@@ -1,7 +1,9 @@
 #include <core/bdf.h>
 #include <core/time_integration_utilities.h>
+#include <core/utilities.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/heat_transfer.h>
 #include <solvers/heat_transfer_assemblers.h>
 
 template <int dim>
@@ -10,8 +12,6 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
-  auto &physical_properties = this->simulation_parameters.physical_properties;
-
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
   double density              = physical_properties.density;
@@ -23,7 +23,11 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   double rho_cp            = density * specific_heat;
   double alpha             = thermal_conductivity / rho_cp;
 
-
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
 
   // Vector for the BDF coefficients
   // The coefficients are stored in the following fashion :
@@ -39,29 +43,29 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   const double sdt = 1. / dt;
 
   // assembling local matrix and right hand side
-  for (const unsigned int q : fe_values_ht.quadrature_point_indices())
+  for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      if (this->simulation_parameters.multiphysics.free_surface)
+      if (simulation_parameters.multiphysics.free_surface)
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
           density =
-            calculate_point_property(phase_values[q],
+            calculate_point_property(scratch_data.phase_values[q],
                                      physical_properties.fluids[0].density,
                                      physical_properties.fluids[1].density);
 
           viscosity =
-            calculate_point_property(phase_values[q],
+            calculate_point_property(scratch_data.phase_values[q],
                                      physical_properties.fluids[0].viscosity,
                                      physical_properties.fluids[1].viscosity);
 
           specific_heat = calculate_point_property(
-            phase_values[q],
+            scratch_data.phase_values[q],
             physical_properties.fluids[0].specific_heat,
             physical_properties.fluids[1].specific_heat);
 
           thermal_conductivity = calculate_point_property(
-            phase_values[q],
+            scratch_data.phase_values[q],
             physical_properties.fluids[0].thermal_conductivity,
             physical_properties.fluids[1].thermal_conductivity);
 
@@ -71,11 +75,13 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
           alpha             = thermal_conductivity / rho_cp;
         }
 
-      // Store JxW in local variable for faster access
-      const double JxW = fe_values_ht.JxW(q);
+      const auto method = this->simulation_control->get_assembly_method();
 
-      const auto velocity          = velocity_values[q];
-      const auto velocity_gradient = velocity_gradient_values[q];
+      // Store JxW in local variable for faster access
+      const double JxW = JxW_vec[q];
+
+      const auto velocity          = scratch_data.velocity_values[q];
+      const auto velocity_gradient = scratch_data.velocity_gradient_values[q];
 
 
       // Calculation of the magnitude of the velocity for the
@@ -87,27 +93,28 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       // steady or unsteady. In the unsteady case it includes the value
       // of the time-step
       const double tau =
-        is_steady(time_stepping_method) ?
+        is_steady(method) ?
           1. / std::sqrt(std::pow(2. * rho_cp * u_mag / h, 2) +
                          9 * std::pow(4 * alpha / (h * h), 2)) :
           1. /
             std::sqrt(std::pow(sdt, 2) + std::pow(2. * rho_cp * u_mag / h, 2) +
                       9 * std::pow(4 * alpha / (h * h), 2));
-      const double tau_ggls = std::pow(h, fe->degree + 1) / 6. / rho_cp;
+      const double tau_ggls =
+        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / rho_cp;
 
       // Gather the shape functions and their gradient
-      for (unsigned int k : fe_values_ht.dof_indices())
+      for (unsigned int k : scratch_data.fe_values_T.dof_indices())
         {
-          phi_T[k]      = fe_values_ht.shape_value(k, q);
-          grad_phi_T[k] = fe_values_ht.shape_grad(k, q);
-          hess_phi_T[k] = fe_values_ht.shape_hessian(k, q);
+          phi_T[k]      = scratch_data.fe_values_T.shape_value(k, q);
+          grad_phi_T[k] = scratch_data.fe_values_T.shape_grad(k, q);
+          hess_phi_T[k] = scratch_data.fe_values_T.shape_hessian(k, q);
 
           laplacian_phi_T[k] = trace(hess_phi_T[k]);
         }
 
 
 
-      for (const unsigned int i : fe_values_ht.dof_indices())
+      for (const unsigned int i : fe_values_T.dof_indices())
         {
           const auto phi_T_i      = phi_T[i];
           const auto grad_phi_T_i = grad_phi_T[i];
@@ -115,7 +122,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
           if (assemble_matrix)
             {
-              for (const unsigned int j : fe_values_ht.dof_indices())
+              for (const unsigned int j : fe_values_T.dof_indices())
                 {
                   const auto phi_T_j           = phi_T[j];
                   const auto grad_phi_T_j      = grad_phi_T[j];
@@ -153,8 +160,19 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsCopyData &   copy_data)
 {
   // assembling local matrix and right hand side
-  for (const unsigned int q : fe_values_ht.quadrature_point_indices())
+  for (const unsigned int q : fe_values_T.quadrature_point_indices())
     {
+      // Gather physical properties in case of mono fluids simulations (to be
+      // modified by cell in case of multiple fluids simulations)
+      double density              = physical_properties.density;
+      double specific_heat        = physical_properties.specific_heat;
+      double thermal_conductivity = physical_properties.thermal_conductivity;
+      double viscosity            = physical_properties.viscosity;
+
+      double dynamic_viscosity = viscosity * density;
+      double rho_cp            = density * specific_heat;
+      double alpha             = thermal_conductivity / rho_cp;
+
       if (this->simulation_parameters.multiphysics.free_surface)
         {
           // Calculation of the equivalent physical properties at the
@@ -186,7 +204,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
         }
 
       // Store JxW in local variable for faster access
-      const double JxW = fe_values_ht.JxW(q);
+      const double JxW = fe_values_T.JxW(q);
 
       const auto velocity          = velocity_values[q];
       const auto velocity_gradient = velocity_gradient_values[q];
@@ -210,18 +228,18 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       const double tau_ggls = std::pow(h, fe->degree + 1) / 6. / rho_cp;
 
       // Gather the shape functions and their gradient
-      for (unsigned int k : fe_values_ht.dof_indices())
+      for (unsigned int k : fe_values_T.dof_indices())
         {
-          phi_T[k]      = fe_values_ht.shape_value(k, q);
-          grad_phi_T[k] = fe_values_ht.shape_grad(k, q);
-          hess_phi_T[k] = fe_values_ht.shape_hessian(k, q);
+          phi_T[k]      = fe_values_T.shape_value(k, q);
+          grad_phi_T[k] = fe_values_T.shape_grad(k, q);
+          hess_phi_T[k] = fe_values_T.shape_hessian(k, q);
 
           laplacian_phi_T[k] = trace(hess_phi_T[k]);
         }
 
 
 
-      for (const unsigned int i : fe_values_ht.dof_indices())
+      for (const unsigned int i : fe_values_T.dof_indices())
         {
           const auto phi_T_i      = phi_T[i];
           const auto grad_phi_T_i = grad_phi_T[i];
@@ -284,7 +302,7 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
   auto &local_matrix        = copy_data.local_matrix;
 
   // assembling local matrix and right hand side
-  for (const unsigned int q : fe_values_ht.quadrature_point_indices())
+  for (const unsigned int q : fe_values_T.quadrature_point_indices())
     {
       if (this->simulation_parameters.multiphysics.free_surface)
         {
@@ -317,7 +335,7 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
         }
 
       // Store JxW in local variable for faster access
-      const double JxW = fe_values_ht.JxW(q);
+      const double JxW = fe_values_T.JxW(q);
 
       const auto velocity          = velocity_values[q];
       const auto velocity_gradient = velocity_gradient_values[q];
@@ -341,18 +359,18 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
       const double tau_ggls = std::pow(h, fe->degree + 1) / 6. / rho_cp;
 
       // Gather the shape functions and their gradient
-      for (unsigned int k : fe_values_ht.dof_indices())
+      for (unsigned int k : fe_values_T.dof_indices())
         {
-          phi_T[k]      = fe_values_ht.shape_value(k, q);
-          grad_phi_T[k] = fe_values_ht.shape_grad(k, q);
-          hess_phi_T[k] = fe_values_ht.shape_hessian(k, q);
+          phi_T[k]      = fe_values_T.shape_value(k, q);
+          grad_phi_T[k] = fe_values_T.shape_grad(k, q);
+          hess_phi_T[k] = fe_values_T.shape_hessian(k, q);
 
           laplacian_phi_T[k] = trace(hess_phi_T[k]);
         }
 
 
 
-      for (const unsigned int i : fe_values_ht.dof_indices())
+      for (const unsigned int i : fe_values_T.dof_indices())
         {
           const auto phi_T_i      = phi_T[i];
           const auto grad_phi_T_i = grad_phi_T[i];
@@ -360,7 +378,7 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
 
           if (assemble_matrix)
             {
-              for (const unsigned int j : fe_values_ht.dof_indices())
+              for (const unsigned int j : fe_values_T.dof_indices())
                 {
                   const auto phi_T_j      = phi_T[j];
                   const auto grad_phi_T_j = grad_phi_T[j];
@@ -390,8 +408,19 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
   StabilizedMethodsCopyData &   copy_data)
 {
   // assembling local matrix and right hand side
-  for (const unsigned int q : fe_values_ht.quadrature_point_indices())
+  for (const unsigned int q : fe_values_T.quadrature_point_indices())
     {
+      // Gather physical properties in case of mono fluids simulations (to be
+      // modified by cell in case of multiple fluids simulations)
+      double density              = physical_properties.density;
+      double specific_heat        = physical_properties.specific_heat;
+      double thermal_conductivity = physical_properties.thermal_conductivity;
+      double viscosity            = physical_properties.viscosity;
+
+      double dynamic_viscosity = viscosity * density;
+      double rho_cp            = density * specific_heat;
+      double alpha             = thermal_conductivity / rho_cp;
+
       if (this->simulation_parameters.multiphysics.free_surface)
         {
           // Calculation of the equivalent physical properties at the
@@ -423,7 +452,7 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
         }
 
       // Store JxW in local variable for faster access
-      const double JxW = fe_values_ht.JxW(q);
+      const double JxW = fe_values_T.JxW(q);
 
       const auto velocity          = velocity_values[q];
       const auto velocity_gradient = velocity_gradient_values[q];
@@ -447,16 +476,16 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
       const double tau_ggls = std::pow(h, fe->degree + 1) / 6. / rho_cp;
 
       // Gather the shape functions and their gradient
-      for (unsigned int k : fe_values_ht.dof_indices())
+      for (unsigned int k : fe_values_T.dof_indices())
         {
-          phi_T[k]      = fe_values_ht.shape_value(k, q);
-          grad_phi_T[k] = fe_values_ht.shape_grad(k, q);
-          hess_phi_T[k] = fe_values_ht.shape_hessian(k, q);
+          phi_T[k]      = fe_values_T.shape_value(k, q);
+          grad_phi_T[k] = fe_values_T.shape_grad(k, q);
+          hess_phi_T[k] = fe_values_T.shape_hessian(k, q);
 
           laplacian_phi_T[k] = trace(hess_phi_T[k]);
         }
 
-      for (const unsigned int i : fe_values_ht.dof_indices())
+      for (const unsigned int i : fe_values_T.dof_indices())
         {
           const auto phi_T_i      = phi_T[i];
           const auto grad_phi_T_i = grad_phi_T[i];
@@ -630,17 +659,17 @@ HeatTransferAssemblerRBC<dim>::assemble_matrix(
                              fe_face_values_ht.quadrature_point_indices())
                           {
                             const double JxW = fe_face_values_ht.JxW(q);
-                            for (unsigned int k : fe_values_ht.dof_indices())
+                            for (unsigned int k : fe_values_T.dof_indices())
                               phi_face_T[k] =
                                 fe_face_values_ht.shape_value(k, q);
 
                             for (const unsigned int i :
-                                 fe_values_ht.dof_indices())
+                                 fe_values_T.dof_indices())
                               {
                                 if (assemble_matrix)
                                   {
                                     for (const unsigned int j :
-                                         fe_values_ht.dof_indices())
+                                         fe_values_T.dof_indices())
                                       {
                                         // Weak form modification
                                         cell_matrix(i, j) += phi_face_T[i] *

@@ -21,20 +21,19 @@ HeatTransferScratchData<dim>::allocate()
   this->velocities.first_vector_component = 0;
   // Velocity
   this->velocity_values = std::vector<Tensor<1, dim>>(n_q_points);
-  // Tracer
-  this->ht_values     = std::vector<double>(n_q_points);
-  this->ht_gradients  = std::vector<Tensor<1, dim>>(n_q_points);
-  this->ht_laplacians = std::vector<double>(n_q_points);
+  this->velocity_gradient_values(n_q_points);
+  // Temperature
+  this->phi_T(n_dofs);
+  this->grad_phi_T(n_dofs);
+  this->hess_phi_T(n_dofs);
+  this->laplacian_phi_T(n_dofs);
 
-  // Velocity for BDF schemes
-  this->previous_ht_values =
-    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
-                                     std::vector<double>(n_q_points));
+  this->present_temperature_values(n_q_points);
+  this->temperature_gradients(n_q_points);
+  this->present_temperature_laplacians(n_q_points);
+  this->present_face_temperature_values(this->face_quadrature->size());
 
-  // Velocity for SDIRK schemes
-  this->stages_ht_values =
-    std::vector<std::vector<double>>(max_number_of_intermediary_stages(),
-                                     std::vector<double>(n_q_points));
+  this->previous_T_values(n_q_points);
 
 
   // Initialize arrays related to shape functions
@@ -47,6 +46,8 @@ HeatTransferScratchData<dim>::allocate()
     n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
   this->laplacian_phi =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
+
+  this->phase_values(n_q_points);
 }
 
 

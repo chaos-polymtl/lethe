@@ -58,7 +58,9 @@ HeatTransfer<dim>::setup_assemblers()
     }
   // Core assembler
   this->assemblers.push_back(std::make_shared<HeatTransferAssemblerCore<dim>>(
-    this->simulation_control, this->simulation_parameters.physical_properties));
+    this->simulation_control,
+    this->simulation_parameters.physical_properties,
+    this->simulation_parameters));
 }
 
 template <int dim>
@@ -73,7 +75,7 @@ HeatTransfer<dim>::assemble_system_matrix()
 
   auto scratch_data = HeatTransferScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping,
+                                                   *this->temperature_mapping,
                                                    dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
@@ -164,7 +166,7 @@ HeatTransfer<dim>::assemble_system_rhs()
 
   auto scratch_data = HeatTransferScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping,
+                                                   *this->temperature_mapping,
                                                    dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),

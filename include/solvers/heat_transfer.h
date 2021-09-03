@@ -375,6 +375,7 @@ private:
 
   // Previous solutions vectors
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+  std::vector<TrilinosWrappers::MPI::Vector> solution_stages;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>

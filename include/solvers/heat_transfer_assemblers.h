@@ -30,6 +30,7 @@
 
 #include <solvers/copy_data.h>
 #include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/multiphysics_interface.h>
 
 /**
  * @brief A pure virtual class that serves as an interface for all
@@ -86,9 +87,11 @@ class HeatTransferAssemblerCore : public HeatTransferAssemblerBase<dim>
 public:
   HeatTransferAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties)
+    Parameters::PhysicalProperties     physical_properties,
+    const SimulationParameters<dim> &  p_simulation_parameters)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
+    , simulation_parameters(p_simulation_parameters)
   {}
 
   /**
@@ -114,6 +117,7 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
+  const SimulationParameters<dim> &  simulation_parameters;
 };
 
 /**

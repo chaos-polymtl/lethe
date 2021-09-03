@@ -28,6 +28,8 @@
 
 #include <core/multiphysics.h>
 
+#include <solvers/multiphysics_interface.h>
+
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -85,11 +87,11 @@ public:
                           const Quadrature<dim> &   quadrature,
                           const Mapping<dim> &      mapping,
                           const FiniteElement<dim> &fe_navier_stokes)
-    : fe_values_ht(mapping,
-                   fe_ht,
-                   quadrature,
-                   update_values | update_quadrature_points |
-                     update_JxW_values | update_gradients | update_hessians)
+    : fe_values_T(mapping,
+                  fe_ht,
+                  quadrature,
+                  update_values | update_quadrature_points | update_JxW_values |
+                    update_gradients | update_hessians)
     , fe_values_navier_stokes(mapping,
                               fe_navier_stokes,
                               quadrature,
@@ -112,11 +114,11 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    */
   HeatTransferScratchData(const HeatTransferScratchData<dim> &sd)
-    : fe_values_ht(sd.fe_values_ht.get_mapping(),
-                   sd.fe_values_ht.get_fe(),
-                   sd.fe_values_ht.get_quadrature(),
-                   update_values | update_quadrature_points |
-                     update_JxW_values | update_gradients | update_hessians)
+    : fe_values_T(sd.fe_values_T.get_mapping(),
+                  sd.fe_values_T.get_fe(),
+                  sd.fe_values_T.get_quadrature(),
+                  update_values | update_quadrature_points | update_JxW_values |
+                    update_gradients | update_hessians)
     , fe_values_navier_stokes(sd.fe_values_navier_stokes.get_mapping(),
                               sd.fe_values_navier_stokes.get_fe(),
                               sd.fe_values_navier_stokes.get_quadrature(),
@@ -158,52 +160,72 @@ public:
          const VectorType &                                    current_solution,
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages,
-         Function<dim> *                source_function)
+         Function<dim> *                source_function,
+         const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                       triangulation,
+         const DoFHandler<dim>         dof_handler_fluid,
+         MultiphysicsInterface<dim> *  multiphysics,
+         TrilinosWrappers::MPI::Vector evaluation_point)
   {
-    this->fe_values_ht.reinit(cell);
+    fe_values_T.reinit(cell);
 
-    quadrature_points = this->fe_values_ht.get_quadrature_points();
-    auto &fe_ht       = this->fe_values_ht.get_fe();
+    fe_values_T.get_function_gradients(current_solution, temperature_gradients);
 
-    source_function->value_list(quadrature_points, source);
 
-    if (dim == 2)
-      this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe_ht.degree;
-    else if (dim == 3)
-      this->cell_size = pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_ht.degree;
+    typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+      &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
-    // Gather tracer (values, gradient and laplacian)
-    this->fe_values_ht.get_function_values(current_solution, this->ht_values);
-    this->fe_values_ht.get_function_gradients(current_solution,
-                                              this->ht_gradients);
-    this->fe_values_ht.get_function_laplacians(current_solution,
-                                               this->ht_laplacians);
+    fe_values_navier_stokes.reinit(velocity_cell);
 
-    // Gather previous tracer values
+    if (multiphysics->fluid_dynamics_is_block())
+      {
+        fe_values_navier_stokes[velocities].get_function_values(
+          *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+          velocity_values);
+        fe_values_navier_stokes[velocities].get_function_gradients(
+          *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+          velocity_gradient_values);
+      }
+    else
+      {
+        fe_values_navier_stokes[velocities].get_function_values(
+          *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+          velocity_values);
+        fe_values_navier_stokes[velocities].get_function_gradients(
+          *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+          velocity_gradient_values);
+      }
+
+    // Gather present value
+    fe_values_T.get_function_values(evaluation_point,
+                                    present_temperature_values);
+
+
+    // Gather present laplacian
+    fe_values_T.get_function_laplacians(evaluation_point,
+                                        present_temperature_laplacians);
+    // Gather the previous time steps for heat transfer depending on
+    // the number of stages of the time integration method
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_ht.get_function_values(previous_solutions[p],
-                                               previous_ht_values[p]);
+        fe_values_T.get_function_values(previous_solutions[p],
+                                        previous_T_values[p]);
+        fe_values_T.get_function_gradients(previous_solutions[p],
+                                           previous_T_values[p]);
       }
 
-    // Gather tracer stages
-    for (unsigned int s = 0; s < solution_stages.size(); ++s)
-      {
-        this->fe_values_ht.get_function_values(solution_stages[s],
-                                               stages_ht_values[s]);
-      }
 
 
     for (unsigned int q = 0; q < n_q_points; ++q)
       {
-        this->JxW[q] = this->fe_values_ht.JxW(q);
+        this->JxW[q] = this->fe_values_T.JxW(q);
 
         for (unsigned int k = 0; k < n_dofs; ++k)
           {
             // Shape function
-            this->phi[q][k]           = this->fe_values_ht.shape_value(k, q);
-            this->grad_phi[q][k]      = this->fe_values_ht.shape_grad(k, q);
-            this->hess_phi[q][k]      = this->fe_values_ht.shape_hessian(k, q);
+            this->phi[q][k]           = this->fe_values_T.shape_value(k, q);
+            this->grad_phi[q][k]      = this->fe_values_T.shape_grad(k, q);
+            this->hess_phi[q][k]      = this->fe_values_T.shape_hessian(k, q);
             this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
           }
       }
@@ -222,7 +244,7 @@ public:
 
 
   // FEValues for the Tracer problem
-  FEValues<dim> fe_values_ht;
+  FEValues<dim> fe_values_T;
   unsigned int  n_dofs;
   unsigned int  n_q_points;
   double        cell_size;
@@ -231,12 +253,11 @@ public:
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;
 
-  // Tracer values
-  std::vector<double>              ht_values;
-  std::vector<Tensor<1, dim>>      ht_gradients;
-  std::vector<double>              ht_laplacians;
-  std::vector<std::vector<double>> previous_ht_values;
-  std::vector<std::vector<double>> stages_ht_values;
+  // Shape functions and gradients
+  std::vector<double>         phi_T;
+  std::vector<Tensor<1, dim>> grad_phi_T;
+  std::vector<Tensor<2, dim>> hess_phi_T;
+  std::vector<double>         laplacian_phi_T;
 
   // Source term
   std::vector<double> source;
@@ -247,6 +268,8 @@ public:
   std::vector<std::vector<double>>         laplacian_phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
 
+  std::vector<double> phase_values;
+
 
   /**
    * Scratch component for the Navier-Stokes component
@@ -255,6 +278,13 @@ public:
   // This FEValues must mandatorily be instantiated for the velocity
   FEValues<dim>               fe_values_navier_stokes;
   std::vector<Tensor<1, dim>> velocity_values;
+  std::vector<Tensor<2, dim>> velocity_gradient_values;
+
+  std::vector<double>         present_temperature_values;
+  std::vector<Tensor<1, dim>> temperature_gradients;
+  std::vector<double>         present_temperature_laplacians;
+  std::vector<double>         present_face_temperature_values;
+  std::vector<Tensor<1, dim>> previous_T_values;
 };
 
 #endif
