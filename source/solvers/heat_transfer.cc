@@ -4,6 +4,10 @@
 #include <core/utilities.h>
 
 #include <solvers/heat_transfer.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
+
+#include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -22,275 +26,219 @@
 
 template <int dim>
 void
-HeatTransfer<dim>::assemble_matrix_and_rhs()
+HeatTransfer<dim>::assemble_matrix_and_rhs(
+  const Parameters::SimulationControl::
+    TimeSteppingMethod /*time_stepping_method*/)
 {
-  assemble_system<true>();
+  assemble_system_matrix();
+  assemble_system_rhs();
 }
 
 
 template <int dim>
 void
-HeatTransfer<dim>::assemble_rhs()
+HeatTransfer<dim>::assemble_rhs(const Parameters::SimulationControl::
+                                  TimeSteppingMethod /*time_stepping_method*/)
 {
-  assemble_system<false>();
+  assemble_system_rhs();
 }
 
-
 template <int dim>
-template <bool assemble_matrix>
 void
-HeatTransfer<dim>::assemble_system()
+HeatTransfer<dim>::setup_assemblers()
 {
-  auto &physical_properties = this->simulation_parameters.physical_properties;
+  this->assemblers.clear();
 
-  // Gather physical properties in case of mono fluids simulations (to be
-  // modified by cell in case of multiple fluids simulations)
-  double density              = physical_properties.density;
-  double specific_heat        = physical_properties.specific_heat;
-  double thermal_conductivity = physical_properties.thermal_conductivity;
-  double viscosity            = physical_properties.viscosity;
-
-  double dynamic_viscosity = viscosity * density;
-  double rho_cp            = density * specific_heat;
-  double alpha             = thermal_conductivity / rho_cp;
-
-  if (assemble_matrix)
-    system_matrix = 0;
-  system_rhs = 0;
-
-  // Vector for the BDF coefficients
-  // The coefficients are stored in the following fashion :
-  // 0 - n+1
-  // 1 - n
-  // 2 - n-1
-  // 3 - n-2
-  std::vector<double> time_steps_vector =
-    simulation_control->get_time_steps_vector();
-
-  // Time steps and inverse time steps which is used for numerous calculations
-  const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
-
-
-  Vector<double> bdf_coefs;
-
-  if (this->time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-      this->time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
-    bdf_coefs = bdf_coefficients(1, time_steps_vector);
-
-  if (this->time_stepping_method ==
-      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    bdf_coefs = bdf_coefficients(2, time_steps_vector);
-
-  if (this->time_stepping_method ==
-      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    bdf_coefs = bdf_coefficients(3, time_steps_vector);
-
-  if (this->time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-      this->time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
+  // Time-stepping schemes
+  if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      throw std::runtime_error(
-        "SDIRK schemes are not supported by heat transfer physics");
+      this->assemblers.push_back(
+        std::make_shared<HeatTransferAssemblerBDF<dim>>(
+          this->simulation_control));
     }
+  // Core assembler
+  this->assemblers.push_back(std::make_shared<HeatTransferAssemblerCore<dim>>(
+    this->simulation_control, this->simulation_parameters.physical_properties));
+}
 
+template <int dim>
+void
+HeatTransfer<dim>::assemble_system_matrix()
+{
+  this->system_matrix = 0;
+  setup_assemblers();
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = HeatTransferScratchData<dim>(*this->fe,
+                                                   *this->cell_quadrature,
+                                                   *this->mapping,
+                                                   dof_handler_fluid->get_fe());
+
+  WorkStream::run(this->dof_handler.begin_active(),
+                  this->dof_handler.end(),
+                  *this,
+                  &HeatTransfer::assemble_local_system_matrix,
+                  &HeatTransfer::copy_local_matrix_to_global_matrix,
+                  scratch_data,
+                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                            this->cell_quadrature->size()));
+
+  system_matrix.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::assemble_local_system_matrix(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  HeatTransferScratchData<dim> &                        scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
+{
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
 
   auto &source_term = simulation_parameters.source_term->heat_transfer_source;
   source_term.set_time(simulation_control->get_current_time());
 
-  FEValues<dim> fe_values_ht(*fe,
-                             *this->cell_quadrature,
-                             update_values | update_gradients |
-                               update_quadrature_points | update_JxW_values |
-                               update_hessians);
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      &source_term);
 
-  auto &evaluation_point = this->get_evaluation_point();
-
-  const unsigned int dofs_per_cell = fe->dofs_per_cell;
-
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>     cell_rhs(dofs_per_cell);
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  const unsigned int     n_q_points = this->cell_quadrature->size();
-  std::vector<double>    source_term_values(n_q_points);
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-  FEValues<dim> fe_values_flow(dof_handler_fluid->get_fe(),
-                               *this->cell_quadrature,
-                               update_values | update_quadrature_points |
-                                 update_gradients);
 
-  // FaceValues for Robin boundary condition
-  FEFaceValues<dim> fe_face_values_ht(*fe,
-                                      *this->face_quadrature,
-                                      update_values | update_quadrature_points |
-                                        update_JxW_values);
+  typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
-  // Shape functions and gradients
-  std::vector<double>         phi_T(dofs_per_cell);
-  std::vector<Tensor<1, dim>> grad_phi_T(dofs_per_cell);
-  std::vector<Tensor<2, dim>> hess_phi_T(dofs_per_cell);
-  std::vector<double>         laplacian_phi_T(dofs_per_cell);
-
-
-  // Velocity values
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-
-  std::vector<Tensor<1, dim>> velocity_values(n_q_points);
-  std::vector<Tensor<2, dim>> velocity_gradient_values(n_q_points);
-
-  std::vector<double>         present_temperature_values(n_q_points);
-  std::vector<Tensor<1, dim>> temperature_gradients(n_q_points);
-  std::vector<double>         present_temperature_laplacians(n_q_points);
-  std::vector<double>         present_face_temperature_values(
-    this->face_quadrature->size());
-
-  // Values for backward Euler scheme
-  std::vector<double> p1_temperature_values(n_q_points);
-  std::vector<double> p2_temperature_values(n_q_points);
-  std::vector<double> p3_temperature_values(n_q_points);
-
-  // Values for GGLS stabilization
-  std::vector<Tensor<1, dim>> p1_temperature_gradients(n_q_points);
-  std::vector<Tensor<1, dim>> p2_temperature_gradients(n_q_points);
-  std::vector<Tensor<1, dim>> p3_temperature_gradients(n_q_points);
-
-  // Initialization for pointers and vector used in multiple fluids simulations
-  DoFHandler<dim> *              dof_handler_fs;
-  std::shared_ptr<FEValues<dim>> fe_values_fs;
-  std::vector<double>            phase_values(n_q_points);
-
-  if (simulation_parameters.multiphysics.free_surface)
+  if (multiphysics->fluid_dynamics_is_block())
     {
-      // if free surface simulation, gather dof_handler and FEValues
-      // physical properties will be defined in quadrature points loop
-      dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_block_solution(
+                                     PhysicsID::fluid_dynamics));
+    }
+  else
+    {
+      scratch_data.reinit_velocity(
+        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+    }
+  copy_data.reset();
 
-      fe_values_fs =
-        std::make_shared<FEValues<dim>>(dof_handler_fs->get_fe(),
-                                        *this->cell_quadrature,
-                                        update_values | update_gradients |
-                                          update_quadrature_points);
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_matrix(scratch_data, copy_data);
     }
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+
+  cell->get_dof_indices(copy_data.local_dof_indices);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::copy_local_matrix_to_global_matrix(
+  const StabilizedMethodsCopyData &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_matrix,
+                                              copy_data.local_dof_indices,
+                                              system_matrix);
+}
+
+
+template <int dim>
+void
+HeatTransfer<dim>::assemble_system_rhs()
+{
+  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  this->system_rhs = 0;
+  setup_assemblers();
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = HeatTransferScratchData<dim>(*this->fe,
+                                                   *this->cell_quadrature,
+                                                   *this->mapping,
+                                                   dof_handler_fluid->get_fe());
+
+  WorkStream::run(this->dof_handler.begin_active(),
+                  this->dof_handler.end(),
+                  *this,
+                  &HeatTransfer::assemble_local_system_rhs,
+                  &HeatTransfer::copy_local_rhs_to_global_rhs,
+                  scratch_data,
+                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                            this->cell_quadrature->size()));
+
+  this->system_rhs.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::assemble_local_system_rhs(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  HeatTransferScratchData<dim> &                        scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
+{
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
+
+  auto &source_term = simulation_parameters.source_term->heat_transfer_source;
+  source_term.set_time(simulation_control->get_current_time());
+
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      &source_term);
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+  if (multiphysics->fluid_dynamics_is_block())
     {
-      if (cell->is_locally_owned())
-        {
-          cell_matrix = 0;
-          cell_rhs    = 0;
-          double h    = 0;
-
-          if (simulation_parameters.multiphysics.free_surface)
-            {
-              // Gather FreeSurface values, current phase
-              typename DoFHandler<dim>::active_cell_iterator phase_cell(
-                &(*(this->triangulation)),
-                cell->level(),
-                cell->index(),
-                dof_handler_fs);
-
-              fe_values_fs->reinit(phase_cell);
-
-              fe_values_fs->get_function_values(
-                *this->multiphysics->get_solution(PhysicsID::free_surface),
-                phase_values);
-            }
-
-          if (dim == 2)
-            h = std::sqrt(4. * cell->measure() / M_PI) / fe->degree;
-          else if (dim == 3)
-            h = pow(6 * cell->measure() / M_PI, 1. / 3.) / fe->degree;
-
-          fe_values_ht.reinit(cell);
-
-          fe_values_ht.get_function_gradients(evaluation_point,
-                                              temperature_gradients);
-
-
-          typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-            &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
-
-          fe_values_flow.reinit(velocity_cell);
-
-          if (multiphysics->fluid_dynamics_is_block())
-            {
-              fe_values_flow[velocities].get_function_values(
-                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-                velocity_values);
-              fe_values_flow[velocities].get_function_gradients(
-                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-                velocity_gradient_values);
-            }
-          else
-            {
-              fe_values_flow[velocities].get_function_values(
-                *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-                velocity_values);
-              fe_values_flow[velocities].get_function_gradients(
-                *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-                velocity_gradient_values);
-            }
-
-          // Gather present value
-          fe_values_ht.get_function_values(evaluation_point,
-                                           present_temperature_values);
-
-
-          // Gather present laplacian
-          fe_values_ht.get_function_laplacians(evaluation_point,
-                                               present_temperature_laplacians);
-
-          // Gather the previous time steps for heat transfer depending on
-          // the number of stages of the time integration method
-          if (this->time_stepping_method !=
-              Parameters::SimulationControl::TimeSteppingMethod::steady)
-            {
-              fe_values_ht.get_function_values(previous_solutions[0],
-                                               p1_temperature_values);
-              fe_values_ht.get_function_gradients(previous_solutions[0],
-                                                  p1_temperature_gradients);
-            }
-
-          if (time_stepping_method_uses_two_previous_solutions(
-                this->time_stepping_method))
-            {
-              fe_values_ht.get_function_values(previous_solutions[1],
-                                               p2_temperature_values);
-
-              fe_values_ht.get_function_gradients(previous_solutions[1],
-                                                  p2_temperature_gradients);
-            }
-
-          if (time_stepping_method_uses_three_previous_solutions(
-                this->time_stepping_method))
-            {
-              fe_values_ht.get_function_values(previous_solutions[2],
-                                               p3_temperature_values);
-
-              fe_values_ht.get_function_gradients(previous_solutions[2],
-                                                  p3_temperature_gradients);
-            }
-
-          source_term.value_list(fe_values_ht.get_quadrature_points(),
-                                 source_term_values);
-
-          // transfer cell contribution into global objects
-          cell->get_dof_indices(local_dof_indices);
-          zero_constraints.distribute_local_to_global(cell_matrix,
-                                                      cell_rhs,
-                                                      local_dof_indices,
-                                                      system_matrix,
-                                                      system_rhs);
-        } // end loop active cell
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_block_solution(
+                                     PhysicsID::fluid_dynamics));
     }
-  system_matrix.compress(VectorOperation::add);
-  system_rhs.compress(VectorOperation::add);
+  else
+    {
+      scratch_data.reinit_velocity(
+        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+    }
+
+  copy_data.reset();
+
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_rhs(scratch_data, copy_data);
+    }
+
+  cell->get_dof_indices(copy_data.local_dof_indices);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::copy_local_rhs_to_global_rhs(
+  const StabilizedMethodsCopyData &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_rhs,
+                                              copy_data.local_dof_indices,
+                                              system_rhs);
 }
 
 

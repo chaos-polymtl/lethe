@@ -10,6 +10,34 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
+  auto &physical_properties = this->simulation_parameters.physical_properties;
+
+  // Gather physical properties in case of mono fluids simulations (to be
+  // modified by cell in case of multiple fluids simulations)
+  double density              = physical_properties.density;
+  double specific_heat        = physical_properties.specific_heat;
+  double thermal_conductivity = physical_properties.thermal_conductivity;
+  double viscosity            = physical_properties.viscosity;
+
+  double dynamic_viscosity = viscosity * density;
+  double rho_cp            = density * specific_heat;
+  double alpha             = thermal_conductivity / rho_cp;
+
+
+
+  // Vector for the BDF coefficients
+  // The coefficients are stored in the following fashion :
+  // 0 - n+1
+  // 1 - n
+  // 2 - n-1
+  // 3 - n-2
+  std::vector<double> time_steps_vector =
+    simulation_control->get_time_steps_vector();
+
+  // Time steps and inverse time steps which is used for numerous calculations
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
   // assembling local matrix and right hand side
   for (const unsigned int q : fe_values_ht.quadrature_point_indices())
     {
@@ -109,22 +137,6 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
                     rho_cp * velocity * grad_phi_T_j -
                     thermal_conductivity * laplacian_phi_T_j;
 
-                  // Mass matrix for transient simulation
-                  if (is_bdf(time_stepping_method))
-                    {
-                      cell_matrix(i, j) +=
-                        rho_cp * phi_T_j * phi_T_i * bdf_coefs[0] * JxW;
-
-                      strong_jacobian += rho_cp * phi_T_j * bdf_coefs[0];
-
-                      if (GGLS)
-                        {
-                          cell_matrix(i, j) += rho_cp * rho_cp * tau_ggls *
-                                               (grad_phi_T_i * grad_phi_T_j) *
-                                               bdf_coefs[0] * JxW;
-                        }
-                    }
-
                   cell_matrix(i, j) +=
                     tau * strong_jacobian * (grad_phi_T_i * velocity) * JxW;
                 }
@@ -222,6 +234,234 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
              source_term_values[q] * phi_T_i) *
             JxW;
 
+          cell_rhs(i) -=
+            tau * (strong_residual * (grad_phi_T_i * velocity_values[q])) * JxW;
+        }
+
+    } // end loop on quadrature points
+}
+
+template class HeatTransferAssemblerCore<2>;
+template class HeatTransferAssemblerCore<3>;
+
+template <int dim>
+void
+HeatTransferAssemblerBDF<dim>::assemble_matrix(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &   copy_data)
+{
+  auto &physical_properties = this->simulation_parameters.physical_properties;
+
+  // Gather physical properties in case of mono fluids simulations (to be
+  // modified by cell in case of multiple fluids simulations)
+  double density              = physical_properties.density;
+  double specific_heat        = physical_properties.specific_heat;
+  double thermal_conductivity = physical_properties.thermal_conductivity;
+  double viscosity            = physical_properties.viscosity;
+
+  double dynamic_viscosity = viscosity * density;
+  double rho_cp            = density * specific_heat;
+  double alpha             = thermal_conductivity / rho_cp;
+
+
+
+  // Vector for the BDF coefficients
+  // The coefficients are stored in the following fashion :
+  // 0 - n+1
+  // 1 - n
+  // 2 - n-1
+  // 3 - n-2
+  std::vector<double> time_steps_vector =
+    simulation_control->get_time_steps_vector();
+
+  // Time steps and inverse time steps which is used for numerous calculations
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+
+  // Copy data elements
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // assembling local matrix and right hand side
+  for (const unsigned int q : fe_values_ht.quadrature_point_indices())
+    {
+      if (this->simulation_parameters.multiphysics.free_surface)
+        {
+          // Calculation of the equivalent physical properties at the
+          // quadrature point
+          density =
+            calculate_point_property(phase_values[q],
+                                     physical_properties.fluids[0].density,
+                                     physical_properties.fluids[1].density);
+
+          viscosity =
+            calculate_point_property(phase_values[q],
+                                     physical_properties.fluids[0].viscosity,
+                                     physical_properties.fluids[1].viscosity);
+
+          specific_heat = calculate_point_property(
+            phase_values[q],
+            physical_properties.fluids[0].specific_heat,
+            physical_properties.fluids[1].specific_heat);
+
+          thermal_conductivity = calculate_point_property(
+            phase_values[q],
+            physical_properties.fluids[0].thermal_conductivity,
+            physical_properties.fluids[1].thermal_conductivity);
+
+          // Useful definitions
+          dynamic_viscosity = viscosity * density;
+          rho_cp            = density * specific_heat;
+          alpha             = thermal_conductivity / rho_cp;
+        }
+
+      // Store JxW in local variable for faster access
+      const double JxW = fe_values_ht.JxW(q);
+
+      const auto velocity          = velocity_values[q];
+      const auto velocity_gradient = velocity_gradient_values[q];
+
+
+      // Calculation of the magnitude of the velocity for the
+      // stabilization parameter
+      const double u_mag = std::max(velocity.norm(), 1e-12);
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation is
+      // steady or unsteady. In the unsteady case it includes the value
+      // of the time-step
+      const double tau =
+        is_steady(time_stepping_method) ?
+          1. / std::sqrt(std::pow(2. * rho_cp * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2)) :
+          1. /
+            std::sqrt(std::pow(sdt, 2) + std::pow(2. * rho_cp * u_mag / h, 2) +
+                      9 * std::pow(4 * alpha / (h * h), 2));
+      const double tau_ggls = std::pow(h, fe->degree + 1) / 6. / rho_cp;
+
+      // Gather the shape functions and their gradient
+      for (unsigned int k : fe_values_ht.dof_indices())
+        {
+          phi_T[k]      = fe_values_ht.shape_value(k, q);
+          grad_phi_T[k] = fe_values_ht.shape_grad(k, q);
+          hess_phi_T[k] = fe_values_ht.shape_hessian(k, q);
+
+          laplacian_phi_T[k] = trace(hess_phi_T[k]);
+        }
+
+
+
+      for (const unsigned int i : fe_values_ht.dof_indices())
+        {
+          const auto phi_T_i      = phi_T[i];
+          const auto grad_phi_T_i = grad_phi_T[i];
+
+
+          if (assemble_matrix)
+            {
+              for (const unsigned int j : fe_values_ht.dof_indices())
+                {
+                  const auto phi_T_j      = phi_T[j];
+                  const auto grad_phi_T_j = grad_phi_T[j];
+
+                  cell_matrix(i, j) +=
+                    rho_cp * phi_T_j * phi_T_i * bdf_coefs[0] * JxW;
+
+                  strong_jacobian += rho_cp * phi_T_j * bdf_coefs[0];
+
+                  if (GGLS)
+                    {
+                      cell_matrix(i, j) += rho_cp * rho_cp * tau_ggls *
+                                           (grad_phi_T_i * grad_phi_T_j) *
+                                           bdf_coefs[0] * JxW;
+                    }
+                }
+            }
+        }
+
+    } // end loop on quadrature points
+}
+
+template <int dim>
+void
+HeatTransferAssemblerBDF<dim>::assemble_rhs(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &   copy_data)
+{
+  // assembling local matrix and right hand side
+  for (const unsigned int q : fe_values_ht.quadrature_point_indices())
+    {
+      if (this->simulation_parameters.multiphysics.free_surface)
+        {
+          // Calculation of the equivalent physical properties at the
+          // quadrature point
+          density =
+            calculate_point_property(phase_values[q],
+                                     physical_properties.fluids[0].density,
+                                     physical_properties.fluids[1].density);
+
+          viscosity =
+            calculate_point_property(phase_values[q],
+                                     physical_properties.fluids[0].viscosity,
+                                     physical_properties.fluids[1].viscosity);
+
+          specific_heat = calculate_point_property(
+            phase_values[q],
+            physical_properties.fluids[0].specific_heat,
+            physical_properties.fluids[1].specific_heat);
+
+          thermal_conductivity = calculate_point_property(
+            phase_values[q],
+            physical_properties.fluids[0].thermal_conductivity,
+            physical_properties.fluids[1].thermal_conductivity);
+
+          // Useful definitions
+          dynamic_viscosity = viscosity * density;
+          rho_cp            = density * specific_heat;
+          alpha             = thermal_conductivity / rho_cp;
+        }
+
+      // Store JxW in local variable for faster access
+      const double JxW = fe_values_ht.JxW(q);
+
+      const auto velocity          = velocity_values[q];
+      const auto velocity_gradient = velocity_gradient_values[q];
+
+
+      // Calculation of the magnitude of the velocity for the
+      // stabilization parameter
+      const double u_mag = std::max(velocity.norm(), 1e-12);
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation is
+      // steady or unsteady. In the unsteady case it includes the value
+      // of the time-step
+      const double tau =
+        is_steady(time_stepping_method) ?
+          1. / std::sqrt(std::pow(2. * rho_cp * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2)) :
+          1. /
+            std::sqrt(std::pow(sdt, 2) + std::pow(2. * rho_cp * u_mag / h, 2) +
+                      9 * std::pow(4 * alpha / (h * h), 2));
+      const double tau_ggls = std::pow(h, fe->degree + 1) / 6. / rho_cp;
+
+      // Gather the shape functions and their gradient
+      for (unsigned int k : fe_values_ht.dof_indices())
+        {
+          phi_T[k]      = fe_values_ht.shape_value(k, q);
+          grad_phi_T[k] = fe_values_ht.shape_grad(k, q);
+          hess_phi_T[k] = fe_values_ht.shape_hessian(k, q);
+
+          laplacian_phi_T[k] = trace(hess_phi_T[k]);
+        }
+
+      for (const unsigned int i : fe_values_ht.dof_indices())
+        {
+          const auto phi_T_i      = phi_T[i];
+          const auto grad_phi_T_i = grad_phi_T[i];
+
+
           if (this->simulation_parameters.multiphysics.viscous_dissipation)
             {
               cell_rhs(i) -= (-dynamic_viscosity * phi_T_i *
@@ -235,7 +475,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
           auto strong_residual =
             rho_cp * velocity_values[q] * temperature_gradients[q] -
             thermal_conductivity * present_temperature_laplacians[q];
-
 
 
           // Residual associated with BDF schemes
@@ -312,31 +551,9 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
                                  JxW;
                 }
             }
-
-
-          cell_rhs(i) -=
-            tau * (strong_residual * (grad_phi_T_i * velocity_values[q])) * JxW;
         }
-
     } // end loop on quadrature points
 }
-
-template class HeatTransferAssemblerCore<2>;
-template class HeatTransferAssemblerCore<3>;
-
-template <int dim>
-void
-HeatTransferAssemblerBDF<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
-{}
-
-template <int dim>
-void
-HeatTransferAssemblerBDF<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
-{}
 
 template class HeatTransferAssemblerBDF<2>;
 template class HeatTransferAssemblerBDF<3>;
@@ -347,6 +564,40 @@ HeatTransferAssemblerRBC<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
+  auto &physical_properties = this->simulation_parameters.physical_properties;
+
+  // Gather physical properties in case of mono fluids simulations (to be
+  // modified by cell in case of multiple fluids simulations)
+  double density              = physical_properties.density;
+  double specific_heat        = physical_properties.specific_heat;
+  double thermal_conductivity = physical_properties.thermal_conductivity;
+  double viscosity            = physical_properties.viscosity;
+
+  double dynamic_viscosity = viscosity * density;
+  double rho_cp            = density * specific_heat;
+  double alpha             = thermal_conductivity / rho_cp;
+
+
+
+  // Vector for the BDF coefficients
+  // The coefficients are stored in the following fashion :
+  // 0 - n+1
+  // 1 - n
+  // 2 - n-1
+  // 3 - n-2
+  std::vector<double> time_steps_vector =
+    simulation_control->get_time_steps_vector();
+
+  // Time steps and inverse time steps which is used for numerous calculations
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+
+  // Copy data elements
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+
   // Robin boundary condition, loop on faces (Newton's cooling law)
   // implementation similar to deal.ii step-7
   for (unsigned int i_bc = 0;
@@ -411,13 +662,6 @@ HeatTransferAssemblerRBC<dim>::assemble_matrix(
         }
     } // end loop for Robin condition
 }
-
-template <int dim>
-void
-HeatTransferAssemblerRBC<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
-{}
 
 template class HeatTransferAssemblerRBC<2>;
 template class HeatTransferAssemblerRBC<3>;

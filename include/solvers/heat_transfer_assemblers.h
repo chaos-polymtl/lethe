@@ -182,15 +182,6 @@ public:
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
                   StabilizedMethodsCopyData &   copy_data) override;
 
-  /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-  virtual void
-  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
-
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
