@@ -44,7 +44,7 @@ ExplicitEulerIntegrator<dim>::integrate(
 
       for (int d = 0; d < dim; ++d)
         {
-          acceleration[d] = g[d] + particle_force[d] * mass_inverse;
+          acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;
 
           // Velocity integration:
           particle_properties[PropertiesIndex::v_x + d] += dt * acceleration[d];

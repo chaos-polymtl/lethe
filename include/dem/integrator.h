@@ -17,9 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_solver_parameters.h>
-
 #include <deal.II/particles/particle_handler.h>
+
+#include <dem/dem_solver_parameters.h>
 
 using namespace dealii;
 
@@ -53,6 +53,7 @@ public:
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
    * @param body_force A constant volumetric body force applied to all particles
+   * @param fluid_solid_force The fluid-particle force in CFD-DEM simulations
    * @param force Force acting on particles
    * @param time_step The value of the time step used for the integration
    */
@@ -69,6 +70,7 @@ public:
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
    * @param body_force A constant volumetric body force applied to all particles
+   * @param fluid_solid_force The fluid-particle force in CFD-DEM simulations
    * @param time_step The value of the time step used for the integration
    * @param momentum Momentum of particles
    * @param force Force acting on particles

@@ -16,8 +16,14 @@
  *
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
-#include <core/solutions_output.h>
+#include <deal.II/base/table_handler.h>
 
+#include <deal.II/fe/mapping_q_generic.h>
+
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_out.h>
+
+#include <core/solutions_output.h>
 #include <dem/dem.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -41,13 +47,6 @@
 #include <dem/uniform_insertion.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
-
-#include <deal.II/base/table_handler.h>
-
-#include <deal.II/fe/mapping_q_generic.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_out.h>
 
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
@@ -170,7 +169,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // parameter handler file, finding maximum particle diameter used in
   // polydisperse systems
   maximum_particle_diameter =
-    find_maximum_particle_size(parameters.physical_properties,
+    find_maximum_particle_size(parameters.lagrangian_physical_properties,
                                standard_deviation_multiplier);
   neighborhood_threshold_squared =
     std::pow(parameters.model_parameters.neighborhood_threshold *
@@ -508,16 +507,18 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 
   particle_point_line_contact_force_object
-    .calculate_particle_point_contact_force(&particle_points_in_contact,
-                                            parameters.physical_properties,
-                                            force);
+    .calculate_particle_point_contact_force(
+      &particle_points_in_contact,
+      parameters.lagrangian_physical_properties,
+      force);
 
   if (dim == 3)
     {
       particle_point_line_contact_force_object
-        .calculate_particle_line_contact_force(&particle_lines_in_contact,
-                                               parameters.physical_properties,
-                                               force);
+        .calculate_particle_line_contact_force(
+          &particle_lines_in_contact,
+          parameters.lagrangian_physical_properties,
+          force);
     }
 }
 
@@ -793,6 +794,7 @@ DEMSolver<dim>::solve()
       }
 #endif
       force.resize(displacement.size());
+      fluid_solid_force.resize(displacement.size());
       momentum.resize(displacement.size());
 
       update_moment_of_inertia(particle_handler, MOI);
@@ -893,6 +895,7 @@ DEMSolver<dim>::solve()
           }
 #endif
           force.resize(displacement.size());
+          fluid_solid_force.resize(displacement.size());
           momentum.resize(displacement.size());
 
           // Updating moment of inertia container
@@ -987,18 +990,19 @@ DEMSolver<dim>::solve()
         {
           integrator_object->integrate_half_step_location(
             particle_handler,
-            parameters.physical_properties.g,
+            parameters.lagrangian_physical_properties.g,
             force,
             simulation_control->get_time_step());
         }
       else
         {
-          integrator_object->integrate(particle_handler,
-                                       parameters.physical_properties.g,
-                                       simulation_control->get_time_step(),
-                                       momentum,
-                                       force,
-                                       MOI);
+          integrator_object->integrate(
+            particle_handler,
+            parameters.lagrangian_physical_properties.g,
+            simulation_control->get_time_step(),
+            momentum,
+            force,
+            MOI);
         }
 
       // Visualization

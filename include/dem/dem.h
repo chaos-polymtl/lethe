@@ -368,6 +368,7 @@ private:
   std::vector<Tensor<1, dim>> force;
   std::vector<double>         displacement;
   std::vector<double>         MOI;
+  std::vector<Tensor<1, dim>> fluid_solid_force;
 
   std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
     forces_boundary_information;

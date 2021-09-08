@@ -50,16 +50,21 @@ end
 subsection void fraction
    set mode = dem
    set read dem = true
-   set dem file name = dem
-   set shock capturing = false
-   set reference velocity = 0.5
-   set grad div = true
-   set full stress tensor = false
+   set dem file name = packed_bed
+   set l2 smoothing factor = 0.000005
    set l2 lower bound = 0
    set l2 upper bound = 1
-   set l2 smoothing factor = 0.000005
-   set drag model = difelice
 end
+
+#---------------------------------------------------
+# CFD-DEM
+#---------------------------------------------------
+subsection cfd-dem
+   set grad div = true
+   set drag model = rong
+   set post processing = true
+end
+
 
 #---------------------------------------------------
 # Initial condition
