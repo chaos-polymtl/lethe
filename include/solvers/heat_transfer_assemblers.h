@@ -113,7 +113,6 @@ public:
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
 
-  const bool GGLS = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
@@ -133,8 +132,12 @@ class HeatTransferAssemblerBDF : public HeatTransferAssemblerBase<dim>
 {
 public:
   HeatTransferAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control)
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const SimulationParameters<dim> &  p_simulation_parameters)
     : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , simulation_parameters(p_simulation_parameters)
   {}
 
   /**
@@ -157,36 +160,9 @@ public:
                StabilizedMethodsCopyData &   copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
-};
-
-/**
- * @brief Class that assembles Robin boundary condition, loop on faces (Newton's cooling law)
- * implementation similar to deal.ii step-7 for the heat transfer solver.
- *
- * @tparam dim An integer that denotes the number of spatial dimensions
- *
- * @ingroup assemblers
- */
-template <int dim>
-class HeatTransferAssemblerRBC : public HeatTransferAssemblerBase<dim>
-{
-public:
-  HeatTransferAssemblerRBC(
-    std::shared_ptr<SimulationControl> simulation_control)
-    : simulation_control(simulation_control)
-  {}
-
-  /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-
-  virtual void
-  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
-
-  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  const SimulationParameters<dim> &  simulation_parameters;
+  const bool                         GGLS = true;
 };
 
 #endif

@@ -158,19 +158,26 @@ public:
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType &                                    current_solution,
-         const std::vector<VectorType> &previous_solutions,
-         const std::vector<VectorType> &solution_stages,
-         Function<dim> *                source_function,
+         const std::vector<TrilinosWrappers::MPI::Vector> &previous_solutions,
+         const std::vector<VectorType> &                   solution_stages,
+         Function<dim> *                                   source_function,
          const std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        triangulation,
-         const DoFHandler<dim>         dof_handler_fluid,
          MultiphysicsInterface<dim> *  multiphysics,
          TrilinosWrappers::MPI::Vector evaluation_point)
   {
     fe_values_T.reinit(cell);
+    auto &fe_T = this->fe_values_T.get_fe();
+
+    if (dim == 2)
+      this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe_T.degree;
+    else if (dim == 3)
+      this->cell_size = pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_T.degree;
 
     fe_values_T.get_function_gradients(current_solution, temperature_gradients);
 
+    const DoFHandler<dim> *dof_handler_fluid =
+      multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
     typename DoFHandler<dim>::active_cell_iterator velocity_cell(
       &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
@@ -211,7 +218,11 @@ public:
         fe_values_T.get_function_values(previous_solutions[p],
                                         previous_T_values[p]);
         fe_values_T.get_function_gradients(previous_solutions[p],
-                                           previous_T_values[p]);
+                                           previous_T_gradients[p]);
+
+
+        //     this->fe_values_tracer.get_function_values(previous_solutions[p],
+        //                                            previous_tracer_values[p]);
       }
 
 
@@ -280,11 +291,12 @@ public:
   std::vector<Tensor<1, dim>> velocity_values;
   std::vector<Tensor<2, dim>> velocity_gradient_values;
 
-  std::vector<double>         present_temperature_values;
-  std::vector<Tensor<1, dim>> temperature_gradients;
-  std::vector<double>         present_temperature_laplacians;
-  std::vector<double>         present_face_temperature_values;
-  std::vector<Tensor<1, dim>> previous_T_values;
+  std::vector<double>                      present_temperature_values;
+  std::vector<Tensor<1, dim>>              temperature_gradients;
+  std::vector<double>                      present_temperature_laplacians;
+  std::vector<double>                      present_face_temperature_values;
+  std::vector<std::vector<double>>         previous_T_values;
+  std::vector<std::vector<Tensor<1, dim>>> previous_T_gradients;
 };
 
 #endif

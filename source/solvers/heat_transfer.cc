@@ -54,7 +54,9 @@ HeatTransfer<dim>::setup_assemblers()
     {
       this->assemblers.push_back(
         std::make_shared<HeatTransferAssemblerBDF<dim>>(
-          this->simulation_control));
+          this->simulation_control,
+          this->simulation_parameters.physical_properties,
+          this->simulation_parameters));
     }
   // Core assembler
   this->assemblers.push_back(std::make_shared<HeatTransferAssemblerCore<dim>>(
@@ -108,7 +110,10 @@ HeatTransfer<dim>::assemble_local_system_matrix(
                       this->evaluation_point,
                       this->previous_solutions,
                       this->solution_stages,
-                      &source_term);
+                      &source_term,
+                      this->triangulation,
+                      this->multiphysics,
+                      this->evaluation_point);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -199,7 +204,10 @@ HeatTransfer<dim>::assemble_local_system_rhs(
                       this->evaluation_point,
                       this->previous_solutions,
                       this->solution_stages,
-                      &source_term);
+                      &source_term,
+                      this->triangulation,
+                      this->multiphysics,
+                      this->evaluation_point);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
