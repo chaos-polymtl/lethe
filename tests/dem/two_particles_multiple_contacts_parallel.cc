@@ -215,18 +215,21 @@ test()
 
   // Defining general simulation parameters
   Tensor<1, dim> g{{0, 0}};
-  double         dt                                             = 0.00001;
-  double         particle_diameter                              = 0.005;
-  unsigned int   step_end                                       = 1000;
-  unsigned int   output_frequency                               = 10;
-  dem_parameters.physical_properties.particle_type_number       = 1;
-  dem_parameters.physical_properties.youngs_modulus_particle[0] = 50000000;
-  dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.9;
-  dem_parameters.physical_properties.restitution_coefficient_particle[0] = 0.9;
-  dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.5;
-  dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
-    0.1;
-  dem_parameters.physical_properties.density_particle[0] = 2500;
+  double         dt                                                  = 0.00001;
+  double         particle_diameter                                   = 0.005;
+  unsigned int   step_end                                            = 1000;
+  unsigned int   output_frequency                                    = 10;
+  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
+  dem_parameters.lagrangian_physical_properties.youngs_modulus_particle[0] =
+    50000000;
+  dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[0] = 0.9;
+  dem_parameters.lagrangian_physical_properties
+    .restitution_coefficient_particle[0] = 0.9;
+  dem_parameters.lagrangian_physical_properties
+    .friction_coefficient_particle[0] = 0.5;
+  dem_parameters.lagrangian_physical_properties
+    .rolling_friction_coefficient_particle[0]                       = 0.1;
+  dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
   double neighborhood_threshold = 1.3 * particle_diameter;
   dem_parameters.model_parameters.rolling_resistance_method = Parameters::
     Lagrangian::ModelParameters::RollingResistanceMethod::constant_resistance;

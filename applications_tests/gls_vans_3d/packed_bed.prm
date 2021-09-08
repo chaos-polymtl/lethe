@@ -59,10 +59,7 @@ end
 # CFD-DEM
 #---------------------------------------------------
 subsection cfd-dem
-   set shock capturing = false
-   set reference velocity = 0.5
    set grad div = true
-   set full stress tensor = false
    set drag model = rong
    set post processing = true
 end

@@ -77,7 +77,7 @@ test()
 
 
   DEMSolverParameters<dim> dem_parameters;
-  dem_parameters.physical_properties.particle_type_number = 1;
+  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
 
   // Initial condition
   double   t         = 0;

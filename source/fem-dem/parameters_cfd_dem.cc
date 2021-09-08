@@ -1,4 +1,4 @@
-#include "core/parameters_cfd_dem.h"
+#include "fem-dem/parameters_cfd_dem.h"
 
 namespace Parameters
 {
@@ -19,6 +19,11 @@ namespace Parameters
                       "false",
                       Patterns::Bool(),
                       "Define particles using a DEM simulation results file.");
+    prm.declare_entry(
+      "bound void fraction",
+      "true",
+      Patterns::Bool(),
+      "Boolean for the bounding of the void fraction using an active set method.");
     prm.declare_entry("dem file name",
                       "dem",
                       Patterns::FileName(),
@@ -55,6 +60,7 @@ namespace Parameters
     prm.leave_subsection();
 
     read_dem            = prm.get_bool("read dem");
+    bound_void_fraction = prm.get_bool("bound void fraction");
     dem_file_name       = prm.get("dem file name");
     l2_smoothing_factor = prm.get_double("l2 smoothing factor");
     l2_lower_bound      = prm.get_double("l2 lower bound");
@@ -66,27 +72,14 @@ namespace Parameters
   CFDDEM::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("cfd-dem");
-    prm.declare_entry("shock capturing",
-                      "true",
-                      Patterns::Bool(),
-                      "Choose whether or not to apply shock_capturing");
     prm.declare_entry("grad div",
                       "false",
                       Patterns::Bool(),
                       "Choose whether or not to apply grad_div stabilization");
-    prm.declare_entry(
-      "full stress tensor",
-      "false",
-      Patterns::Bool(),
-      "Choose whether or not to apply the complete stress tensor");
     prm.declare_entry("drag model",
                       "difelice",
                       Patterns::Selection("difelice|rong"),
                       "The drag model used to determine the drag coefficient");
-    prm.declare_entry("reference velocity",
-                      "1",
-                      Patterns::Double(),
-                      "The refernce velocity for the shock capturing scheme");
     prm.declare_entry("post processing",
                       "false",
                       Patterns::Bool(),
@@ -99,6 +92,15 @@ namespace Parameters
                       "2",
                       Patterns::Integer(),
                       "The outlet boundary of the bed");
+    prm.declare_entry("coupling frequency",
+                      "100",
+                      Patterns::Integer(),
+                      "dem-cfd coupling frequency");
+    prm.declare_entry(
+      "test output",
+      "false",
+      Patterns::Bool(),
+      "This parameter is only set to true in the prm of particle sedimentation test");
     prm.leave_subsection();
   }
 
@@ -107,13 +109,12 @@ namespace Parameters
   CFDDEM::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("cfd-dem");
-    shock_capturing      = prm.get_bool("shock capturing");
     grad_div             = prm.get_bool("grad div");
-    full_stress_tensor   = prm.get_bool("full stress tensor");
-    reference_velocity   = prm.get_double("reference velocity");
+    test_output          = prm.get_bool("test output");
     post_processing      = prm.get_bool("post processing");
     inlet_boundary_id    = prm.get_integer("inlet boundary id");
     outlet_boundary_id   = prm.get_integer("outlet boundary id");
+    coupling_frequency   = prm.get_integer("coupling frequency");
     const std::string op = prm.get("drag model");
     if (op == "difelice")
       drag_model = Parameters::DragModel::difelice;
@@ -123,8 +124,6 @@ namespace Parameters
       throw(std::runtime_error("Invalid drag model"));
     prm.leave_subsection();
   }
-
-
 } // namespace Parameters
 // Pre-compile the 2D and 3D
 template class Parameters::VoidFraction<2>;

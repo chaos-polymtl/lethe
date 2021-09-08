@@ -68,21 +68,27 @@ test()
 
   // Defining general simulation parameters
   Tensor<1, dim> g{{0, -9.81}};
-  double         dt                                             = 0.0001;
-  double         particle_diameter                              = 0.1;
-  dem_parameters.physical_properties.particle_type_number       = 1;
-  dem_parameters.physical_properties.youngs_modulus_particle[0] = 200000000000;
-  dem_parameters.physical_properties.youngs_modulus_wall        = 200000000000;
-  dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.3;
-  dem_parameters.physical_properties.poisson_ratio_wall         = 0.3;
-  dem_parameters.physical_properties.restitution_coefficient_particle[0] = 0.95;
-  dem_parameters.physical_properties.restitution_coefficient_wall        = 0.95;
-  dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.05;
-  dem_parameters.physical_properties.friction_coefficient_wall           = 0.05;
-  dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
-    0.1;
-  dem_parameters.physical_properties.rolling_friction_wall = 0.1;
-  dem_parameters.physical_properties.density_particle[0]   = 2500;
+  double         dt                                                  = 0.0001;
+  double         particle_diameter                                   = 0.1;
+  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
+  dem_parameters.lagrangian_physical_properties.youngs_modulus_particle[0] =
+    200000000000;
+  dem_parameters.lagrangian_physical_properties.youngs_modulus_wall =
+    200000000000;
+  dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[0] = 0.3;
+  dem_parameters.lagrangian_physical_properties.poisson_ratio_wall        = 0.3;
+  dem_parameters.lagrangian_physical_properties
+    .restitution_coefficient_particle[0] = 0.95;
+  dem_parameters.lagrangian_physical_properties.restitution_coefficient_wall =
+    0.95;
+  dem_parameters.lagrangian_physical_properties
+    .friction_coefficient_particle[0] = 0.05;
+  dem_parameters.lagrangian_physical_properties.friction_coefficient_wall =
+    0.05;
+  dem_parameters.lagrangian_physical_properties
+    .rolling_friction_coefficient_particle[0]                         = 0.1;
+  dem_parameters.lagrangian_physical_properties.rolling_friction_wall = 0.1;
+  dem_parameters.lagrangian_physical_properties.density_particle[0]   = 2500;
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   // Defining particle handler
@@ -162,7 +168,9 @@ test()
                                                       neighborhood_threshold);
 
       force_object.calculate_particle_point_contact_force(
-        &contact_information, dem_parameters.physical_properties, force);
+        &contact_information,
+        dem_parameters.lagrangian_physical_properties,
+        force);
       integrator_object.integrate(
         particle_handler, g, dt, momentum, force, MOI);
 
