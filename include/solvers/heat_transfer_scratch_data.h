@@ -156,6 +156,7 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType &                                    current_solution,
          const std::vector<TrilinosWrappers::MPI::Vector> &previous_solutions,
+         const std::vector<VectorType> &                   solution_stages,
          Function<dim> *                                   source_function)
   {
     this->fe_values_T.reinit(cell);
@@ -178,8 +179,7 @@ public:
     this->fe_values_T.get_function_laplacians(
       current_solution, this->present_temperature_laplacians);
 
-    // Gather the previous time steps for heat transfer depending on
-    // the number of stages of the time integration method
+    // Gather previous temperature values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         this->fe_values_T.get_function_values(previous_solutions[p],
@@ -187,6 +187,13 @@ public:
 
         this->fe_values_T.get_function_gradients(
           previous_solutions[p], previous_temperature_gradients[p]);
+      }
+
+    // Gather temperature stages
+    for (unsigned int s = 0; s < solution_stages.size(); ++s)
+      {
+        this->fe_values_T.get_function_values(solution_stages[s],
+                                              stages_temperature_values[s]);
       }
 
     for (unsigned int q = 0; q < n_q_points; ++q)
@@ -203,6 +210,7 @@ public:
           }
       }
   }
+
 
   template <typename VectorType>
   void
@@ -232,6 +240,7 @@ public:
   std::vector<double>                      present_face_temperature_values;
   std::vector<std::vector<double>>         previous_temperature_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
+  std::vector<std::vector<double>>         stages_temperature_values;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;
