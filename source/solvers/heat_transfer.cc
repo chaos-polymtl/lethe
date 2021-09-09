@@ -109,11 +109,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      this->solution_stages,
-                      &source_term,
-                      this->triangulation,
-                      this->multiphysics,
-                      this->evaluation_point);
+                      &source_term);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -203,11 +199,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      this->solution_stages,
-                      &source_term,
-                      this->triangulation,
-                      this->multiphysics,
-                      this->evaluation_point);
+                      &source_term);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);

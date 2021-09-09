@@ -395,9 +395,6 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<HeatTransferAssemblerBase<dim>>> assemblers;
-
-  // Tracer statistics table
-  TableHandler statistics_table;
 };
 
 
