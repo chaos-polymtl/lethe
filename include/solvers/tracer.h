@@ -99,24 +99,6 @@ public:
   }
 
   /**
-   * @brief Call for the assembly of the matrix and the right-hand side.
-   *
-   * @deprecated This function is to be deprecated when the new assembly mechanism
-   * is integrated to this solver
-   */
-  void
-  assemble_matrix_and_rhs();
-
-  /**
-   * @brief Call for the assembly of the right-hand side
-   *
-   * @deprecated This function is to be deprecated when the new assembly mechanism
-   * is integrated to this solver
-   */
-  void
-  assemble_rhs();
-
-  /**
    * @brief Attach the solution vector to the DataOut provided. This function
    * enable the auxiliary physics to output their solution via the core solver.
    */
