@@ -50,7 +50,6 @@
 #include <deal.II/opencascade/utilities.h>
 
 
-
 /*
  * Constructor for the Navier-Stokes base class
  */
