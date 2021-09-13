@@ -181,12 +181,12 @@ LetheGridTools::find_cells_around_cell(std::map<unsigned int,std::set<typename D
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
-LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
+LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler,
                     const typename DoFHandler<dim>::active_cell_iterator &cell){
     std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_inside;
     //Loop over all the cell of the dof handler_1 and check one of the vertices of each cell_iter is contained in cell. This loop also check if the cell_iter contained a vertex of cell. If either of those are true, the cell_iter is returned as being contained by cell.
-    // The variable cell is a cell from another mesh then the mesh described by dof_handler_1.
-    for (const auto &cell_iter : dof_handler_1.active_cell_iterators())
+    // The variable cell is a cell from another mesh then the mesh described by dof_handler.
+    for (const auto &cell_iter : dof_handler.active_cell_iterators())
     {
         for(unsigned int i=0;i<GeometryInfo<dim>::vertices_per_cell;++i){
             if(cell->point_inside(cell_iter->vertex(i))){
@@ -318,41 +318,6 @@ bool LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active
     }
 }
 
-template < int spacedim, int structdim>
-double
-LetheGridTools::dist_based_on_reference_point(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
-                                           const Point<spacedim> &trial_point, const Point<structdim> &xi)
-{
-    Point<spacedim> x_k;
-    for (const unsigned int i : GeometryInfo<structdim>::vertex_indices())
-        x_k += object->vertex(i) *
-               GeometryInfo<structdim>::d_linear_shape_function(xi, i);
-    return (x_k-trial_point).norm();
-
-}
-
-template < int spacedim, int structdim>
-Tensor<1,structdim>
-LetheGridTools::grad_dist_based_on_reference_point(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
-                                              const Point<spacedim> &trial_point, const Point<structdim> &xi)
-{
-    Tensor<1,structdim> F_k;
-    for (const unsigned int i : GeometryInfo<structdim>::vertex_indices()) {
-        double dx=1e-4;
-        Point<structdim> xi_dx=xi;
-        Point<structdim> xi_mdx=xi;
-        xi_dx[i]=xi[i]+dx;
-        xi_mdx[i]=xi[i]-dx;
-        double d0=dist_based_on_reference_point(object,
-                                                trial_point, xi_mdx);
-        double d1=dist_based_on_reference_point(object,
-                                                trial_point, xi_dx);
-        F_k[i] = (d1-d0)/(2*dx);
-    }
-    return  F_k;
-
-}
-
 
 
 template < int spacedim, int structdim>
@@ -399,25 +364,6 @@ LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,s
     for (const unsigned int i : GeometryInfo<structdim>::vertex_indices())
         x_k += object->vertex(i) *
                GeometryInfo<structdim>::d_linear_shape_function(xi, i);
-
-
-    Tensor<1, structdim> last_grad;
-    Point<structdim> last_xi=xi;
-    last_xi[0]=xi[0]+1e-4;
-    for (unsigned int i=0 ;i<structdim; ++i ) {
-        double dx=1e-4;
-        Point<structdim> xi_dx=last_xi;
-        Point<structdim> xi_mdx=last_xi;
-        xi_dx[i]= xi_dx[i]+dx;
-        xi_mdx[i]=xi_mdx[i]-dx;
-        double d0=dist_based_on_reference_point(object,
-                                                trial_point, xi_mdx);
-        double d1=dist_based_on_reference_point(object,
-                                                trial_point, xi_dx);
-        last_grad[i] = (d1-d0)/(2*dx);
-    }
-
-
 
     do
     {
@@ -500,97 +446,6 @@ LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,s
     return output;
 }
 
-/*template < int spacedim, int structdim>
-Point<spacedim>
-LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
-                                           const Point<spacedim> &trial_point)
-{
-    // let's look at this for simplicity for a quad (structdim==2) in a
-    // space with spacedim>2 (notate trial_point by y): all points on the
-    // surface are given by
-    //   x(\xi) = sum_i v_i phi_x(\xi)
-    // where v_i are the vertices of the quad, and \xi=(\xi_1,\xi_2) are the
-    // reference coordinates of the quad. so what we are trying to do is
-    // find a point x on the surface that is closest to the point y. there
-    // are different ways to solve this problem, but in the end it's a
-    // nonlinear problem and we have to find reference coordinates \xi so
-    // that J(\xi) = 1/2 || x(\xi)-y ||^2 is minimal. x(\xi) is a function
-    // that is structdim-linear in \xi, so J(\xi) is a polynomial of degree
-    // 2*structdim that we'd like to minimize. unless structdim==1, we'll
-    // have to use a Newton method to find the answer. This leads to the
-    // following formulation of Newton steps:
-    //
-    // Given \xi_k, find \delta\xi_k so that
-    //   H_k \delta\xi_k = - F_k
-    // where H_k is an approximation to the second derivatives of J at
-    // \xi_k, and F_k is the first derivative of J.  We'll iterate this a
-    // number of times until the right hand side is small enough. As a
-    // stopping criterion, we terminate if ||\delta\xi||<eps.
-    //
-    // As for the Hessian, the best choice would be
-    //   H_k = J''(\xi_k)
-    // but we'll opt for the simpler Gauss-Newton form
-    //   H_k = A^T A
-    // i.e.
-    //   (H_k)_{nm} = \sum_{i,j} v_i*v_j *
-    //                   \partial_n phi_i *
-    //                   \partial_m phi_j
-    // we start at xi=(0.5, 0.5).
-    Point<structdim> xi;
-    for (unsigned int d = 0; d < structdim; ++d)
-        xi[d] = 0.5;
-
-    Point<spacedim> x_k;
-    for (const unsigned int i : GeometryInfo<structdim>::vertex_indices())
-        x_k += object->vertex(i) *
-               GeometryInfo<structdim>::d_linear_shape_function(xi, i);
-
-    do
-    {
-        Tensor<1, structdim> F_k;
-        for (const unsigned int i :
-                GeometryInfo<structdim>::vertex_indices())
-            F_k +=
-                    (x_k - trial_point) * object->vertex(i) *
-                    GeometryInfo<structdim>::d_linear_shape_function_gradient(xi,
-                                                                              i);
-
-        Tensor<2, structdim> H_k;
-        for (const unsigned int i :
-                GeometryInfo<structdim>::vertex_indices())
-            for (const unsigned int j :
-                    GeometryInfo<structdim>::vertex_indices())
-            {
-                Tensor<2, structdim> tmp = outer_product(
-                        GeometryInfo<structdim>::d_linear_shape_function_gradient(
-                                xi, i),
-                        GeometryInfo<structdim>::d_linear_shape_function_gradient(
-                                xi, j));
-                H_k += (object->vertex(i) * object->vertex(j)) * tmp;
-            }
-
-        const Tensor<1, structdim> delta_xi = -invert(H_k) * F_k;
-        xi += delta_xi;
-
-        x_k = Point<spacedim>();
-        std::cout<<"dx " <<delta_xi<<std::endl;
-        std::cout<<"xi" <<xi<<std::endl;
-        std::cout<<"dl,dx " <<F_k<<std::endl;
-        std::cout<<"H" <<H_k<<std::endl;
-        for (const unsigned int i :
-                GeometryInfo<structdim>::vertex_indices())
-            x_k += object->vertex(i) *
-                   GeometryInfo<structdim>::d_linear_shape_function(xi, i);
-
-        if (delta_xi.norm() < 1e-7)
-            break;
-    }
-    while (true);
-
-    return x_k;
-}*/
-
-
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -598,9 +453,6 @@ LetheGridTools::find_cells_around_edge(const DoFHandler<dim> &dof_handler,
                        std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
                        const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
                        Point<dim> &point_2){
-
-
-
 
     std::set<typename DoFHandler<dim>::active_cell_iterator> cells_pierced_set;
     DoFHandler<1, dim>    local_edge_dof_handler;
@@ -754,8 +606,6 @@ LetheGridTools::cell_cut_by_flat(
             condition_B1 = true;
         }
 
-
-
         // Check if we switched to the other side
         // of the flat during this iteration
         double scalar_prod = scalar_product(normal, projected_point.second);
@@ -863,7 +713,6 @@ LetheGridTools::find_cells_around_flat_cell(
                   previous_candidate_cells.insert(cell_iter);
                   intersected_cells.insert(cell_iter);
                   // If the cell was not present in the intersected cells set
-
               }
           }
           current_candidate_cells.clear();
@@ -912,11 +761,11 @@ LetheGridTools::find_cells_around_cell<3>(std::map<unsigned int,std::set<typenam
                                        const typename DoFHandler<3>::active_cell_iterator &cell);
 
 template std::vector<typename DoFHandler<2>::active_cell_iterator>
-LetheGridTools::find_cells_in_cells(const DoFHandler<2> &dof_handler_1,
+LetheGridTools::find_cells_in_cells(const DoFHandler<2> &dof_handler,
                                     const typename DoFHandler<2>::active_cell_iterator &cell);
 
 template std::vector<typename DoFHandler<3>::active_cell_iterator>
-LetheGridTools::find_cells_in_cells(const DoFHandler<3> &dof_handler_1,
+LetheGridTools::find_cells_in_cells(const DoFHandler<3> &dof_handler,
                                     const typename DoFHandler<3>::active_cell_iterator &cell);
 
 template bool
@@ -956,16 +805,6 @@ std::pair<std::pair<Point<3>,bool>,Tensor<1,3>>
 LetheGridTools::project_to_d_linear_object<3,2>(const typename DoFHandler<2,3>::active_cell_iterator&      object,
                                            const Point<3> &trial_point);
 
-
-template
-Tensor<1,2>
-LetheGridTools::grad_dist_based_on_reference_point<3,2>(const typename DoFHandler<2,3>::active_cell_iterator&      object,
-                                                   const Point<3> &trial_point, const Point<2> &xi);
-
-template
-Tensor<1,1>
-LetheGridTools::grad_dist_based_on_reference_point<2,1>(const typename DoFHandler<1,2>::active_cell_iterator&      object,
-                                                   const Point<2> &trial_point, const Point<1> &xi);
 
 template
 bool

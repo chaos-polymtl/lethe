@@ -84,6 +84,13 @@ namespace LetheGridTools
     find_cells_around_cell(std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
             const typename DoFHandler<dim>::active_cell_iterator &cell);
 
+    /**
+      * @brief
+      *Return a vector of cells around a flat cell in spacedim. A flat cell as a dim of spacedim-1.
+      *
+      * @param cell the cell that describes the flat. We want to know all the cells that are cut by the flat.
+     */
+
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     find_cells_around_flat_cell(const DoFHandler<dim> &                                   dof_handler,
@@ -92,6 +99,12 @@ namespace LetheGridTools
                                         std::set<typename DoFHandler<dim>::active_cell_iterator>>
                                 &vertices_cell_map);
 
+    /**
+      * @brief
+      *Return a vector of cells around a edge cell in spacedim. A edge cell as a dim of 1.
+      *
+      * @param cell the cell that describes the edge. We want to know all the cells that are pierced by the edge.
+     */
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     find_cells_around_edge(const DoFHandler<dim> &dof_handler,
@@ -99,41 +112,69 @@ namespace LetheGridTools
                            const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
                            Point<dim> &point_2);
 
+    /**
+      * @brief
+      * Return a vector of cells from the dof_handler that are inside a cell from another mesh.
+      *
+      * @param cell that describes the volume for which we want to find the cells from the dof_handler that are inside.
+     */
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
-    find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
+    find_cells_in_cells(const DoFHandler<dim> &dof_handler,
             const typename DoFHandler<dim>::active_cell_iterator &cell);
 
+    /**
+      * @brief
+      * Return a bool that say if a cell is cut by a flat cell
+      *
+      * @param cell the cell that we want to check.
+      *
+      * @param cell_flat the cell that describes the flat.
+     */
     template <int dim>
     bool
     cell_cut_by_flat(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<dim-1,dim>::active_cell_iterator &cell_flat);
 
+    /**
+      * @brief
+      * Return a bool that say if a cell is cut by a edge cell
+      *
+      * @param cell the cell that we want to check.
+      *
+      * @param cell_edge the cell that describes the edge.
+     */
     template <int dim>
     bool
     cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell, const TriaIterator<CellAccessor<1, dim>> &cell_edge);
 
+    /**
+      * @brief
+      * Return a bool that say if a cell is cut by a edge cell
+      *
+      * @param cell the cell that we want to check.
+      *
+      * @param point_1 the first point that describes the edge
+      *
+      * @param point_2 the second point that describes the edge
+     */
     template <int dim>
     bool
     cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell, Point<dim> point_1, Point<dim> point_2);
 
-    template <int dim>
-    std::vector<typename DoFHandler<dim>::active_cell_iterator>
-    move_grid(Triangulation<dim> mesh,Tensor<2,dim+1> displacement);
 
+    /**
+      * @brief
+      * A copy of the of the project_to_d_linear from dealii but it also output the normal of the flat
+      *
+      * @param object the flat or the edge.
+      *
+      * @param trial_point the point we project on the flat or edge
+      *
+     */
     template  <int spacedim, int structdim>
     std::pair<std::pair<Point<spacedim>,bool>,Tensor<1,spacedim>>
     project_to_d_linear_object(const typename DoFHandler<structdim,spacedim>::active_cell_iterator &       object,
                                const Point<spacedim> &trial_point);
-
-    template  <int spacedim, int structdim>
-    double
-    dist_based_on_reference_point(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
-                                        const Point<spacedim> &trial_point, const Point<structdim> &xi);
-
-    template < int spacedim, int structdim>
-    Tensor<1,structdim>
-    grad_dist_based_on_reference_point(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
-                                                       const Point<spacedim> &trial_point, const Point<structdim> &xi);
 
 
     template <int dim>
