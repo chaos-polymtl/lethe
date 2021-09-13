@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
 
 *
-* Author: Carole-Anne Daunais, Polytechnique Montreal, 2020-
+* Author: Émile Bergeron , Lucka Barbeau , Polytechnique Montreal, 2021-
 */
 
 // Deal.II includes
