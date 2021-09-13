@@ -375,11 +375,6 @@ Return a bool that describes  if a cell contains a specific point
   find_cells_around_cell(
     const typename DoFHandler<dim>::active_cell_iterator &cell);
 
-
-
-  void
-  box_refine();
-
   /**
    * Members
    */

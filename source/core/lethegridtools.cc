@@ -47,10 +47,10 @@ LetheGridTools::find_cell_around_point_with_tree(const DoFHandler<dim> &dof_hand
     // Define temporary variables to store search parameters and intermediary results
     MappingQ1<dim> mapping;
     const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
-    unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
+
     typename DoFHandler<dim>::cell_iterator best_cell_iter;
 
-    bool cell_0_found = false;
+    bool cell_on_level_0_found  = false;
 
     // loop on the cell on lvl 0 of the mesh
     for (const auto &cell : cell_iterator)
@@ -62,24 +62,26 @@ LetheGridTools::find_cell_around_point_with_tree(const DoFHandler<dim> &dof_hand
 
             const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
 
-            if (dist < 1e-7)
+            if (dist < 1e-12)
             {
                 // cell on lvl 0 found
-                cell_0_found   = true;
+                cell_on_level_0_found   = true;
                 best_cell_iter = cell;
+                break;
             }
         }
         catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
         {}
     }
 
-    if (cell_0_found)
+    if (cell_on_level_0_found)
     {
         // the cell on lvl 0 contain the point so now loop on the childs of
         // this cell when we found the child of the cell that containt it we
         // stop and loop if the cell is active if the cell is not active loop
         // on the child of the cell. Repeat
         unsigned int lvl = 0;
+        unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
         while (best_cell_iter->is_active() == false)
         {
             bool         cell_found = false;
@@ -122,6 +124,9 @@ LetheGridTools::find_cell_around_point_with_tree(const DoFHandler<dim> &dof_hand
             lvl += 1;
         }
     }
+    else{
+        throw "The point is not inside the mesh";
+      }
 
 
     return best_cell_iter;
@@ -134,8 +139,6 @@ LetheGridTools::find_cell_around_point_with_neighbors(const DoFHandler<dim> &dof
                                                       const typename DoFHandler<dim>::active_cell_iterator &cell,
                                                       const Point<dim> &point)
 {
-    // Find the cell around a point based on an initial cell.
-
     // Find the cells around the initial cell ( cells that share a vertex with the
     // original cell).
     std::vector<typename DoFHandler<dim>::active_cell_iterator>

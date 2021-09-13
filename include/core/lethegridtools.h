@@ -46,11 +46,10 @@ namespace LetheGridTools
 
     /**
      * @brief
-     * Return the cell around a point by starting from the least refined level and iterating over children
+     * Return the cell around a point by starting from the least refined level and iterating over children.
      *
-     * @param cell The initial cell. We suspect the point of being in one of the neighbours of this cell.
+     * @param point The point that we want to find the cell that contains it.
      *
-     * @param point The point that we want to find the cell that contains it
      */
     template <int dim>
     typename DoFHandler<dim>::active_cell_iterator
@@ -64,7 +63,9 @@ namespace LetheGridTools
      *
      * @param cell The initial cell. We suspect the point of being in one of the neighbours of this cell.
      *
-     * @param point The point that we want to find the cell that contains it
+     * @param point The point that we want to find the cell that contains it.
+     *
+     * @param vertices_cell_map see vertices_cell_mapping function description.
      */
     template<int dim>
     typename DoFHandler<dim>::active_cell_iterator
@@ -78,6 +79,8 @@ namespace LetheGridTools
       *Return a vector of cells around a cell including vertex neighbors
       *
       * @param cell The initial cell. we want to know all the cells that share a vertex with this cell.
+      *
+      * @param vertices_cell_map see vertices_cell_mapping function description.
       */
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -89,6 +92,8 @@ namespace LetheGridTools
       *Return a vector of cells around a flat cell in spacedim. A flat cell as a dim of spacedim-1.
       *
       * @param cell the cell that describes the flat. We want to know all the cells that are cut by the flat.
+      *
+      * @param vertices_cell_map see vertices_cell_mapping function description.
      */
 
     template <int dim>
@@ -103,7 +108,11 @@ namespace LetheGridTools
       * @brief
       *Return a vector of cells around a edge cell in spacedim. A edge cell as a dim of 1.
       *
-      * @param cell the cell that describes the edge. We want to know all the cells that are pierced by the edge.
+      * @param point_1 the first point that describes the edge
+      *
+      * @param point_2 the second point that describes the edge
+      *
+      * @param vertices_cell_map see vertices_cell_mapping function description.
      */
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -164,7 +173,7 @@ namespace LetheGridTools
 
     /**
       * @brief
-      * A copy of the of the project_to_d_linear from dealii but it also output the normal of the flat
+      * A copy of the project_to_d_linear from dealii but it also output the normal of the flat
       *
       * @param object the flat or the edge.
       *
