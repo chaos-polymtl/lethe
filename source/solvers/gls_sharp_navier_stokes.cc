@@ -527,8 +527,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                            fe_face_projection_values.JxW(q);
                               if(force.norm()>0) {
                                   nb_evaluation += local_weight;
-                                  /*std::cout<<"fluid_stress "<< fluid_stress<<" JxW(q) "<< fe_face_projection_values.JxW(q)<<std::endl;
-                                  std::cout<<"force "<< force<<" application point "<< q_points[q]<<std::endl;*/
                               }
 
 
