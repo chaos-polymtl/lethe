@@ -453,10 +453,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                                       fluide_stress_at_ib +=
                                         fluid_stress * ib_coef[k];
-                                      /*std::cout<<"i "<< i <<" face_tensor "<< fluid_stress<<" ib_coef  "<<ib_coef[k] <<std::endl;
-                                      std::cout<<"i "<< i <<" velocity_tensor "<< velocity_gradients[k] <<" point  "<<point <<std::endl;
-                                      std::cout<<"i "<< i <<" pressure_tensor "<< fluid_pressure  << "dof support point "<<support_points[local_face_dof_indices[i]] <<std::endl;
-                                      std::cout<<"i "<< i <<" interpolation point "<<interpolation_points[stencil.nb_points(order) - 1]<<std::endl;*/
 
                                     }
                                   // Store the stress tensor that results from
