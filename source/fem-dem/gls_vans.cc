@@ -560,8 +560,6 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   ilu_preconditioner->initialize(system_matrix_void_fraction,
                                  preconditionerOptions);
 
-  this->setup_preconditioner();
-
   solver.solve(system_matrix_void_fraction,
                completely_distributed_solution,
                system_rhs_void_fraction,
@@ -764,6 +762,7 @@ GLSVANSSolver<dim>::assemble_system_matrix()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
   this->system_matrix.compress(VectorOperation::add);
+  this->setup_preconditioner();
 }
 
 template <int dim>
@@ -835,7 +834,6 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_system_rhs()
 {
-  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
   this->system_rhs = 0;
   setup_assemblers();
 
