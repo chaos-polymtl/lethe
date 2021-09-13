@@ -107,10 +107,9 @@ test()
     LetheGridTools::vertices_cell_mapping(dof_handler, vertice_to_cell);
     std::vector<typename DoFHandler<2>::active_cell_iterator> cells_cut;
 
-    for (const auto &flat_cell :
-            flat_dof_handler.active_cell_iterators()) {
-        cells_cut = LetheGridTools::find_cells_around_flat_cell(dof_handler, flat_cell, vertice_to_cell);
-    }
+    const auto &flat_cell =flat_dof_handler.active_cell_iterators().begin();
+    cells_cut = LetheGridTools::find_cells_around_flat_cell(dof_handler, flat_cell, vertice_to_cell);
+
 
 
     Vector<double> subdomain(triangulation.n_active_cells());
