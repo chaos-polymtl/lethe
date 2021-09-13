@@ -729,17 +729,16 @@ GLSNavierStokesSolver<dim>::setup_preconditioner()
         Parameters::LinearSolver::SolverType::gmres ||
       this->simulation_parameters.linear_solver.solver ==
         Parameters::LinearSolver::SolverType::bicgstab)
-    setup_ILU(current_preconditioner_fill_level);
+    setup_ILU();
   else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::amg)
-    setup_AMG(current_preconditioner_fill_level);
+    setup_AMG();
 }
 
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_ILU(
-  const int /* current_ilu_preconditioner_fill_level */)
+GLSNavierStokesSolver<dim>::setup_ILU()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_ILU");
 
@@ -757,8 +756,7 @@ GLSNavierStokesSolver<dim>::setup_ILU(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_AMG(
-  const int /* current_amg_ilu_preconditioner_fill_level */)
+GLSNavierStokesSolver<dim>::setup_AMG()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_AMG");
 
