@@ -738,6 +738,8 @@ void
 GLSVANSSolver<dim>::assemble_system_matrix()
 {
   this->system_matrix = 0;
+  this->simulation_control->set_assembly_method(this->time_stepping_method);
+
   setup_assemblers();
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
@@ -835,6 +837,7 @@ void
 GLSVANSSolver<dim>::assemble_system_rhs()
 {
   this->system_rhs = 0;
+  this->simulation_control->set_assembly_method(this->time_stepping_method);
   setup_assemblers();
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
