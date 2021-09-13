@@ -55,7 +55,7 @@ namespace LetheGridTools
     template <int dim>
     typename DoFHandler<dim>::active_cell_iterator
     find_cell_around_point_with_tree(const DoFHandler<dim> &dof_handler,
-                                     Point<dim>             &point);
+                                     const Point<dim>             &point);
 
     /**
      * @brief
@@ -66,13 +66,6 @@ namespace LetheGridTools
      *
      * @param point The point that we want to find the cell that contains it
      */
-
-    template<int dim>
-    typename DoFHandler<dim>::active_cell_iterator
-    find_cell_around_point_with_tree_with_guess(const DoFHandler<dim> &dof_handler,
-                                                const typename DoFHandler<dim>::active_cell_iterator &cell,
-                                                const Point<dim> &point);
-
     template<int dim>
     typename DoFHandler<dim>::active_cell_iterator
     find_cell_around_point_with_neighbors(const DoFHandler<dim> &dof_handler,
