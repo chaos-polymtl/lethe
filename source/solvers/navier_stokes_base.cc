@@ -390,9 +390,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 }
 
 
-
-
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
