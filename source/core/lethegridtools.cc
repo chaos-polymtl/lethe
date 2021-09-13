@@ -15,13 +15,10 @@ void
 LetheGridTools::vertices_cell_mapping(const DoFHandler<dim> &dof_handler,
         std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> & vertices_cell_map)
 {
-    // Find all the cells around each vertices
-
     vertices_cell_map.clear();
     const auto &cell_iterator = dof_handler.active_cell_iterators();
 
-
-    // // Loop on all the cells and find their vertices to fill the map of sets of
+    // Loop on all the cells and find their vertices to fill the map of sets of
     // cells around each vertex
     for (const auto &cell : cell_iterator)
     {
@@ -47,10 +44,8 @@ typename DoFHandler<dim>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_tree(const DoFHandler<dim> &dof_handler,
                                  Point<dim>             &point)
 {
-    // find cell around point using tree properties instead of looping on all cell
-
-    // define stuff for the search
-    MappingQ1<dim> map;
+    // Define temporary variables to store search parameters and intermediary results
+    MappingQ1<dim> mapping;
     const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
     unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
     typename DoFHandler<dim>::cell_iterator best_cell_iter;
@@ -63,11 +58,11 @@ LetheGridTools::find_cell_around_point_with_tree(const DoFHandler<dim> &dof_hand
         try
         {
             const Point<dim, double> p_cell =
-                    map.transform_real_to_unit_cell(cell, point);
+                    mapping.transform_real_to_unit_cell(cell, point);
 
             const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
 
-            if (dist == 0)
+            if (dist < 1e-7)
             {
                 // cell on lvl 0 found
                 cell_0_found   = true;
@@ -95,8 +90,8 @@ LetheGridTools::find_cell_around_point_with_tree(const DoFHandler<dim> &dof_hand
                 try
                 {
                     const Point<dim, double> p_cell =
-                            map.transform_real_to_unit_cell(best_cell_iter->child(i),
-                                                            point);
+                            mapping.transform_real_to_unit_cell(best_cell_iter->child(i),
+                                                                point);
                     const double dist =
                             GeometryInfo<dim>::distance_to_unit_cell(p_cell);
                     bool inside = true;

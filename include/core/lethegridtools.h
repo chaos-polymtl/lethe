@@ -1,9 +1,20 @@
-//
-// Created by lucka on 2021-07-15.
-//
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2021 -  by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * -------------------------------------------------------------------*/
 
-#ifndef LETHE_LETHEGRIDTOOLS_H
-#define LETHE_LETHEGRIDTOOLS_H
+#ifndef lethe_lethegridtools_h
+#define lethe_lethegridtools_h
 
 
 #include <deal.II/base/table_handler.h>
@@ -20,48 +31,60 @@ using namespace dealii;
 namespace LetheGridTools
 {
     /**
-    * @brief
-    * Map the vertex index to the cell that includes that vertex.
-    * This map is used to find all the cell close to a specific vertex.
-    */
+     * @brief
+     * Map the vertex index to the cells that includes that vertex.
+     *
+     * @param dof_handler DofHandler of the triangulation on which to create the map
+     *
+     * @param vertices_cell_map Object to which the data will be written
+     */
+
     template <int dim>
     void
     vertices_cell_mapping(const DoFHandler<dim> &dof_handler,
             std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> & vertices_cell_map);
 
+    /**
+     * @brief
+     * Return the cell around a point by starting from the least refined level and iterating over children
+     *
+     * @param cell The initial cell. We suspect the point of being in one of the neighbours of this cell.
+     *
+     * @param point The point that we want to find the cell that contains it
+     */
     template <int dim>
     typename DoFHandler<dim>::active_cell_iterator
     find_cell_around_point_with_tree(const DoFHandler<dim> &dof_handler,
                                      Point<dim>             &point);
 
     /**
-      * @brief
-      * Return the cell around a point based on a initial guess of a closed cell
-      * (look in the neighbors of this cell)
-      *
-      * @param cell , The initial cell. We suspect the point of being in one of the neighbours of this cell.
-      *
-      * @param point, The point that we want to find the cell that contains it
-      */
+     * @brief
+     * Return the cell around a point based on a initial guess of a closed cell
+     * (look in the neighbors of this cell)
+     *
+     * @param cell The initial cell. We suspect the point of being in one of the neighbours of this cell.
+     *
+     * @param point The point that we want to find the cell that contains it
+     */
 
-    template <int dim>
+    template<int dim>
     typename DoFHandler<dim>::active_cell_iterator
     find_cell_around_point_with_tree_with_guess(const DoFHandler<dim> &dof_handler,
-            const typename DoFHandler<dim>::active_cell_iterator &cell,
-                                     Point<dim>             &point);
+                                                const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                                const Point<dim> &point);
 
-    template <int dim>
+    template<int dim>
     typename DoFHandler<dim>::active_cell_iterator
     find_cell_around_point_with_neighbors(const DoFHandler<dim> &dof_handler,
-            std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
-            const typename DoFHandler<dim>::active_cell_iterator &cell,
-            Point<dim>                                           &point);
+                                          std::map<unsigned int, std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
+                                          const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                          const Point<dim> &point);
 
     /**
       * @brief
       *Return a vector of cells around a cell including vertex neighbors
       *
-      * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
+      * @param cell The initial cell. we want to know all the cells that share a vertex with this cell.
       */
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -146,5 +169,5 @@ namespace LetheGridTools
 }
 
 
-#endif //LETHE_LETHEGRIDTOOLS_H
+#endif //lethe_lethegridtools_h
 
