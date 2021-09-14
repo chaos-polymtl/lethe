@@ -106,6 +106,7 @@ test()
 
     // Printing the final position for all the vertices
 
+    #if DEAL_II_VERSION_GTE(9, 3, 0)
     DataOut<2> data_out;
     data_out.attach_dof_handler(dof_handler);
     data_out.add_data_vector(subdomain, "subdomain");
@@ -118,8 +119,20 @@ test()
     flat_data_out.build_patches();
     std::ofstream flat_output("flat_trig.vtu");
     flat_data_out.write_vtu(flat_output);
+    #else
+    Legacy::DataOut<2> data_out;
+    data_out.attach_dof_handler(dof_handler);
+    data_out.add_data_vector(subdomain, "subdomain");
+    data_out.build_patches();
+    std::ofstream output("solution.vtu");
+    data_out.write_vtu(output);
 
-
+    Legacy::DataOut<1,2> flat_data_out;
+    flat_data_out.attach_dof_handler(flat_dof_handler);
+    flat_data_out.build_patches();
+    std::ofstream flat_output("flat_trig.vtu");
+    flat_data_out.write_vtu(flat_output);
+    #endif
 
 
 }
