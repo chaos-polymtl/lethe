@@ -96,7 +96,6 @@ make_table_tensors_scalars(
 
 
 
-
 template TableHandler
 make_table_scalars_tensors(
   const std::vector<double> &      independent_values,
@@ -176,5 +175,3 @@ make_table_tensors_scalars(
   const std::vector<double> &      dependent_values,
   const std::string &              dependent_column_name,
   const unsigned int               display_precision);
-
-

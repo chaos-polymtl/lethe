@@ -752,94 +752,94 @@ namespace Parameters
 
   void
   MeshBoxRefinement::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("box refinement");
     {
-        prm.enter_subsection("box refinement");
+      prm.declare_entry("type",
+                        "dealii",
+                        Patterns::Selection("gmsh|dealii|periodic_hills"),
+                        "Type of mesh "
+                        "Choices are <gmsh|dealii|periodic_hills>.");
+
+      prm.declare_entry("file name",
+                        "none",
+                        Patterns::FileName(),
+                        "GMSH file name");
+
+      prm.declare_entry("initial refinement",
+                        "0",
+                        Patterns::Integer(),
+                        "Initial refinement of the principal mesh");
+      prm.declare_entry("box initial refinement",
+                        "0",
+                        Patterns::Integer(),
+                        "Initial refinement of the box mesh");
+
+      if (prm.get("type") == "periodic_hills")
         {
-            prm.declare_entry("type",
-                              "dealii",
-                              Patterns::Selection("gmsh|dealii|periodic_hills"),
-                              "Type of mesh "
-                              "Choices are <gmsh|dealii|periodic_hills>.");
-
-            prm.declare_entry("file name",
-                              "none",
-                              Patterns::FileName(),
-                              "GMSH file name");
-
-            prm.declare_entry("initial refinement",
-                              "0",
-                              Patterns::Integer(),
-                              "Initial refinement of the principal mesh");
-            prm.declare_entry("box initial refinement",
-                              "0",
-                              Patterns::Integer(),
-                              "Initial refinement of the box mesh");
-
-            if (prm.get("type") == "periodic_hills")
-            {
-                prm.declare_entry("grid arguments", "1 ; 1 ; 1 ; 1 ; 1");
-            }
-            else
-            {
-                prm.declare_entry("grid type", "hyper_cube");
-                prm.declare_entry("grid arguments", "-1 : 1 : false");
-            }
-            prm.declare_entry(
-                    "enable target size",
-                    "false",
-                    Patterns::Bool(),
-                    "Enable initial refinement until target size is reached.");
-
-            prm.declare_entry(
-                    "simplex",
-                    "false",
-                    Patterns::Bool(),
-                    "Indicates that the mesh used is a mesh made of only simplex elements.");
-
-
-            prm.declare_entry("target size",
-                              "1",
-                              Patterns::Double(),
-                              "Target size of the initial refinement");
-
-
-            prm.declare_entry("grid type", "hyper_cube");
-            prm.declare_entry("grid arguments", "-1 : 1 : false");
+          prm.declare_entry("grid arguments", "1 ; 1 ; 1 ; 1 ; 1");
         }
-        prm.leave_subsection();
-    }
+      else
+        {
+          prm.declare_entry("grid type", "hyper_cube");
+          prm.declare_entry("grid arguments", "-1 : 1 : false");
+        }
+      prm.declare_entry(
+        "enable target size",
+        "false",
+        Patterns::Bool(),
+        "Enable initial refinement until target size is reached.");
 
-    void
-    MeshBoxRefinement::parse_parameters(ParameterHandler &prm)
+      prm.declare_entry(
+        "simplex",
+        "false",
+        Patterns::Bool(),
+        "Indicates that the mesh used is a mesh made of only simplex elements.");
+
+
+      prm.declare_entry("target size",
+                        "1",
+                        Patterns::Double(),
+                        "Target size of the initial refinement");
+
+
+      prm.declare_entry("grid type", "hyper_cube");
+      prm.declare_entry("grid arguments", "-1 : 1 : false");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  MeshBoxRefinement::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("box refinement");
     {
-        prm.enter_subsection("box refinement");
-        {
-            {
-                const std::string op = prm.get("type");
-                if (op == "gmsh")
-                    type = Type::gmsh;
-                else if (op == "dealii")
-                    type = Type::dealii;
-                else
-                    throw std::logic_error(
-                            "Error, invalid mesh type. Choices are gmsh and dealii");
-            }
+      {
+        const std::string op = prm.get("type");
+        if (op == "gmsh")
+          type = Type::gmsh;
+        else if (op == "dealii")
+          type = Type::dealii;
+        else
+          throw std::logic_error(
+            "Error, invalid mesh type. Choices are gmsh and dealii");
+      }
 
-            file_name = prm.get("file name");
+      file_name = prm.get("file name");
 
-            initial_refinement = prm.get_integer("initial refinement");
+      initial_refinement = prm.get_integer("initial refinement");
 
-            initial_refinement_box = prm.get_integer("box initial refinement");
+      initial_refinement_box = prm.get_integer("box initial refinement");
 
-            grid_type      = prm.get("grid type");
-            grid_arguments = prm.get("grid arguments");
+      grid_type      = prm.get("grid type");
+      grid_arguments = prm.get("grid arguments");
 
-            refine_until_target_size = prm.get_bool("enable target size");
-            simplex                  = prm.get_bool("simplex");
-            target_size              = prm.get_double("target size");
-        }
-        prm.leave_subsection();
+      refine_until_target_size = prm.get_bool("enable target size");
+      simplex                  = prm.get_bool("simplex");
+      target_size              = prm.get_double("target size");
     }
+    prm.leave_subsection();
+  }
 
   void
   LinearSolver::declare_parameters(ParameterHandler &prm)

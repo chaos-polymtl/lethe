@@ -13,9 +13,9 @@
 
 template <int dim>
 RPTCellReconstruction<dim>::RPTCellReconstruction(
-  Parameters::RPTParameters               &rpt_parameters,
+  Parameters::RPTParameters &              rpt_parameters,
   Parameters::RPTReconstructionParameters &rpt_reconstruction_parameters,
-  Parameters::DetectorParameters          &rpt_detector_parameters)
+  Parameters::DetectorParameters &         rpt_detector_parameters)
   : parameters(rpt_parameters)
   , reconstruction_parameters(rpt_reconstruction_parameters)
   , detector_parameters(rpt_detector_parameters)

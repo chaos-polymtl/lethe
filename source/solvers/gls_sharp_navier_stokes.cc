@@ -19,10 +19,10 @@
 
 #include <core/bdf.h>
 #include <core/grids.h>
+#include <core/lethegridtools.h>
 #include <core/sdirk.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-#include <core/lethegridtools.h>
 
 #include <solvers/gls_sharp_navier_stokes.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
@@ -55,7 +55,7 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
   // Find all the cells around each vertices
   TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
 
-  LetheGridTools::vertices_cell_mapping(this->dof_handler,vertices_to_cell);
+  LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
 }
 
 template <int dim>
@@ -97,7 +97,6 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
         }
     }
 }
-
 
 
 
@@ -363,8 +362,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // extrapolate the fluid stress tensor on the IB
                           // surface.
                           if (force_eval_done[local_face_dof_indices[i]]
-                                .first == false && this->locally_owned_dofs.is_element(
-                                  local_face_dof_indices[i]))
+                                  .first == false &&
+                              this->locally_owned_dofs.is_element(
+                                local_face_dof_indices[i]))
                             {
                               // Only need one extrapolation by dof location;
                               if (component_i == 0)
@@ -388,8 +388,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                         .first == false)
                                     {
                                       // Get the cell use for the extrapolation
-                                      cell_2 =
-                                              LetheGridTools::find_cell_around_point_with_neighbors(this->dof_handler,
+                                      cell_2 = LetheGridTools::
+                                        find_cell_around_point_with_neighbors(
+                                          this->dof_handler,
                                           vertices_to_cell,
                                           cell,
                                           interpolation_points
@@ -409,7 +410,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                           ->transform_real_to_unit_cell(
                                             cell_2,
                                             interpolation_points[j - 1]);
-
                                     }
 
                                   fluide_stress_at_ib = 0;
@@ -439,7 +439,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   for (unsigned int k = 0; k < ib_coef.size();
                                        ++k)
                                     {
-                                      fluid_pressure=0;
+                                      fluid_pressure = 0;
                                       for (int d = 0; d < dim; ++d)
                                         {
                                           fluid_pressure[d][d] =
@@ -453,7 +453,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                                       fluide_stress_at_ib +=
                                         fluid_stress * ib_coef[k];
-
                                     }
                                   // Store the stress tensor that results from
                                   // the extrapolation in the local evaluation
@@ -496,7 +495,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               normal_vector =
                                 (q_points[q] - particles[p].position) /
                                 (q_points[q] - particles[p].position).norm();
-                              fluid_stress = 0;
+                              fluid_stress        = 0;
                               double local_weight = 0;
                               // Integrate
                               for (unsigned int i = 0;
@@ -506,28 +505,34 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   const unsigned int component_i =
                                     this->fe->system_to_component_index(i)
                                       .first;
-                                  if (component_i == 0  && this->locally_owned_dofs.is_element(
-                                          local_face_dof_indices[i]))
+                                  if (component_i == 0 &&
+                                      this->locally_owned_dofs.is_element(
+                                        local_face_dof_indices[i]))
                                     {
                                       fluid_stress +=
                                         fe_face_projection_values.shape_value(
                                           i, q) *
                                         local_face_tensor[i];
-                                      total_area += fe_face_projection_values.JxW(q)*fe_face_projection_values.shape_value(
-                                              i, q);
-                                      local_weight+=fe_face_projection_values.shape_value(
-                                              i, q);
-                                      /*std::cout<<"i_face_tensor "<< local_face_tensor[i]<<" fe  "<< fe_face_projection_values.shape_value(
+                                      total_area +=
+                                        fe_face_projection_values.JxW(q) *
+                                        fe_face_projection_values.shape_value(
+                                          i, q);
+                                      local_weight +=
+                                        fe_face_projection_values.shape_value(
+                                          i, q);
+                                      /*std::cout<<"i_face_tensor "<<
+                                         local_face_tensor[i]<<" fe  "<<
+                                         fe_face_projection_values.shape_value(
                                               i, q)<<std::endl;*/
-
                                     }
                                 }
 
                               auto force = fluid_stress * normal_vector *
                                            fe_face_projection_values.JxW(q);
-                              if(force.norm()>0) {
+                              if (force.norm() > 0)
+                                {
                                   nb_evaluation += local_weight;
-                              }
+                                }
 
 
 
@@ -1300,11 +1305,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
-      Point<dim> pressure_reference_location=particles[p].pressure_location +
-                                             particles[p].position;
-      const auto &cell =
-        LetheGridTools::find_cell_around_point_with_tree(this->dof_handler,
-                                                         pressure_reference_location);
+      Point<dim> pressure_reference_location =
+        particles[p].pressure_location + particles[p].position;
+      const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
+        this->dof_handler, pressure_reference_location);
 
       if (cell->is_locally_owned())
         {
@@ -1427,10 +1431,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                        support_points[local_dof_indices[i]]);
 
                       // Find the cell used for the stencil definition.
-                      auto cell_2 = LetheGridTools::find_cell_around_point_with_neighbors(this->dof_handler,
-                        vertices_to_cell,
-                        cell,
-                        interpolation_points[stencil.nb_points(order) - 1]);
+                      auto cell_2 =
+                        LetheGridTools::find_cell_around_point_with_neighbors(
+                          this->dof_handler,
+                          vertices_to_cell,
+                          cell,
+                          interpolation_points[stencil.nb_points(order) - 1]);
                       cell_2->get_dof_indices(local_dof_indices_2);
 
                       ib_done[global_index_overwrite] =
@@ -1445,7 +1451,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // Check if the point used to define the cell used for the
                       // definition of the stencil ("cell_2") is on a face
                       // between the cell that is cut ("cell") and the "cell_2".
-                      bool point_in_cell = cell->point_inside(interpolation_points[stencil.nb_points(order) - 1]);
+                      bool point_in_cell = cell->point_inside(
+                        interpolation_points[stencil.nb_points(order) - 1]);
 
                       if (cell_2 == cell || point_in_cell)
                         {
@@ -1639,7 +1646,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // If the matrix entry on the diagonal of this DOF is
                           // close to zero, check if all the cells close are
                           // cut. If it's the case, the DOF is a dummy DOF.
-                          active_neighbors_set = LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell,cell);
+                          active_neighbors_set =
+                            LetheGridTools::find_cells_around_cell<dim>(
+                              vertices_to_cell, cell);
                           for (unsigned int m = 0;
                                m < active_neighbors_set.size();
                                m++)

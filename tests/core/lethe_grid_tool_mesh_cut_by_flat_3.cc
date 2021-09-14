@@ -39,135 +39,135 @@
 void
 test()
 {
-    //MPI_Comm mpi_communicator(MPI_COMM_WORLD);
+  // MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
 
-    Triangulation<3> triangulation;
+  Triangulation<3> triangulation;
 
-    Triangulation<2,3> flat_triangulation;
-    std::vector<Point<3>> vertices_of_flat(GeometryInfo<3>::vertices_per_face);
-    std::vector<CellData<2>> flat_cell_data(1);
+  Triangulation<2, 3>      flat_triangulation;
+  std::vector<Point<3>>    vertices_of_flat(GeometryInfo<3>::vertices_per_face);
+  std::vector<CellData<2>> flat_cell_data(1);
 
-    DoFHandler<3>    dof_handler;
-    DoFHandler<2,3>  flat_dof_handler;
+  DoFHandler<3>    dof_handler;
+  DoFHandler<2, 3> flat_dof_handler;
 
-    // Mesh
-    GridGenerator::hyper_cube(triangulation, -1, 1);
+  // Mesh
+  GridGenerator::hyper_cube(triangulation, -1, 1);
 
-    // Mesh flat
-    Point<3> v0(0,0,0) ;
-    Point<3> v1(0.5,0.5,0.1) ;
-    Point<3> v2(-0.1,-0.2,0.7) ;
-    Point<3> v3(0.6,0.7,0.8) ;
+  // Mesh flat
+  Point<3> v0(0, 0, 0);
+  Point<3> v1(0.5, 0.5, 0.1);
+  Point<3> v2(-0.1, -0.2, 0.7);
+  Point<3> v3(0.6, 0.7, 0.8);
 
-    vertices_of_flat[0]=v0;
-    vertices_of_flat[1]=v1;
-    vertices_of_flat[2]=v2;
-    vertices_of_flat[3]=v3;
-
-
-    flat_cell_data[0].vertices[0] = 0;
-    flat_cell_data[0].vertices[1] = 1;
-    flat_cell_data[0].vertices[2] = 2;
-    flat_cell_data[0].vertices[3] = 3;
-
-    flat_cell_data[0].material_id = 0;
-    flat_triangulation.create_triangulation(vertices_of_flat,flat_cell_data,SubCellData());
-    triangulation.refine_global(3);
-
-    // Attach triangulation to dof_handler
-
-    dof_handler.reinit(
-            triangulation);
-    flat_dof_handler.reinit(
-            flat_triangulation);
-
-    Vector<double> subdomain(triangulation.n_active_cells());
-    std::map<unsigned int,std::set<typename DoFHandler<3>::active_cell_iterator>> vertice_to_cell;
-
-    LetheGridTools::vertices_cell_mapping(dof_handler, vertice_to_cell);
-    std::vector<typename DoFHandler<3>::active_cell_iterator> cells_cut;
-
-    const auto &flat_cell =flat_dof_handler.active_cell_iterators().begin();
-    cells_cut = LetheGridTools::find_cells_around_flat_cell(dof_handler, flat_cell, vertice_to_cell);
+  vertices_of_flat[0] = v0;
+  vertices_of_flat[1] = v1;
+  vertices_of_flat[2] = v2;
+  vertices_of_flat[3] = v3;
 
 
-    for (unsigned int i=0 ; i<cells_cut.size() ; ++i)
+  flat_cell_data[0].vertices[0] = 0;
+  flat_cell_data[0].vertices[1] = 1;
+  flat_cell_data[0].vertices[2] = 2;
+  flat_cell_data[0].vertices[3] = 3;
+
+  flat_cell_data[0].material_id = 0;
+  flat_triangulation.create_triangulation(vertices_of_flat,
+                                          flat_cell_data,
+                                          SubCellData());
+  triangulation.refine_global(3);
+
+  // Attach triangulation to dof_handler
+
+  dof_handler.reinit(triangulation);
+  flat_dof_handler.reinit(flat_triangulation);
+
+  Vector<double> subdomain(triangulation.n_active_cells());
+  std::map<unsigned int, std::set<typename DoFHandler<3>::active_cell_iterator>>
+    vertice_to_cell;
+
+  LetheGridTools::vertices_cell_mapping(dof_handler, vertice_to_cell);
+  std::vector<typename DoFHandler<3>::active_cell_iterator> cells_cut;
+
+  const auto &flat_cell = flat_dof_handler.active_cell_iterators().begin();
+  cells_cut = LetheGridTools::find_cells_around_flat_cell(dof_handler,
+                                                          flat_cell,
+                                                          vertice_to_cell);
+
+
+  for (unsigned int i = 0; i < cells_cut.size(); ++i)
     {
-        cells_cut[i]->set_subdomain_id(1);
-        subdomain(cells_cut[i]->global_active_cell_index()) =cells_cut[i]->global_active_cell_index();
-        deallog << "The cell with ID : "<< cells_cut[i]->global_active_cell_index()<<" is cut "<< std::endl;
+      cells_cut[i]->set_subdomain_id(1);
+      subdomain(cells_cut[i]->global_active_cell_index()) =
+        cells_cut[i]->global_active_cell_index();
+      deallog << "The cell with ID : "
+              << cells_cut[i]->global_active_cell_index() << " is cut "
+              << std::endl;
     }
 
     // Printing the final position for all the vertices
 
-    #if DEAL_II_VERSION_GTE(9, 3, 0)
-      Legacy::DataOut<3> data_out;
-      data_out.attach_dof_handler(dof_handler);
-      data_out.add_data_vector(subdomain, "subdomain");
-      data_out.build_patches();
-      std::ofstream output("solution.vtu");
-      data_out.write_vtu(output);
-      Legacy::DataOut<2,DoFHandler<2,3>> flat_data_out;
-      flat_data_out.attach_dof_handler(flat_dof_handler);
-      flat_data_out.build_patches();
-      std::ofstream flat_output("flat_trig.vtu");
-      flat_data_out.write_vtu(flat_output);
-    #else
-      DataOut<3> data_out;
-      data_out.attach_dof_handler(dof_handler);
-      data_out.add_data_vector(subdomain, "subdomain");
-      data_out.build_patches();
-      std::ofstream output("solution.vtu");
-      data_out.write_vtu(output);
-      DataOut<2,3> flat_data_out;
-      flat_data_out.attach_dof_handler(flat_dof_handler);
-      flat_data_out.build_patches();
-      std::ofstream flat_output("flat_trig.vtu");
-      flat_data_out.write_vtu(flat_output);
-    #endif
-
-
-
-
-
-
+#if DEAL_II_VERSION_GTE(9, 3, 0)
+  Legacy::DataOut<3> data_out;
+  data_out.attach_dof_handler(dof_handler);
+  data_out.add_data_vector(subdomain, "subdomain");
+  data_out.build_patches();
+  std::ofstream output("solution.vtu");
+  data_out.write_vtu(output);
+  Legacy::DataOut<2, DoFHandler<2, 3>> flat_data_out;
+  flat_data_out.attach_dof_handler(flat_dof_handler);
+  flat_data_out.build_patches();
+  std::ofstream flat_output("flat_trig.vtu");
+  flat_data_out.write_vtu(flat_output);
+#else
+  DataOut<3> data_out;
+  data_out.attach_dof_handler(dof_handler);
+  data_out.add_data_vector(subdomain, "subdomain");
+  data_out.build_patches();
+  std::ofstream output("solution.vtu");
+  data_out.write_vtu(output);
+  DataOut<2, 3> flat_data_out;
+  flat_data_out.attach_dof_handler(flat_dof_handler);
+  flat_data_out.build_patches();
+  std::ofstream flat_output("flat_trig.vtu");
+  flat_data_out.write_vtu(flat_output);
+#endif
 }
 
 int
 main(int argc, char *argv[])
 {
-    try
+  try
     {
-        initlog();
-        Utilities::MPI::MPI_InitFinalize mpi_initialization(
-                argc, argv, numbers::invalid_unsigned_int);
-        test();
+      initlog();
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+      test();
     }
-    catch (std::exception &exc)
+  catch (std::exception &exc)
     {
-        std::cerr << std::endl
-                  << std::endl
-                  << "----------------------------------------------------"
-                  << std::endl;
-        std::cerr << "Exception on processing: " << std::endl
-                  << exc.what() << std::endl
-                  << "Aborting!" << std::endl
-                  << "----------------------------------------------------"
-                  << std::endl;
-        return 1;
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
     }
-    catch (...)
+  catch (...)
     {
-        std::cerr << std::endl
-                  << std::endl
-                  << "----------------------------------------------------"
-                  << std::endl;
-        std::cerr << "Unknown exception!" << std::endl
-                  << "Aborting!" << std::endl
-                  << "----------------------------------------------------"
-                  << std::endl;
-        return 1;
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
     }
-    return 0;
+  return 0;
 }

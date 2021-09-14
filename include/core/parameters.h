@@ -562,44 +562,44 @@ namespace Parameters
   };
 
   struct MeshBoxRefinement
-          {
-        // GMSH or dealii
-        enum class Type
-        {
-            gmsh,
-            dealii,
-        };
-        Type type;
-
-        // File name of the mesh
-        std::string file_name;
-
-        // Name of the grid in GridTools
-        std::string grid_type;
-
-        // Arguments of the GridTools
-        std::string grid_arguments;
-
-        // Initial refinement level of primitive mesh contained in the box
-        unsigned int initial_refinement;
-
-        // Initial refinement level mesh box
-        unsigned int initial_refinement_box;
-
-        // Enabling fixing initial refinement from a target size
-        bool refine_until_target_size;
-
-        // Allowing the use of a simplex mesh
-        bool simplex;
-
-        // Target size when automatically refining initial mesh
-        double target_size;
-
-        static void
-        declare_parameters(ParameterHandler &prm);
-        void
-        parse_parameters(ParameterHandler &prm);
+  {
+    // GMSH or dealii
+    enum class Type
+    {
+      gmsh,
+      dealii,
     };
+    Type type;
+
+    // File name of the mesh
+    std::string file_name;
+
+    // Name of the grid in GridTools
+    std::string grid_type;
+
+    // Arguments of the GridTools
+    std::string grid_arguments;
+
+    // Initial refinement level of primitive mesh contained in the box
+    unsigned int initial_refinement;
+
+    // Initial refinement level mesh box
+    unsigned int initial_refinement_box;
+
+    // Enabling fixing initial refinement from a target size
+    bool refine_until_target_size;
+
+    // Allowing the use of a simplex mesh
+    bool simplex;
+
+    // Target size when automatically refining initial mesh
+    double target_size;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
 
 
   /**
