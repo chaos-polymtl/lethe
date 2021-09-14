@@ -71,36 +71,22 @@ test()
 
 
 
-    Tensor<1,2> vect;
-    vect[0]=-(v1-v0)[1];
-    vect[1]=(v1-v0)[0];
-    Point<2> p;
-    p=v0+100000.0*vect;
-
-    SphericalManifold<1, 2> sphere_manifold(
-            p);
 
     vertices_of_flat[0]=v0;
     vertices_of_flat[1]=v1;
-
-
 
     flat_cell_data[0].vertices[0] = 0;
     flat_cell_data[0].vertices[1] = 1;
 
     flat_cell_data[0].material_id = 0;
     flat_triangulation.create_triangulation(vertices_of_flat,flat_cell_data,SubCellData());
-    flat_triangulation.set_all_manifold_ids(
-            0);
-    flat_triangulation.set_manifold(
-            0, sphere_manifold);
+
     // Attach triangulation to dof_handler
 
     dof_handler.reinit(
             triangulation);
     flat_dof_handler.reinit(
             flat_triangulation);
-
 
     std::map<unsigned int,std::set<typename DoFHandler<2>::active_cell_iterator>> vertice_to_cell;
 
@@ -109,8 +95,6 @@ test()
 
     const auto &flat_cell =flat_dof_handler.active_cell_iterators().begin();
     cells_cut = LetheGridTools::find_cells_around_flat_cell(dof_handler, flat_cell, vertice_to_cell);
-
-
 
     Vector<double> subdomain(triangulation.n_active_cells());
     for (unsigned int i=0 ; i<cells_cut.size() ; ++i)
