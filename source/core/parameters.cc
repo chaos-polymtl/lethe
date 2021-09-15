@@ -755,56 +755,14 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-      prm.declare_entry("type",
-                        "dealii",
-                        Patterns::Selection("gmsh|dealii|periodic_hills"),
-                        "Type of mesh "
-                        "Choices are <gmsh|dealii|periodic_hills>.");
 
-      prm.declare_entry("file name",
-                        "none",
-                        Patterns::FileName(),
-                        "GMSH file name");
+      box_mesh.declare_parameters(prm);
 
       prm.declare_entry("initial refinement",
                         "0",
                         Patterns::Integer(),
                         "Initial refinement of the principal mesh");
-      prm.declare_entry("box initial refinement",
-                        "0",
-                        Patterns::Integer(),
-                        "Initial refinement of the box mesh");
 
-      if (prm.get("type") == "periodic_hills")
-        {
-          prm.declare_entry("grid arguments", "1 ; 1 ; 1 ; 1 ; 1");
-        }
-      else
-        {
-          prm.declare_entry("grid type", "hyper_cube");
-          prm.declare_entry("grid arguments", "-1 : 1 : false");
-        }
-      prm.declare_entry(
-        "enable target size",
-        "false",
-        Patterns::Bool(),
-        "Enable initial refinement until target size is reached.");
-
-      prm.declare_entry(
-        "simplex",
-        "false",
-        Patterns::Bool(),
-        "Indicates that the mesh used is a mesh made of only simplex elements.");
-
-
-      prm.declare_entry("target size",
-                        "1",
-                        Patterns::Double(),
-                        "Target size of the initial refinement");
-
-
-      prm.declare_entry("grid type", "hyper_cube");
-      prm.declare_entry("grid arguments", "-1 : 1 : false");
     }
     prm.leave_subsection();
   }
@@ -814,29 +772,11 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-      {
-        const std::string op = prm.get("type");
-        if (op == "gmsh")
-          type = Type::gmsh;
-        else if (op == "dealii")
-          type = Type::dealii;
-        else
-          throw std::logic_error(
-            "Error, invalid mesh type. Choices are gmsh and dealii");
-      }
-
-      file_name = prm.get("file name");
+      box_mesh.parse_parameters(prm);
 
       initial_refinement = prm.get_integer("initial refinement");
 
-      initial_refinement_box = prm.get_integer("box initial refinement");
 
-      grid_type      = prm.get("grid type");
-      grid_arguments = prm.get("grid arguments");
-
-      refine_until_target_size = prm.get_bool("enable target size");
-      simplex                  = prm.get_bool("simplex");
-      target_size              = prm.get_double("target size");
     }
     prm.leave_subsection();
   }
@@ -1269,11 +1209,6 @@ namespace Parameters
         Patterns::Double(),
         "The factor that multiplie the radius to define the outside bound for the refinement of the mesh");
       prm.declare_entry(
-        "nb force evaluation",
-        "100",
-        Patterns::Integer(),
-        "Number of evaluation of the pressure and viscosity force at the boundary per particle  ");
-      prm.declare_entry(
         "calculate force",
         "true",
         Patterns::Bool(),
@@ -1381,7 +1316,6 @@ namespace Parameters
       initial_refinement = prm.get_integer("initial refinement");
       inside_radius      = prm.get_double("refine mesh inside radius factor");
       outside_radius     = prm.get_double("refine mesh outside radius factor");
-      nb_force_eval      = prm.get_integer("nb force evaluation");
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
       density              = prm.get_double("fluid density");
