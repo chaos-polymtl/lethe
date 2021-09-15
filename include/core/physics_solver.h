@@ -149,8 +149,6 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
   const bool                                              first_iteration)
 {
-  // BB IMPORTANT
-  // for (unsigned int iphys = 0; iphys < 1; iphys++)
   {
     this->time_stepping_method = time_stepping_method;
     this->non_linear_solver->solve(first_iteration);
