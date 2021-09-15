@@ -82,7 +82,6 @@ end
 subsection particles
 	set number of particles = 1
 	set stencil order = 6
-	set nb force evaluation = 1000
 	set initial refinement = 2
 	set refine mesh inside radius factor=0
 	set refine mesh outside radius factor=2
