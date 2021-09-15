@@ -921,12 +921,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
   this->pcout << "Number of solid loaded : " << solid.size() << std::endl
               << std::endl;
 
-  this->pcout
-    << "Warning - the solid triangulation cannot be properly loaded,"
-    << std::endl
-    << "so from now on only the visualisation of the solid particles is correct."
-    << std::endl
-    << std::endl;
 
   // Load fluid triangulation with connexion to particles
   const std::string filename = prefix + "_fluid.triangulation";

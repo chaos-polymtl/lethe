@@ -7,9 +7,6 @@ Running on 1 MPI rank(s)...
 ************************
 Number of solid loaded : 1
 
-Warning - the solid triangulation cannot be properly loaded,
-so from now on only the visualisation of the solid particles is correct.
-
    Number of active cells:       320
    Number of degrees of freedom: 1011
    Volume of triangulation:      3.12145
