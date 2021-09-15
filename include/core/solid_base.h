@@ -145,11 +145,17 @@ public:
   void
   move_solid_triangulation(double time_step);
 
+  /**
+   * @brief Writes the vertices positions and the cells vertices in files when a checkpoint is enabled
+   */
   void
   write_solid_information(std::string vertices_positions_output, std::string cell_indices_output);
 
+  /**
+   * @brief Reads the vertices positions and the cells vertices upon restart and generates a new solid_tria
+   */
   void
-  read_solid_information(std::string vertices_positions_input, std::string cell_indices_input);
+  read_solid_information_and_setup_tria(std::string vertices_positions_input, std::string cell_indices_input);
   
   /**
    * @brief prints the positions of the particles

@@ -592,7 +592,7 @@ SolidBase<dim, spacedim>::write_solid_information(std::string vertices_positions
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::read_solid_information(std::string vertices_positions_input, std::string cell_indices_input)
+SolidBase<dim, spacedim>::read_solid_information_and_setup_tria(std::string vertices_positions_input, std::string cell_indices_input)
 {
   std::ifstream input_vertices (vertices_positions_input);
   std::ifstream input_cells (cell_indices_input);

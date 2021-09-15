@@ -910,7 +910,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
       pvdhandler_solid_triangulation[i_solid].read(
         prefix + "_sol_triangulation_" + Utilities::int_to_string(i_solid, 2));
 
-      solid[i_solid]->read_solid_information(prefix + "_sol.vertices_positions_" +
+      solid[i_solid]->read_solid_information_and_setup_tria(prefix + "_sol.vertices_positions_" +
                            Utilities::int_to_string(i_solid, 2), prefix + "_sol.cells_vertices_" +
                            Utilities::int_to_string(i_solid, 2));  
 
