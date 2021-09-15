@@ -8,9 +8,8 @@
 subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 1
-  set output name             = nitsche_load_example
+  set output name             = rotating-square-restart
   set output frequency        = 1
-  set output path             = ./output_22/
   set time end                = 1
   set time step		      = 0.25
 end
