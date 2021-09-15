@@ -85,7 +85,7 @@ public:
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     Parameters::MeshAdaptation::declare_parameters(prm);
-    mesh_box_refinement= std::make_shared<Parameters::MeshBoxRefinement>();
+    mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
     mesh_box_refinement->declare_parameters(prm);
 
     Parameters::NonLinearSolver::declare_parameters(prm);

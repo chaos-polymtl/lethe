@@ -755,7 +755,7 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-      box_mesh=std::make_shared<Mesh>();
+      box_mesh = std::make_shared<Mesh>();
       box_mesh->declare_parameters(prm);
 
       prm.declare_entry("initial refinement",

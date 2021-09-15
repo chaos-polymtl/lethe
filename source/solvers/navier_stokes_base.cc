@@ -671,8 +671,8 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 
           GridIn<dim> grid_in;
           grid_in.attach_triangulation(basetria);
-          std::ifstream input_file(
-            this->simulation_parameters.mesh_box_refinement->box_mesh->file_name);
+          std::ifstream input_file(this->simulation_parameters
+                                     .mesh_box_refinement->box_mesh->file_name);
 
           grid_in.read_msh(input_file);
 
@@ -690,8 +690,8 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
         {
           GridIn<dim> grid_in;
           grid_in.attach_triangulation(box_to_refine);
-          std::ifstream input_file(
-            this->simulation_parameters.mesh_box_refinement->box_mesh->file_name);
+          std::ifstream input_file(this->simulation_parameters
+                                     .mesh_box_refinement->box_mesh->file_name);
           grid_in.read_msh(input_file);
         }
     }
@@ -704,7 +704,8 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
           Triangulation<dim> temporary_quad_triangulation;
           GridGenerator::generate_from_name_and_arguments(
             temporary_quad_triangulation,
-            this->simulation_parameters.mesh_box_refinement->box_mesh->grid_type,
+            this->simulation_parameters.mesh_box_refinement->box_mesh
+              ->grid_type,
             this->simulation_parameters.mesh_box_refinement->box_mesh
               ->grid_arguments);
 
@@ -740,7 +741,8 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
         {
           GridGenerator::generate_from_name_and_arguments(
             box_to_refine,
-            this->simulation_parameters.mesh_box_refinement->box_mesh->grid_type,
+            this->simulation_parameters.mesh_box_refinement->box_mesh
+              ->grid_type,
             this->simulation_parameters.mesh_box_refinement->box_mesh
               ->grid_arguments);
         }
