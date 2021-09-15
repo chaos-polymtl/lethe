@@ -661,10 +661,10 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 {
   // Read the mesh for that define the box use in this function
   Triangulation<dim> box_to_refine;
-  if (this->simulation_parameters.mesh_box_refinement.box_mesh.type ==
+  if (this->simulation_parameters.mesh_box_refinement->box_mesh->type ==
       Parameters::Mesh::Type::gmsh)
     {
-      if (this->simulation_parameters.mesh_box_refinement.box_mesh.simplex)
+      if (this->simulation_parameters.mesh_box_refinement->box_mesh->simplex)
         {
           Triangulation<dim> basetria(
             Triangulation<dim>::limit_level_difference_at_vertices);
@@ -672,7 +672,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
           GridIn<dim> grid_in;
           grid_in.attach_triangulation(basetria);
           std::ifstream input_file(
-            this->simulation_parameters.mesh_box_refinement.box_mesh.file_name);
+            this->simulation_parameters.mesh_box_refinement->box_mesh->file_name);
 
           grid_in.read_msh(input_file);
 
@@ -691,27 +691,27 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
           GridIn<dim> grid_in;
           grid_in.attach_triangulation(box_to_refine);
           std::ifstream input_file(
-            this->simulation_parameters.mesh_box_refinement.box_mesh.file_name);
+            this->simulation_parameters.mesh_box_refinement->box_mesh->file_name);
           grid_in.read_msh(input_file);
         }
     }
   // Dealii grids
-  else if (this->simulation_parameters.mesh_box_refinement.box_mesh.type ==
+  else if (this->simulation_parameters.mesh_box_refinement->box_mesh->type ==
            Parameters::Mesh::Type::dealii)
     {
-      if (this->simulation_parameters.mesh_box_refinement.box_mesh.simplex)
+      if (this->simulation_parameters.mesh_box_refinement->box_mesh->simplex)
         {
           Triangulation<dim> temporary_quad_triangulation;
           GridGenerator::generate_from_name_and_arguments(
             temporary_quad_triangulation,
-            this->simulation_parameters.mesh_box_refinement.box_mesh.grid_type,
-            this->simulation_parameters.mesh_box_refinement.box_mesh
-              .grid_arguments);
+            this->simulation_parameters.mesh_box_refinement->box_mesh->grid_type,
+            this->simulation_parameters.mesh_box_refinement->box_mesh
+              ->grid_arguments);
 
           // initial refinement
           const int initial_refinement =
-            this->simulation_parameters.mesh_box_refinement.box_mesh
-              .initial_refinement;
+            this->simulation_parameters.mesh_box_refinement->box_mesh
+              ->initial_refinement;
           temporary_quad_triangulation.refine_global(initial_refinement);
           // flatten the triangulation
           Triangulation<dim> flat_temp_quad_triangulation;
@@ -740,21 +740,21 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
         {
           GridGenerator::generate_from_name_and_arguments(
             box_to_refine,
-            this->simulation_parameters.mesh_box_refinement.box_mesh.grid_type,
-            this->simulation_parameters.mesh_box_refinement.box_mesh
-              .grid_arguments);
+            this->simulation_parameters.mesh_box_refinement->box_mesh->grid_type,
+            this->simulation_parameters.mesh_box_refinement->box_mesh
+              ->grid_arguments);
         }
     }
 
   // define a local dof handler of this mesh.
 
   box_to_refine.refine_global(this->simulation_parameters.mesh_box_refinement
-                                .box_mesh.initial_refinement);
+                                ->box_mesh->initial_refinement);
   DoFHandler<dim> box_to_refine_dof_handler(box_to_refine);
 
   // refine the number of time needed
   for (unsigned int i = 0;
-       i < this->simulation_parameters.mesh_box_refinement.initial_refinement;
+       i < this->simulation_parameters.mesh_box_refinement->initial_refinement;
        ++i)
     {
       if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(

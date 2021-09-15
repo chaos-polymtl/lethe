@@ -755,7 +755,8 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-      box_mesh.declare_parameters(prm);
+      box_mesh=std::make_shared<Mesh>();
+      box_mesh->declare_parameters(prm);
 
       prm.declare_entry("initial refinement",
                         "0",
@@ -770,7 +771,7 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-      box_mesh.parse_parameters(prm);
+      box_mesh->parse_parameters(prm);
 
       initial_refinement = prm.get_integer("initial refinement");
     }

@@ -564,14 +564,11 @@ namespace Parameters
   struct MeshBoxRefinement
   {
     // GMSH or dealii
-    static Mesh box_mesh;
-
+    std::shared_ptr<Mesh> box_mesh;
     // Initial refinement level of primitive mesh contained in the box
     unsigned int initial_refinement;
 
-
-
-    static void
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
