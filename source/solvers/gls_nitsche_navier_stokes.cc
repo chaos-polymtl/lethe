@@ -73,7 +73,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
       std::shared_ptr<Particles::ParticleHandler<spacedim>> &solid_ph =
         solid[i_solid]->get_solid_particle_handler();
 
-
       const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
       std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
@@ -668,14 +667,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
               {
                 solid[i_solid]->integrate_velocity(
                   this->simulation_control->get_time_step());
-                // (known issue) Full load of the solid triangulation is not
-                // currently supported if the simulation is restarted, so the
-                // solid triangulation will not be moved in this case
-                if (!this->simulation_parameters.restart_parameters.restart)
-                  {
-                    solid[i_solid]->move_solid_triangulation(
-                      this->simulation_control->get_time_step());
-                  }
+                solid[i_solid]->move_solid_triangulation(
+                  this->simulation_control->get_time_step());
               }
           }
       }
@@ -703,13 +696,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
             {
               output_solid_particles(i_solid);
-              // (known issue) Full load of the solid triangulation is not
-              // currently supported if the simulation is restarted, so the
-              // solid triangulation will not be outputed in this case
-              if (!this->simulation_parameters.restart_parameters.restart)
-                {
-                  output_solid_triangulation(i_solid);
-                }
+              output_solid_triangulation(i_solid);
             }
         }
 
@@ -857,6 +844,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
         {
           solid_tria->save(prefix + "_sol.triangulation_" +
                            Utilities::int_to_string(i_solid, 2));
+          solid[i_solid]->write_solid_information(prefix + "_sol.vertices_positions_" +
+                           Utilities::int_to_string(i_solid, 2), prefix + "_sol.cells_vertices_" +
+                           Utilities::int_to_string(i_solid, 2));
         }
     }
 
@@ -920,15 +910,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
       pvdhandler_solid_triangulation[i_solid].read(
         prefix + "_sol_triangulation_" + Utilities::int_to_string(i_solid, 2));
 
-      // Setup Nitsche solid (loads triangulation and particles)
-      // (known issue) The solid triangulation cannot be fully loaded for now,
-      // so it must be set prior to loading
-      solid[i_solid]->setup_triangulation(true);
-
-      // Load triangulation and particles : commented for now to avoid
-      // misinterpretation. Should be uncommented when loading bug is fixed.
-      //      solid[i_solid]->load_triangulation(prefix + "_sol.triangulation_"
-      //      + Utilities::int_to_string(i_solid,2));
+      solid[i_solid]->read_solid_information(prefix + "_sol.vertices_positions_" +
+                           Utilities::int_to_string(i_solid, 2), prefix + "_sol.cells_vertices_" +
+                           Utilities::int_to_string(i_solid, 2));  
 
       solid[i_solid]->load_particles(prefix + "_sol.particles_" +
                                      Utilities::int_to_string(i_solid, 2));

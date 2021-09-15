@@ -7,12 +7,26 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = bdf1
-  set time step		      = 0.01
-  set time end 		      = 0.1
-  set number mesh adapt       = 0
-  set output name             = two-bar-mixer
+  set number mesh adapt       = 1
+  set output name             = nitsche_load_example
   set output frequency        = 1
-  set subdivision             = 1
+  set output path             = ./output_22/
+  set time end                = 1
+  set time step		      = 0.25
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+subsection restart
+  set checkpoint = false
+  set restart    = true
+  set filename   = restart
+  set frequency  = 1
+end
+
+subsection test
+    set enable            = true
 end
 
 #---------------------------------------------------
@@ -21,48 +35,20 @@ end
 subsection FEM
     set velocity order        = 1
     set pressure order        = 1
-    set temperature order     = 2
-end
-
-#--------------------------------------------------
-# Restart
-#--------------------------------------------------
-subsection restart
-  # Enable checkpointing
-  set checkpoint = false
-
-  # Enable restart
-  set restart    = true
-
-  # Prefix for the filename of checkpoints
-  set filename   = restart
-
-  # Frequency for checkpointing
-  set frequency  = 5
 end
 
 #---------------------------------------------------
-# Multiphysics
+# Force
 #---------------------------------------------------
-subsection multiphysics
-	set heat transfer = true
-end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-subsection timer
-    set type    = none                                  # <none|iteration|end>
-end
-
-#---------------------------------------------------
-# Initial condition
-#---------------------------------------------------
-subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 0; 0; 0
-    end
+subsection forces
+    set verbosity             = quiet   # Output force and torques in log <quiet|verbose>
+    set calculate forces      = false     # Enable force calculation
+    set calculate torques     = false     # Enable torque calculation
+    set force name            = force     # Name prefix of force files
+    set torque name           = torque    # Name prefix of torque files
+    set output precision      = 10        # Output precision
+    set calculation frequency = 1         # Frequency of the force calculation
+    set output frequency      = 1         # Frequency of file update
 end
 
 #---------------------------------------------------
@@ -76,55 +62,53 @@ end
 # Mesh
 #---------------------------------------------------
 subsection mesh
-		set type = dealii
-		set grid type = hyper_rectangle
-		set grid arguments = -1, -1 : 1, 1.0 : true
-		set initial refinement = 4
+	set type = dealii
+	set grid type = hyper_ball
+	set grid arguments = 0, 0 : 1 : true
+	set initial refinement = 3
 end
 
 #---------------------------------------------------
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 100
-	set number of solids = 2
-	subsection nitsche solid 0
-		subsection mesh
-			set type = dealii
-			set grid type = hyper_ball
-			set grid arguments = -0.3, -0.3 : 0.2 : true
-			set initial refinement = 2
-		end
-		set enable particles motion = true
-		subsection solid velocity
-			set Function expression = -pi*y ; pi*x
-		end
-	end
-	subsection nitsche solid 1
-		subsection mesh
-			set type = dealii
-			set grid type = hyper_ball
-			set grid arguments = 0.3, 0.3 : 0.2 : true
-			set initial refinement = 2
-		end
-		set enable particles motion = true
-		subsection solid velocity
-			set Function expression = -pi*y ; pi*x
-		end
-	end
+	set beta = 10
+  set calculate torques on solid = true
+  set verbosity = verbose
+  set number of solids = 1
+
+  subsection nitsche solid 0
+	  subsection mesh
+		 set type = dealii
+		set grid type = hyper_rectangle
+		set grid arguments = -0.5, -0.5 : 0.5, 0.5 : true
+		set initial refinement = 2
+	  end
+	  set enable particles motion = true
+	  subsection solid velocity
+		  set Function expression = -y ; x
+	  end
+  end
 end
 
-subsection test
-    set enable            = true
-end
 
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                  = 1
+    subsection bc 0
+    set id = 0
+        set type              = noslip
+    end
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
   set verbosity               = quiet
-  set tolerance               = 1e-12
+  set tolerance               = 1e-8
   set max iterations          = 10
 end
 
@@ -133,11 +117,14 @@ end
 #---------------------------------------------------
 subsection linear solver
   set verbosity               = quiet
-  set method                  = gmres
-  set max iters               = 5000
-  set relative residual       = 1e-4
-  set minimum residual        = 1e-13
-  set ilu preconditioner fill = 2
-  set ilu preconditioner absolute tolerance = 1e-14
+  set method                  = amg
+  set max iters               = 500
+  set relative residual       = 1e-3
+  set minimum residual        = 1e-10
+  set ilu preconditioner fill = 3
+  set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
+  set amg preconditioner ilu fill = 1
+  set amg preconditioner ilu absolute tolerance = 1e-12
+  set amg preconditioner ilu relative tolerance = 1.00
 end

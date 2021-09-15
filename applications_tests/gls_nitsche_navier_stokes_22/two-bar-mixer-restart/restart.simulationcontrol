@@ -1,8 +1,8 @@
 Simulation control
-dt_0 0.01
-dt_1 0.01
-dt_2 0.01
-dt_3 0.01
-CFL  0.119431
-Time 0.04
-Iter 4
+dt_0 0.25
+dt_1 0.25
+dt_2 0.25
+dt_3 0.25
+CFL  1.31264
+Time 0.75
+Iter 3

@@ -1,7 +1,6 @@
-5
+4
 Time File
-0 two-bar-mixer_solid_particles_00.0000.pvtu
-0.01 two-bar-mixer_solid_particles_00.0001.pvtu
-0.02 two-bar-mixer_solid_particles_00.0002.pvtu
-0.03 two-bar-mixer_solid_particles_00.0003.pvtu
-0.04 two-bar-mixer_solid_particles_00.0004.pvtu
+0 nitsche_load_example_solid_particles_00.0000.pvtu
+0.25 nitsche_load_example_solid_particles_00.0001.pvtu
+0.5 nitsche_load_example_solid_particles_00.0002.pvtu
+0.75 nitsche_load_example_solid_particles_00.0003.pvtu

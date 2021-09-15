@@ -81,7 +81,7 @@ public:
    * @brief Generates a solid triangulation from a dealii or gmsh mesh
    */
   void
-  setup_triangulation(const bool restart);
+  setup_triangulation();
 
   /**
    * @brief Creates a particle handler in the fluid triangulation domain
@@ -145,6 +145,12 @@ public:
   void
   move_solid_triangulation(double time_step);
 
+  void
+  write_solid_information(std::string vertices_positions_output, std::string cell_indices_output);
+
+  void
+  read_solid_information(std::string vertices_positions_input, std::string cell_indices_input);
+  
   /**
    * @brief prints the positions of the particles
    */

@@ -96,13 +96,13 @@ SolidBase<dim, spacedim>::initial_setup()
 {
   // initial_setup is called if the simulation is not a restarted one
   // Set-up of Nitsche triangulation, then particles (order important)
-  setup_triangulation(false);
+  setup_triangulation();
   setup_particles();
 }
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
+SolidBase<dim, spacedim>::setup_triangulation()
 {
   if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
@@ -208,18 +208,15 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
   // afterwards
-  if (!restart)
+  if (param->solid_mesh.simplex)
     {
-      if (param->solid_mesh.simplex)
-        {
-          // Simplex triangulation refinement isn't possible yet
-        }
-      else
-        {
-          solid_tria->refine_global(param->solid_mesh.initial_refinement);
-        }
-      solid_dh.distribute_dofs(*fe);
+      // Simplex triangulation refinement isn't possible yet
     }
+  else
+    {
+      solid_tria->refine_global(param->solid_mesh.initial_refinement);
+    }
+  solid_dh.distribute_dofs(*fe);
 }
 
 template <>
@@ -559,6 +556,97 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
             }
         }
     }
+}
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::write_solid_information(std::string vertices_positions_output, std::string cell_indices_output)
+{
+  std::ofstream output_vertices (vertices_positions_output);
+  std::ofstream output_cells (cell_indices_output);
+
+  const unsigned int n_dofs = solid_dh.n_dofs();
+  std::vector<bool>  written_position(n_dofs, false);
+
+  for (const auto &cell : solid_dh.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (unsigned int i = 0;
+               i < GeometryInfo<spacedim>::vertices_per_cell;
+               ++i)
+            {
+              output_cells << cell->vertex_index(i) << '\t';
+              if (!written_position[cell->vertex_index(i)])
+                {
+                  output_vertices << cell->vertex_index(i) << '\t' << "Point " << cell->vertex(i) << std::endl;
+                  written_position[cell->vertex_index(i)] = true;
+                }
+            }
+            output_cells << std::endl;
+        }
+    }
+  output_vertices.close();
+  output_cells.close();
+}
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::read_solid_information(std::string vertices_positions_input, std::string cell_indices_input)
+{
+  std::ifstream input_vertices (vertices_positions_input);
+  std::ifstream input_cells (cell_indices_input);
+
+  if (input_vertices.is_open() && input_cells.is_open())
+  {
+    // Vertices positions
+    std::string line;
+    std::string i;
+    std::string temp;
+    Point<spacedim> position;
+    std::unordered_map<int, Point<spacedim>> positions;
+
+    while (std::getline(input_vertices, line))
+    {
+        std::istringstream linestream(line);
+        std::getline(linestream, i, '\t');
+        linestream >> temp >> position;
+        positions.insert({{stoi(i), position}});
+    }
+
+    std::vector<Point<spacedim>> vertices(positions.size());
+    for (auto& pos : positions)
+    {
+      vertices[pos.first] = pos.second;
+    }
+
+    // Cells vertices
+    std::string data;
+    unsigned int i_cell = 0;
+    std::vector<CellData<dim>> cells;
+    std::set<unsigned int> cell_vertices;
+
+    while (std::getline(input_cells, line))
+    {
+      cell_vertices.clear();
+      cells.emplace_back();
+      std::istringstream linestream(line);
+      for (std::string data; std::getline(linestream, data, '\t'); ) 
+      {
+        cell_vertices.insert(std::stoul(data));
+      }
+      std::vector<unsigned int> &c_vertices = cells[i_cell].vertices;
+      std::copy(cell_vertices.begin(), cell_vertices.end(), c_vertices.begin());
+      i_cell++;
+    }
+
+    solid_tria->create_triangulation(vertices, cells, SubCellData());
+    FE_Q<dim, spacedim> fe(1);
+    solid_dh.distribute_dofs(fe);
+
+  }
+  input_vertices.close();
+  input_cells.close();
 }
 
 template <int dim, int spacedim>
