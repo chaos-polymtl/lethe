@@ -661,7 +661,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 {
   // Read the mesh for that define the box use in this function
   Triangulation<dim> box_to_refine;
-  if (this->simulation_parameters.mesh_box_refinement.box_mesh.type==
+  if (this->simulation_parameters.mesh_box_refinement.box_mesh.type ==
       Parameters::Mesh::Type::gmsh)
     {
       if (this->simulation_parameters.mesh_box_refinement.box_mesh.simplex)
@@ -705,11 +705,13 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
           GridGenerator::generate_from_name_and_arguments(
             temporary_quad_triangulation,
             this->simulation_parameters.mesh_box_refinement.box_mesh.grid_type,
-            this->simulation_parameters.mesh_box_refinement.box_mesh.grid_arguments);
+            this->simulation_parameters.mesh_box_refinement.box_mesh
+              .grid_arguments);
 
           // initial refinement
           const int initial_refinement =
-            this->simulation_parameters.mesh_box_refinement.box_mesh.initial_refinement;
+            this->simulation_parameters.mesh_box_refinement.box_mesh
+              .initial_refinement;
           temporary_quad_triangulation.refine_global(initial_refinement);
           // flatten the triangulation
           Triangulation<dim> flat_temp_quad_triangulation;
@@ -739,14 +741,15 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
           GridGenerator::generate_from_name_and_arguments(
             box_to_refine,
             this->simulation_parameters.mesh_box_refinement.box_mesh.grid_type,
-            this->simulation_parameters.mesh_box_refinement.box_mesh.grid_arguments);
+            this->simulation_parameters.mesh_box_refinement.box_mesh
+              .grid_arguments);
         }
     }
 
   // define a local dof handler of this mesh.
 
-  box_to_refine.refine_global(
-    this->simulation_parameters.mesh_box_refinement.box_mesh.initial_refinement);
+  box_to_refine.refine_global(this->simulation_parameters.mesh_box_refinement
+                                .box_mesh.initial_refinement);
   DoFHandler<dim> box_to_refine_dof_handler(box_to_refine);
 
   // refine the number of time needed

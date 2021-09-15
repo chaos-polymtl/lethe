@@ -755,14 +755,12 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-
       box_mesh.declare_parameters(prm);
 
       prm.declare_entry("initial refinement",
                         "0",
                         Patterns::Integer(),
                         "Initial refinement of the principal mesh");
-
     }
     prm.leave_subsection();
   }
@@ -775,8 +773,6 @@ namespace Parameters
       box_mesh.parse_parameters(prm);
 
       initial_refinement = prm.get_integer("initial refinement");
-
-
     }
     prm.leave_subsection();
   }
