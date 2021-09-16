@@ -102,8 +102,7 @@ public:
    */
   void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
-                   time_stepping_method,
-        const bool force_matrix_renewal)
+          time_stepping_method)
   {
     // Loop through all the elements in the physics map. Consequently, iphys is
     // an std::pair where iphys.first is the PhysicsID and iphys.second is the
@@ -115,7 +114,7 @@ public:
         if (verbosity != Parameters::Verbosity::quiet)
           announce_physics(iphys.first);
 
-        solve_physics(iphys.first, time_stepping_method, force_matrix_renewal);
+        solve_physics(iphys.first, time_stepping_method);
       }
     for (auto &iphys : block_physics)
       {
@@ -123,9 +122,7 @@ public:
         if (verbosity != Parameters::Verbosity::quiet)
           announce_physics(iphys.first);
 
-        solve_block_physics(iphys.first,
-                            time_stepping_method,
-                            force_matrix_renewal);
+        solve_block_physics(iphys.first, time_stepping_method);
       }
   }
 
@@ -138,17 +135,14 @@ public:
   void
   solve_physics(const PhysicsID physics_id,
                 const Parameters::SimulationControl::TimeSteppingMethod
-                           time_stepping_method,
-                const bool force_matrix_renewal)
+                  time_stepping_method)
   {
     AssertThrow(std::find(active_physics.begin(),
                           active_physics.end(),
                           physics_id) != active_physics.end(),
                 ExcInternalError());
 
-    physics[physics_id]->solve_non_linear_system(time_stepping_method,
-                                                 false,
-                                                 force_matrix_renewal);
+    physics[physics_id]->solve_non_linear_system(time_stepping_method, false);
   }
 
   /**
@@ -159,8 +153,7 @@ public:
   void
   solve_block_physics(const PhysicsID physics_id,
                       const Parameters::SimulationControl::TimeSteppingMethod
-                                 time_stepping_method,
-                      const bool force_matrix_renewal)
+                        time_stepping_method)
   {
     AssertThrow(std::find(active_physics.begin(),
                           active_physics.end(),
@@ -168,8 +161,7 @@ public:
                 ExcInternalError());
 
     block_physics[physics_id]->solve_non_linear_system(time_stepping_method,
-                                                       false,
-                                                       force_matrix_renewal);
+                                                       false);
   }
 
 

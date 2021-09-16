@@ -92,19 +92,40 @@ private:
   postprocess_solid_torques();
 
   /**
-   * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled
+   * @brief Call for the assembly of the matrix
    */
   virtual void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override;
+  assemble_system_matrix() override
+  {
+    assemble_matrix_and_rhs();
+  }
 
   /**
-   * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when rhs is assembled
+   * @brief Call for the assembly of the right-hand side
    */
   virtual void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override;
+  assemble_system_rhs() override
+  {
+    assemble_rhs();
+  }
+
+  /**
+   * @brief Same as in gls_navier_stokes, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled
+   *
+   * @deprecated This function is to be deprecated when the new assembly mechanism
+   * is integrated to this solver
+   */
+  void
+  assemble_matrix_and_rhs();
+
+  /**
+   * @brief Same as in gls_navier_stokes, but calls assemble_nitsche_restriction() when rhs is assembled
+   *
+   * @deprecated This function is to be deprecated when the new assembly mechanism
+   * is integrated to this solver
+   */
+  void
+  assemble_rhs();
 
   /**
    * @brief Outputs a vtu file for each output frequency of the particles
