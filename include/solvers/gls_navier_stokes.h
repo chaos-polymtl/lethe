@@ -86,15 +86,27 @@ protected:
   /**
    *  @brief Assembles the matrix associated with the solver
    */
-  void
-  assemble_system_matrix();
+  virtual void
+  assemble_system_matrix() override;
+
+  /**
+   *  @brief Assembles the matrix associated with the solver without computing the preconditioner
+   */
+  virtual void
+  assemble_system_matrix_without_preconditioner();
 
   /**
    * @brief Assemble the rhs associated with the solver
    */
-  void
-  assemble_system_rhs();
+  virtual void
+  assemble_system_rhs() override;
 
+
+  /**
+   * @brief  Set-up the appropriate preconditioner
+   */
+  void
+  setup_preconditioner();
 
   /**
    * @brief Assemble the local matrix for a given cell.
@@ -160,45 +172,6 @@ protected:
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
-  /**
-   * @brief Call for the assembly of the matrix and the right hand side
-   *
-   * @param time_stepping_method The time-stepping method used for the assembly
-   *
-   * @deprecated This function is to be deprecated when the non-linear solvers
-   * have been refactored to call for rhs and matrix assembly seperately.
-   */
-
-  virtual void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override
-  {
-    TimerOutput::Scope t(this->computing_timer, "assemble_system");
-    this->simulation_control->set_assembly_method(time_stepping_method);
-    assemble_system_matrix();
-    assemble_system_rhs();
-  }
-
-
-  /**
-   * @brief Call for the assembly of the right hand side
-   *
-   * @param time_stepping_method The time-stepping method used for the assembly
-   *
-   * @deprecated This function is to be deprecated when the non-linear solvers
-   * have been refactored to call for rhs and matrix assembly seperately.
-   */
-  virtual void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override
-  {
-    TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-    this->simulation_control->set_assembly_method(time_stepping_method);
-
-    assemble_system_rhs();
-  }
-
 
   /**
    * @brief Call for the assembly of the linear system of equation
@@ -234,8 +207,7 @@ private:
   void
   solve_system_GMRES(const bool   initial_step,
                      const double absolute_residual,
-                     const double relative_residual,
-                     const bool   renewed_matrix);
+                     const double relative_residual);
 
   /**
    * @brief BiCGStab solver with ILU(N) preconditioning
@@ -243,8 +215,7 @@ private:
   void
   solve_system_BiCGStab(const bool   initial_step,
                         const double absolute_residual,
-                        const double relative_residual,
-                        const bool   renewed_matrix);
+                        const double relative_residual);
 
   /**
    * @brief GMRES solver with AMG preconditioner with ILU smoother and coarsener
@@ -252,8 +223,7 @@ private:
   void
   solve_system_AMG(const bool   initial_step,
                    const double absolute_residual,
-                   const double relative_residual,
-                   const bool   renewed_matrix);
+                   const double relative_residual);
 
   /**
    * @brief Direct solver using TrilinosWrappers::SolverDirect
@@ -262,20 +232,19 @@ private:
   void
   solve_system_direct(const bool   initial_step,
                       const double absolute_residual,
-                      const double relative_residual,
-                      const bool   renewed_matrix);
+                      const double relative_residual);
 
   /**
    * @brief  Set-up AMG preconditioner
    */
   void
-  setup_AMG(const int current_amg_ilu_preconditioner_fill_level);
+  setup_AMG();
 
   /**
    * @brief Set-up ILU preconditioner
    */
   void
-  setup_ILU(const int current_ilu_preconditioner_fill_level);
+  setup_ILU();
 
 
   /**
@@ -288,6 +257,8 @@ private:
   SparsityPattern                                    sparsity_pattern;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
+  int current_preconditioner_fill_level;
+  int initial_preconditioner_fill_level;
 };
 
 

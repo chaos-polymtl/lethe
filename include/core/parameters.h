@@ -355,17 +355,28 @@ namespace Parameters
    */
   struct NonLinearSolver
   {
-    // Type of linear solver
+    // Type of non-linear solver
     enum class SolverType
     {
       newton,
-      skip_newton
+      kinsol_newton
+    };
+
+    // Kinsol solver strategy
+    enum class KinsolStrategy
+    {
+      normal_newton,
+      line_search,
+      picard
     };
 
     Verbosity verbosity;
 
     // Type of non-linear solver
     SolverType solver;
+
+    // Kinsol solver strategy
+    KinsolStrategy kinsol_strategy;
 
     // Tolerance
     double tolerance;
@@ -378,9 +389,6 @@ namespace Parameters
 
     // Residual precision
     unsigned int display_precision;
-
-    // Iterations to skip in the non-linear solver
-    unsigned int skip_iterations;
 
     static void
     declare_parameters(ParameterHandler &prm);

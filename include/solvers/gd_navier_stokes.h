@@ -165,45 +165,6 @@ private:
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
-  /**
-   * @brief Call for the assembly of the matrix and the right hand side
-   *
-   * @param time_stepping_method The time-stepping method used for the assembly
-   *
-   * @deprecated This function is to be deprecated when the non-linear solvers
-   * have been refactored to call for rhs and matrix assembly seperately.
-   */
-
-  virtual void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override
-  {
-    TimerOutput::Scope t(this->computing_timer, "assemble_system");
-    this->simulation_control->set_assembly_method(time_stepping_method);
-    assemble_system_matrix();
-    assemble_system_rhs();
-  }
-
-
-  /**
-   * @brief Call for the assembly of the right hand side
-   *
-   * @param time_stepping_method The time-stepping method used for the assembly
-   *
-   * @deprecated This function is to be deprecated when the non-linear solvers
-   * have been refactored to call for rhs and matrix assembly seperately.
-   */
-  virtual void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override
-  {
-    TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-    this->simulation_control->set_assembly_method(time_stepping_method);
-
-    assemble_system_rhs();
-  }
-
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme>
   void

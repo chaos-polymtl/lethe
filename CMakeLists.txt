@@ -69,7 +69,8 @@ foreach(feat
 endforeach()
 
 foreach(feat
-    DEAL_II_WITH_OPENCASCADE)
+    DEAL_II_WITH_OPENCASCADE
+    DEAL_II_WITH_SUNDIALS)
   message(STATUS "Checking optional ${feat}: " ${${feat}})
 endforeach()
 

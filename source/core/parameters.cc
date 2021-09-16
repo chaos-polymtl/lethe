@@ -541,13 +541,20 @@ namespace Parameters
       prm.declare_entry(
         "solver",
         "newton",
-        Patterns::Selection("newton|skip_newton"),
+        Patterns::Selection("newton|kinsol_newton"),
         "Non-linear solver that will be used "
-        "Choices are <newton|skip_newton>."
+        "Choices are <newton|kinsol_newton>."
         " The newton solver is a traditional newton solver with"
         "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
-        "are assembled every iteration. In the skip_newton method, the jacobian matrix and"
-        "the pre-conditioner are re-assembled every skip_iteration.");
+        "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
+        "Kinsol from the SUNDIALS library is used. This solver has an internal algorithm"
+        "that decides whether to reassemble the Jacobian matrix or not.");
+
+      prm.declare_entry(
+        "kinsol strategy",
+        "line_search",
+        Patterns::Selection("normal_newton|line_search|fixed_point|picard"),
+        "Strategy that will be used by the kinsol newton solver");
 
       prm.declare_entry("tolerance",
                         "1e-6",
@@ -565,13 +572,6 @@ namespace Parameters
         " If a newton iteration leads to a residual > step tolerance"
         " * previous residual then the theta relaxation"
         " is applied until this criteria is satisfied");
-
-      prm.declare_entry(
-        "skip iterations",
-        "1",
-        Patterns::Integer(),
-        "Non-linear iterations to skip before rebuilding the jacobian matrix "
-        "and the preconditioner");
 
       prm.declare_entry("residual precision",
                         "4",
@@ -597,15 +597,25 @@ namespace Parameters
       const std::string str_solver = prm.get("solver");
       if (str_solver == "newton")
         solver = SolverType::newton;
-      else if (str_solver == "skip_newton")
-        solver = SolverType::skip_newton;
+      else if (str_solver == "kinsol_newton")
+        solver = SolverType::kinsol_newton;
       else
         throw(std::runtime_error("Invalid non-linear solver "));
+
+      const std::string str_kinsol_strategy = prm.get("kinsol strategy");
+      if (str_kinsol_strategy == "normal_newton")
+        kinsol_strategy = KinsolStrategy::normal_newton;
+      else if (str_kinsol_strategy == "line_search")
+        kinsol_strategy = KinsolStrategy::line_search;
+      else if (str_kinsol_strategy == "picard")
+        kinsol_strategy = KinsolStrategy::picard;
+      else
+        throw(
+          std::runtime_error("Invalid strategy for kinsol non-linear solver "));
 
       tolerance         = prm.get_double("tolerance");
       step_tolerance    = prm.get_double("step tolerance");
       max_iterations    = prm.get_integer("max iterations");
-      skip_iterations   = prm.get_integer("skip iterations");
       display_precision = prm.get_integer("residual precision");
     }
     prm.leave_subsection();

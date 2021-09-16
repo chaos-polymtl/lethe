@@ -10,6 +10,7 @@ subsection simulation control
   set number mesh adapt       = 2
   set output name             = taylor_couette_22
   set output frequency        = 1
+  set log precision           = 1
 end
 
 #---------------------------------------------------

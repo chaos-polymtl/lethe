@@ -57,16 +57,9 @@ public:
    *
    * @param is_initial_step Boolean variable that controls which constraints are
    * going to be applied to the equations
-   *
-   * @param force_matrix_renewal Boolean variable that controls if the Newton non-linear
-   * solver will force the re-caculation of the jacobian matrix and the
-   * reconstruction of the preconditioner at every iteration.
    */
   virtual void
-  solve(const Parameters::SimulationControl::TimeSteppingMethod
-                   time_stepping_method,
-        const bool is_initial_step,
-        const bool force_matrix_rewewal = true) = 0;
+  solve(const bool is_initial_step) = 0;
 
 protected:
   PhysicsSolver<VectorType> * physics_solver;

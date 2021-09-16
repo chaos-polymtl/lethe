@@ -26,28 +26,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-
-
-template <int dim>
-void
-Tracer<dim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::
-    TimeSteppingMethod /*time_stepping_method*/)
-{
-  assemble_system_matrix();
-  assemble_system_rhs();
-}
-
-
-template <int dim>
-void
-Tracer<dim>::assemble_rhs(const Parameters::SimulationControl::
-                            TimeSteppingMethod /*time_stepping_method*/)
-{
-  assemble_system_rhs();
-}
-
-
 template <int dim>
 void
 Tracer<dim>::setup_assemblers()
