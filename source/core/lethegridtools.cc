@@ -613,7 +613,8 @@ LetheGridTools::cell_cut_by_flat(
   //    B2) The cell must have vertices on each side of the flat
   // C) Fill these conditions
   //    C1) One of the faces of the cell must have vertices of the flat cell on
-  //    either side of it. C2) The cell must have vertices on each side of the
+  //    either side of it.
+  //    C2) The cell must have vertices on each side of the
   //    flat (identical to B2)
 
 
@@ -652,10 +653,7 @@ LetheGridTools::cell_cut_by_flat(
 
       Tensor<1, dim> normal = cell->vertex(i) - projected_point.first.first;
 
-
       // Check if the projected vertex falls inside the flat
-
-
 
       if (projected_point.first.second &&
           cell->point_inside(projected_point.first.first))
@@ -770,9 +768,9 @@ LetheGridTools::find_cells_around_flat_cell(
       previous_candidate_cells.clear();
 
       // Check if current candidate cells are intersected, and if they are, add
-      // them to the intersected cell set. If the added cell was not already
-      // present in the intersected cell set, add it to the previous candidate
-      // cells as well.
+      // them to the set  of intersected cells . If the added cells were not
+      // already present in the set of intersected cells, add them to the
+      // previous candidate cells as well.
       for (const typename DoFHandler<dim>::active_cell_iterator &cell_iter :
            current_candidate_cells)
         {
