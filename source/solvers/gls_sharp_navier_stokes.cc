@@ -520,10 +520,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       local_weight +=
                                         fe_face_projection_values.shape_value(
                                           i, q);
-                                      /*std::cout<<"i_face_tensor "<<
-                                         local_face_tensor[i]<<" fe  "<<
-                                         fe_face_projection_values.shape_value(
-                                              i, q)<<std::endl;*/
+ 
                                     }
                                 }
 
