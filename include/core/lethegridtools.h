@@ -214,7 +214,11 @@ namespace LetheGridTools
       &                    object,
     const Point<spacedim> &trial_point);
 
-
+  /**
+   * @brief
+   * A functor that provides a unique and uniformly distributed hash for a
+   * a cell. Used to store cells in hash sets.
+   */
   template <int dim>
   struct hash_cell
   {
@@ -226,6 +230,11 @@ namespace LetheGridTools
     }
   };
 
+  /**
+   * @brief
+   * A functor that provides a way to check if two cells are the same cell.
+   * Used to store cells in hash sets.
+   */
   template <int dim>
   struct equal_cell
   {
