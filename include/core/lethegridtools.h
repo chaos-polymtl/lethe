@@ -153,7 +153,7 @@ namespace LetheGridTools
 
   /**
    * @brief
-   * Return a bool that say if a cell is cut by a flat cell
+   * Return a bool that indicates if a cell is cut by a flat cell
    *
    * @param cell the cell that we want to check.
    *
