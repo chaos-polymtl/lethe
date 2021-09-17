@@ -99,7 +99,7 @@ namespace LetheGridTools
 
   /**
    * @brief
-   *Return a vector of cells around a flat cell in spacedim. A flat cell as a
+   *Return a vector of cells around a flat cell in spacedim. A flat cell has a
    *dim of spacedim-1.
    *
    * @param cell the cell that describes the flat. We want to know all the cells that are cut by the flat.
