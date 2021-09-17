@@ -118,7 +118,7 @@ namespace LetheGridTools
 
   /**
    * @brief
-   *Return a vector of cells around a edge cell in spacedim. A edge cell as a
+   *Return a vector of cells around an edge cell in spacedim. An edge cell as a
    *dim of 1.
    *
    * @param point_1 the first point that describes the edge
