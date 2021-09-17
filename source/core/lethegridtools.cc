@@ -1,7 +1,3 @@
-//
-// Created by lucka on 2021-07-15.
-//
-
 #include <core/lethegridtools.h>
 
 #include <deal.II/fe/fe_q.h>
