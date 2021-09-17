@@ -52,7 +52,7 @@ namespace LetheGridTools
    * Return the cell around a point by starting from the least refined level and
    * iterating over children.
    *
-   * @param point The point that we want to find the cell that contains it.
+   * @param point The point around which we want to find the cell.
    *
    */
   template <int dim>
@@ -62,12 +62,11 @@ namespace LetheGridTools
 
   /**
    * @brief
-   * Return the cell around a point based on a initial guess of a closed cell
-   * (look in the neighbors of this cell)
+   * Return the cell around a point based on an initial guess of a nearby cell
    *
-   * @param cell The initial cell. We suspect the point of being in one of the neighbours of this cell.
+   * @param cell The initial cell. We suspect that the point is in one of the neighbours of this cell.
    *
-   * @param point The point that we want to find the cell that contains it.
+   * @param point The point around which we want to find the cell.
    *
    * @param vertices_cell_map see vertices_cell_mapping function description.
    */
@@ -83,9 +82,9 @@ namespace LetheGridTools
 
   /**
    * @brief
-   *Return a vector of cells around a cell including vertex neighbors
+   * Return a vector of cells around a cell including vertex neighbors
    *
-   * @param cell The initial cell. we want to know all the cells that share a vertex with this cell.
+   * @param cell The initial cell. We want to know all the cells that share a vertex with this cell.
    *
    * @param vertices_cell_map see vertices_cell_mapping function description.
    */
@@ -99,10 +98,10 @@ namespace LetheGridTools
 
   /**
    * @brief
-   *Return a vector of cells around a flat cell in spacedim. A flat cell has a
-   *dim of spacedim-1.
+   * Return a vector of cells around a flat cell in spacedim. A flat cell has a
+   * dim of spacedim-1.
    *
-   * @param cell the cell that describes the flat. We want to know all the cells that are cut by the flat.
+   * @param cell The cell that describes the flat. We want to know all the cells that are cut by the flat.
    *
    * @param vertices_cell_map see vertices_cell_mapping function description.
    */
@@ -118,12 +117,12 @@ namespace LetheGridTools
 
   /**
    * @brief
-   *Return a vector of cells around an edge cell in spacedim. An edge cell as a
-   *dim of 1.
+   * Return a vector of cells around an edge cell in spacedim. An edge cell as a
+   * dim of 1.
    *
-   * @param point_1 the first point that describes the edge
+   * @param point_1 The first point that describes the edge
    *
-   * @param point_2 the second point that describes the edge
+   * @param point_2 The second point that describes the edge
    *
    * @param vertices_cell_map see vertices_cell_mapping function description.
    */
@@ -143,7 +142,7 @@ namespace LetheGridTools
    * Return a vector of cells from the dof_handler that are inside a cell from
    * another mesh.
    *
-   * @param cell that describes the volume for which we want to find the cells from the dof_handler that are inside.
+   * @param cell Describes the volume for which we want to obtain the enclosed cells.
    */
   template <int dim>
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -155,9 +154,9 @@ namespace LetheGridTools
    * @brief
    * Return a bool that indicates if a cell is cut by a flat cell
    *
-   * @param cell the cell that we want to check.
+   * @param cell The cell that we want to check.
    *
-   * @param cell_flat the cell that describes the flat.
+   * @param cell_flat The cell that describes the flat.
    */
   template <int dim>
   bool
@@ -169,9 +168,9 @@ namespace LetheGridTools
    * @brief
    * Return a bool that say if a cell is cut by a edge cell
    *
-   * @param cell the cell that we want to check.
+   * @param cell The cell that we want to check.
    *
-   * @param cell_edge the cell that describes the edge.
+   * @param cell_edge The cell that describes the edge.
    */
   template <int dim>
   bool
@@ -183,11 +182,11 @@ namespace LetheGridTools
    * @brief
    * Return a bool that say if a cell is cut by a edge cell
    *
-   * @param cell the cell that we want to check.
+   * @param cell The cell that we want to check.
    *
-   * @param point_1 the first point that describes the edge
+   * @param point_1 The first point that describes the edge
    *
-   * @param point_2 the second point that describes the edge
+   * @param point_2 The second point that describes the edge
    */
   template <int dim>
   bool
@@ -199,12 +198,12 @@ namespace LetheGridTools
 
   /**
    * @brief
-   * A copy of the project_to_d_linear from dealii but it also output the normal
+   * A copy of the project_to_d_linear from dealii that also outputs the normal
    * of the flat
    *
-   * @param object the flat or the edge.
+   * @param object The flat or the edge.
    *
-   * @param trial_point the point we project on the flat or edge
+   * @param trial_point The point we project on the flat or edge
    *
    */
   template <int spacedim, int structdim>

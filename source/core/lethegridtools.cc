@@ -20,8 +20,8 @@ LetheGridTools::vertices_cell_mapping(
   vertices_cell_map.clear();
   const auto &cell_iterator = dof_handler.active_cell_iterators();
 
-  // Loop on all the cells and find their vertices to fill the map of sets of
-  // cells around each vertex
+  // Loop on all the cells and find their vertices, and use them to fill
+  // the map of sets of cells around each vertex
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_locally_owned() || cell->is_ghost())
@@ -47,7 +47,7 @@ LetheGridTools::find_cell_around_point_with_tree(
   const DoFHandler<dim> &dof_handler,
   const Point<dim>      &point)
 {
-  // Define temporary variables to store search parameters and intermediary
+  // Define temporary variables to store search parameters and intermediate
   // results
   MappingQ1<dim> mapping;
   const auto    &cell_iterator = dof_handler.cell_iterators_on_level(0);
@@ -56,7 +56,7 @@ LetheGridTools::find_cell_around_point_with_tree(
 
   bool cell_on_level_0_found = false;
 
-  // loop on the cell on lvl 0 of the mesh
+  // Loop on the cells on level 0 of the mesh
   for (const auto &cell : cell_iterator)
     {
       try
@@ -80,10 +80,11 @@ LetheGridTools::find_cell_around_point_with_tree(
   double best_dist_last = DBL_MAX;
   if (cell_on_level_0_found)
     {
-      // the cell on lvl 0 contain the point so now loop on the childs of
-      // this cell when we found the child of the cell that containt it we
-      // stop and loop if the cell is active if the cell is not active loop
-      // on the child of the cell. Repeat
+      // A cell on level 0 contains the point, so we loop on the children of
+      // this cell. When we found the child of the cell that contains the point,
+      // we check if the cell is active and stop if it is. Otherwise, we repeat
+      // this process until we find the active cell that contains the point.
+
       unsigned int lvl        = 0;
       unsigned int max_childs = GeometryInfo<dim>::max_children_per_cell;
       while (best_cell_iter->is_active() == false)
@@ -148,8 +149,7 @@ LetheGridTools::find_cell_around_point_with_neighbors(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const Point<dim>                                     &point)
 {
-  // Find the cells around the initial cell ( cells that share a vertex with the
-  // original cell).
+  // Find the cells that share a vertex with the original cell.
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
     active_neighbors_set =
       LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map, cell);
@@ -162,7 +162,7 @@ LetheGridTools::find_cell_around_point_with_neighbors(
           return active_neighbors_set[i];
         }
     }
-  // The cell is not found near the initial cell so we use the cell tree
+  // The cell is not found near the initial cell, so we use the cell tree
   // algorithm instead (much slower).
   std::cout << "Cell not found around " << point << std::endl;
   return LetheGridTools::find_cell_around_point_with_tree(dof_handler, point);
@@ -176,14 +176,11 @@ LetheGridTools::find_cells_around_cell(
                                                        &vertices_cell_map,
   const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
-  // Find all the cells that share a vertex with a reference cell including the
+  // Find all the cells that share a vertex with a reference cell, including the
   // initial cell.
-  // std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
-  // LetheGridTools::hash_cell<dim>, LetheGridTools::equal_cell<dim>>
-  // neighbors_cells;
   std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
 
-  // Loop over the vertices of the initial cell and find all the cells around
+  // Loop over the vertices of the initial cell, find all the cells around
   // each vertex and add them to the set of cells around the reference cell.
   for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
     {
@@ -204,12 +201,11 @@ LetheGridTools::find_cells_in_cells(
   const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
   std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_inside;
-  // Loop over all the cell of the dof handler_1 and check one of the vertices
-  // of each cell_iter is contained in cell. This loop also check if the
-  // cell_iter contained a vertex of cell. If either of those are true, the
-  // cell_iter is returned as being contained by cell.
-  // The variable cell is a cell from another mesh then the mesh described by
-  // dof_handler.
+  // Loop over all the cells of the dof handler and check one of the vertices
+  // of each cell is contained in the external cell, or vice versa. If either
+  // of those are true, the cell_iter is added to the set of cells contained by
+  // the external cell.
+
   for (const auto &cell_iter : dof_handler.active_cell_iterators())
     {
       for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
@@ -248,13 +244,10 @@ LetheGridTools::cell_pierced_by_edge(
 
   using numbers::PI;
 
-  // A cell that is pierced either has to:
-  // A) Fill these two conditions
-  //    A1) The projection of one of the cell's
-  //         vertices must fall on the edge
-  //    A2) At least one of the scalar product of the normal as to be negative
-
-
+  // A cell that is pierced either has to fill these two conditions:
+//    A1) The projection of one of the cell's
+//         vertices must fall on the edge
+//    A2) At least one of the scalar product of the normal as to be negative
 
   for (const auto face : cell->face_indices())
     {
