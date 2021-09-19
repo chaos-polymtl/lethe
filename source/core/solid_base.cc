@@ -576,12 +576,22 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::print_particle_positions()
 {
+  std::map<int, Particles::ParticleIterator<spacedim>> local_particles;
   for (auto particle = solid_particle_handler->begin();
        particle != solid_particle_handler->end();
        ++particle)
     {
-      std::cout << "Particle " << particle->get_id() << " : "
-                << particle->get_location() << std::endl;
+      local_particles.insert({particle->get_id(), particle});
+    }
+
+  for (auto &iterator : local_particles)
+    {
+      unsigned int id                = iterator.first;
+      auto         particle          = iterator.second;
+      auto         particle_location = particle->get_location();
+
+      std::cout << std::fixed << std::setprecision(0) << id << " "
+                << std::setprecision(4) << particle_location << std::endl;
     }
 }
 
