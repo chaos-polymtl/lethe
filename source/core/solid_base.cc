@@ -292,11 +292,6 @@ SolidBase<dim, spacedim>::setup_particles_handler()
   solid_particle_handler->initialize(*fluid_tria, *fluid_mapping, n_properties);
 
   // Connect Nitsche particles to the fluid triangulation
-  fluid_tria->signals.pre_distributed_repartition.connect(
-    [&]() { solid_particle_handler->register_store_callback_function(); });
-  fluid_tria->signals.post_distributed_repartition.connect(
-    [&]() { solid_particle_handler->register_load_callback_function(false); });
-
   fluid_tria->signals.pre_distributed_refinement.connect(
     [&]() { solid_particle_handler->register_store_callback_function(); });
   fluid_tria->signals.post_distributed_refinement.connect(
@@ -361,19 +356,35 @@ SolidBase<dim, spacedim>::setup_particles()
   // Compute fluid bounding box
   std::vector<std::vector<BoundingBox<spacedim>>> global_fluid_bounding_boxes;
 
+
+
   // if Triangulation is a parallel::distributed::triangulation, use the naive
   // bounding box algorithm of deal.II
   if (auto tria =
         dynamic_cast<parallel::distributed::Triangulation<spacedim> *>(
           fluid_tria.get()))
     {
+      unsigned int minimal_cell_level = 100;
+      for (const auto &cell : fluid_tria->active_cell_iterators())
+        {
+          if (cell->is_locally_owned())
+            {
+              unsigned int cell_level = cell->level();
+              minimal_cell_level = std::min(minimal_cell_level, cell_level);
+            }
+        }
+
+      minimal_cell_level =
+        Utilities::MPI::min(minimal_cell_level, mpi_communicator);
+
       // Increase number of bounding box level to ensure that insertion is
       // faster. Right now this is set to the maximum refinement level-1 which
       // is a decent heuristic.
-      const unsigned int bounding_box_level = fluid_tria->n_global_levels() - 1;
-      const auto         my_bounding_box =
+      // const unsigned int bounding_box_level = fluid_tria->n_global_levels() -
+      // 1;
+      const auto my_bounding_box =
         GridTools::compute_mesh_predicate_bounding_box(
-          *tria, IteratorFilters::LocallyOwnedCell(), bounding_box_level, true);
+          *tria, IteratorFilters::LocallyOwnedCell(), minimal_cell_level, true);
       global_fluid_bounding_boxes =
         Utilities::MPI::all_gather(mpi_communicator, my_bounding_box);
     }

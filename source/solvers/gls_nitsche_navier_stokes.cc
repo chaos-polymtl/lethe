@@ -668,14 +668,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
               {
                 solid[i_solid]->integrate_velocity(
                   this->simulation_control->get_time_step());
-                // (known issue) Full load of the solid triangulation is not
-                // currently supported if the simulation is restarted, so the
-                // solid triangulation will not be moved in this case
-                if (!this->simulation_parameters.restart_parameters.restart)
-                  {
-                    solid[i_solid]->move_solid_triangulation(
-                      this->simulation_control->get_time_step());
-                  }
+                solid[i_solid]->move_solid_triangulation(
+                  this->simulation_control->get_time_step());
               }
           }
       }
@@ -703,13 +697,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
             {
               output_solid_particles(i_solid);
-              // (known issue) Full load of the solid triangulation is not
-              // currently supported if the simulation is restarted, so the
-              // solid triangulation will not be outputed in this case
-              if (!this->simulation_parameters.restart_parameters.restart)
-                {
-                  output_solid_triangulation(i_solid);
-                }
+              output_solid_triangulation(i_solid);
             }
         }
 
@@ -812,7 +800,7 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
 {
-  TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
+  this->GLSNavierStokesSolver<spacedim>::write_checkpoint();
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder +
@@ -834,188 +822,55 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
             Utilities::int_to_string(i_solid, 2));
         }
     }
-
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-    {
-      // Save Nitsche solid particles
-      std::shared_ptr<Particles::ParticleHandler<spacedim>> &particle_handler =
-        solid[i_solid]->get_solid_particle_handler();
-
-      std::ostringstream            oss;
-      boost::archive::text_oarchive oa(oss, boost::archive::no_header);
-      oa << *particle_handler;
-
-      // Write additional particle information for deserialization
-      std::string particle_filename =
-        prefix + "_sol.particles_" + Utilities::int_to_string(i_solid, 2);
-      std::ofstream output(particle_filename.c_str());
-      output << oss.str() << std::endl;
-
-      // Save solid triangulation (not bounded)
-      if (auto solid_tria =
-            dynamic_cast<parallel::distributed::Triangulation<dim, spacedim> *>(
-              solid[i_solid]->get_solid_triangulation().get()))
-        {
-          solid_tria->save(prefix + "_sol.triangulation_" +
-                           Utilities::int_to_string(i_solid, 2));
-        }
-    }
-
-  // Save Navier-Stokes past and present solution
-  // VectorType = TrilinosWrappers::MPI::Vector
-  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
-  sol_set_transfer.push_back(&this->present_solution);
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
-    {
-      sol_set_transfer.push_back(&this->previous_solutions[i]);
-    }
-
-  parallel::distributed::SolutionTransfer<spacedim,
-                                          TrilinosWrappers::MPI::Vector>
-    system_trans_vectors(this->dof_handler);
-  system_trans_vectors.prepare_for_serialization(sol_set_transfer);
-
-  this->multiphysics->write_checkpoint();
-
-  // Save fluid triangulation with connexion to particles
-  if (auto fluid_tria =
-        dynamic_cast<parallel::distributed::Triangulation<spacedim> *>(
-          this->triangulation.get()))
-    {
-      for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-        {
-          std::shared_ptr<Particles::ParticleHandler<spacedim>>
-            &particle_handler = solid[i_solid]->get_solid_particle_handler();
-
-          fluid_tria->signals.pre_distributed_save.connect(
-            std::bind(&Particles::ParticleHandler<
-                        spacedim>::register_store_callback_function,
-                      particle_handler));
-        }
-      fluid_tria->save(prefix + "_fluid.triangulation");
-    }
-
-  this->pcout << "Checkpoint written for Nitsche solid particles" << std::endl;
 }
 
 template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
 {
-  TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
+  this->GLSNavierStokesSolver<spacedim>::read_checkpoint();
 
+  TimerOutput::Scope t(this->computing_timer,
+                       "Reset Nitsche solid mesh and particles");
+
+  // Reload initial configurations
+  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+    solid[i_solid]->initial_setup();
+
+  // Move configuration to current location
+  double       time      = 0;
+  const double time_step = this->simulation_control->get_time_step();
+  while (time < this->simulation_control->get_current_time())
+    {
+      for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+        {
+          if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+                ->enable_particles_motion)
+            {
+              solid[i_solid]->integrate_velocity(
+                this->simulation_control->get_time_step());
+              solid[i_solid]->move_solid_triangulation(
+                this->simulation_control->get_time_step());
+            }
+        }
+      time += time_step;
+      this->pcout << "Solid is now at time : " << time << std::endl;
+    }
+
+  // Reload particle and solid pvd handlers
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
-  this->simulation_control->read(prefix);
-  unsigned int nb_solid = this->simulation_parameters.nitsche->number_solids;
-
-  // Load Paraview data file for the fluid
-  this->pvdhandler.read(prefix);
-
-  for (unsigned int i_solid = 0; i_solid < nb_solid; ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
     {
-      // Load Paraview data file for Nitsche solids
+      // Load Paraview pvd handler for solid triangulation and particles
       pvdhandler_solid_particles[i_solid].read(
         prefix + "_sol_particles_" + Utilities::int_to_string(i_solid, 2));
       pvdhandler_solid_triangulation[i_solid].read(
         prefix + "_sol_triangulation_" + Utilities::int_to_string(i_solid, 2));
-
-      // Setup Nitsche solid (loads triangulation and particles)
-      // (known issue) The solid triangulation cannot be fully loaded for now,
-      // so it must be set prior to loading
-      solid[i_solid]->setup_triangulation(true);
-
-      // Load triangulation and particles : commented for now to avoid
-      // misinterpretation. Should be uncommented when loading bug is fixed.
-      //      solid[i_solid]->load_triangulation(prefix + "_sol.triangulation_"
-      //      + Utilities::int_to_string(i_solid,2));
-
-      solid[i_solid]->load_particles(prefix + "_sol.particles_" +
-                                     Utilities::int_to_string(i_solid, 2));
     }
-
-  this->pcout << "Number of solid loaded : " << solid.size() << std::endl
-              << std::endl;
-
-  this->pcout
-    << "Warning - the solid triangulation cannot be properly loaded,"
-    << std::endl
-    << "so from now on only the visualisation of the solid particles is correct."
-    << std::endl
-    << std::endl;
-
-  // Load fluid triangulation with connexion to particles
-  const std::string filename = prefix + "_fluid.triangulation";
-  std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename + "> does not appear to exist!"));
-
-  try
-    {
-      if (auto fluid_tria =
-            dynamic_cast<parallel::distributed::Triangulation<spacedim> *>(
-              this->triangulation.get()))
-        {
-          for (unsigned int i_solid = 0; i_solid < nb_solid; ++i_solid)
-            {
-              std::shared_ptr<Particles::ParticleHandler<spacedim>> &
-                particle_handler = solid[i_solid]->get_solid_particle_handler();
-              // Connect must be done before load, or else particles position
-              // are reset
-              fluid_tria->signals.post_distributed_load.connect(
-                std::bind(&Particles::ParticleHandler<
-                            spacedim>::register_load_callback_function,
-                          particle_handler,
-                          true));
-            }
-
-          fluid_tria->load(filename.c_str());
-        }
-    }
-  catch (...)
-    {
-      AssertThrow(false,
-                  ExcMessage("Cannot open snapshot mesh file or read the "
-                             "fluid triangulation stored there."));
-    }
-
-  // Setup Navier-Stokes trans vectors
-  this->setup_dofs();
-
-  TrilinosWrappers::MPI::Vector distributed_system(this->locally_owned_dofs,
-                                                   this->mpi_communicator);
-  std::vector<TrilinosWrappers::MPI::Vector *> x_system(
-    1 + this->previous_solutions.size());
-  x_system[0] = &(distributed_system);
-
-  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
-  distributed_previous_solutions.reserve(this->previous_solutions.size());
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
-    {
-      distributed_previous_solutions.emplace_back(
-        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
-                                      this->mpi_communicator));
-      x_system[i + 1] = &distributed_previous_solutions[i];
-    }
-
-  parallel::distributed::SolutionTransfer<spacedim,
-                                          TrilinosWrappers::MPI::Vector>
-    system_trans_vectors(this->dof_handler);
-
-  system_trans_vectors.deserialize(x_system);
-  this->present_solution = distributed_system;
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
-    {
-      this->previous_solutions[i] = distributed_previous_solutions[i];
-    }
-  this->multiphysics->read_checkpoint();
 }
+
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library
 // is valid before we actually compile the solver This greatly helps with
