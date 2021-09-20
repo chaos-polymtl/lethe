@@ -91,7 +91,7 @@ public:
     Parameters::DynamicFlowControl ::declare_parameters(prm);
     particlesParameters.declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
-    Parameters::Non_Newtonian::declare_parameters(prm);
+    non_newtonian.declare_parameters(prm);
 
     analytical_solution = new AnalyticalSolutions::AnalyticalSolution<dim>;
     analytical_solution->declare_parameters(prm);

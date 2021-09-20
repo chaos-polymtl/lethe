@@ -1456,9 +1456,6 @@ namespace Parameters
         const std::string op = prm.get("model");
         if (op == "carreau")
           model = Model::carreau;
-        else
-          throw std::logic_error(
-            "Error, invalid non newtonian model. Choices are carreau");
       }
       viscosity_0     = prm.get_double("viscosity_0");;
       viscosity_inf   = prm.get_double("viscosity_inf");
