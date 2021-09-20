@@ -52,7 +52,12 @@ Contributors (in alphabetical order):
 - Shahab Golshan
 - Jeanne Joachim
 - Rajeshwari Kamble
+- Martin Kronbichler
 - Ghazaleh Mirakhori
+- Peter Munch
+- Paul Patience
+- Laura Prieto Saavedra
+- Catherine Radburn
 
 ## Installation
 
