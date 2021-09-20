@@ -688,6 +688,32 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Non Newtonian - Defines the parameters for 
+   * non newtonian flows.
+   */
+
+  struct Non_Newtonian
+  {
+    // Non Newtonian model
+    enum class Model
+    {
+      none,
+      carreau
+    };
+
+    Model  model;
+    double viscosity_0;
+    double viscosity_inf;
+    double lambda;
+    double a;
+    double n;
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
 
 } // namespace Parameters
 #endif

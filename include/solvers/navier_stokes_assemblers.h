@@ -293,6 +293,44 @@ public:
   double                             gamma;
 };
 
+template <int dim>
+class GDNavierStokesAssemblerCarreauCore : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GDNavierStokesAssemblerCarreauCore(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const double                       gamma)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , gamma(gamma)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  double                             gamma;
+};
+
 
 /**
  * @brief Class that assembles a Poisson problem for all velocity components and pressure variables .

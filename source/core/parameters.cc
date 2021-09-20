@@ -1412,6 +1412,63 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  void
+  Non_Newtonian::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("non newtonian");
+    {
+      prm.declare_entry("model",
+                        "none",
+                        Patterns::Selection("none|carreau"),
+                        "Non newtonian model "
+                        "Choices are <none|carreau>.");
+      prm.declare_entry("viscosity_0",
+                        "1",
+                        Patterns::Double(),
+                        "Viscosity at rest");
+      prm.declare_entry("viscosity_inf",
+                        "2",
+                        Patterns::Double(),
+                        "Viscosity for an infinite constraint");
+      prm.declare_entry("lambda",
+                        "1",
+                        Patterns::Double(),
+                        "Relaxation time");
+      prm.declare_entry("a",
+                        "1",
+                        Patterns::Double(),
+                        "Relaxation time");
+      prm.declare_entry("n",
+                        "1",
+                        Patterns::Double(),
+                        "Power parameter");
+            
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  Non_Newtonian::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("non newtonian");
+    {
+      {
+        const std::string op = prm.get("model");
+        if (op == "carreau")
+          model = Model::carreau;
+        else
+          throw std::logic_error(
+            "Error, invalid non newtonian model. Choices are carreau");
+      }
+      viscosity_0     = prm.get_double("viscosity_0");;
+      viscosity_inf   = prm.get_double("viscosity_inf");
+      lambda          = prm.get_double("lambda");
+      a               = prm.get_double("a");
+      n               = prm.get_double("n");
+    }
+    prm.leave_subsection();
+  }
+
   template class IBParticles<2>;
   template class IBParticles<3>;
 } // namespace Parameters
