@@ -591,7 +591,7 @@ SolidBase<dim, spacedim>::print_particle_positions()
       auto         particle_location = particle->get_location();
 
       std::cout << std::fixed << std::setprecision(0) << id << " "
-                << std::setprecision(4) << particle_location << std::endl;
+                << std::setprecision(2) << particle_location << std::endl;
     }
 }
 
