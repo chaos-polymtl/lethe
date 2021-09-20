@@ -569,6 +569,19 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  struct MeshBoxRefinement
+  {
+    // GMSH or dealii
+    std::shared_ptr<Mesh> box_mesh;
+    // Initial refinement level of primitive mesh contained in the box
+    unsigned int initial_refinement;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
 
   /**
    * @brief Testing - Some solvers have a specific testing
@@ -634,7 +647,6 @@ namespace Parameters
   public:
     unsigned int                 nb;
     unsigned int                 order;
-    unsigned int                 nb_force_eval;
     unsigned int                 initial_refinement;
     double                       inside_radius;
     double                       outside_radius;

@@ -761,6 +761,34 @@ namespace Parameters
   }
 
   void
+  MeshBoxRefinement::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("box refinement");
+    {
+      box_mesh = std::make_shared<Mesh>();
+      box_mesh->declare_parameters(prm);
+
+      prm.declare_entry("initial refinement",
+                        "0",
+                        Patterns::Integer(),
+                        "Initial refinement of the principal mesh");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  MeshBoxRefinement::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("box refinement");
+    {
+      box_mesh->parse_parameters(prm);
+
+      initial_refinement = prm.get_integer("initial refinement");
+    }
+    prm.leave_subsection();
+  }
+
+  void
   LinearSolver::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("linear solver");
@@ -1188,11 +1216,6 @@ namespace Parameters
         Patterns::Double(),
         "The factor that multiplie the radius to define the outside bound for the refinement of the mesh");
       prm.declare_entry(
-        "nb force evaluation",
-        "100",
-        Patterns::Integer(),
-        "Number of evaluation of the pressure and viscosity force at the boundary per particle  ");
-      prm.declare_entry(
         "calculate force",
         "true",
         Patterns::Bool(),
@@ -1300,7 +1323,6 @@ namespace Parameters
       initial_refinement = prm.get_integer("initial refinement");
       inside_radius      = prm.get_double("refine mesh inside radius factor");
       outside_radius     = prm.get_double("refine mesh outside radius factor");
-      nb_force_eval      = prm.get_integer("nb force evaluation");
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
       density              = prm.get_double("fluid density");
