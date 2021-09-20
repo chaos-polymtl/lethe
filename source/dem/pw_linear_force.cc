@@ -103,13 +103,10 @@ PWLinearForce<dim>::PWLinearForce(
     dem_parameters.forces_torques.calculate_force_torque;
   this->center_mass_container =
     dem_parameters.forces_torques.triangulation_center_mass;
-  this->triangulation_mass   = dem_parameters.forces_torques.triangulation_mass;
-  this->inclined_plane_angle = dem_parameters.grid_motion.inclined_plane_angle;
-  this->boundary_index       = boundary_index;
+  this->triangulation_mass = dem_parameters.forces_torques.triangulation_mass;
+  this->boundary_index     = boundary_index;
   for (unsigned int d = 0; d < dim; ++d)
     this->gravity[d] = dem_parameters.physical_properties.g[d];
-  this->force_on_walls  = this->initialize();
-  this->torque_on_walls = this->initialize();
 }
 
 template <int dim>
@@ -123,8 +120,11 @@ PWLinearForce<dim>::calculate_pw_contact_force(
   std::vector<Tensor<1, dim>> &momentum,
   std::vector<Tensor<1, dim>> &force)
 {
-  PWContactForce<dim>::force_on_walls  = PWContactForce<dim>::initialize();
-  PWContactForce<dim>::torque_on_walls = PWContactForce<dim>::initialize();
+  PWContactForce<dim>::force_on_walls =
+    PWContactForce<dim>::initialize_boundary_force();
+  PWContactForce<dim>::torque_on_walls =
+    PWContactForce<dim>::initialize_boundary_torque();
+
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
   for (auto &&pairs_in_contact_content :

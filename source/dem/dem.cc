@@ -188,6 +188,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     input_parameter_inspection(parameters,
                                pcout,
                                standard_deviation_multiplier);
+
+  // Modifying the gravitational acceleration vector for inclined surfaces
+  parameters.physical_properties.g =
+    parameters.physical_properties.g *
+    sin(parameters.grid_motion.inclined_plane_angle);
 }
 
 template <int dim>

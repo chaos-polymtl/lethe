@@ -623,10 +623,10 @@ namespace Parameters
                         "0,0,0",
                         Patterns::List(Patterns::Double(), 3, 3),
                         "coordinate of center of mass");
-      prm.declare_entry("moment of inertia",
+      prm.declare_entry("effective moment of inertia",
                         "0,0,0",
                         Patterns::List(Patterns::Double(), 3, 3),
-                        "Boundary inertia around x,y,z axis");
+                        "Boundary effective inertia (I + m * R * R)");
       prm.leave_subsection();
     }
 
@@ -652,7 +652,7 @@ namespace Parameters
       std::vector<double> vec_center_mass = Utilities::string_to_double(
         Utilities::split_string_list(prm.get("center of mass")));
       std::vector<double> vec_inertia = Utilities::string_to_double(
-        Utilities::split_string_list(prm.get("moment of inertia")));
+        Utilities::split_string_list(prm.get("effective moment of inertia")));
       for (unsigned int i = 0; i < dim; i++)
         {
           if (!(dim == 2 & i == 2))

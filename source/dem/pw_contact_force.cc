@@ -118,25 +118,30 @@ PWContactForce<dim>::calculate_force_and_torque_on_boundary(
           torque_on_walls[boundary_id] +=
             -cross_product_3d(point_contact - center_mass_container, add_force);
         }
-
-      if (inclined_plane_angle != 0)
-        {
-          Tensor<1, dim> gravitational_torque =
-            cross_product_3d(center_mass_container - point_contact,
-                             triangulation_mass * gravity);
-          torque_on_walls[boundary_id] += gravitational_torque;
-        }
     }
 }
 
 template <int dim>
 std::map<unsigned int, Tensor<1, dim>>
-PWContactForce<dim>::initialize()
+PWContactForce<dim>::initialize_boundary_force()
 {
   std::map<unsigned int, Tensor<1, dim>> map;
   for (const auto &it : boundary_index)
     {
-      map[it] = 0;
+      map[it] = this->triangulation_mass * this->gravity;
+    }
+  return map;
+}
+
+template <int dim>
+std::map<unsigned int, Tensor<1, dim>>
+PWContactForce<dim>::initialize_boundary_torque()
+{
+  std::map<unsigned int, Tensor<1, dim>> map;
+  for (const auto &it : boundary_index)
+    {
+      map[it] =
+        this->triangulation_mass * this->gravity * this->triangulation_radius;
     }
   return map;
 }

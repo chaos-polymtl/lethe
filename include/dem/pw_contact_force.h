@@ -155,11 +155,19 @@ protected:
                                          Tensor<1, dim>     add_force,
                                          const Point<dim>   point_contact);
 
-  /** This function is used to initialize a map of vectors to zero
-   * with the member class boundary index which has the keys as information
+  /** This function is used to initialize a map of vectors (force on boundaries)
+   * to gravitational force acting on the boundary, with the member class
+   * boundary index which has the keys as information
    */
   std::map<unsigned int, Tensor<1, dim>>
-  initialize();
+  initialize_boundary_force();
+
+  /** This function is used to initialize a map of vectors (torque on
+   * boundaries) to gravitational torque acting on the boundary, with the member
+   * class boundary index which has the keys as information
+   */
+  std::map<unsigned int, Tensor<1, dim>>
+  initialize_boundary_torque();
 
   /** This function sums all the forces and torques from all the
    * MPI processes
@@ -203,10 +211,6 @@ protected:
   double                                 triangulation_mass;
   Tensor<1, dim>                         gravity;
   std::vector<types::boundary_id>        boundary_index;
-
-  // A variable for cylinder_motion (grid motion) to show the angle of the
-  // inclined plane on which the cylinder is rolling
-  double inclined_plane_angle;
 };
 
 #endif /* particle_wall_contact_force_h */

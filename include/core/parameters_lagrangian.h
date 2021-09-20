@@ -247,7 +247,8 @@ namespace Parameters
       // Enable force post-processing
       bool calculate_force_torque;
 
-      // Choosing how the outputs is displayed
+      // Enables printing the results to the standard output in which in the
+      // simulation is running
       Parameters::Verbosity force_torque_verbosity;
 
       // Output frequency
@@ -259,7 +260,7 @@ namespace Parameters
       // Center of mass of the triangulation
       Point<dim> triangulation_center_mass;
 
-      // Triangulation inertia
+      // Triangulation effective inertia (I + m * R * R)
       Tensor<1, dim> triangulation_inertia;
 
       // Prefix for simulation output
@@ -383,7 +384,8 @@ namespace Parameters
       // Initial rotational boundary velocity
       Tensor<1, dim> boundary_initial_rotational_velocity;
 
-      // Inclined plane angle for cylinder motion
+      // Inclined plane angle for cylinder motion. This parameter is multiplied
+      // by the gravitational acceleration in the simulation
       double inclined_plane_angle;
 
       static void
