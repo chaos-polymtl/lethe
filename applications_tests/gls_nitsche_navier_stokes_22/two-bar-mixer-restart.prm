@@ -91,8 +91,8 @@ subsection nitsche
 	subsection nitsche solid 0
 		subsection mesh
 			set type = dealii
-			set grid type = hyper_ball
-			set grid arguments = -0.3, -0.3 : 0.2 : true
+			set grid type = hyper_rectangle
+			set grid arguments = -0.5, -0.5 : -0.1, -0.1 : true
 			set initial refinement = 2
 		end
 		set enable particles motion = true
@@ -103,8 +103,8 @@ subsection nitsche
 	subsection nitsche solid 1
 		subsection mesh
 			set type = dealii
-			set grid type = hyper_ball
-			set grid arguments = 0.3, 0.3 : 0.2 : true
+   			set grid type = hyper_rectangle
+			set grid arguments = 0.1, 0.1 : 0.5, 0.5 : true
 			set initial refinement = 2
 		end
 		set enable particles motion = true
