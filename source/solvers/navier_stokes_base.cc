@@ -873,7 +873,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto                            &present_solution = this->present_solution;
+  auto &                           present_solution = this->present_solution;
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::pressure)
     {
@@ -1116,11 +1116,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
       double             kE = calculate_kinetic_energy(this->dof_handler,
-                                                       present_solution,
-                                                       mpi_communicator,
-                                                       *this->fe,
-                                                       *this->cell_quadrature,
-                                                       *this->mapping);
+                                           present_solution,
+                                           mpi_communicator,
+                                           *this->fe,
+                                           *this->cell_quadrature,
+                                           *this->mapping);
       this->kinetic_energy_table.add_value(
         "time", simulation_control->get_current_time());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);

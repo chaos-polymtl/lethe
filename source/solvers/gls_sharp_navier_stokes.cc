@@ -520,7 +520,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       local_weight +=
                                         fe_face_projection_values.shape_value(
                                           i, q);
- 
                                     }
                                 }
 
