@@ -692,7 +692,6 @@ namespace Parameters
    * @brief Non Newtonian - Defines the parameters for 
    * non newtonian flows.
    */
-
   struct Non_Newtonian
   {
     // Non Newtonian model
