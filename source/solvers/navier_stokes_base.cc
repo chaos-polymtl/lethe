@@ -659,7 +659,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 {
-  // Read the mesh for that define the box use in this function
+  // Read the mesh that define the box use in this function
   Triangulation<dim> box_to_refine;
   if (this->simulation_parameters.mesh_box_refinement->box_mesh->type ==
       Parameters::Mesh::Type::gmsh)
@@ -748,13 +748,13 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
         }
     }
 
-  // define a local dof handler of this mesh.
+  // Define a local dofhandler of this mesh. This won't be needed in later
+  // version of LetheGridTools
 
   box_to_refine.refine_global(this->simulation_parameters.mesh_box_refinement
                                 ->box_mesh->initial_refinement);
   DoFHandler<dim> box_to_refine_dof_handler(box_to_refine);
-
-  // refine the number of time needed
+  // Refine the number of time needed
   for (unsigned int i = 0;
        i < this->simulation_parameters.mesh_box_refinement->initial_refinement;
        ++i)
@@ -873,7 +873,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &                           present_solution = this->present_solution;
+  auto                            &present_solution = this->present_solution;
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::pressure)
     {
@@ -1116,11 +1116,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
       double             kE = calculate_kinetic_energy(this->dof_handler,
-                                           present_solution,
-                                           mpi_communicator,
-                                           *this->fe,
-                                           *this->cell_quadrature,
-                                           *this->mapping);
+                                                       present_solution,
+                                                       mpi_communicator,
+                                                       *this->fe,
+                                                       *this->cell_quadrature,
+                                                       *this->mapping);
       this->kinetic_energy_table.add_value(
         "time", simulation_control->get_current_time());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);

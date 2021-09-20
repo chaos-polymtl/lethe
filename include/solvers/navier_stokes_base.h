@@ -317,9 +317,6 @@ protected:
   virtual void
   first_iteration();
 
-  void
-  refine_mesh();
-
   /**
    * @brief Allow the initial refinement of all cells of the principal mesh that are partially
    * contained in one of the cells of the box refinement mesh given in the
@@ -328,9 +325,24 @@ protected:
   void
   box_refine_mesh();
 
+  /**
+   * @brief Allow the refinement of the mesh according to one of the 2 methods proposed
+   */
+  void
+  refine_mesh();
+
+  /**
+   * @brief Allow the refinement of the mesh based on the Kelly error estimator.
+   * See :
+   * https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html
+   * for more information on the Kelly error estimator.
+   */
   void
   refine_mesh_kelly();
 
+  /**
+   * @brief Allow the uniform refinement of all the mesh.
+   */
   void
   refine_mesh_uniform();
 
