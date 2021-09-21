@@ -189,16 +189,39 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                pcout,
                                standard_deviation_multiplier);
 
-  // If the cylinder motion is enables and the inclined plane angle is not equal to zero, we modify the components of the gravity vector in y and z directions
+  // If the cylinder motion is enables and the inclined plane angle is not equal
+  // to zero, we modify the components of the gravity vector in y and z
+  // directions
   if (dem_parameters.grid_motion.motion_type ==
-          Parameters::Lagrangian::GridMotion<dim>::MotionType::cylinder_motion && dem_parameters.grid_motion.inclined_plane_angle != 0.)
-  {
-
+        Parameters::Lagrangian::GridMotion<dim>::MotionType::cylinder_motion &&
+      dem_parameters.grid_motion.inclined_plane_angle != 0.)
+    {
+      pcout
+        << std::endl
+        << "*****************************************************************"
+        << std::endl;
+      pcout
+        << "The cylinder motion with inclined plane angle modifies the components"
+        << std::endl
+        << "of the gravity vector by g * sin(theta) and g * cos(theta) in y and z "
+        << std::endl
+        << "coordinates, respectively. Note that in this configuration, the cylinder"
+        << std::endl
+        << "rotation axis must be in x direction (cylinder rotation axis = 0)"
+        << std::endl;
+      pcout
+        << "*****************************************************************"
+        << std::endl
+        << std::endl;
 
       dem_parameters.physical_properties.g[0] = 0;
-  dem_parameters.physical_properties.g[1] = dem_parameters.physical_properties.g.norm() * sin(dem_parameters.grid_motion.inclined_plane_angle);
-  dem_parameters.physical_properties.g[2] = dem_parameters.physical_properties.g.norm() * cos(dem_parameters.grid_motion.inclined_plane_angle);
-  }
+      dem_parameters.physical_properties.g[1] =
+        dem_parameters.physical_properties.g.norm() *
+        sin(dem_parameters.grid_motion.inclined_plane_angle);
+      dem_parameters.physical_properties.g[2] =
+        dem_parameters.physical_properties.g.norm() *
+        cos(dem_parameters.grid_motion.inclined_plane_angle);
+    }
 }
 
 template <int dim>

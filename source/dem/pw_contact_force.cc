@@ -17,8 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/pw_contact_force.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/pw_contact_force.h>
 
 // Updates the contact information (contact_info) based on the new information
 // of particles pair in the current time step
@@ -119,10 +119,12 @@ PWContactForce<dim>::calculate_force_and_torque_on_boundary(
 
       force_on_walls[boundary_id] = force_on_walls[boundary_id] - add_force;
 
- if (dim == 3)
+      if (dim == 3)
         {
-          torque_on_walls[boundary_id] += cross_product_3d(point_contact - center_mass_container, force_in_rolling_direction)
-            - cross_product_3d(point_contact - center_mass_container, add_force);
+          torque_on_walls[boundary_id] +=
+            cross_product_3d(point_contact - center_mass_container,
+                             force_in_rolling_direction) -
+            cross_product_3d(point_contact - center_mass_container, add_force);
         }
     }
 }
@@ -134,7 +136,8 @@ PWContactForce<dim>::initialize_boundary_force()
   std::map<unsigned int, Tensor<1, dim>> map;
   for (const auto &it : boundary_index)
     {
-      map[it] = this->triangulation_mass * this->gravity * sin(this->inclined_plane_angle);
+      map[it] = this->triangulation_mass * this->gravity *
+                sin(this->inclined_plane_angle);
     }
   return map;
 }
@@ -156,8 +159,9 @@ PWContactForce<dim>::initialize_boundary_torque()
         }
 
       // Torque is applied only in the direction of rotation
-      map[it] =
-        this->triangulation_mass * (this->gravity.norm() * rolling_vector) * this->triangulation_radius * sin(this->inclined_plane_angle);
+      map[it] = this->triangulation_mass *
+                (this->gravity.norm() * rolling_vector) *
+                this->triangulation_radius * sin(this->inclined_plane_angle);
     }
   return map;
 }

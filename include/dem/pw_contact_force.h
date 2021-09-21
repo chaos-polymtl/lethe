@@ -210,8 +210,8 @@ protected:
   double                                 triangulation_mass;
   Tensor<1, dim>                         gravity;
   std::vector<types::boundary_id>        boundary_index;
-  unsigned int rotation_axis;
-  double inclined_plane_angle;
+  unsigned int                           rotation_axis;
+  double                                 inclined_plane_angle;
 };
 
 #endif /* particle_wall_contact_force_h */

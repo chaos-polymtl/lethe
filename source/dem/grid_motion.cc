@@ -120,7 +120,7 @@ void GridMotion<3>::cylinder_motion(
         {
           // triangulation_forces += it.second;
           triangulation_torques += torque_on_walls[it.first];
-      }
+        }
       Tensor<1, 3> rotational_velocity_one_time_step_further;
 
       // Calculation of rotation angle
