@@ -117,6 +117,8 @@ PWContactForce<dim>::calculate_force_and_torque_on_boundary(
             force_in_rolling_direction[d] = 0;
         }
 
+      force_on_walls[boundary_id] = force_on_walls[boundary_id] - add_force;
+
  if (dim == 3)
         {
           torque_on_walls[boundary_id] += cross_product_3d(point_contact - center_mass_container, force_in_rolling_direction)
@@ -166,6 +168,8 @@ PWContactForce<dim>::mpi_summation_of_forces()
 {
   for (const auto &it : boundary_index)
     {
+      force_on_walls[it] =
+        Utilities::MPI::sum(force_on_walls[it], MPI_COMM_WORLD);
       torque_on_walls[it] =
         Utilities::MPI::sum(torque_on_walls[it], MPI_COMM_WORLD);
     }

@@ -496,6 +496,8 @@ DEMSolver<dim>::particle_wall_contact_force()
 
   if (parameters.forces_torques.calculate_force_torque)
     {
+      forces_boundary_information[simulation_control->get_step_number()] =
+        pw_contact_force_object->get_force();
       torques_boundary_information[simulation_control->get_step_number()] =
         pw_contact_force_object->get_torque();
     }

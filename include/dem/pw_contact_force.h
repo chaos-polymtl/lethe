@@ -68,6 +68,12 @@ public:
     std::vector<Tensor<1, dim>> &force) = 0;
 
   std::map<unsigned int, Tensor<1, dim>>
+  get_force()
+  {
+    return force_on_walls;
+  }
+
+  std::map<unsigned int, Tensor<1, dim>>
   get_torque()
   {
     return torque_on_walls;
@@ -197,6 +203,7 @@ protected:
   std::map<types::particle_index, double> effective_coefficient_of_friction;
   std::map<types::particle_index, double>
                                          effective_coefficient_of_rolling_friction;
+  std::map<unsigned int, Tensor<1, dim>> force_on_walls;
   std::map<unsigned int, Tensor<1, dim>> torque_on_walls;
   bool                                   calculate_force_torque_on_boundary;
   Point<dim>                             center_mass_container;
