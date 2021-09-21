@@ -105,8 +105,7 @@ void GridMotion<3>::cylinder_motion(
       // Update forces like torque and force
       std::map<unsigned int, Tensor<1, 3>> force_on_walls, torque_on_walls;
 
-      // Calling get_force() and get_torque() functions in PWContactForce class
-      force_on_walls  = pw_contact_force_object->get_force();
+      // Calling get_torque() function in PWContactForce class
       torque_on_walls = pw_contact_force_object->get_torque();
 
       // At the moment, we only define rotational motion of the cylindrical
@@ -117,11 +116,11 @@ void GridMotion<3>::cylinder_motion(
 
       // triangulation_forces  = 0;
       triangulation_torques = 0;
-      for (auto it : force_on_walls)
+      for (auto it : torque_on_walls)
         {
           // triangulation_forces += it.second;
           triangulation_torques += torque_on_walls[it.first];
-        }
+      }
       Tensor<1, 3> rotational_velocity_one_time_step_further;
 
       // Calculation of rotation angle

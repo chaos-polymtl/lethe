@@ -385,7 +385,7 @@ namespace Parameters
       Tensor<1, dim> boundary_initial_rotational_velocity;
 
       // Inclined plane angle for cylinder motion. This parameter is multiplied
-      // by the gravitational acceleration in the simulation
+      // by the force and toruqe acting on the triangulation
       double inclined_plane_angle;
 
       static void

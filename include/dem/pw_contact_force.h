@@ -17,7 +17,6 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 #include <dem/dem_properties.h>
-#include <dem/dem_solver_parameters.h>
 #include <dem/pw_contact_info_struct.h>
 
 #include <boost/math/special_functions.hpp>
@@ -67,12 +66,6 @@ public:
     const double &               dt,
     std::vector<Tensor<1, dim>> &momentum,
     std::vector<Tensor<1, dim>> &force) = 0;
-
-  std::map<unsigned int, Tensor<1, dim>>
-  get_force()
-  {
-    return force_on_walls;
-  }
 
   std::map<unsigned int, Tensor<1, dim>>
   get_torque()
@@ -169,11 +162,11 @@ protected:
   std::map<unsigned int, Tensor<1, dim>>
   initialize_boundary_torque();
 
-  /** This function sums all the forces and torques from all the
+  /** This function sums all the torques from all the
    * MPI processes
    */
   void
-  mpi_correction_over_calculation_of_forces_and_torques();
+  mpi_summation_of_forces();
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -204,13 +197,14 @@ protected:
   std::map<types::particle_index, double> effective_coefficient_of_friction;
   std::map<types::particle_index, double>
                                          effective_coefficient_of_rolling_friction;
-  std::map<unsigned int, Tensor<1, dim>> force_on_walls;
   std::map<unsigned int, Tensor<1, dim>> torque_on_walls;
   bool                                   calculate_force_torque_on_boundary;
   Point<dim>                             center_mass_container;
   double                                 triangulation_mass;
   Tensor<1, dim>                         gravity;
   std::vector<types::boundary_id>        boundary_index;
+  unsigned int rotation_axis;
+  double inclined_plane_angle;
 };
 
 #endif /* particle_wall_contact_force_h */

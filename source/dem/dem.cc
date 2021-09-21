@@ -188,11 +188,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     input_parameter_inspection(parameters,
                                pcout,
                                standard_deviation_multiplier);
-
-  // Modifying the gravitational acceleration vector for inclined surfaces
-  parameters.physical_properties.g =
-    parameters.physical_properties.g *
-    sin(parameters.grid_motion.inclined_plane_angle);
 }
 
 template <int dim>
@@ -501,8 +496,6 @@ DEMSolver<dim>::particle_wall_contact_force()
 
   if (parameters.forces_torques.calculate_force_torque)
     {
-      forces_boundary_information[simulation_control->get_step_number()] =
-        pw_contact_force_object->get_force();
       torques_boundary_information[simulation_control->get_step_number()] =
         pw_contact_force_object->get_torque();
     }

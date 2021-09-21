@@ -117,6 +117,9 @@ PWNonLinearForce<dim>::PWNonLinearForce(
   this->boundary_index     = boundary_index;
   for (unsigned int d = 0; d < dim; ++d)
     this->gravity[d] = dem_parameters.physical_properties.g[d];
+
+  this->rotation_axis = dem_parameters.grid_motion.cylinder_rotation_axis;
+  this->inclined_plane_angle = dem_parameters.grid_motion.inclined_plane_angle;
 }
 
 template <int dim>
@@ -130,8 +133,6 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
   std::vector<Tensor<1, dim>> &momentum,
   std::vector<Tensor<1, dim>> &force)
 {
-  PWContactForce<dim>::force_on_walls =
-    PWContactForce<dim>::initialize_boundary_force();
   PWContactForce<dim>::torque_on_walls =
     PWContactForce<dim>::initialize_boundary_torque();
 
@@ -218,7 +219,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             }
         }
     }
-  this->mpi_correction_over_calculation_of_forces_and_torques();
+  this->mpi_summation_of_forces();
 }
 
 // Calculates nonlinear contact force and torques
