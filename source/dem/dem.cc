@@ -188,6 +188,17 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     input_parameter_inspection(parameters,
                                pcout,
                                standard_deviation_multiplier);
+
+  // If the cylinder motion is enables and the inclined plane angle is not equal to zero, we modify the components of the gravity vector in y and z directions
+  if (dem_parameters.grid_motion.motion_type ==
+          Parameters::Lagrangian::GridMotion<dim>::MotionType::cylinder_motion && dem_parameters.grid_motion.inclined_plane_angle != 0.)
+  {
+
+
+      dem_parameters.physical_properties.g[0] = 0;
+  dem_parameters.physical_properties.g[1] = dem_parameters.physical_properties.g.norm() * sin(dem_parameters.grid_motion.inclined_plane_angle);
+  dem_parameters.physical_properties.g[2] = dem_parameters.physical_properties.g.norm() * cos(dem_parameters.grid_motion.inclined_plane_angle);
+  }
 }
 
 template <int dim>

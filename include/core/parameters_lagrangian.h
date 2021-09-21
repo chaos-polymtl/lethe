@@ -384,8 +384,7 @@ namespace Parameters
       // Initial rotational boundary velocity
       Tensor<1, dim> boundary_initial_rotational_velocity;
 
-      // Inclined plane angle for cylinder motion. This parameter is multiplied
-      // by the force and toruqe acting on the triangulation
+      // Inclined plane angle for cylinder motion. Note that after defining this parameter, the components of the gravitaty vector in y and z directions are modified by g * sin(theta) and g * cos(theta), respectively
       double inclined_plane_angle;
 
       static void
