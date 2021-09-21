@@ -1085,6 +1085,78 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
 template <int dim>
 void
+GLSSharpNavierStokesSolver<dim>::particles_dem()
+{
+  using numbers::PI;
+  Tensor<1, dim> g   = this->simulation_parameters.particlesParameters.gravity;
+  double         rho = this->simulation_parameters.particlesParameters.density;
+  double dt= this->simulation_control->get_time_steps_vector()[0];
+  double dt_dem=dt/1000;
+  double particle_stiffness=10000;
+  //local time for the dem step
+  std::vector<Tensor<1,dim>> normal_contact_force(particles.size());
+  std::vector<Tensor<1,dim>> current_fluid_force(particles.size());
+
+  std::vector<Tensor<1,dim>> velocity(particles.size());
+  std::vector<Point<dim>> position(particles.size());
+
+  double t=0;
+  Tensor<1, dim> gravity;
+
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
+      position[p_i]=particles[p_i].last_position;
+      velocity[p_i]=particles[p_i].last_velocity;
+      particles[p_i].impulsion=0;
+    }
+
+  while(t<dt) {
+      normal_contact_force.clear();
+      normal_contact_force.resize(particles.size());
+      current_fluid_force.clear();
+      current_fluid_force.resize(particles.size());
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
+          // Particle Particle contact force;
+          for (unsigned int p_j = 0; p_j < particles.size(); ++p_j) {
+              if(p_j!=p_i) {
+                  double overlap = 0;
+                  double dist = (position[p_i] - position[p_j] ).norm();
+                  if (dist < (particles[p_i].radius + particles[p_j].radius)) {
+                      overlap = (particles[p_i].radius + particles[p_j].radius)-dist;
+                    }
+                  normal_contact_force[p_i]+=(position[p_i] - position[p_j] )/dist*overlap*particle_stiffness;
+                }
+            }
+          // current fluid_force (inteprolate the fluide force in the current time step)
+        }
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
+          if (dim == 2)
+            gravity =
+              g * (particles[p_i].mass -
+                   particles[p_i].radius * particles[p_i].radius * PI * rho);
+          if (dim == 3)
+            {
+              gravity =
+                g * (particles[p_i].mass - 4.0 / 3.0 * particles[p_i].radius *
+                                             particles[p_i].radius *
+                                             particles[p_i].radius * PI * rho);
+            }
+
+          current_fluid_force[p_i]=particles[p_i].last_forces+(particles[p_i].forces-particles[p_i].last_forces)*t/dt;
+
+          velocity[p_i]=velocity[p_i] +(current_fluid_force[p_i]+normal_contact_force[p_i]+ gravity) * dt_dem / particles[p_i].mass;
+          position[p_i]= position[p_i] +velocity[p_i]* dt_dem ;
+          particles[p_i].impulsion+=(current_fluid_force[p_i]+normal_contact_force[p_i]+ gravity) * dt_dem;
+        }
+      t+=dt_dem;
+    }
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
+      particles[p_i].position=position[p_i];
+    }
+
+}
+
+template <int dim>
+void
 GLSSharpNavierStokesSolver<dim>::integrate_particles()
 {
 
@@ -1839,7 +1911,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                        particles[ib_particle_id],
                                        support_points[local_dof_indices[i]]);
 
-                      // Find the cell used for the stencil definition.
                       // Find the cell used for the stencil definition.
                       auto point_to_find_cell =
                         stencil.point_for_cell_detection(
