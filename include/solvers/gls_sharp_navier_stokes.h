@@ -264,6 +264,13 @@ private:
 
   /**
    * @brief
+   * Function that allow subtime stepping to allow contact between particle.
+   * Note : This function is a prototype and will be heavely modified in upcomming PR.
+   */
+  void
+  particles_dem();
+  /**
+   * @brief
    * Store the solution of the particles dynamics parameters for integration.
    * Defines the table to store the history of each of the particles.
    */

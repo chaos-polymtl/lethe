@@ -50,6 +50,8 @@ IBParticle<dim>::initialise_all()
   last_omega            = omega;
   omega_iter            = omega;
   last_angular_position = angular_position;
+  impulsion     =0;
+  impulsion_iter=0;
 }
 
 template <int dim>

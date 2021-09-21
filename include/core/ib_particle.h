@@ -114,6 +114,9 @@ public:
   // iteration.
   Tensor<1, 3> omega_iter;
 
+  Tensor<1, dim> impulsion;
+  Tensor<1, dim> impulsion_iter;
+
   std::shared_ptr<Functions::ParsedFunction<dim>> f_velocity;
   std::shared_ptr<Functions::ParsedFunction<dim>> f_position;
   std::shared_ptr<Functions::ParsedFunction<dim>> f_omega;
