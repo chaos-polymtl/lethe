@@ -2192,6 +2192,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
             }
         }
     }
+  MPI_Barrier(this->mpi_communicator);
 
   this->system_rhs.compress(VectorOperation::insert);
   this->system_matrix.compress(VectorOperation::insert);
