@@ -51,7 +51,9 @@ HeatTransferScratchData<dim>::allocate()
     n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
   this->laplacian_phi_T =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
-}
+
+   this->phi_face_T = std::vector<double>(n_dofs);
+  }
 
 
 template class HeatTransferScratchData<2>;

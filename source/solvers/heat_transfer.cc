@@ -78,7 +78,8 @@ HeatTransfer<dim>::assemble_system_matrix()
   auto scratch_data = HeatTransferScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
                                                    *this->temperature_mapping,
-                                                   dof_handler_fluid->get_fe());
+                                                   dof_handler_fluid->get_fe(),
+                                                   *this->face_quadrature);
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -169,7 +170,8 @@ HeatTransfer<dim>::assemble_system_rhs()
   auto scratch_data = HeatTransferScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
                                                    *this->temperature_mapping,
-                                                   dof_handler_fluid->get_fe());
+                                                   dof_handler_fluid->get_fe(),
+                                                   *this->face_quadrature);
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
