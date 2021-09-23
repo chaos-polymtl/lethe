@@ -173,6 +173,7 @@ private:
         dim>::assemble_system_matrix_without_preconditioner();
       this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
     }
+
     sharp_edge();
 
     // Assemble the preconditioner
@@ -364,19 +365,11 @@ private:
 
 
   /**
-   * @brief
-   * Return the cell around a point based on a initial guess of a closed cell
-   * (look in the neighbors of this cell)
-   *
-   * @param cell , The initial cell. We suspect the point of being in one of the neighbours of this cell.
-   *
-   * @param point, The point that we want to find the cell that contains it
+   * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
    */
-  typename DoFHandler<dim>::active_cell_iterator
-  find_cell_around_point_with_neighbors(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    Point<dim>                                            point);
 
+  virtual void
+  write_checkpoint() override;
 
   /**
 * @brief
@@ -409,11 +402,11 @@ Return a bool that describes  if a cell contains a specific point
    *Return a vector of cells around a cell including vertex neighbors
    *
    * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
+   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart
    */
-  std::vector<typename DoFHandler<dim>::active_cell_iterator>
-  find_cells_around_cell(
-    const typename DoFHandler<dim>::active_cell_iterator &cell);
 
+  virtual void
+  read_checkpoint() override;
 
   /**
    * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
@@ -502,6 +495,7 @@ Return a bool that describes  if a cell contains a specific point
   /**
    * Members
    */
+
 private:
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
