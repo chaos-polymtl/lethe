@@ -83,11 +83,11 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  HeatTransferScratchData(const FiniteElement<dim> &fe_ht,
-                          const Quadrature<dim> &   quadrature,
-                          const Mapping<dim> &      mapping,
-                          const FiniteElement<dim> &fe_navier_stokes,
-                             const Quadrature<dim - 1> &face_quadrature)
+  HeatTransferScratchData(const FiniteElement<dim> & fe_ht,
+                          const Quadrature<dim> &    quadrature,
+                          const Mapping<dim> &       mapping,
+                          const FiniteElement<dim> & fe_navier_stokes,
+                          const Quadrature<dim - 1> &face_quadrature)
     : fe_values_T(mapping,
                   fe_ht,
                   quadrature,
@@ -100,8 +100,8 @@ public:
     , fe_face_values_ht(mapping,
                         fe_ht,
                         face_quadrature,
-                                          update_values | update_quadrature_points |
-                                            update_JxW_values)
+                        update_values | update_quadrature_points |
+                          update_JxW_values)
   {
     allocate();
   }
@@ -132,8 +132,8 @@ public:
     , fe_face_values_ht(sd.fe_face_values_ht.get_mapping(),
                         sd.fe_face_values_ht.get_fe(),
                         sd.fe_face_values_ht.get_quadrature(),
-                                          update_values | update_quadrature_points |
-                                            update_JxW_values)
+                        update_values | update_quadrature_points |
+                          update_JxW_values)
   {
     allocate();
   }
@@ -172,8 +172,8 @@ public:
   {
     this->fe_values_T.reinit(cell);
 
-      this->cell = cell;
-      this->evaluation_point = current_solution;
+    this->cell             = cell;
+    this->evaluation_point = current_solution;
 
     quadrature_points = this->fe_values_T.get_quadrature_points();
     auto &fe_T        = this->fe_values_T.get_fe();
@@ -276,11 +276,11 @@ public:
   std::vector<Tensor<1, dim>> velocity_values;
   std::vector<Tensor<2, dim>> velocity_gradient_values;
 
-  //Robin boundary condition
-  std::vector<double> phi_face_T;
+  // Robin boundary condition
+  std::vector<double>                            phi_face_T;
   typename DoFHandler<dim>::active_cell_iterator cell;
-    FEFaceValues<dim> fe_face_values_ht;
-    TrilinosWrappers::MPI::Vector  evaluation_point;
+  FEFaceValues<dim>                              fe_face_values_ht;
+  TrilinosWrappers::MPI::Vector                  evaluation_point;
 };
 
 #endif

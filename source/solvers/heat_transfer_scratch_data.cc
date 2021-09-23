@@ -52,8 +52,11 @@ HeatTransferScratchData<dim>::allocate()
   this->laplacian_phi_T =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
 
-   this->phi_face_T = std::vector<double>(n_dofs);
-  }
+  // Is this correct?
+  this->present_face_temperature_values =
+    std::vector<double>(this->fe_face_values_ht.get_fe().degree);
+  this->phi_face_T = std::vector<double>(n_dofs);
+}
 
 
 template class HeatTransferScratchData<2>;
