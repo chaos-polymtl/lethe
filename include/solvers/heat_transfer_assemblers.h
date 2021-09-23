@@ -165,4 +165,49 @@ public:
   const bool                         GGLS = true;
 };
 
+
+/**
+ * @brief Class that assembles the Robin boundary condition for the heat transfer solver.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerRBC : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerRBC(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const SimulationParameters<dim> &  p_simulation_parameters)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , simulation_parameters(p_simulation_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData &   copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData &   copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  const SimulationParameters<dim> &  simulation_parameters;
+};
+
 #endif

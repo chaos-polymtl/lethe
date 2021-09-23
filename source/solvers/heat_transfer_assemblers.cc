@@ -463,3 +463,26 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
 
 template class HeatTransferAssemblerBDF<2>;
 template class HeatTransferAssemblerBDF<3>;
+
+
+template <int dim>
+void
+HeatTransferAssemblerRBC<dim>::assemble_matrix(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &   copy_data)
+{
+
+}
+
+template <int dim>
+void
+HeatTransferAssemblerRBC<dim>::assemble_rhs(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &   copy_data)
+{
+
+}
+
+template class HeatTransferAssemblerRBC<2>;
+template class HeatTransferAssemblerRBC<3>;
+
