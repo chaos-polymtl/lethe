@@ -49,6 +49,12 @@ HeatTransfer<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
+    this->assemblers.push_back(
+      std::make_shared<HeatTransferAssemblerRBC<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.physical_properties,
+        this->simulation_parameters));
+
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {

@@ -471,6 +471,78 @@ HeatTransferAssemblerRBC<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
+      auto &local_matrix    = copy_data.local_matrix;
+
+    // Robin boundary condition, loop on faces (Newton's cooling law)
+    // implementation similar to deal.ii step-7
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+         ++i_bc)
+      {
+        if (this->simulation_parameters.boundary_conditions_ht
+              .type[i_bc] == BoundaryConditions::BoundaryType::convection)
+          {
+            const double h =
+              this->simulation_parameters.boundary_conditions_ht.h[i_bc];
+
+
+           // if (cell->is_locally_owned())
+           //  {
+                for (unsigned int face = 0;
+                     face < GeometryInfo<dim>::faces_per_cell;
+                     face++)
+                  {
+                    if (scratch_data.cell->face(face)->at_boundary() &&
+                        (scratch_data.cell->face(face)->boundary_id() ==
+                         this->simulation_parameters.boundary_conditions_ht
+                           .id[i_bc]))
+                      {
+                        scratch_data.fe_face_values_ht.reinit(scratch_data.cell, face);
+                        scratch_data.fe_face_values_ht.get_function_values(
+                          scratch_data.evaluation_point,
+                          scratch_data.present_face_temperature_values);
+                        {
+                          for (const unsigned int q :
+                               scratch_data.fe_face_values_ht
+                                 .quadrature_point_indices())
+                            {
+                              const double JxW = scratch_data.fe_face_values_ht.JxW(q);
+                              for (unsigned int k :
+                                   scratch_data.fe_values_T.dof_indices())
+                                scratch_data.phi_face_T[k] =
+                                  scratch_data.fe_face_values_ht.shape_value(k, q);
+
+                              for (const unsigned int i :
+                                   scratch_data.fe_values_T.dof_indices())
+                                {
+
+                                      for (const unsigned int j :
+                                           scratch_data.fe_values_T.dof_indices())
+                                        {
+                                          // Weak form modification
+                                          local_matrix(i, j) +=
+                                            scratch_data.phi_face_T[i] *
+                                            scratch_data.phi_face_T[j] * h * JxW;
+                                        }
+
+                                }
+                            }
+                        }
+                      }
+                  }
+              //}
+          }
+      } // end loop for Robin condition
+}
+
+template <int dim>
+void
+HeatTransferAssemblerRBC<dim>::assemble_rhs(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &   copy_data)
+{
+    auto &local_rhs       = copy_data.local_rhs;
+
     // Robin boundary condition, loop on faces (Newton's cooling law)
     // implementation similar to deal.ii step-7
     for (unsigned int i_bc = 0;
@@ -499,37 +571,26 @@ HeatTransferAssemblerRBC<dim>::assemble_matrix(
                       {
                         scratch_data.fe_face_values_ht.reinit(scratch_data.cell, face);
                         scratch_data.fe_face_values_ht.get_function_values(
-                          evaluation_point,
-                          present_face_temperature_values);
+                          scratch_data.evaluation_point,
+                          scratch_data.present_face_temperature_values);
                         {
                           for (const unsigned int q :
-                               fe_face_values_ht
+                               scratch_data.fe_face_values_ht
                                  .quadrature_point_indices())
                             {
-                              const double JxW = fe_face_values_ht.JxW(q);
+                              const double JxW = scratch_data.fe_face_values_ht.JxW(q);
                               for (unsigned int k :
-                                   fe_values_ht.dof_indices())
-                                phi_face_T[k] =
-                                  fe_face_values_ht.shape_value(k, q);
+                                   scratch_data.fe_values_T.dof_indices())
+                                scratch_data.phi_face_T[k] =
+                                  scratch_data.fe_face_values_ht.shape_value(k, q);
 
                               for (const unsigned int i :
-                                   fe_values_ht.dof_indices())
+                                   scratch_data.fe_values_T.dof_indices())
                                 {
-                                  if (assemble_matrix)
-                                    {
-                                      for (const unsigned int j :
-                                           fe_values_ht.dof_indices())
-                                        {
-                                          // Weak form modification
-                                          cell_matrix(i, j) +=
-                                            phi_face_T[i] *
-                                            phi_face_T[j] * h * JxW;
-                                        }
-                                    }
                                   // Residual
-                                  cell_rhs(i) -=
-                                    phi_face_T[i] * h *
-                                    (present_face_temperature_values[q] -
+                                  local_rhs(i) -=
+                                    scratch_data.phi_face_T[i] * h *
+                                    (scratch_data.present_face_temperature_values[q] -
                                      T_inf) *
                                     JxW;
                                 }
@@ -540,15 +601,6 @@ HeatTransferAssemblerRBC<dim>::assemble_matrix(
               //}
           }
       } // end loop for Robin condition
-}
-
-template <int dim>
-void
-HeatTransferAssemblerRBC<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
-{
-
 }
 
 template class HeatTransferAssemblerRBC<2>;

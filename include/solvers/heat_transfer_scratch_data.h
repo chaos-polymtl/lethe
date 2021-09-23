@@ -173,6 +173,7 @@ public:
     this->fe_values_T.reinit(cell);
 
       this->cell = cell;
+      this->evaluation_point = current_solution;
 
     quadrature_points = this->fe_values_T.get_quadrature_points();
     auto &fe_T        = this->fe_values_T.get_fe();
@@ -279,6 +280,7 @@ public:
   std::vector<double> phi_face_T;
   typename DoFHandler<dim>::active_cell_iterator cell;
     FEFaceValues<dim> fe_face_values_ht;
+    TrilinosWrappers::MPI::Vector  evaluation_point;
 };
 
 #endif
