@@ -222,7 +222,7 @@ namespace Parameters
   }
 
   void
-  NoNewtonian::parse_parameters(ParameterHandler &prm)
+  NonNewtonian::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("non newtonian");
     {
