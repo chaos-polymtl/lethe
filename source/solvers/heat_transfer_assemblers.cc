@@ -139,8 +139,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
-  std::cout << "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh " << std::endl;
-
   const auto         method = this->simulation_control->get_assembly_method();
   const unsigned int n_q_points = scratch_data.n_q_points;
   const double       h          = scratch_data.cell_size;
