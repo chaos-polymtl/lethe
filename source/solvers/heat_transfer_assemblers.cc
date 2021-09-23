@@ -93,16 +93,6 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
             std::sqrt(std::pow(sdt, 2) + std::pow(2. * rho_cp * u_mag / h, 2) +
                       9 * std::pow(4 * alpha / (h * h), 2));
 
-
-      for (unsigned int j = 0; j < n_dofs; ++j)
-        {
-          const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi_T[q][j];
-          const double laplacian_phi_T_j = scratch_data.laplacian_phi_T[q][j];
-          strong_jacobian_vec[q][j] += rho_cp * velocity * grad_phi_T_j -
-                                       thermal_conductivity * laplacian_phi_T_j;
-        }
-
-
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_T_i      = scratch_data.phi_T[q][i];

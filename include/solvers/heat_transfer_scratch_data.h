@@ -96,7 +96,7 @@ public:
     , fe_values_navier_stokes(mapping,
                               fe_navier_stokes,
                               quadrature,
-                              update_values)
+                              update_values | update_gradients)
     , fe_face_values_ht(mapping,
                         fe_ht,
                         face_quadrature,
@@ -128,7 +128,7 @@ public:
     , fe_values_navier_stokes(sd.fe_values_navier_stokes.get_mapping(),
                               sd.fe_values_navier_stokes.get_fe(),
                               sd.fe_values_navier_stokes.get_quadrature(),
-                              update_values)
+                              update_values | update_gradients)
     , fe_face_values_ht(sd.fe_face_values_ht.get_mapping(),
                         sd.fe_face_values_ht.get_fe(),
                         sd.fe_face_values_ht.get_quadrature(),
@@ -235,6 +235,14 @@ public:
 
     this->fe_values_navier_stokes[velocities].get_function_values(
       current_solution, velocity_values);
+  }
+
+  template <typename VectorType>
+  void
+  reinit_velocity_gradient(const VectorType &current_solution)
+  {
+    this->fe_values_navier_stokes[velocities].get_function_gradients(
+      current_solution, velocity_gradient_values);
   }
 
   // FEValues for the HT problem

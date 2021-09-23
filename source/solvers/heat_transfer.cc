@@ -49,6 +49,7 @@ HeatTransfer<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
+  // Robin boundary condition
   this->assemblers.push_back(std::make_shared<HeatTransferAssemblerRBC<dim>>(
     this->simulation_control,
     this->simulation_parameters.physical_properties,
@@ -63,6 +64,7 @@ HeatTransfer<dim>::setup_assemblers()
           this->simulation_parameters.physical_properties,
           this->simulation_parameters));
     }
+
   // Core assembler
   this->assemblers.push_back(std::make_shared<HeatTransferAssemblerCore<dim>>(
     this->simulation_control,
@@ -221,11 +223,17 @@ HeatTransfer<dim>::assemble_local_system_rhs(
       scratch_data.reinit_velocity(velocity_cell,
                                    *multiphysics->get_block_solution(
                                      PhysicsID::fluid_dynamics));
+
+      scratch_data.reinit_velocity_gradient(
+        *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
     }
   else
     {
       scratch_data.reinit_velocity(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+
+      scratch_data.reinit_velocity_gradient(
+        *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
 
   copy_data.reset();
