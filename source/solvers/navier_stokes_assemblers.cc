@@ -710,6 +710,15 @@ GDNavierStokesAssemblerCarreauCore<dim>::assemble_matrix(
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
+      // Calculate shear rate
+      const Tensor<2, dim> shear_rate = velocity_gradient 
+        + transpose(velocity_gradient);
+      double shear_rate_magnitude = 0;
+      for (unsigned int d = 0; d < dim; ++d)
+      {
+        shear_rate_magnitude += (shear_rate[d] * shear_rate[d]);
+      }
+      shear_rate_magnitude = sqrt(0.5 * shear_rate_magnitude);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
