@@ -60,7 +60,7 @@ public:
   std::shared_ptr<Parameters::VoidFraction<dim>>    void_fraction;
   Parameters::CFDDEM                                cfd_dem;
   Parameters::DynamicFlowControl                    flow_control;
-  Parameters::Non_Newtonian                         non_newtonian;
+  Parameters::NonNewtonian                          non_newtonian;
   Parameters::Multiphysics                          multiphysics;
 
   void

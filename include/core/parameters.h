@@ -170,6 +170,31 @@ namespace Parameters
     double tracer_diffusivity;
   };
 
+    /**
+   * @brief Non Newtonian - Defines the parameters for 
+   * non newtonian flows.
+   */
+
+  struct NonNewtonian
+  {
+    // Non Newtonian model
+    enum class Model
+    {
+      carreau
+    };
+
+    Model  model;
+    double viscosity_0;
+    double viscosity_inf;
+    double lambda;
+    double a;
+    double n;
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
   /**
    * @brief PhysicalProperties - Define the possible physical properties.
    * All continuum equations share the same physical properties object but only
@@ -194,6 +219,8 @@ namespace Parameters
     double thermal_conductivity;
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
+    // Non Newtonian parameters
+    NonNewtonian non_newtonian_parameters;
 
     // Fluid objects for multiphasic simulations
     std::vector<Fluid>        fluids;
@@ -687,32 +714,6 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-
-  /**
-   * @brief Non Newtonian - Defines the parameters for 
-   * non newtonian flows.
-   */
-  struct Non_Newtonian
-  {
-    // Non Newtonian model
-    enum class Model
-    {
-      none,
-      carreau
-    };
-
-    Model  model;
-    double viscosity_0;
-    double viscosity_inf;
-    double lambda;
-    double a;
-    double n;
-    static void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
-
 
 } // namespace Parameters
 #endif

@@ -687,15 +687,20 @@ GDNavierStokesAssemblerCarreauCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  // Non newtonian parameters
+  const double viscosity      = physical_properties.viscosity;
+  const double viscosity_0    = physical_properties.non_newtonian_parameters.viscosity_0;
+  const double viscosity_inf  = physical_properties.non_newtonian_parameters.viscosity_inf;
+  const double lambda         = physical_properties.non_newtonian_parameters.lambda;
+  const double a              = physical_properties.non_newtonian_parameters.n;
+  const double n              = physical_properties.non_newtonian_parameters.a;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  // Copy data elements
+  // Copy data elementscd ../
   auto &local_matrix = copy_data.local_matrix;
 
   // Loop over the quadrature points
