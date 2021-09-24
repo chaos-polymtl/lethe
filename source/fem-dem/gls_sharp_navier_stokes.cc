@@ -1453,7 +1453,77 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force()
-{}
+{
+  for (auto &particle : dem_particles)
+    {
+      for (auto &boundary_cell : boundary_cells)
+        {
+          auto boundary_cell_information = boundary_cell.second;
+
+          auto normal_vector     = boundary_cell_information.normal_vector;
+          auto point_on_boundary = boundary_cell_information.point_on_boundary;
+
+          // A vector (point_to_particle_vector) is defined which connects the
+          // center of particle to the point_on_boundary. This vector will then
+          // be projected on the normal vector of the boundary to obtain the
+          // particle-wall distance
+          Tensor<1, dim> point_to_particle_vector =
+            particle.position - point_on_boundary;
+
+          // Finding the projected vector on the normal vector of the boundary.
+          // Here we have used the private function find_projection. Using this
+          // projected vector, the particle-wall distance is calculated
+          Tensor<1, dim> projected_vector =
+            find_projection(point_to_particle_vector, normal_vector);
+
+          double normal_overlap = particle.radius - (projected_vector.norm());
+
+          if (normal_overlap > 0)
+            {
+              contact_information.normal_overlap = normal_overlap;
+
+              this->update_contact_information(contact_information,
+                                               particle_properties,
+                                               dt);
+
+              // This tuple (forces and torques) contains four elements which
+              // are: 1, normal force, 2, tangential force, 3, tangential torque
+              // and 4, rolling resistance torque, respectively
+              std::tuple<Tensor<1, dim>,
+                         Tensor<1, dim>,
+                         Tensor<1, dim>,
+                         Tensor<1, dim>>
+                forces_and_torques =
+                  this->calculate_nonlinear_contact_force_and_torque(
+                    contact_information, particle_properties);
+
+              // Getting particle's momentum and force
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+              types::particle_index particle_id = particle->get_local_index();
+#else
+              types::particle_index particle_id = particle->get_id();
+#endif
+              Tensor<1, dim> &particle_momentum = momentum[particle_id];
+              Tensor<1, dim> &particle_force    = force[particle_id];
+
+              // Apply the calculated forces and torques on the particle pair
+              this->apply_force_and_torque(forces_and_torques,
+                                           particle_momentum,
+                                           particle_force,
+                                           point_on_boundary,
+                                           contact_information.boundary_id);
+            }
+          else
+            {
+              contact_information.normal_overlap = 0;
+              for (int d = 0; d < dim; ++d)
+                {
+                  contact_information.tangential_overlap[d] = 0;
+                }
+            }
+        }
+    }
+}
 
 template <int dim>
 void
