@@ -92,6 +92,7 @@ public:
   unsigned int   particle_id;
 
   Tensor<1, 3> torques;
+  Tensor<1, 3> last_torques;
   double       mass;
   Tensor<2, 3> inertia;
   // Translational velocity
@@ -114,6 +115,8 @@ public:
   // iteration.
   Tensor<1, 3> omega_iter;
 
+
+
   Tensor<1, dim> impulsion;
   Tensor<1, dim> impulsion_iter;
 
@@ -121,6 +124,9 @@ public:
   std::shared_ptr<Functions::ParsedFunction<dim>> f_position;
   std::shared_ptr<Functions::ParsedFunction<dim>> f_omega;
 
+
+  Tensor<1, 3> omega_impulsion;
+  Tensor<1, 3> omega_impulsion_iter;
 
   // Allow the definition of a local relaxation parameter for each particle in
   // the integration process.

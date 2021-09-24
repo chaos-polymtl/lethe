@@ -11,9 +11,9 @@ IBParticle<dim>::initialise_all()
   local_alpha_torque = 1;
   local_alpha_force  = 1;
 
-  inertia[0][0] = 0;
-  inertia[1][1] = 0;
-  inertia[2][2] = 0;
+  inertia[0][0] = 1;
+  inertia[1][1] = 1;
+  inertia[2][2] = 1;
 
   forces[0] = 0;
   forces[1] = 0;
@@ -44,6 +44,7 @@ IBParticle<dim>::initialise_all()
     }
 
   last_forces           = forces;
+  last_torques          = torques;
   last_position         = position;
   last_velocity         = velocity;
   velocity_iter         = velocity;
