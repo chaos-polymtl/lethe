@@ -1070,33 +1070,36 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::particles_dem()
-{// add refilling containers
+{ // add refilling containers
   using numbers::PI;
   Tensor<1, dim> g   = this->simulation_parameters.particlesParameters.gravity;
   double         rho = this->simulation_parameters.particlesParameters.density;
-  double dt= this->simulation_control->get_time_steps_vector()[0];
-  double dt_dem=dt/1000;
-  double particle_stiffness=10000;
-  //local time for the dem step
-  std::vector<Tensor<1,dim>> contact_force(particles.size());
-  std::vector<Tensor<1,dim>> current_fluid_force(particles.size());
-  std::vector<Tensor<1,3>> current_fluid_torque(particles.size());
-  std::vector<Tensor<1,3>> current_contact_torque(particles.size());
+  double         dt  = this->simulation_control->get_time_steps_vector()[0];
+  double         dt_dem             = dt / 1000;
+  double         particle_stiffness = 10000;
+  // local time for the dem step
+  std::vector<Tensor<1, dim>> contact_force(particles.size());
+  std::vector<Tensor<1, dim>> current_fluid_force(particles.size());
+  std::vector<Tensor<1, dim>> dem_contact_torque(particles.size());
 
-  std::vector<Tensor<1,dim>> velocity(particles.size());
-  std::vector<Point<dim>> position(particles.size());
+  std::vector<Tensor<1, 3>> current_fluid_torque(particles.size());
+  std::vector<Tensor<1, 3>> current_contact_torque(particles.size());
 
-  double t=0;
+  std::vector<Tensor<1, dim>> velocity(particles.size());
+  std::vector<Point<dim>>     position(particles.size());
+
+  double         t = 0;
   Tensor<1, dim> gravity;
 
-  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
-      position[p_i]=particles[p_i].last_position;
-      velocity[p_i]=particles[p_i].last_velocity;
-      particles[p_i].impulsion=0;
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      position[p_i]            = particles[p_i].last_position;
+      velocity[p_i]            = particles[p_i].last_velocity;
+      particles[p_i].impulsion = 0;
     }
 
-  while(t<dt) {
-
+  while (t < dt)
+    {
       current_fluid_force.clear();
       current_fluid_force.resize(particles.size());
       current_fluid_torque.clear();
@@ -1107,6 +1110,8 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
       current_contact_torque.resize(particles.size());
       contact_force.clear();
       contact_force.resize(particles.size());
+      dem_contact_torque.clear();
+      dem_contact_torque.resize(particles.size());
 
       /*for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
           // Particle Particle contact force;
@@ -1115,14 +1120,24 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
                   double overlap = 0;
                   double dist = (position[p_i] - position[p_j] ).norm();
                   if (dist < (particles[p_i].radius + particles[p_j].radius)) {
-                      overlap = (particles[p_i].radius + particles[p_j].radius)-dist;
+                      overlap = (particles[p_i].radius +
+        particles[p_j].radius)-dist;
                     }
-                  contact_force[p_i]+=(position[p_i] - position[p_j] )/dist*overlap*particle_stiffness;
+                  contact_force[p_i]+=(position[p_i] - position[p_j]
+        )/dist*overlap*particle_stiffness;
                 }
             }
-          // current fluid_force (inteprolate the fluide force in the current time step)
+          // current fluid_force (inteprolate the fluide force in the current
+        time step)
         }*/ //add dem pp and pw force torque
-      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
+
+      // Calculate particle-particle and particle-wall contact force
+      calculate_pp_contact_force(dt_dem, contact_force, dem_contact_torque);
+      calculate_pw_contact_force();
+
+
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
           if (dim == 2)
             gravity =
               g * (particles[p_i].mass -
@@ -1135,25 +1150,301 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
                                              particles[p_i].radius * PI * rho);
             }
 
-          current_fluid_force[p_i]=particles[p_i].last_forces+(particles[p_i].forces-particles[p_i].last_forces)*t/dt;
-          current_fluid_torque[p_i]=particles[p_i].last_torques+(particles[p_i].torques-particles[p_i].last_torques)*t/dt;
+          current_fluid_force[p_i] =
+            particles[p_i].last_forces +
+            (particles[p_i].forces - particles[p_i].last_forces) * t / dt;
+          current_fluid_torque[p_i] =
+            particles[p_i].last_torques +
+            (particles[p_i].torques - particles[p_i].last_torques) * t / dt;
 
-          velocity[p_i]=velocity[p_i] +(current_fluid_force[p_i]+contact_force[p_i]+ gravity) * dt_dem / particles[p_i].mass;
-          position[p_i]= position[p_i] +velocity[p_i]* dt_dem ;
-          particles[p_i].impulsion+=(current_fluid_force[p_i]+contact_force[p_i]+ gravity) * dt_dem;
+          velocity[p_i] = velocity[p_i] + (current_fluid_force[p_i] +
+                                           contact_force[p_i] + gravity) *
+                                            dt_dem / particles[p_i].mass;
+          position[p_i] = position[p_i] + velocity[p_i] * dt_dem;
+          particles[p_i].impulsion +=
+            (current_fluid_force[p_i] + contact_force[p_i] + gravity) * dt_dem;
         }
-      t+=dt_dem;
+      t += dt_dem;
     }
-  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
-      particles[p_i].position=position[p_i];
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      particles[p_i].position = position[p_i];
     }
-
 }
+
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
+  const double &               dt_dem,
+  std::vector<Tensor<1, dim>> &contact_force,
+  std::vector<Tensor<1, dim>> &contact_torque)
+{
+  for (auto &particle_one : dem_particles)
+    {
+      for (auto &particle_two : dem_particles)
+        {
+          if (particle_one.particle_id != particle_two.particle_id)
+            {
+              contact_tangential_history contact_history;
+
+              const Point<dim> particle_one_location = particle_one.position;
+              const Point<dim> particle_two_location = particle_two.position;
+
+              auto contact_info = &contact_map[particle_one.particle_id]
+                                              [particle_two.particle_id];
+
+
+              // Calculation of normal overlap
+              double normal_overlap =
+                (particle_one.radius + particle_two.radius) -
+                particle_one_location.distance(particle_two_location);
+
+              if (normal_overlap > 0)
+                // This means that the adjacent particles are in contact
+                {
+                  // Calculation of the contact vector (vector from particle one
+                  // to particle two
+                  auto contact_vector =
+                    particle_two_location - particle_one_location;
+
+                  // Using contact_vector, the contact normal vector is obtained
+                  auto normal_unit_vector =
+                    contact_vector / contact_vector.norm();
+
+                  // Defining relative contact velocity
+                  Tensor<1, dim> contact_relative_velocity;
+
+                  if (dim == 3)
+                    {
+                      // Calculation of contact relative velocity
+                      contact_relative_velocity =
+                        (particle_one.velocity - particle_two.velocity) +
+                        (cross_product_3d(
+                          (particle_one.radius * particle_one.omega +
+                           particle_two.radius * particle_two.omega),
+                          normal_unit_vector));
+                    }
+                  else
+                    {
+                      // TODO: Correct this after correcting dem_2d
+                      contact_relative_velocity =
+                        particle_one.velocity - particle_two.velocity;
+                    }
+
+                  auto normal_relative_velocity_value =
+                    contact_relative_velocity * normal_unit_vector;
+                  Tensor<1, dim> normal_relative_velocity =
+                    normal_relative_velocity_value * normal_unit_vector;
+
+                  // Calculation of tangential relative velocity
+                  Tensor<1, dim> tangential_relative_velocity =
+                    contact_relative_velocity - normal_relative_velocity;
+
+                  Tensor<1, dim> modified_tangential_overlap =
+                    contact_info.tangential_overlap +
+                    contact_info.tangential_relative_velocity * dt_dem;
+
+                  // Updating the contact_info container based on the new
+                  // calculated values
+                  contact_history.tangential_overlap =
+                    modified_tangential_overlap;
+                  contact_history.tangential_relative_velocity =
+                    tangential_relative_velocity;
+                  contact_info.insert(contact_history);
+
+
+                  const double effective_mass =
+                    (particle_one.mass * particle_two.mass) /
+                    (particle_one.mass + particle_two.mass);
+                  const double effective_radius =
+                    (particle_one.radius * particle_two.radius) /
+                    (particle_one.radius + particle_two.radius);
+                  const double effective_youngs_modulus =
+                    (particle_one.youngs_modulus *
+                     particle_two.youngs_modulus) /
+                    ((particle_two.youngs_modulus *
+                      (1 - particle_one.poisson_ratio *
+                             particle_one.poisson_ratio)) +
+                     (particle_one.youngs_modulus *
+                      (1 - particle_two.poisson_ratio *
+                             particle_two.poisson_ratio)) +
+                     DBL_MIN);
+
+                  const double effective_shear_modulus =
+                    (particle_one.youngs_modulus *
+                     particle_two.youngs_modulus) /
+                    (2 * ((particle_two.youngs_modulus *
+                           (2 - particle_one.poisson_ratio) *
+                           (1 + particle_one.poisson_ratio)) +
+                          (particle_one.youngs_modulus *
+                           (2 - particle_two.poisson_ratio) *
+                           (1 + particle_two.poisson_ratio))) +
+                     DBL_MIN);
+
+
+                  const double effective_coefficient_of_restitution =
+                    2 * particle_one.restitution_coefficient *
+                    particle_two.restitution_coefficient /
+                    (particle_one.restitution_coefficient +
+                     particle_two.restitution_coefficient + DBL_MIN);
+
+                  const double effective_coefficient_of_friction =
+                    2 * particle_one.friction_coefficient *
+                    particle_two.friction_coefficient /
+                    (particle_one.friction_coefficient +
+                     particle_two.friction_coefficient + DBL_MIN);
+
+
+                  const double effective_coefficient_of_rolling_friction =
+                    2 * particle_one.rolling_friction_coefficient *
+                    particle_two.rolling_friction_coefficient /
+                    (particle_one.rolling_friction_coefficient +
+                     particle_two.rolling_friction_coefficient + DBL_MIN);
+
+                  const double restitution_coefficient_particle_log =
+                    std::log(effective_coefficient_of_restitution);
+
+                  const double model_parameter_beta =
+                    restitution_coefficient_particle_log /
+                    sqrt(restitution_coefficient_particle_log *
+                           restitution_coefficient_particle_log +
+                         9.8696);
+
+                  const double radius_times_overlap_sqrt =
+                    sqrt(this->effective_radius * normal_overlap);
+
+                  const double model_parameter_sn =
+                    2 * effective_youngs_modulus * radius_times_overlap_sqrt;
+
+                  double model_parameter_st =
+                    8 * effective_youngs_modulus * radius_times_overlap_sqrt;
+
+                  // Calculation of normal and tangential spring and dashpot
+                  // constants using particle properties
+                  double normal_spring_constant = 0.66665 * model_parameter_sn;
+                  double normal_damping_constant =
+                    -1.8257 * model_parameter_beta *
+                    sqrt(model_parameter_sn * this->effective_mass);
+                  double tangential_spring_constant =
+                    8 * effective_shear_modulus * radius_times_overlap_sqrt +
+                    DBL_MIN;
+                  double tangential_damping_constant =
+                    normal_damping_constant *
+                    sqrt(model_parameter_st / model_parameter_sn);
+
+                  // Calculation of normal force using spring and dashpot normal
+                  // forces
+                  Tensor<1, dim> normal_force =
+                    ((normal_spring_constant * normal_overlap) *
+                     normal_unit_vector) +
+                    ((normal_damping_constant *
+                      normal_relative_velocity_value) *
+                     normal_unit_vector);
+
+                  // Calculation of tangential force using spring and dashpot
+                  // tangential forces. Since we need dashpot tangential force
+                  // in the gross sliding again, we define it as a separate
+                  // variable
+                  Tensor<1, dim> damping_tangential_force =
+                    tangential_damping_constant *
+                    contact_info.tangential_relative_velocity;
+                  Tensor<1, dim> tangential_force =
+                    (tangential_spring_constant *
+                     contact_info.tangential_overlap) +
+                    damping_tangential_force;
+
+                  double coulomb_threshold =
+                    effective_coefficient_of_friction * normal_force.norm();
+
+                  // Check for gross sliding
+                  if (tangential_force.norm() > coulomb_threshold)
+                    {
+                      // Gross sliding occurs and the tangential overlap and
+                      // tangnetial force are limited to Coulumb's criterion
+                      contact_info.tangential_overlap =
+                        (coulomb_threshold *
+                           (tangential_force /
+                            (tangential_force.norm() + DBL_MIN)) -
+                         damping_tangential_force) /
+                        (tangential_spring_constant + DBL_MIN);
+
+                      tangential_force = (tangential_spring_constant *
+                                          contact_info.tangential_overlap) +
+                                         damping_tangential_force;
+                    }
+
+                  // Calculation of torque
+                  // Torque caused by tangential force (tangential_torque)
+                  Tensor<1, dim> tangential_torque;
+                  if (dim == 3)
+                    {
+                      tangential_torque =
+                        cross_product_3d((this->effective_radius *
+                                          normal_unit_vector),
+                                         tangential_force);
+                    }
+
+                  // Rolling resistance torque using viscous rolling resistance
+                  // model
+                  auto omega_ij = particle_one.omega - particle_two.omega;
+                  auto omega_ij_direction =
+                    omega_ij / (omega_ij.norm() + DBL_MIN);
+
+                  Tensor<1, dim> v_omega =
+                    cross_product_3d(particle_one.omega,
+                                     particle_one.radius * normal_unit_vector) -
+                    cross_product_3d(particle_two.omega,
+                                     particle_two.radius * -normal_unit_vector);
+
+                  // Calculation of rolling resistance torque
+                  Tensor<1, dim> rolling_resistance_torque =
+                    -effective_coefficient_of_rolling_friction *
+                    effective_radius * normal_force.norm() * v_omega.norm() *
+                    omega_ij_direction;
+
+
+
+                  contact_force[particle_one.particle_id] -=
+                    (normal_force + tangential_force);
+                  contact_force[particle_two.particle_id] +=
+                    (normal_force + tangential_force);
+
+                  contact_torque[particle_one.particle_id] =
+                    contact_torque[particle_one.particle_id] -
+                    tangential_torque + rolling_resistance_torque;
+                  contact_torque[particle_two.particle_id] =
+                    contact_torque[particle_two.particle_id] -
+                    tangential_torque - rolling_resistance_torque;
+                }
+
+              else
+                {
+                  // if the adjacent pair is not in contact anymore
+                  for (int d = 0; d < dim; ++d)
+                    {
+                      contact_history.tangential_overlap[d]           = 0;
+                      contact_history.tangential_relative_velocity[d] = 0;
+                    }
+                  contact_info.insert(contact_history);
+                }
+            }
+        }
+    }
+}
+
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force()
+{}
 
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::integrate_particles()
 {
+  dem_particles = particles;
+
   TimerOutput::Scope t(this->computing_timer, "integrate particles");
   // Integrate the velocity of the particle. If integrate motion is defined as
   // true in the parameter this function will also integrate the force to update
@@ -1192,9 +1483,12 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 g * (particles[p].mass -
                      particles[p].radius * particles[p].radius * PI * rho);
             volume=particles[p].radius * particles[p].radius * PI * rho;
+            volume = particles[p].radius * particles[p].radius * PI * rho;
             }
           if (dim == 3)
             {
+              volume = 4.0 / 3.0 * particles[p].radius * particles[p].radius *
+                       particles[p].radius * PI;
               g[0] = this->simulation_parameters.particlesParameters->f_gravity
                        ->value(particles[p].position, 0);
               g[1] = this->simulation_parameters.particlesParameters->f_gravity
@@ -1212,26 +1506,44 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           // Define the gravity force applied on the particle based on his masse
           // and the density of fluide applied on it.
           // Evaluate the velocity of the particle
-          Tensor<1,dim> residual_velocity= particles[p].last_velocity + particles[p].impulsion/particles[p].mass-particles[p].velocity;
+          Tensor<1, dim> residual_velocity =
+            particles[p].last_velocity +
+            particles[p].impulsion / particles[p].mass - particles[p].velocity;
 
-          // check if it's the first iteration if this is the case the variation of impulsion is assume to be due only to virtual mass of an isolated particle.
-          // We assume that the Jacobian of the variation of impulsion due to variation of velocity is diagonal. (This is not always true but is a good approximation.)
-          Tensor<2,dim> jac_velocity;
-          if(particles[p].impulsion_iter.norm()==0){
-              for (unsigned int d=0;d<dim;++d) {
-                  jac_velocity[d][d]=-1-0.5*volume*rho/particles[p].mass;
+          // check if it's the first iteration if this is the case the variation
+          // of impulsion is assume to be due only to virtual mass of an
+          // isolated particle. We assume that the Jacobian of the variation of
+          // impulsion due to variation of velocity is diagonal. (This is not
+          // always true but is a good approximation.)
+          Tensor<2, dim> jac_velocity;
+          if (particles[p].impulsion_iter.norm() == 0)
+            {
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  jac_velocity[d][d] =
+                    -1 - 0.5 * volume * rho / particles[p].mass;
                 }
             }
-          else{
-              for (unsigned int d=0;d<dim;++d) {
-                  if((particles[p].velocity[d]-particles[p].velocity_iter[d])!=0)
-                    jac_velocity[d][d]=-1+(particles[p].impulsion[d]-particles[p].impulsion_iter[d])/(particles[p].velocity[d]-particles[p].velocity_iter[d])/particles[p].mass;
+          else
+            {
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  if ((particles[p].velocity[d] -
+                       particles[p].velocity_iter[d]) != 0)
+                    jac_velocity[d][d] =
+                      -1 + (particles[p].impulsion[d] -
+                            particles[p].impulsion_iter[d]) /
+                             (particles[p].velocity[d] -
+                              particles[p].velocity_iter[d]) /
+                             particles[p].mass;
                   else
-                    jac_velocity[d][d]=-1-0.5*volume*rho/particles[p].mass;
+                    jac_velocity[d][d] =
+                      -1 - 0.5 * volume * rho / particles[p].mass;
                 }
             }
           particles[p].velocity_iter = particles[p].velocity;
-          particles[p].velocity=particles[p].velocity_iter-residual_velocity*invert(jac_velocity);
+          particles[p].velocity      = particles[p].velocity_iter -
+                                  residual_velocity * invert(jac_velocity);
 
           // This section is used to check if the fix point iteration is
           // diverging. If, between 2 iterations, the correction changes its
@@ -1240,37 +1552,54 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           // correction vector and the last correction vector will the norm of
           // the new correction vector is larger than the last one.
 
-          particles[p].impulsion_iter=particles[p].impulsion;
-          particles[p].omega_impulsion_iter=particles[p].omega_impulsion;
-          if (this->simulation_parameters.non_linear_solver.verbosity != Parameters::Verbosity::quiet)
+          particles[p].impulsion_iter       = particles[p].impulsion;
+          particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
+          if (this->simulation_parameters.non_linear_solver.verbosity !=
+              Parameters::Verbosity::quiet)
             {
-              this->pcout << "particle " << p << " residual " << residual_velocity.norm() << std::endl;
+              this->pcout << "particle " << p << " residual "
+                          << residual_velocity.norm() << std::endl;
             }
-
 
 
 
           // For the rotation velocity : same logic as the velocity.
-          auto inv_inertia=invert(particles[p].inertia);
-          Tensor<1,3> residual_omega= particles[p].last_omega + inv_inertia*particles[p].omega_impulsion-particles[p].omega;
+          auto         inv_inertia = invert(particles[p].inertia);
+          Tensor<1, 3> residual_omega =
+            particles[p].last_omega +
+            inv_inertia * particles[p].omega_impulsion - particles[p].omega;
 
-          Tensor<2,3> jac_omega;
-          if(particles[p].omega_impulsion.norm()==0){
-              for (unsigned int d=0;d<3;++d) {
-                  jac_omega[d][d]=-1-0.5*2./5*volume*rho*particles[p].radius*particles[p].radius*inv_inertia[d][d];
+          Tensor<2, 3> jac_omega;
+          if (particles[p].omega_impulsion.norm() == 0)
+            {
+              for (unsigned int d = 0; d < 3; ++d)
+                {
+                  jac_omega[d][d] =
+                    -1 - 0.5 * 2. / 5 * volume * rho * particles[p].radius *
+                           particles[p].radius * inv_inertia[d][d];
                 }
             }
-          else{
-              for (unsigned int d=0;d<dim;++d) {
-                  if((particles[p].velocity[d]-particles[p].velocity_iter[d])!=0)
-                    jac_omega[d][d]=-1+(particles[p].omega_impulsion[d]-particles[p].omega_impulsion_iter[d])/(particles[p].omega[d]-particles[p].omega_iter[d])*inv_inertia[d][d];
+          else
+            {
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  if ((particles[p].velocity[d] -
+                       particles[p].velocity_iter[d]) != 0)
+                    jac_omega[d][d] =
+                      -1 +
+                      (particles[p].omega_impulsion[d] -
+                       particles[p].omega_impulsion_iter[d]) /
+                        (particles[p].omega[d] - particles[p].omega_iter[d]) *
+                        inv_inertia[d][d];
                   else
-                    jac_omega[d][d]=-1-0.5*2./5*volume*rho*particles[p].radius*particles[p].radius*inv_inertia[d][d];
+                    jac_omega[d][d] =
+                      -1 - 0.5 * 2. / 5 * volume * rho * particles[p].radius *
+                             particles[p].radius * inv_inertia[d][d];
                 }
             }
           particles[p].omega_iter = particles[p].omega;
-          particles[p].omega=particles[p].omega_iter -invert(jac_omega)*residual_omega;
-
+          particles[p].omega =
+            particles[p].omega_iter - invert(jac_omega) * residual_omega;
         }
     }
   else
@@ -2136,7 +2465,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
   this->system_rhs.compress(VectorOperation::insert);
   this->system_matrix.compress(VectorOperation::insert);
-
 }
 
 
@@ -2695,7 +3023,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
   if (this->simulation_parameters.particlesParameters->calculate_force_ib)
     this->finish_simulation();
 }
-
 
 // Pre-compile the 2D and 3D versopm solver to ensure that the library is
 // valid before we actually compile the final solver

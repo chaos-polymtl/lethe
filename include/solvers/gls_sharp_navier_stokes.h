@@ -266,7 +266,8 @@ private:
   /**
    * @brief
    * Function that allow subtime stepping to allow contact between particle.
-   * Note : This function is a prototype and will be heavely modified in upcomming PR.
+   * Note : This function is a prototype and will be heavely modified in
+   * upcomming PR.
    */
   void
   particles_dem();
@@ -497,6 +498,21 @@ Return a bool that describes  if a cell contains a specific point
    */
 
 private:
+  /**
+   * @brief Calculate non-linear (Hertzian) particle-particle contact force
+   */
+  void
+  calculate_pp_contact_force(const double &               dt_dem,
+                             std::vector<Tensor<1, dim>> &contact_force,
+                             std::vector<Tensor<1, dim>> &contact_torque);
+
+
+  /**
+   * @brief Calculate non-linear (Hertzian) particle-wall contact force
+   */
+  void
+  calculate_pw_contact_force();
+
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
@@ -525,13 +541,26 @@ private:
 
   PVDHandler ib_particles_pvdhandler;
 
+
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
   const double                 GLS_u_scale = 1;
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
+  std::vector<IBParticle<dim>> dem_particles;
 
   std::vector<TableHandler> table_p;
+
+  // A struct to store contact tangential history
+  struct contact_tangential_history
+    Tensor<1, dim> tangential_relative_velocity;
+  {
+    Tensor<1, dim> tangential_overlap;
+  };
+  // Particles contact history
+
+  std::map<unsigned int, std::map<unsigned int, contact_tangential_history>>
+    contact_map;
 };
 
 

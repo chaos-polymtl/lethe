@@ -10,6 +10,7 @@ IBParticle<dim>::initialise_all()
   radius             = 1;
   local_alpha_torque = 1;
   local_alpha_force  = 1;
+  particle_id        = 0;
 
   inertia[0][0] = 1;
   inertia[1][1] = 1;
@@ -51,8 +52,8 @@ IBParticle<dim>::initialise_all()
   last_omega            = omega;
   omega_iter            = omega;
   last_angular_position = angular_position;
-  impulsion     =0;
-  impulsion_iter=0;
+  impulsion             = 0;
+  impulsion_iter        = 0;
 }
 
 template <int dim>

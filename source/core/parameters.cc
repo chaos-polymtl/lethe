@@ -1701,6 +1701,7 @@ namespace Parameters
             particles[i].f_omega->value(particles[i].position, 2);
 
 
+          particles[i].particle_id          = i;
           particles[i].radius               = prm.get_double("radius");
           particles[i].inertia[0][0]        = prm.get_double("inertia");
           particles[i].inertia[1][1]        = prm.get_double("inertia");
