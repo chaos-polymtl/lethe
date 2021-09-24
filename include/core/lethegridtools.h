@@ -213,6 +213,11 @@ namespace LetheGridTools
       &                    object,
     const Point<spacedim> &trial_point);
 
+  template <int dim>
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+  find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
+                                   const Point<dim> &     center,double radius);
+
   /**
    * @brief
    * A functor that provides a unique and uniformly distributed hash for a
