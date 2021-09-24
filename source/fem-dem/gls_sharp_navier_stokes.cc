@@ -1107,11 +1107,12 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
   double         t = 0;
   Tensor<1, dim> gravity;
 
-  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
-      position[p_i]=particles[p_i].last_position;
-      velocity[p_i]=particles[p_i].last_velocity;
-      particles[p_i].impulsion=0;
-      particles[p_i].omega_impulsion=0;
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      position[p_i]                  = particles[p_i].last_position;
+      velocity[p_i]                  = particles[p_i].last_velocity;
+      particles[p_i].impulsion       = 0;
+      particles[p_i].omega_impulsion = 0;
     }
 
   while (t < dt)
@@ -1173,11 +1174,14 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
             particles[p_i].last_torques +
             (particles[p_i].torques - particles[p_i].last_torques) * t / dt;
 
-          velocity[p_i]=velocity[p_i] +(current_fluid_force[p_i]+contact_force[p_i]+ gravity) * dt_dem / particles[p_i].mass;
-          position[p_i]= position[p_i] +velocity[p_i]* dt_dem ;
-          particles[p_i].impulsion+=(current_fluid_force[p_i]+contact_force[p_i]+ gravity) * dt_dem;
-          particles[p_i].omega_impulsion+=(current_fluid_torque[p_i]+contact_torque[p_i]) * dt_dem;
-
+          velocity[p_i] = velocity[p_i] + (current_fluid_force[p_i] +
+                                           contact_force[p_i] + gravity) *
+                                            dt_dem / particles[p_i].mass;
+          position[p_i] = position[p_i] + velocity[p_i] * dt_dem;
+          particles[p_i].impulsion +=
+            (current_fluid_force[p_i] + contact_force[p_i] + gravity) * dt_dem;
+          particles[p_i].omega_impulsion +=
+            (current_fluid_torque[p_i] + contact_torque[p_i]) * dt_dem;
         }
       t += dt_dem;
     }
@@ -1206,8 +1210,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
               const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
 
-              auto contact_info = &contact_map[particle_one.particle_id]
-                                              [particle_two.particle_id];
+              auto contact_info = &pp_contact_map[particle_one.particle_id]
+                                                 [particle_two.particle_id];
 
 
               // Calculation of normal overlap
@@ -1332,19 +1336,20 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                   const double model_parameter_sn =
                     2 * effective_youngs_modulus * radius_times_overlap_sqrt;
 
-                  double model_parameter_st =
+                  const double model_parameter_st =
                     8 * effective_youngs_modulus * radius_times_overlap_sqrt;
 
                   // Calculation of normal and tangential spring and dashpot
                   // constants using particle properties
-                  double normal_spring_constant = 0.66665 * model_parameter_sn;
-                  double normal_damping_constant =
+                  const double normal_spring_constant =
+                    0.66665 * model_parameter_sn;
+                  const double normal_damping_constant =
                     -1.8257 * model_parameter_beta *
                     sqrt(model_parameter_sn * this->effective_mass);
-                  double tangential_spring_constant =
+                  const double tangential_spring_constant =
                     8 * effective_shear_modulus * radius_times_overlap_sqrt +
                     DBL_MIN;
-                  double tangential_damping_constant =
+                  const double tangential_damping_constant =
                     normal_damping_constant *
                     sqrt(model_parameter_st / model_parameter_sn);
 
@@ -1369,7 +1374,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                      contact_info.tangential_overlap) +
                     damping_tangential_force;
 
-                  double coulomb_threshold =
+                  const double coulomb_threshold =
                     effective_coefficient_of_friction * normal_force.norm();
 
                   // Check for gross sliding
@@ -1394,10 +1399,9 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                   Tensor<1, dim> tangential_torque;
                   if (dim == 3)
                     {
-                      tangential_torque =
-                        cross_product_3d((this->effective_radius *
-                                          normal_unit_vector),
-                                         tangential_force);
+                      tangential_torque = cross_product_3d((effective_radius *
+                                                            normal_unit_vector),
+                                                           tangential_force);
                     }
 
                   // Rolling resistance torque using viscous rolling resistance
@@ -1451,13 +1455,19 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force()
+GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force(
+  const double &               dt_dem,
+  std::vector<Tensor<1, dim>> &contact_force,
+  std::vector<Tensor<1, dim>> &contact_torque)
 {
   for (auto &particle : dem_particles)
     {
       for (auto &boundary_cell : boundary_cells)
         {
           auto boundary_cell_information = boundary_cell.second;
+
+          auto contact_info =
+            &pw_contact_map[particle.particle_id][boundary_cell.first];
 
           auto normal_vector     = boundary_cell_information.normal_vector;
           auto point_on_boundary = boundary_cell_information.point_on_boundary;
@@ -1479,45 +1489,169 @@ GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force()
 
           if (normal_overlap > 0)
             {
-              contact_information.normal_overlap = normal_overlap;
+              // Defining relative contact velocity
+              Tensor<1, dim> contact_relative_velocity;
+              if (dim == 3)
+                {
+                  contact_relative_velocity =
+                    particle.velocity +
+                    cross_product_3d((particle.radius * particle.omega),
+                                     normal_vector);
+                }
+              if (dim == 2)
+                {
+                  // TODO correct this after dem_2d correction
+                  contact_relative_velocity = particle.velocity;
+                }
 
-              this->update_contact_information(contact_information,
-                                               particle_properties,
-                                               dt);
+              // Calculation of normal relative velocity
+              double normal_relative_velocity_value =
+                contact_relative_velocity * normal_vector;
+              Tensor<1, dim> normal_relative_velocity =
+                normal_relative_velocity_value * normal_vector;
 
-              // This tuple (forces and torques) contains four elements which
-              // are: 1, normal force, 2, tangential force, 3, tangential torque
-              // and 4, rolling resistance torque, respectively
-              std::tuple<Tensor<1, dim>,
-                         Tensor<1, dim>,
-                         Tensor<1, dim>,
-                         Tensor<1, dim>>
-                forces_and_torques =
-                  this->calculate_nonlinear_contact_force_and_torque(
-                    contact_information, particle_properties);
+              // Calculation of tangential relative velocity
+              Tensor<1, dim> tangential_relative_velocity =
+                contact_relative_velocity - normal_relative_velocity;
 
-              // Getting particle's momentum and force
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-              types::particle_index particle_id = particle->get_local_index();
-#else
-              types::particle_index particle_id = particle->get_id();
-#endif
-              Tensor<1, dim> &particle_momentum = momentum[particle_id];
-              Tensor<1, dim> &particle_force    = force[particle_id];
+              Tensor<1, dim> modified_tangential_overlap =
+                contact_info.tangential_overlap +
+                tangential_relative_velocity * dt_dem;
 
-              // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque(forces_and_torques,
-                                           particle_momentum,
-                                           particle_force,
-                                           point_on_boundary,
-                                           contact_information.boundary_id);
+
+              const double effective_youngs_modulus =
+                (particle.youngs_modulus * wall_youngs_modulus) /
+                (wall_youngs_modulus *
+                   (1 - particle.poisson_ratio * particle.poisson_ratio) +
+                 particle.youngs_modulus *
+                   (1 - wall_poisson_ratio * wall_poisson_ratio) +
+                 DBL_MIN);
+
+              const double effective_shear_modulus =
+                (particle.youngs_modulus * wall_youngs_modulus) /
+                ((2 * wall_youngs_modulus * (2 - particle.poisson_ratio) *
+                  (1 + particle.poisson_ratio)) +
+                 (2 * particle.youngs_modulus * (2 - wall_poisson_ratio) *
+                  (1 + wall_poisson_ratio)) +
+                 DBL_MIN);
+
+              const double effective_coefficient_of_restitution =
+                2 * particle.restitution_coefficient *
+                wall_restitution_coefficient /
+                (particle.restitution_coefficient +
+                 wall_restitution_coefficient + DBL_MIN);
+
+              const double effective_coefficient_of_friction =
+                2 * particle.friction_coefficient * wall_friction_coefficient /
+                (particle.friction_coefficient + wall_friction_coefficient +
+                 DBL_MIN);
+
+              const double effective_coefficient_of_rolling_friction =
+                2 * particle.rolling_friction_coefficient *
+                wall_rolling_friction_coefficient /
+                (particle.rolling_friction_coefficient +
+                 wall_rolling_friction_coefficient + DBL_MIN);
+
+              const double effective_coefficient_of_rolling_friction =
+                2 * particle_rolling_friction_coefficient *
+                wall_rolling_friction_coefficient /
+                (particle_rolling_friction_coefficient +
+                 wall_rolling_friction_coefficient + DBL_MIN);
+
+
+              const double radius_times_overlap_sqrt =
+                sqrt(particle.radius * normal_overlap);
+              const double log_coeff_restitution =
+                log(effective_coefficient_of_restitution);
+              const double model_parameter_beta =
+                log_coeff_restitution /
+                sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
+              const double model_parameter_sn =
+                2 * effective_youngs_modulus * radius_times_overlap_sqrt;
+
+              // Calculation of normal and tangential spring and dashpot
+              // constants using particle and wall properties
+              const double normal_spring_constant =
+                1.3333 * effective_youngs_modulus * radius_times_overlap_sqrt;
+              const double normal_damping_constant =
+                1.8257 * model_parameter_beta *
+                sqrt(model_parameter_sn * particle.mass);
+              const double tangential_spring_constant =
+                -8 * effective_shear_modulus * radius_times_overlap_sqrt +
+                DBL_MIN;
+
+              // Calculation of normal force using spring and dashpot normal
+              // forces
+              Tensor<1, dim> normal_force =
+                (normal_spring_constant * normal_overlap +
+                 normal_damping_constant * normal_relative_velocity) *
+                normal_vector;
+
+              // Calculation of tangential force
+              Tensor<1, dim> tangential_force =
+                tangential_spring_constant * contact_info.tangential_overlap;
+
+              const double coulomb_threshold =
+                effective_coefficient_of_friction * normal_force.norm();
+
+              // Check for gross sliding
+              if (tangential_force.norm() > coulomb_threshold)
+                {
+                  // Gross sliding occurs and the tangential overlap and
+                  // tangnetial force are limited to Coulumb's criterion
+                  tangential_force =
+                    coulomb_threshold *
+                    (tangential_force / tangential_force.norm());
+
+                  contact_info.tangential_overlap =
+                    tangential_force / (tangential_spring_constant + DBL_MIN);
+                }
+
+              // Calculation of torque
+              // Torque caused by tangential force (tangential_torque)
+              Tensor<1, dim> tangential_torque;
+
+              if (dim == 3)
+                {
+                  tangential_torque =
+                    cross_product_3d((particle.radius * normal_vector),
+                                     tangential_force);
+                }
+
+              // Rolling resistance torque
+              Tensor<1, dim> angular_velocity = particle.omega;
+              Tensor<1, dim> pw_angular_velocity;
+
+              double omega_value = angular_velocity.norm();
+              if (omega_value != 0)
+                {
+                  pw_angular_velocity = angular_velocity / omega_value;
+                }
+
+              Tensor<1, dim> v_omega =
+                cross_product_3d(angular_velocity,
+                                 particle.radius * normal_vector);
+
+              // Calculation of rolling resistance torque
+              Tensor<1, dim> rolling_resistance_torque =
+                -effective_coefficient_of_rolling_friction * particle.radius *
+                normal_force.norm() * v_omega.norm() * pw_angular_velocity;
+
+
+              // Updating the force of particles in the particle handler
+              contact_force[particle.particle_id] +=
+                normal_force + tangential_force;
+
+              // Updating the torque acting on particles
+
+              contact_torque[particle.particle_id] +=
+                tangential_torque + rolling_resistance_torque;
             }
           else
             {
-              contact_information.normal_overlap = 0;
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information.tangential_overlap[d] = 0;
+                  contact_info.tangential_overlap[d] = 0;
                 }
             }
         }
