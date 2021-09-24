@@ -806,7 +806,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
-  // Write data in paraview format (pvd)
+  // Write data about paraview format (pvd)
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       this->simulation_control->save(prefix);
@@ -822,6 +822,16 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
             Utilities::int_to_string(i_solid, 2));
         }
     }
+
+  // Write solid base checkpoint
+  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+    {
+      std::string filename =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename + "_solid_" +
+        Utilities::int_to_string(i_solid, 2);
+      this->solid[i_solid]->write_checkpoint(filename);
+    }
 }
 
 template <int dim, int spacedim>
@@ -833,28 +843,16 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
   TimerOutput::Scope t(this->computing_timer,
                        "Reset Nitsche solid mesh and particles");
 
+
   // Reload initial configurations
   for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-    solid[i_solid]->initial_setup();
-
-  // Move configuration to current location
-  double       time      = 0;
-  const double time_step = this->simulation_control->get_time_step();
-  while (time < this->simulation_control->get_current_time())
     {
-      for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-        {
-          if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
-                ->enable_particles_motion)
-            {
-              solid[i_solid]->integrate_velocity(
-                this->simulation_control->get_time_step());
-              solid[i_solid]->move_solid_triangulation(
-                this->simulation_control->get_time_step());
-            }
-        }
-      time += time_step;
-      this->pcout << "Solid is now at time : " << time << std::endl;
+      std::string prefix =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename + "_solid_" +
+        Utilities::int_to_string(i_solid, 2);
+
+      solid[i_solid]->read_checkpoint(prefix);
     }
 
   // Reload particle and solid pvd handlers

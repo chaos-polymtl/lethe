@@ -45,6 +45,7 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <deal.II/lac/trilinos_vector.h>
 
 
 using namespace dealii;
@@ -82,6 +83,13 @@ public:
    */
   void
   setup_triangulation(const bool restart);
+
+  /**
+   * @brief Sets-up particles with particle handler, in the fluid triangulation domain that holds the particles of the solid
+   * according to a specific quadrature
+   */
+  void
+  setup_displacement();
 
   /**
    * @brief Creates a particle handler in the fluid triangulation domain
@@ -154,8 +162,22 @@ public:
   void
   rotate_grid(double angle, int axis);
 
+  /**
+   * @brief read solid base triangulation checkpoint
+   */
+  void
+  read_checkpoint(std::string prefix_name);
+
+  /**
+   * @brief write solid base triangulation checkpoint
+   */
+  void
+  write_checkpoint(std::string prefix_name);
+
 
 private:
+  IndexSet locally_owned_dofs;
+  IndexSet locally_relevant_dofs;
   // Member variables
   MPI_Comm           mpi_communicator;
   const unsigned int n_mpi_processes;
@@ -172,6 +194,11 @@ private:
   std::shared_ptr<Mapping<dim, spacedim>> solid_mapping;
   std::shared_ptr<Mapping<spacedim>>      fluid_mapping;
   std::shared_ptr<Quadrature<dim>>        quadrature;
+
+
+  DoFHandler<dim, spacedim>                displacement_dh;
+  std::shared_ptr<FESystem<dim, spacedim>> displacement_fe;
+  TrilinosWrappers::MPI::Vector          displacement;
 
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param;
 
