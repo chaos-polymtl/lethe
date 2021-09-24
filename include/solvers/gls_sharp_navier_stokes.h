@@ -585,7 +585,9 @@ private:
 
   // Particles contact history
   std::map<unsigned int, std::map<unsigned int, contact_tangential_history>>
-    contact_map;
+    pp_contact_map;
+  std::map<unsigned int, std::map<unsigned int, contact_tangential_history>>
+    pw_contact_map;
 
   std::map<unsigned int, boundary_cells_info> boundary_cells;
 };

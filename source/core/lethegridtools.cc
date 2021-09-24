@@ -139,20 +139,24 @@ LetheGridTools::find_cell_around_point_with_tree(
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
 LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
-                             const Point<dim> &     center,double radius){
+                                             const Point<dim> &     center,
+                                             double                 radius)
+{
   MappingQ1<dim> mapping;
   const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
 
 
 
   bool cell_on_level_0_found = false;
-  std::set<typename DoFHandler<dim>::active_cell_iterator> boundary_cells_candidates;
-  std::set<typename DoFHandler<dim>::active_cell_iterator> last_boundary_cells_candidates;
+  std::set<typename DoFHandler<dim>::active_cell_iterator>
+    boundary_cells_candidates;
+  std::set<typename DoFHandler<dim>::active_cell_iterator>
+                                                           last_boundary_cells_candidates;
   std::set<typename DoFHandler<dim>::active_cell_iterator> cells_at_boundary;
   // Loop on the cells on level 0 of the mesh
   for (const auto &cell : cell_iterator)
     {
-      if(cell->at_boundary())
+      if (cell->at_boundary())
         {
           for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell;
                ++i)
@@ -164,19 +168,21 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
         }
     }
 
-  last_boundary_cells_candidates=boundary_cells_candidates;
+  last_boundary_cells_candidates = boundary_cells_candidates;
 
-  if(boundary_cells_candidates.size()!=0)
+  if (boundary_cells_candidates.size() != 0)
     {
       bool all_cell_are_active = false;
       while (!all_cell_are_active)
         {
-          all_cell_are_active=true;
+          all_cell_are_active = true;
           boundary_cells_candidates.clear();
-          for(auto cell:last_boundary_cells_candidates){
-              if(cell->at_boundary())
+          for (auto cell : last_boundary_cells_candidates)
+            {
+              if (cell->at_boundary())
                 {
-                  for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell;
+                  for (unsigned int i = 0;
+                       i < GeometryInfo<dim>::vertices_per_cell;
                        ++i)
                     {
                       if ((cell->vertex(i) - center).norm() <= radius)
@@ -195,15 +201,13 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
                     }
                 }
             }
-          last_boundary_cells_candidates=boundary_cells_candidates;
+          last_boundary_cells_candidates = boundary_cells_candidates;
         }
     }
 
 
   return cells_at_boundary;
 }
-
-
 
 
 
