@@ -513,6 +513,22 @@ private:
   void
   calculate_pw_contact_force();
 
+  /** This function is used to find the projection of vector_a on
+   * vector_b
+   * @param vector_a A vector which is going to be projected on vector_b
+   * @param vector_b The projection vector of vector_a
+   * @return The projection of vector_a on vector_b
+   */
+  inline Tensor<1, dim>
+  find_projection(const Tensor<1, dim> &vector_a,
+                  const Tensor<1, dim> &vector_b)
+  {
+    Tensor<1, dim> vector_c;
+    vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
+
+    return vector_c;
+  }
+
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
@@ -559,8 +575,19 @@ private:
   };
   // Particles contact history
 
+  // A struct to store boundary cells' information
+  struct boundary_cells_info
+  {
+    Tensor<1, dim> normal_vector;
+    Point<dim>     point_on_boundary;
+  };
+
+
+  // Particles contact history
   std::map<unsigned int, std::map<unsigned int, contact_tangential_history>>
     contact_map;
+
+  std::map<unsigned int, boundary_cells_info> boundary_cells;
 };
 
 
