@@ -1086,7 +1086,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::particles_dem()
-{
+{// add refilling containers
   using numbers::PI;
   Tensor<1, dim> g   = this->simulation_parameters.particlesParameters.gravity;
   double         rho = this->simulation_parameters.particlesParameters.density;
@@ -1094,8 +1094,10 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
   double dt_dem=dt/1000;
   double particle_stiffness=10000;
   //local time for the dem step
-  std::vector<Tensor<1,dim>> normal_contact_force(particles.size());
+  std::vector<Tensor<1,dim>> contact_force(particles.size());
   std::vector<Tensor<1,dim>> current_fluid_force(particles.size());
+  std::vector<Tensor<1,3>> current_fluid_torque(particles.size());
+  std::vector<Tensor<1,3>> current_contact_torque(particles.size());
 
   std::vector<Tensor<1,dim>> velocity(particles.size());
   std::vector<Point<dim>> position(particles.size());
@@ -1110,11 +1112,19 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
     }
 
   while(t<dt) {
-      normal_contact_force.clear();
-      normal_contact_force.resize(particles.size());
+
       current_fluid_force.clear();
       current_fluid_force.resize(particles.size());
-      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
+      current_fluid_torque.clear();
+      current_fluid_torque.resize(particles.size());
+
+
+      current_contact_torque.clear();
+      current_contact_torque.resize(particles.size());
+      contact_force.clear();
+      contact_force.resize(particles.size());
+
+      /*for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
           // Particle Particle contact force;
           for (unsigned int p_j = 0; p_j < particles.size(); ++p_j) {
               if(p_j!=p_i) {
@@ -1123,11 +1133,11 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
                   if (dist < (particles[p_i].radius + particles[p_j].radius)) {
                       overlap = (particles[p_i].radius + particles[p_j].radius)-dist;
                     }
-                  normal_contact_force[p_i]+=(position[p_i] - position[p_j] )/dist*overlap*particle_stiffness;
+                  contact_force[p_i]+=(position[p_i] - position[p_j] )/dist*overlap*particle_stiffness;
                 }
             }
           // current fluid_force (inteprolate the fluide force in the current time step)
-        }
+        }*/ //add dem pp and pw force torque
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
           if (dim == 2)
             gravity =
@@ -1142,10 +1152,11 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
             }
 
           current_fluid_force[p_i]=particles[p_i].last_forces+(particles[p_i].forces-particles[p_i].last_forces)*t/dt;
+          current_fluid_torque[p_i]=particles[p_i].last_torques+(particles[p_i].torques-particles[p_i].last_torques)*t/dt;
 
-          velocity[p_i]=velocity[p_i] +(current_fluid_force[p_i]+normal_contact_force[p_i]+ gravity) * dt_dem / particles[p_i].mass;
+          velocity[p_i]=velocity[p_i] +(current_fluid_force[p_i]+contact_force[p_i]+ gravity) * dt_dem / particles[p_i].mass;
           position[p_i]= position[p_i] +velocity[p_i]* dt_dem ;
-          particles[p_i].impulsion+=(current_fluid_force[p_i]+normal_contact_force[p_i]+ gravity) * dt_dem;
+          particles[p_i].impulsion+=(current_fluid_force[p_i]+contact_force[p_i]+ gravity) * dt_dem;
         }
       t+=dt_dem;
     }
