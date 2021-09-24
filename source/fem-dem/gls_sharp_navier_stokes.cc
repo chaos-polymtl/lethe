@@ -1107,11 +1107,11 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
   double         t = 0;
   Tensor<1, dim> gravity;
 
-  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-    {
-      position[p_i]            = particles[p_i].last_position;
-      velocity[p_i]            = particles[p_i].last_velocity;
-      particles[p_i].impulsion = 0;
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
+      position[p_i]=particles[p_i].last_position;
+      velocity[p_i]=particles[p_i].last_velocity;
+      particles[p_i].impulsion=0;
+      particles[p_i].omega_impulsion=0;
     }
 
   while (t < dt)
@@ -1122,8 +1122,8 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
       current_fluid_torque.resize(particles.size());
 
 
-      current_contact_torque.clear();
-      current_contact_torque.resize(particles.size());
+      contact_torque.clear();
+      contact_torque.resize(particles.size());
       contact_force.clear();
       contact_force.resize(particles.size());
       dem_contact_torque.clear();
@@ -1173,12 +1173,11 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
             particles[p_i].last_torques +
             (particles[p_i].torques - particles[p_i].last_torques) * t / dt;
 
-          velocity[p_i] = velocity[p_i] + (current_fluid_force[p_i] +
-                                           contact_force[p_i] + gravity) *
-                                            dt_dem / particles[p_i].mass;
-          position[p_i] = position[p_i] + velocity[p_i] * dt_dem;
-          particles[p_i].impulsion +=
-            (current_fluid_force[p_i] + contact_force[p_i] + gravity) * dt_dem;
+          velocity[p_i]=velocity[p_i] +(current_fluid_force[p_i]+contact_force[p_i]+ gravity) * dt_dem / particles[p_i].mass;
+          position[p_i]= position[p_i] +velocity[p_i]* dt_dem ;
+          particles[p_i].impulsion+=(current_fluid_force[p_i]+contact_force[p_i]+ gravity) * dt_dem;
+          particles[p_i].omega_impulsion+=(current_fluid_torque[p_i]+contact_torque[p_i]) * dt_dem;
+
         }
       t += dt_dem;
     }
