@@ -754,6 +754,24 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   DoFHandler<dim, spacedim> &solid_dh = solid[i_solid]->get_solid_dof_handler();
   data_out.attach_dof_handler(solid_dh);
 
+  DoFHandler<dim, spacedim> &displacement_dh =
+    solid[i_solid]->get_displacement_dof_handler();
+  data_out.attach_dof_handler(displacement_dh);
+
+  std::vector<std::string> solution_names(spacedim, "displacement");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    data_component_interpretation(
+      spacedim, DataComponentInterpretation::component_is_part_of_vector);
+  TrilinosWrappers::MPI::Vector &displacement_vector =
+    solid[i_solid]->get_displacement_vector();
+
+  data_out.add_data_vector(displacement_vector,
+                           solution_names,
+                           DataOut<dim, spacedim>::type_dof_data,
+                           data_component_interpretation);
+
+
+
   data_out.build_patches();
 
   const std::string folder = this->simulation_control->get_output_path();
@@ -816,9 +834,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
       for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
         {
           pvdhandler_solid_particles[i_solid].save(
-            prefix + "_sol_particles_" + Utilities::int_to_string(i_solid, 2));
+            prefix + "_solid_particles_" +
+            Utilities::int_to_string(i_solid, 2));
           pvdhandler_solid_triangulation[i_solid].save(
-            prefix + "_sol_triangulation_" +
+            prefix + "_solid_triangulation_" +
             Utilities::int_to_string(i_solid, 2));
         }
     }
@@ -863,9 +882,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
     {
       // Load Paraview pvd handler for solid triangulation and particles
       pvdhandler_solid_particles[i_solid].read(
-        prefix + "_sol_particles_" + Utilities::int_to_string(i_solid, 2));
+        prefix + "_solid_particles_" + Utilities::int_to_string(i_solid, 2));
       pvdhandler_solid_triangulation[i_solid].read(
-        prefix + "_sol_triangulation_" + Utilities::int_to_string(i_solid, 2));
+        prefix + "_solid_triangulation_" +
+        Utilities::int_to_string(i_solid, 2));
     }
 }
 

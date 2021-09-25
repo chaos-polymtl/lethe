@@ -43,9 +43,9 @@
 
 #include <deal.II/grid/grid_generator.h>
 
-#include <deal.II/particles/particle_handler.h>
-
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 
 using namespace dealii;
@@ -136,6 +136,18 @@ public:
   get_solid_dof_handler();
 
   /**
+   * @return the reference to the displacement dof handler
+   */
+  DoFHandler<dim, spacedim> &
+  get_displacement_dof_handler();
+
+  /**
+   * @return the reference to the displacement vector
+   */
+  TrilinosWrappers::MPI::Vector &
+  get_displacement_vector();
+
+  /**
    * @return Function<spacedim> of the solid velocity
    */
   Function<spacedim> *
@@ -152,6 +164,12 @@ public:
    */
   void
   move_solid_triangulation(double time_step);
+
+  /**
+   * @brief Moves the dofs of the solid_triangulation
+   */
+  void
+  move_solid_triangulation_with_displacement();
 
   /**
    * @brief prints the positions of the particles
@@ -198,7 +216,7 @@ private:
 
   DoFHandler<dim, spacedim>                displacement_dh;
   std::shared_ptr<FESystem<dim, spacedim>> displacement_fe;
-  TrilinosWrappers::MPI::Vector          displacement;
+  TrilinosWrappers::MPI::Vector            displacement;
 
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param;
 

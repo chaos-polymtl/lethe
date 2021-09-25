@@ -8,11 +8,12 @@
 subsection simulation control
   set method                  = bdf1
   set time step		      = 0.05
-  set time end 		      = 1.
+  set time end 		      = 0.5
   set number mesh adapt       = 0
   set output name             = two-bar-mixer
   set output frequency        = 1
   set subdivision             = 1
+
 end
 
 #---------------------------------------------------
@@ -29,10 +30,10 @@ end
 #--------------------------------------------------
 subsection restart
   # Enable checkpointing
-  set checkpoint = false
+  set checkpoint = true
 
   # Enable restart
-  set restart    = true
+  set restart    = false
 
   # Prefix for the filename of checkpoints
   set filename   = restart
@@ -93,7 +94,7 @@ subsection nitsche
 			set type = dealii
 			set grid type = hyper_rectangle
 			set grid arguments = -0.5, -0.5 : -0.1, -0.1 : true
-			set initial refinement = 2
+			set initial refinement = 1
 		end
 		set enable particles motion = true
 		subsection solid velocity
@@ -105,7 +106,7 @@ subsection nitsche
 			set type = dealii
    			set grid type = hyper_rectangle
 			set grid arguments = 0.1, 0.1 : 0.5, 0.5 : true
-			set initial refinement = 2
+			set initial refinement = 1
 		end
 		set enable particles motion = true
 		subsection solid velocity
