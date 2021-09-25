@@ -684,9 +684,16 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
 {
+#if (DEAL_II_VERSION_MAJOR < 10)
+  parallel::distributed::SolutionTransfer<dim,
+                                          TrilinosWrappers::MPI::Vector,
+                                          DoFHandler<dim, spacedim>>
+    system_trans_vectors(this->displacement_dh);
+#else
   parallel::distributed::
     SolutionTransfer<dim, TrilinosWrappers::MPI::Vector, spacedim>
       system_trans_vectors(this->displacement_dh);
+#endif
 
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
   sol_set_transfer.push_back(&displacement);
