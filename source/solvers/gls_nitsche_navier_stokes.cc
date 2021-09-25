@@ -765,10 +765,18 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   TrilinosWrappers::MPI::Vector &displacement_vector =
     solid[i_solid]->get_displacement_vector();
 
+#if (DEAL_II_VERSION_MAJOR < 10)
+  data_out.add_data_vector(
+    displacement_vector,
+    solution_names,
+    DataOut<dim, DoFHandler<dim, spacedim>>::type_dof_data,
+    data_component_interpretation);
+#else
   data_out.add_data_vector(displacement_vector,
                            solution_names,
                            DataOut<dim, spacedim>::type_dof_data,
                            data_component_interpretation);
+#endif
 
 
 
