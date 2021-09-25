@@ -746,9 +746,17 @@ SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
   // Read displacement vector
   std::vector<TrilinosWrappers::MPI::Vector *> x_system(1);
   x_system[0] = &(displacement);
+
+#if (DEAL_II_VERSION_MAJOR < 10)
+  parallel::distributed::SolutionTransfer<dim,
+                                          TrilinosWrappers::MPI::Vector,
+                                          DoFHandler<dim, spacedim>>
+    system_trans_vectors(this->displacement_dh);
+#else
   parallel::distributed::
     SolutionTransfer<dim, TrilinosWrappers::MPI::Vector, spacedim>
-      system_trans_vectors(displacement_dh);
+      system_trans_vectors(this->displacement_dh);
+#endif
 
   system_trans_vectors.deserialize(x_system);
 
