@@ -217,6 +217,8 @@ private:
   DoFHandler<dim, spacedim>                displacement_dh;
   std::shared_ptr<FESystem<dim, spacedim>> displacement_fe;
   TrilinosWrappers::MPI::Vector            displacement;
+  TrilinosWrappers::MPI::Vector            displacement_relevant;
+
 
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param;
 

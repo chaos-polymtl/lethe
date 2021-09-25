@@ -472,7 +472,8 @@ template <int dim, int spacedim>
 TrilinosWrappers::MPI::Vector &
 SolidBase<dim, spacedim>::get_displacement_vector()
 {
-  return displacement;
+  displacement_relevant = displacement;
+  return displacement_relevant;
 }
 
 template <int dim, int spacedim>
@@ -779,6 +780,9 @@ SolidBase<dim, spacedim>::setup_displacement()
                                           locally_relevant_dofs);
 
   displacement.reinit(locally_owned_dofs, mpi_communicator);
+  displacement_relevant.reinit(locally_owned_dofs,
+                               locally_relevant_dofs,
+                               mpi_communicator);
 
   displacement = 0;
 }
