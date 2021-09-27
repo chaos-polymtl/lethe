@@ -94,6 +94,14 @@ test()
                                                           flat_cell,
                                                           vertice_to_cell);
 
+  std::sort(cells_cut.begin(),
+            cells_cut.end(),
+            [](typename DoFHandler<3>::active_cell_iterator cell_1,
+              typename DoFHandler<3>::active_cell_iterator cell_2) {
+    return cell_1->global_active_cell_index() <
+    cell_2->global_active_cell_index();
+  });
+
 
   for (unsigned int i = 0; i < cells_cut.size(); ++i)
     {
