@@ -72,7 +72,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        this->dof_handler,
                                        support_points);
   cut_cells_map.clear();
-  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -1079,11 +1079,12 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
   double         particle_stiffness = 10000;
   // local time for the dem step
   std::vector<Tensor<1, dim>> contact_force(particles.size());
-  std::vector<Tensor<1, dim>> current_fluid_force(particles.size());
-  std::vector<Tensor<1, dim>> dem_contact_torque(particles.size());
+  std::vector<Tensor<1, 3>>   contact_torque(particles.size());
+  std::vector<Tensor<1, 3>>   contact_wall_torque(particles.size());
+  std::vector<Tensor<1, dim>> contact_wall_force(particles.size());
 
-  std::vector<Tensor<1, 3>> current_fluid_torque(particles.size());
-  std::vector<Tensor<1, 3>> current_contact_torque(particles.size());
+  std::vector<Tensor<1, dim>> current_fluid_force(particles.size());
+  std::vector<Tensor<1, 3>>   current_fluid_torque(particles.size());
 
   std::vector<Tensor<1, dim>> velocity(particles.size());
   std::vector<Point<dim>>     position(particles.size());
@@ -1111,30 +1112,15 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
       contact_torque.resize(particles.size());
       contact_force.clear();
       contact_force.resize(particles.size());
-      dem_contact_torque.clear();
-      dem_contact_torque.resize(particles.size());
+      contact_torque.clear();
+      contact_torque.resize(particles.size());
 
-      /*for (unsigned int p_i = 0; p_i < particles.size(); ++p_i) {
-          // Particle Particle contact force;
-          for (unsigned int p_j = 0; p_j < particles.size(); ++p_j) {
-              if(p_j!=p_i) {
-                  double overlap = 0;
-                  double dist = (position[p_i] - position[p_j] ).norm();
-                  if (dist < (particles[p_i].radius + particles[p_j].radius)) {
-                      overlap = (particles[p_i].radius +
-        particles[p_j].radius)-dist;
-                    }
-                  contact_force[p_i]+=(position[p_i] - position[p_j]
-        )/dist*overlap*particle_stiffness;
-                }
-            }
-          // current fluid_force (inteprolate the fluide force in the current
-        time step)
-        }*/ //add dem pp and pw force torque
 
       // Calculate particle-particle and particle-wall contact force
-      calculate_pp_contact_force(dt_dem, contact_force, dem_contact_torque);
-      calculate_pw_contact_force();
+      calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
+      calculate_pw_contact_force(dt_dem,
+                                 contact_wall_force,
+                                 contact_wall_torque);
 
 
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
@@ -1179,23 +1165,41 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
-  const double &               dt_dem,
+  const double                &dt_dem,
   std::vector<Tensor<1, dim>> &contact_force,
-  std::vector<Tensor<1, dim>> &contact_torque)
+  std::vector<Tensor<1, 3>>   &contact_torque)
 {
   for (auto &particle_one : dem_particles)
     {
       for (auto &particle_two : dem_particles)
         {
-          if (particle_one.particle_id != particle_two.particle_id)
+          if (particle_one.particle_id != particle_two.particle_id and particle_one.particle_id< particle_two.particle_id)
             {
-              contact_tangential_history contact_history;
-
               const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
+              ContactTangentialHistory contact_history;
+              ContactTangentialHistory contact_info;
+              try
+                {
+                  contact_info = pp_contact_map[particle_one.particle_id]
+                                               [particle_two.particle_id];
+                }
+              catch (...)
+                {
+                  for (int d = 0; d < dim; ++d)
+                    {
+                      contact_history.tangential_overlap[d]           = 0;
+                      contact_history.tangential_relative_velocity[d] = 0;
+                    }
+                  pp_contact_map[particle_one.particle_id]
+                                [particle_two.particle_id] = contact_history;
+                }
 
-              auto contact_info = &pp_contact_map[particle_one.particle_id]
-                                                 [particle_two.particle_id];
+              double effective_mass = (particle_one.mass * particle_two.mass) /
+                                      (particle_one.mass + particle_two.mass);
+              double effective_radius =
+                (particle_one.radius * particle_two.radius) /
+                (particle_one.radius + particle_two.radius);
 
 
               // Calculation of normal overlap
@@ -1214,6 +1218,18 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                   // Using contact_vector, the contact normal vector is obtained
                   auto normal_unit_vector =
                     contact_vector / contact_vector.norm();
+                  Tensor<1, 3> normal;
+                  if (dim == 2)
+                    {
+                      normal[0] = normal_unit_vector[0];
+                      normal[1] = normal_unit_vector[1];
+                    }
+                  if (dim == 2)
+                    {
+                      normal[0] = normal_unit_vector[0];
+                      normal[1] = normal_unit_vector[1];
+                      normal[2] = normal_unit_vector[2];
+                    }
 
                   // Defining relative contact velocity
                   Tensor<1, dim> contact_relative_velocity;
@@ -1221,12 +1237,17 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                   if (dim == 3)
                     {
                       // Calculation of contact relative velocity
-                      contact_relative_velocity =
-                        (particle_one.velocity - particle_two.velocity) +
-                        (cross_product_3d(
-                          (particle_one.radius * particle_one.omega +
-                           particle_two.radius * particle_two.omega),
-                          normal_unit_vector));
+                      Tensor<1,3> rotational_velocity=
+                        cross_product_3d((particle_one.radius * particle_one.omega +
+                                          particle_two.radius * particle_two.omega),
+                                         normal);
+                      contact_relative_velocity[0] =
+                        (particle_one.velocity - particle_two.velocity)[0] +
+                        rotational_velocity[0];
+                      contact_relative_velocity[1] =
+                        (particle_one.velocity - particle_two.velocity)[1] + rotational_velocity[1];
+                      contact_relative_velocity[2] =
+                        (particle_one.velocity - particle_two.velocity)[2] + rotational_velocity[2];
                     }
                   else
                     {
@@ -1254,7 +1275,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                     modified_tangential_overlap;
                   contact_history.tangential_relative_velocity =
                     tangential_relative_velocity;
-                  contact_info.insert(contact_history);
+                  pp_contact_map[particle_one.particle_id]
+                                [particle_two.particle_id] = contact_history;
 
 
                   const double effective_mass =
@@ -1315,7 +1337,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                          9.8696);
 
                   const double radius_times_overlap_sqrt =
-                    sqrt(this->effective_radius * normal_overlap);
+                    sqrt(effective_radius * normal_overlap);
 
                   const double model_parameter_sn =
                     2 * effective_youngs_modulus * radius_times_overlap_sqrt;
@@ -1329,7 +1351,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                     0.66665 * model_parameter_sn;
                   const double normal_damping_constant =
                     -1.8257 * model_parameter_beta *
-                    sqrt(model_parameter_sn * this->effective_mass);
+                    sqrt(model_parameter_sn * effective_mass);
                   const double tangential_spring_constant =
                     8 * effective_shear_modulus * radius_times_overlap_sqrt +
                     DBL_MIN;
@@ -1380,28 +1402,40 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
 
                   // Calculation of torque
                   // Torque caused by tangential force (tangential_torque)
-                  Tensor<1, dim> tangential_torque;
+                  Tensor<1, 3> tangential_torque;
+                  if (dim == 2)
+                    {
+                      Tensor<1,3> tangential_force_3d;
+                      tangential_force_3d[0]=tangential_force[0];
+                      tangential_force_3d[1]=tangential_force[1];
+                      tangential_torque = cross_product_3d((effective_radius *
+                                                            normal),
+                                                           tangential_force_3d);
+                    }
                   if (dim == 3)
                     {
-                      tangential_torque = cross_product_3d((effective_radius *
-                                                            normal_unit_vector),
-                                                           tangential_force);
+                      Tensor<1,3> tangential_force_3d;
+                      tangential_force_3d[0]=tangential_force[0];
+                      tangential_force_3d[1]=tangential_force[1];
+                      tangential_force_3d[2]=tangential_force[2];
+                      tangential_torque =
+                        cross_product_3d((effective_radius * normal),
+                                         tangential_force_3d);
                     }
-
                   // Rolling resistance torque using viscous rolling resistance
                   // model
                   auto omega_ij = particle_one.omega - particle_two.omega;
                   auto omega_ij_direction =
                     omega_ij / (omega_ij.norm() + DBL_MIN);
 
-                  Tensor<1, dim> v_omega =
+                  Tensor<1, 3> v_omega =
                     cross_product_3d(particle_one.omega,
-                                     particle_one.radius * normal_unit_vector) -
+                                     particle_one.radius * normal) -
                     cross_product_3d(particle_two.omega,
-                                     particle_two.radius * -normal_unit_vector);
+                                     particle_two.radius * -normal);
 
                   // Calculation of rolling resistance torque
-                  Tensor<1, dim> rolling_resistance_torque =
+                  Tensor<1, 3> rolling_resistance_torque =
                     -effective_coefficient_of_rolling_friction *
                     effective_radius * normal_force.norm() * v_omega.norm() *
                     omega_ij_direction;
@@ -1429,7 +1463,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                       contact_history.tangential_overlap[d]           = 0;
                       contact_history.tangential_relative_velocity[d] = 0;
                     }
-                  contact_info.insert(contact_history);
+                  pp_contact_map[particle_one.particle_id].erase(
+                    particle_two.particle_id);
                 }
             }
         }
@@ -1440,21 +1475,53 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force(
-  const double &               dt_dem,
+  const double                &dt_dem,
   std::vector<Tensor<1, dim>> &contact_force,
-  std::vector<Tensor<1, dim>> &contact_torque)
+  std::vector<Tensor<1, 3>>   &contact_torque)
 {
+  double wall_youngs_modulus               = 100000;
+  double wall_poisson_ratio                = 0.3;
+  double wall_rolling_friction_coefficient = 1;
+  double wall_friction_coefficient         = 1;
+  double wall_restitution_coefficient      = 1;
   for (auto &particle : dem_particles)
     {
       for (auto &boundary_cell : boundary_cells)
         {
           auto boundary_cell_information = boundary_cell.second;
-
-          auto contact_info =
-            &pw_contact_map[particle.particle_id][boundary_cell.first];
+          ContactTangentialHistory contact_history;
+          ContactTangentialHistory contact_info;
+          try
+            {
+              contact_info =
+                pw_contact_map[particle.particle_id][boundary_cell.first];
+            }
+          catch (...)
+            {
+              for (int d = 0; d < dim; ++d)
+                {
+                  contact_history.tangential_overlap[d]           = 0;
+                  contact_history.tangential_relative_velocity[d] = 0;
+                }
+              pw_contact_map[particle.particle_id][boundary_cell.first] =
+                contact_history;
+            }
 
           auto normal_vector     = boundary_cell_information.normal_vector;
           auto point_on_boundary = boundary_cell_information.point_on_boundary;
+
+          Tensor<1, 3> normal;
+          if (dim == 2)
+            {
+              normal[0] = normal_vector[0];
+              normal[1] = normal_vector[1];
+            }
+          if (dim == 2)
+            {
+              normal[0] = normal_vector[0];
+              normal[1] = normal_vector[1];
+              normal[2] = normal_vector[2];
+            }
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -1477,10 +1544,15 @@ GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force(
               Tensor<1, dim> contact_relative_velocity;
               if (dim == 3)
                 {
-                  contact_relative_velocity =
-                    particle.velocity +
+                  Tensor<1, 3> rotational_velocity =
                     cross_product_3d((particle.radius * particle.omega),
-                                     normal_vector);
+                                     normal);
+                  contact_relative_velocity[0] =
+                    particle.velocity[0] + rotational_velocity[0];
+                  contact_relative_velocity[1] =
+                    particle.velocity[1] + rotational_velocity[1];
+                  contact_relative_velocity[2] =
+                    particle.velocity[2] + rotational_velocity[2];
                 }
               if (dim == 2)
                 {
@@ -1536,13 +1608,6 @@ GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force(
                 (particle.rolling_friction_coefficient +
                  wall_rolling_friction_coefficient + DBL_MIN);
 
-              const double effective_coefficient_of_rolling_friction =
-                2 * particle_rolling_friction_coefficient *
-                wall_rolling_friction_coefficient /
-                (particle_rolling_friction_coefficient +
-                 wall_rolling_friction_coefficient + DBL_MIN);
-
-
               const double radius_times_overlap_sqrt =
                 sqrt(particle.radius * normal_overlap);
               const double log_coeff_restitution =
@@ -1568,7 +1633,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force(
               // forces
               Tensor<1, dim> normal_force =
                 (normal_spring_constant * normal_overlap +
-                 normal_damping_constant * normal_relative_velocity) *
+                 normal_damping_constant * normal_relative_velocity_value) *
                 normal_vector;
 
               // Calculation of tangential force
@@ -1593,18 +1658,30 @@ GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force(
 
               // Calculation of torque
               // Torque caused by tangential force (tangential_torque)
-              Tensor<1, dim> tangential_torque;
-
-              if (dim == 3)
+              Tensor<1, 3> tangential_torque;
+              if (dim == 2)
                 {
+                  Tensor<1,3> tangential_force_3d;
+                  tangential_force_3d[0]=tangential_force[0];
+                  tangential_force_3d[1]=tangential_force[1];
+                  tangential_torque = cross_product_3d((particle.radius*
+                                                        normal),
+                                                            tangential_force_3d);
+                }
+              if (dim == 2)
+                {
+                  Tensor<1,3> tangential_force_3d;
+                  tangential_force_3d[0]=tangential_force[0];
+                  tangential_force_3d[1]=tangential_force[1];
+                  tangential_force_3d[2]=tangential_force[2];
                   tangential_torque =
-                    cross_product_3d((particle.radius * normal_vector),
-                                     tangential_force);
+                    cross_product_3d((particle.radius*normal),
+                                     tangential_force_3d);
                 }
 
               // Rolling resistance torque
-              Tensor<1, dim> angular_velocity = particle.omega;
-              Tensor<1, dim> pw_angular_velocity;
+              Tensor<1, 3> angular_velocity = particle.omega;
+              Tensor<1, 3> pw_angular_velocity;
 
               double omega_value = angular_velocity.norm();
               if (omega_value != 0)
@@ -1612,12 +1689,12 @@ GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force(
                   pw_angular_velocity = angular_velocity / omega_value;
                 }
 
-              Tensor<1, dim> v_omega =
+              Tensor<1, 3> v_omega =
                 cross_product_3d(angular_velocity,
-                                 particle.radius * normal_vector);
+                                 particle.radius * normal);
 
               // Calculation of rolling resistance torque
-              Tensor<1, dim> rolling_resistance_torque =
+              Tensor<1, 3> rolling_resistance_torque =
                 -effective_coefficient_of_rolling_friction * particle.radius *
                 normal_force.norm() * v_omega.norm() * pw_angular_velocity;
 
@@ -2090,7 +2167,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p(
-  std::vector<types::global_dof_index> &         local_dof_indices,
+  std::vector<types::global_dof_index>          &local_dof_indices,
   std::map<types::global_dof_index, Point<dim>> &support_points,
   unsigned int                                   p)
 {
@@ -2124,8 +2201,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_cut(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index> &                local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>> &       support_points)
+  std::vector<types::global_dof_index>                 &local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>>        &support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -2147,8 +2224,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_inside(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index> &                local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>> &       support_points)
+  std::vector<types::global_dof_index>                 &local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>>        &support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -2211,8 +2288,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);
   FEValues<dim>      fe_values(*this->fe,
-                          q_formula,
-                          update_quadrature_points | update_JxW_values);
+                               q_formula,
+                               update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   int    order = this->simulation_parameters.particlesParameters->order;
@@ -2768,8 +2845,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2860,8 +2937,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 

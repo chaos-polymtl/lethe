@@ -504,14 +504,16 @@ private:
   void
   calculate_pp_contact_force(const double &               dt_dem,
                              std::vector<Tensor<1, dim>> &contact_force,
-                             std::vector<Tensor<1, dim>> &contact_torque);
+                             std::vector<Tensor<1, 3>> &contact_torque);
 
 
   /**
    * @brief Calculate non-linear (Hertzian) particle-wall contact force
    */
   void
-  calculate_pw_contact_force();
+  calculate_pw_contact_force(const double &               dt_dem,
+                             std::vector<Tensor<1, dim>> &contact_force,
+                             std::vector<Tensor<1, 3>> &contact_torque);
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -568,15 +570,14 @@ private:
   std::vector<TableHandler> table_p;
 
   // A struct to store contact tangential history
-  struct contact_tangential_history
-    Tensor<1, dim> tangential_relative_velocity;
+  struct ContactTangentialHistory
   {
     Tensor<1, dim> tangential_overlap;
   };
   // Particles contact history
 
   // A struct to store boundary cells' information
-  struct boundary_cells_info
+  struct BoundaryCellsInfo
   {
     Tensor<1, dim> normal_vector;
     Point<dim>     point_on_boundary;
@@ -584,12 +585,12 @@ private:
 
 
   // Particles contact history
-  std::map<unsigned int, std::map<unsigned int, contact_tangential_history>>
+  std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
     pp_contact_map;
-  std::map<unsigned int, std::map<unsigned int, contact_tangential_history>>
+  std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
     pw_contact_map;
 
-  std::map<unsigned int, boundary_cells_info> boundary_cells;
+  std::map<unsigned int, BoundaryCellsInfo> boundary_cells;
 };
 
 

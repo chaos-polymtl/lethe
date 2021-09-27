@@ -117,6 +117,7 @@ public:
 
 
 
+
   Tensor<1, dim> impulsion;
   Tensor<1, dim> impulsion_iter;
 
@@ -134,6 +135,13 @@ public:
   double local_alpha_force;
 
   double radius;
+
+  double youngs_modulus;
+  double restitution_coefficient;
+  double friction_coefficient;
+  double poisson_ratio;
+  double rolling_friction_coefficient;
+
 
   // Pressure imposition location
   Point<dim> pressure_location;
