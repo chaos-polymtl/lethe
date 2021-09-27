@@ -54,6 +54,13 @@ IBParticle<dim>::initialise_all()
   last_angular_position = angular_position;
   impulsion             = 0;
   impulsion_iter        = 0;
+
+
+  youngs_modulus=10000000;
+  restitution_coefficient=1;
+  friction_coefficient=1;
+  poisson_ratio=0.3;
+  rolling_friction_coefficient=0.1;
 }
 
 template <int dim>
