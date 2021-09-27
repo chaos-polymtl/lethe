@@ -1535,6 +1535,26 @@ namespace Parameters
                       "1",
                       Patterns::Double(),
                       "uniform rotational moment of inertia");
+    prm.declare_entry("youngs modulus",
+                      "10000000",
+                      Patterns::Double(),
+                      "The youngs modulus of particle in case of contact");
+    prm.declare_entry("poisson ratio",
+                      "0.3",
+                      Patterns::Double(),
+                      "The poisson ratio of particle in case of contact");
+    prm.declare_entry("restitution coefficient",
+                      "1",
+                      Patterns::Double(),
+                      "The restitution coefficient of particle in case of contact");
+    prm.declare_entry("friction coefficient",
+                      "1",
+                      Patterns::Double(),
+                      "The friction coefficient of particle in case of contact");
+    prm.declare_entry("rolling friction coefficient",
+                      "0.1",
+                      Patterns::Double(),
+                      "The rolling friction coefficient of particle in case of contact");
   }
 
   template <int dim>
@@ -1612,6 +1632,31 @@ namespace Parameters
                         Patterns::Double(),
                         "relaxation parameter");
 
+      prm.declare_entry("wall youngs modulus",
+                        "10000000",
+                        Patterns::Double(),
+                        "The wall youngs modulus if IB particles are in contact with it");
+
+      prm.declare_entry("wall poisson ratio",
+                          "0.3",
+                          Patterns::Double(),
+                          "The wall poisson ratio if IB particles are in contact with it");
+
+      prm.declare_entry("wall rolling friction coefficient",
+                          "0.1",
+                          Patterns::Double(),
+                          "The wall rolling friction coefficient if IB particles are in contact with it");
+
+      prm.declare_entry("wall friction coefficient",
+                        "1",
+                        Patterns::Double(),
+                        "The wall friction coefficient if IB particles are in contact with it");
+
+      prm.declare_entry("wall restitution coefficient",
+                        "1",
+                        Patterns::Double(),
+                        "The wall restitution coefficient if IB particles are in contact with it");
+
 
       prm.enter_subsection("gravity");
       f_gravity->declare_parameters(prm, dim);
@@ -1666,6 +1711,14 @@ namespace Parameters
       f_gravity->parse_parameters(prm);
       prm.leave_subsection();
 
+      wall_youngs_modulus= prm.get_double("wall youngs modulus");
+      wall_poisson_ratio= prm.get_double("wall poisson ratio");
+      wall_rolling_friction_coefficient= prm.get_double("wall rolling friction coefficient");
+      wall_friction_coefficient= prm.get_double("wall friction coefficient");
+      wall_restitution_coefficient= prm.get_double("wall restitution coefficient");
+
+
+
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
@@ -1708,6 +1761,11 @@ namespace Parameters
           particles[i].inertia[2][2]        = prm.get_double("inertia");
           particles[i].pressure_location[0] = prm.get_double("pressure x");
           particles[i].pressure_location[1] = prm.get_double("pressure y");
+          particles[i].youngs_modulus = prm.get_double("youngs modulus");
+          particles[i].restitution_coefficient = prm.get_double("restitution coefficient");
+          particles[i].friction_coefficient = prm.get_double("friction coefficient");
+          particles[i].poisson_ratio= prm.get_double("poisson ratio");
+          particles[i].rolling_friction_coefficient=prm.get_double("rolling friction coefficient");
 
           if (dim == 3)
             {

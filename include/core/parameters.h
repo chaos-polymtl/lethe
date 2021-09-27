@@ -849,7 +849,11 @@ namespace Parameters
     Tensor<1, dim>               gravity;
     double                       length_ratio;
     double                       particle_nonlinear_tol;
-    double                       length_ratio;
+    double wall_youngs_modulus               ;
+    double wall_poisson_ratio                ;
+    double wall_rolling_friction_coefficient ;
+    double wall_friction_coefficient         ;
+    double wall_restitution_coefficient      ;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 

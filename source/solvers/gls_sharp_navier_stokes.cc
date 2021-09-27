@@ -1229,7 +1229,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                       normal[0] = normal_unit_vector[0];
                       normal[1] = normal_unit_vector[1];
                     }
-                  if (dim == 2)
+                  if (dim == 3)
                     {
                       normal[0] = normal_unit_vector[0];
                       normal[1] = normal_unit_vector[1];
@@ -1246,6 +1246,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                         cross_product_3d((particle_one.radius * particle_one.omega +
                                           particle_two.radius * particle_two.omega),
                                          normal);
+                      this->pcout<<"rotational_velocity" <<rotational_velocity<<endl;
                       contact_relative_velocity[0] =
                         (particle_one.velocity - particle_two.velocity)[0] +
                         rotational_velocity[0];
@@ -1372,7 +1373,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                     ((normal_damping_constant *
                       normal_relative_velocity_value) *
                      normal_unit_vector);
-                  this->pcout<<normal_spring_constant<<" ----   " <<normal_damping_constant<< " ----   "<<normal_overlap<< " ----   "<< normal_relative_velocity_value <<std::endl;
+
 
                   // Calculation of tangential force using spring and dashpot
                   // tangential forces. Since we need dashpot tangential force
@@ -1446,7 +1447,9 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                     effective_radius * normal_force.norm() * v_omega.norm() *
                     omega_ij_direction;
 
-
+                  //this->pcout<<"normal: "<<normal_force<<" ---- normal_overlap: "<<normal_overlap<<" ---- tangential_force: "<<tangential_force<<" ---- tangential_overlap: "<<contact_info.tangential_overlap<<" ---- contact_relative_velocity: "<< contact_relative_velocity<<std::endl;
+                  //this->pcout<<"tangential_force: "<<tangential_force<<" ---- tangential_spring_constant: "<<tangential_spring_constant<<" ---- damping_tangential_force: "<<damping_tangential_force <<" ---- contact_info.tangential_overlap: "<<contact_info.tangential_overlap<<std::endl;
+                  //this->pcout<<"tangential_force: "<<tangential_force<<" ---- tangential_spring_constant: "<<tangential_spring_constant<<" ---- damping_tangential_force: "<<damping_tangential_force <<" ---- contact_info.tangential_overlap: "<<contact_info.tangential_overlap<<std::endl;
 
                   contact_force[particle_one.particle_id] -=
                     (normal_force + tangential_force);
