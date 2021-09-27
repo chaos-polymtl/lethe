@@ -1110,8 +1110,9 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
 
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
-      position[p_i]                  = particles[p_i].last_position;
-      velocity[p_i]                  = particles[p_i].last_velocity;
+      dem_particles[p_i].position    = particles[p_i].last_position;
+      dem_particles[p_i].velocity    = particles[p_i].last_velocity;
+      dem_particles[p_i].omega       = particles[p_i].last_omega;
       particles[p_i].impulsion       = 0;
       particles[p_i].omega_impulsion = 0;
     }
@@ -1141,6 +1142,7 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
 
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
+          auto         inv_inertia = invert(particles[p_i].inertia);
           if (dim == 2)
             gravity =
               g * (particles[p_i].mass -
@@ -1160,20 +1162,23 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
             particles[p_i].last_torques +
             (particles[p_i].torques - particles[p_i].last_torques) * t / dt;
 
-          velocity[p_i] = velocity[p_i] + (current_fluid_force[p_i] +
-                                           contact_force[p_i] + gravity) *
+          dem_particles[p_i].velocity= dem_particles[p_i] .velocity + (current_fluid_force[p_i] +
+                                           contact_force[p_i]+contact_wall_force[p_i] + gravity) *
                                             dt_dem / particles[p_i].mass;
-          position[p_i] = position[p_i] + velocity[p_i] * dt_dem;
+          dem_particles[p_i].position = dem_particles[p_i].position + dem_particles[p_i] .velocity * dt_dem;
+
+          dem_particles[p_i].omega=dem_particles[p_i].omega + inv_inertia*(current_fluid_torque[p_i] + contact_torque[p_i]+contact_wall_torque[p_i]) * dt_dem;
+
           particles[p_i].impulsion +=
             (current_fluid_force[p_i] + contact_force[p_i] + gravity) * dt_dem;
           particles[p_i].omega_impulsion +=
-            (current_fluid_torque[p_i] + contact_torque[p_i]) * dt_dem;
+            (current_fluid_torque[p_i] + contact_torque[p_i]+contact_wall_torque[p_i]) * dt_dem;
         }
       t += dt_dem;
     }
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
-      particles[p_i].position = position[p_i];
+      particles[p_i].position = dem_particles[p_i].position;
     }
 }
 
@@ -1383,6 +1388,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                     ((normal_damping_constant *
                       normal_relative_velocity_value) *
                      normal_unit_vector);
+                  this->pcout<<normal_spring_constant<<" ----   " <<normal_damping_constant<< " ----   "<<normal_overlap<< " ----   "<< normal_relative_velocity_value <<std::endl;
 
                   // Calculation of tangential force using spring and dashpot
                   // tangential forces. Since we need dashpot tangential force
