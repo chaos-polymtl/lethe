@@ -1159,12 +1159,15 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
                                              particles[p_i].radius * PI * rho);
             }
 
-          current_fluid_force[p_i] =
+          /*current_fluid_force[p_i] =
             particles[p_i].last_forces +
             (particles[p_i].forces - particles[p_i].last_forces) * t / dt;
           current_fluid_torque[p_i] =
             particles[p_i].last_torques +
-            (particles[p_i].torques - particles[p_i].last_torques) * t / dt;
+            (particles[p_i].torques - particles[p_i].last_torques) * t / dt;*/
+
+          current_fluid_force[p_i] =particles[p_i].forces;
+          current_fluid_torque[p_i] =particles[p_i].torques;
 
           dem_particles[p_i].velocity =
             dem_particles[p_i].velocity +
@@ -1620,234 +1623,238 @@ GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force(
             }
           boundary_index += 1;
         }
-      auto &boundary_cell = boundary_cells[particle.particle_id][best_index];
+      if (boundary_cells[particle.particle_id].size() > 0)
+        {
+          auto &boundary_cell =
+            boundary_cells[particle.particle_id][best_index];
 
 
-      auto                     boundary_cell_information = boundary_cell;
-      ContactTangentialHistory contact_history;
-      ContactTangentialHistory contact_info;
-      try
-        {
-          contact_info = pw_contact_map[particle.particle_id][boundary_index];
-        }
-      catch (...)
-        {
-          for (int d = 0; d < dim; ++d)
+          auto                     boundary_cell_information = boundary_cell;
+          ContactTangentialHistory contact_history;
+          ContactTangentialHistory contact_info;
+          try
             {
-              contact_history.tangential_overlap[d]           = 0;
-              contact_history.tangential_relative_velocity[d] = 0;
+              contact_info =
+                pw_contact_map[particle.particle_id][boundary_index];
             }
-          pw_contact_map[particle.particle_id][boundary_index] =
-            contact_history;
-        }
-
-      auto normal_vector     = boundary_cell_information.normal_vector;
-      auto point_on_boundary = boundary_cell_information.point_on_boundary;
-
-      Tensor<1, 3> normal;
-      if (dim == 2)
-        {
-          normal[0] = normal_vector[0];
-          normal[1] = normal_vector[1];
-        }
-      if (dim == 3)
-        {
-          normal[0] = normal_vector[0];
-          normal[1] = normal_vector[1];
-          normal[2] = normal_vector[2];
-        }
-
-      // A vector (point_to_particle_vector) is defined which connects the
-      // center of particle to the point_on_boundary. This vector will then
-      // be projected on the normal vector of the boundary to obtain the
-      // particle-wall distance
-      Tensor<1, dim> point_to_particle_vector =
-        particle.position - point_on_boundary;
-
-      // Finding the projected vector on the normal vector of the boundary.
-      // Here we have used the private function find_projection. Using this
-      // projected vector, the particle-wall distance is calculated
-      Tensor<1, dim> projected_vector =
-        find_projection(point_to_particle_vector, normal_vector);
-
-      double normal_overlap = particle.radius - (projected_vector.norm());
-
-      if (normal_overlap > 0)
-        {
-          // Defining relative contact velocity
-          Tensor<1, dim> contact_relative_velocity;
-          if (dim == 3)
+          catch (...)
             {
-              Tensor<1, 3> rotational_velocity =
-                cross_product_3d((particle.radius * particle.omega), normal);
-              contact_relative_velocity[0] =
-                particle.velocity[0] + rotational_velocity[0];
-              contact_relative_velocity[1] =
-                particle.velocity[1] + rotational_velocity[1];
-              contact_relative_velocity[2] =
-                particle.velocity[2] + rotational_velocity[2];
+              for (int d = 0; d < dim; ++d)
+                {
+                  contact_history.tangential_overlap[d]           = 0;
+                  contact_history.tangential_relative_velocity[d] = 0;
+                }
+              pw_contact_map[particle.particle_id][boundary_index] =
+                contact_history;
             }
+
+          auto normal_vector     = boundary_cell_information.normal_vector;
+          auto point_on_boundary = boundary_cell_information.point_on_boundary;
+
+          Tensor<1, 3> normal;
           if (dim == 2)
             {
-              // TODO correct this after dem_2d correction
-              contact_relative_velocity = particle.velocity;
-            }
-
-          // Calculation of normal relative velocity
-          double normal_relative_velocity_value =
-            contact_relative_velocity * normal_vector;
-          Tensor<1, dim> normal_relative_velocity =
-            normal_relative_velocity_value * normal_vector;
-
-          // Calculation of tangential relative velocity
-          Tensor<1, dim> tangential_relative_velocity =
-            contact_relative_velocity - normal_relative_velocity;
-
-          Tensor<1, dim> modified_tangential_overlap =
-            contact_info.tangential_overlap +
-            tangential_relative_velocity * dt_dem;
-
-
-          const double effective_youngs_modulus =
-            (particle.youngs_modulus * wall_youngs_modulus) /
-            (wall_youngs_modulus *
-               (1 - particle.poisson_ratio * particle.poisson_ratio) +
-             particle.youngs_modulus *
-               (1 - wall_poisson_ratio * wall_poisson_ratio) +
-             DBL_MIN);
-
-          const double effective_shear_modulus =
-            (particle.youngs_modulus * wall_youngs_modulus) /
-            ((2 * wall_youngs_modulus * (2 - particle.poisson_ratio) *
-              (1 + particle.poisson_ratio)) +
-             (2 * particle.youngs_modulus * (2 - wall_poisson_ratio) *
-              (1 + wall_poisson_ratio)) +
-             DBL_MIN);
-
-          const double effective_coefficient_of_restitution =
-            2 * particle.restitution_coefficient *
-            wall_restitution_coefficient /
-            (particle.restitution_coefficient + wall_restitution_coefficient +
-             DBL_MIN);
-
-          const double effective_coefficient_of_friction =
-            2 * particle.friction_coefficient * wall_friction_coefficient /
-            (particle.friction_coefficient + wall_friction_coefficient +
-             DBL_MIN);
-
-          const double effective_coefficient_of_rolling_friction =
-            2 * particle.rolling_friction_coefficient *
-            wall_rolling_friction_coefficient /
-            (particle.rolling_friction_coefficient +
-             wall_rolling_friction_coefficient + DBL_MIN);
-
-          const double radius_times_overlap_sqrt =
-            sqrt(particle.radius * normal_overlap);
-          const double log_coeff_restitution =
-            log(effective_coefficient_of_restitution);
-          const double model_parameter_beta =
-            log_coeff_restitution /
-            sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
-          const double model_parameter_sn =
-            2 * effective_youngs_modulus * radius_times_overlap_sqrt;
-
-          // Calculation of normal and tangential spring and dashpot
-          // constants using particle and wall properties
-          const double normal_spring_constant =
-            1.3333 * effective_youngs_modulus * radius_times_overlap_sqrt;
-          const double normal_damping_constant =
-            1.8257 * model_parameter_beta *
-            sqrt(model_parameter_sn * particle.mass);
-          const double tangential_spring_constant =
-            -8 * effective_shear_modulus * radius_times_overlap_sqrt + DBL_MIN;
-
-          // Calculation of normal force using spring and dashpot normal
-          // forces
-
-          Tensor<1, dim> normal_force =
-            (normal_spring_constant * normal_overlap +
-             normal_damping_constant * normal_relative_velocity_value) *
-            normal_vector;
-
-          // Calculation of tangential force
-          Tensor<1, dim> tangential_force =
-            tangential_spring_constant * contact_info.tangential_overlap;
-
-          const double coulomb_threshold =
-            effective_coefficient_of_friction * normal_force.norm();
-
-          // Check for gross sliding
-          if (tangential_force.norm() > coulomb_threshold)
-            {
-              // Gross sliding occurs and the tangential overlap and
-              // tangnetial force are limited to Coulumb's criterion
-              tangential_force = coulomb_threshold *
-                                 (tangential_force / tangential_force.norm());
-
-              contact_info.tangential_overlap =
-                tangential_force / (tangential_spring_constant + DBL_MIN);
-            }
-
-          // Calculation of torque
-          // Torque caused by tangential force (tangential_torque)
-          Tensor<1, 3> tangential_torque;
-          if (dim == 2)
-            {
-              Tensor<1, 3> tangential_force_3d;
-              tangential_force_3d[0] = tangential_force[0];
-              tangential_force_3d[1] = tangential_force[1];
-              tangential_torque = cross_product_3d((particle.radius * normal),
-                                                   tangential_force_3d);
+              normal[0] = normal_vector[0];
+              normal[1] = normal_vector[1];
             }
           if (dim == 3)
             {
-              Tensor<1, 3> tangential_force_3d;
-              tangential_force_3d[0] = tangential_force[0];
-              tangential_force_3d[1] = tangential_force[1];
-              tangential_force_3d[2] = tangential_force[2];
-              tangential_torque = cross_product_3d((particle.radius * normal),
-                                                   tangential_force_3d);
+              normal[0] = normal_vector[0];
+              normal[1] = normal_vector[1];
+              normal[2] = normal_vector[2];
             }
 
-          // Rolling resistance torque
-          Tensor<1, 3> angular_velocity = particle.omega;
-          Tensor<1, 3> pw_angular_velocity;
+          // A vector (point_to_particle_vector) is defined which connects the
+          // center of particle to the point_on_boundary. This vector will then
+          // be projected on the normal vector of the boundary to obtain the
+          // particle-wall distance
+          Tensor<1, dim> point_to_particle_vector =
+            particle.position - point_on_boundary;
 
-          double omega_value = angular_velocity.norm();
-          if (omega_value != 0)
+          // Finding the projected vector on the normal vector of the boundary.
+          // Here we have used the private function find_projection. Using this
+          // projected vector, the particle-wall distance is calculated
+          Tensor<1, dim> projected_vector =
+            find_projection(point_to_particle_vector, normal_vector);
+
+          double normal_overlap = particle.radius - (projected_vector.norm());
+
+          if (normal_overlap > 0)
             {
-              pw_angular_velocity = angular_velocity / omega_value;
+              // Defining relative contact velocity
+              Tensor<1, dim> contact_relative_velocity;
+              if (dim == 3)
+                {
+                  Tensor<1, 3> rotational_velocity =
+                    cross_product_3d((particle.radius * particle.omega),
+                                     normal);
+                  contact_relative_velocity[0] =
+                    particle.velocity[0] + rotational_velocity[0];
+                  contact_relative_velocity[1] =
+                    particle.velocity[1] + rotational_velocity[1];
+                  contact_relative_velocity[2] =
+                    particle.velocity[2] + rotational_velocity[2];
+                }
+              if (dim == 2)
+                {
+                  // TODO correct this after dem_2d correction
+                  contact_relative_velocity = particle.velocity;
+                }
+
+              // Calculation of normal relative velocity
+              double normal_relative_velocity_value =
+                contact_relative_velocity * normal_vector;
+              Tensor<1, dim> normal_relative_velocity =
+                normal_relative_velocity_value * normal_vector;
+
+              // Calculation of tangential relative velocity
+              Tensor<1, dim> tangential_relative_velocity =
+                contact_relative_velocity - normal_relative_velocity;
+
+              Tensor<1, dim> modified_tangential_overlap =
+                contact_info.tangential_overlap +
+                tangential_relative_velocity * dt_dem;
+
+
+              const double effective_youngs_modulus =
+                (particle.youngs_modulus * wall_youngs_modulus) /
+                (wall_youngs_modulus *
+                   (1 - particle.poisson_ratio * particle.poisson_ratio) +
+                 particle.youngs_modulus *
+                   (1 - wall_poisson_ratio * wall_poisson_ratio) +
+                 DBL_MIN);
+
+              const double effective_shear_modulus =
+                (particle.youngs_modulus * wall_youngs_modulus) /
+                ((2 * wall_youngs_modulus * (2 - particle.poisson_ratio) *
+                  (1 + particle.poisson_ratio)) +
+                 (2 * particle.youngs_modulus * (2 - wall_poisson_ratio) *
+                  (1 + wall_poisson_ratio)) +
+                 DBL_MIN);
+
+              const double effective_coefficient_of_restitution =
+                2 * particle.restitution_coefficient *
+                wall_restitution_coefficient /
+                (particle.restitution_coefficient +
+                 wall_restitution_coefficient + DBL_MIN);
+
+              const double effective_coefficient_of_friction =
+                2 * particle.friction_coefficient * wall_friction_coefficient /
+                (particle.friction_coefficient + wall_friction_coefficient +
+                 DBL_MIN);
+
+              const double effective_coefficient_of_rolling_friction =
+                2 * particle.rolling_friction_coefficient *
+                wall_rolling_friction_coefficient /
+                (particle.rolling_friction_coefficient +
+                 wall_rolling_friction_coefficient + DBL_MIN);
+
+              const double radius_times_overlap_sqrt =
+                sqrt(particle.radius * normal_overlap);
+              const double log_coeff_restitution =
+                log(effective_coefficient_of_restitution);
+              const double model_parameter_beta =
+                log_coeff_restitution /
+                sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
+              const double model_parameter_sn =
+                2 * effective_youngs_modulus * radius_times_overlap_sqrt;
+
+              // Calculation of normal and tangential spring and dashpot
+              // constants using particle and wall properties
+              const double normal_spring_constant =
+                1.3333 * effective_youngs_modulus * radius_times_overlap_sqrt;
+              const double normal_damping_constant =
+                1.8257 * model_parameter_beta *
+                sqrt(model_parameter_sn * particle.mass);
+              const double tangential_spring_constant =
+                -8 * effective_shear_modulus * radius_times_overlap_sqrt +
+                DBL_MIN;
+
+              // Calculation of normal force using spring and dashpot normal
+              // forces
+
+              Tensor<1, dim> normal_force =
+                (normal_spring_constant * normal_overlap +
+                 normal_damping_constant * normal_relative_velocity_value) *
+                normal_vector;
+
+              // Calculation of tangential force
+              Tensor<1, dim> tangential_force =
+                tangential_spring_constant * contact_info.tangential_overlap;
+
+              const double coulomb_threshold =
+                effective_coefficient_of_friction * normal_force.norm();
+
+              // Check for gross sliding
+              if (tangential_force.norm() > coulomb_threshold)
+                {
+                  // Gross sliding occurs and the tangential overlap and
+                  // tangnetial force are limited to Coulumb's criterion
+                  tangential_force =
+                    coulomb_threshold *
+                    (tangential_force / tangential_force.norm());
+
+                  contact_info.tangential_overlap =
+                    tangential_force / (tangential_spring_constant + DBL_MIN);
+                }
+
+              // Calculation of torque
+              // Torque caused by tangential force (tangential_torque)
+              Tensor<1, 3> tangential_torque;
+              if (dim == 2)
+                {
+                  Tensor<1, 3> tangential_force_3d;
+                  tangential_force_3d[0] = tangential_force[0];
+                  tangential_force_3d[1] = tangential_force[1];
+                  tangential_torque =
+                    cross_product_3d((particle.radius * normal),
+                                     tangential_force_3d);
+                }
+              if (dim == 3)
+                {
+                  Tensor<1, 3> tangential_force_3d;
+                  tangential_force_3d[0] = tangential_force[0];
+                  tangential_force_3d[1] = tangential_force[1];
+                  tangential_force_3d[2] = tangential_force[2];
+                  tangential_torque =
+                    cross_product_3d((particle.radius * normal),
+                                     tangential_force_3d);
+                }
+
+              // Rolling resistance torque
+              Tensor<1, 3> angular_velocity = particle.omega;
+              Tensor<1, 3> pw_angular_velocity;
+
+              double omega_value = angular_velocity.norm();
+              if (omega_value != 0)
+                {
+                  pw_angular_velocity = angular_velocity / omega_value;
+                }
+
+              Tensor<1, 3> v_omega =
+                cross_product_3d(angular_velocity, particle.radius * normal);
+
+              // Calculation of rolling resistance torque
+              Tensor<1, 3> rolling_resistance_torque =
+                -effective_coefficient_of_rolling_friction * particle.radius *
+                normal_force.norm() * v_omega.norm() * pw_angular_velocity;
+
+
+              // Updating the force of particles in the particle handler
+              contact_force[particle.particle_id] +=
+                normal_force + tangential_force;
+
+              // Updating the torque acting on particles
+
+              contact_torque[particle.particle_id] +=
+                tangential_torque + rolling_resistance_torque;
             }
-
-          Tensor<1, 3> v_omega =
-            cross_product_3d(angular_velocity, particle.radius * normal);
-
-          // Calculation of rolling resistance torque
-          Tensor<1, 3> rolling_resistance_torque =
-            -effective_coefficient_of_rolling_friction * particle.radius *
-            normal_force.norm() * v_omega.norm() * pw_angular_velocity;
-
-          this->pcout << "normal: " << normal_force
-                      << " ---- normal_overlap: " << normal_overlap
-                      << " ---- tangential_force: " << tangential_force
-                      << " ---- tangential_overlap: "
-                      << contact_info.tangential_overlap
-                      << " ---- contact_relative_velocity: "
-                      << contact_relative_velocity << std::endl;
-          // Updating the force of particles in the particle handler
-          contact_force[particle.particle_id] +=
-            normal_force + tangential_force;
-
-          // Updating the torque acting on particles
-
-          contact_torque[particle.particle_id] +=
-            tangential_torque + rolling_resistance_torque;
-        }
-      else
-        {
-          for (int d = 0; d < dim; ++d)
+          else
             {
-              contact_info.tangential_overlap[d] = 0;
+              for (int d = 0; d < dim; ++d)
+                {
+                  contact_info.tangential_overlap[d] = 0;
+                }
             }
         }
     }
