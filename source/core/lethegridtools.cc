@@ -225,7 +225,7 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
 {
   MappingQ1<dim> mapping;
   const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
-
+  unsigned int max_childs = GeometryInfo<dim>::max_children_per_cell;
 
 
   bool cell_on_level_0_found = false;
@@ -242,13 +242,12 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
           for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell;
                ++i)
             {
-              if ((cell->vertex(i) - center).norm() <= radius)
+              if ((cell->vertex(i) - center).norm() <= radius|| cell->point_inside(center ))
                 boundary_cells_candidates.insert(cell);
               break;
             }
         }
     }
-
   last_boundary_cells_candidates = boundary_cells_candidates;
 
   if (boundary_cells_candidates.size() != 0)
@@ -266,28 +265,33 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
                        i < GeometryInfo<dim>::vertices_per_cell;
                        ++i)
                     {
-                      if ((cell->vertex(i) - center).norm() <= radius)
+                      if ((cell->vertex(i) - center).norm() <= radius|| cell->point_inside(center ))
                         {
                           if (cell->is_active())
                             {
-                              cells_at_boundary->insert(cell);
+                              cells_at_boundary.insert(cell);
                             }
                           else
                             {
+
                               all_cell_are_active = false;
-                              boundary_cells_candidates.insert(cell);
+                              for (unsigned int j = 0; j < max_childs; ++j)
+                                {
+                                  boundary_cells_candidates.insert(cell->child(j));
+                                }
                             }
                           break;
                         }
                     }
                 }
             }
+          last_boundary_cells_candidates.clear();
           last_boundary_cells_candidates = boundary_cells_candidates;
         }
     }
-
-
-  return cells_at_boundary;
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+    cells_at_boundary_v(cells_at_boundary.begin(), cells_at_boundary.end());
+  return cells_at_boundary_v;
 }
 
 

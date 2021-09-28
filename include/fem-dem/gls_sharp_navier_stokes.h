@@ -501,6 +501,9 @@ private:
                              std::vector<Tensor<1, dim>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
 
+  void
+  update_particles_boundary_contact();
+
   /** This function is used to find the projection of vector_a on
    * vector_b
    * @param vector_a A vector which is going to be projected on vector_b
