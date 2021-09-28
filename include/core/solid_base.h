@@ -43,8 +43,9 @@
 
 #include <deal.II/grid/grid_generator.h>
 
-#include <deal.II/particles/particle_handler.h>
+#include <deal.II/lac/trilinos_vector.h>
 
+#include <deal.II/particles/particle_handler.h>
 
 
 using namespace dealii;
@@ -82,6 +83,13 @@ public:
    */
   void
   setup_triangulation(const bool restart);
+
+  /**
+   * @brief Sets-up particles with particle handler, in the fluid triangulation domain that holds the particles of the solid
+   * according to a specific quadrature
+   */
+  void
+  setup_displacement();
 
   /**
    * @brief Creates a particle handler in the fluid triangulation domain
@@ -128,6 +136,18 @@ public:
   get_solid_dof_handler();
 
   /**
+   * @return the reference to the displacement dof handler
+   */
+  DoFHandler<dim, spacedim> &
+  get_displacement_dof_handler();
+
+  /**
+   * @return the reference to the displacement vector
+   */
+  TrilinosWrappers::MPI::Vector &
+  get_displacement_vector();
+
+  /**
    * @return Function<spacedim> of the solid velocity
    */
   Function<spacedim> *
@@ -146,6 +166,12 @@ public:
   move_solid_triangulation(double time_step);
 
   /**
+   * @brief Moves the dofs of the solid_triangulation
+   */
+  void
+  move_solid_triangulation_with_displacement();
+
+  /**
    * @brief prints the positions of the particles
    */
   void
@@ -154,8 +180,22 @@ public:
   void
   rotate_grid(double angle, int axis);
 
+  /**
+   * @brief read solid base triangulation checkpoint
+   */
+  void
+  read_checkpoint(std::string prefix_name);
+
+  /**
+   * @brief write solid base triangulation checkpoint
+   */
+  void
+  write_checkpoint(std::string prefix_name);
+
 
 private:
+  IndexSet locally_owned_dofs;
+  IndexSet locally_relevant_dofs;
   // Member variables
   MPI_Comm           mpi_communicator;
   const unsigned int n_mpi_processes;
@@ -172,6 +212,13 @@ private:
   std::shared_ptr<Mapping<dim, spacedim>> solid_mapping;
   std::shared_ptr<Mapping<spacedim>>      fluid_mapping;
   std::shared_ptr<Quadrature<dim>>        quadrature;
+
+
+  DoFHandler<dim, spacedim>                displacement_dh;
+  std::shared_ptr<FESystem<dim, spacedim>> displacement_fe;
+  TrilinosWrappers::MPI::Vector            displacement;
+  TrilinosWrappers::MPI::Vector            displacement_relevant;
+
 
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param;
 
