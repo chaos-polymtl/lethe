@@ -515,6 +515,9 @@ private:
                              std::vector<Tensor<1, dim>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
 
+  void
+  update_particles_boundary_contact();
+
   /** This function is used to find the projection of vector_a on
    * vector_b
    * @param vector_a A vector which is going to be projected on vector_b
@@ -590,7 +593,7 @@ private:
   std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
     pw_contact_map;
 
-  std::map<unsigned int, BoundaryCellsInfo> boundary_cells;
+  std::vector<std::vector<BoundaryCellsInfo>> boundary_cells;
 };
 
 
