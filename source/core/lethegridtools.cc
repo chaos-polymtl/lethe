@@ -88,6 +88,7 @@ LetheGridTools::find_cell_around_point_with_tree(
       unsigned int max_childs = GeometryInfo<dim>::max_children_per_cell;
       while (best_cell_iter->is_active() == false)
         {
+
           bool         cell_found = false;
           double       best_dist  = DBL_MAX;
           unsigned int best_index = 0;
@@ -126,6 +127,8 @@ LetheGridTools::find_cell_around_point_with_tree(
           lvl += 1;
           best_dist_last = best_dist;
         }
+
+
     }
 
   if (best_dist_last >= 1e-9 && cell_on_level_0_found == false)

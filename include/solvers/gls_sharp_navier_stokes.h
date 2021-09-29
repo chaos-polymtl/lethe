@@ -67,6 +67,7 @@ public:
   assemble_system_rhs()
   {
     assemble_rhs();
+    sharp_edge();
   }
 
 
@@ -171,7 +172,6 @@ private:
       TimerOutput::Scope t(this->computing_timer, "assemble_system");
       this->GLSNavierStokesSolver<
         dim>::assemble_system_matrix_without_preconditioner();
-      this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
     }
 
     sharp_edge();
@@ -582,8 +582,18 @@ private:
   // A struct to store boundary cells' information
   struct BoundaryCellsInfo
   {
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+      for(unsigned int i=0; i<dim; ++i){
+          ar & normal_vector;
+          ar &  point_on_boundary;
+        }
+    }
+
     Tensor<1, dim> normal_vector;
     Point<dim>     point_on_boundary;
+
   };
 
 
@@ -594,6 +604,7 @@ private:
     pw_contact_map;
 
   std::vector<std::vector<BoundaryCellsInfo>> boundary_cells;
+
 };
 
 

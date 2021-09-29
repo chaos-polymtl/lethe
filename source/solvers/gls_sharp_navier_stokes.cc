@@ -143,12 +143,13 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
           cell->get_dof_indices(local_dof_indices);
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-              unsigned int count_small     = 0;
-              Point<dim>   center_immersed = particles[p].position;
-              Tensor<1,dim> r;
-              r[0]=particles[p].radius;
+              unsigned int   count_small     = 0;
+              Point<dim>     center_immersed = particles[p].position;
+              Tensor<1, dim> r;
+              r[0] = particles[p].radius;
 
-              bool cell_as_ib_inside=cell->point_inside(particles[p].position+r);
+              bool cell_as_ib_inside =
+                cell->point_inside(particles[p].position + r);
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
                   // Count the number of dofs that are smaller or larger than
@@ -168,7 +169,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                       ++count_small;
                     }
                 }
-              if (count_small > 0||cell_as_ib_inside)
+              if (count_small > 0 || cell_as_ib_inside)
                 {
                   cell->set_refine_flag();
                   break;
@@ -1569,6 +1570,16 @@ GLSSharpNavierStokesSolver<dim>::update_particles_boundary_contact()
                 }
             }
         }
+
+
+            auto
+         global_boundary_cell=Utilities::MPI::all_gather(this->mpi_communicator,boundary_cells[p_i]);
+            boundary_cells[p_i].clear();
+            for(unsigned int i=0;i<global_boundary_cell.size();++i){
+                boundary_cells[p_i].insert(boundary_cells[p_i].end(),
+         global_boundary_cell[i].begin(), global_boundary_cell[i].end());
+              }
+
     }
 }
 
@@ -1952,8 +1963,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 }
             }
           particles[p].velocity_iter = particles[p].velocity;
-          particles[p].velocity      = particles[p].velocity_iter -
-                                  residual_velocity * invert(jac_velocity)*alpha;
+          particles[p].velocity =
+            particles[p].velocity_iter -
+            residual_velocity * invert(jac_velocity) * alpha;
 
           // This section is used to check if the fix point iteration is
           // diverging. If, between 2 iterations, the correction changes its
@@ -1968,10 +1980,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               Parameters::Verbosity::quiet)
             {
               this->pcout << "particle " << p << " residual "
-                          << residual_velocity.norm()
-                          << " particle velocity"
-                          << particles[p].velocity<< std::endl;
-
+                          << residual_velocity.norm() << " particle velocity"
+                          << particles[p].velocity << std::endl;
             }
 
 
@@ -2010,8 +2020,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 }
             }
           particles[p].omega_iter = particles[p].omega;
-          particles[p].omega =
-            particles[p].omega_iter - residual_omega * invert(jac_omega)*alpha;
+          particles[p].omega      = particles[p].omega_iter -
+                               residual_omega * invert(jac_omega) * alpha;
 
 
           particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
@@ -2461,6 +2471,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
     {
       Point<dim> pressure_reference_location =
         particles[p].pressure_location + particles[p].position;
+
+
       const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
         this->dof_handler, pressure_reference_location);
 
@@ -2480,9 +2492,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           // Clear the line in the matrix
           unsigned int inside_index = local_dof_indices[dim];
           // Check on which DOF of the cell to impose the pressure. If the dof
-          // is on a hanging node, it is already constrained and
-          // the pressure cannot be imposed there. So we just go to the next
-          // pressure DOF of the cell.
+          // is on a hanging node, it is already constrained and the pressure
+          // cannot be imposed there. So we just go to the next pressure DOF of
+          // the cell.
 
           for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
             {
@@ -2877,7 +2889,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
             }
         }
     }
-  MPI_Barrier(this->mpi_communicator);
 
   this->system_rhs.compress(VectorOperation::insert);
   this->system_matrix.compress(VectorOperation::insert);
