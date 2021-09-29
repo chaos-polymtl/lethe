@@ -1148,15 +1148,14 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
                                              particles[p_i].radius * PI * rho);
             }
 
-          /*current_fluid_force[p_i] =
+          current_fluid_force[p_i] =
             particles[p_i].last_forces +
             (particles[p_i].forces - particles[p_i].last_forces) * t / dt;
           current_fluid_torque[p_i] =
             particles[p_i].last_torques +
-            (particles[p_i].torques - particles[p_i].last_torques) * t / dt;*/
+            (particles[p_i].torques - particles[p_i].last_torques) * t / dt;
 
-          current_fluid_force[p_i] =particles[p_i].forces;
-          current_fluid_torque[p_i] =particles[p_i].torques;
+
 
           dem_particles[p_i].velocity =
             dem_particles[p_i].velocity +
@@ -1854,6 +1853,7 @@ void
 GLSSharpNavierStokesSolver<dim>::integrate_particles()
 {
   dem_particles = particles;
+
 
   TimerOutput::Scope t(this->computing_timer, "integrate particles");
   // Integrate the velocity of the particle. If integrate motion is defined as
