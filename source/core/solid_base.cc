@@ -646,8 +646,8 @@ SolidBase<dim, spacedim>::move_solid_triangulation_with_displacement()
 
                   for (unsigned d = 0; d < spacedim; ++d)
                     {
-                      vertex_position[d] =
-                        vertex_position[d] + displacement[dof_index + d];
+                      vertex_position[d] = vertex_position[d] +
+                                           displacement_relevant[dof_index + d];
                     }
 
                   dof_vertex_displaced.insert(cell->vertex_index(vertex));
@@ -697,7 +697,8 @@ SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
 #endif
 
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
-  sol_set_transfer.push_back(&displacement);
+  displacement_relevant = displacement;
+  sol_set_transfer.push_back(&displacement_relevant);
 
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
@@ -760,6 +761,7 @@ SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
 #endif
 
   system_trans_vectors.deserialize(x_system);
+  displacement_relevant = displacement;
 
   // Reset triangulation position using displacement vector
   move_solid_triangulation_with_displacement();
