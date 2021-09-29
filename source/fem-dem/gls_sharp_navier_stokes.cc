@@ -1580,6 +1580,16 @@ GLSSharpNavierStokesSolver<dim>::update_particles_boundary_contact()
                 }
             }
         }
+
+
+            auto
+         global_boundary_cell=Utilities::MPI::all_gather(this->mpi_communicator,boundary_cells[p_i]);
+            boundary_cells[p_i].clear();
+            for(unsigned int i=0;i<global_boundary_cell.size();++i){
+                boundary_cells[p_i].insert(boundary_cells[p_i].end(),
+         global_boundary_cell[i].begin(), global_boundary_cell[i].end());
+              }
+
     }
 }
 
@@ -2900,7 +2910,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
             }
         }
     }
-  MPI_Barrier(this->mpi_communicator);
 
   this->system_rhs.compress(VectorOperation::insert);
   this->system_matrix.compress(VectorOperation::insert);

@@ -568,8 +568,18 @@ private:
   // A struct to store boundary cells' information
   struct BoundaryCellsInfo
   {
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+      for(unsigned int i=0; i<dim; ++i){
+          ar & normal_vector;
+          ar &  point_on_boundary;
+        }
+    }
+
     Tensor<1, dim> normal_vector;
     Point<dim>     point_on_boundary;
+
   };
 
 
