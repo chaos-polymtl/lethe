@@ -1873,6 +1873,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::integrate_particles()
 {
+  dem_particles = particles;
+  particle_residual=0;
 
   particle_residual=0;
   ib_dem.update_particles(particles);
