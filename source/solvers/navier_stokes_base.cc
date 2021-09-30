@@ -1654,6 +1654,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     }
 }
 
+
+
 // Pre-compile the 2D and 3D version with the types that can occur
 template class NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>;
 template class NavierStokesBase<3, TrilinosWrappers::MPI::Vector, IndexSet>;

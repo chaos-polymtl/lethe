@@ -518,6 +518,12 @@ private:
   void
   update_particles_boundary_contact();
 
+  double
+  get_current_residual()override{
+    double scalling =this->simulation_parameters.non_linear_solver.tolerance/this->simulation_parameters.particlesParameters.particle_nonlinear_tol;
+    return std::max(this->system_rhs.l2_norm(),particle_residual*scalling);
+  }
+
   /** This function is used to find the projection of vector_a on
    * vector_b
    * @param vector_a A vector which is going to be projected on vector_b

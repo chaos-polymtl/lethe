@@ -1864,6 +1864,7 @@ void
 GLSSharpNavierStokesSolver<dim>::integrate_particles()
 {
   dem_particles = particles;
+  particle_residual=0;
 
 
   TimerOutput::Scope t(this->computing_timer, "integrate particles");
@@ -1942,7 +1943,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               for (unsigned int d = 0; d < dim; ++d)
                 {
                   jac_velocity[d][d] =
-                    -1 - 0.5 * volume * rho / particles[p].mass;
+                    -1 - 0.25 * volume * rho / particles[p].mass;
                 }
             }
           else
@@ -1959,7 +1960,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                              particles[p].mass;
                   else
                     jac_velocity[d][d] =
-                      -1 - 0.5 * volume * rho / particles[p].mass;
+                      -1 - 0.25 * volume * rho / particles[p].mass;
                 }
             }
           particles[p].velocity_iter = particles[p].velocity;
@@ -2025,7 +2026,11 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
 
           particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
+          double this_particle_residual=sqrt(residual_velocity.norm()*residual_velocity.norm()+residual_omega.norm()*residual_omega.norm());
+          if(this_particle_residual>particle_residual)
+            particle_residual=this_particle_residual;
         }
+
     }
   else
     {
@@ -2059,6 +2064,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 particles[p].f_velocity->value(particles[p].position, 2);
             }
         }
+      particle_residual=0;
     }
 }
 
