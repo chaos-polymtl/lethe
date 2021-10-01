@@ -782,7 +782,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   double         alpha = this->simulation_parameters.particlesParameters.alpha;
   Tensor<1, dim> g   = this->simulation_parameters.particlesParameters.gravity;
   double         rho = this->simulation_parameters.particlesParameters.density;
-
+  particle_residual=0;
   if (this->simulation_parameters.particlesParameters.integrate_motion)
     {
       Tensor<1, dim> gravity;

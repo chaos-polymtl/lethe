@@ -159,7 +159,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
             }
           last_alpha_res = current_res;
         }
-      
+
       global_res       = solver->get_current_residual();
       present_solution = evaluation_point;
       last_res         = current_res;
