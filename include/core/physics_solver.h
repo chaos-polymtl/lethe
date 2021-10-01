@@ -112,7 +112,8 @@ public:
 
   /**
    * @brief Default way to evaluate the residual for the nonlinear solver.
-   * Some application may use more complex evaluation of the residual and override this method.
+   * Some application may use more complex evaluation of the residual and
+   * override this method.
    */
   virtual double
   get_current_residual()
