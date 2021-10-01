@@ -42,23 +42,24 @@
 void
 test()
 {
-  std::string table_file_name="table_test_input.dat";
+  std::string table_file_name = "table_read_input.dat";
 
   TableHandler table;
-  fill_table_from_file(table, table_file_name );
+  fill_table_from_file(table, table_file_name);
 
-  table.write_text(std::cout);
-  std::pair<std::vector<std::string>,std::vector<std::vector<double>>> vector;
-  fill_vectors_from_file(vector, table_file_name );
+  table.write_tex(deallog.get_file_stream());
 
-  for (unsigned int i=0 ;i<vector.first.size();++i){
-      std::cout<<vector.first[i]<<std::endl;
-      for (unsigned int j=0 ;j<vector.second[i].size();++j){
-          std::cout<<vector.second[i][j]<<std::endl;
+  std::pair<std::vector<std::string>, std::vector<std::vector<double>>> vector;
+  fill_vectors_from_file(vector, table_file_name);
+
+  for (unsigned int i = 0; i < vector.first.size(); ++i)
+    {
+      deallog << vector.first[i] << std::endl;
+      for (unsigned int j = 0; j < vector.second[i].size(); ++j)
+        {
+          deallog << vector.second[i][j] << std::endl;
+        }
     }
-    }
-
-
 }
 
 int

@@ -2052,78 +2052,138 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
-  std::string  filename =
+  std::string filename =
     this->simulation_parameters.simulation_control.output_folder + prefix +
     ".ib_particles";
 
   // refill the table from checkpoint
-  for(unsigned int p_i=0;p_i<particles.size();++p_i){
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
       std::string filename_table =
         this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.particlesParameters
-          .ib_force_output_file +
+        this->simulation_parameters.particlesParameters.ib_force_output_file +
         "." + Utilities::int_to_string(p_i, 2) + ".dat";
-      fill_table_from_file(table_p[p_i],filename_table );
+      fill_table_from_file(table_p[p_i], filename_table);
     }
-  std::pair<std::vector<std::string>,std::vector<std::vector<double>>> restart_data;
-  fill_vectors_from_file(restart_data, filename );
+  std::pair<std::vector<std::string>, std::vector<std::vector<double>>>
+    restart_data;
+  fill_vectors_from_file(restart_data, filename);
 
-  std::vector<double> p_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"p_x")-restart_data.first.begin()];
-  std::vector<double> p_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"p_y")-restart_data.first.begin()];
-  std::vector<double> v_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"v_x")-restart_data.first.begin()];
-  std::vector<double> v_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"v_y")-restart_data.first.begin()];
-  std::vector<double> f_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"f_x")-restart_data.first.begin()];
-  std::vector<double> f_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"f_y")-restart_data.first.begin()];
-  std::vector<double> omega_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"omega_z")-restart_data.first.begin()];
-  std::vector<double> t_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"T_z")-restart_data.first.begin()];
+  std::vector<double> p_x =
+    restart_data.second[std::find(restart_data.first.begin(),
+                                  restart_data.first.end(),
+                                  "p_x") -
+                        restart_data.first.begin()];
+  std::vector<double> p_y =
+    restart_data.second[std::find(restart_data.first.begin(),
+                                  restart_data.first.end(),
+                                  "p_y") -
+                        restart_data.first.begin()];
+  std::vector<double> v_x =
+    restart_data.second[std::find(restart_data.first.begin(),
+                                  restart_data.first.end(),
+                                  "v_x") -
+                        restart_data.first.begin()];
+  std::vector<double> v_y =
+    restart_data.second[std::find(restart_data.first.begin(),
+                                  restart_data.first.end(),
+                                  "v_y") -
+                        restart_data.first.begin()];
+  std::vector<double> f_x =
+    restart_data.second[std::find(restart_data.first.begin(),
+                                  restart_data.first.end(),
+                                  "f_x") -
+                        restart_data.first.begin()];
+  std::vector<double> f_y =
+    restart_data.second[std::find(restart_data.first.begin(),
+                                  restart_data.first.end(),
+                                  "f_y") -
+                        restart_data.first.begin()];
+  std::vector<double> omega_z =
+    restart_data.second[std::find(restart_data.first.begin(),
+                                  restart_data.first.end(),
+                                  "omega_z") -
+                        restart_data.first.begin()];
+  std::vector<double> t_z =
+    restart_data.second[std::find(restart_data.first.begin(),
+                                  restart_data.first.end(),
+                                  "T_z") -
+                        restart_data.first.begin()];
 
-  if(dim==2)
+  if (dim == 2)
     {
-      for(unsigned int p_i=0;p_i<p_x.size();++p_i){
-          particles[p_i].position[0]=p_x[p_i];
-          particles[p_i].position[1]=p_y[p_i];
-          particles[p_i].velocity[0]=v_x[p_i];
-          particles[p_i].velocity[1]=v_y[p_i];
-          particles[p_i].forces[0]=f_x[p_i];
-          particles[p_i].forces[1]=f_y[p_i];
-          particles[p_i].omega[2]=omega_z[p_i];
-          particles[p_i].torques[2]=t_z[p_i];
+      for (unsigned int p_i = 0; p_i < p_x.size(); ++p_i)
+        {
+          particles[p_i].position[0] = p_x[p_i];
+          particles[p_i].position[1] = p_y[p_i];
+          particles[p_i].velocity[0] = v_x[p_i];
+          particles[p_i].velocity[1] = v_y[p_i];
+          particles[p_i].forces[0]   = f_x[p_i];
+          particles[p_i].forces[1]   = f_y[p_i];
+          particles[p_i].omega[2]    = omega_z[p_i];
+          particles[p_i].torques[2]  = t_z[p_i];
         }
     }
-  if(dim==3)
+  if (dim == 3)
     {
-      std::vector<double> p_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"p_z")-restart_data.first.begin()];
-      std::vector<double> v_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"v_z")-restart_data.first.begin()];
-      std::vector<double> f_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"f_z")-restart_data.first.begin()];
-      std::vector<double> omega_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"omega_x")-restart_data.first.begin()];
-      std::vector<double> omega_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"omega_y")-restart_data.first.begin()];
-      std::vector<double> t_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"T_x")-restart_data.first.begin()];
-      std::vector<double> t_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"T_y")-restart_data.first.begin()];
+      std::vector<double> p_z =
+        restart_data.second[std::find(restart_data.first.begin(),
+                                      restart_data.first.end(),
+                                      "p_z") -
+                            restart_data.first.begin()];
+      std::vector<double> v_z =
+        restart_data.second[std::find(restart_data.first.begin(),
+                                      restart_data.first.end(),
+                                      "v_z") -
+                            restart_data.first.begin()];
+      std::vector<double> f_z =
+        restart_data.second[std::find(restart_data.first.begin(),
+                                      restart_data.first.end(),
+                                      "f_z") -
+                            restart_data.first.begin()];
+      std::vector<double> omega_x =
+        restart_data.second[std::find(restart_data.first.begin(),
+                                      restart_data.first.end(),
+                                      "omega_x") -
+                            restart_data.first.begin()];
+      std::vector<double> omega_y =
+        restart_data.second[std::find(restart_data.first.begin(),
+                                      restart_data.first.end(),
+                                      "omega_y") -
+                            restart_data.first.begin()];
+      std::vector<double> t_x =
+        restart_data.second[std::find(restart_data.first.begin(),
+                                      restart_data.first.end(),
+                                      "T_x") -
+                            restart_data.first.begin()];
+      std::vector<double> t_y =
+        restart_data.second[std::find(restart_data.first.begin(),
+                                      restart_data.first.end(),
+                                      "T_y") -
+                            restart_data.first.begin()];
 
-      for(unsigned int p_i=0;p_i<particles.size();++p_i){
-          particles[p_i].position[0]=p_x[p_i];
-          particles[p_i].position[1]=p_y[p_i];
-          particles[p_i].position[2]=p_z[p_i];
-          particles[p_i].velocity[0]=v_x[p_i];
-          particles[p_i].velocity[1]=v_y[p_i];
-          particles[p_i].velocity[2]=v_z[p_i];
-          particles[p_i].forces[0]=f_x[p_i];
-          particles[p_i].forces[1]=f_y[p_i];
-          particles[p_i].forces[2]=f_z[p_i];
-          particles[p_i].omega[0]=omega_x[p_i];
-          particles[p_i].omega[1]=omega_y[p_i];
-          particles[p_i].omega[2]=omega_z[p_i];
-          particles[p_i].torques[0]=t_x[p_i];
-          particles[p_i].torques[1]=t_y[p_i];
-          particles[p_i].torques[2]=t_z[p_i];
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          particles[p_i].position[0] = p_x[p_i];
+          particles[p_i].position[1] = p_y[p_i];
+          particles[p_i].position[2] = p_z[p_i];
+          particles[p_i].velocity[0] = v_x[p_i];
+          particles[p_i].velocity[1] = v_y[p_i];
+          particles[p_i].velocity[2] = v_z[p_i];
+          particles[p_i].forces[0]   = f_x[p_i];
+          particles[p_i].forces[1]   = f_y[p_i];
+          particles[p_i].forces[2]   = f_z[p_i];
+          particles[p_i].omega[0]    = omega_x[p_i];
+          particles[p_i].omega[1]    = omega_y[p_i];
+          particles[p_i].omega[2]    = omega_z[p_i];
+          particles[p_i].torques[0]  = t_x[p_i];
+          particles[p_i].torques[1]  = t_y[p_i];
+          particles[p_i].torques[2]  = t_z[p_i];
         }
     }
 
   finish_time_step_particles();
 }
-
-
-
 
 
 

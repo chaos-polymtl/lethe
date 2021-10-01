@@ -95,92 +95,103 @@ make_table_tensors_scalars(
 }
 
 void
-fill_table_from_file(TableHandler & table, std::string file,const std::string delimiter ){
-  std::string   line;
+fill_table_from_file(TableHandler &    table,
+                     std::string       file,
+                     const std::string delimiter)
+{
+  std::string line;
   table.clear();
   std::ifstream myfile(file);
+  // open the file
   if (myfile.is_open())
     {
       std::vector<std::string> vector_of_column_names;
-      std::vector<double> line_of_data;
+      std::vector<double>      line_of_data;
 
       while (std::getline(myfile, line))
         {
-          std::vector<std::string> list_of_words_base=
+          // read the line and clean the resulting vector
+          std::vector<std::string> list_of_words_base =
             Utilities::split_string_list(line, delimiter);
           std::vector<std::string> list_of_words_clean;
-          for(unsigned int i=0 ; i<list_of_words_base.size();++i)
+          for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
             {
-              if(list_of_words_base[i]!=""){
+              if (list_of_words_base[i] != "")
+                {
                   list_of_words_clean.push_back(list_of_words_base[i]);
                 }
             }
-          //check if the line is contained words or numbers
-          try{
-              line_of_data=Utilities::string_to_double(list_of_words_clean);
-              for(unsigned int i=0 ; i<line_of_data.size();++i){
-                  table.add_value( vector_of_column_names[i], line_of_data[i]);
-
+          // check if the line is contained words or numbers
+          try
+            {
+              line_of_data = Utilities::string_to_double(list_of_words_clean);
+              for (unsigned int i = 0; i < line_of_data.size(); ++i)
+                {
+                  table.add_value(vector_of_column_names[i], line_of_data[i]);
                 }
             }
-          catch(...){
-              //the line contains words we assume these are the column
-              vector_of_column_names=list_of_words_clean;
+          catch (...)
+            {
+              // the line contains words we assume these are the column
+              vector_of_column_names = list_of_words_clean;
             }
-
-
         }
       myfile.close();
     }
   else
     std::cout << "Unable to open file";
-
 }
 
 void
-fill_vectors_from_file(std::pair<std::vector<std::string>,std::vector<std::vector<double>>>& vectors, std::string file,const std::string delimiter ){
-  //fill a pair, first being a vector of vector name and the second being the vector of vector associated with the vector name.
-
-  std::string   line;
+fill_vectors_from_file(std::pair<std::vector<std::string>,
+                                 std::vector<std::vector<double>>> &vectors,
+                       std::string                                  file,
+                       const std::string                            delimiter)
+{
+  // fill a pair, first being a vector of vector name and the second being the
+  // vector of vector associated with the vector name.
+  std::string line;
 
   std::ifstream myfile(file);
-
+  // open the file.
   if (myfile.is_open())
     {
       std::vector<std::string> vector_of_column_names;
-      std::vector<double> line_of_data;
+      std::vector<double>      line_of_data;
 
       while (std::getline(myfile, line))
         {
-
-          std::vector<std::string> list_of_words_base=
+          // read the line and clean the resulting vector.
+          std::vector<std::string> list_of_words_base =
             Utilities::split_string_list(line, delimiter);
           std::vector<std::string> list_of_words_clean;
-          for(unsigned int i=0 ; i<list_of_words_base.size();++i)
+          for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
             {
-              if(list_of_words_base[i]!=""){
+              if (list_of_words_base[i] != "")
+                {
                   list_of_words_clean.push_back(list_of_words_base[i]);
                 }
             }
-          //check if the line a word or number
-          try{
-              line_of_data=Utilities::string_to_double(list_of_words_clean);
-              for(unsigned int i=0 ; i<line_of_data.size();++i){
+          // check if the line is contained words or numbers.
+          try
+            {
+              line_of_data = Utilities::string_to_double(list_of_words_clean);
+              for (unsigned int i = 0; i < line_of_data.size(); ++i)
+                {
                   vectors.second[i].push_back(line_of_data[i]);
                 }
             }
-          catch(...){
-              //the line contains words, we assume these are the columns names
-              vectors.first=list_of_words_clean;
+          catch (...)
+            {
+              // the line contains words, we assume these are the columns names.
+              vectors.first = list_of_words_clean;
               vectors.second.resize(vectors.first.size());
-
             }
         }
       myfile.close();
     }
   else
     std::cout << "Unable to open file";
-
 }
 
 template TableHandler
