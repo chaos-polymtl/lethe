@@ -116,7 +116,6 @@ fill_table_from_file(TableHandler & table, std::string file,const std::string de
                 }
             }
           //check if the line is contained words or numbers
-          std::cout<< "list of word clean"<<list_of_words_clean.size()<<std::endl;
           try{
               line_of_data=Utilities::string_to_double(list_of_words_clean);
               for(unsigned int i=0 ; i<line_of_data.size();++i){
@@ -145,7 +144,7 @@ fill_vectors_from_file(std::pair<std::vector<std::string>,std::vector<std::vecto
   std::string   line;
 
   std::ifstream myfile(file);
-  std::cout <<"file is open"<<std::endl;
+
   if (myfile.is_open())
     {
       std::vector<std::string> vector_of_column_names;

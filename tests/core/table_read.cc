@@ -42,7 +42,7 @@
 void
 test()
 {
-  std::string table_file_name="table_test_input";
+  std::string table_file_name="table_test_input.dat";
 
   TableHandler table;
   fill_table_from_file(table, table_file_name );
