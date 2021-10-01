@@ -1,0 +1,289 @@
+
+DEAL::Particle index: 0
+DEAL::Particle location: -0.357726 -0.357726 -0.479608
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 1
+DEAL::Particle location: -0.402039 -0.0958524 -0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 2
+DEAL::Particle location: -0.0958524 -0.402039 -0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 3
+DEAL::Particle location: -0.107726 -0.107726 -0.662621
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 4
+DEAL::Particle location: -0.402039 0.0958524 -0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 5
+DEAL::Particle location: -0.357726 0.357726 -0.479608
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 6
+DEAL::Particle location: -0.107726 0.107726 -0.662621
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 7
+DEAL::Particle location: -0.0958524 0.402039 -0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 8
+DEAL::Particle location: 0.0958524 -0.402039 -0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 9
+DEAL::Particle location: 0.107726 -0.107726 -0.662621
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 10
+DEAL::Particle location: 0.357726 -0.357726 -0.479608
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 11
+DEAL::Particle location: 0.402039 -0.0958524 -0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 12
+DEAL::Particle location: 0.107726 0.107726 -0.662621
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 13
+DEAL::Particle location: 0.0958524 0.402039 -0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 14
+DEAL::Particle location: 0.402039 0.0958524 -0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 15
+DEAL::Particle location: 0.357726 0.357726 -0.479608
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 16
+DEAL::Particle location: 0.479608 -0.357726 -0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 17
+DEAL::Particle location: 0.550722 -0.0958524 -0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 18
+DEAL::Particle location: 0.550722 -0.402039 -0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 19
+DEAL::Particle location: 0.662621 -0.107726 -0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 20
+DEAL::Particle location: 0.550722 0.0958524 -0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 21
+DEAL::Particle location: 0.479608 0.357726 -0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 22
+DEAL::Particle location: 0.662621 0.107726 -0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 23
+DEAL::Particle location: 0.550722 0.402039 -0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 24
+DEAL::Particle location: 0.550722 -0.402039 0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 25
+DEAL::Particle location: 0.662621 -0.107726 0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 26
+DEAL::Particle location: 0.479608 -0.357726 0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 27
+DEAL::Particle location: 0.550722 -0.0958524 0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 28
+DEAL::Particle location: 0.662621 0.107726 0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 29
+DEAL::Particle location: 0.550722 0.402039 0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 30
+DEAL::Particle location: 0.550722 0.0958524 0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 31
+DEAL::Particle location: 0.479608 0.357726 0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 32
+DEAL::Particle location: -0.357726 -0.357726 0.479608
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 33
+DEAL::Particle location: -0.0958524 -0.402039 0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 34
+DEAL::Particle location: -0.402039 -0.0958524 0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 35
+DEAL::Particle location: -0.107726 -0.107726 0.662621
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 36
+DEAL::Particle location: 0.0958524 -0.402039 0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 37
+DEAL::Particle location: 0.357726 -0.357726 0.479608
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 38
+DEAL::Particle location: 0.107726 -0.107726 0.662621
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 39
+DEAL::Particle location: 0.402039 -0.0958524 0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 40
+DEAL::Particle location: -0.402039 0.0958524 0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 41
+DEAL::Particle location: -0.107726 0.107726 0.662621
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 42
+DEAL::Particle location: -0.357726 0.357726 0.479608
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 43
+DEAL::Particle location: -0.0958524 0.402039 0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 44
+DEAL::Particle location: 0.107726 0.107726 0.662621
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 45
+DEAL::Particle location: 0.402039 0.0958524 0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 46
+DEAL::Particle location: 0.0958524 0.402039 0.550722
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 47
+DEAL::Particle location: 0.357726 0.357726 0.479608
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 48
+DEAL::Particle location: -0.479608 -0.357726 -0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 49
+DEAL::Particle location: -0.550722 -0.402039 -0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 50
+DEAL::Particle location: -0.550722 -0.0958524 -0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 51
+DEAL::Particle location: -0.662621 -0.107726 -0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 52
+DEAL::Particle location: -0.550722 -0.402039 0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 53
+DEAL::Particle location: -0.479608 -0.357726 0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 54
+DEAL::Particle location: -0.662621 -0.107726 0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 55
+DEAL::Particle location: -0.550722 -0.0958524 0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 56
+DEAL::Particle location: -0.550722 0.0958524 -0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 57
+DEAL::Particle location: -0.662621 0.107726 -0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 58
+DEAL::Particle location: -0.479608 0.357726 -0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 59
+DEAL::Particle location: -0.550722 0.402039 -0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 60
+DEAL::Particle location: -0.662621 0.107726 0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 61
+DEAL::Particle location: -0.550722 0.0958524 0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 62
+DEAL::Particle location: -0.550722 0.402039 0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 63
+DEAL::Particle location: -0.479608 0.357726 0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 64
+DEAL::Particle location: -0.357726 -0.479608 -0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 65
+DEAL::Particle location: -0.0958524 -0.550722 -0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 66
+DEAL::Particle location: -0.402039 -0.550722 -0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 67
+DEAL::Particle location: -0.107726 -0.662621 -0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 68
+DEAL::Particle location: 0.0958524 -0.550722 -0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 69
+DEAL::Particle location: 0.357726 -0.479608 -0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 70
+DEAL::Particle location: 0.107726 -0.662621 -0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 71
+DEAL::Particle location: 0.402039 -0.550722 -0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 72
+DEAL::Particle location: -0.402039 -0.550722 0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 73
+DEAL::Particle location: -0.107726 -0.662621 0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 74
+DEAL::Particle location: -0.357726 -0.479608 0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 75
+DEAL::Particle location: -0.0958524 -0.550722 0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 76
+DEAL::Particle location: 0.107726 -0.662621 0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 77
+DEAL::Particle location: 0.402039 -0.550722 0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 78
+DEAL::Particle location: 0.0958524 -0.550722 0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 79
+DEAL::Particle location: 0.357726 -0.479608 0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 80
+DEAL::Particle location: -0.357726 0.479608 -0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 81
+DEAL::Particle location: -0.402039 0.550722 -0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 82
+DEAL::Particle location: -0.0958524 0.550722 -0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 83
+DEAL::Particle location: -0.107726 0.662621 -0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 84
+DEAL::Particle location: -0.402039 0.550722 0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 85
+DEAL::Particle location: -0.357726 0.479608 0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 86
+DEAL::Particle location: -0.107726 0.662621 0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 87
+DEAL::Particle location: -0.0958524 0.550722 0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 88
+DEAL::Particle location: 0.0958524 0.550722 -0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 89
+DEAL::Particle location: 0.107726 0.662621 -0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 90
+DEAL::Particle location: 0.357726 0.479608 -0.357726
+DEAL::Particle JxW: 0.0550404
+DEAL::Particle index: 91
+DEAL::Particle location: 0.402039 0.550722 -0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 92
+DEAL::Particle location: 0.107726 0.662621 0.107726
+DEAL::Particle JxW: 0.0743460
+DEAL::Particle index: 93
+DEAL::Particle location: 0.0958524 0.550722 0.402039
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 94
+DEAL::Particle location: 0.402039 0.550722 0.0958524
+DEAL::Particle JxW: 0.0646849
+DEAL::Particle index: 95
+DEAL::Particle location: 0.357726 0.479608 0.357726
+DEAL::Particle JxW: 0.0550404
