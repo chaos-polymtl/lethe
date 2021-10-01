@@ -1127,7 +1127,6 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
               std::cout << "+------------------------------------------+"
                         << std::endl;
               table_p[p].write_text(std::cout);
-              table_p[p].write_text(std::cout);
             }
         }
     }
