@@ -426,7 +426,6 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(c
 
                                                                                )
 {
-    std::cout << "before " << boundary_cells_information.size() << std::endl;
     std::vector<typename Triangulation<dim>::active_cell_iterator> boundary_neighbor_cells;
 
     // First we have to store all the global (including local and non-local) cells with boundary faces in a container. Note that the boundary_cells_with_faces container only stores the local boundary cells
@@ -505,7 +504,6 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(c
             }
         }
     }
-    std::cout << "after " << boundary_cells_information.size() << std::endl;
 
 }
 
