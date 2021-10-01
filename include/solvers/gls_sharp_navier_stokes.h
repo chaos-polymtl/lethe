@@ -387,7 +387,8 @@ Return a bool that describes  if a cell contains a specific point
    *  A override of the get_current_residual to take into account the particles coupling residual.
    */
   double
-  get_current_residual()override{
+  get_current_residual()override
+  {
     double scalling =this->simulation_parameters.non_linear_solver.tolerance/this->simulation_parameters.particlesParameters.particle_nonlinear_tol;
     return std::max(this->system_rhs.l2_norm(),particle_residual*scalling);
   }
