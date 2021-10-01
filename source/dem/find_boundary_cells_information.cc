@@ -488,10 +488,10 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(c
                                        int imaginary_face_id = -1 * boundary_neighbor_cells[counter_two]->face_index(face_id);
 
                                        // Update cell to the cell with boundary line
-                                       boundary_cells_information.at(boundary_neighbor_cells[counter_two]->face_index(face_id)).cell = cell_with_boundary_line;
-                                       boundary_cells_information.at(boundary_neighbor_cells[counter_two]->face_index(face_id)).global_face_id = imaginary_face_id;
-                                        boundary_cells_information.insert({imaginary_face_id, boundary_cells_information.at(boundary_neighbor_cells[counter_two]->face_index(face_id))});
 
+                                        boundary_cells_information.insert({imaginary_face_id, boundary_cells_information.at(boundary_neighbor_cells[counter_two]->face_index(face_id))});
+                                        boundary_cells_information.at(imaginary_face_id).cell = cell_with_boundary_line;
+                                        boundary_cells_information.at(imaginary_face_id).global_face_id = imaginary_face_id;
                                     }
                                 }
                             }
