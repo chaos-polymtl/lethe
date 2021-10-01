@@ -50,11 +50,21 @@ HeatTransfer<dim>::setup_assemblers()
   this->assemblers.clear();
 
   // Robin boundary condition
-  this->assemblers.push_back(std::make_shared<HeatTransferAssemblerRobinBC<dim>>(
-    this->simulation_control,
-    this->simulation_parameters.physical_properties,
-    this->simulation_parameters.multiphysics,
-                                 simulation_parameters.boundary_conditions_ht));
+  this->assemblers.push_back(
+    std::make_shared<HeatTransferAssemblerRobinBC<dim>>(
+      this->simulation_control,
+      this->simulation_parameters.physical_properties,
+      this->simulation_parameters.multiphysics,
+      simulation_parameters.boundary_conditions_ht));
+
+  if (this->simulation_parameters.multiphysics.viscous_dissipation)
+    {
+      this->assemblers.push_back(
+        std::make_shared<HeatTransferAssemblerViscousDissipation<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties,
+          this->simulation_parameters.multiphysics));
+    }
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
@@ -63,16 +73,14 @@ HeatTransfer<dim>::setup_assemblers()
         std::make_shared<HeatTransferAssemblerBDF<dim>>(
           this->simulation_control,
           this->simulation_parameters.physical_properties,
-          this->simulation_parameters.multiphysics,
-                      simulation_parameters.boundary_conditions_ht));
+          this->simulation_parameters.multiphysics));
     }
 
   // Core assembler
   this->assemblers.push_back(std::make_shared<HeatTransferAssemblerCore<dim>>(
     this->simulation_control,
     this->simulation_parameters.physical_properties,
-    this->simulation_parameters.multiphysics,
-                                 simulation_parameters.boundary_conditions_ht));
+    this->simulation_parameters.multiphysics));
 }
 
 template <int dim>

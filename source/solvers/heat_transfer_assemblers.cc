@@ -158,11 +158,9 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       double density              = physical_properties.density;
       double specific_heat        = physical_properties.specific_heat;
       double thermal_conductivity = physical_properties.thermal_conductivity;
-      double viscosity            = physical_properties.viscosity;
 
-      double dynamic_viscosity = viscosity * density;
-      double rho_cp            = density * specific_heat;
-      double alpha             = thermal_conductivity / rho_cp;
+      double rho_cp = density * specific_heat;
+      double alpha  = thermal_conductivity / rho_cp;
 
       if (this->multiphysics_parameters.free_surface)
         {
@@ -172,11 +170,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
             calculate_point_property(scratch_data.phase_values[q],
                                      physical_properties.fluids[0].density,
                                      physical_properties.fluids[1].density);
-
-          viscosity =
-            calculate_point_property(scratch_data.phase_values[q],
-                                     physical_properties.fluids[0].viscosity,
-                                     physical_properties.fluids[1].viscosity);
 
           specific_heat = calculate_point_property(
             scratch_data.phase_values[q],
@@ -189,16 +182,14 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
             physical_properties.fluids[1].thermal_conductivity);
 
           // Useful definitions
-          dynamic_viscosity = viscosity * density;
-          rho_cp            = density * specific_heat;
-          alpha             = thermal_conductivity / rho_cp;
+          rho_cp = density * specific_heat;
+          alpha  = thermal_conductivity / rho_cp;
         }
 
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
 
-      const auto velocity          = scratch_data.velocity_values[q];
-      const auto velocity_gradient = scratch_data.velocity_gradient_values[q];
+      const auto velocity = scratch_data.velocity_values[q];
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
@@ -233,15 +224,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
              rho_cp * phi_T_i * velocity * temperature_gradient -
              scratch_data.source[q] * phi_T_i) *
             JxW;
-
-          if (this->multiphysics_parameters.viscous_dissipation)
-            {
-              local_rhs(i) -= (-dynamic_viscosity * phi_T_i *
-                               scalar_product(velocity_gradient +
-                                                transpose(velocity_gradient),
-                                              transpose(velocity_gradient))) *
-                              JxW;
-            }
 
           local_rhs(i) -=
             tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
@@ -468,15 +450,12 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
 
   // Robin boundary condition, loop on faces (Newton's cooling law)
   // implementation similar to deal.ii step-7
-  for (unsigned int i_bc = 0;
-       i_bc < this->boundary_conditions_ht.size;
-       ++i_bc)
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
     {
       if (this->boundary_conditions_ht.type[i_bc] ==
           BoundaryConditions::BoundaryType::convection)
         {
-          const double h =
-            this->boundary_conditions_ht.h[i_bc];
+          const double h = this->boundary_conditions_ht.h[i_bc];
 
 
           if (scratch_data.cell->is_locally_owned())
@@ -487,8 +466,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                 {
                   if (scratch_data.cell->face(face)->at_boundary() &&
                       (scratch_data.cell->face(face)->boundary_id() ==
-                       this->boundary_conditions_ht
-                         .id[i_bc]))
+                       this->boundary_conditions_ht.id[i_bc]))
                     {
                       scratch_data.fe_face_values_ht.reinit(scratch_data.cell,
                                                             face);
@@ -525,7 +503,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                 }
             }
         }
-    } // end loop for Robin condition
+    }
 }
 
 template <int dim>
@@ -541,17 +519,13 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
 
   // Robin boundary condition, loop on faces (Newton's cooling law)
   // implementation similar to deal.ii step-7
-  for (unsigned int i_bc = 0;
-       i_bc < this->boundary_conditions_ht.size;
-       ++i_bc)
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
     {
       if (this->boundary_conditions_ht.type[i_bc] ==
           BoundaryConditions::BoundaryType::convection)
         {
-          const double h =
-            this->boundary_conditions_ht.h[i_bc];
-          const double T_inf =
-            this->boundary_conditions_ht.Tinf[i_bc];
+          const double h     = this->boundary_conditions_ht.h[i_bc];
+          const double T_inf = this->boundary_conditions_ht.Tinf[i_bc];
 
 
           if (scratch_data.cell->is_locally_owned())
@@ -562,8 +536,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                 {
                   if (scratch_data.cell->face(face)->at_boundary() &&
                       (scratch_data.cell->face(face)->boundary_id() ==
-                       this->boundary_conditions_ht
-                         .id[i_bc]))
+                       this->boundary_conditions_ht.id[i_bc]))
                     {
                       scratch_data.fe_face_values_ht.reinit(scratch_data.cell,
                                                             face);
@@ -600,8 +573,84 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                 }
             }
         }
-    } // end loop for Robin condition
+    }
 }
 
 template class HeatTransferAssemblerRobinBC<2>;
 template class HeatTransferAssemblerRobinBC<3>;
+
+
+template <int dim>
+void
+HeatTransferAssemblerViscousDissipation<dim>::assemble_matrix(
+  HeatTransferScratchData<dim> & /*scratch_data*/,
+  StabilizedMethodsCopyData & /*copy_data*/)
+{}
+
+template <int dim>
+void
+HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &   copy_data)
+{
+  const unsigned int n_q_points = scratch_data.n_q_points;
+
+  const unsigned int n_dofs = scratch_data.n_dofs;
+
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // assembling right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather physical properties in case of mono fluids simulations (to be
+      // modified by cell in case of multiple fluids simulations)
+      double density   = physical_properties.density;
+      double viscosity = physical_properties.viscosity;
+
+      double dynamic_viscosity = viscosity * density;
+
+      if (this->multiphysics_parameters.free_surface)
+        {
+          // Calculation of the equivalent physical properties at the
+          // quadrature point
+          density =
+            calculate_point_property(scratch_data.phase_values[q],
+                                     physical_properties.fluids[0].density,
+                                     physical_properties.fluids[1].density);
+
+          viscosity =
+            calculate_point_property(scratch_data.phase_values[q],
+                                     physical_properties.fluids[0].viscosity,
+                                     physical_properties.fluids[1].viscosity);
+
+          // Useful definitions
+          dynamic_viscosity = viscosity * density;
+        }
+
+      // Store JxW in local variable for faster access
+      const double JxW = scratch_data.fe_values_T.JxW(q);
+
+      const auto velocity_gradient = scratch_data.velocity_gradient_values[q];
+
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i = scratch_data.phi_T[q][i];
+
+          local_rhs(i) -=
+            (-dynamic_viscosity * phi_T_i *
+             scalar_product(velocity_gradient + transpose(velocity_gradient),
+                            transpose(velocity_gradient))) *
+            JxW;
+        }
+    }
+}
+
+template class HeatTransferAssemblerViscousDissipation<2>;
+template class HeatTransferAssemblerViscousDissipation<3>;

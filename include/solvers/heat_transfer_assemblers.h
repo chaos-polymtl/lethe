@@ -87,12 +87,10 @@ public:
   HeatTransferAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-          const Parameters::Multiphysics & p_multiphysics_parameters,
-          const BoundaryConditions::HTBoundaryConditions<dim> & p_boundary_conditions_ht)
+    const Parameters::Multiphysics &   p_multiphysics_parameters)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
     , multiphysics_parameters(p_multiphysics_parameters)
-    , boundary_conditions_ht(p_boundary_conditions_ht)
   {}
 
   /**
@@ -117,8 +115,7 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
-  const Parameters::Multiphysics   & multiphysics_parameters;
-  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
+  const Parameters::Multiphysics &   multiphysics_parameters;
 };
 
 /**
@@ -136,12 +133,10 @@ public:
   HeatTransferAssemblerBDF(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &  p_multiphysics_parameters,
-          const BoundaryConditions::HTBoundaryConditions<dim> & p_boundary_conditions_ht)
+    const Parameters::Multiphysics &   p_multiphysics_parameters)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
     , multiphysics_parameters(p_multiphysics_parameters)
-    , boundary_conditions_ht(p_boundary_conditions_ht)
   {}
 
   /**
@@ -165,8 +160,7 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
-  const Parameters::Multiphysics &  multiphysics_parameters;
-  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
+  const Parameters::Multiphysics &   multiphysics_parameters;
   const bool                         GGLS = true;
 };
 
@@ -185,8 +179,9 @@ public:
   HeatTransferAssemblerRobinBC(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &  p_multiphysics_parameters,
-          const BoundaryConditions::HTBoundaryConditions<dim> & p_boundary_conditions_ht)
+    const Parameters::Multiphysics &   p_multiphysics_parameters,
+    const BoundaryConditions::HTBoundaryConditions<dim>
+      &p_boundary_conditions_ht)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
     , multiphysics_parameters(p_multiphysics_parameters)
@@ -212,11 +207,51 @@ public:
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
 
+  std::shared_ptr<SimulationControl>                   simulation_control;
+  Parameters::PhysicalProperties                       physical_properties;
+  const Parameters::Multiphysics &                     multiphysics_parameters;
+  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
+};
+
+
+/**
+ * @brief Class that assembles the viscous dissipation for the heat transfer solver.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerViscousDissipation
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerViscousDissipation(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const Parameters::Multiphysics &   p_multiphysics_parameters)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , multiphysics_parameters(p_multiphysics_parameters)
+  {}
+
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData &   copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData &   copy_data) override;
+
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
-  const Parameters::Multiphysics & multiphysics_parameters;
-  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
-
+  const Parameters::Multiphysics &   multiphysics_parameters;
 };
+
 
 #endif

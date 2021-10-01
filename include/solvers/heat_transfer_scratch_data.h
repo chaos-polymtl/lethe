@@ -47,13 +47,13 @@ using namespace dealii;
  * @brief HeatTransferScratchData class
  * stores the information required by the assembly procedure
  * for a heat transfer advection-diffusion equation. Consequently, this class
- *calculates the heat transfer (values, gradients, laplacians) and the shape function
- * (values, gradients, laplacians) at all the gauss points for all degrees
- * of freedom and stores it into arrays. Additionnaly, the use can request
- * that this class gathers additional fields for physics which are coupled
- * to the heat transfer equation, such as the velocity which is required. This class
- * serves as a seperation between the evaluation at the gauss point of the
- * variables of interest and their use in the assembly, which is carried out
+ *calculates the heat transfer (values, gradients, laplacians) and the shape
+ *function (values, gradients, laplacians) at all the gauss points for all
+ *degrees of freedom and stores it into arrays. Additionnaly, the use can
+ *request that this class gathers additional fields for physics which are
+ *coupled to the heat transfer equation, such as the velocity which is required.
+ *This class serves as a seperation between the evaluation at the gauss point of
+ *the variables of interest and their use in the assembly, which is carried out
  * by the assembler functions. For more information on this design, the reader
  * can consult deal.II step-9
  * "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter
