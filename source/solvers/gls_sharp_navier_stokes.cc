@@ -106,8 +106,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
 {
   // initialized the particles
   particles = this->simulation_parameters.particlesParameters.particles;
-  table_f.resize(particles.size());
-  table_t.resize(particles.size());
+  table_p.resize(particles.size());
 }
 
 
@@ -595,8 +594,8 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
               "." + Utilities::int_to_string(p, 2) + ".dat";
             std::ofstream output(filename.c_str());
 
-            table_f[p].write_text(output);
-            table_t[p].write_text(output);
+            table_p[p].write_text(output);
+            table_p[p].write_text(output);
           }
         MPI_Barrier(this->mpi_communicator);
       }
@@ -1025,98 +1024,92 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           this->pcout << "particule " << p << " velocity "
                       << particles[p].velocity << std::endl;
         }
-      table_t[p].add_value("particle ID", p);
+      table_p[p].add_value("particle_ID", p);
       if (this->simulation_parameters.simulation_control.method !=
           Parameters::SimulationControl::TimeSteppingMethod::steady)
-        table_t[p].add_value("time",
+        table_p[p].add_value("time",
                              this->simulation_control->get_current_time());
       if (dim == 3)
         {
-          table_t[p].add_value("T_x", particles[p].torques[0]);
-          table_t[p].set_precision(
+          table_p[p].add_value("T_x", particles[p].torques[0]);
+          table_p[p].set_precision(
             "T_x",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters.integrate_motion)
             {
-              table_t[p].add_value("omega_x", particles[p].omega[0]);
-              table_t[p].set_precision(
+              table_p[p].add_value("omega_x", particles[p].omega[0]);
+              table_p[p].set_precision(
                 "omega_x",
                 this->simulation_parameters.simulation_control.log_precision);
             }
 
-          table_t[p].add_value("T_y", particles[p].torques[1]);
-          table_t[p].set_precision(
+          table_p[p].add_value("T_y", particles[p].torques[1]);
+          table_p[p].set_precision(
             "T_y",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters.integrate_motion)
             {
-              table_t[p].add_value("omega_y", particles[p].omega[1]);
-              table_t[p].set_precision(
+              table_p[p].add_value("omega_y", particles[p].omega[1]);
+              table_p[p].set_precision(
                 "omega_y",
                 this->simulation_parameters.simulation_control.log_precision);
             }
         }
 
-      table_t[p].add_value("T_z", particles[p].torques[2]);
-      table_t[p].set_precision(
+      table_p[p].add_value("T_z", particles[p].torques[2]);
+      table_p[p].set_precision(
         "T_z", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
-          table_t[p].add_value("omega_z", particles[p].omega[2]);
-          table_t[p].set_precision(
+          table_p[p].add_value("omega_z", particles[p].omega[2]);
+          table_p[p].set_precision(
             "omega_z",
             this->simulation_parameters.simulation_control.log_precision);
         }
 
 
 
-      table_f[p].add_value("particle ID", p);
-      if (this->simulation_parameters.simulation_control.method !=
-          Parameters::SimulationControl::TimeSteppingMethod::steady)
-        table_f[p].add_value("time",
-                             this->simulation_control->get_current_time());
-
-      table_f[p].add_value("f_x", particles[p].forces[0]);
+      table_p[p].add_value("f_x", particles[p].forces[0]);
       if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
-          table_f[p].add_value("v_x", particles[p].velocity[0]);
-          table_f[p].add_value("p_x", particles[p].position[0]);
+          table_p[p].add_value("v_x", particles[p].velocity[0]);
+          table_p[p].add_value("p_x", particles[p].position[0]);
         }
-      table_f[p].add_value("f_y", particles[p].forces[1]);
+      table_p[p].add_value("f_y", particles[p].forces[1]);
       if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
-          table_f[p].add_value("v_y", particles[p].velocity[1]);
-          table_f[p].add_value("p_y", particles[p].position[1]);
+          table_p[p].add_value("v_y", particles[p].velocity[1]);
+          table_p[p].add_value("p_y", particles[p].position[1]);
         }
-      table_f[p].set_precision(
+      table_p[p].set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
-      table_f[p].set_precision(
+      table_p[p].set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
-          table_f[p].set_precision(
+          table_p[p].set_precision(
             "v_x",
             this->simulation_parameters.simulation_control.log_precision);
-          table_f[p].set_precision(
+          table_p[p].set_precision(
             "v_y",
             this->simulation_parameters.simulation_control.log_precision);
-          table_f[p].set_precision(
+          table_p[p].set_precision(
             "p_x",
             this->simulation_parameters.simulation_control.log_precision);
-          table_f[p].set_precision(
+          table_p[p].set_precision(
             "p_y",
             this->simulation_parameters.simulation_control.log_precision);
         }
       if (dim == 3)
         {
-          table_f[p].add_value("f_z", particles[p].forces[2]);
-          table_f[p].set_precision(
+          table_p[p].add_value("f_z", particles[p].forces[2]);
+          table_p[p].set_precision(
             "f_z",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters.integrate_motion)
             {
-              table_f[p].add_value("v_z", particles[p].velocity[2]);
-              table_f[p].add_value("p_z", particles[p].position[2]);
+              table_p[p].add_value("v_z", particles[p].velocity[2]);
+              table_p[p].add_value("p_z", particles[p].position[2]);
             }
         }
     }
@@ -1133,8 +1126,8 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
                         << "               |" << std::endl;
               std::cout << "+------------------------------------------+"
                         << std::endl;
-              table_f[p].write_text(std::cout);
-              table_t[p].write_text(std::cout);
+              table_p[p].write_text(std::cout);
+              table_p[p].write_text(std::cout);
             }
         }
     }
@@ -1949,6 +1942,189 @@ GLSSharpNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
                                               copy_data.local_dof_indices,
                                               this->system_rhs);
 }
+
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::write_checkpoint()
+{
+  this->GLSNavierStokesSolver<dim>::write_checkpoint();
+
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
+
+  TableHandler particles_information_table;
+  std::string  filename =
+    this->simulation_parameters.simulation_control.output_folder + prefix +
+    ".ib_particles";
+  std::ofstream output(filename.c_str());
+  // Write data in paraview format (pvd)
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      this->simulation_control->save(prefix);
+      // Navier-Stokes
+      this->pvdhandler.save(prefix);
+      for (unsigned int i_particle = 0; i_particle < particles.size();
+           ++i_particle)
+        {
+          particles_information_table.add_value("ID", i_particle);
+          particles_information_table.add_value(
+            "p_x", particles[i_particle].position[0]);
+          particles_information_table.set_precision("p_x", 12);
+          particles_information_table.add_value(
+            "p_y", particles[i_particle].position[1]);
+          particles_information_table.set_precision("p_y", 12);
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "p_z", particles[i_particle].position[2]);
+              particles_information_table.set_precision("p_z", 12);
+            }
+
+          particles_information_table.add_value(
+            "v_x", particles[i_particle].velocity[0]);
+          particles_information_table.set_precision("v_x", 12);
+          particles_information_table.add_value(
+            "v_y", particles[i_particle].velocity[1]);
+          particles_information_table.set_precision("v_y", 12);
+
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "v_z", particles[i_particle].velocity[2]);
+              particles_information_table.set_precision("v_z", 12);
+            }
+
+          particles_information_table.add_value(
+            "f_x", particles[i_particle].forces[0]);
+          particles_information_table.set_precision("f_x", 12);
+          particles_information_table.add_value(
+            "f_y", particles[i_particle].forces[1]);
+          particles_information_table.set_precision("f_y", 12);
+
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "f_z", particles[i_particle].forces[2]);
+              particles_information_table.set_precision("f_z", 12);
+            }
+
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "omega_x", particles[i_particle].omega[0]);
+              particles_information_table.set_precision("omega_x", 12);
+              particles_information_table.add_value(
+                "omega_y", particles[i_particle].omega[1]);
+              particles_information_table.set_precision("omega_y", 12);
+            }
+          particles_information_table.add_value("omega_z",
+                                                particles[i_particle].omega[2]);
+          particles_information_table.set_precision("omega_z", 12);
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "T_x", particles[i_particle].torques[0]);
+              particles_information_table.set_precision("T_x", 12);
+              particles_information_table.add_value(
+                "T_y", particles[i_particle].torques[1]);
+              particles_information_table.set_precision("T_y", 12);
+            }
+          particles_information_table.add_value(
+            "T_z", particles[i_particle].torques[2]);
+          particles_information_table.set_precision("T_z", 12);
+        }
+      particles_information_table.write_text(output);
+    }
+}
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::read_checkpoint()
+{
+  this->GLSNavierStokesSolver<dim>::read_checkpoint();
+
+  TimerOutput::Scope t(this->computing_timer,
+                       "Reset Nitsche solid mesh and particles");
+
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
+
+  std::string  filename =
+    this->simulation_parameters.simulation_control.output_folder + prefix +
+    ".ib_particles";
+
+  // refill the table from checkpoint
+  for(unsigned int p_i=0;p_i<particles.size();++p_i){
+      std::string filename_table =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.particlesParameters
+          .ib_force_output_file +
+        "." + Utilities::int_to_string(p_i, 2) + ".dat";
+      fill_table_from_file(table_p[p_i],filename_table );
+    }
+  std::pair<std::vector<std::string>,std::vector<std::vector<double>>> restart_data;
+  fill_vectors_from_file(restart_data, filename );
+
+  std::vector<double> p_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"p_x")-restart_data.first.begin()];
+  std::vector<double> p_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"p_y")-restart_data.first.begin()];
+  std::vector<double> v_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"v_x")-restart_data.first.begin()];
+  std::vector<double> v_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"v_y")-restart_data.first.begin()];
+  std::vector<double> f_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"f_x")-restart_data.first.begin()];
+  std::vector<double> f_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"f_y")-restart_data.first.begin()];
+  std::vector<double> omega_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"omega_z")-restart_data.first.begin()];
+  std::vector<double> t_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"T_z")-restart_data.first.begin()];
+
+  if(dim==2)
+    {
+      for(unsigned int p_i=0;p_i<p_x.size();++p_i){
+          particles[p_i].position[0]=p_x[p_i];
+          particles[p_i].position[1]=p_y[p_i];
+          particles[p_i].velocity[0]=v_x[p_i];
+          particles[p_i].velocity[1]=v_y[p_i];
+          particles[p_i].forces[0]=f_x[p_i];
+          particles[p_i].forces[1]=f_y[p_i];
+          particles[p_i].omega[2]=omega_z[p_i];
+          particles[p_i].torques[2]=t_z[p_i];
+        }
+    }
+  if(dim==3)
+    {
+      std::vector<double> p_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"p_z")-restart_data.first.begin()];
+      std::vector<double> v_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"v_z")-restart_data.first.begin()];
+      std::vector<double> f_z =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"f_z")-restart_data.first.begin()];
+      std::vector<double> omega_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"omega_x")-restart_data.first.begin()];
+      std::vector<double> omega_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"omega_y")-restart_data.first.begin()];
+      std::vector<double> t_x =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"T_x")-restart_data.first.begin()];
+      std::vector<double> t_y =restart_data.second[std::find(restart_data.first.begin(),restart_data.first.end(),"T_y")-restart_data.first.begin()];
+
+      for(unsigned int p_i=0;p_i<particles.size();++p_i){
+          particles[p_i].position[0]=p_x[p_i];
+          particles[p_i].position[1]=p_y[p_i];
+          particles[p_i].position[2]=p_z[p_i];
+          particles[p_i].velocity[0]=v_x[p_i];
+          particles[p_i].velocity[1]=v_y[p_i];
+          particles[p_i].velocity[2]=v_z[p_i];
+          particles[p_i].forces[0]=f_x[p_i];
+          particles[p_i].forces[1]=f_y[p_i];
+          particles[p_i].forces[2]=f_z[p_i];
+          particles[p_i].omega[0]=omega_x[p_i];
+          particles[p_i].omega[1]=omega_y[p_i];
+          particles[p_i].omega[2]=omega_z[p_i];
+          particles[p_i].torques[0]=t_x[p_i];
+          particles[p_i].torques[1]=t_y[p_i];
+          particles[p_i].torques[2]=t_z[p_i];
+        }
+    }
+
+  finish_time_step_particles();
+}
+
+
+
+
 
 
 template <int dim>
