@@ -19,8 +19,7 @@
  * Equation solved:
  * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
  *
- * Author: Bruno Blais, Jeanne Joachim and Shahab Golshan, Polytechnique
- Montreal, 2020-
+ * Polytechnique Montreal, 2020-
  */
 
 #ifndef lethe_heat_transfer_assemblers_h
@@ -49,7 +48,7 @@ public:
    * @param scratch_data Scratch data containing the heat transfer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the element for the local_rhs and local_matrix are copied to
    */
 
   virtual void
@@ -61,7 +60,7 @@ public:
    * @param scratch_data Scratch data containing the heat transfer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the element for the local_rhs and local_matrix are copied to
    */
 
   virtual void
@@ -88,10 +87,12 @@ public:
   HeatTransferAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const SimulationParameters<dim> &  p_simulation_parameters)
+          const Parameters::Multiphysics & p_multiphysics_parameters,
+          const BoundaryConditions::HTBoundaryConditions<dim> & p_boundary_conditions_ht)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
-    , simulation_parameters(p_simulation_parameters)
+    , multiphysics_parameters(p_multiphysics_parameters)
+    , boundary_conditions_ht(p_boundary_conditions_ht)
   {}
 
   /**
@@ -116,7 +117,8 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
-  const SimulationParameters<dim> &  simulation_parameters;
+  const Parameters::Multiphysics   & multiphysics_parameters;
+  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
 };
 
 /**
@@ -134,10 +136,12 @@ public:
   HeatTransferAssemblerBDF(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const SimulationParameters<dim> &  p_simulation_parameters)
+    const Parameters::Multiphysics &  p_multiphysics_parameters,
+          const BoundaryConditions::HTBoundaryConditions<dim> & p_boundary_conditions_ht)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
-    , simulation_parameters(p_simulation_parameters)
+    , multiphysics_parameters(p_multiphysics_parameters)
+    , boundary_conditions_ht(p_boundary_conditions_ht)
   {}
 
   /**
@@ -161,7 +165,8 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
-  const SimulationParameters<dim> &  simulation_parameters;
+  const Parameters::Multiphysics &  multiphysics_parameters;
+  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
   const bool                         GGLS = true;
 };
 
@@ -180,10 +185,12 @@ public:
   HeatTransferAssemblerRBC(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const SimulationParameters<dim> &  p_simulation_parameters)
+    const Parameters::Multiphysics &  p_multiphysics_parameters,
+          const BoundaryConditions::HTBoundaryConditions<dim> & p_boundary_conditions_ht)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
-    , simulation_parameters(p_simulation_parameters)
+    , multiphysics_parameters(p_multiphysics_parameters)
+    , boundary_conditions_ht(p_boundary_conditions_ht)
   {}
 
   /**
@@ -207,7 +214,9 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
-  const SimulationParameters<dim> &  simulation_parameters;
+  const Parameters::Multiphysics & multiphysics_parameters;
+  const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
+
 };
 
 #endif

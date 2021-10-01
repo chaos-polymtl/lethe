@@ -19,8 +19,7 @@
  * Equation solved:
  * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
  *
- * Author: Bruno Blais, Jeanne Joachim and Shahab Golshan, Polytechnique
- Montreal, 2020-
+ * Polytechnique Montreal, 2020-
  */
 
 #ifndef lethe_heat_transfer_h
