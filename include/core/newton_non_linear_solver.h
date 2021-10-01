@@ -79,7 +79,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
   // defined by the physical solver and may differ from the l2_norm of the
   // residual vector. Only the global_res is compared to the tolerance in order
   // to evaluate if the nonlinear system is solved. Only current_res is used for
-  // the alpha scheme as this scheme only applied to the matrix problem.
+  // the alpha scheme as this scheme only monitors the convergence of the non-linear system of equation (the matrix problem).
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
