@@ -133,13 +133,18 @@ private:
     const std::vector<unsigned int> &                outlet_boundaries);
 
   /**
-   * Loops over all the cells to find boundary cells, find the global boundary cells with faces. Note that the boundary_cells_with_faces container only stores the local boundary cells, while global_boundary_cells_with_faces stores all the boundary cells with faces.
+   * Loops over all the cells to find boundary cells, find the global boundary
+   * cells with faces. Note that the boundary_cells_with_faces container only
+   * stores the local boundary cells, while global_boundary_cells_with_faces
+   * stores all the boundary cells with faces.
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param outlet_boundaries A vector which contains the outlet boundary IDs
    */
-  void find_global_boundary_cells_with_faces(const parallel::distributed::Triangulation<dim> &triangulation,
-                                                                                            const std::vector<unsigned int> &                outlet_boundaries);
+  void
+  find_global_boundary_cells_with_faces(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    const std::vector<unsigned int> &                outlet_boundaries);
 
   /**
    * Loops over all the cells to find cells which should be searched for
@@ -160,13 +165,21 @@ private:
     const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
-   * Adds the cells with boundary lines to the boundary cells information (boundary_cells_information), First , it loops through the boundary_cells_with_lines vector, then it loops through the neighbors of boundary cells with lines, if a neighbor is a member of boundary_cells_with_faces, then it adds the neighbor cell to the boundary_cells_information with the normal vector and point of the neighbor cell.
+   * Adds the cells with boundary lines to the boundary cells information
+   * (boundary_cells_information), First , it loops through the
+   * boundary_cells_with_lines vector, then it loops through the neighbors of
+   * boundary cells with lines, if a neighbor is a member of
+   * boundary_cells_with_faces, then it adds the neighbor cell to the
+   * boundary_cells_information with the normal vector and point of the neighbor
+   * cell.
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param outlet_boundaries A vector which contains the outlet boundary IDs
    */
-  void add_cells_with_boundary_lines_to_boundary_cells(const parallel::distributed::Triangulation<dim> & triangulation,
-                                                        const std::vector<unsigned int> &                outlet_boundaries);
+  void
+  add_cells_with_boundary_lines_to_boundary_cells(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    const std::vector<unsigned int> &                outlet_boundaries);
 
   /**
    * Loops over all the cells to find cells which should be searched for
@@ -196,8 +209,10 @@ private:
                Point<dim>>>
     boundary_cells_with_lines;
 
-  // A vector of all the local cells with boundary lines. This vector is used in add_cells_with_boundary_lines_to_boundary_cells function.
-  std::vector<typename Triangulation<dim>::active_cell_iterator> local_cells_with_boundary_lines;
+  // A vector of all the local cells with boundary lines. This vector is used in
+  // add_cells_with_boundary_lines_to_boundary_cells function.
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+    local_cells_with_boundary_lines;
 
   // Structure that contains the boundary cells which have a point
   std::unordered_map<

@@ -7,7 +7,7 @@ read_mesh(const DEMSolverParameters<dim> &           parameters,
           parallel::distributed::Triangulation<dim> &triangulation,
           double &triangulation_cell_diameter)
 {
-    pcout << "Reading triangulation " << std::endl;
+  pcout << "Reading triangulation " << std::endl;
   // GMSH input
   if (parameters.mesh.type == Parameters::Mesh::Type::gmsh)
     {
