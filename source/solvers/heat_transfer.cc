@@ -50,7 +50,7 @@ HeatTransfer<dim>::setup_assemblers()
   this->assemblers.clear();
 
   // Robin boundary condition
-  this->assemblers.push_back(std::make_shared<HeatTransferAssemblerRBC<dim>>(
+  this->assemblers.push_back(std::make_shared<HeatTransferAssemblerRobinBC<dim>>(
     this->simulation_control,
     this->simulation_parameters.physical_properties,
     this->simulation_parameters.multiphysics,

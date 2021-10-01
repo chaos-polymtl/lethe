@@ -457,7 +457,7 @@ template class HeatTransferAssemblerBDF<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerRBC<dim>::assemble_matrix(
+HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
@@ -530,7 +530,7 @@ HeatTransferAssemblerRBC<dim>::assemble_matrix(
 
 template <int dim>
 void
-HeatTransferAssemblerRBC<dim>::assemble_rhs(
+HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
@@ -603,5 +603,5 @@ HeatTransferAssemblerRBC<dim>::assemble_rhs(
     } // end loop for Robin condition
 }
 
-template class HeatTransferAssemblerRBC<2>;
-template class HeatTransferAssemblerRBC<3>;
+template class HeatTransferAssemblerRobinBC<2>;
+template class HeatTransferAssemblerRobinBC<3>;

@@ -179,10 +179,10 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerRBC : public HeatTransferAssemblerBase<dim>
+class HeatTransferAssemblerRobinBC : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerRBC(
+  HeatTransferAssemblerRobinBC(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
     const Parameters::Multiphysics &  p_multiphysics_parameters,
