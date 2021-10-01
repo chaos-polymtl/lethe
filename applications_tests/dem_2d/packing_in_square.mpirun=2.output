@@ -3,6 +3,9 @@ DEM time-step is 2.07669% of Rayleigh time step
 Starting simulation with Lethe/DEM on 2 processors
 ***************************************************************** 
 
+Reading triangulation 
+
+Finished reading triangulation 
 ***************************************************************** 
 20 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***************************************************************** 
