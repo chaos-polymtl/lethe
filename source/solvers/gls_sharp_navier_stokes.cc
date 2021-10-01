@@ -1959,11 +1959,11 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
     this->simulation_parameters.simulation_control.output_folder + prefix +
     ".ib_particles";
   std::ofstream output(filename.c_str());
-  // Write data in paraview format (pvd)
+  // Write a table with all the relevant properties of the particle in a table.
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       this->simulation_control->save(prefix);
-      // Navier-Stokes
+
       this->pvdhandler.save(prefix);
       for (unsigned int i_particle = 0; i_particle < particles.size();
            ++i_particle)
@@ -2035,6 +2035,7 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
             "T_z", particles[i_particle].torques[2]);
           particles_information_table.set_precision("T_z", 12);
         }
+      // Write the table in the checkpoint file.
       particles_information_table.write_text(output);
     }
 }
@@ -2065,6 +2066,9 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
         "." + Utilities::int_to_string(p_i, 2) + ".dat";
       fill_table_from_file(table_p[p_i], filename_table);
     }
+
+  // Read the data of each particle and put the relevant information in a
+  // vector.
   std::pair<std::vector<std::string>, std::vector<std::vector<double>>>
     restart_data;
   fill_vectors_from_file(restart_data, filename);
@@ -2109,7 +2113,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                                   restart_data.first.end(),
                                   "T_z") -
                         restart_data.first.begin()];
-
+  // Implement the data  in the particles.
   if (dim == 2)
     {
       for (unsigned int p_i = 0; p_i < p_x.size(); ++p_i)
@@ -2181,7 +2185,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
           particles[p_i].torques[2]  = t_z[p_i];
         }
     }
-
+  // Finish the time step of the particle.
   finish_time_step_particles();
 }
 
