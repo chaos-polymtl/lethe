@@ -656,6 +656,7 @@ namespace Parameters
     std::string                  ib_force_output_file;
     double                       density;
     Tensor<1, dim>               gravity;
+    double                       particle_nonlinear_tol;
 
     double alpha;
     bool   integrate_motion;

@@ -110,6 +110,18 @@ public:
   virtual AffineConstraints<double> &
   get_nonzero_constraints() = 0;
 
+  /**
+   * @brief Default way to evaluate the residual for the nonlinear solver.
+   * Some application may use more complex evaluation of the residual and
+   * override this method.
+   */
+  virtual double
+  get_current_residual()
+  {
+    auto &system_rhs = get_system_rhs();
+    return system_rhs.l2_norm();
+  }
+
   ConditionalOStream                                pcout;
   Parameters::SimulationControl::TimeSteppingMethod time_stepping_method;
 
