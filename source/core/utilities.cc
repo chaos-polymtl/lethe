@@ -99,12 +99,13 @@ fill_table_from_file(TableHandler &    table,
                      std::string       file,
                      const std::string delimiter)
 {
-  std::string line;
+
   table.clear();
   std::ifstream myfile(file);
   // open the file
   if (myfile.is_open())
     {
+      std::string line;
       std::vector<std::string> vector_of_column_names;
       std::vector<double>      line_of_data;
       unsigned int i=0;
@@ -151,12 +152,13 @@ fill_vectors_from_file(std::map<std::string,std::vector<double>>  &map,
 {
   // fill a pair, first being a vector of vector name and the second being the
   // vector of vector associated with the vector name.
-  std::string line;
+
 
   std::ifstream myfile(file);
   // open the file.
   if (myfile.is_open())
     {
+      std::string line;
       std::vector<std::string> column_names;
       std::vector<double>      line_of_data;
       unsigned int i=0;

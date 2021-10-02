@@ -37,7 +37,9 @@
 // Tests (with common definitions)
 #include <../tests/tests.h>
 
-
+/*
+* The test read a table and print the results. We make sure the output of these functions always stay the same.
+*/
 
 void
 test()
