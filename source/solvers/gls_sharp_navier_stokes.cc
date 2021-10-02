@@ -21,9 +21,9 @@
 #include <core/grids.h>
 #include <core/lethegridtools.h>
 #include <core/sdirk.h>
+#include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-#include <core/solutions_output.h>
 
 #include <solvers/gls_sharp_navier_stokes.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
@@ -1005,9 +1005,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(std::vector<IBParticle<dim>>particles)
+GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(
+  std::vector<IBParticle<dim>> particles)
 {
-  properties_to_write=particles[0].get_properties_name();
+  properties_to_write = particles[0].get_properties_name();
   /**
    * A list of field names for all data components stored in patches.
    */
@@ -1045,7 +1046,7 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(std::vector<IBP
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       // Particle location
-      patches[p].vertices[0]    =  particles[p].position;
+      patches[p].vertices[0]    = particles[p].position;
       patches[p].patch_index    = p;
       patches[p].n_subdivisions = 1;
       patches[p].data.reinit(particles[p].get_number_properties(), 1);
@@ -1056,10 +1057,10 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(std::vector<IBP
       auto particle_properties = particles[p].get_properties();
 
       for (unsigned int property_index = 0;
-           property_index < particles[p].get_number_properties();++property_index)
+           property_index < particles[p].get_number_properties();
+           ++property_index)
         patches[p].data(property_index, 0) =
-          particle_properties[property_index ];
-
+          particle_properties[property_index];
     }
 }
 
@@ -1083,7 +1084,8 @@ std::vector<
              unsigned int,
              std::string,
              DataComponentInterpretation::DataComponentInterpretation>>
-GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_nonscalar_data_ranges() const
+GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_nonscalar_data_ranges()
+  const
 {
   return vector_datasets;
 }
@@ -1099,11 +1101,13 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
   // Store information about the particle used for the integration and print the
   // results if requested.
 
-  const std::string folder = this->simulation_parameters.simulation_control.output_folder;
-  const std::string particles_solution_name = "ib_particle_results";
-  const unsigned int iter        = this->simulation_control->get_step_number();
-  const double       time        = this->simulation_control->get_current_time();
-  const unsigned int group_files = this->simulation_parameters.simulation_control.group_files;
+  const std::string folder =
+    this->simulation_parameters.simulation_control.output_folder;
+  const std::string  particles_solution_name = "ib_particle_results";
+  const unsigned int iter = this->simulation_control->get_step_number();
+  const double       time = this->simulation_control->get_current_time();
+  const unsigned int group_files =
+    this->simulation_parameters.simulation_control.group_files;
 
   Visualization_IB ib_particles_data;
   ib_particles_data.build_patches(particles);

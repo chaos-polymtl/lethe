@@ -409,17 +409,16 @@ Return a bool that describes  if a cell contains a specific point
 
 
   /**
-   * @brief Defined a struct with methods that allow the generation of the a visualisation of the IB_particles.
+   * @brief Defined a struct with methods that allow the generation of the a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
    */
   struct Visualization_IB : public dealii::DataOutInterface<0, dim>
   {
   public:
-
     /**
-   * Carries out building the patches of properties of particles for
-   * visualization
-   *
-   * @param particles The vector fo IB_particles
+     * Carries out building the patches of properties of particles for
+     * visualization
+     *
+     * @param particles The vector fo IB_particles
      */
     void
     build_patches(std::vector<IBParticle<dim>> particles);
@@ -429,57 +428,57 @@ Return a bool that describes  if a cell contains a specific point
 
   private:
     /**
-   * Implementation of the corresponding function of the base class.
+     * Implementation of the corresponding function of the base class.
      */
     virtual const std::vector<DataOutBase::Patch<0, dim>> &
     get_patches() const;
 
     /**
-   * Implementation of the corresponding function of the base class.
+     * Implementation of the corresponding function of the base class.
      */
     virtual std::vector<std::string>
     get_dataset_names() const;
 
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
+#if DEAL_II_VERSION_GTE(9, 1, 0)
     virtual std::vector<
       std::tuple<unsigned int,
                  unsigned int,
                  std::string,
                  DataComponentInterpretation::DataComponentInterpretation>>
     get_nonscalar_data_ranges() const;
-#  else
+#else
     virtual std::vector<std::tuple<unsigned int, unsigned int, std::string>>
     get_vector_data_ranges() const;
-#  endif
+#endif
 
     /**
-   * Output information that is filled by build_patches() and
-   * written by the write function of the base class.
+     * Output information that is filled by build_patches() and
+     * written by the write function of the base class.
      */
     std::vector<DataOutBase::Patch<0, dim>> patches;
 
     /**
-   * A list of field names for all data components stored in patches.
+     * A list of field names for all data components stored in patches.
      */
     std::vector<std::string> dataset_names;
 
     /**
-   * Store which of the data fields are vectors.
+     * Store which of the data fields are vectors.
      */
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
+#if DEAL_II_VERSION_GTE(9, 1, 0)
     std::vector<
       std::tuple<unsigned int,
                  unsigned int,
                  std::string,
                  DataComponentInterpretation::DataComponentInterpretation>>
       vector_datasets;
-#  else
+#else
     std::vector<std::tuple<unsigned int, unsigned int, std::string>>
       vector_datasets;
-#  endif
+#endif
 
     /**
-   * Particle properties that are written in output files
+     * Particle properties that are written in output files
      */
     std::vector<std::pair<std::string, int>> properties_to_write;
   };
@@ -530,7 +529,7 @@ private:
   std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>>
     assemblers_inside_ib;
 
-  PVDHandler                   ib_particles_pvdhandler;
+  PVDHandler ib_particles_pvdhandler;
 
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;

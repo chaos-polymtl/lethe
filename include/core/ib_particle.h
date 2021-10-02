@@ -37,15 +37,15 @@ public:
     vx           = 2,
     vy           = 3,
     vz           = 4,
-    fx=5,
-    fy=6,
-    fz=7,
-    ox=8,
-    oy=9,
-    oz=10,
-    tx=11,
-    ty=12,
-    tz=13,
+    fx           = 5,
+    fy           = 6,
+    fz           = 7,
+    ox           = 8,
+    oy           = 9,
+    oz           = 10,
+    tx           = 11,
+    ty           = 12,
+    tz           = 13,
     n_properties = 14,
   };
   /**
@@ -125,11 +125,8 @@ public:
   // Pressure imposition location
   Point<dim> pressure_location;
 
-  struct properties{
-
-
-  };
-
+  struct properties
+  {};
 };
 
 #endif

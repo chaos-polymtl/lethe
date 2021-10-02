@@ -50,7 +50,6 @@ IBParticle<dim>::initialise_all()
   last_omega            = omega;
   omega_iter            = omega;
   last_angular_position = angular_position;
-
 }
 
 template <int dim>
@@ -73,20 +72,20 @@ IBParticle<dim>::get_properties_name()
 {
   std::vector<std::pair<std::string, int>> properties(
     PropertiesIndex::n_properties);
-  properties[PropertiesIndex::id]      = std::make_pair("ID", 1);
-  properties[PropertiesIndex::dp]      = std::make_pair("Diameter", 1);
-  properties[PropertiesIndex::vx]       = std::make_pair("Velocity", 3);
-  properties[PropertiesIndex::vy]       = std::make_pair("Velocity", 1);
-  properties[PropertiesIndex::vz]       = std::make_pair("Velocity", 1);
-  properties[PropertiesIndex::fx]       = std::make_pair("Force", 3);
-  properties[PropertiesIndex::fy]       = std::make_pair("Force", 1);
-  properties[PropertiesIndex::fz]       = std::make_pair("Force", 1);
-  properties[PropertiesIndex::ox]       = std::make_pair("Omega", 3);
-  properties[PropertiesIndex::oy]       = std::make_pair("Omega", 1);
-  properties[PropertiesIndex::oz]       = std::make_pair("Omega", 1);
-  properties[PropertiesIndex::tx]       = std::make_pair("Torques", 3);
-  properties[PropertiesIndex::ty]       = std::make_pair("Torques", 1);
-  properties[PropertiesIndex::tz]       = std::make_pair("Torques", 1);
+  properties[PropertiesIndex::id] = std::make_pair("ID", 1);
+  properties[PropertiesIndex::dp] = std::make_pair("Diameter", 1);
+  properties[PropertiesIndex::vx] = std::make_pair("Velocity", 3);
+  properties[PropertiesIndex::vy] = std::make_pair("Velocity", 1);
+  properties[PropertiesIndex::vz] = std::make_pair("Velocity", 1);
+  properties[PropertiesIndex::fx] = std::make_pair("Force", 3);
+  properties[PropertiesIndex::fy] = std::make_pair("Force", 1);
+  properties[PropertiesIndex::fz] = std::make_pair("Force", 1);
+  properties[PropertiesIndex::ox] = std::make_pair("Omega", 3);
+  properties[PropertiesIndex::oy] = std::make_pair("Omega", 1);
+  properties[PropertiesIndex::oz] = std::make_pair("Omega", 1);
+  properties[PropertiesIndex::tx] = std::make_pair("Torques", 3);
+  properties[PropertiesIndex::ty] = std::make_pair("Torques", 1);
+  properties[PropertiesIndex::tz] = std::make_pair("Torques", 1);
 
   return properties;
 }
@@ -95,35 +94,37 @@ std::vector<double>
 IBParticle<dim>::get_properties()
 {
   std::vector<double> properties(get_number_properties());
-  properties[0]      = particle_id;
-  properties[1]=radius*2;
-  if(dim==2){
-      properties[2]=velocity[0];
-      properties[3]=velocity[1];
-      properties[4]=0;
-      properties[5]=forces[0];
-      properties[6]=forces[1];
-      properties[7]=0;
-      properties[8]=omega[0];
-      properties[9]=omega[1];
-      properties[10]=omega[2];
-      properties[11]=torques[0];
-      properties[12]=torques[1];
-      properties[13]=torques[2];
+  properties[0] = particle_id;
+  properties[1] = radius * 2;
+  if (dim == 2)
+    {
+      properties[2]  = velocity[0];
+      properties[3]  = velocity[1];
+      properties[4]  = 0;
+      properties[5]  = forces[0];
+      properties[6]  = forces[1];
+      properties[7]  = 0;
+      properties[8]  = omega[0];
+      properties[9]  = omega[1];
+      properties[10] = omega[2];
+      properties[11] = torques[0];
+      properties[12] = torques[1];
+      properties[13] = torques[2];
     }
-  if(dim==3){
-      properties[2]=velocity[0];
-      properties[3]=velocity[1];
-      properties[4]=velocity[2];
-      properties[5]=forces[0];
-      properties[6]=forces[1];
-      properties[7]=forces[2];
-      properties[8]=omega[0];
-      properties[9]=omega[1];
-      properties[10]=omega[2];
-      properties[11]=torques[0];
-      properties[12]=torques[1];
-      properties[13]=torques[2];
+  if (dim == 3)
+    {
+      properties[2]  = velocity[0];
+      properties[3]  = velocity[1];
+      properties[4]  = velocity[2];
+      properties[5]  = forces[0];
+      properties[6]  = forces[1];
+      properties[7]  = forces[2];
+      properties[8]  = omega[0];
+      properties[9]  = omega[1];
+      properties[10] = omega[2];
+      properties[11] = torques[0];
+      properties[12] = torques[1];
+      properties[13] = torques[2];
     }
 
   return properties;
@@ -131,8 +132,8 @@ IBParticle<dim>::get_properties()
 
 template <int dim>
 unsigned int
-IBParticle<dim>::get_number_properties(){
-
+IBParticle<dim>::get_number_properties()
+{
   return PropertiesIndex::n_properties;
 }
 
