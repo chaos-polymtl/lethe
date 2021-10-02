@@ -38,8 +38,9 @@
 #include <../tests/tests.h>
 
 /*
-* The test read a table and print the results. We make sure the output of these functions always stay the same.
-*/
+ * The test read a table and print the results. We make sure the output of these
+ * functions always stay the same.
+ */
 
 void
 test()
@@ -51,13 +52,16 @@ test()
 
   table.write_tex(deallog.get_file_stream());
 
-  std::map<std::string,std::vector<double>> vectors;
+  std::map<std::string, std::vector<double>> vectors;
   fill_vectors_from_file(vectors, table_file_name);
 
-  for(std::map<std::string,std::vector<double>>::iterator it =  vectors.begin(); it !=  vectors.end(); ++it) {
-
+  for (std::map<std::string, std::vector<double>>::iterator it =
+         vectors.begin();
+       it != vectors.end();
+       ++it)
+    {
       deallog << it->first << std::endl;
-      for (unsigned int j = 0; j <  it->second.size(); ++j)
+      for (unsigned int j = 0; j < it->second.size(); ++j)
         {
           deallog << it->second[j] << std::endl;
         }

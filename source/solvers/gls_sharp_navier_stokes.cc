@@ -2068,8 +2068,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
 
   // Read the data of each particle and put the relevant information in a
   // vector.
-  std::map<std::string,std::vector<double>>
-    restart_data;
+  std::map<std::string, std::vector<double>> restart_data;
   fill_vectors_from_file(restart_data, filename);
 
 
@@ -2090,7 +2089,6 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
     }
   if (dim == 3)
     {
-
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           particles[p_i].position[0] = restart_data["p_x"][p_i];

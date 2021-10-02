@@ -169,8 +169,8 @@ fill_table_from_file(TableHandler &    table,
  *   @param delimiter The delimiter used to read the table.
  */
 void
-fill_vectors_from_file(std::map<std::string,std::vector<double>> &map,
-                       std::string                                  file,
+fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
+                       std::string                                 file,
                        const std::string delimiter = " ");
 
 

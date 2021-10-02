@@ -99,16 +99,15 @@ fill_table_from_file(TableHandler &    table,
                      std::string       file,
                      const std::string delimiter)
 {
-
   table.clear();
   std::ifstream myfile(file);
   // open the file
   if (myfile.is_open())
     {
-      std::string line;
+      std::string              line;
       std::vector<std::string> vector_of_column_names;
       std::vector<double>      line_of_data;
-      unsigned int i=0;
+      unsigned int             i = 0;
 
       while (std::getline(myfile, line))
         {
@@ -124,7 +123,7 @@ fill_table_from_file(TableHandler &    table,
                 }
             }
           //  If it's the first line, we only initialize the variable names.
-          if(i!=0)
+          if (i != 0)
             {
               line_of_data = Utilities::string_to_double(list_of_words_clean);
               for (unsigned int i = 0; i < line_of_data.size(); ++i)
@@ -146,9 +145,9 @@ fill_table_from_file(TableHandler &    table,
 }
 
 void
-fill_vectors_from_file(std::map<std::string,std::vector<double>>  &map,
-                       std::string                                  file,
-                       const std::string                            delimiter)
+fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
+                       std::string                                 file,
+                       const std::string                           delimiter)
 {
   // fill a pair, first being a vector of vector name and the second being the
   // vector of vector associated with the vector name.
@@ -158,10 +157,10 @@ fill_vectors_from_file(std::map<std::string,std::vector<double>>  &map,
   // open the file.
   if (myfile.is_open())
     {
-      std::string line;
+      std::string              line;
       std::vector<std::string> column_names;
       std::vector<double>      line_of_data;
-      unsigned int i=0;
+      unsigned int             i = 0;
 
       while (std::getline(myfile, line))
         {
@@ -177,7 +176,7 @@ fill_vectors_from_file(std::map<std::string,std::vector<double>>  &map,
                 }
             }
           // check if the line is contained words or numbers.
-          if(i!=0)
+          if (i != 0)
             {
               line_of_data = Utilities::string_to_double(list_of_words_clean);
               for (unsigned int i = 0; i < line_of_data.size(); ++i)
@@ -188,11 +187,11 @@ fill_vectors_from_file(std::map<std::string,std::vector<double>>  &map,
           else
             {
               // the line contains words, we assume these are the columns names.
-              column_names=list_of_words_clean;
+              column_names = list_of_words_clean;
               for (unsigned int i = 0; i < list_of_words_clean.size(); ++i)
                 {
                   std::vector<double> base_vector;
-                  map[column_names[i]]=base_vector;
+                  map[column_names[i]] = base_vector;
                 }
             }
           ++i;
