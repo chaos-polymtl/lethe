@@ -162,15 +162,14 @@ fill_table_from_file(TableHandler &    table,
  * @brief function that read a file that was build from a dealii table and fill 2 vectors.
  * The first vector contains all the columns names and the second one contained
  * all the column data.
- * * @param vectors A pair of vector used to contained the data.
+ * * @param map A map used to contain the data based on the columns name.
  *
  *   @param file The path the file that will be use to fill up the table.
  *
  *   @param delimiter The delimiter used to read the table.
  */
 void
-fill_vectors_from_file(std::pair<std::vector<std::string>,
-                                 std::vector<std::vector<double>>> &vectors,
+fill_vectors_from_file(std::map<std::string,std::vector<double>> &map,
                        std::string                                  file,
                        const std::string delimiter = " ");
 

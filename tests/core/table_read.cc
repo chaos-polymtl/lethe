@@ -49,15 +49,15 @@ test()
 
   table.write_tex(deallog.get_file_stream());
 
-  std::pair<std::vector<std::string>, std::vector<std::vector<double>>> vector;
-  fill_vectors_from_file(vector, table_file_name);
+  std::map<std::string,std::vector<double>> vectors;
+  fill_vectors_from_file(vectors, table_file_name);
 
-  for (unsigned int i = 0; i < vector.first.size(); ++i)
-    {
-      deallog << vector.first[i] << std::endl;
-      for (unsigned int j = 0; j < vector.second[i].size(); ++j)
+  for(std::map<std::string,std::vector<double>>::iterator it =  vectors.begin(); it !=  vectors.end(); ++it) {
+
+      deallog << it->first << std::endl;
+      for (unsigned int j = 0; j <  it->second.size(); ++j)
         {
-          deallog << vector.second[i][j] << std::endl;
+          deallog << it->second[j] << std::endl;
         }
     }
 }
