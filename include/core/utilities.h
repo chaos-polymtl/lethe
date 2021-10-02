@@ -146,8 +146,8 @@ calculate_point_property(const double phase,
 
 
 /**
- * @brief function that read a file that was build from a dealii table. and refill a table with the data in the file.
- * * @param table The table that is gonna be field. warning ! if the table already contained stuff it will be erased.
+ * @brief Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with the data in the file.
+ * * @param table The table to be filled. Warning ! if the table is empty, it's content will be erased.
  *
  *    @param file The path the file that will be use to fill up the table.
  *
