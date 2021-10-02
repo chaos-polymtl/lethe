@@ -1235,6 +1235,11 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Bool to define if you assemble the inside of particles with the NS equation.");
+      prm.declare_entry(
+        "particle nonlinear tolerance",
+        "1e-6",
+        Patterns::Double(),
+        "The nonlinear tolerance for the coupling of the particle dynamics and the fluid");
       prm.declare_entry("fluid density",
                         "1",
                         Patterns::Double(),
@@ -1332,6 +1337,8 @@ namespace Parameters
       gravity[1]           = prm.get_double("gravity_y");
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
+      particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
+
 
       if (dim == 3)
         gravity[2] = prm.get_double("gravity_z");

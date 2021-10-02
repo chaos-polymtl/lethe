@@ -65,19 +65,29 @@ template <typename VectorType>
 void
 NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
+  double       global_res;
   double       current_res;
   double       last_res;
   bool         first_step      = is_initial_step;
   unsigned int outer_iteration = 0;
   last_res                     = 1e6;
   current_res                  = 1e6;
+  global_res                   = 1e6;
+
+  // current_res and global_res are different as one is defined based on the l2
+  // norm of the residual vector (current_res) and the other (global_res) is
+  // defined by the physical solver and may differ from the l2_norm of the
+  // residual vector. Only the global_res is compared to the tolerance in order
+  // to evaluate if the nonlinear system is solved. Only current_res is used for
+  // the alpha scheme as this scheme only monitors the convergence of the
+  // non-linear system of equation (the matrix problem).
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
   auto &evaluation_point = solver->get_evaluation_point();
   auto &present_solution = solver->get_present_solution();
 
-  while ((current_res > this->params.tolerance) &&
+  while ((global_res > this->params.tolerance) &&
          outer_iteration < this->params.max_iterations)
     {
       evaluation_point = present_solution;
@@ -151,6 +161,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           last_alpha_res = current_res;
         }
 
+      global_res       = solver->get_current_residual();
       present_solution = evaluation_point;
       last_res         = current_res;
       ++outer_iteration;
