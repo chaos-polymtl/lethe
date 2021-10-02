@@ -7,6 +7,7 @@ read_mesh(const DEMSolverParameters<dim> &           parameters,
           parallel::distributed::Triangulation<dim> &triangulation,
           double &triangulation_cell_diameter)
 {
+  pcout << "Reading triangulation " << std::endl;
   // GMSH input
   if (parameters.mesh.type == Parameters::Mesh::Type::gmsh)
     {
@@ -51,6 +52,8 @@ read_mesh(const DEMSolverParameters<dim> &           parameters,
           triangulation.refine_global(initial_refinement);
         }
     }
+
+  pcout << std::endl << "Finished reading triangulation " << std::endl;
 }
 
 template void
