@@ -94,8 +94,6 @@ template <int dim>
 std::vector<double>
 IBParticle<dim>::get_properties()
 {
-
-
   std::vector<double> properties(get_number_properties());
   properties[0]      = particle_id;
   properties[1]=radius*2;

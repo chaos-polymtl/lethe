@@ -408,6 +408,9 @@ Return a bool that describes  if a cell contains a specific point
     const typename DoFHandler<dim>::active_cell_iterator &cell);
 
 
+  /**
+   * @brief Defined a struct with methods that allow the generation of the a visualisation of the IB_particles.
+   */
   struct Visualization_IB : public dealii::DataOutInterface<0, dim>
   {
   public:
@@ -416,23 +419,11 @@ Return a bool that describes  if a cell contains a specific point
    * Carries out building the patches of properties of particles for
    * visualization
    *
-   * @param particle_handler The particle handler of active particles for
-   * visulization
-   * @param properties Properties of particles for visulization. This is a
-   * vector of pairs and each pair contains the property name as the first
-   * element and the size of the property as the second element. For vectors
-   * only the size of the first element of the vector is defined equal to the
-   * dimension
+   * @param particles The vector fo IB_particles
      */
     void
     build_patches(std::vector<IBParticle<dim>> particles);
 
-    /**
-   * Prints the data of particles in the xyz format
-   *
-   * @param particle_handler The particle handler of active particles
-   * @param pcout Printing in parallel
-     */
 
     ~Visualization_IB();
 
@@ -492,7 +483,6 @@ Return a bool that describes  if a cell contains a specific point
      */
     std::vector<std::pair<std::string, int>> properties_to_write;
   };
-
 
 
 

@@ -48,18 +48,39 @@ public:
     tz=13,
     n_properties = 14,
   };
-
+  /**
+   * @brief
+   * initialised the particle
+   *
+   */
   void
   initialise_all();
+  /**
+   * @brief
+   * initialised the value of the last state of the particle
+   *
+   */
   void
   initialise_last();
-
+  /**
+   * @brief
+   * Return the names of properties of the IB_particle for visualisation.
+   *
+   */
   std::vector<std::pair<std::string, int>>
   get_properties_name();
-
+  /**
+   * @brief
+   * Return the value of the properties of the particle for visualisation.
+   *
+   */
   std::vector<double>
   get_properties();
-
+  /**
+   * @brief
+   * Return the number of properties of the particle for visualisation.
+   *
+   */
   unsigned int
   get_number_properties();
 
