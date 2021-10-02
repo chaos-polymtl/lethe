@@ -2046,7 +2046,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   this->GLSNavierStokesSolver<dim>::read_checkpoint();
 
   TimerOutput::Scope t(this->computing_timer,
-                       "Reset Nitsche solid mesh and particles");
+                       "Reset Sharp-Edge particle information");
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder +
