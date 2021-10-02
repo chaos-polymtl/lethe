@@ -407,6 +407,95 @@ Return a bool that describes  if a cell contains a specific point
   find_cells_around_cell(
     const typename DoFHandler<dim>::active_cell_iterator &cell);
 
+
+  struct Visualization_IB : public dealii::DataOutInterface<0, dim>
+  {
+  public:
+
+    /**
+   * Carries out building the patches of properties of particles for
+   * visualization
+   *
+   * @param particle_handler The particle handler of active particles for
+   * visulization
+   * @param properties Properties of particles for visulization. This is a
+   * vector of pairs and each pair contains the property name as the first
+   * element and the size of the property as the second element. For vectors
+   * only the size of the first element of the vector is defined equal to the
+   * dimension
+     */
+    void
+    build_patches(std::vector<IBParticle<dim>> particles);
+
+    /**
+   * Prints the data of particles in the xyz format
+   *
+   * @param particle_handler The particle handler of active particles
+   * @param pcout Printing in parallel
+     */
+
+    ~Visualization_IB();
+
+  private:
+    /**
+   * Implementation of the corresponding function of the base class.
+     */
+    virtual const std::vector<DataOutBase::Patch<0, dim>> &
+    get_patches() const;
+
+    /**
+   * Implementation of the corresponding function of the base class.
+     */
+    virtual std::vector<std::string>
+    get_dataset_names() const;
+
+#  if DEAL_II_VERSION_GTE(9, 1, 0)
+    virtual std::vector<
+      std::tuple<unsigned int,
+                 unsigned int,
+                 std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
+    get_nonscalar_data_ranges() const;
+#  else
+    virtual std::vector<std::tuple<unsigned int, unsigned int, std::string>>
+    get_vector_data_ranges() const;
+#  endif
+
+    /**
+   * Output information that is filled by build_patches() and
+   * written by the write function of the base class.
+     */
+    std::vector<DataOutBase::Patch<0, dim>> patches;
+
+    /**
+   * A list of field names for all data components stored in patches.
+     */
+    std::vector<std::string> dataset_names;
+
+    /**
+   * Store which of the data fields are vectors.
+     */
+#  if DEAL_II_VERSION_GTE(9, 1, 0)
+    std::vector<
+      std::tuple<unsigned int,
+                 unsigned int,
+                 std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
+      vector_datasets;
+#  else
+    std::vector<std::tuple<unsigned int, unsigned int, std::string>>
+      vector_datasets;
+#  endif
+
+    /**
+   * Particle properties that are written in output files
+     */
+    std::vector<std::pair<std::string, int>> properties_to_write;
+  };
+
+
+
+
   /**
    * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
    */
@@ -450,6 +539,8 @@ private:
   // Special assembler of the cells inside an IB particle
   std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>>
     assemblers_inside_ib;
+
+  PVDHandler                   ib_particles_pvdhandler;
 
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
