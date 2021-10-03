@@ -409,7 +409,7 @@ Return a bool that describes  if a cell contains a specific point
 
 
   /**
-   * @brief Defined a struct with methods that allow the generation of the a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
+   * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
    */
   struct Visualization_IB : public dealii::DataOutInterface<0, dim>
   {
