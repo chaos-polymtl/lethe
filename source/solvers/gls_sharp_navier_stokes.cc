@@ -595,7 +595,6 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
             std::ofstream output(filename.c_str());
 
             table_p[p].write_text(output);
-            table_p[p].write_text(output);
           }
         MPI_Barrier(this->mpi_communicator);
       }
@@ -2106,10 +2105,18 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
           particles[p_i].torques[0]  = restart_data["T_x"][p_i];
           particles[p_i].torques[1]  = restart_data["T_y"][p_i];
           particles[p_i].torques[2]  = restart_data["T_z"][p_i];
+
+          particles[p_i].last_position      = particles[p_i].position;
+          particles[p_i].last_velocity      = particles[p_i].velocity;
+          particles[p_i].last_forces        = particles[p_i].forces;
+          particles[p_i].last_omega         = particles[p_i].omega;
+          particles[p_i].local_alpha_torque = 1;
+          particles[p_i].local_alpha_force  = 1;
         }
+
     }
   // Finish the time step of the particle.
-  finish_time_step_particles();
+
 }
 
 
