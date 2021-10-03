@@ -943,7 +943,6 @@ LaplaceAssembly<dim>::assemble_rhs(
           local_rhs_i += -1 / viscosity * h *
                          scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
 
-
           local_rhs(i) += local_rhs_i;
         }
     }
