@@ -96,35 +96,25 @@ IBParticle<dim>::get_properties()
   std::vector<double> properties(get_number_properties());
   properties[0] = particle_id;
   properties[1] = radius * 2;
-  if (dim == 2)
-    {
-      properties[2]  = velocity[0];
+     properties[2]  = velocity[0];
       properties[3]  = velocity[1];
-      properties[4]  = 0;
       properties[5]  = forces[0];
       properties[6]  = forces[1];
-      properties[7]  = 0;
       properties[8]  = omega[0];
       properties[9]  = omega[1];
       properties[10] = omega[2];
       properties[11] = torques[0];
       properties[12] = torques[1];
       properties[13] = torques[2];
+  if (dim == 2)
+    {
+      properties[4]  = 0;
+      properties[7]  = 0;
     }
   if (dim == 3)
     {
-      properties[2]  = velocity[0];
-      properties[3]  = velocity[1];
       properties[4]  = velocity[2];
-      properties[5]  = forces[0];
-      properties[6]  = forces[1];
       properties[7]  = forces[2];
-      properties[8]  = omega[0];
-      properties[9]  = omega[1];
-      properties[10] = omega[2];
-      properties[11] = torques[0];
-      properties[12] = torques[1];
-      properties[13] = torques[2];
     }
 
   return properties;
