@@ -50,7 +50,7 @@ public:
 
   /**
    * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing theTracer information.
+   * @param scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
    * @param copy_data Destination where the local_rhs and loc
@@ -63,7 +63,7 @@ public:
 
 
 /**
- * @brief Class that assembles the core of the Traceer equation.
+ * @brief Class that assembles the core of the Tracer equation.
  * This class assembles the weak form of:
  * $$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 $$ with an SUPG
  * stabilziation

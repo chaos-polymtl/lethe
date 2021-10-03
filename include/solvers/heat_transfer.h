@@ -19,7 +19,7 @@
  * Equation solved:
  * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
  *
- * Author: Bruno Blais and Jeanne Joachim, Polytechnique Montreal, 2020-
+ * Polytechnique Montreal, 2020-
  */
 
 #ifndef lethe_heat_transfer_h
@@ -29,6 +29,8 @@
 #include <core/simulation_control.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
 
 #include <deal.II/base/convergence_table.h>
@@ -100,26 +102,6 @@ public:
               this->dof_handler));
       }
   }
-
-
-  /**
-   * @brief Call for the assembly of the matrix
-   */
-  virtual void
-  assemble_system_matrix() override
-  {
-    assemble_matrix_and_rhs();
-  }
-
-  /**
-   * @brief Call for the assembly of the right-hand side
-   */
-  virtual void
-  assemble_system_rhs() override
-  {
-    assemble_rhs();
-  }
-
 
   /**
    * @brief Call for the assembly of the matrix and the right-hand side.
@@ -280,9 +262,82 @@ public:
 
 
 private:
-  template <bool assemble_matrix>
+  /**
+   *  @brief Assembles the matrix associated with the solver
+   */
   void
-  assemble_system();
+
+  assemble_system_matrix();
+
+  /**
+   * @brief Assemble the rhs associated with the solver
+   */
+  void
+  assemble_system_rhs();
+
+
+  /**
+   * @brief Assemble the local matrix for a given cell.
+   *
+   * This function is used by the WorkStream class to assemble
+   * the system matrix. It is a thread safe function.
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for HeatTransferScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  virtual void
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    HeatTransferScratchData<dim> &                        scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
+
+  /**
+   * @brief Assemble the local rhs for a given cell
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for HeatTransferScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  virtual void
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    HeatTransferScratchData<dim> &                        scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
+
+  /**
+   * @brief sets up the vector of assembler functions
+   */
+  virtual void
+  setup_assemblers();
+
+
+  /**
+   * @brief Copy local cell information to global matrix
+   */
+
+  virtual void
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsCopyData &copy_data);
+
+  /**
+   * @brief Copy local cell rhs information to global rhs
+   */
+
+  virtual void
+  copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
@@ -319,6 +374,7 @@ private:
 
   // Previous solutions vectors
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+  std::vector<TrilinosWrappers::MPI::Vector> solution_stages;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
@@ -335,6 +391,9 @@ private:
   // source term. The same applies, I have no clue if this is detrimental or not
   // to the solution since anyway the GGLS term scales as h^(order+1)
   const bool GGLS = true;
+
+  // Assemblers for the matrix and rhs
+  std::vector<std::shared_ptr<HeatTransferAssemblerBase<dim>>> assemblers;
 };
 
 
