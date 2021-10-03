@@ -26,9 +26,7 @@
 
 template <int dim>
 void
-HeatTransfer<dim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::
-    TimeSteppingMethod /*time_stepping_method*/)
+HeatTransfer<dim>::assemble_matrix_and_rhs()
 {
   assemble_system_matrix();
   assemble_system_rhs();
@@ -37,8 +35,7 @@ HeatTransfer<dim>::assemble_matrix_and_rhs(
 
 template <int dim>
 void
-HeatTransfer<dim>::assemble_rhs(const Parameters::SimulationControl::
-                                  TimeSteppingMethod /*time_stepping_method*/)
+HeatTransfer<dim>::assemble_rhs()
 {
   assemble_system_rhs();
 }
