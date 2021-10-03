@@ -57,7 +57,7 @@ public:
   initialise_all();
   /**
    * @brief
-   * initialised the value of the last state of the particle
+   * initialize the value of the last state of the particle
    *
    */
   void
