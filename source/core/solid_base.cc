@@ -385,7 +385,8 @@ SolidBase<dim, spacedim>::setup_particles()
     if (cell->is_locally_owned())
       all_boxes.emplace_back(cell->bounding_box());
   const auto tree        = pack_rtree(all_boxes);
-  const auto local_boxes = extract_rtree_level(tree, 1);
+  const auto local_boxes = extract_rtree_level(
+    tree, std::max(int(log10(fluid_tria->n_locally_owned_active_cells())), 1));
 
   global_fluid_bounding_boxes =
     Utilities::MPI::all_gather(mpi_communicator, local_boxes);
