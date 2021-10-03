@@ -439,17 +439,13 @@ Return a bool that describes  if a cell contains a specific point
     virtual std::vector<std::string>
     get_dataset_names() const;
 
-#if DEAL_II_VERSION_GTE(9, 1, 0)
     virtual std::vector<
       std::tuple<unsigned int,
                  unsigned int,
                  std::string,
                  DataComponentInterpretation::DataComponentInterpretation>>
     get_nonscalar_data_ranges() const;
-#else
-    virtual std::vector<std::tuple<unsigned int, unsigned int, std::string>>
-    get_vector_data_ranges() const;
-#endif
+
 
     /**
      * Output information that is filled by build_patches() and
@@ -465,17 +461,14 @@ Return a bool that describes  if a cell contains a specific point
     /**
      * Store which of the data fields are vectors.
      */
-#if DEAL_II_VERSION_GTE(9, 1, 0)
+
     std::vector<
       std::tuple<unsigned int,
                  unsigned int,
                  std::string,
                  DataComponentInterpretation::DataComponentInterpretation>>
       vector_datasets;
-#else
-    std::vector<std::tuple<unsigned int, unsigned int, std::string>>
-      vector_datasets;
-#endif
+
 
     /**
      * Particle properties that are written in output files
