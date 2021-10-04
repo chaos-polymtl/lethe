@@ -86,9 +86,6 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
                                           this->locally_relevant_dofs);
 
-  this->pcout << "Dof distributed" << std::endl;
-  MPI_Barrier(MPI_COMM_WORLD);
-
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
@@ -163,12 +160,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   }
   nonzero_constraints.close();
 
-
-  this->pcout << "NON ZERO CONSTRAINTS" << std::endl;
-  this->pcout << "Memory consumption "
-              << nonzero_constraints.memory_consumption() << std::endl;
-  MPI_Barrier(MPI_COMM_WORLD);
-
+  // Zero constraints
   {
     this->zero_constraints.clear();
     this->zero_constraints.reinit(this->locally_relevant_dofs);
@@ -218,12 +210,6 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
       }
   }
   this->zero_constraints.close();
-  this->pcout << "ZERO CONSTRAINTS" << std::endl;
-  sleep(10);
-  MPI_Barrier(MPI_COMM_WORLD);
-  this->pcout << "Init of solutions" << std::endl;
-  sleep(10);
-  MPI_Barrier(MPI_COMM_WORLD);
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -254,42 +240,21 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
 
-  this->pcout << "Before sparsity pattern" << std::endl;
-
-  sleep(10);
-  MPI_Barrier(MPI_COMM_WORLD);
-
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
                                   nonzero_constraints,
                                   false);
-  this->pcout << "Before distribution of sparsity pattern" << std::endl;
-
-  sleep(10);
-  MPI_Barrier(MPI_COMM_WORLD);
-
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     this->dof_handler.locally_owned_dofs(),
     this->mpi_communicator,
     this->locally_relevant_dofs);
 
-  this->pcout << "Sparsity pattern distributed" << std::endl;
-
-  sleep(10);
-  MPI_Barrier(MPI_COMM_WORLD);
-
-
-
   system_matrix.reinit(this->locally_owned_dofs,
                        this->locally_owned_dofs,
                        dsp,
                        this->mpi_communicator);
-  this->pcout << "Matrix re-inited" << std::endl;
-
-  sleep(10);
-  MPI_Barrier(MPI_COMM_WORLD);
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
@@ -1155,7 +1120,6 @@ GLSNavierStokesSolver<dim>::solve()
   // better speed-up than using MPI. This could be eventually changed...
   MultithreadInfo::set_thread_limit(1);
 
-  this->pcout << "Reading mesh and manifolds" << std::endl;
   read_mesh_and_manifolds(
     this->triangulation,
     this->simulation_parameters.mesh,
@@ -1163,9 +1127,7 @@ GLSNavierStokesSolver<dim>::solve()
     this->simulation_parameters.restart_parameters.restart,
     this->simulation_parameters.boundary_conditions);
 
-  this->pcout << "Setting up DOFS" << std::endl;
   this->setup_dofs();
-  this->pcout << "Setting up initial condition" << std::endl;
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
