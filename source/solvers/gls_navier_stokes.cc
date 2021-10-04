@@ -87,6 +87,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                                           this->locally_relevant_dofs);
 
   this->pcout << "Dof distributed" << std::endl;
+  MPI_Barrier(MPI_COMM_WORLD);
 
   FEValuesExtractors::Vector velocities(0);
 
@@ -161,6 +162,9 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   }
   nonzero_constraints.close();
 
+  this->pcout << "NON ZERO CONSTRAINTS" << std::endl;
+  MPI_Barrier(MPI_COMM_WORLD);
+
   {
     this->zero_constraints.clear();
     DoFTools::make_hanging_node_constraints(this->dof_handler,
@@ -208,9 +212,10 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
       }
   }
   this->zero_constraints.close();
-
+  this->pcout << "ZERO CONSTRAINTS" << std::endl;
+  MPI_Barrier(MPI_COMM_WORLD);
   this->pcout << "Init of solutions" << std::endl;
-
+  MPI_Barrier(MPI_COMM_WORLD);
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
