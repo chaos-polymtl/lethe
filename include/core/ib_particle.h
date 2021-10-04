@@ -124,7 +124,6 @@ public:
 
   // Pressure imposition location
   Point<dim> pressure_location;
-  
 };
 
 #endif

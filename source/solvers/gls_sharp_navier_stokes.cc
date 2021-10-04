@@ -1103,7 +1103,8 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
   const std::string folder =
     this->simulation_parameters.simulation_control.output_folder;
-  const std::string  particles_solution_name = "ib_particle_results";
+  const std::string particles_solution_name =
+    this->simulation_parameters.particlesParameters.ib_particles_pvd_file;
   const unsigned int iter = this->simulation_control->get_step_number();
   const double       time = this->simulation_control->get_current_time();
   const unsigned int group_files =

@@ -658,8 +658,9 @@ namespace Parameters
     Tensor<1, dim>               gravity;
     double                       particle_nonlinear_tol;
 
-    double alpha;
-    bool   integrate_motion;
+    double      alpha;
+    bool        integrate_motion;
+    std::string ib_particles_pvd_file;
 
 
 
