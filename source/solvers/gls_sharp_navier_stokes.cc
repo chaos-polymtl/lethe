@@ -106,8 +106,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
 {
   // initialized the particles
   particles = this->simulation_parameters.particlesParameters.particles;
-  table_f.resize(particles.size());
-  table_t.resize(particles.size());
+  table_p.resize(particles.size());
 }
 
 
@@ -595,8 +594,7 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
               "." + Utilities::int_to_string(p, 2) + ".dat";
             std::ofstream output(filename.c_str());
 
-            table_f[p].write_text(output);
-            table_t[p].write_text(output);
+            table_p[p].write_text(output);
           }
         MPI_Barrier(this->mpi_communicator);
       }
@@ -1025,98 +1023,92 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           this->pcout << "particule " << p << " velocity "
                       << particles[p].velocity << std::endl;
         }
-      table_t[p].add_value("particle ID", p);
+      table_p[p].add_value("particle_ID", p);
       if (this->simulation_parameters.simulation_control.method !=
           Parameters::SimulationControl::TimeSteppingMethod::steady)
-        table_t[p].add_value("time",
+        table_p[p].add_value("time",
                              this->simulation_control->get_current_time());
       if (dim == 3)
         {
-          table_t[p].add_value("T_x", particles[p].torques[0]);
-          table_t[p].set_precision(
+          table_p[p].add_value("T_x", particles[p].torques[0]);
+          table_p[p].set_precision(
             "T_x",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters.integrate_motion)
             {
-              table_t[p].add_value("omega_x", particles[p].omega[0]);
-              table_t[p].set_precision(
+              table_p[p].add_value("omega_x", particles[p].omega[0]);
+              table_p[p].set_precision(
                 "omega_x",
                 this->simulation_parameters.simulation_control.log_precision);
             }
 
-          table_t[p].add_value("T_y", particles[p].torques[1]);
-          table_t[p].set_precision(
+          table_p[p].add_value("T_y", particles[p].torques[1]);
+          table_p[p].set_precision(
             "T_y",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters.integrate_motion)
             {
-              table_t[p].add_value("omega_y", particles[p].omega[1]);
-              table_t[p].set_precision(
+              table_p[p].add_value("omega_y", particles[p].omega[1]);
+              table_p[p].set_precision(
                 "omega_y",
                 this->simulation_parameters.simulation_control.log_precision);
             }
         }
 
-      table_t[p].add_value("T_z", particles[p].torques[2]);
-      table_t[p].set_precision(
+      table_p[p].add_value("T_z", particles[p].torques[2]);
+      table_p[p].set_precision(
         "T_z", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
-          table_t[p].add_value("omega_z", particles[p].omega[2]);
-          table_t[p].set_precision(
+          table_p[p].add_value("omega_z", particles[p].omega[2]);
+          table_p[p].set_precision(
             "omega_z",
             this->simulation_parameters.simulation_control.log_precision);
         }
 
 
 
-      table_f[p].add_value("particle ID", p);
-      if (this->simulation_parameters.simulation_control.method !=
-          Parameters::SimulationControl::TimeSteppingMethod::steady)
-        table_f[p].add_value("time",
-                             this->simulation_control->get_current_time());
-
-      table_f[p].add_value("f_x", particles[p].forces[0]);
+      table_p[p].add_value("f_x", particles[p].forces[0]);
       if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
-          table_f[p].add_value("v_x", particles[p].velocity[0]);
-          table_f[p].add_value("p_x", particles[p].position[0]);
+          table_p[p].add_value("v_x", particles[p].velocity[0]);
+          table_p[p].add_value("p_x", particles[p].position[0]);
         }
-      table_f[p].add_value("f_y", particles[p].forces[1]);
+      table_p[p].add_value("f_y", particles[p].forces[1]);
       if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
-          table_f[p].add_value("v_y", particles[p].velocity[1]);
-          table_f[p].add_value("p_y", particles[p].position[1]);
+          table_p[p].add_value("v_y", particles[p].velocity[1]);
+          table_p[p].add_value("p_y", particles[p].position[1]);
         }
-      table_f[p].set_precision(
+      table_p[p].set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
-      table_f[p].set_precision(
+      table_p[p].set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
-          table_f[p].set_precision(
+          table_p[p].set_precision(
             "v_x",
             this->simulation_parameters.simulation_control.log_precision);
-          table_f[p].set_precision(
+          table_p[p].set_precision(
             "v_y",
             this->simulation_parameters.simulation_control.log_precision);
-          table_f[p].set_precision(
+          table_p[p].set_precision(
             "p_x",
             this->simulation_parameters.simulation_control.log_precision);
-          table_f[p].set_precision(
+          table_p[p].set_precision(
             "p_y",
             this->simulation_parameters.simulation_control.log_precision);
         }
       if (dim == 3)
         {
-          table_f[p].add_value("f_z", particles[p].forces[2]);
-          table_f[p].set_precision(
+          table_p[p].add_value("f_z", particles[p].forces[2]);
+          table_p[p].set_precision(
             "f_z",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters.integrate_motion)
             {
-              table_f[p].add_value("v_z", particles[p].velocity[2]);
-              table_f[p].add_value("p_z", particles[p].position[2]);
+              table_p[p].add_value("v_z", particles[p].velocity[2]);
+              table_p[p].add_value("p_z", particles[p].position[2]);
             }
         }
     }
@@ -1133,8 +1125,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
                         << "               |" << std::endl;
               std::cout << "+------------------------------------------+"
                         << std::endl;
-              table_f[p].write_text(std::cout);
-              table_t[p].write_text(std::cout);
+              table_p[p].write_text(std::cout);
             }
         }
     }
@@ -1953,6 +1944,185 @@ GLSSharpNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 void
+GLSSharpNavierStokesSolver<dim>::write_checkpoint()
+{
+  this->GLSNavierStokesSolver<dim>::write_checkpoint();
+
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
+
+  TableHandler particles_information_table;
+  std::string  filename =
+    this->simulation_parameters.simulation_control.output_folder + prefix +
+    ".ib_particles";
+  std::ofstream output(filename.c_str());
+  // Write a table with all the relevant properties of the particle in a table.
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      this->simulation_control->save(prefix);
+
+      this->pvdhandler.save(prefix);
+      for (unsigned int i_particle = 0; i_particle < particles.size();
+           ++i_particle)
+        {
+          particles_information_table.add_value("ID", i_particle);
+          particles_information_table.add_value(
+            "p_x", particles[i_particle].position[0]);
+          particles_information_table.set_precision("p_x", 12);
+          particles_information_table.add_value(
+            "p_y", particles[i_particle].position[1]);
+          particles_information_table.set_precision("p_y", 12);
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "p_z", particles[i_particle].position[2]);
+              particles_information_table.set_precision("p_z", 12);
+            }
+
+          particles_information_table.add_value(
+            "v_x", particles[i_particle].velocity[0]);
+          particles_information_table.set_precision("v_x", 12);
+          particles_information_table.add_value(
+            "v_y", particles[i_particle].velocity[1]);
+          particles_information_table.set_precision("v_y", 12);
+
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "v_z", particles[i_particle].velocity[2]);
+              particles_information_table.set_precision("v_z", 12);
+            }
+
+          particles_information_table.add_value(
+            "f_x", particles[i_particle].forces[0]);
+          particles_information_table.set_precision("f_x", 12);
+          particles_information_table.add_value(
+            "f_y", particles[i_particle].forces[1]);
+          particles_information_table.set_precision("f_y", 12);
+
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "f_z", particles[i_particle].forces[2]);
+              particles_information_table.set_precision("f_z", 12);
+            }
+
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "omega_x", particles[i_particle].omega[0]);
+              particles_information_table.set_precision("omega_x", 12);
+              particles_information_table.add_value(
+                "omega_y", particles[i_particle].omega[1]);
+              particles_information_table.set_precision("omega_y", 12);
+            }
+          particles_information_table.add_value("omega_z",
+                                                particles[i_particle].omega[2]);
+          particles_information_table.set_precision("omega_z", 12);
+          if (dim == 3)
+            {
+              particles_information_table.add_value(
+                "T_x", particles[i_particle].torques[0]);
+              particles_information_table.set_precision("T_x", 12);
+              particles_information_table.add_value(
+                "T_y", particles[i_particle].torques[1]);
+              particles_information_table.set_precision("T_y", 12);
+            }
+          particles_information_table.add_value(
+            "T_z", particles[i_particle].torques[2]);
+          particles_information_table.set_precision("T_z", 12);
+        }
+      // Write the table in the checkpoint file.
+      particles_information_table.write_text(output);
+    }
+}
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::read_checkpoint()
+{
+  this->GLSNavierStokesSolver<dim>::read_checkpoint();
+
+  TimerOutput::Scope t(this->computing_timer,
+                       "Reset Sharp-Edge particle information");
+
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
+
+  std::string filename =
+    this->simulation_parameters.simulation_control.output_folder + prefix +
+    ".ib_particles";
+
+  // refill the table from checkpoint
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      std::string filename_table =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.particlesParameters.ib_force_output_file +
+        "." + Utilities::int_to_string(p_i, 2) + ".dat";
+      fill_table_from_file(table_p[p_i], filename_table);
+    }
+
+  // Read the data of each particle and put the relevant information in a
+  // vector.
+  std::map<std::string, std::vector<double>> restart_data;
+  fill_vectors_from_file(restart_data, filename);
+
+
+  // Implement the data  in the particles.
+  if (dim == 2)
+    {
+      for (unsigned int p_i = 0; p_i < restart_data.size(); ++p_i)
+        {
+          particles[p_i].position[0] = restart_data["p_x"][p_i];
+          particles[p_i].position[1] = restart_data["p_y"][p_i];
+          particles[p_i].velocity[0] = restart_data["v_x"][p_i];
+          particles[p_i].velocity[1] = restart_data["v_y"][p_i];
+          particles[p_i].forces[0]   = restart_data["f_x"][p_i];
+          particles[p_i].forces[1]   = restart_data["f_y"][p_i];
+          particles[p_i].omega[2]    = restart_data["omega_z"][p_i];
+          particles[p_i].torques[2]  = restart_data["T_z"][p_i];
+        }
+    }
+  if (dim == 3)
+    {
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          particles[p_i].position[0] = restart_data["p_x"][p_i];
+          particles[p_i].position[1] = restart_data["p_y"][p_i];
+          particles[p_i].position[2] = restart_data["p_z"][p_i];
+          particles[p_i].velocity[0] = restart_data["v_x"][p_i];
+          particles[p_i].velocity[1] = restart_data["v_y"][p_i];
+          particles[p_i].velocity[2] = restart_data["v_z"][p_i];
+          particles[p_i].forces[0]   = restart_data["f_x"][p_i];
+          particles[p_i].forces[1]   = restart_data["f_y"][p_i];
+          particles[p_i].forces[2]   = restart_data["f_z"][p_i];
+          particles[p_i].omega[0]    = restart_data["omega_x"][p_i];
+          particles[p_i].omega[1]    = restart_data["omega_y"][p_i];
+          particles[p_i].omega[2]    = restart_data["omega_z"][p_i];
+          particles[p_i].torques[0]  = restart_data["T_x"][p_i];
+          particles[p_i].torques[1]  = restart_data["T_y"][p_i];
+          particles[p_i].torques[2]  = restart_data["T_z"][p_i];
+
+          particles[p_i].last_position      = particles[p_i].position;
+          particles[p_i].last_velocity      = particles[p_i].velocity;
+          particles[p_i].last_forces        = particles[p_i].forces;
+          particles[p_i].last_omega         = particles[p_i].omega;
+          particles[p_i].local_alpha_torque = 1;
+          particles[p_i].local_alpha_force  = 1;
+        }
+
+    }
+  // Finish the time step of the particle.
+
+}
+
+
+
+template <int dim>
+void
 GLSSharpNavierStokesSolver<dim>::solve()
 {
   read_mesh_and_manifolds(
@@ -1966,28 +2136,33 @@ GLSSharpNavierStokesSolver<dim>::solve()
   this->setup_dofs();
   this->box_refine_mesh();
 
-  // To change once refinement is split into two function
-  double temp_refine =
-    this->simulation_parameters.mesh_adaptation.refinement_fraction;
-  double temp_coarse =
-    this->simulation_parameters.mesh_adaptation.coarsening_fraction;
-  this->simulation_parameters.mesh_adaptation.refinement_fraction = 0;
-  this->simulation_parameters.mesh_adaptation.coarsening_fraction = 0;
-
-  for (unsigned int i = 0;
-       i < this->simulation_parameters.particlesParameters.initial_refinement;
-       ++i)
+  if(this->simulation_parameters.restart_parameters.restart== false)
     {
-      refine_ib();
-      NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-        refine_mesh();
-    }
-  this->simulation_parameters.mesh_adaptation.refinement_fraction = temp_refine;
-  this->simulation_parameters.mesh_adaptation.coarsening_fraction = temp_coarse;
+      // To change once refinement is split into two function
+      double temp_refine =
+        this->simulation_parameters.mesh_adaptation.refinement_fraction;
+      double temp_coarse =
+        this->simulation_parameters.mesh_adaptation.coarsening_fraction;
+      this->simulation_parameters.mesh_adaptation.refinement_fraction = 0;
+      this->simulation_parameters.mesh_adaptation.coarsening_fraction = 0;
+
+      for (unsigned int i = 0;
+           i <
+           this->simulation_parameters.particlesParameters.initial_refinement;
+           ++i)
+        {
+          refine_ib();
+          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+            refine_mesh();
+        }
+      this->simulation_parameters.mesh_adaptation.refinement_fraction =
+        temp_refine;
+      this->simulation_parameters.mesh_adaptation.coarsening_fraction =
+        temp_coarse;
 
   vertices_cell_mapping();
   generate_cut_cells_map();
-
+}
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
