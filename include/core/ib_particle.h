@@ -124,9 +124,7 @@ public:
 
   // Pressure imposition location
   Point<dim> pressure_location;
-
-  struct properties
-  {};
+  
 };
 
 #endif
