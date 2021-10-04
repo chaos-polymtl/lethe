@@ -443,6 +443,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
+  if (!scratch_data.is_boundary_cell)
+    return;
   auto &local_matrix = copy_data.local_matrix;
 
   // Robin boundary condition, loop on faces (Newton's cooling law)
@@ -488,7 +490,11 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
+  if (!scratch_data.is_boundary_cell)
+    return;
+
   auto &local_rhs = copy_data.local_rhs;
+
 
   // Robin boundary condition, loop on faces (Newton's cooling law)
   // implementation similar to deal.ii step-7
@@ -499,7 +505,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
         {
           const double h     = this->boundary_conditions_ht.h[i_bc];
           const double T_inf = this->boundary_conditions_ht.Tinf[i_bc];
-
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
@@ -518,8 +523,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                             scratch_data.phi_face_T[f][q][i];
                           local_rhs(i) -=
                             phi_face_T_i * h * (T_face - T_inf) * JxW;
-                          std::cout << "phi_face_T_i" << phi_face_T_i
-                                    << std::endl;
                         }
                     }
                 }

@@ -225,6 +225,7 @@ public:
     // might depend on reference cell
     // Only carry out this initialization if the cell is a boundary cell,
     // otherwise these are wasted calculations
+    this->is_boundary_cell = cell->at_boundary();
     if (cell->at_boundary())
       {
         n_faces          = cell->n_faces();
@@ -336,6 +337,7 @@ public:
   unsigned int n_faces_q_points;
 
   // Is boundary cell indicator
+  bool                      is_boundary_cell;
   std::vector<bool>         is_boundary_face;
   std::vector<unsigned int> boundary_face_id;
 
