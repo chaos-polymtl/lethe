@@ -445,9 +445,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
 {
   auto &local_matrix = copy_data.local_matrix;
 
-  std::vector<double> face_temperature_values =
-    scratch_data.present_face_temperature_values;
-
   // Robin boundary condition, loop on faces (Newton's cooling law)
   // implementation similar to deal.ii step-7
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
@@ -456,49 +453,28 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
           BoundaryConditions::BoundaryType::convection)
         {
           const double h = this->boundary_conditions_ht.h[i_bc];
-
-
-          if (scratch_data.cell->is_locally_owned())
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
-              for (unsigned int face = 0;
-                   face < GeometryInfo<dim>::faces_per_cell;
-                   face++)
+              if (scratch_data.boundary_face_id[f] ==
+                  this->boundary_conditions_ht.id[i_bc])
                 {
-                  if (scratch_data.cell->face(face)->at_boundary() &&
-                      (scratch_data.cell->face(face)->boundary_id() ==
-                       this->boundary_conditions_ht.id[i_bc]))
+                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
+                       ++q)
                     {
-                      scratch_data.fe_face_values_ht.reinit(scratch_data.cell,
-                                                            face);
-                      scratch_data.fe_face_values_ht.get_function_values(
-                        scratch_data.evaluation_point, face_temperature_values);
-                      {
-                        for (const unsigned int q :
-                             scratch_data.fe_face_values_ht
-                               .quadrature_point_indices())
-                          {
-                            const double JxW =
-                              scratch_data.fe_face_values_ht.JxW(q);
-                            for (unsigned int k :
-                                 scratch_data.fe_values_T.dof_indices())
-                              scratch_data.phi_face_T[k] =
-                                scratch_data.fe_face_values_ht.shape_value(k,
-                                                                           q);
+                      const double JxW = scratch_data.face_JxW[f][q];
+                      for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+                        {
+                          const double phi_face_T_i =
+                            scratch_data.phi_face_T[f][q][i];
 
-                            for (const unsigned int i :
-                                 scratch_data.fe_values_T.dof_indices())
-                              {
-                                for (const unsigned int j :
-                                     scratch_data.fe_values_T.dof_indices())
-                                  {
-                                    // Weak form modification
-                                    local_matrix(i, j) +=
-                                      scratch_data.phi_face_T[i] *
-                                      scratch_data.phi_face_T[j] * h * JxW;
-                                  }
-                              }
-                          }
-                      }
+                          for (unsigned int j = 0; j < scratch_data.n_dofs; ++j)
+                            {
+                              const double phi_face_T_j =
+                                scratch_data.phi_face_T[f][q][j];
+                              local_matrix(i, j) +=
+                                phi_face_T_i * phi_face_T_j * h * JxW;
+                            }
+                        }
                     }
                 }
             }
@@ -512,9 +488,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
-  std::vector<double> face_temperature_values =
-    scratch_data.present_face_temperature_values;
-
   auto &local_rhs = copy_data.local_rhs;
 
   // Robin boundary condition, loop on faces (Newton's cooling law)
@@ -528,47 +501,26 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
           const double T_inf = this->boundary_conditions_ht.Tinf[i_bc];
 
 
-          if (scratch_data.cell->is_locally_owned())
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
-              for (unsigned int face = 0;
-                   face < GeometryInfo<dim>::faces_per_cell;
-                   face++)
+              if (scratch_data.boundary_face_id[f] ==
+                  this->boundary_conditions_ht.id[i_bc])
                 {
-                  if (scratch_data.cell->face(face)->at_boundary() &&
-                      (scratch_data.cell->face(face)->boundary_id() ==
-                       this->boundary_conditions_ht.id[i_bc]))
+                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
+                       ++q)
                     {
-                      scratch_data.fe_face_values_ht.reinit(scratch_data.cell,
-                                                            face);
-                      scratch_data.fe_face_values_ht.get_function_values(
-                        scratch_data.evaluation_point,
-                        scratch_data.present_face_temperature_values);
-                      {
-                        for (const unsigned int q :
-                             scratch_data.fe_face_values_ht
-                               .quadrature_point_indices())
-                          {
-                            const double JxW =
-                              scratch_data.fe_face_values_ht.JxW(q);
-                            for (unsigned int k :
-                                 scratch_data.fe_values_T.dof_indices())
-                              scratch_data.phi_face_T[k] =
-                                scratch_data.fe_face_values_ht.shape_value(k,
-                                                                           q);
-
-                            for (const unsigned int i :
-                                 scratch_data.fe_values_T.dof_indices())
-                              {
-                                // Residual
-                                local_rhs(i) -=
-                                  scratch_data.phi_face_T[i] * h *
-                                  (scratch_data
-                                     .present_face_temperature_values[q] -
-                                   T_inf) *
-                                  JxW;
-                              }
-                          }
-                      }
+                      const double T_face =
+                        scratch_data.temperature_face_value[f][q];
+                      const double JxW = scratch_data.face_JxW[f][q];
+                      for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+                        {
+                          const double phi_face_T_i =
+                            scratch_data.phi_face_T[f][q][i];
+                          local_rhs(i) -=
+                            phi_face_T_i * h * (T_face - T_inf) * JxW;
+                          std::cout << "phi_face_T_i" << phi_face_T_i
+                                    << std::endl;
+                        }
                     }
                 }
             }
@@ -584,7 +536,8 @@ template <int dim>
 void
 HeatTransferAssemblerViscousDissipation<dim>::assemble_matrix(
   HeatTransferScratchData<dim> & /*scratch_data*/,
-  StabilizedMethodsCopyData & /*copy_data*/)
+  StabilizedMethodsCopyData &
+  /*copy_data*/)
 {}
 
 template <int dim>
@@ -598,7 +551,8 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
   const unsigned int n_dofs = scratch_data.n_dofs;
 
 
-  // Time steps and inverse time steps which is used for stabilization constant
+  // Time steps and inverse time steps which is used for stabilization
+  // constant
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
 

@@ -171,9 +171,6 @@ public:
   {
     this->fe_values_T.reinit(cell);
 
-    this->cell             = cell;
-    this->evaluation_point = current_solution;
-
     quadrature_points = this->fe_values_T.get_quadrature_points();
     auto &fe_T        = this->fe_values_T.get_fe();
 
@@ -222,7 +219,55 @@ public:
             this->laplacian_phi_T[q][k] = trace(this->hess_phi_T[q][k]);
           }
       }
+
+
+    // Arrays related to faces must be re-initialized for each cell, since they
+    // might depend on reference cell
+    // Only carry out this initialization if the cell is a boundary cell,
+    // otherwise these are wasted calculations
+    if (cell->at_boundary())
+      {
+        n_faces          = cell->n_faces();
+        is_boundary_face = std::vector<bool>(n_faces, false);
+        n_faces_q_points = fe_face_values_ht.get_quadrature().size();
+        boundary_face_id = std::vector<unsigned int>(n_faces);
+
+        face_JxW = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+
+        this->phi_face_T = std::vector<std::vector<std::vector<double>>>(
+          n_faces,
+          std::vector<std::vector<double>>(n_faces_q_points,
+                                           std::vector<double>(n_dofs)));
+
+        this->temperature_face_value = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        for (const auto face : cell->face_indices())
+          {
+            this->is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (this->is_boundary_face[face])
+              {
+                fe_face_values_ht.reinit(cell, face);
+                boundary_face_id[face] = cell->face(face)->boundary_id();
+                this->fe_face_values_ht.get_function_values(
+                  current_solution, this->temperature_face_value[face]);
+
+                for (unsigned int q = 0; q < n_faces_q_points; ++q)
+                  {
+                    face_JxW[face][q] = fe_face_values_ht.JxW(q);
+                    for (const unsigned int k : fe_face_values_ht.dof_indices())
+                      {
+                        this->phi_face_T[face][q][k] =
+                          this->fe_face_values_ht.shape_value(k, q);
+                      }
+                  }
+              }
+          }
+      }
   }
+
 
 
   template <typename VectorType>
@@ -283,11 +328,22 @@ public:
   std::vector<Tensor<1, dim>> velocity_values;
   std::vector<Tensor<2, dim>> velocity_gradient_values;
 
-  // Robin boundary condition
-  std::vector<double>                            phi_face_T;
-  typename DoFHandler<dim>::active_cell_iterator cell;
-  FEFaceValues<dim>                              fe_face_values_ht;
-  TrilinosWrappers::MPI::Vector                  evaluation_point;
+  // Scratch for the face boundary condition
+  FEFaceValues<dim>                fe_face_values_ht;
+  std::vector<std::vector<double>> face_JxW;
+
+  unsigned int n_faces;
+  unsigned int n_faces_q_points;
+
+  // Is boundary cell indicator
+  std::vector<bool>         is_boundary_face;
+  std::vector<unsigned int> boundary_face_id;
+
+
+  // First vector is face number, second quadrature point, third DOF
+  std::vector<std::vector<std::vector<double>>> phi_face_T;
+  // First vector is face number, second quadrature point
+  std::vector<std::vector<double>> temperature_face_value;
 };
 
 #endif
