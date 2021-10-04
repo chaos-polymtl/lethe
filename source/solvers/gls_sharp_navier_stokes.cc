@@ -2136,28 +2136,33 @@ GLSSharpNavierStokesSolver<dim>::solve()
   this->setup_dofs();
   this->box_refine_mesh();
 
-  // To change once refinement is split into two function
-  double temp_refine =
-    this->simulation_parameters.mesh_adaptation.refinement_fraction;
-  double temp_coarse =
-    this->simulation_parameters.mesh_adaptation.coarsening_fraction;
-  this->simulation_parameters.mesh_adaptation.refinement_fraction = 0;
-  this->simulation_parameters.mesh_adaptation.coarsening_fraction = 0;
-
-  for (unsigned int i = 0;
-       i < this->simulation_parameters.particlesParameters.initial_refinement;
-       ++i)
+  if(this->simulation_parameters.restart_parameters.restart== false)
     {
-      refine_ib();
-      NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-        refine_mesh();
-    }
-  this->simulation_parameters.mesh_adaptation.refinement_fraction = temp_refine;
-  this->simulation_parameters.mesh_adaptation.coarsening_fraction = temp_coarse;
+      // To change once refinement is split into two function
+      double temp_refine =
+        this->simulation_parameters.mesh_adaptation.refinement_fraction;
+      double temp_coarse =
+        this->simulation_parameters.mesh_adaptation.coarsening_fraction;
+      this->simulation_parameters.mesh_adaptation.refinement_fraction = 0;
+      this->simulation_parameters.mesh_adaptation.coarsening_fraction = 0;
+
+      for (unsigned int i = 0;
+           i <
+           this->simulation_parameters.particlesParameters.initial_refinement;
+           ++i)
+        {
+          refine_ib();
+          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+            refine_mesh();
+        }
+      this->simulation_parameters.mesh_adaptation.refinement_fraction =
+        temp_refine;
+      this->simulation_parameters.mesh_adaptation.coarsening_fraction =
+        temp_coarse;
 
   vertices_cell_mapping();
   generate_cut_cells_map();
-
+}
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
