@@ -107,7 +107,7 @@ fill_table_from_file(TableHandler &    table,
       std::string              line;
       std::vector<std::string> vector_of_column_names;
       std::vector<double>      line_of_data;
-      unsigned int             i = 0;
+      unsigned int             line_count = 0;
 
       while (std::getline(myfile, line))
         {
@@ -123,7 +123,7 @@ fill_table_from_file(TableHandler &    table,
                 }
             }
           //  If it's the first line, we only initialize the variable names.
-          if (i != 0)
+          if (line_count != 0)
             {
               line_of_data = Utilities::string_to_double(list_of_words_clean);
               for (unsigned int i = 0; i < line_of_data.size(); ++i)
@@ -136,7 +136,7 @@ fill_table_from_file(TableHandler &    table,
               // the line contains words we assume these are the column
               vector_of_column_names = list_of_words_clean;
             }
-          ++i;
+          ++line_count;
         }
       myfile.close();
     }
@@ -160,7 +160,7 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
       std::string              line;
       std::vector<std::string> column_names;
       std::vector<double>      line_of_data;
-      unsigned int             i = 0;
+      unsigned int             line_count = 0;
 
       while (std::getline(myfile, line))
         {
@@ -176,7 +176,7 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
                 }
             }
           // check if the line is contained words or numbers.
-          if (i != 0)
+          if (line_count != 0)
             {
               line_of_data = Utilities::string_to_double(list_of_words_clean);
               for (unsigned int i = 0; i < line_of_data.size(); ++i)
@@ -194,7 +194,7 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
                   map[column_names[i]] = base_vector;
                 }
             }
-          ++i;
+          ++line_count;
         }
       myfile.close();
     }
