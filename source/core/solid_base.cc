@@ -378,50 +378,18 @@ SolidBase<dim, spacedim>::setup_particles()
 
 
 
-  // if Triangulation is a parallel::distributed::triangulation, use the naive
-  // bounding box algorithm of deal.II
-  if (auto tria =
-        dynamic_cast<parallel::distributed::Triangulation<spacedim> *>(
-          fluid_tria.get()))
-    {
-      unsigned int minimal_cell_level = 100;
-      for (const auto &cell : fluid_tria->active_cell_iterators())
-        {
-          if (cell->is_locally_owned())
-            {
-              unsigned int cell_level = cell->level();
-              minimal_cell_level = std::min(minimal_cell_level, cell_level);
-            }
-        }
+  // Use the more general boost rtree bounding boxes
+  std::vector<BoundingBox<spacedim>> all_boxes;
+  all_boxes.reserve(fluid_tria->n_locally_owned_active_cells());
+  for (const auto cell : fluid_tria->active_cell_iterators())
+    if (cell->is_locally_owned())
+      all_boxes.emplace_back(cell->bounding_box());
+  const auto tree        = pack_rtree(all_boxes);
+  const auto local_boxes = extract_rtree_level(
+    tree, std::max(int(log10(fluid_tria->n_locally_owned_active_cells())), 1));
 
-      minimal_cell_level =
-        Utilities::MPI::min(minimal_cell_level, mpi_communicator);
-
-      // Increase number of bounding box level to ensure that insertion is
-      // faster. Right now this is set to the maximum refinement level-1 which
-      // is a decent heuristic.
-      // const unsigned int bounding_box_level = fluid_tria->n_global_levels() -
-      // 1;
-      const auto my_bounding_box =
-        GridTools::compute_mesh_predicate_bounding_box(
-          *tria, IteratorFilters::LocallyOwnedCell(), minimal_cell_level, true);
-      global_fluid_bounding_boxes =
-        Utilities::MPI::all_gather(mpi_communicator, my_bounding_box);
-    }
-  // else, use the more general boost rtree bounding boxes
-  else
-    {
-      std::vector<BoundingBox<spacedim>> all_boxes;
-      all_boxes.reserve(fluid_tria->n_locally_owned_active_cells());
-      for (const auto cell : fluid_tria->active_cell_iterators())
-        if (cell->is_locally_owned())
-          all_boxes.emplace_back(cell->bounding_box());
-      const auto tree        = pack_rtree(all_boxes);
-      const auto local_boxes = extract_rtree_level(tree, 1);
-
-      global_fluid_bounding_boxes =
-        Utilities::MPI::all_gather(mpi_communicator, local_boxes);
-    }
+  global_fluid_bounding_boxes =
+    Utilities::MPI::all_gather(mpi_communicator, local_boxes);
 
   // Fill solid particle handler
   solid_particle_handler->insert_global_particles(quadrature_points_vec,
