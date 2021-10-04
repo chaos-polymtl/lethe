@@ -408,6 +408,20 @@ Return a bool that describes  if a cell contains a specific point
     const typename DoFHandler<dim>::active_cell_iterator &cell);
 
   /**
+   * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
+   */
+
+  virtual void
+  write_checkpoint() override;
+
+  /**
+   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart
+   */
+
+  virtual void
+  read_checkpoint() override;
+
+  /**
    * Members
    */
 private:
@@ -443,8 +457,7 @@ private:
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
 
-  std::vector<TableHandler> table_f;
-  std::vector<TableHandler> table_t;
+  std::vector<TableHandler> table_p;
 };
 
 

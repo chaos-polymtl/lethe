@@ -144,4 +144,35 @@ calculate_point_property(const double phase,
   return property_eq;
 }
 
+
+/**
+ * @brief Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with the data in the file.
+ * * @param table The table to be filled. Warning ! if the table is empty, it's content will be erased.
+ *
+ *    @param file The path the file that will be use to fill up the table.
+ *
+ *   @param delimiter The delimiter used to read the table.
+ */
+void
+fill_table_from_file(TableHandler &    table,
+                     std::string       file,
+                     const std::string delimiter = " ");
+
+/**
+ * @brief function that read a file that was build from a dealii table and fill 2 vectors.
+ * The first vector contains all the columns names and the second one contained
+ * all the column data.
+ * * @param map A map used to contain the data based on the columns name.
+ *
+ *   @param file The path the file that will be use to fill up the table.
+ *
+ *   @param delimiter The delimiter used to read the table.
+ */
+void
+fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
+                       std::string                                 file,
+                       const std::string delimiter = " ");
+
+
+
 #endif
