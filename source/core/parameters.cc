@@ -1194,7 +1194,6 @@ namespace Parameters
         "1",
         Patterns::Integer(),
         "Number of particles reprensented by IB max number of particles = 10 ");
-
       prm.declare_entry(
         "initial refinement",
         "0",
@@ -1224,7 +1223,12 @@ namespace Parameters
         "ib force output file",
         "ib_force",
         Patterns::FileName(),
-        "Bool to define if the force is evaluated on each particle ");
+        "The name of the file where the data on the force of each particle is stored");
+      prm.declare_entry(
+        "ib particles pvd file",
+        "ib_particles_data",
+        Patterns::FileName(),
+        "The output files of the pvd data for the ib particles");
       prm.declare_entry(
         "integrate motion",
         "false",
@@ -1337,6 +1341,7 @@ namespace Parameters
       gravity[1]           = prm.get_double("gravity_y");
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
+      ib_particles_pvd_file = prm.get("ib particles pvd file");
       particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
 
 

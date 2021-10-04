@@ -21,6 +21,7 @@
 #include <core/grids.h>
 #include <core/lethegridtools.h>
 #include <core/sdirk.h>
+#include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -1000,6 +1001,99 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
     }
 }
 
+
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(
+  std::vector<IBParticle<dim>> particles)
+{
+  properties_to_write = particles[0].get_properties_name();
+  /**
+   * A list of field names for all data components stored in patches.
+   */
+
+  // Defining property field position
+  int field_position = 0;
+  // Iterating over properties
+  for (auto properties_iterator = properties_to_write.begin();
+       properties_iterator != properties_to_write.end();
+       ++properties_iterator, ++field_position)
+    {
+      // Get the property field name
+      const std::string field_name = properties_iterator->first;
+
+      // Number of components of the corresponding property
+      const unsigned components_number = properties_iterator->second;
+
+      // Check to see if the property is a vector
+      if (components_number == dim)
+        {
+          vector_datasets.push_back(std::make_tuple(
+            field_position,
+            field_position + components_number - 1,
+            field_name,
+            DataComponentInterpretation::component_is_part_of_vector));
+        }
+      dataset_names.push_back(field_name);
+    }
+
+  // Building the patch data
+  patches.resize(particles.size());
+
+
+  // Looping over particle to get the properties from the particle_handler
+  for (unsigned int p = 0; p < particles.size(); ++p)
+    {
+      // Particle location
+      patches[p].vertices[0]    = particles[p].position;
+      patches[p].patch_index    = p;
+      patches[p].n_subdivisions = 1;
+      patches[p].data.reinit(particles[p].get_number_properties(), 1);
+
+      // ID and other properties
+
+      // Calculating force for visualization
+      auto particle_properties = particles[p].get_properties();
+
+      for (unsigned int property_index = 0;
+           property_index < particles[p].get_number_properties();
+           ++property_index)
+        patches[p].data(property_index, 0) =
+          particle_properties[property_index];
+    }
+}
+
+template <int dim>
+const std::vector<DataOutBase::Patch<0, dim>> &
+GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_patches() const
+{
+  return patches;
+}
+
+template <int dim>
+std::vector<std::string>
+GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_dataset_names() const
+{
+  return dataset_names;
+}
+
+template <int dim>
+std::vector<
+  std::tuple<unsigned int,
+             unsigned int,
+             std::string,
+             DataComponentInterpretation::DataComponentInterpretation>>
+GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_nonscalar_data_ranges()
+  const
+{
+  return vector_datasets;
+}
+
+template <int dim>
+GLSSharpNavierStokesSolver<dim>::Visualization_IB::~Visualization_IB()
+{}
+
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
@@ -1007,6 +1101,27 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
   // Store information about the particle used for the integration and print the
   // results if requested.
 
+  const std::string folder =
+    this->simulation_parameters.simulation_control.output_folder;
+  const std::string particles_solution_name =
+    this->simulation_parameters.particlesParameters.ib_particles_pvd_file;
+  const unsigned int iter = this->simulation_control->get_step_number();
+  const double       time = this->simulation_control->get_current_time();
+  const unsigned int group_files =
+    this->simulation_parameters.simulation_control.group_files;
+
+  Visualization_IB ib_particles_data;
+  ib_particles_data.build_patches(particles);
+
+
+  write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
+                            ib_particles_data,
+                            folder,
+                            particles_solution_name,
+                            time,
+                            iter,
+                            group_files,
+                            this->mpi_communicator);
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       particles[p].last_position      = particles[p].position;

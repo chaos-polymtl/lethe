@@ -407,6 +407,77 @@ Return a bool that describes  if a cell contains a specific point
   find_cells_around_cell(
     const typename DoFHandler<dim>::active_cell_iterator &cell);
 
+
+  /**
+   * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
+   */
+  struct Visualization_IB : public dealii::DataOutInterface<0, dim>
+  {
+  public:
+    /**
+     * Carries out building the patches of properties of particles for
+     * visualization
+     *
+     * @param particles The vector fo IB_particles
+     */
+    void
+    build_patches(std::vector<IBParticle<dim>> particles);
+
+
+    ~Visualization_IB();
+
+  private:
+    /**
+     * Implementation of the corresponding function of the base class.
+     */
+    virtual const std::vector<DataOutBase::Patch<0, dim>> &
+    get_patches() const;
+
+    /**
+     * Implementation of the corresponding function of the base class.
+     */
+    virtual std::vector<std::string>
+    get_dataset_names() const;
+
+    virtual std::vector<
+      std::tuple<unsigned int,
+                 unsigned int,
+                 std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
+    get_nonscalar_data_ranges() const;
+
+
+    /**
+     * Output information that is filled by build_patches() and
+     * written by the write function of the base class.
+     */
+    std::vector<DataOutBase::Patch<0, dim>> patches;
+
+    /**
+     * A list of field names for all data components stored in patches.
+     */
+    std::vector<std::string> dataset_names;
+
+    /**
+     * Store which of the data fields are vectors.
+     */
+
+    std::vector<
+      std::tuple<unsigned int,
+                 unsigned int,
+                 std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
+      vector_datasets;
+
+
+    /**
+     * Particle properties that are written in output files
+     */
+    std::vector<std::pair<std::string, int>> properties_to_write;
+  };
+
+
+
   /**
    * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
    */
@@ -450,6 +521,8 @@ private:
   // Special assembler of the cells inside an IB particle
   std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>>
     assemblers_inside_ib;
+
+  PVDHandler ib_particles_pvdhandler;
 
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
