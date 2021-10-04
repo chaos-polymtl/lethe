@@ -213,8 +213,10 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   }
   this->zero_constraints.close();
   this->pcout << "ZERO CONSTRAINTS" << std::endl;
+  sleep(10);
   MPI_Barrier(MPI_COMM_WORLD);
   this->pcout << "Init of solutions" << std::endl;
+  sleep(10);
   MPI_Barrier(MPI_COMM_WORLD);
 
   this->present_solution.reinit(this->locally_owned_dofs,
@@ -248,12 +250,18 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
   this->pcout << "Before sparsity pattern" << std::endl;
 
+  sleep(10);
+  MPI_Barrier(MPI_COMM_WORLD);
+
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
                                   nonzero_constraints,
                                   false);
   this->pcout << "Before distribution of sparsity pattern" << std::endl;
+
+  sleep(10);
+  MPI_Barrier(MPI_COMM_WORLD);
 
   SparsityTools::distribute_sparsity_pattern(
     dsp,
@@ -263,6 +271,9 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
   this->pcout << "Sparsity pattern distributed" << std::endl;
 
+  sleep(10);
+  MPI_Barrier(MPI_COMM_WORLD);
+
 
 
   system_matrix.reinit(this->locally_owned_dofs,
@@ -270,6 +281,9 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                        dsp,
                        this->mpi_communicator);
   this->pcout << "Matrix re-inited" << std::endl;
+
+  sleep(10);
+  MPI_Barrier(MPI_COMM_WORLD);
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
