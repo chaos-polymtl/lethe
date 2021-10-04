@@ -95,6 +95,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   auto &nonzero_constraints = this->get_nonzero_constraints();
   {
     nonzero_constraints.clear();
+    nonzero_constraints.reinit(this->locally_relevant_dofs);
 
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
@@ -170,6 +171,8 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
   {
     this->zero_constraints.clear();
+    this->zero_constraints.reinit(this->locally_relevant_dofs);
+
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             this->zero_constraints);
 
