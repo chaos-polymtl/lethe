@@ -162,7 +162,10 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   }
   nonzero_constraints.close();
 
+
   this->pcout << "NON ZERO CONSTRAINTS" << std::endl;
+  this->pcout << "Memory consumption "
+              << nonzero_constraints.memory_consumption() << std::endl;
   MPI_Barrier(MPI_COMM_WORLD);
 
   {
