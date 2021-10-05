@@ -21,7 +21,9 @@ void
 BoundaryCellsInformation<dim>::build(
   const parallel::distributed::Triangulation<dim> & triangulation,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-  const std::vector<unsigned int> &                 outlet_boundaries)
+  const std::vector<unsigned int> &                 outlet_boundaries,
+        const bool &check_diamond_cells,
+        const ConditionalOStream                       & pcout)
 {
   boundary_cells_with_faces.clear();
   global_boundary_cells_with_faces.clear();
@@ -47,14 +49,18 @@ BoundaryCellsInformation<dim>::build(
 
   // Add cells with boundary lines to boundary cells container
   add_cells_with_boundary_lines_to_boundary_cells(triangulation,
-                                                  outlet_boundaries);
+                                                  outlet_boundaries,
+                                                  check_diamond_cells,
+                                                  pcout);
 }
 
 template <int dim>
 void
 BoundaryCellsInformation<dim>::build(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int> &                outlet_boundaries)
+  const std::vector<unsigned int> &                outlet_boundaries,
+        const bool &check_diamond_cells,
+        const ConditionalOStream                       & pcout)
 {
   boundary_cells_with_faces.clear();
   global_boundary_cells_with_faces.clear();
@@ -72,7 +78,9 @@ BoundaryCellsInformation<dim>::build(
 
   // Add cells with boundary lines to boundary cells container
   add_cells_with_boundary_lines_to_boundary_cells(triangulation,
-                                                  outlet_boundaries);
+                                                  outlet_boundaries,
+                                                  check_diamond_cells,
+                                                  pcout);
 }
 
 // This function finds all the boundary cells and faces in the triangulation,
@@ -429,9 +437,9 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int> &                outlet_boundaries
-
-)
+  const std::vector<unsigned int> &                outlet_boundaries,
+const bool & check_diamond_cells,
+        const ConditionalOStream                       & pcout)
 {
   std::vector<typename Triangulation<dim>::active_cell_iterator>
     boundary_neighbor_cells;
@@ -519,6 +527,10 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
                                             normal_vector_two >
                                           0.707)
                                         {
+                                          pcout << std::endl << "Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells, or define check_diamond_cells = true in the parameter handler file" << std::endl;
+
+                                          if (check_diamond_cells)
+                                          {
                                           // If this condition is true, add this
                                           // cell to boundary_cells_information.
                                           // Since the key of
@@ -547,6 +559,7 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
                                           boundary_cells_information
                                             .at(imaginary_face_id)
                                             .global_face_id = imaginary_face_id;
+                                          }
                                         }
                                     }
                                 }
