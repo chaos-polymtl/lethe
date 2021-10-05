@@ -67,7 +67,6 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
   double       global_res;
   double       current_res;
-  double       global_res;
   double       last_res;
   bool         first_step      = is_initial_step;
   unsigned int outer_iteration = 0;

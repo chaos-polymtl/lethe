@@ -398,16 +398,8 @@ Return a bool that describes  if a cell contains a specific point
   }
 
 
-  /**
-   * @brief
-   * Integrate the particle velocity and position based on the forces and
-   * torques and applies the next value to the particle.
-   */
-  void
-  integrate_particles();
 
-  virtual void
-  read_checkpoint() override;
+
 
 
   /**
@@ -479,6 +471,8 @@ Return a bool that describes  if a cell contains a specific point
   };
 
 
+
+
   /**
    * Members
    */
@@ -504,11 +498,6 @@ private:
   void
   update_particles_boundary_contact();
 
-  double
-  get_current_residual()override{
-    double scalling =this->simulation_parameters.non_linear_solver.tolerance/this->simulation_parameters.particlesParameters.particle_nonlinear_tol;
-    return std::max(this->system_rhs.l2_norm(),particle_residual*scalling);
-  }
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -567,6 +556,7 @@ private:
   // A struct to store contact tangential history
   struct ContactTangentialHistory
   {
+    Tensor<1, dim> tangential_relative_velocity;
     Tensor<1, dim> tangential_overlap;
   };
   // Particles contact history
