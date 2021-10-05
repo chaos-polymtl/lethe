@@ -876,9 +876,6 @@ DEMSolver<dim>::solve()
       if (particles_insertion_step || load_balance_step ||
           contact_detection_step || checkpoint_step)
         {
-          // Reset checkpoint step
-          checkpoint_step = false;
-
           particle_handler.sort_particles_into_subdomains_and_cells();
 
 #if DEAL_II_VERSION_GTE(10, 0, 0)
@@ -906,8 +903,11 @@ DEMSolver<dim>::solve()
 
       // Broad particle-particle contact search
       if (particles_insertion_step || load_balance_step ||
-          contact_detection_step)
+          contact_detection_step || checkpoint_step)
         {
+          // Reset checkpoint step
+          checkpoint_step = false;
+
           pp_broad_search_object.find_particle_particle_contact_pairs(
             particle_handler,
             &cells_local_neighbor_list,
