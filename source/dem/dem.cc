@@ -874,7 +874,7 @@ DEMSolver<dim>::solve()
 
       // Sort particles in cells
       if (particles_insertion_step || load_balance_step ||
-          contact_detection_step)
+          contact_detection_step || checkpoint_step)
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
 
