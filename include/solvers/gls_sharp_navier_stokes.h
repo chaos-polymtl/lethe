@@ -611,6 +611,8 @@ private:
 
   std::vector<std::vector<BoundaryCellsInfo>> boundary_cells;
 
+
+  TableHandler table_residual;
 };
 
 

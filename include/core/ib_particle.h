@@ -133,6 +133,7 @@ public:
   // the integration process.
   double local_alpha_torque;
   double local_alpha_force;
+  double residual;
 
   double radius;
 

@@ -51,6 +51,8 @@ IBParticle<dim>::initialise_all()
   velocity_iter         = velocity;
   last_omega            = omega;
   omega_iter            = omega;
+  omega_impulsion       = 0;
+  omega_impulsion_iter  = 0;
   last_angular_position = angular_position;
   impulsion             = 0;
   impulsion_iter        = 0;
@@ -72,8 +74,10 @@ IBParticle<dim>::initialise_last()
   last_position         = position;
   last_velocity         = velocity;
   velocity_iter         = velocity;
+  impulsion_iter        = impulsion;
   last_omega            = omega;
   omega_iter            = omega;
+  omega_impulsion_iter  = omega_impulsion;
   last_angular_position = angular_position;
 }
 

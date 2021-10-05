@@ -696,6 +696,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     }
   // total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
   // std::cout << "total area " << total_area << std::endl;
+
 }
 
 template <int dim>
@@ -716,6 +717,11 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
             std::ofstream output(filename.c_str());
 
             table_p[p].write_text(output);
+            std::string filename_residual =
+              this->simulation_parameters.simulation_control.output_folder +
+              "residual" + ".dat";
+            std::ofstream output_residual(filename_residual.c_str());
+            table_residual.write_text(output_residual);
           }
         MPI_Barrier(this->mpi_communicator);
       }
@@ -1271,8 +1277,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                         (particle_one.radius * particle_one.omega +
                          particle_two.radius * particle_two.omega),
                         normal);
-                      this->pcout << "rotational_velocity"
-                                  << rotational_velocity << endl;
+
                       contact_relative_velocity[0] =
                         (particle_one.velocity - particle_two.velocity)[0] +
                         rotational_velocity[0];
@@ -1475,24 +1480,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
                     effective_radius * normal_force.norm() * v_omega.norm() *
                     omega_ij_direction;
 
-                  // this->pcout<<"normal: "<<normal_force<<" ----
-                  // normal_overlap: "<<normal_overlap<<" ---- tangential_force:
-                  // "<<tangential_force<<" ---- tangential_overlap:
-                  // "<<contact_info.tangential_overlap<<" ----
-                  // contact_relative_velocity: "<<
-                  // contact_relative_velocity<<std::endl;
-                  // this->pcout<<"tangential_force: "<<tangential_force<<" ----
-                  // tangential_spring_constant:
-                  // "<<tangential_spring_constant<<" ----
-                  // damping_tangential_force: "<<damping_tangential_force <<"
-                  // ---- contact_info.tangential_overlap:
-                  // "<<contact_info.tangential_overlap<<std::endl;
-                  // this->pcout<<"tangential_force: "<<tangential_force<<" ----
-                  // tangential_spring_constant:
-                  // "<<tangential_spring_constant<<" ----
-                  // damping_tangential_force: "<<damping_tangential_force <<"
-                  // ---- contact_info.tangential_overlap:
-                  // "<<contact_info.tangential_overlap<<std::endl;
+
 
                   contact_force[particle_one.particle_id] -=
                     (normal_force + tangential_force);
@@ -2027,6 +2015,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
           particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
           double this_particle_residual=sqrt(residual_velocity.norm()*residual_velocity.norm()+residual_omega.norm()*residual_omega.norm());
+          particles[p].residual=this_particle_residual;
           if(this_particle_residual>particle_residual)
             particle_residual=this_particle_residual;
         }
@@ -2198,7 +2187,14 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       particles[p].local_alpha_torque = 1;
       particles[p].local_alpha_force  = 1;
 
-      if (this->simulation_parameters.particlesParameters->integrate_motion)
+      particles[p].velocity_iter=particles[p].velocity;
+      particles[p].impulsion_iter=particles[p].impulsion;
+      particles[p].omega_iter=particles[p].omega;
+      particles[p].omega_impulsion_iter=particles[p].omega_impulsion;
+
+
+
+      if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
           this->pcout << "particule " << p << " position "
                       << particles[p].position << std::endl;
@@ -2898,6 +2894,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
   this->system_rhs.compress(VectorOperation::insert);
   this->system_matrix.compress(VectorOperation::insert);
+
+  table_residual.add_value("matrix_residual",  this->system_rhs.l2_norm());
+  table_residual.set_precision("matrix_residual", 12);
+  for( unsigned int p=0;p<particles.size();++p){
+      table_residual.add_value("particles_residual"+ Utilities::int_to_string(p, 2),  particles[p].residual);
+      table_residual.set_precision("particles_residual"+ Utilities::int_to_string(p, 2), 12);
+    }
 }
 
 
