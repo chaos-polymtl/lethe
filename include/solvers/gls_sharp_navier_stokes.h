@@ -371,6 +371,11 @@ private:
 
   virtual void
   write_checkpoint() override;
+  /*
+   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart
+   * */
+  virtual void
+  read_checkpoint() override;
 
   /**
 * @brief
@@ -398,16 +403,10 @@ Return a bool that describes  if a cell contains a specific point
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
   }
 
-  /**
-   * @brief
-   *Return a vector of cells around a cell including vertex neighbors
-   *
-   * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
-   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart
-   */
 
-  virtual void
-  read_checkpoint() override;
+
+
+
 
   /**
    * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
@@ -479,19 +478,6 @@ Return a bool that describes  if a cell contains a specific point
 
 
 
-  /**
-   * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
-   */
-
-  virtual void
-  write_checkpoint() override;
-
-  /**
-   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart
-   */
-
-  virtual void
-  read_checkpoint() override;
 
   /**
    * Members
@@ -518,11 +504,6 @@ private:
   void
   update_particles_boundary_contact();
 
-  double
-  get_current_residual()override{
-    double scalling =this->simulation_parameters.non_linear_solver.tolerance/this->simulation_parameters.particlesParameters.particle_nonlinear_tol;
-    return std::max(this->system_rhs.l2_norm(),particle_residual*scalling);
-  }
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -581,6 +562,7 @@ private:
   // A struct to store contact tangential history
   struct ContactTangentialHistory
   {
+    Tensor<1, dim> tangential_relative_velocity;
     Tensor<1, dim> tangential_overlap;
   };
   // Particles contact history

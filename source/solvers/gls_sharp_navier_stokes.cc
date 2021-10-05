@@ -1088,7 +1088,6 @@ GLSSharpNavierStokesSolver<dim>::particles_dem()
   double         rho = this->simulation_parameters.particlesParameters.density;
   double         dt  = this->simulation_control->get_time_steps_vector()[0];
   double         dt_dem             = dt / 10000;
-  double         particle_stiffness = 10000;
   // local time for the dem step
   std::vector<Tensor<1, dim>> contact_force(particles.size());
   std::vector<Tensor<1, 3>>   contact_torque(particles.size());
