@@ -664,7 +664,7 @@ namespace Parameters
         "Indicates that the mesh used is a mesh made of only simplex elements.");
 
       prm.declare_entry(
-        "check_for_diamond_cells",
+        "check diamond cells",
         "false",
         Patterns::Bool(),
         "Enables checking the input grid for diamond-shaped cells.");

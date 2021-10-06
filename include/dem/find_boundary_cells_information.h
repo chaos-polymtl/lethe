@@ -256,6 +256,9 @@ private:
   // contact list.
   std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
     updated_boundary_points_and_normal_vectors;
+
+  // A boolean variable used for printing a warning only once
+  bool first_time_warning = true;
 };
 
 #endif /* find_boundary_cells_information_h */
