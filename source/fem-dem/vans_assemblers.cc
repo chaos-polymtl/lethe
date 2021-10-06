@@ -489,12 +489,7 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
                                              momentum_transfer_coefficient *
                                              relative_velocity;
 
-      local_particle_id[particle_index] =
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-        particle.get_local_index();
-#else
-        particle.get_id();
-#endif
+      local_particle_id[particle_index] = particle.get_id();
 
       particle_index += 1;
     }
@@ -561,12 +556,7 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
         this->physical_properties.density * momentum_transfer_coefficient *
         relative_velocity;
 
-      local_particle_id[particle_index] =
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-        particle.get_local_index();
-#else
-        particle.get_id();
-#endif
+      local_particle_id[particle_index] = particle.get_id();
 
       particle_index += 1;
     }
@@ -600,12 +590,8 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
         -lagrangian_physical_properties.g * physical_properties.density *
         (4.0 / 3) * M_PI *
         pow((particle_properties[DEM::PropertiesIndex::dp] / 2.0), 3);
-      local_particle_id[particle_index] =
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-        particle.get_local_index();
-#else
-        particle.get_id();
-#endif
+
+      local_particle_id[particle_index] = particle.get_id();
 
       particle_index += 1;
     }

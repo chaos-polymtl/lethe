@@ -193,19 +193,13 @@ GLSVANSSolver<dim>::setup_dofs()
 
   assemble_mass_matrix_diagonal(mass_matrix);
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
   unsigned int max_particle_id = 0;
   for (const auto &particle : particle_handler)
-    max_particle_id = std::max(max_particle_id, particle.get_local_index());
-  fluid_solid_force.resize(max_particle_id + 1);
-#else
-  {
-    unsigned int max_particle_id = 0;
-    for (const auto &particle : particle_handler)
+    {
       max_particle_id = std::max(max_particle_id, particle.get_id());
-    fluid_solid_force.resize(max_particle_id + 1);
-  }
-#endif
+    }
+  max_particle_id += 1;
+  fluid_solid_force.resize(max_particle_id);
 }
 
 template <int dim>
@@ -963,6 +957,7 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
 
   for (unsigned int counter = 0; counter < scratch_data.particle_index;
        ++counter)
+
     {
       fluid_solid_force[scratch_data.local_particle_id[counter]] =
         scratch_data.fluid_particle_force[counter];
@@ -1215,6 +1210,7 @@ GLSVANSSolver<dim>::solve()
             refine_mesh();
           this->iterate();
         }
+
       this->postprocess(false);
       this->finish_time_step();
 
