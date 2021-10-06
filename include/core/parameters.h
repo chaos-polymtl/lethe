@@ -500,6 +500,9 @@ namespace Parameters
     // Target size when automatically refining initial mesh
     double target_size;
 
+    // Enables checking the input grid for diamond-shaped cells
+    bool check_for_diamond_cells;
+
     // Grid displacement at initiation
     bool   translate;
     double delta_x;

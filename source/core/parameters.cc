@@ -663,6 +663,12 @@ namespace Parameters
         Patterns::Bool(),
         "Indicates that the mesh used is a mesh made of only simplex elements.");
 
+      prm.declare_entry(
+        "check diamond cells",
+        "false",
+        Patterns::Bool(),
+        "Enables checking the input grid for diamond-shaped cells.");
+
 
       prm.declare_entry("target size",
                         "1",
@@ -745,6 +751,7 @@ namespace Parameters
 
       refine_until_target_size = prm.get_bool("enable target size");
       simplex                  = prm.get_bool("simplex");
+      check_for_diamond_cells  = prm.get_bool("check diamond cells");
       target_size              = prm.get_double("target size");
 
 
@@ -1341,7 +1348,7 @@ namespace Parameters
       gravity[1]           = prm.get_double("gravity_y");
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
-      ib_particles_pvd_file = prm.get("ib particles pvd file");
+      ib_particles_pvd_file  = prm.get("ib particles pvd file");
       particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
 
 

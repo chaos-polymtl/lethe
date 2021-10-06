@@ -2228,10 +2228,8 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
           particles[p_i].local_alpha_torque = 1;
           particles[p_i].local_alpha_force  = 1;
         }
-
     }
   // Finish the time step of the particle.
-
 }
 
 
@@ -2251,7 +2249,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
   this->setup_dofs();
   this->box_refine_mesh();
 
-  if(this->simulation_parameters.restart_parameters.restart== false)
+  if (this->simulation_parameters.restart_parameters.restart == false)
     {
       // To change once refinement is split into two function
       double temp_refine =
@@ -2275,9 +2273,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
       this->simulation_parameters.mesh_adaptation.coarsening_fraction =
         temp_coarse;
 
-  vertices_cell_mapping();
-  generate_cut_cells_map();
-}
+      vertices_cell_mapping();
+      generate_cut_cells_map();
+    }
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);

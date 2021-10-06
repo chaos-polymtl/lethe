@@ -63,16 +63,22 @@ public:
    * @param floating_wall_properties Properties of floating walls specified in
    * the parameter handler file
    * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   * @param check_diamond_cells If true, the diamond shaped cells are found and added to the particle-wall contact search cells
+   * @param pcout
    */
   void
   build(
     const parallel::distributed::Triangulation<dim> & triangulation,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-    const std::vector<unsigned int> &                 outlet_boundaries);
+    const std::vector<unsigned int> &                 outlet_boundaries,
+    const bool &                                      check_diamond_cells,
+    const ConditionalOStream &                        pcout);
 
   void
   build(const parallel::distributed::Triangulation<dim> &triangulation,
-        const std::vector<unsigned int> &                outlet_boundaries);
+        const std::vector<unsigned int> &                outlet_boundaries,
+        const bool &                                     check_diamond_cells,
+        const ConditionalOStream &                       pcout);
 
   std::map<int, boundary_cells_info_struct<dim>> &
   get_boundary_cells_information()
@@ -175,11 +181,15 @@ private:
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   * @param check_diamond_cells If true, the diamond shaped cells are found and added to the particle-wall contact search cells
+   * @param pcout
    */
   void
   add_cells_with_boundary_lines_to_boundary_cells(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const std::vector<unsigned int> &                outlet_boundaries);
+    const std::vector<unsigned int> &                outlet_boundaries,
+    const bool &                                     check_diamond_cells,
+    const ConditionalOStream &                       pcout);
 
   /**
    * Loops over all the cells to find cells which should be searched for
@@ -246,6 +256,9 @@ private:
   // contact list.
   std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
     updated_boundary_points_and_normal_vectors;
+
+  // A boolean variable used for printing a warning only once
+  bool first_time_warning = true;
 };
 
 #endif /* find_boundary_cells_information_h */
