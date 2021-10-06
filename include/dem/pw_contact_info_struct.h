@@ -42,7 +42,7 @@ struct pw_contact_info_struct
   Tensor<1, dim>                   tangential_overlap;
   Tensor<1, dim>                   tangential_relative_velocity;
   types::boundary_id               boundary_id;
-  unsigned int                     global_face_id;
+  int                              global_face_id;
 };
 
 #endif /* particle_wall_contact_info_struct_h */
