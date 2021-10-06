@@ -61,30 +61,30 @@ GridMotion<dim>::update_boundary_points_and_normal_vectors_in_contact_list(
   const std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
     &updated_boundary_points_and_normal_vectors)
 {
-    for (auto &[particle_id, pairs_in_contact_content] :
-         pw_pairs_in_contact)
+  for (auto &[particle_id, pairs_in_contact_content] : pw_pairs_in_contact)
     {
-      for (auto pairs_in_contact_iterator = pairs_in_contact_content.begin(); pairs_in_contact_iterator != pairs_in_contact_content.end();)
+      for (auto pairs_in_contact_iterator = pairs_in_contact_content.begin();
+           pairs_in_contact_iterator != pairs_in_contact_content.end();)
         {
           auto &contact_information = pairs_in_contact_iterator->second;
 
-          // Since we used the negative keys for diamond-shaped cells, we check and remove these elements from the pw_pairs_in_contact
+          // Since we used the negative keys for diamond-shaped cells, we check
+          // and remove these elements from the pw_pairs_in_contact
           if (contact_information.global_face_id >= 0)
-          {
-          contact_information.normal_vector =
-            updated_boundary_points_and_normal_vectors
-              .at(contact_information.global_face_id)
-              .first;
-          contact_information.point_on_boundary =
-            updated_boundary_points_and_normal_vectors
-              .at(contact_information.global_face_id)
-              .second;
-          ++pairs_in_contact_iterator;
-          }
+            {
+              contact_information.normal_vector =
+                updated_boundary_points_and_normal_vectors
+                  .at(contact_information.global_face_id)
+                  .first;
+              contact_information.point_on_boundary =
+                updated_boundary_points_and_normal_vectors
+                  .at(contact_information.global_face_id)
+                  .second;
+              ++pairs_in_contact_iterator;
+            }
           else
-          {
+            {
               pairs_in_contact_content.erase(pairs_in_contact_iterator++);
-
             }
         }
     }

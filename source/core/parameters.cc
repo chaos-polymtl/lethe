@@ -1348,7 +1348,7 @@ namespace Parameters
       gravity[1]           = prm.get_double("gravity_y");
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
-      ib_particles_pvd_file = prm.get("ib particles pvd file");
+      ib_particles_pvd_file  = prm.get("ib particles pvd file");
       particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
 
 

@@ -71,14 +71,14 @@ public:
     const parallel::distributed::Triangulation<dim> & triangulation,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const std::vector<unsigned int> &                 outlet_boundaries,
-          const bool &check_diamond_cells,
-          const ConditionalOStream                       & pcout);
+    const bool &                                      check_diamond_cells,
+    const ConditionalOStream &                        pcout);
 
   void
   build(const parallel::distributed::Triangulation<dim> &triangulation,
         const std::vector<unsigned int> &                outlet_boundaries,
-        const bool &check_diamond_cells,
-        const ConditionalOStream                       & pcout);
+        const bool &                                     check_diamond_cells,
+        const ConditionalOStream &                       pcout);
 
   std::map<int, boundary_cells_info_struct<dim>> &
   get_boundary_cells_information()
@@ -188,8 +188,8 @@ private:
   add_cells_with_boundary_lines_to_boundary_cells(
     const parallel::distributed::Triangulation<dim> &triangulation,
     const std::vector<unsigned int> &                outlet_boundaries,
-          const bool &check_diamond_cells,
-          const ConditionalOStream                       & pcout);
+    const bool &                                     check_diamond_cells,
+    const ConditionalOStream &                       pcout);
 
   /**
    * Loops over all the cells to find cells which should be searched for
