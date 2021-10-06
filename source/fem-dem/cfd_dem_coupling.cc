@@ -184,7 +184,10 @@ DEMCFDSolver<dim>::initialize_dem_parameters()
   boundary_cell_object.build(
     *parallel_triangulation,
     dem_parameters.floating_walls,
-    dem_parameters.boundary_conditions.outlet_boundaries);
+    dem_parameters.boundary_conditions.outlet_boundaries,
+    this->cfd_dem_simulation_parameters.cfd_parameters.mesh
+      .check_for_diamond_cells,
+    this->pcout);
 
   // Setting chosen contact force, insertion and integration methods
   integrator_object       = set_integrator_type();
