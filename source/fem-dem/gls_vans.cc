@@ -852,6 +852,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
       pf_assembler->calculate_particle_fluid_interactions(scratch_data);
     }
 
+
   for (auto &assembler : this->assemblers)
     {
       assembler->assemble_matrix(scratch_data, copy_data);

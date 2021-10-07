@@ -10,9 +10,9 @@
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
 
-// Constructor for class DEM-CFD
+// Constructor for class CFD-DEM
 template <int dim>
-DEMCFDSolver<dim>::DEMCFDSolver(CFDDEMSimulationParameters<dim> &nsparam)
+CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   : GLSVANSSolver<dim>(nsparam)
 {
   coupling_frequency =
@@ -84,12 +84,12 @@ DEMCFDSolver<dim>::DEMCFDSolver(CFDDEMSimulationParameters<dim> &nsparam)
 }
 
 template <int dim>
-DEMCFDSolver<dim>::~DEMCFDSolver()
+CFDDEMSolver<dim>::~CFDDEMSolver()
 {}
 
 template <int dim>
 void
-DEMCFDSolver<dim>::read_dem()
+CFDDEMSolver<dim>::read_dem()
 {
   this->pcout << "Reading DEM checkpoint " << std::endl;
 
@@ -156,7 +156,7 @@ DEMCFDSolver<dim>::read_dem()
 
 template <int dim>
 inline bool
-DEMCFDSolver<dim>::check_contact_search_step_constant()
+CFDDEMSolver<dim>::check_contact_search_step_constant()
 {
   return ((this->simulation_control->get_step_number() %
            contact_detection_frequency) == 0);
@@ -166,11 +166,11 @@ DEMCFDSolver<dim>::check_contact_search_step_constant()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::initialize_dem_parameters()
+CFDDEMSolver<dim>::initialize_dem_parameters()
 {
   this->pcout << "Initializing DEM parameters " << std::endl;
 
-  // TODO write read checkpoint for DEM-CFD
+  // TODO write read checkpoint for CFD-DEM
 
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
@@ -220,7 +220,7 @@ DEMCFDSolver<dim>::initialize_dem_parameters()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::update_moment_of_inertia(
+CFDDEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<double> &                    MOI)
 {
@@ -242,7 +242,7 @@ DEMCFDSolver<dim>::update_moment_of_inertia(
 
 template <int dim>
 std::shared_ptr<Integrator<dim>>
-DEMCFDSolver<dim>::set_integrator_type()
+CFDDEMSolver<dim>::set_integrator_type()
 {
   if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
         .integration_method == Parameters::Lagrangian::ModelParameters::
@@ -271,7 +271,7 @@ DEMCFDSolver<dim>::set_integrator_type()
 
 template <int dim>
 std::shared_ptr<PPContactForce<dim>>
-DEMCFDSolver<dim>::set_pp_contact_force()
+CFDDEMSolver<dim>::set_pp_contact_force()
 {
   if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
         .pp_contact_force_method ==
@@ -297,7 +297,7 @@ DEMCFDSolver<dim>::set_pp_contact_force()
 
 template <int dim>
 std::shared_ptr<PWContactForce<dim>>
-DEMCFDSolver<dim>::set_pw_contact_force()
+CFDDEMSolver<dim>::set_pw_contact_force()
 {
   std::vector<types::boundary_id> boundary_index =
     this->triangulation->get_boundary_ids();
@@ -335,7 +335,7 @@ DEMCFDSolver<dim>::set_pw_contact_force()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::add_fluid_particle_interaction_force()
+CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
 {
   for (unsigned int counter = 0; counter != force.size(); ++counter)
     {
@@ -345,7 +345,7 @@ DEMCFDSolver<dim>::add_fluid_particle_interaction_force()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::dem_iterator()
+CFDDEMSolver<dim>::dem_iterator()
 {
   // Particle-particle contact force
   pp_contact_force_object->calculate_pp_contact_force(local_adjacent_particles,
@@ -385,7 +385,7 @@ DEMCFDSolver<dim>::dem_iterator()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::dem_contact_build()
+CFDDEMSolver<dim>::dem_contact_build()
 {
   // Check to see if it is contact search step
   contact_detection_step = check_contact_search_step_constant();
@@ -488,7 +488,7 @@ DEMCFDSolver<dim>::dem_contact_build()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::write_DEM_output_results()
+CFDDEMSolver<dim>::write_DEM_output_results()
 {
   const std::string folder = this->cfd_dem_simulation_parameters.dem_parameters
                                .simulation_control.output_folder;
@@ -519,7 +519,7 @@ DEMCFDSolver<dim>::write_DEM_output_results()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::particle_wall_broad_search()
+CFDDEMSolver<dim>::particle_wall_broad_search()
 {
   // Particle - wall contact candidates
   pw_broad_search_object.find_particle_wall_contact_pairs(
@@ -556,7 +556,7 @@ DEMCFDSolver<dim>::particle_wall_broad_search()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::particle_wall_fine_search()
+CFDDEMSolver<dim>::particle_wall_fine_search()
 {
   // Particle - wall fine search
   pw_fine_search_object.particle_wall_fine_search(pw_contact_candidates,
@@ -587,7 +587,7 @@ DEMCFDSolver<dim>::particle_wall_fine_search()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::particle_wall_contact_force()
+CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   pw_contact_force_object->calculate_pw_contact_force(pw_pairs_in_contact,
@@ -634,7 +634,7 @@ DEMCFDSolver<dim>::particle_wall_contact_force()
 
 template <int dim>
 void
-DEMCFDSolver<dim>::solve()
+CFDDEMSolver<dim>::solve()
 {
   // This is enforced to 1 right now because it does not provide
   // better speed-up than using MPI. This could be eventually changed...
@@ -667,14 +667,30 @@ DEMCFDSolver<dim>::solve()
         {
           this->first_iteration();
 
-          if (this->cfd_dem_simulation_parameters.cfd_dem.test_output)
+          if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
             { // Write particle Velocity
               for (auto &particle : this->particle_handler)
                 {
                   auto particle_properties = particle.get_properties();
                   this->pcout
-                    << this->simulation_control->get_current_time() << "  "
-                    << particle_properties[DEM::PropertiesIndex::v_x] << "\n";
+                    << "Particle Summary"
+                    << "\n"
+                    << "--------------------------------------------------------------------------"
+                    << "--------------------------------------------------------------------------"
+                    << "\n"
+                    << "id: " << particle.get_id() << ",  "
+                    << "x: " << particle.get_location()[0] << ",  "
+                    << "y: " << particle.get_location()[1] << ",  "
+                    << "z: " << particle.get_location()[2] << ",  "
+                    << "v_x: " << particle_properties[DEM::PropertiesIndex::v_x]
+                    << ",  "
+                    << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y]
+                    << ",  "
+                    << "vz: " << particle_properties[DEM::PropertiesIndex::v_z]
+                    << "\n"
+                    << "--------------------------------------------------------------------------"
+                    << "--------------------------------------------------------------------------"
+                    << std::endl;
                 }
             }
 
@@ -697,15 +713,31 @@ DEMCFDSolver<dim>::solve()
             refine_mesh();
           this->iterate();
 
-          if (this->cfd_dem_simulation_parameters.cfd_dem.test_output)
+          if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
             {
               // Write particle Velocity
               for (auto &particle : this->particle_handler)
                 {
                   auto particle_properties = particle.get_properties();
                   this->pcout
-                    << this->simulation_control->get_current_time() << "  "
-                    << particle_properties[DEM::PropertiesIndex::v_x] << "\n";
+                    << "Particle Summary"
+                    << "\n"
+                    << "--------------------------------------------------------------------------"
+                    << "--------------------------------------------------------------------------"
+                    << "\n"
+                    << "id: " << particle.get_id() << ",  "
+                    << "x: " << particle.get_location()[0] << ",  "
+                    << "y: " << particle.get_location()[1] << ",  "
+                    << "z: " << particle.get_location()[2] << ",  "
+                    << "v_x: " << particle_properties[DEM::PropertiesIndex::v_x]
+                    << ",  "
+                    << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y]
+                    << ",  "
+                    << "vz: " << particle_properties[DEM::PropertiesIndex::v_z]
+                    << "\n"
+                    << "--------------------------------------------------------------------------"
+                    << "--------------------------------------------------------------------------"
+                    << std::endl;
                 }
             }
 
@@ -740,5 +772,5 @@ DEMCFDSolver<dim>::solve()
 // Pre-compile the 2D and 3D CFD-DEM solver to ensure that the
 // library is valid before we actually compile the solver This greatly
 // helps with debugging
-template class DEMCFDSolver<2>;
-template class DEMCFDSolver<3>;
+template class CFDDEMSolver<2>;
+template class CFDDEMSolver<3>;

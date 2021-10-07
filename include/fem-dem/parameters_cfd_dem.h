@@ -82,7 +82,6 @@ namespace Parameters
   struct CFDDEM
   {
     bool         grad_div;
-    bool         test_output;
     DragModel    drag_model;
     bool         post_processing;
     unsigned int inlet_boundary_id;

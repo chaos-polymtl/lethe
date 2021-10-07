@@ -62,7 +62,6 @@ end
 #---------------------------------------------------
 subsection cfd-dem
    set grad div = true
-   set test output = true
    set drag model = rong
    set post processing = false
    set coupling frequency = 100
@@ -161,6 +160,12 @@ subsection model parameters
   set integration method				 = velocity_verlet
 end
 
+# --------------------------------------------------
+# Testing
+#---------------------------------------------------
+subsection test
+  set enable = true
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control

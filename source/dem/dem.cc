@@ -794,7 +794,6 @@ DEMSolver<dim>::solve()
       }
 #endif
       force.resize(displacement.size());
-      fluid_solid_force.resize(displacement.size());
       momentum.resize(displacement.size());
 
       update_moment_of_inertia(particle_handler, MOI);
@@ -895,7 +894,6 @@ DEMSolver<dim>::solve()
           }
 #endif
           force.resize(displacement.size());
-          fluid_solid_force.resize(displacement.size());
           momentum.resize(displacement.size());
 
           // Updating moment of inertia container

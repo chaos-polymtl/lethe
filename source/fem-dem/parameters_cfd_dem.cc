@@ -96,11 +96,6 @@ namespace Parameters
                       "100",
                       Patterns::Integer(),
                       "dem-cfd coupling frequency");
-    prm.declare_entry(
-      "test output",
-      "false",
-      Patterns::Bool(),
-      "This parameter is only set to true in the prm of particle sedimentation test");
     prm.leave_subsection();
   }
 
@@ -110,7 +105,6 @@ namespace Parameters
   {
     prm.enter_subsection("cfd-dem");
     grad_div             = prm.get_bool("grad div");
-    test_output          = prm.get_bool("test output");
     post_processing      = prm.get_bool("post processing");
     inlet_boundary_id    = prm.get_integer("inlet boundary id");
     outlet_boundary_id   = prm.get_integer("outlet boundary id");

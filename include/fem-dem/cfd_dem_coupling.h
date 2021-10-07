@@ -38,12 +38,12 @@
 using namespace dealii;
 
 template <int dim>
-class DEMCFDSolver : public GLSVANSSolver<dim>
+class CFDDEMSolver : public GLSVANSSolver<dim>
 {
 public:
-  DEMCFDSolver(CFDDEMSimulationParameters<dim> &nsparam);
+  CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
 
-  ~DEMCFDSolver();
+  ~CFDDEMSolver();
 
   virtual void
   solve() override;

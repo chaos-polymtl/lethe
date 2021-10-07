@@ -39,7 +39,7 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
-      DEMCFDSolver<2> problem_2d(NSparam);
+      CFDDEMSolver<2> problem_2d(NSparam);
       problem_2d.solve();
     }
   catch (std::exception &exc)

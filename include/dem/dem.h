@@ -17,8 +17,16 @@
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-#include <core/pvd_handler.h>
+#include <deal.II/base/tensor.h>
+#include <deal.II/base/timer.h>
 
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/particles/particle_handler.h>
+
+#include <core/pvd_handler.h>
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
@@ -43,15 +51,6 @@
 #include <dem/pw_contact_force.h>
 #include <dem/pw_fine_search.h>
 #include <dem/visualization.h>
-
-#include <deal.II/base/tensor.h>
-#include <deal.II/base/timer.h>
-
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/particles/particle_handler.h>
 
 #include <fstream>
 #include <iostream>
@@ -368,7 +367,6 @@ private:
   std::vector<Tensor<1, dim>> force;
   std::vector<double>         displacement;
   std::vector<double>         MOI;
-  std::vector<Tensor<1, dim>> fluid_solid_force;
 
   std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
     forces_boundary_information;
