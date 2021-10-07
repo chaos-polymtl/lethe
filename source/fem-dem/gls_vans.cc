@@ -193,13 +193,16 @@ GLSVANSSolver<dim>::setup_dofs()
 
   assemble_mass_matrix_diagonal(mass_matrix);
 
-  unsigned int max_particle_id = 0;
-  for (const auto &particle : particle_handler)
-    {
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  fluid_solid_force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
       max_particle_id = std::max(max_particle_id, particle.get_id());
-    }
-  max_particle_id += 1;
-  fluid_solid_force.resize(max_particle_id);
+    fluid_solid_force.resize(max_particle_id + 1);
+  }
+#endif
 }
 
 template <int dim>

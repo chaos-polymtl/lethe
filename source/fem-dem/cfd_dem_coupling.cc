@@ -337,7 +337,8 @@ template <int dim>
 void
 CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
 {
-  for (unsigned int counter = 0; counter != force.size(); ++counter)
+  for (unsigned int counter = 0; counter < this->fluid_solid_force.size();
+       ++counter)
     {
       force[counter] += this->fluid_solid_force[counter];
     }
