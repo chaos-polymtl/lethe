@@ -192,17 +192,6 @@ GLSVANSSolver<dim>::setup_dofs()
                      this->mpi_communicator);
 
   assemble_mass_matrix_diagonal(mass_matrix);
-
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-  fluid_solid_force.resize(particle_handler.get_max_local_particle_index());
-#else
-  {
-    unsigned int max_particle_id = 0;
-    for (const auto &particle : particle_handler)
-      max_particle_id = std::max(max_particle_id, particle.get_id());
-    fluid_solid_force.resize(max_particle_id + 1);
-  }
-#endif
 }
 
 template <int dim>
@@ -899,6 +888,17 @@ GLSVANSSolver<dim>::assemble_system_rhs()
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell());
 
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  fluid_solid_force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
+      max_particle_id = std::max(max_particle_id, particle.get_id());
+    fluid_solid_force.resize(max_particle_id + 1);
+  }
+#endif
+
   WorkStream::run(
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
@@ -959,6 +959,14 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
       pf_assembler->calculate_particle_fluid_interactions(scratch_data);
     }
 
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_rhs(scratch_data, copy_data);
+    }
+
+  cell->get_dof_indices(copy_data.local_dof_indices);
+
+
   for (unsigned int counter = 0; counter < scratch_data.particle_index;
        ++counter)
 
@@ -966,13 +974,6 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
       fluid_solid_force[scratch_data.local_particle_id[counter]] =
         scratch_data.fluid_particle_force[counter];
     }
-
-  for (auto &assembler : this->assemblers)
-    {
-      assembler->assemble_rhs(scratch_data, copy_data);
-    }
-
-  cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
 template <int dim>

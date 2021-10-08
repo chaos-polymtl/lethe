@@ -206,13 +206,17 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     displacement.resize(max_particle_id + 1);
   }
 #endif
+
   force.resize(displacement.size());
   momentum.resize(displacement.size());
 
-  // Updating moment of inertia container
-  update_moment_of_inertia(this->particle_handler, MOI);
 
   this->particle_handler.exchange_ghost_particles(true);
+
+
+
+  // Updating moment of inertia container
+  update_moment_of_inertia(this->particle_handler, MOI);
 
   this->pcout << "Finished initializing DEM parameters " << std::endl
               << "DEM time-step is " << dem_time_step << " s ";
@@ -337,8 +341,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
 {
-  for (unsigned int counter = 0; counter < this->fluid_solid_force.size();
-       ++counter)
+  for (unsigned int counter = 0; counter < force.size(); ++counter)
     {
       force[counter] += this->fluid_solid_force[counter];
     }
@@ -416,10 +419,12 @@ CFDDEMSolver<dim>::dem_contact_build()
       force.resize(displacement.size());
       momentum.resize(displacement.size());
 
+      this->particle_handler.exchange_ghost_particles(true);
+
+
+
       // Updating moment of inertia container
       update_moment_of_inertia(this->particle_handler, MOI);
-
-      this->particle_handler.exchange_ghost_particles(true);
     }
   else
     {
@@ -427,6 +432,7 @@ CFDDEMSolver<dim>::dem_contact_build()
     }
 
   // Broad particle-particle contact search
+  // TODO add checkpoint step
   if (load_balance_step || contact_detection_step)
     {
       pp_broad_search_object.find_particle_particle_contact_pairs(
@@ -705,6 +711,13 @@ CFDDEMSolver<dim>::solve()
               // particle_wall force calculations, integration and update_ghost
               dem_iterator();
             }
+
+          // dem_contact_build carries out the particle-particle and
+          // particle-wall broad and fine searches,
+          // sort_particles_into_subdomains_and_cells, and exchange_ghost
+          dem_contact_build();
+
+
           this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                       << std::endl;
         }
@@ -745,6 +758,7 @@ CFDDEMSolver<dim>::solve()
           this->pcout << "Starting DEM iterations at step "
                       << this->simulation_control->get_step_number()
                       << std::endl;
+
           for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
                ++dem_counter)
             {

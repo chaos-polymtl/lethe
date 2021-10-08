@@ -12,10 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Author: Tonbi EL Geitani, Shahab Golshan, Polytechnique Montreal, 2019-
-*/
+ */
 
 #include "fem-dem/cfd_dem_coupling.h"
 
