@@ -17,6 +17,8 @@ Particle Summary
 id: 0,  x: 0.0825,  y: 0.0005,  z: -0.0005,  v_x: 0,  v_y: 0,  vz: 0
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 1
+DEM contact search at step 1
+Finished DEM contact search 
 Finished 100 DEM iterations 
 DEM contact search at step 1
 Finished DEM contact search 
@@ -1207,4 +1209,4 @@ id: 0,  x: 0.06610773156,  y: 0.0004980693396,  z: -0.000498069226,  v_x: -0.228
 Starting DEM iterations at step 100
 Finished 100 DEM iterations 
 DEM contact search at step 100
-Finished DEM contact search
+Finished DEM contact search 
