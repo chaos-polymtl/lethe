@@ -1082,124 +1082,6 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
 
 
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::particles_dem()
-{ // add refilling containers
-  using numbers::PI;
-  Tensor<1, dim> g   = this->simulation_parameters.particlesParameters.gravity;
-  double         rho = this->simulation_parameters.particlesParameters.density;
-  double         dt  = this->simulation_control->get_time_steps_vector()[0];
-  double         dt_dem             = dt / 10000;
-  // local time for the dem step
-  std::vector<Tensor<1, dim>> contact_force(particles.size());
-  std::vector<Tensor<1, 3>>   contact_torque(particles.size());
-  std::vector<Tensor<1, 3>>   contact_wall_torque(particles.size());
-  std::vector<Tensor<1, dim>> contact_wall_force(particles.size());
-
-  std::vector<Tensor<1, dim>> current_fluid_force(particles.size());
-  std::vector<Tensor<1, 3>>   current_fluid_torque(particles.size());
-
-  std::vector<Tensor<1, dim>> velocity(particles.size());
-  std::vector<Point<dim>>     position(particles.size());
-
-  double         t = 0;
-  Tensor<1, dim> gravity;
-
-  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-    {
-      dem_particles[p_i].position    = particles[p_i].last_position;
-      dem_particles[p_i].velocity    = particles[p_i].last_velocity;
-      dem_particles[p_i].omega       = particles[p_i].last_omega;
-      particles[p_i].impulsion       = 0;
-      particles[p_i].omega_impulsion = 0;
-    }
-
-  while (t < dt)
-    {
-      current_fluid_force.clear();
-      current_fluid_force.resize(particles.size());
-      current_fluid_torque.clear();
-      current_fluid_torque.resize(particles.size());
-
-
-
-      contact_torque.clear();
-      contact_torque.resize(particles.size());
-      contact_force.clear();
-      contact_force.resize(particles.size());
-      contact_wall_force.clear();
-      contact_wall_force.resize(particles.size());
-      contact_wall_torque.clear();
-      contact_wall_torque.resize(particles.size());
-
-
-
-      // Calculate particle-particle and particle-wall contact force
-      calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
-      calculate_pw_contact_force(dt_dem,
-                                 contact_wall_force,
-                                 contact_wall_torque);
-
-
-      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-        {
-          auto inv_inertia = invert(particles[p_i].inertia);
-          if (dim == 2)
-            gravity =
-              g * (particles[p_i].mass -
-                   particles[p_i].radius * particles[p_i].radius * PI * rho);
-          if (dim == 3)
-            {
-              gravity =
-                g * (particles[p_i].mass - 4.0 / 3.0 * particles[p_i].radius *
-                                             particles[p_i].radius *
-                                             particles[p_i].radius * PI * rho);
-            }
-
-          current_fluid_force[p_i] =
-            particles[p_i].last_forces +
-            (particles[p_i].forces - particles[p_i].last_forces) * t / dt;
-          current_fluid_torque[p_i] =
-            particles[p_i].last_torques +
-            (particles[p_i].torques - particles[p_i].last_torques) * t / dt;
-
-
-
-          dem_particles[p_i].velocity =
-            dem_particles[p_i].velocity +
-            (current_fluid_force[p_i] + contact_force[p_i] +
-             contact_wall_force[p_i] + gravity) *
-              dt_dem / particles[p_i].mass;
-          dem_particles[p_i].position =
-            dem_particles[p_i].position + dem_particles[p_i].velocity * dt_dem;
-
-          dem_particles[p_i].omega =
-            dem_particles[p_i].omega +
-            inv_inertia *
-              (current_fluid_torque[p_i] + contact_torque[p_i] +
-               contact_wall_torque[p_i]) *
-              dt_dem;
-
-          particles[p_i].impulsion +=
-            (current_fluid_force[p_i] + contact_force[p_i] +
-             contact_wall_force[p_i] + gravity) *
-            dt_dem;
-          particles[p_i].omega_impulsion +=
-            (current_fluid_torque[p_i] + contact_torque[p_i] +
-             contact_wall_torque[p_i]) *
-            dt_dem;
-        }
-      t += dt_dem;
-    }
-  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-    {
-      particles[p_i].position = dem_particles[p_i].position;
-    }
-}
-
-
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::calculate_pp_contact_force(
@@ -1847,6 +1729,122 @@ GLSSharpNavierStokesSolver<dim>::calculate_pw_contact_force(
                 }
             }
         }
+    }
+}
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::particles_dem()
+{ // add refilling containers
+  using numbers::PI;
+  Tensor<1, dim> g   = this->simulation_parameters.particlesParameters.gravity;
+  double         rho = this->simulation_parameters.particlesParameters.density;
+  double         dt  = this->simulation_control->get_time_steps_vector()[0];
+  double         dt_dem             = dt / 10000;
+  // local time for the dem step
+  std::vector<Tensor<1, dim>> contact_force(particles.size());
+  std::vector<Tensor<1, 3>>   contact_torque(particles.size());
+  std::vector<Tensor<1, 3>>   contact_wall_torque(particles.size());
+  std::vector<Tensor<1, dim>> contact_wall_force(particles.size());
+
+  std::vector<Tensor<1, dim>> current_fluid_force(particles.size());
+  std::vector<Tensor<1, 3>>   current_fluid_torque(particles.size());
+
+  std::vector<Tensor<1, dim>> velocity(particles.size());
+  std::vector<Point<dim>>     position(particles.size());
+
+  double         t = 0;
+  Tensor<1, dim> gravity;
+
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      dem_particles[p_i].position    = particles[p_i].last_position;
+      dem_particles[p_i].velocity    = particles[p_i].last_velocity;
+      dem_particles[p_i].omega       = particles[p_i].last_omega;
+      particles[p_i].impulsion       = 0;
+      particles[p_i].omega_impulsion = 0;
+      particles[p_i].contact_impulsion =0;
+    }
+
+  while (t+dt_dem/2 < dt)
+    {
+      current_fluid_force.clear();
+      current_fluid_force.resize(particles.size());
+      current_fluid_torque.clear();
+      current_fluid_torque.resize(particles.size());
+
+      contact_torque.clear();
+      contact_torque.resize(particles.size());
+      contact_force.clear();
+      contact_force.resize(particles.size());
+      contact_wall_force.clear();
+      contact_wall_force.resize(particles.size());
+      contact_wall_torque.clear();
+      contact_wall_torque.resize(particles.size());
+
+      // Calculate particle-particle and particle-wall contact force
+      calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
+      calculate_pw_contact_force(dt_dem,
+                                 contact_wall_force,
+                                 contact_wall_torque);
+
+
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          auto inv_inertia = invert(particles[p_i].inertia);
+          if (dim == 2)
+            gravity =
+              g * (particles[p_i].mass -
+                   particles[p_i].radius * particles[p_i].radius * PI * rho);
+          if (dim == 3)
+            {
+              gravity =
+                g * (particles[p_i].mass - 4.0 / 3.0 * particles[p_i].radius *
+                                             particles[p_i].radius *
+                                             particles[p_i].radius * PI * rho);
+            }
+
+          if(this->simulation_control->is_at_start()){
+              current_fluid_force[p_i] =particles[p_i].forces;
+              current_fluid_torque[p_i] =particles[p_i].torques;
+            }
+          else
+            {
+              current_fluid_force[p_i] =
+                                         (particles[p_i].forces + particles[p_i].last_forces) *0.5;
+
+              current_fluid_torque[p_i] =
+                                          (particles[p_i].torques + particles[p_i].last_torques) *0.5;
+            }
+
+
+          dem_particles[p_i].velocity =
+            dem_particles[p_i].velocity +
+            (current_fluid_force[p_i] + contact_force[p_i] +
+             contact_wall_force[p_i] + gravity) *
+              dt_dem / particles[p_i].mass;
+          dem_particles[p_i].position =
+            dem_particles[p_i].position + dem_particles[p_i].velocity * dt_dem;
+
+          dem_particles[p_i].omega =
+            dem_particles[p_i].omega +
+            inv_inertia *
+              (current_fluid_torque[p_i] + contact_torque[p_i] +
+               contact_wall_torque[p_i]) *
+              dt_dem;
+
+          particles[p_i].impulsion +=
+            (current_fluid_force[p_i] + gravity) *
+            dt_dem;
+
+          particles[p_i].contact_impulsion+=(contact_wall_force[p_i]+ contact_force[p_i])*
+                                              dt_dem;
+
+          particles[p_i].omega_impulsion +=
+            (current_fluid_torque[p_i] + contact_torque[p_i] +
+             contact_wall_torque[p_i]) *
+            dt_dem;
+        }
+      t += dt_dem;
     }
 }
 

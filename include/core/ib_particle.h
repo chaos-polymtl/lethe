@@ -115,9 +115,6 @@ public:
   // iteration.
   Tensor<1, 3> omega_iter;
 
-
-
-
   Tensor<1, dim> impulsion;
   Tensor<1, dim> impulsion_iter;
   Tensor<1,dim>  contact_impulsion;
