@@ -56,6 +56,8 @@ IBParticle<dim>::initialise_all()
   last_angular_position = angular_position;
   impulsion             = 0;
   impulsion_iter        = 0;
+  contact_impulsion     = 0;
+
 
 
   youngs_modulus=10000000;
