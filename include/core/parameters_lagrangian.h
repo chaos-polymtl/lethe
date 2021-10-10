@@ -22,9 +22,9 @@
 
 //#include <deal.II/base/conditional_ostream.h>
 //#include <deal.II/base/function.h>
-#include <core/parameters.h>
-
 #include <deal.II/base/parameter_handler.h>
+
+#include <core/parameters.h>
 
 #include <string>
 
@@ -34,7 +34,7 @@ namespace Parameters
   namespace Lagrangian
   {
     template <int dim>
-    class PhysicalProperties
+    class LagrangianPhysicalProperties
     {
     public:
       // Gravitational acceleration
@@ -334,7 +334,7 @@ namespace Parameters
       parse_boundary_conditions(ParameterHandler &prm);
 
     private:
-      const unsigned int DEM_BC_number_max = 10;
+      unsigned int DEM_BC_number_max = 10;
       void
       initialize_containers(
         std::unordered_map<unsigned int, Tensor<1, dim>>

@@ -14,12 +14,6 @@
  * ---------------------------------------------------------------------
  */
 
-#include <core/bdf.h>
-#include <core/parameters.h>
-
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
-
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -32,6 +26,11 @@
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
+
+#include <core/bdf.h>
+#include <core/parameters.h>
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
 
 
 #ifndef lethe_navier_stokes_scratch_data_h
@@ -544,9 +543,13 @@ public:
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<double>         cell_void_fraction;
   unsigned int                max_number_of_particles_per_cell;
+  unsigned int                number_of_locally_owned_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double                                                            cell_volume;
   double                                                            beta_drag;
+  std::vector<Tensor<1, dim>> fluid_particle_force;
+  std::vector<unsigned int>   local_particle_id;
+  unsigned int                particle_index;
 };
 
 #endif

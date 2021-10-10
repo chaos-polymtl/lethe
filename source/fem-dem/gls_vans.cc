@@ -1,10 +1,10 @@
-#include <fem-dem/gls_vans.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <fem-dem/gls_vans.h>
 
 
 template <int dim>
@@ -98,11 +98,11 @@ calculate_pressure_drop(const DoFHandler<dim> &              dof_handler,
 
 // Constructor for class GLS_VANS
 template <int dim>
-GLSVANSSolver<dim>::GLSVANSSolver(SimulationParameters<dim> &p_nsparam)
-  : GLSNavierStokesSolver<dim>(p_nsparam)
+GLSVANSSolver<dim>::GLSVANSSolver(CFDDEMSimulationParameters<dim> &nsparam)
+  : GLSNavierStokesSolver<dim>(nsparam.cfd_parameters)
+  , cfd_dem_simulation_parameters(nsparam)
   , void_fraction_dof_handler(*this->triangulation)
-  , fe_void_fraction(
-      this->simulation_parameters.fem_parameters.void_fraction_order)
+  , fe_void_fraction(nsparam.cfd_parameters.fem_parameters.void_fraction_order)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
                      particle_mapping,
@@ -223,7 +223,8 @@ GLSVANSSolver<dim>::read_dem()
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
 
-  std::string prefix = this->simulation_parameters.void_fraction->dem_file_name;
+  std::string prefix =
+    this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
 
   parallel_triangulation->signals.post_distributed_load.connect(
     std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
@@ -274,6 +275,7 @@ GLSVANSSolver<dim>::read_dem()
     }
 }
 
+
 template <int dim>
 void
 GLSVANSSolver<dim>::initialize_void_fraction()
@@ -287,27 +289,30 @@ template <int dim>
 void
 GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 {
-  if (this->simulation_parameters.void_fraction->mode ==
+  if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
       Parameters::VoidFractionMode::function)
     {
       const MappingQ<dim> mapping(1);
 
-      this->simulation_parameters.void_fraction->void_fraction.set_time(time);
+      this->cfd_dem_simulation_parameters.void_fraction->void_fraction.set_time(
+        time);
 
       VectorTools::interpolate(
         mapping,
         void_fraction_dof_handler,
-        this->simulation_parameters.void_fraction->void_fraction,
+        this->cfd_dem_simulation_parameters.void_fraction->void_fraction,
         nodal_void_fraction_owned);
 
       nodal_void_fraction_relevant = nodal_void_fraction_owned;
     }
-  else if (this->simulation_parameters.void_fraction->mode ==
+  else if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
            Parameters::VoidFractionMode::dem)
     {
       assemble_L2_projection_void_fraction();
       solve_L2_system_void_fraction();
-      update_solution_and_constraints();
+      if (this->cfd_dem_simulation_parameters.void_fraction
+            ->bound_void_fraction == true)
+        update_solution_and_constraints();
     }
 }
 
@@ -378,7 +383,7 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
                     nodal_void_fraction_owned(dof_index);
                   if (lambda(dof_index) +
                         penalty_parameter * mass_matrix(dof_index, dof_index) *
-                          (solution_value - this->simulation_parameters
+                          (solution_value - this->cfd_dem_simulation_parameters
                                               .void_fraction->l2_upper_bound) >
                       0)
                     {
@@ -386,10 +391,10 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
                       void_fraction_constraints.add_line(dof_index);
                       void_fraction_constraints.set_inhomogeneity(
                         dof_index,
-                        this->simulation_parameters.void_fraction
+                        this->cfd_dem_simulation_parameters.void_fraction
                           ->l2_upper_bound);
                       nodal_void_fraction_owned(dof_index) =
-                        this->simulation_parameters.void_fraction
+                        this->cfd_dem_simulation_parameters.void_fraction
                           ->l2_upper_bound;
                       lambda(dof_index) = 0;
                     }
@@ -397,18 +402,18 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
                              penalty_parameter *
                                mass_matrix(dof_index, dof_index) *
                                (solution_value -
-                                this->simulation_parameters.void_fraction
-                                  ->l2_lower_bound) <
+                                this->cfd_dem_simulation_parameters
+                                  .void_fraction->l2_lower_bound) <
                            0)
                     {
                       active_set.add_index(dof_index);
                       void_fraction_constraints.add_line(dof_index);
                       void_fraction_constraints.set_inhomogeneity(
                         dof_index,
-                        this->simulation_parameters.void_fraction
+                        this->cfd_dem_simulation_parameters.void_fraction
                           ->l2_lower_bound);
                       nodal_void_fraction_owned(dof_index) =
-                        this->simulation_parameters.void_fraction
+                        this->cfd_dem_simulation_parameters.void_fraction
                           ->l2_lower_bound;
                       lambda(dof_index) = 0;
                     }
@@ -426,8 +431,9 @@ void
 GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(
-    1, this->simulation_parameters.fem_parameters.qmapping_all);
+  const MappingQ<dim> mapping(1,
+                              this->cfd_dem_simulation_parameters.cfd_parameters
+                                .fem_parameters.qmapping_all);
 
   FEValues<dim> fe_values_void_fraction(mapping,
                                         this->fe_void_fraction,
@@ -490,7 +496,7 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
                       local_matrix_void_fraction(i, j) +=
                         (phi_vf[j] * phi_vf[i]) *
                           fe_values_void_fraction.JxW(q) +
-                        (this->simulation_parameters.void_fraction
+                        (this->cfd_dem_simulation_parameters.void_fraction
                            ->l2_smoothing_factor *
                          grad_phi_vf[j] * grad_phi_vf[i] *
                          fe_values_void_fraction.JxW(q));
@@ -518,8 +524,8 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
 
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -532,11 +538,11 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
     locally_owned_dofs_voidfraction, this->mpi_communicator);
 
 
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
+  SolverControl solver_control(this->cfd_dem_simulation_parameters
+                                 .cfd_parameters.linear_solver.max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
 
   TrilinosWrappers::SolverCG solver(solver_control);
 
@@ -545,12 +551,12 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill =
-    this->simulation_parameters.linear_solver.ilu_precond_fill;
-  const double ilu_atol =
-    this->simulation_parameters.linear_solver.ilu_precond_atol;
-  const double ilu_rtol =
-    this->simulation_parameters.linear_solver.ilu_precond_rtol;
+  const double ilu_fill = this->cfd_dem_simulation_parameters.cfd_parameters
+                            .linear_solver.ilu_precond_fill;
+  const double ilu_atol = this->cfd_dem_simulation_parameters.cfd_parameters
+                            .linear_solver.ilu_precond_atol;
+  const double ilu_rtol = this->cfd_dem_simulation_parameters.cfd_parameters
+                            .linear_solver.ilu_precond_rtol;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -565,8 +571,8 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
                system_rhs_void_fraction,
                *ilu_preconditioner);
 
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
@@ -585,17 +591,18 @@ void
 GLSVANSSolver<dim>::first_iteration()
 {
   // First step if the method is not a multi-step method
-  if (!is_bdf_high_order(this->simulation_parameters.simulation_control.method))
+  if (!is_bdf_high_order(this->cfd_dem_simulation_parameters.cfd_parameters
+                           .simulation_control.method))
     {
       iterate();
     }
 
   // Taking care of the multi-step methods
-  else if (this->simulation_parameters.simulation_control.method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+  else if (this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
+             .method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     {
       Parameters::SimulationControl timeParameters =
-        this->simulation_parameters.simulation_control;
+        this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control;
 
       // Start the BDF2 with a single Euler time step with a lower time step
       double time_step =
@@ -631,11 +638,11 @@ GLSVANSSolver<dim>::first_iteration()
       this->simulation_control->set_suggested_time_step(timeParameters.dt);
     }
 
-  else if (this->simulation_parameters.simulation_control.method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+  else if (this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
+             .method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     {
       Parameters::SimulationControl timeParameters =
-        this->simulation_parameters.simulation_control;
+        this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control;
 
       // Start the BDF3 with a single Euler time step with a lower time step
       double time_step =
@@ -694,7 +701,9 @@ GLSVANSSolver<dim>::iterate()
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
   PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-    this->simulation_parameters.simulation_control.method, false);
+    this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
+      .method,
+    false);
 }
 
 template <int dim>
@@ -705,32 +714,57 @@ GLSVANSSolver<dim>::setup_assemblers()
   particle_fluid_assemblers.clear();
 
   // Particle_Fluid Interactions Assembler
+  if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+      Parameters::DragModel::difelice)
+    {
+      // DiFelice Model drag Assembler
+      particle_fluid_assemblers.push_back(
+        std::make_shared<GLSVansAssemblerDiFelice<dim>>(
+          this->simulation_control,
+          this->cfd_dem_simulation_parameters.cfd_parameters
+            .physical_properties));
+    }
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+      Parameters::DragModel::rong)
+    {
+      // Rong Model drag Assembler
+      particle_fluid_assemblers.push_back(
+        std::make_shared<GLSVansAssemblerRong<dim>>(
+          this->simulation_control,
+          this->cfd_dem_simulation_parameters.cfd_parameters
+            .physical_properties));
+    }
+
+  // Buoyancy Force Assembler
   particle_fluid_assemblers.push_back(
-    std::make_shared<GLSVansAssemblerPFI<dim>>(
+    std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
       this->simulation_control,
-      this->simulation_parameters.physical_properties,
-      this->simulation_parameters.cfd_dem));
+      this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
+      this->cfd_dem_simulation_parameters.dem_parameters
+        .lagrangian_physical_properties));
+
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.push_back(std::make_shared<GLSVansAssemblerBDF<dim>>(
-        this->simulation_control, this->simulation_parameters.cfd_dem));
+        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
     }
 
   //  Fluid_Particle Interactions Assembler
   this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>(
     this->simulation_control,
-    this->simulation_parameters.physical_properties,
-    this->simulation_parameters.cfd_dem));
+    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
+    this->cfd_dem_simulation_parameters.cfd_dem));
 
   // The core assembler should always be the last assembler to be called in the
   // stabilized formulation as to have all strong residual and jacobian stored.
   // Core assembler
   this->assemblers.push_back(std::make_shared<GLSVansAssemblerCore<dim>>(
     this->simulation_control,
-    this->simulation_parameters.physical_properties,
-    this->simulation_parameters.cfd_dem));
+    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
+    this->cfd_dem_simulation_parameters.cfd_dem));
 }
 
 template <int dim>
@@ -810,6 +844,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
       pf_assembler->calculate_particle_fluid_interactions(scratch_data);
     }
 
+
   for (auto &assembler : this->assemblers)
     {
       assembler->assemble_matrix(scratch_data, copy_data);
@@ -849,8 +884,20 @@ GLSVANSSolver<dim>::assemble_system_rhs()
                                     *this->cell_quadrature,
                                     *this->mapping);
 
+
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell());
+
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  fluid_solid_force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
+      max_particle_id = std::max(max_particle_id, particle.get_id());
+    fluid_solid_force.resize(max_particle_id + 1);
+  }
+#endif
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -918,6 +965,15 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     }
 
   cell->get_dof_indices(copy_data.local_dof_indices);
+
+
+  for (unsigned int counter = 0; counter < scratch_data.particle_index;
+       ++counter)
+
+    {
+      fluid_solid_force[scratch_data.local_particle_id[counter]] =
+        scratch_data.fluid_particle_force[counter];
+    }
 }
 
 template <int dim>
@@ -1108,8 +1164,8 @@ GLSVANSSolver<dim>::post_processing()
     this->fe,
     this->evaluation_point,
     this->number_quadrature_points,
-    this->simulation_parameters.cfd_dem.inlet_boundary_id,
-    this->simulation_parameters.cfd_dem.outlet_boundary_id);
+    this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
+    this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id);
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
   this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
@@ -1127,19 +1183,24 @@ GLSVANSSolver<dim>::solve()
 
   read_mesh_and_manifolds(
     this->triangulation,
-    this->simulation_parameters.mesh,
-    this->simulation_parameters.manifolds_parameters,
-    this->simulation_parameters.restart_parameters.restart ||
-      this->simulation_parameters.void_fraction->read_dem == true,
-    this->simulation_parameters.boundary_conditions);
+    this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+    this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+    this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+        .restart ||
+      this->cfd_dem_simulation_parameters.void_fraction->read_dem == true,
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
-  if (this->simulation_parameters.void_fraction->read_dem == true)
+  if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
+      this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+          .restart == false)
     read_dem();
+
   setup_dofs();
   calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
-    this->simulation_parameters.initial_condition->type,
-    this->simulation_parameters.restart_parameters.restart);
+    this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
+    this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+      .restart);
 
   while (this->simulation_control->integrate())
     {
@@ -1154,10 +1215,11 @@ GLSVANSSolver<dim>::solve()
             refine_mesh();
           this->iterate();
         }
+
       this->postprocess(false);
       this->finish_time_step();
 
-      if (this->simulation_parameters.cfd_dem.post_processing)
+      if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
         post_processing();
     }
 
