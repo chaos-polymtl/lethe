@@ -75,8 +75,8 @@ test()
   int      id        = 0;
 
   DEMSolverParameters<dim> dem_parameters;
-  dem_parameters.physical_properties.particle_type_number = 1;
-  dem_parameters.physical_properties.density_particle[0]  = 2500;
+  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
+  dem_parameters.lagrangian_physical_properties.density_particle[0]  = 2500;
 
   Particles::Particle<dim> particle1(position1, position1, id);
   typename Triangulation<dim>::active_cell_iterator particle_cell =
