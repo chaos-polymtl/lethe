@@ -24,6 +24,7 @@
 #include <core/ib_stencil.h>
 
 #include <solvers/gls_navier_stokes.h>
+#include <fem-dem/ib_particles_dem.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
@@ -164,7 +165,7 @@ private:
     if (this->simulation_parameters.particlesParameters->integrate_motion)
       {
         force_on_ib();
-        integrate_particles();
+        this->integrate_particles();
         generate_cut_cells_map();
       }
     // this->simulation_control->set_assembly_method(this->time_stepping_method);
@@ -200,12 +201,6 @@ private:
     this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
     sharp_edge();
   }
-
-
-
-  // BB - TODO This explanation needs to be made clearer. Adjacent, Adjacent_2
-  // and Adjacent_3 needs to be renamed if possible to a clearer notation
-
 
   /**
    * @brief
@@ -249,28 +244,11 @@ private:
   /**
    * @brief
    * Write in a specifique file for each of the paticles its forces, velocity,
-   * position at each time step. LB - TODO refactor the output format of the
-   * file
+   * position at each time step.
    */
   void
   write_force_ib();
 
-  /**
-   * @brief
-   * Integrate the particle velocity and position based on the forces and
-   * torques and applies the next value to the particle.
-   */
-  void
-  integrate_particles();
-
-  /**
-   * @brief
-   * Function that allow subtime stepping to allow contact between particle.
-   * Note : This function is a prototype and will be heavely modified in
-   * upcomming PR.
-   */
-  void
-  particles_dem();
   /**
    * @brief
    * Store the solution of the particles dynamics parameters for integration.
@@ -404,7 +382,13 @@ Return a bool that describes  if a cell contains a specific point
   }
 
 
-
+  /**
+   * @brief
+   * Integrate the particle velocity and position based on the forces and
+   * torques and applies the next value to the particle.
+   */
+  void
+  integrate_particles();
 
 
 
@@ -477,49 +461,10 @@ Return a bool that describes  if a cell contains a specific point
   };
 
 
-
-
   /**
    * Members
    */
-
 private:
-  /**
-   * @brief Calculate non-linear (Hertzian) particle-particle contact force
-   */
-  void
-  calculate_pp_contact_force(const double &               dt_dem,
-                             std::vector<Tensor<1, dim>> &contact_force,
-                             std::vector<Tensor<1, 3>> &contact_torque);
-
-
-  /**
-   * @brief Calculate non-linear (Hertzian) particle-wall contact force
-   */
-  void
-  calculate_pw_contact_force(const double &               dt_dem,
-                             std::vector<Tensor<1, dim>> &contact_force,
-                             std::vector<Tensor<1, 3>> &contact_torque);
-
-  void
-  update_particles_boundary_contact();
-
-
-  /** This function is used to find the projection of vector_a on
-   * vector_b
-   * @param vector_a A vector which is going to be projected on vector_b
-   * @param vector_b The projection vector of vector_a
-   * @return The projection of vector_a on vector_b
-   */
-  inline Tensor<1, dim>
-  find_projection(const Tensor<1, dim> &vector_a,
-                  const Tensor<1, dim> &vector_b)
-  {
-    Tensor<1, dim> vector_c;
-    vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
-
-    return vector_c;
-  }
 
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
@@ -549,52 +494,16 @@ private:
 
   PVDHandler ib_particles_pvdhandler;
 
-
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
   const double                 GLS_u_scale = 1;
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
-  std::vector<IBParticle<dim>> dem_particles;
 
   std::vector<TableHandler> table_p;
-
-  // A struct to store contact tangential history
-  struct ContactTangentialHistory
-  {
-    Tensor<1, dim> tangential_relative_velocity;
-    Tensor<1, dim> tangential_overlap;
-  };
-  // Particles contact history
-
-  // A struct to store boundary cells' information
-  struct BoundaryCellsInfo
-  {
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-      for(unsigned int i=0; i<dim; ++i){
-          ar & normal_vector;
-          ar &  point_on_boundary;
-        }
-    }
-
-    Tensor<1, dim> normal_vector;
-    Point<dim>     point_on_boundary;
-
-  };
-
-
-  // Particles contact history
-  std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
-    pp_contact_map;
-  std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
-    pw_contact_map;
-
-  std::vector<std::vector<BoundaryCellsInfo>> boundary_cells;
-
-
   TableHandler table_residual;
+
+  IBParticlesDEM<dim> ib_dem;
 };
 
 

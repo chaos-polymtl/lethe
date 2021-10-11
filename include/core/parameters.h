@@ -854,6 +854,7 @@ namespace Parameters
     double                       wall_rolling_friction_coefficient;
     double                       wall_friction_coefficient;
     double                       wall_restitution_coefficient;
+    unsigned int                 coupling_frequency;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 

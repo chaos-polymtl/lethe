@@ -1623,6 +1623,11 @@ namespace Parameters
         "1e-6",
         Patterns::Double(),
         "The nonlinear tolerance for the coupling of the particle dynamics and the fluid");
+      prm.declare_entry(
+        "DEM coupling frequency",
+        "1000",
+        Patterns::Integer(),
+        "The number of DEM time step per CFD time step");
       prm.declare_entry("fluid density",
                         "1",
                         Patterns::Double(),
@@ -1716,6 +1721,10 @@ namespace Parameters
       wall_rolling_friction_coefficient= prm.get_double("wall rolling friction coefficient");
       wall_friction_coefficient= prm.get_double("wall friction coefficient");
       wall_restitution_coefficient= prm.get_double("wall restitution coefficient");
+      coupling_frequency= prm.get_double("DEM coupling frequency");
+
+      if (dim == 3)
+        gravity[2] = prm.get_double("gravity_z");
 
 
 
