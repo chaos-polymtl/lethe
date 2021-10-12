@@ -7,15 +7,18 @@
 template <int dim>
 void
 IBParticlesDEM<dim>::initialize(
-  SimulationParameters<dim> p_nsparam, MPI_Comm&     mpi_communicator_input){
+  SimulationParameters<dim> p_nsparam, MPI_Comm&     mpi_communicator_input,std::vector<IBParticle<dim>> particles){
   parameters = p_nsparam;
   mpi_communicator= mpi_communicator_input;
+  dem_particles=particles;
+  boundary_cells.resize(dem_particles.size());
 }
 template <int dim>
 void
 IBParticlesDEM<dim>::update_particles(
   std::vector<IBParticle<dim>> particles){
   dem_particles=particles;
+
 }
 
 
@@ -336,6 +339,7 @@ template <int dim>
 void
 IBParticlesDEM<dim>::update_particles_boundary_contact(std::vector<IBParticle<dim>>& particles,DoFHandler<dim>& dof_handler)
 {
+
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       boundary_cells[p_i].clear();
@@ -668,13 +672,13 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 }
 template <int dim>
 void
-IBParticlesDEM<dim>::particles_dem(double dt, bool is_at_start)
+IBParticlesDEM<dim>::particles_dem(double dt)
 { // add refilling containers
   using numbers::PI;
   Tensor<1, dim> g   =parameters.particlesParameters.gravity;
   double         rho =parameters.particlesParameters.density;
   double         dt_dem             = dt /parameters.particlesParameters.coupling_frequency ;
-  // local time for the dem step
+
   std::vector<Tensor<1, dim>> contact_force(dem_particles.size());
   std::vector<Tensor<1, 3>>   contact_torque(dem_particles.size());
   std::vector<Tensor<1, 3>>   contact_wall_torque(dem_particles.size());
@@ -686,9 +690,10 @@ IBParticlesDEM<dim>::particles_dem(double dt, bool is_at_start)
   std::vector<Tensor<1, dim>> velocity(dem_particles.size());
   std::vector<Point<dim>>     position(dem_particles.size());
 
+  // local time for the dem step
   double         t = 0;
   Tensor<1, dim> gravity;
-
+  // initialized the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
       dem_particles[p_i].position    = dem_particles[p_i].last_position;
@@ -699,6 +704,7 @@ IBParticlesDEM<dim>::particles_dem(double dt, bool is_at_start)
       dem_particles[p_i].contact_impulsion =0;
     }
 
+  // integrate on the with the sub_time_step
   while (t+dt_dem/2 < dt)
     {
       current_fluid_force.clear();
@@ -737,20 +743,11 @@ IBParticlesDEM<dim>::particles_dem(double dt, bool is_at_start)
                                              dem_particles[p_i].radius * PI * rho);
             }
 
-          if(is_at_start){
-              current_fluid_force[p_i] =dem_particles[p_i].forces;
-              current_fluid_torque[p_i] =dem_particles[p_i].torques;
-            }
-          else
-            {
-              current_fluid_force[p_i] =
-                (dem_particles[p_i].forces + dem_particles[p_i].last_forces) *0.5;
+          // BDF 1 on the force
+          current_fluid_force[p_i] =dem_particles[p_i].forces;
+          current_fluid_torque[p_i] =dem_particles[p_i].torques;
 
-              current_fluid_torque[p_i] =
-                (dem_particles[p_i].torques + dem_particles[p_i].last_torques) *0.5;
-            }
-
-
+          // Explicit Euler
           dem_particles[p_i].velocity =
             dem_particles[p_i].velocity +
             (current_fluid_force[p_i] + contact_force[p_i] +
@@ -766,13 +763,12 @@ IBParticlesDEM<dim>::particles_dem(double dt, bool is_at_start)
                contact_wall_torque[p_i]) *
               dt_dem;
 
+          // Integration of the impulsion
           dem_particles[p_i].impulsion +=
             (current_fluid_force[p_i] + gravity) *
             dt_dem;
-
           dem_particles[p_i].contact_impulsion+=(contact_wall_force[p_i]+ contact_force[p_i])*
                                               dt_dem;
-
           dem_particles[p_i].omega_impulsion +=
             (current_fluid_torque[p_i] + contact_torque[p_i] +
              contact_wall_torque[p_i]) *

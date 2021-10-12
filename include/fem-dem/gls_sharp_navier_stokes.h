@@ -199,7 +199,7 @@ private:
     // this->simulation_control->set_assembly_method(this->time_stepping_method);
 
     this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
-    sharp_edge();
+
   }
 
   /**

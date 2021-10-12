@@ -36,25 +36,47 @@ class IBParticlesDEM
 public:
 
 
-
+  /**
+   * @brief
+   * Initialize the IBParticlesDEM object with the parameter, the mpi communicator and the particles.
+   *
+   * @param p_nsparam The parameter of the simulation.
+   *
+   * @param mpi_communicator_input The mpi communicator of the simulation.
+   *
+   * @param particles The particles vector containing all the IB particles.
+   */
   void
-  initialize(SimulationParameters<dim> p_nsparam, MPI_Comm&     mpi_communicator_input);
+  initialize(SimulationParameters<dim> p_nsparam, MPI_Comm&     mpi_communicator_input, std::vector<IBParticle<dim>> particles );
 
 
+  /**
+   * @brief
+   * update the boundary cells that are contact candidate for each of the particle.
+   *
+   * @param particles The particles vector containing all the IB particles.
+   */
   void
   update_particles(std::vector<IBParticle<dim>> particles);
 
 
   /**
    * @brief
-   * Function that allow subtime stepping to allow contact between particle.
-   * upcomming PR.
+   * Integrate the dynamics of the IB_particle taking into account the contact between particles and between particles and walls.
+   * @param dt The CFD time step.
+   *
    */
   void
-  particles_dem(double dt, bool is_at_start);
+  particles_dem(double dt);
 
   /**
    * @brief Calculate non-linear (Hertzian) particle-particle contact force
+   *
+   * @param dt_dem The sub time stepping time step.
+   *
+   * @param contact_force a vector containing the contact force between particles
+   *
+   * @param contact_force a vector containing the contact torques between particles
    */
   void
   calculate_pp_contact_force(const double &               dt_dem,
@@ -64,13 +86,25 @@ public:
 
   /**
    * @brief Calculate non-linear (Hertzian) particle-wall contact force
+   *
+   * @param dt_dem The sub time stepping time step.
+   *
+   * @param contact_force a vector containing the contact force between particles
+   *
+   * @param contact_force a vector containing the contact torques between particles
    */
   void
   calculate_pw_contact_force(const double &               dt_dem,
                              std::vector<Tensor<1, dim>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
 
-
+  /**
+   * @brief  Update the boundary cells that are contact candidate for each of the particle.
+   *
+   * @param particles The particles vector containing all the IB particles.
+   *
+   * @param dof_handler The dof handler of the mesh used for the fluid simulation.
+   */
 
   void
   update_particles_boundary_contact(std::vector<IBParticle<dim>>& particles, DoFHandler<dim> & dof_handler);
@@ -130,6 +164,7 @@ private:
   std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
     pw_contact_map;
 
+  // A vector of vectors of candidate cells for each of the particle.
   std::vector<std::vector<BoundaryCellsInfo>> boundary_cells;
 
 };
