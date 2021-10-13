@@ -783,8 +783,12 @@ GDNavierStokesAssemblerCarreauCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  // Non newtonian parameters
+  const double viscosity_0    = physical_properties.non_newtonian_parameters.viscosity_0;
+  const double viscosity_inf  = physical_properties.non_newtonian_parameters.viscosity_inf;
+  const double lambda         = physical_properties.non_newtonian_parameters.lambda;
+  const double a              = physical_properties.non_newtonian_parameters.n;
+  const double n              = physical_properties.non_newtonian_parameters.a;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -802,6 +806,21 @@ GDNavierStokesAssemblerCarreauCore<dim>::assemble_rhs(
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
+
+      // Calculate shear rate (at each q)
+      const Tensor<2, dim> shear_rate = velocity_gradient 
+        + transpose(velocity_gradient);
+      double shear_rate_magnitude = 0;
+      for (unsigned int d = 0; d < dim; ++d)
+      {
+        shear_rate_magnitude += (shear_rate[d] * shear_rate[d]);
+      }
+      shear_rate_magnitude = sqrt(0.5 * shear_rate_magnitude);
+
+      //Calculate de current non newtonian viscosity on each quadrature point
+      double non_newtonian_viscosity = (viscosity_inf + (viscosity_0 - viscosity_inf) * 
+        std::pow(1 + std::pow(shear_rate_magnitude * lambda, a), (n - 1)/a));
+
 
       // Pressure
       const double pressure = scratch_data.pressure_values[q];
@@ -826,7 +845,7 @@ GDNavierStokesAssemblerCarreauCore<dim>::assemble_rhs(
           local_rhs_i +=
             (
               // Momentum
-              -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) -
+              -non_newtonian_viscosity * scalar_product(shear_rate, grad_phi_u_i) -
               velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
               force * phi_u_i +
               // Continuity
