@@ -57,6 +57,9 @@ public:
     , detector_radius(detector.get_radius())
     , detector_length(detector.get_length())
     , parameters(rpt_parameters)
+    , dead_time(detector.dead_time)
+    , activity(detector.activity)
+    , attenuation_coefficient_reactor(detector.attenuation_coefficient_reactor)
   {}
 
   /**
@@ -176,6 +179,9 @@ private:
 
   double                    detector_radius;
   double                    detector_length;
+  double                    dead_time;
+  double                    activity;
+  double                    attenuation_coefficient_reactor;
   Parameters::RPTParameters parameters;
 };
 

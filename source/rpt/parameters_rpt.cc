@@ -1,5 +1,6 @@
 #include <rpt/parameters_rpt.h>
 #include <time.h>
+#include <sstream>
 
 void
 Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
@@ -58,25 +59,11 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
                       Patterns::Double(),
                       "Sampling time of the counting");
 
-    prm.declare_entry("dead time",
-                      "1",
-                      Patterns::Double(),
-                      "Dead time of the detector per accepted pulse");
-
-    prm.declare_entry("activity",
-                      "1",
-                      Patterns::Double(),
-                      "Activity of the tracer");
-
     prm.declare_entry("gamma-rays emitted",
                       "1",
                       Patterns::Double(),
                       "Number of gamma-rays emitted by each disintegration");
 
-    prm.declare_entry("attenuation coefficient reactor",
-                      "1",
-                      Patterns::Double(),
-                      "Total linear attenuation coefficient of the medium");
 
     prm.declare_entry("attenuation coefficient detector",
                       "1",
@@ -99,11 +86,7 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
     reactor_radius          = prm.get_double("reactor radius");
     peak_to_total_ratio     = prm.get_double("peak-to-total ratio");
     sampling_time           = prm.get_double("sampling time");
-    dead_time               = prm.get_double("dead time");
-    activity                = prm.get_double("activity");
     gamma_rays_emitted      = prm.get_double("gamma-rays emitted");
-    attenuation_coefficient_reactor =
-      prm.get_double("attenuation coefficient reactor");
     attenuation_coefficient_detector =
       prm.get_double("attenuation coefficient detector");
 
@@ -190,6 +173,21 @@ Parameters::DetectorParameters::declare_parameters(ParameterHandler &prm)
                       "none",
                       Patterns::FileName(),
                       "Detector positions file name");
+
+    prm.declare_entry("dead time",
+                      "1",
+                      Patterns::Anything(),
+                      "Dead time of the detector per accepted pulse");
+
+    prm.declare_entry("activity",
+                      "1",
+                      Patterns::Anything(),
+                      "Activity of the tracer");
+
+    prm.declare_entry("attenuation coefficient reactor",
+                      "1",
+                      Patterns::Anything(),
+                      "Total linear attenuation coefficient of the medium");
   }
   prm.leave_subsection();
 }
@@ -202,7 +200,56 @@ Parameters::DetectorParameters::parse_parameters(ParameterHandler &prm)
     radius                  = prm.get_double("radius");
     length                  = prm.get_double("length");
     detector_positions_file = prm.get("detector positions file");
+
+    // Transform string to vector of double
+    std::string dead_time_string  = prm.get("dead time");
+    std::string activity_string = prm.get("activity");
+    std::string attenuation_coefficient_reactor_string =
+      prm.get("attenuation coefficient reactor");
+
+    // Separate arguments of the string
+      std::vector<std::string> arguments;
+      std::stringstream        s_stream(dead_time_string);
+      while (s_stream.good())
+        {
+          std::string substr;
+          getline(s_stream, substr, ':');
+          arguments.push_back(substr);
+        }
+
+   dead_time =
+          dealii::Utilities::string_to_double(arguments);
+
+   // Separate arguments of the string
+     arguments.clear();
+     s_stream.clear();
+     s_stream.str(activity_string);
+     while (s_stream.good())
+       {
+         std::string substr;
+         getline(s_stream, substr, ':');
+         arguments.push_back(substr);
+       }
+
+     activity =
+         dealii::Utilities::string_to_double(arguments);;
+
+     // Separate arguments of the string
+       arguments.clear();
+       s_stream.clear();
+       s_stream.str(attenuation_coefficient_reactor_string);
+       while (s_stream.good())
+         {
+           std::string substr;
+           getline(s_stream, substr, ':');
+           arguments.push_back(substr);
+         }
+
+   attenuation_coefficient_reactor =
+           dealii::Utilities::string_to_double(arguments);
+
   }
+
   prm.leave_subsection();
 }
 

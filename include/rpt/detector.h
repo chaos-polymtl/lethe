@@ -55,7 +55,13 @@ public:
     , id(n)
     , face_position(face_point)
     , middle_position(middle_point)
-  {}
+    , dead_time(detector_parameters.dead_time[n])
+    , activity(detector_parameters.activity[n])
+    , attenuation_coefficient_reactor(detector_parameters.attenuation_coefficient_reactor[n])
+  {
+
+
+  }
 
   double
   get_radius()
@@ -86,6 +92,11 @@ public:
   {
     return middle_position;
   }
+
+  double dead_time;          // Dead time of the detector per accepted pulse
+  double activity;           // Activity of the tracer
+  double attenuation_coefficient_reactor; // Total linear attenuation
+  // coefficient of the medium
 
 private:
   double     radius;

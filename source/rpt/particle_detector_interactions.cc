@@ -320,7 +320,7 @@ ParticleDetectorInteractions<dim>::calculate_non_interaction_probability(
 {
   calculate_reactor_path_length();
 
-  double mu_a = parameters.attenuation_coefficient_reactor;
+  double mu_a = attenuation_coefficient_reactor;
   double non_interaction_probability = std::exp(-mu_a * reactor_path_length);
 
   return non_interaction_probability;
@@ -371,9 +371,9 @@ ParticleDetectorInteractions<dim>::calculate_count()
 
   T   = parameters.sampling_time;
   nu  = parameters.gamma_rays_emitted;
-  R   = parameters.activity;
+  R   = activity;
   phi = parameters.peak_to_total_ratio;
-  tau = parameters.dead_time;
+  tau = dead_time;
 
   calculate_efficiency();
 
