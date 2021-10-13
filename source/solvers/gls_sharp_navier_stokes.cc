@@ -215,9 +215,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   int    order = this->simulation_parameters.particlesParameters.order;
   double mu    = this->simulation_parameters.physical_properties.viscosity;
   double rho   = this->simulation_parameters.particlesParameters.density;
-
+  double length_ratio =
+    this->simulation_parameters.particlesParameters.length_ratio;
   IBStencil<dim>      stencil;
-  std::vector<double> ib_coef = stencil.coefficients(order);
+  std::vector<double> ib_coef = stencil.coefficients(order,length_ratio);
 
   const unsigned int vertices_per_face = GeometryInfo<dim>::vertices_per_face;
   const unsigned int n_q_points_face   = this->face_quadrature->size();
@@ -374,6 +375,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   auto [point, interpolation_points] =
                                     stencil.points(
                                       order,
+                                      length_ratio,
                                       particles[p],
                                       support_points
                                         [local_face_dof_indices[i]]);
@@ -388,13 +390,24 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                         .first == false)
                                     {
                                       // Get the cell use for the extrapolation
-                                      cell_2 = LetheGridTools::
-                                        find_cell_around_point_with_neighbors(
-                                          this->dof_handler,
-                                          vertices_to_cell,
-                                          cell,
-                                          interpolation_points
-                                            [stencil.nb_points(order) - 1]);
+                                      auto point_to_find_cell = stencil.point(
+                                        particles[p],
+                                        support_points
+                                          [local_face_dof_indices[i]]);
+
+                                      try
+                                        {
+                                          cell_2 = LetheGridTools::
+                                            find_cell_around_point_with_neighbors<
+                                              dim>(this->dof_handler,
+                                                   vertices_to_cell,
+                                                   cell,
+                                                   point_to_find_cell);
+                                        }
+                                      catch (...)
+                                        {
+                                          cell_2                 = cell;
+                                        }
                                     }
 
                                   cell_2->get_dof_indices(local_dof_indices_2);
@@ -1375,11 +1388,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   int order = this->simulation_parameters.particlesParameters.order;
+  double length_ratio =
+    this->simulation_parameters.particlesParameters.length_ratio;
 
 
 
   IBStencil<dim>      stencil;
-  std::vector<double> ib_coef = stencil.coefficients(order);
+  std::vector<double> ib_coef = stencil.coefficients(order,length_ratio);
 
   unsigned int n_q_points = q_formula.size();
 
@@ -1496,10 +1511,18 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   const unsigned int component_i =
                     this->fe->system_to_component_index(i).first;
                   unsigned int global_index_overwrite = local_dof_indices[i];
+                  bool         dof_is_inside =
+                    (support_points[local_dof_indices[i]] -
+                     particles[ib_particle_id].position)
+                      .norm() < particles[ib_particle_id].radius;
+                  bool use_ib_for_pressure =
+                    (dof_is_inside) && (component_i == dim) &&
+                    (this->simulation_parameters.particlesParameters
+                       .assemble_navier_stokes_inside == false);
 
 
                   // Check if the DOfs is owned and if it's not a hanging node.
-                  if (component_i < dim &&
+                  if (((component_i < dim) || use_ib_for_pressure) &&
                       this->locally_owned_dofs.is_element(
                         global_index_overwrite) &&
                       ib_done[global_index_overwrite].first == false)
@@ -1529,16 +1552,32 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                       auto [point, interpolation_points] =
                         stencil.points(order,
+                                       length_ratio,
                                        particles[ib_particle_id],
                                        support_points[local_dof_indices[i]]);
 
                       // Find the cell used for the stencil definition.
-                      auto cell_2 =
-                        LetheGridTools::find_cell_around_point_with_neighbors(
-                          this->dof_handler,
-                          vertices_to_cell,
-                          cell,
-                          interpolation_points[stencil.nb_points(order) - 1]);
+                      // Find the cell used for the stencil definition.
+                      auto point_to_find_cell =
+                        stencil.point(particles[ib_particle_id],
+                                      support_points[local_dof_indices[i]]);
+                      typename DoFHandler<dim>::active_cell_iterator cell_2;
+                      bool particle_close_to_wall = false;
+                      try
+                        {
+                          cell_2 = LetheGridTools::
+                            find_cell_around_point_with_neighbors<dim>(
+                              this->dof_handler,
+                              vertices_to_cell,
+                              cell,
+                              point_to_find_cell);
+                        }
+                      catch (...)
+                        {
+                          particle_close_to_wall = true;
+                          cell_2                 = cell;
+                        }
+
                       cell_2->get_dof_indices(local_dof_indices_2);
 
                       ib_done[global_index_overwrite] =
@@ -1556,7 +1595,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       bool point_in_cell = cell->point_inside(
                         interpolation_points[stencil.nb_points(order) - 1]);
 
-                      if (cell_2 == cell || point_in_cell)
+                      if (cell_2 == cell || point_in_cell ||use_ib_for_pressure )
                         {
                           // Give the DOF an approximated value. This help
                           // with pressure shock when the DOF passe from part of
@@ -1725,8 +1764,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           local_dof_indices[i]) *
                           sum_line;
                     }
-
-
 
                   if (component_i == dim && this->locally_owned_dofs.is_element(
                                               global_index_overwrite))

@@ -65,11 +65,26 @@ public:
    * the stencil calculation.
    *
    * @param order, the stencil order.
+   * @param length_ratio the length ratio between the 2 side of the stencil.
    * @param p, the IB particle that cuts the cell.
    * @param dof_point, the support point of the DOF.
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
-  points(unsigned int order, IBParticle<dim> p, Point<dim> dof_point);
+  points(unsigned int    order,
+         double          length_ratio,
+         IBParticle<dim> p,
+         Point<dim>      dof_point);
+
+  /**
+   * @brief
+   * Define the point used to defined the cell used for the stencil calculation.
+   *
+   * @param order, the stencil order.
+   * @param p, the IB particle that cuts the cell.
+   * @param dof_point, the support point of the DOF.
+   */
+  virtual Point<dim>
+  point(IBParticle<dim> p, Point<dim> dof_point);
 
   /**
    * @brief
@@ -81,9 +96,10 @@ public:
    * point.
    *
    * @param order, the stencil order.
+   * @param length_ratio the length ratio between the 2 side of the stencil.
    */
   virtual std::vector<double>
-  coefficients(unsigned int order);
+  coefficients(unsigned int order, double length_ratio);
 
   /**
    * @brief
@@ -95,7 +111,22 @@ public:
    */
   virtual double
   ib_velocity(IBParticle<dim> p, Point<dim> dof_point, unsigned int component);
+
+private:
+  /**
+   * @brief
+   * Return the points on the reference 1D element for the polynomial base
+   *
+   * @param order, the order of the stencil.
+   */
+
+  void
+  p_base(unsigned int order);
+
+  // the points of the reference 1D stencil
+  std::vector<double> reference_points;
 };
+
 
 
 #endif // LETHE_IB_STENCILS_H
