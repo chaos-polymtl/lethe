@@ -631,15 +631,15 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
       // Update the time of the exact solution to the actual time
       this->exact_solution->set_time(
         this->simulation_control->get_current_time());
-      const double error = this->calculate_L2_error_particles();
+      const std::pair<double,double> error = this->calculate_L2_error_particles();
 
       if (this->simulation_parameters.simulation_control.method ==
           Parameters::SimulationControl::TimeSteppingMethod::steady)
         {
           this->error_table.add_value(
             "cells", this->triangulation->n_global_active_cells());
-          this->error_table.add_value("error_velocity", error);
-          this->error_table.add_value("error_pressure", 0);
+          this->error_table.add_value("error_velocity", error.first);
+          this->error_table.add_value("error_pressure", error.second);
 
           auto summary = this->computing_timer.get_summary_data(
             this->computing_timer.total_wall_time);
@@ -654,18 +654,19 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
         {
           this->error_table.add_value(
             "time", this->simulation_control->get_current_time());
-          this->error_table.add_value("error_velocity", error);
+          this->error_table.add_value("error_velocity", error.first);
+          this->error_table.add_value("error_pressure", error.second);
         }
       if (this->simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error velocity : " << error << std::endl;
+          this->pcout << "L2 error velocity : " << error.first << " L2 error pressure: " << error.second  <<std::endl;
         }
     }
 }
 
 template <int dim>
-double
+std::pair<double,double>
 GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
@@ -703,12 +704,65 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                                        support_points);
 
   double l2errorU                  = 0.;
+  double l2errorP                  = 0.;
   double total_velocity_divergence = 0.;
+  double pressure_integral       = 0;
+  double exact_pressure_integral = 0;
 
   // loop over elements
   typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
                                                           .begin_active(),
                                                  endc = this->dof_handler.end();
+
+  // loop over elements to calculate average pressure
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+
+          bool cell_is_cut;
+          // std::ignore is used because we don't care about what particle cut
+          // the cell.
+          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
+
+          if (cell_is_cut == false)
+            {
+              auto &evaluation_point = this->evaluation_point;
+              auto &present_solution = this->present_solution;
+              fe_values.reinit(cell);
+
+              fe_values[pressure].get_function_values(evaluation_point,
+                                                      local_pressure_values);
+              // Get the exact solution at all gauss points
+              l_exact_solution->vector_value_list(
+                fe_values.get_quadrature_points(), q_exactSol);
+
+
+              // Retrieve the effective "connectivity matrix" for this element
+              cell->get_dof_indices(local_dof_indices);
+
+              for (unsigned int q = 0; q < n_q_points; q++)
+                {
+                  pressure_integral +=
+                    local_pressure_values[q] * fe_values.JxW(q);
+                  exact_pressure_integral +=
+                    q_exactSol[q][dim] * fe_values.JxW(q);
+                }
+            }
+        }
+    }
+
+  pressure_integral = Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
+  exact_pressure_integral =
+    Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
+
+  // double global_volume    =
+  // GridTools::volume(dof_handler.get_triangulation(),*mapping);
+  double global_volume =
+    GridTools::volume(this->dof_handler.get_triangulation(), *this->mapping);
+  double average_pressure       = pressure_integral / global_volume;
+  double average_exact_pressure = exact_pressure_integral / global_volume;
+
   for (; cell != endc; ++cell)
     {
       if (cell->is_locally_owned())
@@ -764,17 +818,23 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                       l2errorU += (uz_sim - uz_exact) * (uz_sim - uz_exact) *
                                   fe_values.JxW(q);
                     }
+                  double p_sim   = local_pressure_values[q] - average_pressure;
+                  double p_exact = q_exactSol[q][dim] - average_exact_pressure;
+                  l2errorP +=
+                    (p_sim - p_exact) * (p_sim - p_exact) * fe_values.JxW(q);
+
                 }
             }
         }
     }
   l2errorU = Utilities::MPI::sum(l2errorU, this->mpi_communicator);
+  l2errorP = Utilities::MPI::sum(l2errorP, this->mpi_communicator);
   total_velocity_divergence =
     Utilities::MPI::sum(total_velocity_divergence, this->mpi_communicator);
 
   this->pcout << "div u : " << total_velocity_divergence << std::endl;
 
-  return std::sqrt(l2errorU);
+  return std::make_pair(std::sqrt(l2errorU), std::sqrt(l2errorP));
 }
 
 template <int dim>
