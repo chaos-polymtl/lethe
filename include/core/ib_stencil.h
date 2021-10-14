@@ -77,7 +77,7 @@ public:
 
   /**
    * @brief
-   * Define the point used to defined the cell used for the stencil calculation.
+   * Define the point used to define the cell used for the stencil calculation.
    *
    * @param order, the stencil order.
    * @param p, the IB particle that cuts the cell.
