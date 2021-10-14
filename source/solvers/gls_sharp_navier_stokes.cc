@@ -2382,6 +2382,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
+      this->define_non_zero_constraints();
       if (this->simulation_parameters.particlesParameters.integrate_motion ==
           false)
         integrate_particles();

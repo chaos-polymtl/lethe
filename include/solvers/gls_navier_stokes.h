@@ -109,6 +109,18 @@ protected:
   setup_preconditioner();
 
   /**
+   * @brief  defined the non zero constraints used to solved the problem.
+   */
+  void
+  define_non_zero_constraints();
+
+  /**
+   * @brief defined the zero_constraints used to solved the problem.
+   */
+  void
+  define_zero_constraints();
+
+  /**
    * @brief Assemble the local matrix for a given cell.
    *
    * This function is used by the WorkStream class to assemble
