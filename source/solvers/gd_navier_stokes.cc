@@ -101,13 +101,24 @@ GDNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_parameters.velocity_sources));
         }
 
-
-      // Core assembler
-      this->assemblers.push_back(
-        std::make_shared<GDNavierStokesAssemblerCore<dim>>(
+      if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+      {
+        // Core assembler with Non newtonian viscosity
+       this->assemblers.push_back(
+        std::make_shared<GDNavierStokesAssemblerCarreauCore<dim>>(
           this->simulation_control,
           this->simulation_parameters.physical_properties,
           gamma));
+      }
+      else
+      {
+        // Core assembler
+        this->assemblers.push_back(
+          std::make_shared<GDNavierStokesAssemblerCore<dim>>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties,
+            gamma));
+      }
     }
 }
 

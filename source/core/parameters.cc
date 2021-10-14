@@ -268,6 +268,11 @@ namespace Parameters
                         Patterns::Double(),
                         "Tracer diffusivity");
 
+      prm.declare_entry("non newtonian flow",
+                        "false",
+                        Patterns::Bool(),
+                        "Non Newtonian flow");
+
       prm.declare_entry("number of fluids",
                         "0",
                         Patterns::Integer(),
@@ -295,6 +300,7 @@ namespace Parameters
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
+      non_newtonian_flow   = prm.get_bool("non newtonian flow");
       non_newtonian_parameters.parse_parameters(prm);
       
       // Multiphasic simulations parameters definition
