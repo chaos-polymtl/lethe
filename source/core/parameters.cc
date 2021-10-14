@@ -1247,6 +1247,11 @@ namespace Parameters
         Patterns::Bool(),
         "Bool to define if you assemble the inside of particles with the NS equation.");
       prm.declare_entry(
+        "length ratio",
+        "4",
+        Patterns::Double(),
+        "The length ratio used to define the points for the IB stencil. See definition of epsilon_n in the paper on sharp IB.");
+      prm.declare_entry(
         "particle nonlinear tolerance",
         "1e-6",
         Patterns::Double(),
@@ -1348,6 +1353,7 @@ namespace Parameters
       gravity[1]           = prm.get_double("gravity_y");
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
+      length_ratio           = prm.get_double("length ratio");
       ib_particles_pvd_file  = prm.get("ib particles pvd file");
       particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
 

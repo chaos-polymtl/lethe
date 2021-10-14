@@ -22,9 +22,9 @@
 
 //#include <deal.II/base/conditional_ostream.h>
 //#include <deal.II/base/function.h>
-#include <deal.II/base/parameter_handler.h>
-
 #include <core/parameters.h>
+
+#include <deal.II/base/parameter_handler.h>
 
 #include <string>
 
