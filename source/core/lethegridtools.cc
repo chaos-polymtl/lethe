@@ -121,7 +121,6 @@ LetheGridTools::find_cell_around_point_with_tree(
           best_cell_iter = best_cell_iter->child(best_index);
           if (cell_found == false)
             {
-              //std::cout << "Cell not found around " << point << std::endl;
               break;
             }
 
