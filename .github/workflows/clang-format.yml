@@ -1,0 +1,22 @@
+name: clang-format
+
+on: push
+
+env:
+  CLANG_FORMAT_VERION: 6
+
+jobs:
+  clang-format:
+    name: Run clang-format
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out Lethe with branch of triggering commit
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: clang-format lint
+        uses: DoozyX/clang-format-lint-action@v0.12
+        with:
+          source: 'application source include'
+          clangFormatVersion: ${{ env.CLANG_FORMAT_VERION }}
