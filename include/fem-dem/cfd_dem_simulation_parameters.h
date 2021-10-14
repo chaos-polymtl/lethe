@@ -22,12 +22,14 @@
 #include <core/nitsche.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
-#include <dem/dem_solver_parameters.h>
-#include <fem-dem/parameters_cfd_dem.h>
+
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/simulation_parameters.h>
 #include <solvers/source_terms.h>
+
+#include <dem/dem_solver_parameters.h>
+#include <fem-dem/parameters_cfd_dem.h>
 
 template <int dim>
 class CFDDEMSimulationParameters
