@@ -1250,7 +1250,7 @@ namespace Parameters
         "length ratio",
         "4",
         Patterns::Double(),
-        "The length ratio used to define the points for the IB stencil. See definition of epsilone_n in the paper on sharp IB.");
+        "The length ratio used to define the points for the IB stencil. See definition of epsilon_n in the paper on sharp IB.");
       prm.declare_entry(
         "particle nonlinear tolerance",
         "1e-6",
