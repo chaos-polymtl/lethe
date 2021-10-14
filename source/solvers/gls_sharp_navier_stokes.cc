@@ -390,7 +390,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                         .first == false)
                                     {
                                       // Get the cell use for the extrapolation
-                                      auto point_to_find_cell = stencil.point(
+                                      auto point_to_find_cell = stencil.point_for_cell_detection(
                                         particles[p],
                                         support_points
                                           [local_face_dof_indices[i]]);
@@ -1619,7 +1619,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // Find the cell used for the stencil definition.
                       // Find the cell used for the stencil definition.
                       auto point_to_find_cell =
-                        stencil.point(particles[ib_particle_id],
+                        stencil.point_for_cell_detection(particles[ib_particle_id],
                                       support_points[local_dof_indices[i]]);
                       typename DoFHandler<dim>::active_cell_iterator cell_2;
                       bool particle_close_to_wall = false;

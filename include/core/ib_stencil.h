@@ -79,12 +79,11 @@ public:
    * @brief
    * Define the point used to define the cell used for the stencil calculation.
    *
-   * @param order, the stencil order.
    * @param p, the IB particle that cuts the cell.
    * @param dof_point, the support point of the DOF.
    */
   virtual Point<dim>
-  point(IBParticle<dim> p, Point<dim> dof_point);
+  point_for_cell_detection(IBParticle<dim> p, Point<dim> dof_point);
 
   /**
    * @brief
