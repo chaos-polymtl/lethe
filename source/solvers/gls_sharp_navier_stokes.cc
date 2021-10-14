@@ -218,7 +218,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   double length_ratio =
     this->simulation_parameters.particlesParameters.length_ratio;
   IBStencil<dim>      stencil;
-  std::vector<double> ib_coef = stencil.coefficients(order,length_ratio);
+  std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
 
   const unsigned int vertices_per_face = GeometryInfo<dim>::vertices_per_face;
   const unsigned int n_q_points_face   = this->face_quadrature->size();
@@ -390,10 +390,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                         .first == false)
                                     {
                                       // Get the cell use for the extrapolation
-                                      auto point_to_find_cell = stencil.point_for_cell_detection(
-                                        particles[p],
-                                        support_points
-                                          [local_face_dof_indices[i]]);
+                                      auto point_to_find_cell =
+                                        stencil.point_for_cell_detection(
+                                          particles[p],
+                                          support_points
+                                            [local_face_dof_indices[i]]);
 
                                       try
                                         {
@@ -406,7 +407,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                         }
                                       catch (...)
                                         {
-                                          cell_2                 = cell;
+                                          cell_2 = cell;
                                         }
                                     }
 
@@ -631,7 +632,8 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
       // Update the time of the exact solution to the actual time
       this->exact_solution->set_time(
         this->simulation_control->get_current_time());
-      const std::pair<double,double> error = this->calculate_L2_error_particles();
+      const std::pair<double, double> error =
+        this->calculate_L2_error_particles();
 
       if (this->simulation_parameters.simulation_control.method ==
           Parameters::SimulationControl::TimeSteppingMethod::steady)
@@ -660,13 +662,14 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
       if (this->simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error velocity : " << error.first << " L2 error pressure: " << error.second  <<std::endl;
+          this->pcout << "L2 error velocity : " << error.first
+                      << " L2 error pressure: " << error.second << std::endl;
         }
     }
 }
 
 template <int dim>
-std::pair<double,double>
+std::pair<double, double>
 GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
@@ -706,8 +709,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   double l2errorU                  = 0.;
   double l2errorP                  = 0.;
   double total_velocity_divergence = 0.;
-  double pressure_integral       = 0;
-  double exact_pressure_integral = 0;
+  double pressure_integral         = 0;
+  double exact_pressure_integral   = 0;
 
   // loop over elements
   typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
@@ -719,7 +722,6 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
     {
       if (cell->is_locally_owned())
         {
-
           bool cell_is_cut;
           // std::ignore is used because we don't care about what particle cut
           // the cell.
@@ -752,7 +754,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
         }
     }
 
-  pressure_integral = Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
+  pressure_integral =
+    Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
   exact_pressure_integral =
     Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
 
@@ -822,7 +825,6 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                   double p_exact = q_exactSol[q][dim] - average_exact_pressure;
                   l2errorP +=
                     (p_sim - p_exact) * (p_sim - p_exact) * fe_values.JxW(q);
-
                 }
             }
         }
@@ -1447,14 +1449,14 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
-  int order = this->simulation_parameters.particlesParameters.order;
+  int    order = this->simulation_parameters.particlesParameters.order;
   double length_ratio =
     this->simulation_parameters.particlesParameters.length_ratio;
 
 
 
   IBStencil<dim>      stencil;
-  std::vector<double> ib_coef = stencil.coefficients(order,length_ratio);
+  std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
 
   unsigned int n_q_points = q_formula.size();
 
@@ -1619,8 +1621,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // Find the cell used for the stencil definition.
                       // Find the cell used for the stencil definition.
                       auto point_to_find_cell =
-                        stencil.point_for_cell_detection(particles[ib_particle_id],
-                                      support_points[local_dof_indices[i]]);
+                        stencil.point_for_cell_detection(
+                          particles[ib_particle_id],
+                          support_points[local_dof_indices[i]]);
                       typename DoFHandler<dim>::active_cell_iterator cell_2;
                       bool particle_close_to_wall = false;
                       try
@@ -1655,7 +1658,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       bool point_in_cell = cell->point_inside(
                         interpolation_points[stencil.nb_points(order) - 1]);
 
-                      if (cell_2 == cell || point_in_cell ||use_ib_for_pressure )
+                      if (cell_2 == cell || point_in_cell ||
+                          use_ib_for_pressure)
                         {
                           // Give the DOF an approximated value. This help
                           // with pressure shock when the DOF passe from part of

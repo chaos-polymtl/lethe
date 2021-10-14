@@ -88,7 +88,6 @@ LetheGridTools::find_cell_around_point_with_tree(
       unsigned int max_childs = GeometryInfo<dim>::max_children_per_cell;
       while (best_cell_iter->is_active() == false)
         {
-
           bool         cell_found = false;
           double       best_dist  = DBL_MAX;
           unsigned int best_index = 0;
@@ -127,11 +126,9 @@ LetheGridTools::find_cell_around_point_with_tree(
           lvl += 1;
           best_dist_last = best_dist;
         }
-
-
     }
 
-  if (best_dist_last >= 1e-9 && cell_on_level_0_found==false)
+  if (best_dist_last >= 1e-9 && cell_on_level_0_found == false)
     {
       throw std::runtime_error("The point is not inside the mesh");
     }
@@ -144,7 +141,7 @@ LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<dim> &dof_handler,
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
-                                                       &                                                   vertices_cell_map,
+    &                                                   vertices_cell_map,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const Point<dim> &                                    point)
 {

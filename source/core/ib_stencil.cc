@@ -137,7 +137,7 @@ IBStencil<dim>::points(unsigned int    order,
 
 template <int dim>
 Point<dim>
-IBStencil<dim>::point(IBParticle<dim> p, Point<dim> dof_point)
+IBStencil<dim>::point_for_cell_detection(IBParticle<dim> p, Point<dim> dof_point)
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
