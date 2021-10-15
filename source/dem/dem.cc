@@ -921,6 +921,7 @@ DEMSolver<dim>::solve()
             local_contact_pair_candidates,
             ghost_contact_pair_candidates);
 
+
           // Updating number of contact builds
           contact_build_number++;
 

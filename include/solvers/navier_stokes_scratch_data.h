@@ -473,7 +473,6 @@ public:
       }
   }
 
-
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
   unsigned int               n_dofs;
@@ -548,9 +547,7 @@ public:
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double                                                            cell_volume;
   double                                                            beta_drag;
-  std::vector<Tensor<1, dim>> fluid_particle_force;
-  std::vector<unsigned int>   local_particle_id;
-  unsigned int                particle_index;
+  unsigned int particle_index;
 };
 
 #endif

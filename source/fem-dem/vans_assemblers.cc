@@ -445,13 +445,12 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  auto & particle_index       = scratch_data.particle_index;
-  double c_d                  = 0;
-  auto & beta_drag            = scratch_data.beta_drag;
-  auto & fluid_particle_force = scratch_data.fluid_particle_force;
-  auto & local_particle_id    = scratch_data.local_particle_id;
+  auto & particle_index = scratch_data.particle_index;
+  double c_d            = 0;
+  auto & beta_drag      = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
+  Tensor<1, dim> drag_force;
 
   const auto pic = scratch_data.pic;
   beta_drag      = 0;
@@ -486,16 +485,12 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      fluid_particle_force[particle_index] = this->physical_properties.density *
-                                             momentum_transfer_coefficient *
-                                             relative_velocity;
+      drag_force = this->physical_properties.density *
+                   momentum_transfer_coefficient * relative_velocity;
 
-      local_particle_id[particle_index] =
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-        particle.get_local_index();
-#else
-        particle.get_id();
-#endif
+      particle_properties[DEM::PropertiesIndex::fem_force_x] = drag_force[0];
+      particle_properties[DEM::PropertiesIndex::fem_force_y] = drag_force[1];
+      particle_properties[DEM::PropertiesIndex::fem_force_z] = drag_force[2];
 
       particle_index += 1;
     }
@@ -513,13 +508,12 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  auto & particle_index       = scratch_data.particle_index;
-  double c_d                  = 0;
-  auto & beta_drag            = scratch_data.beta_drag;
-  auto & fluid_particle_force = scratch_data.fluid_particle_force;
-  auto & local_particle_id    = scratch_data.local_particle_id;
+  auto & particle_index = scratch_data.particle_index;
+  double c_d            = 0;
+  auto & beta_drag      = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
+  Tensor<1, dim> drag_force;
 
   const auto pic = scratch_data.pic;
   beta_drag      = 0;
@@ -557,17 +551,12 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      fluid_particle_force[particle_index] =
+      drag_force = this->physical_properties.density *
+                   momentum_transfer_coefficient * relative_velocity;
 
-        this->physical_properties.density * momentum_transfer_coefficient *
-        relative_velocity;
-
-      local_particle_id[particle_index] =
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-        particle.get_local_index();
-#else
-        particle.get_id();
-#endif
+      particle_properties[DEM::PropertiesIndex::fem_force_x] = drag_force[0];
+      particle_properties[DEM::PropertiesIndex::fem_force_y] = drag_force[1];
+      particle_properties[DEM::PropertiesIndex::fem_force_z] = drag_force[2];
 
       particle_index += 1;
     }
@@ -584,12 +573,12 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  auto &particle_index       = scratch_data.particle_index;
-  auto &fluid_particle_force = scratch_data.fluid_particle_force;
-  auto &local_particle_id    = scratch_data.local_particle_id;
+  auto &particle_index = scratch_data.particle_index;
 
   const auto pic = scratch_data.pic;
   particle_index = 0;
+
+  Tensor<1, dim> buoyancy_force;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -597,17 +586,17 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
       auto particle_properties = particle.get_properties();
 
       // Buoyancy Force
-      fluid_particle_force[particle_index] +=
+      buoyancy_force =
         -lagrangian_physical_properties.g * physical_properties.density *
         (4.0 / 3) * M_PI *
         pow((particle_properties[DEM::PropertiesIndex::dp] / 2.0), 3);
 
-      local_particle_id[particle_index] =
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-        particle.get_local_index();
-#else
-        particle.get_id();
-#endif
+      particle_properties[DEM::PropertiesIndex::fem_force_x] +=
+        buoyancy_force[0];
+      particle_properties[DEM::PropertiesIndex::fem_force_y] +=
+        buoyancy_force[1];
+      particle_properties[DEM::PropertiesIndex::fem_force_z] +=
+        buoyancy_force[2];
 
       particle_index += 1;
     }

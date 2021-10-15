@@ -247,7 +247,6 @@ private:
 
 protected:
   Particles::ParticleHandler<dim, dim> particle_handler;
-  std::vector<Tensor<1, dim>>          fluid_solid_force;
 };
 
 #endif
