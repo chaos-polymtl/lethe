@@ -63,6 +63,8 @@ GridMotion<dim>::update_boundary_points_and_normal_vectors_in_contact_list(
 {
   for (auto &[particle_id, pairs_in_contact_content] : pw_pairs_in_contact)
     {
+      // Prevent compiler warning
+      (void)particle_id;
       for (auto pairs_in_contact_iterator = pairs_in_contact_content.begin();
            pairs_in_contact_iterator != pairs_in_contact_content.end();)
         {
