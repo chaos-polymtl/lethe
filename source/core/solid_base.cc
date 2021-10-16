@@ -536,8 +536,10 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
   // First we calculate the displacement that the solid triangulation
   // will feel during this iteration.
   // Then, we apply this displacement to the triangulation
-  const unsigned int     dofs_per_cell = displacement_fe->dofs_per_cell;
-  std::set<unsigned int> dof_vertex_displaced;
+  const unsigned int      dofs_per_cell = displacement_fe->dofs_per_cell;
+  const std::vector<bool> locally_owned_vertices =
+    GridTools::get_locally_owned_vertices(*this->solid_tria);
+  std::vector<bool> vertex_moved(this->solid_tria->n_vertices(), false);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   for (const auto &cell : displacement_dh.active_cell_iterators())
@@ -548,46 +550,46 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
                vertex < cell->reference_cell().n_vertices();
                ++vertex)
             {
-              if (!dof_vertex_displaced.count(cell->vertex_index(vertex)))
-                {
-                  const auto dof_index = cell->vertex_dof_index(vertex, 0);
-                  Point<spacedim> &vertex_position = cell->vertex(vertex);
-                  if (!locally_owned_dofs.is_element(dof_index))
-                    continue;
+              const auto       dof_index = cell->vertex_dof_index(vertex, 0);
+              Point<spacedim> &vertex_position  = cell->vertex(vertex);
+              const unsigned   global_vertex_no = cell->vertex_index(vertex);
+              if (vertex_moved[global_vertex_no] ||
+                  !locally_owned_vertices[global_vertex_no])
+                continue;
 
-                  Tensor<1, spacedim> k1;
-                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                    k1[comp_i] = velocity->value(vertex_position, comp_i);
+              Tensor<1, spacedim> k1;
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k1[comp_i] = velocity->value(vertex_position, comp_i);
 
-                  Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
-                  Tensor<1, spacedim> k2;
-                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                    k2[comp_i] = velocity->value(p1, comp_i);
+              Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
+              Tensor<1, spacedim> k2;
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k2[comp_i] = velocity->value(p1, comp_i);
 
-                  Point<spacedim>     p2 = vertex_position + time_step / 2 * k2;
-                  Tensor<1, spacedim> k3;
-                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                    k3[comp_i] = velocity->value(p2, comp_i);
+              Point<spacedim>     p2 = vertex_position + time_step / 2 * k2;
+              Tensor<1, spacedim> k3;
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k3[comp_i] = velocity->value(p2, comp_i);
 
-                  Point<spacedim>     p3 = vertex_position + time_step * k3;
-                  Tensor<1, spacedim> k4;
-                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                    k4[comp_i] = velocity->value(p3, comp_i);
+              Point<spacedim>     p3 = vertex_position + time_step * k3;
+              Tensor<1, spacedim> k4;
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k4[comp_i] = velocity->value(p3, comp_i);
 
-                  auto vertex_displacement =
-                    time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+              auto vertex_displacement =
+                time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
 
-                  vertex_position += vertex_displacement;
+              vertex_position += vertex_displacement;
 
-                  for (unsigned d = 0; d < spacedim; ++d)
-                    displacement[dof_index + d] =
-                      displacement[dof_index + d] + vertex_displacement[d];
+              for (unsigned d = 0; d < spacedim; ++d)
+                displacement[dof_index + d] =
+                  displacement[dof_index + d] + vertex_displacement[d];
 
-                  dof_vertex_displaced.insert(cell->vertex_index(vertex));
-                }
+              vertex_moved[global_vertex_no] = true;
             }
         }
     }
+  this->solid_tria->communicate_locally_moved_vertices(locally_owned_vertices);
 }
 
 

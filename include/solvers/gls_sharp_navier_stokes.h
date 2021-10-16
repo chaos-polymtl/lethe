@@ -281,7 +281,7 @@ private:
    * method and its application to incompressible flow problems,» Computers &
    * Fluids, 2020, in press, ref. CAF-D-20-0077
    */
-  double
+  std::pair<double, double>
   calculate_L2_error_particles();
 
 

@@ -32,7 +32,7 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
           // Update acceleration
           particle_acceleration[d] =
             g[d] +
-            particle_force[d] / particle_properties[PropertiesIndex::mass];
+            (particle_force[d]) / particle_properties[PropertiesIndex::mass];
 
           // Half-step velocity
           particle_properties[PropertiesIndex::v_x + d] +=
@@ -75,7 +75,7 @@ VelocityVerletIntegrator<dim>::integrate(
 
       for (int d = 0; d < dim; ++d)
         {
-          particle_acceleration[d] = g[d] + particle_force[d] * mass_inverse;
+          particle_acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;
 
           // Particle velocity integration
           particle_properties[PropertiesIndex::v_x + d] +=

@@ -19,32 +19,35 @@ PWLinearForce<dim>::PWLinearForce(
   this->triangulation_radius                = triangulation_radius;
 
   const double wall_youngs_modulus =
-    dem_parameters.physical_properties.youngs_modulus_wall;
+    dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
   const double wall_poisson_ratio =
-    dem_parameters.physical_properties.poisson_ratio_wall;
+    dem_parameters.lagrangian_physical_properties.poisson_ratio_wall;
   const double wall_restitution_coefficient =
-    dem_parameters.physical_properties.restitution_coefficient_wall;
+    dem_parameters.lagrangian_physical_properties.restitution_coefficient_wall;
   const double wall_friction_coefficient =
-    dem_parameters.physical_properties.friction_coefficient_wall;
+    dem_parameters.lagrangian_physical_properties.friction_coefficient_wall;
   const double wall_rolling_friction_coefficient =
-    dem_parameters.physical_properties.rolling_friction_wall;
+    dem_parameters.lagrangian_physical_properties.rolling_friction_wall;
 
   for (unsigned int i = 0;
-       i < dem_parameters.physical_properties.particle_type_number;
+       i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     {
       const double particle_youngs_modulus =
-        dem_parameters.physical_properties.youngs_modulus_particle.at(i);
-      const double particle_poisson_ratio =
-        dem_parameters.physical_properties.poisson_ratio_particle.at(i);
-      const double particle_restitution_coefficient =
-        dem_parameters.physical_properties.restitution_coefficient_particle.at(
-          i);
-      const double particle_friction_coefficient =
-        dem_parameters.physical_properties.friction_coefficient_particle.at(i);
-      const double particle_rolling_friction_coefficient =
-        dem_parameters.physical_properties.rolling_friction_coefficient_particle
+        dem_parameters.lagrangian_physical_properties.youngs_modulus_particle
           .at(i);
+      const double particle_poisson_ratio =
+        dem_parameters.lagrangian_physical_properties.poisson_ratio_particle.at(
+          i);
+      const double particle_restitution_coefficient =
+        dem_parameters.lagrangian_physical_properties
+          .restitution_coefficient_particle.at(i);
+      const double particle_friction_coefficient =
+        dem_parameters.lagrangian_physical_properties
+          .friction_coefficient_particle.at(i);
+      const double particle_rolling_friction_coefficient =
+        dem_parameters.lagrangian_physical_properties
+          .rolling_friction_coefficient_particle.at(i);
 
 
       this->effective_youngs_modulus[i] =
