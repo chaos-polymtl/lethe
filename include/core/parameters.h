@@ -660,6 +660,7 @@ namespace Parameters
     double                       density;
     Tensor<1, dim>               gravity;
     double                       particle_nonlinear_tol;
+    double                       length_ratio;
 
     double      alpha;
     bool        integrate_motion;

@@ -52,7 +52,7 @@ Insertion<dim>::assign_particle_properties(
 
   // Getting properties as local parameters
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
-  auto physical_properties = dem_parameters.physical_properties;
+  auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
   particle_size_sampling(
     particle_sizes,

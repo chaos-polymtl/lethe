@@ -170,7 +170,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // parameter handler file, finding maximum particle diameter used in
   // polydisperse systems
   maximum_particle_diameter =
-    find_maximum_particle_size(parameters.physical_properties,
+    find_maximum_particle_size(parameters.lagrangian_physical_properties,
                                standard_deviation_multiplier);
   neighborhood_threshold_squared =
     std::pow(parameters.model_parameters.neighborhood_threshold *
@@ -508,16 +508,18 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 
   particle_point_line_contact_force_object
-    .calculate_particle_point_contact_force(&particle_points_in_contact,
-                                            parameters.physical_properties,
-                                            force);
+    .calculate_particle_point_contact_force(
+      &particle_points_in_contact,
+      parameters.lagrangian_physical_properties,
+      force);
 
   if (dim == 3)
     {
       particle_point_line_contact_force_object
-        .calculate_particle_line_contact_force(&particle_lines_in_contact,
-                                               parameters.physical_properties,
-                                               force);
+        .calculate_particle_line_contact_force(
+          &particle_lines_in_contact,
+          parameters.lagrangian_physical_properties,
+          force);
     }
 }
 
@@ -987,18 +989,19 @@ DEMSolver<dim>::solve()
         {
           integrator_object->integrate_half_step_location(
             particle_handler,
-            parameters.physical_properties.g,
+            parameters.lagrangian_physical_properties.g,
             force,
             simulation_control->get_time_step());
         }
       else
         {
-          integrator_object->integrate(particle_handler,
-                                       parameters.physical_properties.g,
-                                       simulation_control->get_time_step(),
-                                       momentum,
-                                       force,
-                                       MOI);
+          integrator_object->integrate(
+            particle_handler,
+            parameters.lagrangian_physical_properties.g,
+            simulation_control->get_time_step(),
+            momentum,
+            force,
+            MOI);
         }
 
       // Visualization

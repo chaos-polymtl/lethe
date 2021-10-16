@@ -24,12 +24,14 @@
 #include <core/manifolds.h>
 #include <core/nitsche.h>
 #include <core/parameters.h>
-#include <core/parameters_cfd_dem.h>
 #include <core/parameters_multiphysics.h>
 
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/source_terms.h>
+
+#include <dem/dem_solver_parameters.h>
+#include <fem-dem/parameters_cfd_dem.h>
 
 template <int dim>
 class SimulationParameters
@@ -58,8 +60,6 @@ public:
   SourceTerms::SourceTerm<dim> *                    source_term;
   Parameters::VelocitySource                        velocity_sources;
   Parameters::IBParticles<dim>                      particlesParameters;
-  std::shared_ptr<Parameters::VoidFraction<dim>>    void_fraction;
-  Parameters::CFDDEM                                cfd_dem;
   Parameters::DynamicFlowControl                    flow_control;
   Parameters::Multiphysics                          multiphysics;
 
@@ -103,10 +103,6 @@ public:
 
     Parameters::VelocitySource::declare_parameters(prm);
 
-    void_fraction = std::make_shared<Parameters::VoidFraction<dim>>();
-    void_fraction->declare_parameters(prm);
-    Parameters::CFDDEM::declare_parameters(prm);
-
     multiphysics.declare_parameters(prm);
   }
 
@@ -138,8 +134,7 @@ public:
     simulation_control.parse_parameters(prm);
     velocity_sources.parse_parameters(prm);
     particlesParameters.parse_parameters(prm);
-    void_fraction->parse_parameters(prm);
-    cfd_dem.parse_parameters(prm);
+
     multiphysics.parse_parameters(prm);
 
     // Check consistency of parameters parsed in different subsections

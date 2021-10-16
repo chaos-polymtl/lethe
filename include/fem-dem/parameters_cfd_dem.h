@@ -21,14 +21,16 @@
 #define lethe_parameters_cfd_dem_h
 
 #include <core/parameters.h>
+#include <core/parameters_lagrangian.h>
 
+#include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
 
 using namespace dealii;
 /**
  * The analytical solution class provides an interface for all common
- * dlement required for the calculation of analytical solution
+ * elementS required for the calculation of analytical solution
  * All equation-specific analytical solution should derive
  * from the base class but also call it's declare_parameters and
  *parse_parameters routine. This allows specialize class to focus on their
@@ -70,6 +72,7 @@ namespace Parameters
     VoidFractionMode               mode;
     Functions::ParsedFunction<dim> void_fraction;
     bool                           read_dem;
+    bool                           bound_void_fraction;
     std::string                    dem_file_name;
     double                         l2_smoothing_factor;
     double                         l2_lower_bound;
@@ -78,23 +81,18 @@ namespace Parameters
 
   struct CFDDEM
   {
-    static void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-
-    bool         shock_capturing;
     bool         grad_div;
-    bool         full_stress_tensor;
-    double       reference_velocity;
     DragModel    drag_model;
     bool         post_processing;
     unsigned int inlet_boundary_id;
     unsigned int outlet_boundary_id;
+    unsigned int coupling_frequency;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
   };
-
-
-
 } // namespace Parameters
 
 #endif
