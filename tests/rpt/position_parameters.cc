@@ -58,6 +58,9 @@ test()
   Parameters::DetectorParameters detector_param;
   detector_param.radius = 0.5;
   detector_param.length = 1;
+  detector_param.dead_time.push_back(1);
+  detector_param.activity.push_back(1);
+  detector_param.attenuation_coefficient_reactor.push_back(1);
   Point<3> FP0          = {0.5, 0, 1};
   Point<3> MP0          = {1, 0, 1};
   Point<3> FP1          = {0.5, 0, 0};
