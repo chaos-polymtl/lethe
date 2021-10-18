@@ -57,6 +57,9 @@ test()
   Parameters::DetectorParameters detector_param;
   detector_param.radius = 0.5;
   detector_param.length = 1;
+  detector_param.dead_time.push_back(1);
+  detector_param.activity.push_back(1);
+  detector_param.attenuation_coefficient_reactor.push_back(1);
   Point<3>    FP        = {0.5, 0, 1};
   Point<3>    MP        = {1, 0, 1};
   Detector<3> detector(detector_param, 0, FP, MP);
@@ -68,11 +71,8 @@ test()
   rpt_param.sampling_time                    = 1;
   rpt_param.n_monte_carlo_iteration          = 10000;
   rpt_param.seed                             = 1;
-  rpt_param.dead_time                        = 1;
-  rpt_param.activity                         = 1;
-  rpt_param.gamma_rays_emitted               = 1;
-  rpt_param.attenuation_coefficient_reactor  = 1;
   rpt_param.attenuation_coefficient_detector = 1;
+  rpt_param.gamma_rays_emitted               = 1;
 
   // Counts for every particle positions with Monte Carlo
   for (unsigned int i_particle = 0; i_particle < n_particle; i_particle++)
