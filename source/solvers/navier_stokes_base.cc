@@ -1174,6 +1174,20 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
             this->write_output_torques();
         }
 
+        // Calculate pressure drop between two boundaries
+        if (this->simulation_parameters.post_processing.calculate_average_velocities)
+        {
+            double pressure_drop = calculate_pressure_drop(this->dof_handler,
+                                                                           this->mapping,
+                                                                           this->mpi_communicator,
+                                                                           this->fe,
+                                                                           this->evaluation_point,
+                                                                           *this->cell_quadrature,
+                                                                           *this->face_quadrature,
+                                                                           this->simulation_parameters.post_processing.inlet_boundary_id,
+                                                           this->simulation_parameters.post_processing.outlet_boundary_id);
+        }
+
       // Calculate error with respect to analytical solution
       if (this->simulation_parameters.analytical_solution->calculate_error())
         {

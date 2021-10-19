@@ -40,6 +40,39 @@
 #  include <core/boundary_conditions.h>
 #  include <core/parameters.h>
 
+/**
+ * @brief Calculate the pressure drop between two boundaries
+ * @return Pressure drop of the flow between two boundaries of the domain
+ *
+ * @param dof_handler The dof_handler used for the calculation
+ *
+ * @param evaluation_point The solution for which the CFL is calculated. The velocity field is assumed to be the first field.
+ *
+ * @param mpi_communicator The mpi communicator. It is used to reduce the CFL calculation.
+ *
+ * @param fe The finite element of the simulation
+ *
+ * @param cell_quadrature_formula The cell quadrature formula for the calculation
+ *
+ * @param face_quadrature_formula The cell quadrature formula for the calculation
+ *
+ * @param mapping The mapping of the simulation
+ *
+ * @param inlet_boundary_id The id of the inlet boundary
+ *
+ * @param outlet_boundary_id The id of the outlet boundary
+ */
+template <int dim, typename VectorType>
+double
+calculate_pressure_drop(const DoFHandler<dim> &        dof_handler,
+                        std::shared_ptr<Mapping<dim>>  mapping,
+                        const MPI_Comm &               mpi_communicator,
+                        std::shared_ptr<FESystem<dim,dim>> fe,
+                        const VectorType &             evaluation_point,
+                        const Quadrature<dim> &        cell_quadrature_formula,
+                        const Quadrature<dim - 1> &    face_quadrature_formula,
+                        const unsigned int                   inlet_boundary_id,
+                        const unsigned int          outlet_boundary_id);
 
 /**
  * @brief Calculate the CFL condition on the simulation domain
