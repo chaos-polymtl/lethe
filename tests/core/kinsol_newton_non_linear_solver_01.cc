@@ -20,7 +20,7 @@ test()
     Parameters::NonLinearSolver::KinsolStrategy::line_search, // kinsol strategy
     1e-8,                                                     // tolerance
     0.9, // relative tolerance
-    10,  // maxIter
+    15,  // maxIter
     4    // display precision
   };
 
