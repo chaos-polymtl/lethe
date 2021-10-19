@@ -467,11 +467,15 @@ SolidBase<dim, spacedim>::get_solid_velocity()
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::integrate_velocity(double time_step)
+SolidBase<dim, spacedim>::integrate_velocity(double time_step,
+                                             double initial_time)
 {
   const unsigned int sub_particles_iterations = param->particles_sub_iterations;
   AssertThrow(sub_particles_iterations >= 1,
               ExcMessage("Sub particles iterations must be 1 or larger"));
+
+
+
   double sub_iteration_relaxation = 1. / sub_particles_iterations;
   time_step                       = time_step * sub_iteration_relaxation;
   // Particle sub iterations divide the time step in a number of "sub
@@ -482,6 +486,7 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
   // than unity
   for (unsigned int it = 0; it < sub_particles_iterations; ++it)
     {
+      // Set the time of the velocity function
       for (auto particle = solid_particle_handler->begin();
            particle != solid_particle_handler->end();
            ++particle)
@@ -489,11 +494,13 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
           Point<spacedim> particle_location = particle->get_location();
 
           Tensor<1, spacedim> k1;
+          velocity->set_time(initial_time);
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k1[comp_i] = velocity->value(particle_location, comp_i);
 
           Point<spacedim>     p1 = particle_location + time_step / 2 * k1;
           Tensor<1, spacedim> k2;
+          velocity->set_time(initial_time + time_step / 2);
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k2[comp_i] = velocity->value(p1, comp_i);
 
@@ -504,6 +511,7 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
 
           Point<spacedim>     p3 = particle_location + time_step * k3;
           Tensor<1, spacedim> k4;
+          velocity->set_time(initial_time + time_step);
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k4[comp_i] = velocity->value(p3, comp_i);
 
@@ -511,6 +519,7 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
           particle->set_location(particle_location);
         }
       solid_particle_handler->sort_particles_into_subdomains_and_cells();
+      initial_time += time_step;
     }
 
   if (initial_number_of_particles !=
@@ -531,7 +540,8 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
+SolidBase<dim, spacedim>::move_solid_triangulation(const double time_step,
+                                                   const double initial_time)
 {
   // First we calculate the displacement that the solid triangulation
   // will feel during this iteration.
@@ -541,6 +551,7 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
     GridTools::get_locally_owned_vertices(*this->solid_tria);
   std::vector<bool> vertex_moved(this->solid_tria->n_vertices(), false);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
 
   for (const auto &cell : displacement_dh.active_cell_iterators())
     {
@@ -558,11 +569,13 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
                 continue;
 
               Tensor<1, spacedim> k1;
+              velocity->set_time(initial_time);
               for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k1[comp_i] = velocity->value(vertex_position, comp_i);
 
               Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
               Tensor<1, spacedim> k2;
+              velocity->set_time(initial_time + time_step / 2);
               for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k2[comp_i] = velocity->value(p1, comp_i);
 
@@ -573,6 +586,7 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
 
               Point<spacedim>     p3 = vertex_position + time_step * k3;
               Tensor<1, spacedim> k4;
+              velocity->set_time(initial_time + time_step);
               for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k4[comp_i] = velocity->value(p3, comp_i);
 

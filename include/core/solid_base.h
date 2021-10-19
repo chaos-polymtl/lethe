@@ -157,13 +157,13 @@ public:
    * @brief Updates particle positions in solid_particle_handler by integrating velocity using a Runge-Kutta method
    */
   void
-  integrate_velocity(double time_step);
+  integrate_velocity(double time_step, double initial_time);
 
   /**
    * @brief Moves the dofs of the solid_triangulation
    */
   void
-  move_solid_triangulation(double time_step);
+  move_solid_triangulation(double time_step, double initial_time);
 
   /**
    * @brief Moves the dofs of the solid_triangulation
