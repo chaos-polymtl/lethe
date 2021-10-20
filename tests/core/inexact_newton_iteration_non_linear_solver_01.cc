@@ -16,7 +16,7 @@ test()
 {
   Parameters::NonLinearSolver params{
     Parameters::Verbosity::verbose,
-    Parameters::NonLinearSolver::SolverType::newton,
+    Parameters::NonLinearSolver::SolverType::inexact_newton_iteration,
     Parameters::NonLinearSolver::KinsolStrategy::
       normal_newton, // kinsol strategy, not used in this case
     1e-8,            // tolerance

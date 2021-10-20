@@ -382,8 +382,6 @@ namespace Parameters
     // Tolerance
     double tolerance;
 
-
-
     // Maximal number of iterations for the Newton solver
     unsigned int max_iterations;
 
