@@ -401,7 +401,7 @@ namespace Parameters
     // Matrix reconstruction tolerance
     // This parameter controls the reconstruction of the system matrix
     // If the residual after a newton step is lower than previous_residual *
-    // matrix_tolernace than that iteration is conisdered sufficient and the
+    // matrix_tolerance then that iteration is considered sufficient and the
     // matrix is not reassembled at the next iteration.
     double matrix_tolerance;
 
