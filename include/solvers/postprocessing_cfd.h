@@ -54,7 +54,7 @@
  *
  * @param cell_quadrature_formula The cell quadrature formula for the calculation
  *
- * @param face_quadrature_formula The cell quadrature formula for the calculation
+ * @param face_quadrature_formula The face quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  *
