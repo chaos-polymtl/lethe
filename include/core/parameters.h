@@ -393,7 +393,7 @@ namespace Parameters
 
     // Force RHS recalculation at the beginning of every non-linear steps
     // This is required if there is a fixed point component to the non-linear
-    // solver that is changed at the beggining of every newton iteration.
+    // solver that is changed at the beginning of every newton iteration.
     // This is notably the case of the sharp edge method.
     // The default value of this parameter is false.
     bool force_rhs_calculation;
