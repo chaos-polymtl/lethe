@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
 #ifndef lethe_inexact_newton_iteration_non_linear_solver_h
@@ -164,6 +161,10 @@ InexactNewtonIterationNonLinearSolver<VectorType>::solve(
           if (current_res < this->params.step_tolerance * last_res ||
               last_res < this->params.tolerance)
             {
+              // If the current residual has decreased  by less than
+              // the last residual * matrix_tolerance, the jacobian
+              // approximation has become insufficiently performant and,
+              // consequently, it is preferable to renew the jacobian matrix
               if (current_res > this->params.matrix_tolerance * last_res)
                 matrix_requires_assembly = true;
               else
