@@ -40,8 +40,8 @@ calculate_pressure_drop(const DoFHandler<dim> &        dof_handler,
                         const VectorType &             evaluation_point,
                         const Quadrature<dim> &        cell_quadrature_formula,
                         const Quadrature<dim - 1> &    face_quadrature_formula,
-                        const unsigned int      inlet_boundary_id,
-                        const unsigned int          outlet_boundary_id)
+                        const unsigned int             inlet_boundary_id,
+                        const unsigned int             outlet_boundary_id)
 {
   FEValues<dim>     fe_values(*mapping,
                           *fe,
@@ -127,8 +127,8 @@ calculate_pressure_drop<2, TrilinosWrappers::MPI::Vector>(
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Quadrature<2> &                cell_quadrature_formula,
   const Quadrature<1> &                face_quadrature_formula,
-  const unsigned int            inlet_boundary_id,
-  const unsigned int            outlet_boundary_id);
+  const unsigned int                   inlet_boundary_id,
+  const unsigned int                   outlet_boundary_id);
 
 template double
 calculate_pressure_drop<3, TrilinosWrappers::MPI::Vector>(
@@ -139,32 +139,32 @@ calculate_pressure_drop<3, TrilinosWrappers::MPI::Vector>(
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Quadrature<3> &                cell_quadrature_formula,
   const Quadrature<2> &                face_quadrature_formula,
-  const unsigned int           inlet_boundary_id,
-  const unsigned int               outlet_boundary_id);
+  const unsigned int                   inlet_boundary_id,
+  const unsigned int                   outlet_boundary_id);
 
 template double
 calculate_pressure_drop<2, TrilinosWrappers::MPI::BlockVector>(
-        const DoFHandler<2> &                dof_handler,
-        std::shared_ptr<Mapping<2>>          mapping,
-        const MPI_Comm &                     mpi_communicator,
-        std::shared_ptr<FESystem<2>>         fe,
-        const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-        const Quadrature<2> &                cell_quadrature_formula,
-        const Quadrature<1> &                face_quadrature_formula,
-        const unsigned int            inlet_boundary_id,
-        const unsigned int            outlet_boundary_id);
+  const DoFHandler<2> &                     dof_handler,
+  std::shared_ptr<Mapping<2>>               mapping,
+  const MPI_Comm &                          mpi_communicator,
+  std::shared_ptr<FESystem<2>>              fe,
+  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
+  const Quadrature<2> &                     cell_quadrature_formula,
+  const Quadrature<1> &                     face_quadrature_formula,
+  const unsigned int                        inlet_boundary_id,
+  const unsigned int                        outlet_boundary_id);
 
 template double
 calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
-        const DoFHandler<3> &                dof_handler,
-        std::shared_ptr<Mapping<3>>          mapping,
-        const MPI_Comm &                     mpi_communicator,
-        std::shared_ptr<FESystem<3>>         fe,
-        const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-        const Quadrature<3> &                cell_quadrature_formula,
-        const Quadrature<2> &                face_quadrature_formula,
-        const unsigned int           inlet_boundary_id,
-        const unsigned int               outlet_boundary_id);
+  const DoFHandler<3> &                     dof_handler,
+  std::shared_ptr<Mapping<3>>               mapping,
+  const MPI_Comm &                          mpi_communicator,
+  std::shared_ptr<FESystem<3>>              fe,
+  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
+  const Quadrature<3> &                     cell_quadrature_formula,
+  const Quadrature<2> &                     face_quadrature_formula,
+  const unsigned int                        inlet_boundary_id,
+  const unsigned int                        outlet_boundary_id);
 
 template <int dim, typename VectorType>
 double

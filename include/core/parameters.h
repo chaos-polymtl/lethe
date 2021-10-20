@@ -307,6 +307,9 @@ namespace Parameters
     // Prefix for kinectic energy output
     std::string kinetic_energy_output_name;
 
+    // Prefix for pressure drop output
+    std::string pressure_drop_output_name;
+
     // Prefix for the enstrophy output
     std::string enstrophy_output_name;
 

@@ -1136,6 +1136,47 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
 
+  // Calculate pressure drop between two boundaries
+  if (this->simulation_parameters.post_processing.calculate_pressure_drop)
+    {
+      TimerOutput::Scope t(this->computing_timer, "pressure_drop_calculation");
+      double             pressure_drop = calculate_pressure_drop(
+        this->dof_handler,
+        this->mapping,
+        this->mpi_communicator,
+        this->fe,
+        this->evaluation_point,
+        *this->cell_quadrature,
+        *this->face_quadrature,
+        this->simulation_parameters.post_processing.inlet_boundary_id,
+        this->simulation_parameters.post_processing.outlet_boundary_id);
+      this->pressure_drop_table.add_value(
+        "time", simulation_control->get_current_time());
+      this->pressure_drop_table.add_value("pressure-drop", pressure_drop);
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Pressure drop : " << pressure_drop << std::endl;
+        }
+
+      // Output pressure drop to a text file from processor 0
+      if ((simulation_control->get_step_number() %
+             this->simulation_parameters.post_processing.output_frequency ==
+           0) &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing.pressure_drop_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          pressure_drop_table.set_precision("time", 12);
+          pressure_drop_table.set_precision("pressure-drop", 12);
+          this->pressure_drop_table.write_text(output);
+        }
+    }
+
+
   // Calculate inlet flow rate and area
   if (this->simulation_parameters.flow_control.enable_flow_control)
     {
@@ -1172,20 +1213,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                   .output_frequency ==
               0)
             this->write_output_torques();
-        }
-
-        // Calculate pressure drop between two boundaries
-        if (this->simulation_parameters.post_processing.calculate_average_velocities)
-        {
-            double pressure_drop = calculate_pressure_drop(this->dof_handler,
-                                                                           this->mapping,
-                                                                           this->mpi_communicator,
-                                                                           this->fe,
-                                                                           this->evaluation_point,
-                                                                           *this->cell_quadrature,
-                                                                           *this->face_quadrature,
-                                                                           this->simulation_parameters.post_processing.inlet_boundary_id,
-                                                           this->simulation_parameters.post_processing.outlet_boundary_id);
         }
 
       // Calculate error with respect to analytical solution
