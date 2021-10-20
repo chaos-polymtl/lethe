@@ -711,6 +711,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   double total_velocity_divergence = 0.;
   double pressure_integral         = 0;
   double exact_pressure_integral   = 0;
+  double volume                    = 0;
 
   // loop over elements
   typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
@@ -718,7 +719,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                                                  endc = this->dof_handler.end();
 
   // loop over elements to calculate average pressure
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (; cell != endc; ++cell)
     {
       if (cell->is_locally_owned())
         {
@@ -726,8 +727,10 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           // std::ignore is used because we don't care about what particle cut
           // the cell.
           std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
+          bool cell_is_inside;
+          std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
 
-          if (cell_is_cut == false)
+          if (cell_is_cut == false && cell_is_inside==false )
             {
               auto &evaluation_point = this->evaluation_point;
               fe_values.reinit(cell);
@@ -748,6 +751,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                     local_pressure_values[q] * fe_values.JxW(q);
                   exact_pressure_integral +=
                     q_exactSol[q][dim] * fe_values.JxW(q);
+                  volume += fe_values.JxW(q);
                 }
             }
         }
@@ -757,14 +761,17 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
     Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
   exact_pressure_integral =
     Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
+  volume =
+    Utilities::MPI::sum(volume, this->mpi_communicator);
 
   // double global_volume    =
   // GridTools::volume(dof_handler.get_triangulation(),*mapping);
   double global_volume =
     GridTools::volume(this->dof_handler.get_triangulation(), *this->mapping);
-  double average_pressure       = pressure_integral / global_volume;
-  double average_exact_pressure = exact_pressure_integral / global_volume;
-
+  double average_pressure       = pressure_integral /volume;
+  double average_exact_pressure = exact_pressure_integral /volume;
+  cell = this->dof_handler
+           .begin_active(),endc = this->dof_handler.end();
   for (; cell != endc; ++cell)
     {
       if (cell->is_locally_owned())
@@ -775,6 +782,9 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           // std::ignore is used because we don't care about what particle cut
           // the cell.
           std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
+
+          bool cell_is_inside;
+          std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
 
           if (cell_is_cut == false)
             {
@@ -820,10 +830,15 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                       l2errorU += (uz_sim - uz_exact) * (uz_sim - uz_exact) *
                                   fe_values.JxW(q);
                     }
-                  double p_sim   = local_pressure_values[q] - average_pressure;
-                  double p_exact = q_exactSol[q][dim] - average_exact_pressure;
-                  l2errorP +=
-                    (p_sim - p_exact) * (p_sim - p_exact) * fe_values.JxW(q);
+                  if(cell_is_inside==false)
+                    {
+                      double p_sim =
+                        local_pressure_values[q] - average_pressure;
+                      double p_exact =
+                        q_exactSol[q][dim] - average_exact_pressure;
+                      l2errorP += (p_sim - p_exact) * (p_sim - p_exact) *
+                                  fe_values.JxW(q);
+                    }
                 }
             }
         }
@@ -852,6 +867,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   // resolution.
   using numbers::PI;
   double         dt    = this->simulation_control->get_time_steps_vector()[0];
+  double time =this->simulation_control->get_current_time();
   double         alpha = this->simulation_parameters.particlesParameters.alpha;
   Tensor<1, dim> g   = this->simulation_parameters.particlesParameters.gravity;
   double         rho = this->simulation_parameters.particlesParameters.density;
@@ -1064,8 +1080,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
           particles[p].last_position = particles[p].position;
-          particles[p].position[0] =
-            particles[p].position[0] + dt * particles[p].velocity[0];
+          particles[p].position[0] =std::cos(time);
+          particles[p].velocity[0] =-std::sin(time);
           particles[p].position[1] =
             particles[p].position[1] + dt * particles[p].velocity[1];
           if (dim == 3)
@@ -1478,6 +1494,56 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
       this->simulation_parameters.simulation_control.method)
     dt = 1;
 
+  Point<dim> pressure_reference_location(1.99,0.00001,0.00001);
+  const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
+    this->dof_handler, pressure_reference_location);
+
+  if (cell->is_locally_owned())
+    {
+      cell->get_dof_indices(local_dof_indices);
+      double sum_line = 0;
+      fe_values.reinit(cell);
+      std::vector<int> set_pressure_cell;
+      set_pressure_cell.resize(particles.size());
+
+      // Define the order of magnitude for the stencil.
+      for (unsigned int qf = 0; qf < n_q_points; ++qf)
+        sum_line += fe_values.JxW(qf);
+
+      sum_line = sum_line / dt;
+      // Clear the line in the matrix
+      unsigned int inside_index = local_dof_indices[dim];
+      // Check on which DOF of the cell to impose the pressure. If the dof
+      // is on a hanging node, it is already constrained and
+      // the pressure cannot be imposed there. So we just go to the next
+      // pressure DOF of the cell.
+
+      for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+        {
+          const unsigned int component_i =
+            this->fe->system_to_component_index(i).first;
+          if (this->zero_constraints.is_constrained(local_dof_indices[i]) ==
+                false &&
+              this->locally_owned_dofs.is_element(local_dof_indices[i]) &&
+              component_i == dim)
+            {
+              inside_index = local_dof_indices[i];
+              break;
+            }
+        }
+
+      this->system_matrix.clear_row(inside_index);
+      // this->system_matrix.clear_row(inside_index)
+      // is not reliable on edge case
+
+      // Set the new equation for the first pressure dofs of the
+      // cell. this is the new reference pressure inside a
+      // particle
+
+      this->system_matrix.set(inside_index, inside_index, sum_line);
+      this->system_rhs(inside_index) =
+        0 - this->evaluation_point(inside_index) * sum_line;
+    }
 
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
@@ -1975,6 +2041,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
+
   if (!cell->is_locally_owned())
     return;
 
@@ -1990,6 +2057,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   if (cell_is_cut)
     return;
 
+  double time =this->simulation_control->get_current_time();
+  this->forcing_function->set_time(time);
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
@@ -2082,7 +2151,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   if (cell_is_cut)
     return;
-
+  double time =this->simulation_control->get_current_time();
+  this->forcing_function->set_time(time);
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
