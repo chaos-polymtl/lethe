@@ -541,9 +541,9 @@ namespace Parameters
       prm.declare_entry(
         "solver",
         "newton",
-        Patterns::Selection("newton|kinsol_newton"),
+        Patterns::Selection("newton|kinsol_newton|inexact_newton_iteration"),
         "Non-linear solver that will be used "
-        "Choices are <newton|kinsol_newton>."
+        "Choices are <newton|kinsol_newton|inexact_newton_iteration>."
         " The newton solver is a traditional newton solver with"
         "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
         "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
@@ -573,6 +573,23 @@ namespace Parameters
         " * previous residual then the theta relaxation"
         " is applied until this criteria is satisfied");
 
+      prm.declare_entry(
+        "matrix tolerance",
+        "0.1",
+        Patterns::Double(),
+        "This parameter controls the frequency at which the matrix is refreshed in the inexact Newton solvers"
+        "If the residual after a newton step < previous residual * matrix tolerance, the matrix is not re-assembled");
+
+      prm.declare_entry(
+        "force rhs calculation",
+        "false",
+        Patterns::Bool(),
+        "This is required if there is a fixed point component to the non-linear"
+        "solver that is changed at the beggining of every newton iteration."
+        "This is notably the case of the sharp edge method."
+        "The default value of this parameter is false.");
+
+
       prm.declare_entry("residual precision",
                         "4",
                         Patterns::Integer(),
@@ -599,6 +616,8 @@ namespace Parameters
         solver = SolverType::newton;
       else if (str_solver == "kinsol_newton")
         solver = SolverType::kinsol_newton;
+      else if (str_solver == "inexact_newton_iteration")
+        solver = SolverType::inexact_newton_iteration;
       else
         throw(std::runtime_error("Invalid non-linear solver "));
 
@@ -613,10 +632,12 @@ namespace Parameters
         throw(
           std::runtime_error("Invalid strategy for kinsol non-linear solver "));
 
-      tolerance         = prm.get_double("tolerance");
-      step_tolerance    = prm.get_double("step tolerance");
-      max_iterations    = prm.get_integer("max iterations");
-      display_precision = prm.get_integer("residual precision");
+      tolerance             = prm.get_double("tolerance");
+      step_tolerance        = prm.get_double("step tolerance");
+      matrix_tolerance      = prm.get_double("matrix tolerance");
+      max_iterations        = prm.get_integer("max iterations");
+      display_precision     = prm.get_integer("residual precision");
+      force_rhs_calculation = prm.get_bool("force rhs calculation");
     }
     prm.leave_subsection();
   }

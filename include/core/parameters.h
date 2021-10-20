@@ -359,6 +359,7 @@ namespace Parameters
     enum class SolverType
     {
       newton,
+      inexact_newton_iteration,
       kinsol_newton
     };
 
@@ -381,14 +382,32 @@ namespace Parameters
     // Tolerance
     double tolerance;
 
-    // Relative Tolerance
-    double step_tolerance;
+
 
     // Maximal number of iterations for the Newton solver
     unsigned int max_iterations;
 
     // Residual precision
     unsigned int display_precision;
+
+
+    // Force RHS recalculation at the beggining of every non-linear steps
+    // This is required if there is a fixed point component to the non-linear
+    // solver that is changed at the beggining of every newton iteration.
+    // This is notably the case of the sharp edge method.
+    // The default value of this parameter is false.
+    bool force_rhs_calculation;
+
+    // Matrix reconstruction tolerance
+    // This parameter controls the reconstruction of the system matrix
+    // If the residual after a newton step is lower than previous_residual *
+    // matrix_tolernace than that iteration is conisdered sufficient and the
+    // matrix is not reassembled at the next iteration.
+    double matrix_tolerance;
+
+    // Relative Tolerance
+    double step_tolerance;
+
 
     static void
     declare_parameters(ParameterHandler &prm);

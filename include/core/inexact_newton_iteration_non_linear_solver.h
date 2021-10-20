@@ -17,31 +17,32 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#ifndef lethe_newton_non_linear_solver_h
-#define lethe_newton_non_linear_solver_h
+#ifndef lethe_inexact_newton_iteration_non_linear_solver_h
+#define lethe_inexact_newton_iteration_non_linear_solver_h
 
 #include <core/multiphysics.h>
 #include <core/non_linear_solver.h>
 
 /**
- * @brief NewtonNonlinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton
+ * @brief InexactNewtonIterationNonLinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton
  * method with \alpha relaxation to ensure that the residual is monotonically
  * decreasing.
  */
 template <typename VectorType>
-class NewtonNonLinearSolver : public NonLinearSolver<VectorType>
+class InexactNewtonIterationNonLinearSolver : public NonLinearSolver<VectorType>
 {
 public:
   /**
-   * @brief Constructor for the NewtonNonLinearSolver.
+   * @brief Constructor for the InexactNewtonIterationNonLinearSolver.
    *
    * @param physics_solver A pointer to the physics solver to which the non-linear solver is attached
    *
    * @param param Non-linear solver parameters
    *
    */
-  NewtonNonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
-                        const Parameters::NonLinearSolver &param);
+  InexactNewtonIterationNonLinearSolver(
+    PhysicsSolver<VectorType> *        physics_solver,
+    const Parameters::NonLinearSolver &param);
 
 
   /**
@@ -55,15 +56,17 @@ public:
 };
 
 template <typename VectorType>
-NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
-  PhysicsSolver<VectorType> *        physics_solver,
-  const Parameters::NonLinearSolver &params)
+InexactNewtonIterationNonLinearSolver<VectorType>::
+  InexactNewtonIterationNonLinearSolver(
+    PhysicsSolver<VectorType> *        physics_solver,
+    const Parameters::NonLinearSolver &params)
   : NonLinearSolver<VectorType>(physics_solver, params)
 {}
 
 template <typename VectorType>
 void
-NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
+InexactNewtonIterationNonLinearSolver<VectorType>::solve(
+  const bool is_initial_step)
 {
   double       global_res;
   double       current_res;
@@ -87,12 +90,15 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
   auto &evaluation_point = solver->get_evaluation_point();
   auto &present_solution = solver->get_present_solution();
 
+  bool matrix_requires_assembly = true;
+
   while ((global_res > this->params.tolerance) &&
          outer_iteration < this->params.max_iterations)
     {
       evaluation_point = present_solution;
 
-      solver->assemble_system_matrix();
+      if (matrix_requires_assembly)
+        solver->assemble_system_matrix();
       if (this->params.force_rhs_calculation || outer_iteration == 0)
         solver->assemble_system_rhs();
 
@@ -136,8 +142,8 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 
           // If it's not the first iteration of alpha check if the residual is
           // smaller then the last alpha iteration. If it's not smaller we fall
-          // back to the last alpha iteration.
-          if (current_res > last_alpha_res and alpha_iter != 0)
+          // back to the last alpha iteration, which is generally the first one.
+          if (alpha_iter != 0 and current_res > last_alpha_res)
             {
               alpha                  = 2 * alpha;
               local_evaluation_point = present_solution;
@@ -158,6 +164,11 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           if (current_res < this->params.step_tolerance * last_res ||
               last_res < this->params.tolerance)
             {
+              if (current_res > this->params.matrix_tolerance * last_res)
+                matrix_requires_assembly = true;
+              else
+                matrix_requires_assembly = false;
+
               break;
             }
           last_alpha_res = current_res;
