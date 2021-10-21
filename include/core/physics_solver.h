@@ -18,6 +18,7 @@
 
 #include <deal.II/lac/affine_constraints.h>
 
+#include "inexact_newton_iteration_non_linear_solver.h"
 #include "kinsol_newton_non_linear_solver.h"
 #include "multiphysics.h"
 #include "newton_non_linear_solver.h"
@@ -144,6 +145,11 @@ PhysicsSolver<VectorType>::PhysicsSolver(
       case Parameters::NonLinearSolver::SolverType::kinsol_newton:
         non_linear_solver = new KinsolNewtonNonLinearSolver<VectorType>(
           this, non_linear_solver_parameters);
+        break;
+      case Parameters::NonLinearSolver::SolverType::inexact_newton_iteration:
+        non_linear_solver =
+          new InexactNewtonIterationNonLinearSolver<VectorType>(
+            this, non_linear_solver_parameters);
         break;
       default:
         break;

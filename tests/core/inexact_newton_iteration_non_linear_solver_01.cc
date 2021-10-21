@@ -1,6 +1,6 @@
 /**
- * @brief The TestClass tests the non-linear solvers using a simple system
- * of two equations, only one of which is non-linear
+ * @brief The TestClass tests the non-linear solvers using a simple systme of two
+ * equations, only one of which is non-linear
  */
 
 // Lethe
@@ -15,13 +15,16 @@ void
 test()
 {
   Parameters::NonLinearSolver params{
-    Parameters::Verbosity::quiet,
-    Parameters::NonLinearSolver::SolverType::kinsol_newton,
-    Parameters::NonLinearSolver::KinsolStrategy::line_search, // kinsol strategy
-    1e-8,                                                     // tolerance
-    10,                                                       // maxIter
-    4,    // display precision
-    false // force rhs calculation
+    Parameters::Verbosity::verbose,
+    Parameters::NonLinearSolver::SolverType::inexact_newton_iteration,
+    Parameters::NonLinearSolver::KinsolStrategy::
+      normal_newton, // kinsol strategy, not used in this case
+    1e-8,            // tolerance
+    10,              // maxIter
+    4,               // display precision
+    false,           // force rhs calculation
+    0.1,             // matrix tolerance
+    0.99             // step_tolerance
   };
 
   deallog << "Creating solver" << std::endl;
@@ -45,9 +48,9 @@ main(int argc, char **argv)
 {
   try
     {
+      initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
         argc, argv, numbers::invalid_unsigned_int);
-      initlog();
       test();
     }
   catch (std::exception &exc)
