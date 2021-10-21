@@ -15,13 +15,16 @@ void
 test()
 {
   Parameters::NonLinearSolver params{
-    Parameters::Verbosity::quiet,
+    Parameters::Verbosity::verbose,
     Parameters::NonLinearSolver::SolverType::newton,
     Parameters::NonLinearSolver::KinsolStrategy::
       normal_newton, // kinsol strategy, not used in this case
     1e-8,            // tolerance
     10,              // maxIter
-    4                // display precision
+    4,               // display precision
+    false,           // force rhs calculation
+    0.1,             // matrix tolerance
+    0.99             // step_tolerance
   };
 
   deallog << "Creating solver" << std::endl;

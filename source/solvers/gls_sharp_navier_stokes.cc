@@ -730,7 +730,6 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           if (cell_is_cut == false)
             {
               auto &evaluation_point = this->evaluation_point;
-              auto &present_solution = this->present_solution;
               fe_values.reinit(cell);
 
               fe_values[pressure].get_function_values(evaluation_point,
@@ -1626,6 +1625,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           support_points[local_dof_indices[i]]);
                       typename DoFHandler<dim>::active_cell_iterator cell_2;
                       bool particle_close_to_wall = false;
+                      (void)particle_close_to_wall;
                       try
                         {
                           cell_2 = LetheGridTools::
