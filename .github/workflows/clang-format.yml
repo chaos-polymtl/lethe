@@ -1,8 +1,10 @@
+# Independent workflow to allow greater flexibility in triggers and schedules
 name: clang-format
 
 on: push
 
 env:
+  # Supports version 5 up to version 12
   CLANG_FORMAT_VERION: 6
 
 jobs:
@@ -15,6 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Executes the specified version of clang-format
       - name: clang-format lint
         uses: DoozyX/clang-format-lint-action@v0.12
         with:
