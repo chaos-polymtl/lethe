@@ -35,7 +35,6 @@ template <int dim, typename VectorType>
 double
 calculate_pressure_drop(const DoFHandler<dim> &        dof_handler,
                         std::shared_ptr<Mapping<dim>>  mapping,
-                        const MPI_Comm &               mpi_communicator,
                         std::shared_ptr<FESystem<dim>> fe,
                         const VectorType &             evaluation_point,
                         const Quadrature<dim> &        cell_quadrature_formula,
@@ -104,6 +103,7 @@ calculate_pressure_drop(const DoFHandler<dim> &        dof_handler,
         }
     }
 
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   pressure_lower_boundary =
     Utilities::MPI::sum(pressure_lower_boundary, mpi_communicator);
   lower_surface = Utilities::MPI::sum(lower_surface, mpi_communicator);
@@ -122,7 +122,6 @@ template double
 calculate_pressure_drop<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   std::shared_ptr<Mapping<2>>          mapping,
-  const MPI_Comm &                     mpi_communicator,
   std::shared_ptr<FESystem<2>>         fe,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Quadrature<2> &                cell_quadrature_formula,
@@ -134,7 +133,6 @@ template double
 calculate_pressure_drop<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   std::shared_ptr<Mapping<3>>          mapping,
-  const MPI_Comm &                     mpi_communicator,
   std::shared_ptr<FESystem<3>>         fe,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Quadrature<3> &                cell_quadrature_formula,
@@ -146,7 +144,6 @@ template double
 calculate_pressure_drop<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   std::shared_ptr<Mapping<2>>               mapping,
-  const MPI_Comm &                          mpi_communicator,
   std::shared_ptr<FESystem<2>>              fe,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Quadrature<2> &                     cell_quadrature_formula,
@@ -158,7 +155,6 @@ template double
 calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   std::shared_ptr<Mapping<3>>               mapping,
-  const MPI_Comm &                          mpi_communicator,
   std::shared_ptr<FESystem<3>>              fe,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Quadrature<3> &                     cell_quadrature_formula,
@@ -171,7 +167,6 @@ double
 calculate_CFL(const DoFHandler<dim> &   dof_handler,
               const VectorType &        evaluation_point,
               const double              time_step,
-              const MPI_Comm &          mpi_communicator,
               const FiniteElement<dim> &fe,
               const Quadrature<dim> &   quadrature_formula,
               const Mapping<dim> &      mapping)
@@ -216,6 +211,7 @@ calculate_CFL(const DoFHandler<dim> &   dof_handler,
             }
         }
     }
+    const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   CFL = Utilities::MPI::max(CFL, mpi_communicator);
   return (CFL);
 }
@@ -225,7 +221,6 @@ calculate_CFL<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const double                         time_step,
-  const MPI_Comm &                     mpi_communicator,
   const FiniteElement<2> &             fe,
   const Quadrature<2> &                quadrature_formula,
   const Mapping<2> &                   mapping);
@@ -235,7 +230,6 @@ calculate_CFL<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const double                         time_step,
-  const MPI_Comm &                     mpi_communicator,
   const FiniteElement<3> &             fe,
   const Quadrature<3> &                quadrature_formula,
   const Mapping<3> &                   mapping);
@@ -245,7 +239,6 @@ calculate_CFL<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const double                              time_step,
-  const MPI_Comm &                          mpi_communicator,
   const FiniteElement<2> &                  fe,
   const Quadrature<2> &                     quadrature_formula,
   const Mapping<2> &                        mapping);
@@ -255,7 +248,6 @@ calculate_CFL<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const double                              time_step,
-  const MPI_Comm &                          mpi_communicator,
   const FiniteElement<3> &                  fe,
   const Quadrature<3> &                     quadrature_formula,
   const Mapping<3> &                        mapping);
@@ -266,7 +258,6 @@ template <int dim, typename VectorType>
 double
 calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
                     const VectorType &        evaluation_point,
-                    const MPI_Comm &          mpi_communicator,
                     const FiniteElement<dim> &fe,
                     const Quadrature<dim> &   quadrature_formula,
                     const Mapping<dim> &      mapping)
@@ -323,6 +314,7 @@ calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
             }
         }
     }
+    const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   en = Utilities::MPI::sum(en, mpi_communicator);
   return (en);
 }
@@ -331,7 +323,6 @@ template double
 calculate_enstrophy<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const MPI_Comm &                     mpi_communicator,
   const FiniteElement<2> &             fe,
   const Quadrature<2> &                quadrature_formula,
   const Mapping<2> &                   mapping);
@@ -340,7 +331,6 @@ template double
 calculate_enstrophy<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const MPI_Comm &                     mpi_communicator,
   const FiniteElement<3> &             fe,
   const Quadrature<3> &                quadrature_formula,
   const Mapping<3> &                   mapping);
@@ -349,7 +339,6 @@ template double
 calculate_enstrophy<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const MPI_Comm &                          mpi_communicator,
   const FiniteElement<2> &                  fe,
   const Quadrature<2> &                     quadrature_formula,
   const Mapping<2> &                        mapping);
@@ -358,7 +347,6 @@ template double
 calculate_enstrophy<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const MPI_Comm &                          mpi_communicator,
   const FiniteElement<3> &                  fe,
   const Quadrature<3> &                     quadrature_formula,
   const Mapping<3> &                        mapping);
@@ -368,7 +356,6 @@ template <int dim, typename VectorType>
 double
 calculate_kinetic_energy(const DoFHandler<dim> &   dof_handler,
                          const VectorType &        evaluation_point,
-                         const MPI_Comm &          mpi_communicator,
                          const FiniteElement<dim> &fe,
                          const Quadrature<dim> &   quadrature_formula,
                          const Mapping<dim> &      mapping)
@@ -413,6 +400,7 @@ calculate_kinetic_energy(const DoFHandler<dim> &   dof_handler,
             }
         }
     }
+    const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   KEU = Utilities::MPI::sum(KEU / domain_volume, mpi_communicator);
   return (KEU);
 }
@@ -421,7 +409,6 @@ template double
 calculate_kinetic_energy<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const MPI_Comm &                     mpi_communicator,
   const FiniteElement<2> &             fe,
   const Quadrature<2> &                quadrature_formula,
   const Mapping<2> &                   mapping);
@@ -430,7 +417,6 @@ template double
 calculate_kinetic_energy<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const MPI_Comm &                     mpi_communicator,
   const FiniteElement<3> &             fe,
   const Quadrature<3> &                quadrature_formula,
   const Mapping<3> &                   mapping);
@@ -439,7 +425,6 @@ template double
 calculate_kinetic_energy<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const MPI_Comm &                          mpi_communicator,
   const FiniteElement<2> &                  fe,
   const Quadrature<2> &                     quadrature_formula,
   const Mapping<2> &                        mapping);
@@ -448,7 +433,6 @@ template double
 calculate_kinetic_energy<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const MPI_Comm &                          mpi_communicator,
   const FiniteElement<3> &                  fe,
   const Quadrature<3> &                     quadrature_formula,
   const Mapping<3> &                        mapping);
@@ -461,7 +445,6 @@ calculate_forces(
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const MPI_Comm &                                     mpi_communicator,
   const FiniteElement<dim> &                           fe,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping)
@@ -486,7 +469,7 @@ calculate_forces(
                                    update_values | update_quadrature_points |
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
-
+    const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
       unsigned int boundary_id = boundary_conditions.id[i_bc];
@@ -543,7 +526,6 @@ calculate_forces<2, TrilinosWrappers::MPI::Vector>(
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const MPI_Comm &                                   mpi_communicator,
   const FiniteElement<2> &                           fe,
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
@@ -553,7 +535,6 @@ calculate_forces<3, TrilinosWrappers::MPI::Vector>(
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const MPI_Comm &                                   mpi_communicator,
   const FiniteElement<3> &                           fe,
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);
@@ -564,7 +545,6 @@ calculate_forces<2, TrilinosWrappers::MPI::BlockVector>(
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const MPI_Comm &                                   mpi_communicator,
   const FiniteElement<2> &                           fe,
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
@@ -575,7 +555,6 @@ calculate_forces<3, TrilinosWrappers::MPI::BlockVector>(
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const MPI_Comm &                                   mpi_communicator,
   const FiniteElement<3> &                           fe,
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);
@@ -588,7 +567,6 @@ calculate_torques(
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const MPI_Comm &                                     mpi_communicator,
   const FiniteElement<dim> &                           fe,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping)
@@ -614,7 +592,7 @@ calculate_torques(
                                    update_values | update_quadrature_points |
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
-
+    const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
       unsigned int boundary_id = boundary_conditions.id[i_bc];
@@ -686,7 +664,6 @@ calculate_torques<2, TrilinosWrappers::MPI::Vector>(
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const MPI_Comm &                                   mpi_communicator,
   const FiniteElement<2> &                           fe,
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
@@ -696,7 +673,6 @@ calculate_torques<3, TrilinosWrappers::MPI::Vector>(
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const MPI_Comm &                                   mpi_communicator,
   const FiniteElement<3> &                           fe,
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);
@@ -707,7 +683,6 @@ calculate_torques<2, TrilinosWrappers::MPI::BlockVector>(
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-  const MPI_Comm &                                   mpi_communicator,
   const FiniteElement<2> &                           fe,
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
@@ -718,7 +693,6 @@ calculate_torques<3, TrilinosWrappers::MPI::BlockVector>(
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-  const MPI_Comm &                                   mpi_communicator,
   const FiniteElement<3> &                           fe,
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);
@@ -732,7 +706,6 @@ std::pair<double, double>
 calculate_L2_error(const DoFHandler<dim> &   dof_handler,
                    const VectorType &        evaluation_point,
                    const Function<dim> *     exact_solution,
-                   const MPI_Comm &          mpi_communicator,
                    const FiniteElement<dim> &fe,
                    const Quadrature<dim> &   quadrature_formula,
                    const Mapping<dim> &      mapping)
@@ -785,7 +758,7 @@ calculate_L2_error(const DoFHandler<dim> &   dof_handler,
             }
         }
     }
-
+    const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   pressure_integral = Utilities::MPI::sum(pressure_integral, mpi_communicator);
   exact_pressure_integral =
     Utilities::MPI::sum(exact_pressure_integral, mpi_communicator);
@@ -858,7 +831,6 @@ template std::pair<double, double>
 calculate_L2_error(const DoFHandler<2> &                dof_handler,
                    const TrilinosWrappers::MPI::Vector &present_solution,
                    const Function<2> *                  l_exact_solution,
-                   const MPI_Comm &                     mpi_communicator,
                    const FiniteElement<2> &             fe,
                    const Quadrature<2> &                quadrature_formula,
                    const Mapping<2> &                   mapping);
@@ -867,7 +839,6 @@ template std::pair<double, double>
 calculate_L2_error(const DoFHandler<3> &                dof_handler,
                    const TrilinosWrappers::MPI::Vector &present_solution,
                    const Function<3> *                  l_exact_solution,
-                   const MPI_Comm &                     mpi_communicator,
                    const FiniteElement<3> &             fe,
                    const Quadrature<3> &                quadrature_formula,
                    const Mapping<3> &                   mapping);
@@ -876,7 +847,6 @@ template std::pair<double, double>
 calculate_L2_error(const DoFHandler<2> &                     dof_handler,
                    const TrilinosWrappers::MPI::BlockVector &present_solution,
                    const Function<2> *                       l_exact_solution,
-                   const MPI_Comm &                          mpi_communicator,
                    const FiniteElement<2> &                  fe,
                    const Quadrature<2> &                     quadrature_formula,
                    const Mapping<2> &                        mapping);
@@ -885,7 +855,6 @@ template std::pair<double, double>
 calculate_L2_error(const DoFHandler<3> &                     dof_handler,
                    const TrilinosWrappers::MPI::BlockVector &present_solution,
                    const Function<3> *                       l_exact_solution,
-                   const MPI_Comm &                          mpi_communicator,
                    const FiniteElement<3> &                  fe,
                    const Quadrature<3> &                     quadrature_formula,
                    const Mapping<3> &                        mapping);
@@ -895,7 +864,6 @@ std::pair<double, double>
 calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
                     const VectorType &         present_solution,
                     const unsigned int &       boundary_id,
-                    const MPI_Comm &           mpi_communicator,
                     const FiniteElement<dim> & fe,
                     const Quadrature<dim - 1> &face_quadrature_formula,
                     const Mapping<dim> &       mapping)
@@ -942,6 +910,7 @@ calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
         }
     }
 
+    const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   area      = Utilities::MPI::sum(area, mpi_communicator);
   flow_rate = Utilities::MPI::sum(flow_rate, mpi_communicator);
 
@@ -952,7 +921,6 @@ template std::pair<double, double>
 calculate_flow_rate(const DoFHandler<2> &                dof_handler,
                     const TrilinosWrappers::MPI::Vector &present_solution,
                     const unsigned int &                 boundary_id,
-                    const MPI_Comm &                     mpi_communicator,
                     const FiniteElement<2> &             fe,
                     const Quadrature<1> &face_quadrature_formula,
                     const Mapping<2> &   mapping);
@@ -961,7 +929,6 @@ template std::pair<double, double>
 calculate_flow_rate(const DoFHandler<3> &                dof_handler,
                     const TrilinosWrappers::MPI::Vector &present_solution,
                     const unsigned int &                 boundary_id,
-                    const MPI_Comm &                     mpi_communicator,
                     const FiniteElement<3> &             fe,
                     const Quadrature<2> &face_quadrature_formula,
                     const Mapping<3> &   mapping);
@@ -970,7 +937,6 @@ template std::pair<double, double>
 calculate_flow_rate(const DoFHandler<2> &                     dof_handler,
                     const TrilinosWrappers::MPI::BlockVector &present_solution,
                     const unsigned int &                      boundary_id,
-                    const MPI_Comm &                          mpi_communicator,
                     const FiniteElement<2> &                  fe,
                     const Quadrature<1> &face_quadrature_formula,
                     const Mapping<2> &   mapping);
@@ -979,7 +945,6 @@ template std::pair<double, double>
 calculate_flow_rate(const DoFHandler<3> &                     dof_handler,
                     const TrilinosWrappers::MPI::BlockVector &present_solution,
                     const unsigned int &                      boundary_id,
-                    const MPI_Comm &                          mpi_communicator,
                     const FiniteElement<3> &                  fe,
                     const Quadrature<2> &face_quadrature_formula,
                     const Mapping<3> &   mapping);

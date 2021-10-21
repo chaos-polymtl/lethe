@@ -108,7 +108,6 @@ RestartNavierStokes<dim>::run()
   auto   errors_p1 = calculate_L2_error(this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
-                                      this->mpi_communicator,
                                       *this->fe,
                                       *this->cell_quadrature,
                                       *this->mapping);
@@ -121,7 +120,6 @@ RestartNavierStokes<dim>::run()
   auto errors_p2         = calculate_L2_error(this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
-                                      this->mpi_communicator,
                                       *this->fe,
                                       *this->cell_quadrature,
                                       *this->mapping);
@@ -140,7 +138,6 @@ RestartNavierStokes<dim>::run()
   auto errors_p3 = calculate_L2_error(this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
-                                      this->mpi_communicator,
                                       *this->fe,
                                       *this->cell_quadrature,
                                       *this->mapping);

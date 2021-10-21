@@ -192,7 +192,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
     calculate_flow_rate(this->dof_handler,
                         evaluation_point,
                         simulation_parameters.flow_control.boundary_flow_id,
-                        mpi_communicator,
                         *this->fe,
                         *this->face_quadrature,
                         *this->mapping);
@@ -245,7 +244,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
                      evaluation_point,
                      simulation_parameters.physical_properties,
                      simulation_parameters.boundary_conditions,
-                     mpi_communicator,
                      *this->fe,
                      *this->face_quadrature,
                      *this->mapping);
@@ -326,7 +324,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
                       evaluation_point,
                       simulation_parameters.physical_properties,
                       simulation_parameters.boundary_conditions,
-                      mpi_communicator,
                       *this->fe,
                       *this->face_quadrature,
                       *this->mapping);
@@ -461,7 +458,6 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
       const double CFL = calculate_CFL(this->dof_handler,
                                        this->present_solution,
                                        simulation_control->get_time_step(),
-                                       mpi_communicator,
                                        *this->fe,
                                        *this->cell_quadrature,
                                        *this->mapping);
@@ -1049,7 +1045,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       double enstrophy = calculate_enstrophy(this->dof_handler,
                                              present_solution,
-                                             mpi_communicator,
                                              *this->fe,
                                              *this->cell_quadrature,
                                              *this->mapping);
@@ -1106,7 +1101,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
       double             kE = calculate_kinetic_energy(this->dof_handler,
                                            present_solution,
-                                           mpi_communicator,
                                            *this->fe,
                                            *this->cell_quadrature,
                                            *this->mapping);
@@ -1143,7 +1137,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       double             pressure_drop = calculate_pressure_drop(
         this->dof_handler,
         this->mapping,
-        this->mpi_communicator,
         this->fe,
         this->evaluation_point,
         *this->cell_quadrature,
@@ -1225,7 +1218,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
             calculate_L2_error(dof_handler,
                                present_solution,
                                exact_solution,
-                               mpi_communicator,
                                *this->fe,
                                *this->cell_quadrature,
                                *this->mapping);
@@ -1367,7 +1359,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
         calculate_flow_rate(this->dof_handler,
                             present_solution,
                             simulation_parameters.flow_control.boundary_flow_id,
-                            mpi_communicator,
                             *this->fe,
                             *this->face_quadrature,
                             *this->mapping);
