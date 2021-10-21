@@ -456,6 +456,7 @@ protected:
   // Post-processing variables
   TableHandler enstrophy_table;
   TableHandler kinetic_energy_table;
+  TableHandler pressure_drop_table;
   std::shared_ptr<AverageVelocities<dim, VectorType, DofsType>>
              average_velocities;
   VectorType average_solution;

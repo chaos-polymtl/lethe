@@ -460,6 +460,21 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of average velocities.");
 
+      prm.declare_entry("calculate pressure drop",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of between two boundaries.");
+
+      prm.declare_entry("inlet boundary id",
+                        "0",
+                        Patterns::Integer(),
+                        "Inlet boundary ID for pressure drop calculation");
+
+      prm.declare_entry("outlet boundary id",
+                        "1",
+                        Patterns::Integer(),
+                        "Outlet boundary ID for pressure drop calculation");
+
       prm.declare_entry(
         "initial time",
         "0.0",
@@ -470,6 +485,11 @@ namespace Parameters
                         "kinetic_energy",
                         Patterns::FileName(),
                         "File output kinetic energy");
+
+      prm.declare_entry("pressure drop name",
+                        "pressure_drop",
+                        Patterns::FileName(),
+                        "File output pressure drop");
 
       prm.declare_entry("enstrophy name",
                         "enstrophy",
@@ -515,8 +535,12 @@ namespace Parameters
       calculate_enstrophy      = prm.get_bool("calculate enstrophy");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
+      calculate_pressure_drop     = prm.get_bool("calculate pressure drop");
+      inlet_boundary_id           = prm.get_integer("inlet boundary id");
+      outlet_boundary_id          = prm.get_integer("outlet boundary id");
       initial_time                = prm.get_double("initial time");
       kinetic_energy_output_name  = prm.get("kinetic energy name");
+      pressure_drop_output_name   = prm.get("pressure drop name");
       enstrophy_output_name       = prm.get("enstrophy name");
       calculation_frequency       = prm.get_integer("calculation frequency");
       output_frequency            = prm.get_integer("output frequency");

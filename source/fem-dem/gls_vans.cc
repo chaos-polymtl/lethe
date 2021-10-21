@@ -1,3 +1,5 @@
+#include "solvers/postprocessing_cfd.h"
+
 #include <fem-dem/gls_vans.h>
 
 #include <deal.II/base/work_stream.h>
@@ -6,95 +8,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-
-template <int dim>
-double
-calculate_pressure_drop(const DoFHandler<dim> &              dof_handler,
-                        std::shared_ptr<Mapping<dim>>        mapping,
-                        const MPI_Comm &                     mpi_communicator,
-                        std::shared_ptr<FESystem<dim>>       fe,
-                        const TrilinosWrappers::MPI::Vector &evaluation_point,
-                        const unsigned int number_quadrature_points,
-                        double             inlet_boundary_id,
-                        double             outlet_boundary_id)
-{
-  QGauss<dim>     quadrature_formula(number_quadrature_points);
-  QGauss<dim - 1> face_quadrature_formula(number_quadrature_points);
-
-  FEValues<dim>     fe_values(*mapping,
-                          *fe,
-                          quadrature_formula,
-                          update_values | update_quadrature_points |
-                            update_JxW_values | update_gradients |
-                            update_hessians);
-  FEFaceValues<dim> fe_face_values(*fe,
-                                   face_quadrature_formula,
-                                   update_values | update_quadrature_points |
-                                     update_normal_vectors | update_JxW_values);
-
-  const FEValuesExtractors::Scalar pressure(dim);
-
-  const unsigned int n_q_points      = quadrature_formula.size();
-  const unsigned int face_n_q_points = face_quadrature_formula.size();
-
-  std::vector<double> present_pressure_values(n_q_points);
-
-  double pressure_upper_boundary = 0;
-  double upper_surface           = 0;
-  double pressure_lower_boundary = 0;
-  double lower_surface           = 0;
-  double pressure_drop           = 0;
-
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          // Gather pressure (values)
-          fe_values[pressure].get_function_values(evaluation_point,
-                                                  present_pressure_values);
-
-          for (unsigned int q = 0; q < face_n_q_points; ++q)
-            {
-              for (const auto &face : cell->face_iterators())
-                {
-                  if (face->at_boundary() &&
-                      (face->boundary_id() == outlet_boundary_id))
-                    {
-                      fe_face_values.reinit(cell, face);
-                      pressure_upper_boundary +=
-                        present_pressure_values[q] * fe_face_values.JxW(q);
-
-                      upper_surface += fe_face_values.JxW(q);
-                    }
-
-                  if (face->at_boundary() &&
-                      (face->boundary_id() == inlet_boundary_id))
-                    {
-                      fe_face_values.reinit(cell, face);
-                      pressure_lower_boundary +=
-                        present_pressure_values[q] * fe_face_values.JxW(q);
-
-                      lower_surface += fe_face_values.JxW(q);
-                    }
-                }
-            }
-        }
-    }
-
-  pressure_lower_boundary =
-    Utilities::MPI::sum(pressure_lower_boundary, mpi_communicator);
-  lower_surface = Utilities::MPI::sum(lower_surface, mpi_communicator);
-  pressure_upper_boundary =
-    Utilities::MPI::sum(pressure_upper_boundary, mpi_communicator);
-  upper_surface = Utilities::MPI::sum(upper_surface, mpi_communicator);
-
-  pressure_upper_boundary = pressure_upper_boundary / upper_surface;
-  pressure_lower_boundary = pressure_lower_boundary / lower_surface;
-  pressure_drop           = pressure_lower_boundary - pressure_upper_boundary;
-
-  return pressure_drop;
-}
 
 // Constructor for class GLS_VANS
 template <int dim>
@@ -1157,13 +1070,14 @@ GLSVANSSolver<dim>::post_processing()
 
   average_void_fraction = fluid_volume / bed_volume;
 
-  pressure_drop = calculate_pressure_drop<dim>(
+  QGauss<dim>     cell_quadrature_formula(this->number_quadrature_points);
+  QGauss<dim - 1> face_quadrature_formula(this->number_quadrature_points);
+  pressure_drop = calculate_pressure_drop(
     this->dof_handler,
     this->mapping,
-    this->mpi_communicator,
-    this->fe,
     this->evaluation_point,
-    this->number_quadrature_points,
+    cell_quadrature_formula,
+    face_quadrature_formula,
     this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
     this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id);
 

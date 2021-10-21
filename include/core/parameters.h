@@ -286,6 +286,15 @@ namespace Parameters
     // Enable velocity post-processing
     bool calculate_average_velocities;
 
+    // Enable pressure drop post-processing
+    bool calculate_pressure_drop;
+
+    // The outlet boundary ID for pressure drop calculation
+    unsigned int inlet_boundary_id;
+
+    // The outlet boundary ID for pressure drop calculation
+    unsigned int outlet_boundary_id;
+
     // Set initial time to start calculations for velocities
     double initial_time;
 
@@ -297,6 +306,9 @@ namespace Parameters
 
     // Prefix for kinectic energy output
     std::string kinetic_energy_output_name;
+
+    // Prefix for pressure drop output
+    std::string pressure_drop_output_name;
 
     // Prefix for the enstrophy output
     std::string enstrophy_output_name;
