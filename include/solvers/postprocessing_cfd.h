@@ -40,6 +40,33 @@
 #  include <core/boundary_conditions.h>
 #  include <core/parameters.h>
 
+/**
+ * @brief Calculate the pressure drop between two boundaries. The pressure drop thus calculated has units of Length^2/Time^2.
+ * @return Pressure drop of the flow between two boundaries of the domain
+ *
+ * @param dof_handler The dof_handler used for the calculation
+ *
+ * @param evaluation_point The solution for which the pressure drop is calculated. The velocity field is assumed to be the "dim" field
+ *
+ * @param cell_quadrature_formula The cell quadrature formula for the calculation
+ *
+ * @param face_quadrature_formula The face quadrature formula for the calculation
+ *
+ * @param mapping The mapping of the simulation
+ *
+ * @param inlet_boundary_id The id of the inlet boundary
+ *
+ * @param outlet_boundary_id The id of the outlet boundary
+ */
+template <int dim, typename VectorType>
+double
+calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
+                        std::shared_ptr<Mapping<dim>> mapping,
+                        const VectorType &            evaluation_point,
+                        const Quadrature<dim> &       cell_quadrature_formula,
+                        const Quadrature<dim - 1> &   face_quadrature_formula,
+                        const unsigned int            inlet_boundary_id,
+                        const unsigned int            outlet_boundary_id);
 
 /**
  * @brief Calculate the CFL condition on the simulation domain
@@ -51,23 +78,17 @@
  *
  * @param evaluation_point The solution for which the CFL is calculated. The velocity field is assumed to be the first field.
  *
- * @param mpi_communicator The mpi communicator. It is used to reduce the CFL calculation.
- *
- * @param fe The finite element of the simulation
- *
  * @param quadrature_formula The quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
-calculate_CFL(const DoFHandler<dim> &   dof_handler,
-              const VectorType &        evaluation_point,
-              const double              time_step,
-              const MPI_Comm &          mpi_communicator,
-              const FiniteElement<dim> &fe,
-              const Quadrature<dim> &   quadrature_formula,
-              const Mapping<dim> &      mapping);
+calculate_CFL(const DoFHandler<dim> &dof_handler,
+              const VectorType &     evaluation_point,
+              const double           time_step,
+              const Quadrature<dim> &quadrature_formula,
+              const Mapping<dim> &   mapping);
 
 /**
  * @brief Calculate the average enstrophy in the simulation domain
@@ -79,22 +100,16 @@ calculate_CFL(const DoFHandler<dim> &   dof_handler,
  *
  * @param evaluation_point The solution at which the force is calculated
  *
- * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
- *
- * @param fe The finite element of the simulation
- *
  * @param quadrature_formula The quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
-calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
-                    const VectorType &        evaluation_point,
-                    const MPI_Comm &          mpi_communicator,
-                    const FiniteElement<dim> &fe,
-                    const Quadrature<dim> &   quadrature_formula,
-                    const Mapping<dim> &      mapping);
+calculate_enstrophy(const DoFHandler<dim> &dof_handler,
+                    const VectorType &     evaluation_point,
+                    const Quadrature<dim> &quadrature_formula,
+                    const Mapping<dim> &   mapping);
 
 /**
  * @brief Calculate the average kinetic energy in the simulation domain
@@ -106,22 +121,16 @@ calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
  *
  * @param evaluation_point The solution at which the force is calculated
  *
- * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
- *
- * @param fe The finite element of the simulation
- *
  * @param quadrature_formula The quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
-calculate_kinetic_energy(const DoFHandler<dim> &   dof_handler,
-                         const VectorType &        evaluation_point,
-                         const MPI_Comm &          mpi_communicator,
-                         const FiniteElement<dim> &fe,
-                         const Quadrature<dim> &   quadrature_formula,
-                         const Mapping<dim> &      mapping);
+calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
+                         const VectorType &     evaluation_point,
+                         const Quadrature<dim> &quadrature_formula,
+                         const Mapping<dim> &   mapping);
 
 /**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
@@ -139,10 +148,6 @@ calculate_kinetic_energy(const DoFHandler<dim> &   dof_handler,
  *
  * @param boundary_conditions The boundary conditions object
  *
- * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
- *
- * @param fe The finite element of the simulation
- *
  * @param face_quadrature_formula The face quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
@@ -154,8 +159,6 @@ calculate_forces(
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const MPI_Comm &                                     mpi_communicator,
-  const FiniteElement<dim> &                           fe,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping);
 
@@ -176,10 +179,6 @@ calculate_forces(
  *
  * @param boundary_conditions The boundary conditions object.
  *
- * @param mpi_communicator The mpi communicator. It is used to reduce the torque calculation.
- *
- * @param fe The finite element of the simulation.
- *
  * @param face_quadrature_formula The face quadrature formula for the calculation.
  *
  * @param mapping The mapping of the simulation.
@@ -191,8 +190,6 @@ calculate_torques(
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const MPI_Comm &                                     mpi_communicator,
-  const FiniteElement<dim> &                           fe,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping);
 
@@ -212,23 +209,17 @@ calculate_torques(
  *
  * @param exact_solution The exact solution, a function of dim+1 component for velocity + pressure
  *
- * @param mpi_communicator The mpi communicator. It is used to reduce the error calculation.
- *
- * @param fe The finite element of the simulation.
- *
  * @param quadrature_formula The quadrature formula for the calculation.
  *
  * @param mapping The mapping of the simulation.
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_L2_error(const DoFHandler<dim> &   dof_handler,
-                   const VectorType &        evaluation_point,
-                   const Function<dim> *     exact_solution,
-                   const MPI_Comm &          mpi_communicator,
-                   const FiniteElement<dim> &fe,
-                   const Quadrature<dim> &   quadrature_formula,
-                   const Mapping<dim> &      mapping);
+calculate_L2_error(const DoFHandler<dim> &dof_handler,
+                   const VectorType &     evaluation_point,
+                   const Function<dim> *  exact_solution,
+                   const Quadrature<dim> &quadrature_formula,
+                   const Mapping<dim> &   mapping);
 
 
 /**
@@ -244,10 +235,6 @@ calculate_L2_error(const DoFHandler<dim> &   dof_handler,
  *
  * @param boundary_id. The inlet boundary
  *
- * @param mpi_communicator. The mpi communicator
- *
- * @param fe The finite element of the simulation
- *
  * @param face_quadrature_formula The face quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
@@ -257,8 +244,6 @@ std::pair<double, double>
 calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
                     const VectorType &         present_solution,
                     const unsigned int &       boundary_id,
-                    const MPI_Comm &           mpi_communicator,
-                    const FiniteElement<dim> & fe,
                     const Quadrature<dim - 1> &face_quadrature_formula,
                     const Mapping<dim> &       mapping);
 
