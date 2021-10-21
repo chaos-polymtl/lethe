@@ -60,11 +60,11 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
 
   std::vector<double> present_pressure_values(n_q_points);
 
-  double pressure_upper_boundary = 0;
-  double upper_surface           = 0;
-  double pressure_lower_boundary = 0;
-  double lower_surface           = 0;
-  double pressure_drop           = 0;
+  double pressure_outlet_boundary = 0;
+  double outlet_surface           = 0;
+  double pressure_inlet_boundary  = 0;
+  double inlet_surface            = 0;
+  double pressure_drop            = 0;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -83,20 +83,20 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
                       (face->boundary_id() == outlet_boundary_id))
                     {
                       fe_face_values.reinit(cell, face);
-                      pressure_upper_boundary +=
+                      pressure_outlet_boundary +=
                         present_pressure_values[q] * fe_face_values.JxW(q);
 
-                      upper_surface += fe_face_values.JxW(q);
+                      outlet_surface += fe_face_values.JxW(q);
                     }
 
                   if (face->at_boundary() &&
                       (face->boundary_id() == inlet_boundary_id))
                     {
                       fe_face_values.reinit(cell, face);
-                      pressure_lower_boundary +=
+                      pressure_inlet_boundary +=
                         present_pressure_values[q] * fe_face_values.JxW(q);
 
-                      lower_surface += fe_face_values.JxW(q);
+                      inlet_surface += fe_face_values.JxW(q);
                     }
                 }
             }
@@ -104,16 +104,16 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
     }
 
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-  pressure_lower_boundary =
-    Utilities::MPI::sum(pressure_lower_boundary, mpi_communicator);
-  lower_surface = Utilities::MPI::sum(lower_surface, mpi_communicator);
-  pressure_upper_boundary =
-    Utilities::MPI::sum(pressure_upper_boundary, mpi_communicator);
-  upper_surface = Utilities::MPI::sum(upper_surface, mpi_communicator);
+  pressure_inlet_boundary =
+    Utilities::MPI::sum(pressure_inlet_boundary, mpi_communicator);
+  inlet_surface = Utilities::MPI::sum(inlet_surface, mpi_communicator);
+  pressure_outlet_boundary =
+    Utilities::MPI::sum(pressure_outlet_boundary, mpi_communicator);
+  outlet_surface = Utilities::MPI::sum(outlet_surface, mpi_communicator);
 
-  pressure_upper_boundary = pressure_upper_boundary / upper_surface;
-  pressure_lower_boundary = pressure_lower_boundary / lower_surface;
-  pressure_drop           = pressure_lower_boundary - pressure_upper_boundary;
+  pressure_outlet_boundary = pressure_outlet_boundary / outlet_surface;
+  pressure_inlet_boundary  = pressure_inlet_boundary / inlet_surface;
+  pressure_drop            = pressure_inlet_boundary - pressure_outlet_boundary;
 
   return pressure_drop;
 }
