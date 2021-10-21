@@ -286,6 +286,15 @@ namespace Parameters
     // Enable velocity post-processing
     bool calculate_average_velocities;
 
+    // Enable pressure drop post-processing
+    bool calculate_pressure_drop;
+
+    // The outlet boundary ID for pressure drop calculation
+    unsigned int inlet_boundary_id;
+
+    // The outlet boundary ID for pressure drop calculation
+    unsigned int outlet_boundary_id;
+
     // Set initial time to start calculations for velocities
     double initial_time;
 
@@ -297,6 +306,9 @@ namespace Parameters
 
     // Prefix for kinectic energy output
     std::string kinetic_energy_output_name;
+
+    // Prefix for pressure drop output
+    std::string pressure_drop_output_name;
 
     // Prefix for the enstrophy output
     std::string enstrophy_output_name;
@@ -359,6 +371,7 @@ namespace Parameters
     enum class SolverType
     {
       newton,
+      inexact_newton_iteration,
       kinsol_newton
     };
 
@@ -381,14 +394,30 @@ namespace Parameters
     // Tolerance
     double tolerance;
 
-    // Relative Tolerance
-    double step_tolerance;
-
     // Maximal number of iterations for the Newton solver
     unsigned int max_iterations;
 
     // Residual precision
     unsigned int display_precision;
+
+
+    // Force RHS recalculation at the beginning of every non-linear steps
+    // This is required if there is a fixed point component to the non-linear
+    // solver that is changed at the beginning of every newton iteration.
+    // This is notably the case of the sharp edge method.
+    // The default value of this parameter is false.
+    bool force_rhs_calculation;
+
+    // Matrix reconstruction tolerance
+    // This parameter controls the reconstruction of the system matrix
+    // If the residual after a newton step is lower than previous_residual *
+    // matrix_tolerance then that iteration is considered sufficient and the
+    // matrix is not reassembled at the next iteration.
+    double matrix_tolerance;
+
+    // Relative Tolerance
+    double step_tolerance;
+
 
     static void
     declare_parameters(ParameterHandler &prm);

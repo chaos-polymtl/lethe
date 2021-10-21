@@ -28,6 +28,7 @@
 #include <core/parameters.h>
 
 #include "solvers/gls_navier_stokes.h"
+#include "solvers/postprocessing_cfd.h"
 
 #include <dem/dem.h>
 #include <dem/dem_properties.h>

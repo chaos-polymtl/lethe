@@ -147,7 +147,8 @@ subsection non-linear solver
   set max iterations          = 20
   set residual precision      = 15
   set verbosity               = quiet
-  set step tolerance     = 0.99
+  set step tolerance          = 0.99
+  set force rhs calculation   = true
 
 end
 # --------------------------------------------------

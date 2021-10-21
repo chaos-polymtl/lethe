@@ -160,6 +160,7 @@ subsection non-linear solver
   set max iterations          = 10
   set residual precision      = 15
   set verbosity               = quiet
+  set force rhs calculation   = true
 
 end
 # --------------------------------------------------

@@ -349,6 +349,9 @@ LetheGridTools::cell_pierced_by_edge(
     {
       return LetheGridTools::cell_pierced_by_edge<dim>(cell, edge_cell);
     }
+
+  // Default return statement in case loop is empty;
+  return false;
 }
 
 
