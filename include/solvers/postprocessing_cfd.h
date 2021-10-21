@@ -46,7 +46,7 @@
  *
  * @param dof_handler The dof_handler used for the calculation
  *
- * @param evaluation_point The solution for which the CFL is calculated. The velocity field is assumed to be the first field.
+ * @param evaluation_point The solution for which the pressure drop is calculated. The velocity field is assumed to be the "dim" field
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the CFL calculation.
  *
