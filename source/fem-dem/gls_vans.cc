@@ -1075,7 +1075,6 @@ GLSVANSSolver<dim>::post_processing()
   pressure_drop = calculate_pressure_drop(
     this->dof_handler,
     this->mapping,
-    this->fe,
     this->evaluation_point,
     cell_quadrature_formula,
     face_quadrature_formula,

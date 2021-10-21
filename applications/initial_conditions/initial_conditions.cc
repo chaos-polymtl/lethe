@@ -72,7 +72,6 @@ InitialConditionsNavierStokes<dim>::runTest()
     calculate_L2_error(this->dof_handler,
                        this->present_solution,
                        this->exact_solution,
-                       *this->fe,
                        *this->cell_quadrature,
                        *this->mapping);
   double error_L2projection = errors.first;
@@ -90,7 +89,6 @@ InitialConditionsNavierStokes<dim>::runTest()
     calculate_L2_error(this->dof_handler,
                        this->present_solution,
                        this->exact_solution,
-                       *this->fe,
                        *this->cell_quadrature,
                        *this->mapping);
   double error_nodal = errors_nodal.first;

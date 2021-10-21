@@ -48,8 +48,6 @@
  *
  * @param evaluation_point The solution for which the pressure drop is calculated. The velocity field is assumed to be the "dim" field
  *
- * @param fe The finite element of the simulation
- *
  * @param cell_quadrature_formula The cell quadrature formula for the calculation
  *
  * @param face_quadrature_formula The face quadrature formula for the calculation
@@ -62,14 +60,13 @@
  */
 template <int dim, typename VectorType>
 double
-calculate_pressure_drop(const DoFHandler<dim> &             dof_handler,
-                        std::shared_ptr<Mapping<dim>>       mapping,
-                        std::shared_ptr<FESystem<dim, dim>> fe,
-                        const VectorType &                  evaluation_point,
-                        const Quadrature<dim> &    cell_quadrature_formula,
-                        const Quadrature<dim - 1> &face_quadrature_formula,
-                        const unsigned int         inlet_boundary_id,
-                        const unsigned int         outlet_boundary_id);
+calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
+                        std::shared_ptr<Mapping<dim>> mapping,
+                        const VectorType &            evaluation_point,
+                        const Quadrature<dim> &       cell_quadrature_formula,
+                        const Quadrature<dim - 1> &   face_quadrature_formula,
+                        const unsigned int            inlet_boundary_id,
+                        const unsigned int            outlet_boundary_id);
 
 /**
  * @brief Calculate the CFL condition on the simulation domain
@@ -81,20 +78,17 @@ calculate_pressure_drop(const DoFHandler<dim> &             dof_handler,
  *
  * @param evaluation_point The solution for which the CFL is calculated. The velocity field is assumed to be the first field.
  *
- * @param fe The finite element of the simulation
- *
  * @param quadrature_formula The quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
-calculate_CFL(const DoFHandler<dim> &   dof_handler,
-              const VectorType &        evaluation_point,
-              const double              time_step,
-              const FiniteElement<dim> &fe,
-              const Quadrature<dim> &   quadrature_formula,
-              const Mapping<dim> &      mapping);
+calculate_CFL(const DoFHandler<dim> &dof_handler,
+              const VectorType &     evaluation_point,
+              const double           time_step,
+              const Quadrature<dim> &quadrature_formula,
+              const Mapping<dim> &   mapping);
 
 /**
  * @brief Calculate the average enstrophy in the simulation domain
@@ -106,19 +100,16 @@ calculate_CFL(const DoFHandler<dim> &   dof_handler,
  *
  * @param evaluation_point The solution at which the force is calculated
  *
- * @param fe The finite element of the simulation
- *
  * @param quadrature_formula The quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
-calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
-                    const VectorType &        evaluation_point,
-                    const FiniteElement<dim> &fe,
-                    const Quadrature<dim> &   quadrature_formula,
-                    const Mapping<dim> &      mapping);
+calculate_enstrophy(const DoFHandler<dim> &dof_handler,
+                    const VectorType &     evaluation_point,
+                    const Quadrature<dim> &quadrature_formula,
+                    const Mapping<dim> &   mapping);
 
 /**
  * @brief Calculate the average kinetic energy in the simulation domain
@@ -130,19 +121,16 @@ calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
  *
  * @param evaluation_point The solution at which the force is calculated
  *
- * @param fe The finite element of the simulation
- *
  * @param quadrature_formula The quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
-calculate_kinetic_energy(const DoFHandler<dim> &   dof_handler,
-                         const VectorType &        evaluation_point,
-                         const FiniteElement<dim> &fe,
-                         const Quadrature<dim> &   quadrature_formula,
-                         const Mapping<dim> &      mapping);
+calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
+                         const VectorType &     evaluation_point,
+                         const Quadrature<dim> &quadrature_formula,
+                         const Mapping<dim> &   mapping);
 
 /**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
@@ -160,8 +148,6 @@ calculate_kinetic_energy(const DoFHandler<dim> &   dof_handler,
  *
  * @param boundary_conditions The boundary conditions object
  *
- * @param fe The finite element of the simulation
- *
  * @param face_quadrature_formula The face quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
@@ -173,7 +159,6 @@ calculate_forces(
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const FiniteElement<dim> &                           fe,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping);
 
@@ -194,8 +179,6 @@ calculate_forces(
  *
  * @param boundary_conditions The boundary conditions object.
  *
- * @param fe The finite element of the simulation.
- *
  * @param face_quadrature_formula The face quadrature formula for the calculation.
  *
  * @param mapping The mapping of the simulation.
@@ -207,7 +190,6 @@ calculate_torques(
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-  const FiniteElement<dim> &                           fe,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping);
 
@@ -227,20 +209,17 @@ calculate_torques(
  *
  * @param exact_solution The exact solution, a function of dim+1 component for velocity + pressure
  *
- * @param fe The finite element of the simulation.
- *
  * @param quadrature_formula The quadrature formula for the calculation.
  *
  * @param mapping The mapping of the simulation.
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_L2_error(const DoFHandler<dim> &   dof_handler,
-                   const VectorType &        evaluation_point,
-                   const Function<dim> *     exact_solution,
-                   const FiniteElement<dim> &fe,
-                   const Quadrature<dim> &   quadrature_formula,
-                   const Mapping<dim> &      mapping);
+calculate_L2_error(const DoFHandler<dim> &dof_handler,
+                   const VectorType &     evaluation_point,
+                   const Function<dim> *  exact_solution,
+                   const Quadrature<dim> &quadrature_formula,
+                   const Mapping<dim> &   mapping);
 
 
 /**
@@ -256,8 +235,6 @@ calculate_L2_error(const DoFHandler<dim> &   dof_handler,
  *
  * @param boundary_id. The inlet boundary
  *
- * @param fe The finite element of the simulation
- *
  * @param face_quadrature_formula The face quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
@@ -267,7 +244,6 @@ std::pair<double, double>
 calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
                     const VectorType &         present_solution,
                     const unsigned int &       boundary_id,
-                    const FiniteElement<dim> & fe,
                     const Quadrature<dim - 1> &face_quadrature_formula,
                     const Mapping<dim> &       mapping);
 
