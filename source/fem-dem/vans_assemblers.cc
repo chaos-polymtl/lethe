@@ -444,34 +444,33 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  unsigned int particle_index;
+  // particle_number is an increment that goes from 0 to n_particles_in_cell. It
+  // is incremented at the end of the loop over particles and is used to point
+  // to the element of the vectors relative_velocity and
+  // fluid_velocity_at_particle_location corresponding to the particle being
+  // looped over.
+  unsigned int particle_number;
   double       c_d       = 0;
   auto &       beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
-  const auto pic = scratch_data.pic;
-  beta_drag      = 0;
-  particle_index = 0;
+  const auto pic  = scratch_data.pic;
+  beta_drag       = 0;
+  particle_number = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
     {
       auto particle_properties = particle.get_properties();
 
-      // Set the parctile_fluid_interactions to zero
-      for (int d = 0; d < dim; ++d)
-        {
-          particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
-        }
-
       relative_velocity =
-        scratch_data.fluid_velocity_at_particle_location[particle_index] -
-        scratch_data.particle_velocity[particle_index];
+        scratch_data.fluid_velocity_at_particle_location[particle_number] -
+        scratch_data.particle_velocity[particle_number];
 
       double cell_void_fraction =
-        scratch_data.cell_void_fraction[particle_index];
+        scratch_data.cell_void_fraction[particle_number];
 
       // Particle's Reynolds number
       double re = 1e-1 + relative_velocity.norm() *
@@ -499,7 +498,7 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
             drag_force[d];
         }
 
-      particle_index += 1;
+      particle_number += 1;
     }
 
   beta_drag = beta_drag / scratch_data.cell_volume;
@@ -515,34 +514,28 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  unsigned int particle_index;
+  unsigned int particle_number;
   double       c_d       = 0;
   auto &       beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
-  const auto pic = scratch_data.pic;
-  beta_drag      = 0;
-  particle_index = 0;
+  const auto pic  = scratch_data.pic;
+  beta_drag       = 0;
+  particle_number = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
     {
       auto particle_properties = particle.get_properties();
 
-      // Set the parctile_fluid_interactions to zero
-      for (int d = 0; d < dim; ++d)
-        {
-          particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
-        }
-
       relative_velocity =
-        scratch_data.fluid_velocity_at_particle_location[particle_index] -
-        scratch_data.particle_velocity[particle_index];
+        scratch_data.fluid_velocity_at_particle_location[particle_number] -
+        scratch_data.particle_velocity[particle_number];
 
       double cell_void_fraction =
-        scratch_data.cell_void_fraction[particle_index];
+        scratch_data.cell_void_fraction[particle_number];
 
       // Particle's Reynolds number
       double re = 1e-1 + relative_velocity.norm() *
@@ -573,7 +566,7 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
             drag_force[d];
         }
 
-      particle_index += 1;
+      particle_number += 1;
     }
 
   beta_drag = beta_drag / scratch_data.cell_volume;

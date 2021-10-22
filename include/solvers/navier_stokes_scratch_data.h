@@ -428,6 +428,12 @@ public:
       {
         auto particle_properties = particle.get_properties();
 
+        // Set the parctile_fluid_interactions properties to zero
+        for (int d = 0; d < dim; ++d)
+          {
+            particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
+          }
+
         cell_void_fraction[particle_number]                  = 0;
         fluid_velocity_at_particle_location[particle_number] = 0;
 
@@ -545,7 +551,7 @@ public:
   unsigned int                number_of_locally_owned_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double                                                            cell_volume;
-  double                                                            beta_drag;
+  double beta_drag;:wq
 };
 
 #endif
