@@ -551,7 +551,7 @@ public:
   unsigned int                number_of_locally_owned_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double                                                            cell_volume;
-  double beta_drag;:wq
+  double                                                            beta_drag;
 };
 
 #endif
