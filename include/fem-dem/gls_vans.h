@@ -206,7 +206,6 @@ protected:
 
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
-private:
   void
   read_dem();
 

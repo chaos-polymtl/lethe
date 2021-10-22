@@ -361,6 +361,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 {
+  TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
   // Particle-particle contact force
   pp_contact_force_object->calculate_pp_contact_force(local_adjacent_particles,
                                                       ghost_adjacent_particles,
@@ -406,6 +407,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
+  TimerOutput::Scope t(this->computing_timer, "DEM_Contact_Build");
   // Check to see if it is contact search step
   contact_detection_step = check_contact_search_step_constant(counter);
 
@@ -507,7 +509,8 @@ template <int dim>
 void
 CFDDEMSolver<dim>::write_DEM_output_results()
 {
-  const std::string folder = this->cfd_dem_simulation_parameters.dem_parameters
+  TimerOutput::Scope t(this->computing_timer, "DEM_Output_Results");
+  const std::string  folder = this->cfd_dem_simulation_parameters.dem_parameters
                                .simulation_control.output_folder;
   const std::string particles_solution_name =
     this->cfd_dem_simulation_parameters.dem_parameters.simulation_control
@@ -665,7 +668,10 @@ CFDDEMSolver<dim>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
   // Reading DEM restart file information
-  read_dem();
+  if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
+      this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+          .restart == false)
+    read_dem();
 
   this->setup_dofs();
   this->calculate_void_fraction(this->simulation_control->get_current_time());
