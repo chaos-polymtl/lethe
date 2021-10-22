@@ -3,7 +3,6 @@
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-
 #include <fem-dem/vans_assemblers.h>
 
 template <int dim>
@@ -445,9 +444,9 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  auto & particle_index = scratch_data.particle_index;
-  double c_d            = 0;
-  auto & beta_drag      = scratch_data.beta_drag;
+  unsigned int particle_index;
+  double       c_d       = 0;
+  auto &       beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
@@ -460,6 +459,12 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   for (auto &particle : pic)
     {
       auto particle_properties = particle.get_properties();
+
+      // Set the parctile_fluid_interactions to zero
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
+        }
 
       relative_velocity =
         scratch_data.fluid_velocity_at_particle_location[particle_index] -
@@ -488,9 +493,11 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
       drag_force = this->physical_properties.density *
                    momentum_transfer_coefficient * relative_velocity;
 
-      particle_properties[DEM::PropertiesIndex::fem_force_x] = drag_force[0];
-      particle_properties[DEM::PropertiesIndex::fem_force_y] = drag_force[1];
-      particle_properties[DEM::PropertiesIndex::fem_force_z] = drag_force[2];
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
+        }
 
       particle_index += 1;
     }
@@ -508,9 +515,9 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  auto & particle_index = scratch_data.particle_index;
-  double c_d            = 0;
-  auto & beta_drag      = scratch_data.beta_drag;
+  unsigned int particle_index;
+  double       c_d       = 0;
+  auto &       beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
@@ -523,6 +530,12 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   for (auto &particle : pic)
     {
       auto particle_properties = particle.get_properties();
+
+      // Set the parctile_fluid_interactions to zero
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
+        }
 
       relative_velocity =
         scratch_data.fluid_velocity_at_particle_location[particle_index] -
@@ -554,9 +567,11 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
       drag_force = this->physical_properties.density *
                    momentum_transfer_coefficient * relative_velocity;
 
-      particle_properties[DEM::PropertiesIndex::fem_force_x] = drag_force[0];
-      particle_properties[DEM::PropertiesIndex::fem_force_y] = drag_force[1];
-      particle_properties[DEM::PropertiesIndex::fem_force_z] = drag_force[2];
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
+        }
 
       particle_index += 1;
     }
@@ -573,11 +588,7 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  auto &particle_index = scratch_data.particle_index;
-
-  const auto pic = scratch_data.pic;
-  particle_index = 0;
-
+  const auto     pic = scratch_data.pic;
   Tensor<1, dim> buoyancy_force;
 
   // Loop over particles in cell
@@ -591,14 +602,11 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
         (4.0 / 3) * M_PI *
         pow((particle_properties[DEM::PropertiesIndex::dp] / 2.0), 3);
 
-      particle_properties[DEM::PropertiesIndex::fem_force_x] +=
-        buoyancy_force[0];
-      particle_properties[DEM::PropertiesIndex::fem_force_y] +=
-        buoyancy_force[1];
-      particle_properties[DEM::PropertiesIndex::fem_force_z] +=
-        buoyancy_force[2];
-
-      particle_index += 1;
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            buoyancy_force[d];
+        }
     }
 }
 

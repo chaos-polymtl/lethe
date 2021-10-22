@@ -16,8 +16,14 @@
  *
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
-#include <core/solutions_output.h>
+#include <deal.II/base/table_handler.h>
 
+#include <deal.II/fe/mapping_q_generic.h>
+
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_out.h>
+
+#include <core/solutions_output.h>
 #include <dem/dem.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -41,13 +47,6 @@
 #include <dem/uniform_insertion.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
-
-#include <deal.II/base/table_handler.h>
-
-#include <deal.II/fe/mapping_q_generic.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_out.h>
 
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
@@ -920,7 +919,6 @@ DEMSolver<dim>::solve()
             &cells_ghost_neighbor_list,
             local_contact_pair_candidates,
             ghost_contact_pair_candidates);
-
 
           // Updating number of contact builds
           contact_build_number++;

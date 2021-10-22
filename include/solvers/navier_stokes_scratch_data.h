@@ -14,12 +14,6 @@
  * ---------------------------------------------------------------------
  */
 
-#include <core/bdf.h>
-#include <core/parameters.h>
-
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
-
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -32,6 +26,11 @@
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
+
+#include <core/bdf.h>
+#include <core/parameters.h>
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
 
 
 #ifndef lethe_navier_stokes_scratch_data_h
@@ -547,7 +546,6 @@ public:
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double                                                            cell_volume;
   double                                                            beta_drag;
-  unsigned int particle_index;
 };
 
 #endif
