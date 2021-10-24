@@ -55,13 +55,13 @@ private:
    * @brief Carries out the DEM calculations in the DEM_CFD solver. Particle-particle and particle-wall contact force calculations, integration and update_ghost
    */
   void
-  dem_iterator();
+  dem_iterator(unsigned int counter);
 
   /**
    * @brief Carries out the particle-particle and particle-wall contact searches, sort_particles_into_subdomains_and_cells and exchange_ghost
    */
   void
-  dem_contact_build();
+  dem_contact_build(unsigned int counter);
 
   /**
    * @brief Carries out the initialization of DEM parameters
@@ -102,7 +102,7 @@ private:
    * Finds contact search steps for constant contact search method
    */
   inline bool
-  check_contact_search_step_constant();
+  check_contact_search_step_constant(unsigned int counter);
 
   /**
    * @brief Updates moment of inertia container after sorting particles
@@ -152,9 +152,9 @@ private:
 
 
   unsigned int                coupling_frequency;
-  bool                        contact_detection_step = true;
-  bool                        checkpoint_step        = true;
-  bool                        load_balance_step      = true;
+  bool                        contact_detection_step = false;
+  bool                        checkpoint_step        = false;
+  bool                        load_balance_step      = false;
   std::vector<Tensor<1, dim>> momentum;
   std::vector<Tensor<1, dim>> force;
   std::vector<double>         displacement;
