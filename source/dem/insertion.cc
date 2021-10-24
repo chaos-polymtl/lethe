@@ -74,17 +74,31 @@ Insertion<dim>::assign_particle_properties(
         -particle_sizes[particle_counter];
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
-      double vel_x   = 0.;
-      double vel_y   = 0.;
-      double vel_z   = 0.;
-      double omega_x = 0.;
-      double omega_y = 0.;
-      double omega_z = 0.;
-      double mass    = density * (4. / 3. * M_PI * (diameter * 0.5) *
+      double vel_x       = 0.;
+      double vel_y       = 0.;
+      double vel_z       = 0.;
+      double omega_x     = 0.;
+      double omega_y     = 0.;
+      double omega_z     = 0.;
+      double fem_force_x = 0.;
+      double fem_force_y = 0.;
+      double fem_force_z = 0.;
+      double mass        = density * (4. / 3. * M_PI * (diameter * 0.5) *
                                (diameter * 0.5) * (diameter * 0.5));
 
-      std::vector<double> properties_of_one_particle{
-        type, diameter, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z, mass};
+
+      std::vector<double> properties_of_one_particle{type,
+                                                     diameter,
+                                                     vel_x,
+                                                     vel_y,
+                                                     vel_z,
+                                                     omega_x,
+                                                     omega_y,
+                                                     omega_z,
+                                                     fem_force_x,
+                                                     fem_force_y,
+                                                     fem_force_z,
+                                                     mass};
 
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();

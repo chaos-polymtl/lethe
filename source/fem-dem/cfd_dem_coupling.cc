@@ -19,10 +19,9 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
-  contact_detection_frequency = coupling_frequency;
-  this->pcout << "Warning: DEM contact detection frequency is set to "
-              << contact_detection_frequency
-              << " (equal to coupling frequency) " << std::endl;
+  contact_detection_frequency =
+    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
+      .contact_detection_frequency;
 
   maximum_particle_diameter =
     find_maximum_particle_size(this->cfd_dem_simulation_parameters
@@ -157,13 +156,10 @@ CFDDEMSolver<dim>::read_dem()
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::check_contact_search_step_constant()
+CFDDEMSolver<dim>::check_contact_search_step_constant(unsigned int counter)
 {
-  return ((this->simulation_control->get_step_number() %
-           contact_detection_frequency) == 0);
+  return ((counter % contact_detection_frequency) == 0);
 }
-
-
 
 template <int dim>
 void
@@ -213,8 +209,6 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
 
   this->particle_handler.exchange_ghost_particles(true);
-
-
 
   // Updating moment of inertia container
   update_moment_of_inertia(this->particle_handler, MOI);
@@ -342,15 +336,30 @@ template <int dim>
 void
 CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
 {
-  for (unsigned int counter = 0; counter < force.size(); ++counter)
+  for (auto particle = this->particle_handler.begin();
+       particle != this->particle_handler.end();
+       ++particle)
     {
-      force[counter] += this->fluid_solid_force[counter];
+      auto particle_properties = particle->get_properties();
+
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      types::particle_index particle_id = particle->get_local_index();
+#else
+      types::particle_index particle_id = particle->get_id();
+#endif
+
+      force[particle_id][0] +=
+        particle_properties[DEM::PropertiesIndex::fem_force_x];
+      force[particle_id][1] +=
+        particle_properties[DEM::PropertiesIndex::fem_force_y];
+      force[particle_id][2] +=
+        particle_properties[DEM::PropertiesIndex::fem_force_z];
     }
 }
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_iterator()
+CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 {
   // Particle-particle contact force
   pp_contact_force_object->calculate_pp_contact_force(local_adjacent_particles,
@@ -386,20 +395,24 @@ CFDDEMSolver<dim>::dem_iterator()
         force,
         MOI);
     }
+
+  // dem_contact_build carries out the particle-particle and particle-wall
+  // broad and fine searches, sort_particles_into_subdomains_and_cells, and
+  // exchange_ghost
+  dem_contact_build(counter);
 }
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_contact_build()
+CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
   // Check to see if it is contact search step
-  contact_detection_step = check_contact_search_step_constant();
+  contact_detection_step = check_contact_search_step_constant(counter);
 
   // Sort particles in cells
   if (contact_detection_step || checkpoint_step || load_balance_step)
     {
-      this->pcout << "DEM contact search at step "
-                  << this->simulation_control->get_step_number() << std::endl;
+      this->pcout << "DEM contact search at dem step " << counter << std::endl;
 
       // Reset checkpoint step
       checkpoint_step = false;
@@ -421,8 +434,6 @@ CFDDEMSolver<dim>::dem_contact_build()
       momentum.resize(displacement.size());
 
       this->particle_handler.exchange_ghost_particles(true);
-
-
 
       // Updating moment of inertia container
       update_moment_of_inertia(this->particle_handler, MOI);
@@ -477,8 +488,6 @@ CFDDEMSolver<dim>::dem_contact_build()
 
       // Particles-wall fine search
       particle_wall_fine_search();
-
-      this->pcout << "Finished DEM contact search " << std::endl;
     }
 
   // Visualization
@@ -710,14 +719,8 @@ CFDDEMSolver<dim>::solve()
             {
               // dem_iterator carries out the particle-particle and
               // particle_wall force calculations, integration and update_ghost
-              dem_iterator();
+              dem_iterator(dem_counter);
             }
-
-          // dem_contact_build carries out the particle-particle and
-          // particle-wall broad and fine searches,
-          // sort_particles_into_subdomains_and_cells, and exchange_ghost
-          dem_contact_build();
-
 
           this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                       << std::endl;
@@ -765,16 +768,11 @@ CFDDEMSolver<dim>::solve()
             {
               // dem_iterator carries out the particle-particle and
               // particle_wall force calculations, integration and update_ghost
-              dem_iterator();
+              dem_iterator(dem_counter);
             }
           this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                       << std::endl;
         }
-
-      // dem_contact_build carries out the particle-particle and particle-wall
-      // broad and fine searches, sort_particles_into_subdomains_and_cells, and
-      // exchange_ghost
-      dem_contact_build();
 
       this->postprocess(false);
       this->finish_time_step();

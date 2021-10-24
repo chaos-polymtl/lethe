@@ -1,5 +1,4 @@
 Running on 1 MPI rank(s)...
-Warning: DEM contact detection frequency is set to 100 (equal to coupling frequency) 
 Reading DEM checkpoint 
 Finished reading DEM checkpoint 
 1 particles are in the simulation 
@@ -17,11 +16,17 @@ Particle Summary
 id: 0,  x: 0.0825,  y: 0.0005,  z: -0.0005,  v_x: 0,  v_y: 0,  vz: 0
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 1
-DEM contact search at step 1
-Finished DEM contact search 
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 1
-Finished DEM contact search 
 
 *****************************************************************
 Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0       
@@ -31,1182 +36,1974 @@ Particle Summary
 id: 0,  x: 0.08249702163,  y: 0.0005,  z: -0.0005,  v_x: -0.005897772,  v_y: 0,  vz: 0
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 2
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 2
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 3.647641834e-10
+Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 3.647641947e-10
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: 0.08248815626,  y: 0.0005,  z: -0.0005,  v_x: -0.01177419129,  v_y: 0,  vz: 0
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 3
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 3
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 1.22356496e-09
+Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 1.223565025e-09
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08247343118,  y: 0.0005,  z: -0.0005,  v_x: -0.01761754156,  v_y: -2.470234744e-12,  vz: 2.447935377e-12
+id: 0,  x: 0.08247343118,  y: 0.0005,  z: -0.0005,  v_x: -0.01761754155,  v_y: -2.469205224e-12,  vz: 2.446909287e-12
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 4
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 4
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 2.641826623e-09
+Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 2.641826825e-09
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08245288387,  y: 0.0005,  z: -0.0005,  v_x: -0.02341905099,  v_y: -1.016817184e-11,  vz: 1.005206417e-11
+id: 0,  x: 0.08245288387,  y: 0.0005,  z: -0.0005,  v_x: -0.02341905097,  v_y: -1.016160569e-11,  vz: 1.004551194e-11
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 5
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 5
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 6        Time : 0.006    Time step : 0.001    CFL : 4.665212781e-09
+Transient iteration : 6        Time : 0.006    Time step : 0.001    CFL : 4.665213249e-09
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08242656004,  y: 0.0005,  z: -0.0005,  v_x: -0.02917110124,  v_y: -2.494529269e-11,  vz: 2.464059604e-11
+id: 0,  x: 0.08242656004,  y: 0.0005,  z: -0.0005,  v_x: -0.02917110121,  v_y: -2.492202961e-11,  vz: 2.461736875e-11
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 6
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 6
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 7        Time : 0.007    Time step : 0.001    CFL : 7.326640404e-09
+Transient iteration : 7        Time : 0.007    Time step : 0.001    CFL : 7.326641316e-09
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08239451259,  y: 0.0004999999999,  z: -0.0004999999999,  v_x: -0.03486684557,  v_y: -4.777090234e-11,  vz: 4.716459702e-11
+id: 0,  x: 0.08239451259,  y: 0.0004999999999,  z: -0.0004999999999,  v_x: -0.03486684551,  v_y: -4.770941279e-11,  vz: 4.710317943e-11
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 7
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 7
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 8        Time : 0.008    Time step : 0.001    CFL : 1.064985492e-08
+Transient iteration : 8        Time : 0.008    Time step : 0.001    CFL : 1.064985651e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08235680097,  y: 0.0004999999999,  z: -0.0004999999999,  v_x: -0.04050004703,  v_y: -7.873752845e-11,  vz: 7.77147201e-11
+id: 0,  x: 0.08235680097,  y: 0.0004999999999,  z: -0.0004999999999,  v_x: -0.04050004692,  v_y: -7.860175818e-11,  vz: 7.757907409e-11
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 8
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 8
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 9        Time : 0.009    Time step : 0.001    CFL : 1.465135709e-08
+Transient iteration : 9        Time : 0.009    Time step : 0.001    CFL : 1.465135964e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08231349063,  y: 0.0004999999998,  z: -0.0004999999998,  v_x: -0.04606499408,  v_y: -1.171503372e-10,  vz: 1.156064226e-10
+id: 0,  x: 0.08231349063,  y: 0.0004999999998,  z: -0.0004999999998,  v_x: -0.04606499389,  v_y: -1.168852206e-10,  vz: 1.153414982e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 9
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 9
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 10       Time : 0.01     Time step : 0.001    CFL : 1.934162414e-08
+Transient iteration : 10       Time : 0.01     Time step : 0.001    CFL : 1.934162799e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08226465245,  y: 0.0004999999996,  z: -0.0004999999996,  v_x: -0.05155645086,  v_y: -1.616163257e-10,  vz: 1.594680064e-10
+id: 0,  x: 0.08226465245,  y: 0.0004999999996,  z: -0.0004999999996,  v_x: -0.05155645057,  v_y: -1.611430727e-10,  vz: 1.589950254e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 10
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 10
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 11       Time : 0.011    Time step : 0.001    CFL : 2.472595639e-08
+Transient iteration : 11       Time : 0.011    Time step : 0.001    CFL : 2.472596192e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08221036234,  y: 0.0004999999995,  z: -0.0004999999995,  v_x: -0.05696962509,  v_y: -2.101591814e-10,  vz: 2.073506111e-10
+id: 0,  x: 0.08221036235,  y: 0.0004999999995,  z: -0.0004999999995,  v_x: -0.05696962467,  v_y: -2.093704449e-10,  vz: 2.065622319e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 11
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 11
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 12       Time : 0.012    Time step : 0.001    CFL : 3.080513818e-08
+Transient iteration : 12       Time : 0.012    Time step : 0.001    CFL : 3.080514584e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08215070081,  y: 0.0004999999992,  z: -0.0004999999992,  v_x: -0.06230014542,  v_y: -2.603409032e-10,  vz: 2.568472928e-10
+id: 0,  x: 0.08215070081,  y: 0.0004999999992,  z: -0.0004999999992,  v_x: -0.06230014483,  v_y: -2.590959359e-10,  vz: 2.556027635e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 12
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 12
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 13       Time : 0.013    Time step : 0.001    CFL : 3.75759767e-08
+Transient iteration : 13       Time : 0.013    Time step : 0.001    CFL : 3.757598697e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08208575249,  y: 0.0004999999989,  z: -0.0004999999989,  v_x: -0.06754404424,  v_y: -3.093936207e-10,  vz: 3.052234676e-10
+id: 0,  x: 0.08208575249,  y: 0.0004999999989,  z: -0.0004999999989,  v_x: -0.06754404342,  v_y: -3.075135245e-10,  vz: 3.033438718e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 13
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 13
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 14       Time : 0.014    Time step : 0.001    CFL : 4.503174829e-08
+Transient iteration : 14       Time : 0.014    Time step : 0.001    CFL : 4.50317617e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08201560583,  y: 0.0004999999986,  z: -0.0004999999986,  v_x: -0.07269774334,  v_y: -3.543588127e-10,  vz: 3.495563144e-10
+id: 0,  x: 0.08201560583,  y: 0.0004999999986,  z: -0.0004999999986,  v_x: -0.07269774224,  v_y: -3.516219794e-10,  vz: 3.468200084e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 14
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 14
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 15       Time : 0.015    Time step : 0.001    CFL : 5.316257542e-08
+Transient iteration : 15       Time : 0.015    Time step : 0.001    CFL : 5.316259251e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08194035264,  y: 0.0004999999982,  z: -0.0004999999982,  v_x: -0.07775804128,  v_y: -3.922337428e-10,  vz: 3.868816982e-10
+id: 0,  x: 0.08194035264,  y: 0.0004999999982,  z: -0.0004999999983,  v_x: -0.07775803985,  v_y: -3.883715766e-10,  vz: 3.830200298e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 15
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 15
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 16       Time : 0.016    Time step : 0.001    CFL : 6.195575611e-08
+Transient iteration : 16       Time : 0.016    Time step : 0.001    CFL : 6.195577748e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08186008774,  y: 0.0004999999978,  z: -0.0004999999978,  v_x: -0.08272210142,  v_y: -4.201219283e-10,  vz: 4.143448713e-10
+id: 0,  x: 0.08186008775,  y: 0.0004999999978,  z: -0.0004999999979,  v_x: -0.08272209959,  v_y: -4.148149303e-10,  vz: 4.090382608e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 16
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 16
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 17       Time : 0.017    Time step : 0.001    CFL : 7.13960636e-08
+Transient iteration : 17       Time : 0.017    Time step : 0.001    CFL : 7.139608987e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08177490865,  y: 0.0004999999974,  z: -0.0004999999974,  v_x: -0.08758744012,  v_y: -4.353837233e-10,  vz: 4.293507246e-10
+id: 0,  x: 0.08177490866,  y: 0.0004999999974,  z: -0.0004999999974,  v_x: -0.08758743782,  v_y: -4.282580073e-10,  vz: 4.22225177e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 17
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 17
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 18       Time : 0.018    Time step : 0.001    CFL : 8.146602672e-08
+Transient iteration : 18       Time : 0.018    Time step : 0.001    CFL : 8.146605853e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08168491515,  y: 0.000499999997,  z: -0.000499999997,  v_x: -0.09235191496,  v_y: -4.357826001e-10,  vz: 4.297093383e-10
+id: 0,  x: 0.08168491516,  y: 0.000499999997,  z: -0.000499999997,  v_x: -0.09235191211,  v_y: -4.264068997e-10,  vz: 4.203334472e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 18
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 18
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 19       Time : 0.019    Time step : 0.001    CFL : 9.214619589e-08
+Transient iteration : 19       Time : 0.019    Time step : 0.001    CFL : 9.214623387e-08
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08159020902,  y: 0.0004999999965,  z: -0.0004999999966,  v_x: -0.09701371255,  v_y: -4.196233809e-10,  vz: 4.13773363e-10
+id: 0,  x: 0.08159020904,  y: 0.0004999999966,  z: -0.0004999999966,  v_x: -0.09701370907,  v_y: -4.075065945e-10,  vz: 4.016558524e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 19
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 19
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 20       Time : 0.02     Time step : 0.001    CFL : 1.034044219e-07
+Transient iteration : 20       Time : 0.02     Time step : 0.001    CFL : 1.034044667e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08149089371,  y: 0.0004999999961,  z: -0.0004999999962,  v_x: -0.101571336,  v_y: -3.858795918e-10,  vz: 3.805646463e-10
+id: 0,  x: 0.08149089373,  y: 0.0004999999962,  z: -0.0004999999962,  v_x: -0.1015713318,  v_y: -3.704689024e-10,  vz: 3.651524877e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 20
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 20
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 21       Time : 0.021    Time step : 0.001    CFL : 1.152391381e-07
+Transient iteration : 21       Time : 0.021    Time step : 0.001    CFL : 1.152391904e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08138707399,  y: 0.0004999999958,  z: -0.0004999999958,  v_x: -0.1060235921,  v_y: -3.33190815e-10,  vz: 3.292681924e-10
+id: 0,  x: 0.08138707401,  y: 0.0004999999958,  z: -0.0004999999959,  v_x: -0.1060235871,  v_y: -3.138731148e-10,  vz: 3.099474731e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 21
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 21
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 22       Time : 0.022    Time step : 0.001    CFL : 1.276199507e-07
+Transient iteration : 22       Time : 0.022    Time step : 0.001    CFL : 1.276200111e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08127885567,  y: 0.0004999999955,  z: -0.0004999999955,  v_x: -0.1103695777,  v_y: -2.607050391e-10,  vz: 2.584317954e-10
+id: 0,  x: 0.0812788557,  y: 0.0004999999956,  z: -0.0004999999956,  v_x: -0.1103695718,  v_y: -2.368033522e-10,  vz: 2.345245314e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 22
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 22
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 23       Time : 0.023    Time step : 0.001    CFL : 1.405189242e-07
+Transient iteration : 23       Time : 0.023    Time step : 0.001    CFL : 1.405189933e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08116634535,  y: 0.0004999999953,  z: -0.0004999999953,  v_x: -0.1146086664,  v_y: -1.704787127e-10,  vz: 1.700392657e-10
+id: 0,  x: 0.08116634539,  y: 0.0004999999954,  z: -0.0004999999954,  v_x: -0.1146086596,  v_y: -1.412519656e-10,  vz: 1.408034484e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 23
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 23
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 24       Time : 0.024    Time step : 0.001    CFL : 1.539094362e-07
+Transient iteration : 24       Time : 0.024    Time step : 0.001    CFL : 1.539095146e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08104965012,  y: 0.0004999999951,  z: -0.0004999999952,  v_x: -0.1187404945,  v_y: -6.556446982e-11,  vz: 6.706082861e-11
+id: 0,  x: 0.08104965016,  y: 0.0004999999953,  z: -0.0004999999953,  v_x: -0.1187404865,  v_y: -3.020804409e-11,  vz: 3.169102137e-11
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 24
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 24
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 25       Time : 0.025    Time step : 0.001    CFL : 1.677649832e-07
+Transient iteration : 25       Time : 0.025    Time step : 0.001    CFL : 1.677650716e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08092887727,  y: 0.0004999999951,  z: -0.0004999999952,  v_x: -0.1227649463,  v_y: 5.008082371e-11,  vz: -4.660978146e-11
+id: 0,  x: 0.08092887732,  y: 0.0004999999953,  z: -0.0004999999954,  v_x: -0.1227649372,  v_y: 9.24339144e-11,  vz: -8.898126219e-11
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 25
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 25
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 26       Time : 0.026    Time step : 0.001    CFL : 1.820587395e-07
+Transient iteration : 26       Time : 0.026    Time step : 0.001    CFL : 1.820588384e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08080413414,  y: 0.0004999999952,  z: -0.0004999999953,  v_x: -0.1266821405,  v_y: 1.714826228e-10,  vz: -1.660302779e-10
+id: 0,  x: 0.0808041342,  y: 0.0004999999955,  z: -0.0004999999955,  v_x: -0.12668213,  v_y: 2.217599993e-10,  vz: -2.163316398e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 26
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 26
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 27       Time : 0.027    Time step : 0.001    CFL : 1.967634705e-07
+Transient iteration : 27       Time : 0.027    Time step : 0.001    CFL : 1.967635804e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08067552781,  y: 0.0004999999955,  z: -0.0004999999955,  v_x: -0.1304924149,  v_y: 2.925466845e-10,  vz: -2.85114868e-10
+id: 0,  x: 0.08067552788,  y: 0.0004999999958,  z: -0.0004999999958,  v_x: -0.1304924031,  v_y: 3.517343592e-10,  vz: -3.443326146e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 27
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 27
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 28       Time : 0.028    Time step : 0.001    CFL : 2.118516849e-07
+Transient iteration : 28       Time : 0.028    Time step : 0.001    CFL : 2.118518062e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08054316493,  y: 0.0004999999958,  z: -0.0004999999959,  v_x: -0.1341963127,  v_y: 4.060196888e-10,  vz: -3.966078735e-10
+id: 0,  x: 0.08054316501,  y: 0.0004999999962,  z: -0.0004999999962,  v_x: -0.1341962994,  v_y: 4.75159343e-10,  vz: -4.657840967e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 28
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 28
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 29       Time : 0.029    Time step : 0.001    CFL : 2.272958448e-07
+Transient iteration : 29       Time : 0.029    Time step : 0.001    CFL : 2.272959782e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.0804071515,  y: 0.0004999999963,  z: -0.0004999999963,  v_x: -0.1377945677,  v_y: 5.034973003e-10,  vz: -4.920997478e-10
+id: 0,  x: 0.0804071516,  y: 0.0004999999967,  z: -0.0004999999967,  v_x: -0.1377945528,  v_y: 5.836831162e-10,  vz: -5.723289737e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 29
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 29
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 30       Time : 0.03     Time step : 0.001    CFL : 2.43068535e-07
+Transient iteration : 30       Time : 0.03     Time step : 0.001    CFL : 2.430686807e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.0802675927,  y: 0.0004999999968,  z: -0.0004999999968,  v_x: -0.1412880901,  v_y: 5.754538798e-10,  vz: -5.620587358e-10
+id: 0,  x: 0.08026759282,  y: 0.0004999999973,  z: -0.0004999999974,  v_x: -0.1412880735,  v_y: 6.678289683e-10,  vz: -6.544843636e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 30
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 30
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 31       Time : 0.031    Time step : 0.001    CFL : 2.591425837e-07
+Transient iteration : 31       Time : 0.031    Time step : 0.001    CFL : 2.591427421e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.08012459273,  y: 0.0004999999974,  z: -0.0004999999974,  v_x: -0.1446779526,  v_y: 6.112816805e-10,  vz: -5.958696598e-10
+id: 0,  x: 0.08012459286,  y: 0.000499999998,  z: -0.000499999998,  v_x: -0.1446779342,  v_y: 7.170341536e-10,  vz: -7.01680044e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 31
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 31
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 32       Time : 0.032    Time step : 0.001    CFL : 2.754911595e-07
+Transient iteration : 32       Time : 0.032    Time step : 0.001    CFL : 2.754913309e-07
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07997825463,  y: 0.000499999998,  z: -0.000499999998,  v_x: -0.1479653765,  v_y: 5.993382019e-10,  vz: -5.818810142e-10
+id: 0,  x: 0.07997825478,  y: 0.0004999999987,  z: -0.0004999999987,  v_x: -0.1479653562,  v_y: 7.196969447e-10,  vz: -7.023052437e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 32
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 32
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 33       Time : 0.033    Time step : 0.001    CFL : 0.0006421576673
+Transient iteration : 33       Time : 0.033    Time step : 0.001    CFL : 0.0006421576672
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07982868066,  y: 0.0004999999986,  z: -0.0004999999986,  v_x: -0.1511507071,  v_y: 5.477564167e-10,  vz: -5.282328448e-10
+id: 0,  x: 0.07982868083,  y: 0.0004999999994,  z: -0.0004999999994,  v_x: -0.1511506873,  v_y: 6.712780872e-10,  vz: -6.518167163e-10
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 33
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 33
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 34       Time : 0.034    Time step : 0.001    CFL : 0.0001323368068
+Transient iteration : 34       Time : 0.034    Time step : 0.001    CFL : 0.0001323368034
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07967620741,  y: 0.0004999895762,  z: -0.0004999895761,  v_x: -0.1537696078,  v_y: -2.063900882e-05,  vz: 2.063903198e-05
+id: 0,  x: 0.07967620779,  y: 0.0004999895947,  z: -0.0004999895946,  v_x: -0.1537692191,  v_y: -2.06041581e-05,  vz: 2.060418122e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 34
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 34
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 35       Time : 0.035    Time step : 0.001    CFL : 6.139653232e-05
+Transient iteration : 35       Time : 0.035    Time step : 0.001    CFL : 6.139652938e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07952095599,  y: 0.0004999658461,  z: -0.000499965846,  v_x: -0.1567038948,  v_y: -2.675997872e-05,  vz: 2.67600244e-05
+id: 0,  x: 0.07952095676,  y: 0.000499965895,  z: -0.0004999658949,  v_x: -0.156703487,  v_y: -2.673389054e-05,  vz: 2.673393618e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 35
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 35
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 36       Time : 0.036    Time step : 0.001    CFL : 4.947901251e-05
+Transient iteration : 36       Time : 0.036    Time step : 0.001    CFL : 4.947901014e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07936279389,  y: 0.0004999376578,  z: -0.0004999376576,  v_x: -0.1595914232,  v_y: -2.958833423e-05,  vz: 2.958838569e-05
+id: 0,  x: 0.07936279506,  y: 0.0004999377295,  z: -0.0004999377293,  v_x: -0.1595910374,  v_y: -2.956881346e-05,  vz: 2.956886489e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 36
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 36
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 37       Time : 0.037    Time step : 0.001    CFL : 3.984071211e-05
+Transient iteration : 37       Time : 0.037    Time step : 0.001    CFL : 3.984071027e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07920178746,  y: 0.0004999071114,  z: -0.0004999071113,  v_x: -0.1623934278,  v_y: -3.148533298e-05,  vz: 3.148539085e-05
+id: 0,  x: 0.079201789,  y: 0.0004999072007,  z: -0.0004999072005,  v_x: -0.1623930675,  v_y: -3.146978334e-05,  vz: 3.146984118e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 37
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 37
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 38       Time : 0.038    Time step : 0.001    CFL : 3.28158901e-05
+Transient iteration : 38       Time : 0.038    Time step : 0.001    CFL : 3.281588871e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07903802429,  y: 0.0004998748839,  z: -0.0004998748839,  v_x: -0.1651057776,  v_y: -3.295515682e-05,  vz: 3.29546346e-05
+id: 0,  x: 0.07903802618,  y: 0.0004998749873,  z: -0.0004998749874,  v_x: -0.1651054414,  v_y: -3.294221839e-05,  vz: 3.294169563e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 38
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 38
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 39       Time : 0.039    Time step : 0.001    CFL : 2.768575955e-05
+Transient iteration : 39       Time : 0.039    Time step : 0.001    CFL : 2.768575855e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07887159382,  y: 0.0004998413183,  z: -0.000499841319,  v_x: -0.1677289405,  v_y: -3.416390093e-05,  vz: 3.41630474e-05
+id: 0,  x: 0.07887159603,  y: 0.0004998414337,  z: -0.0004998414344,  v_x: -0.1677286263,  v_y: -3.415288642e-05,  vz: 3.415203189e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 39
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 39
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 40       Time : 0.04     Time step : 0.001    CFL : 2.384298904e-05
+Transient iteration : 40       Time : 0.04     Time step : 0.001    CFL : 2.384298838e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07870258453,  y: 0.0004998066352,  z: -0.0004998066369,  v_x: -0.1702642701,  v_y: -3.519195606e-05,  vz: 3.519093103e-05
+id: 0,  x: 0.07870258706,  y: 0.0004998067609,  z: -0.0004998067625,  v_x: -0.1702639759,  v_y: -3.518249786e-05,  vz: 3.518147142e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 40
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 40
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 41       Time : 0.041    Time step : 0.001    CFL : 2.087551814e-05
+Transient iteration : 41       Time : 0.041    Time step : 0.001    CFL : 2.087551777e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07853108345,  y: 0.0004997709945,  z: -0.0004997709973,  v_x: -0.1727134147,  v_y: -3.608053277e-05,  vz: 3.607944999e-05
+id: 0,  x: 0.07853108625,  y: 0.000499771129,  z: -0.0004997711317,  v_x: -0.1727131389,  v_y: -3.607241054e-05,  vz: 3.607132599e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 41
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 41
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 42       Time : 0.042    Time step : 0.001    CFL : 1.851525846e-05
+Transient iteration : 42       Time : 0.042    Time step : 0.001    CFL : 1.851525835e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07835717583,  y: 0.0004997345253,  z: -0.0004997345291,  v_x: -0.1750781783,  v_y: -3.685029715e-05,  vz: 3.684923843e-05
+id: 0,  x: 0.0783571789,  y: 0.0004997346672,  z: -0.000499734671,  v_x: -0.1750779193,  v_y: -3.684335718e-05,  vz: 3.684229638e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 42
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 42
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 43       Time : 0.043    Time step : 0.001    CFL : 1.658740988e-05
+Transient iteration : 43       Time : 0.043    Time step : 0.001    CFL : 1.658741e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07818094509,  y: 0.0004996973411,  z: -0.0004996973459,  v_x: -0.1773604642,  v_y: -3.751146938e-05,  vz: 3.75104865e-05
+id: 0,  x: 0.07818094842,  y: 0.0004996974894,  z: -0.0004996974943,  v_x: -0.1773602207,  v_y: -3.750558767e-05,  vz: 3.750460241e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 43
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 43
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 44       Time : 0.044    Time step : 0.001    CFL : 1.497613393e-05
+Transient iteration : 44       Time : 0.044    Time step : 0.001    CFL : 1.497613425e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07800247273,  y: 0.0004996595478,  z: -0.0004996595536,  v_x: -0.1795622428,  v_y: -3.806947369e-05,  vz: 3.806859627e-05
+id: 0,  x: 0.07800247629,  y: 0.0004996597016,  z: -0.0004996597073,  v_x: -0.1795620136,  v_y: -3.806453969e-05,  vz: 3.806365962e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 44
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 44
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 45       Time : 0.045    Time step : 0.001    CFL : 1.360307171e-05
+Transient iteration : 45       Time : 0.045    Time step : 0.001    CFL : 1.36030722e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07782183823,  y: 0.0004996212468,  z: -0.0004996212534,  v_x: -0.18168553,  v_y: -3.852794831e-05,  vz: 3.852719294e-05
+id: 0,  x: 0.07782184201,  y: 0.0004996214051,  z: -0.0004996214117,  v_x: -0.181685314,  v_y: -3.852385831e-05,  vz: 3.852310004e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 45
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 45
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 46       Time : 0.046    Time step : 0.001    CFL : 1.24140242e-05
+Transient iteration : 46       Time : 0.046    Time step : 0.001    CFL : 1.241402484e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07763911904,  y: 0.0004995825359,  z: -0.0004995825432,  v_x: -0.1837323706,  v_y: -3.889021759e-05,  vz: 3.888959395e-05
+id: 0,  x: 0.07763912304,  y: 0.0004995826979,  z: -0.0004995827052,  v_x: -0.1837321669,  v_y: -3.888687247e-05,  vz: 3.888624568e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 46
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 46
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 47       Time : 0.047    Time step : 0.001    CFL : 1.137061484e-05
+Transient iteration : 47       Time : 0.047    Time step : 0.001    CFL : 1.137061561e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07745439058,  y: 0.0004995435095,  z: -0.0004995435173,  v_x: -0.1857048262,  v_y: -3.915991432e-05,  vz: 3.915942798e-05
+id: 0,  x: 0.07745439477,  y: 0.0004995436745,  z: -0.0004995436823,  v_x: -0.1857046339,  v_y: -3.915721916e-05,  vz: 3.915672945e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 47
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 47
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 48       Time : 0.048    Time step : 0.001    CFL : 1.044500957e-05
+Transient iteration : 48       Time : 0.048    Time step : 0.001    CFL : 1.044501046e-05
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07726772619,  y: 0.0004995042581,  z: -0.0004995042663,  v_x: -0.1876049651,  v_y: -3.934116314e-05,  vz: 3.934081688e-05
+id: 0,  x: 0.07726773056,  y: 0.0004995044255,  z: -0.0004995044337,  v_x: -0.1876047833,  v_y: -3.933902754e-05,  vz: 3.933867769e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 48
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 48
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 49       Time : 0.049    Time step : 0.001    CFL : 9.616534867e-06
+Transient iteration : 49       Time : 0.049    Time step : 0.001    CFL : 9.616535857e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07707919713,  y: 0.0004994648677,  z: -0.0004994648762,  v_x: -0.1894348541,  v_y: -3.943855709e-05,  vz: 3.943835161e-05
+id: 0,  x: 0.07707920168,  y: 0.000499465037,  z: -0.0004994650455,  v_x: -0.1894346823,  v_y: -3.943689563e-05,  vz: 3.943668635e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 49
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 49
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 50       Time : 0.05     Time step : 0.001    CFL : 8.86948269e-06
+Transient iteration : 50       Time : 0.05     Time step : 0.001    CFL : 8.869483765e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07688887262,  y: 0.0004994254198,  z: -0.0004994254284,  v_x: -0.1911965521,  v_y: -3.945705027e-05,  vz: 3.945698488e-05
+id: 0,  x: 0.07688887734,  y: 0.0004994255906,  z: -0.0004994255992,  v_x: -0.1911963896,  v_y: -3.945578287e-05,  vz: 3.945571349e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 50
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 50
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 51       Time : 0.051    Time step : 0.001    CFL : 8.191661962e-06
+Transient iteration : 51       Time : 0.051    Time step : 0.001    CFL : 8.191663112e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07669681981,  y: 0.0004993859906,  z: -0.0004993859993,  v_x: -0.192892104,  v_y: -3.94018279e-05,  vz: 3.940190109e-05
+id: 0,  x: 0.07669682469,  y: 0.0004993861625,  z: -0.0004993861712,  v_x: -0.1928919502,  v_y: -3.940088014e-05,  vz: 3.940094915e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 51
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 51
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 52       Time : 0.052    Time step : 0.001    CFL : 7.573424707e-06
+Transient iteration : 52       Time : 0.052    Time step : 0.001    CFL : 7.57342592e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07650310383,  y: 0.0004993466513,  z: -0.0004993466597,  v_x: -0.1945235358,  v_y: -3.927818233e-05,  vz: 3.927839211e-05
+id: 0,  x: 0.07650310886,  y: 0.000499346824,  z: -0.0004993468325,  v_x: -0.1945233901,  v_y: -3.927748553e-05,  vz: 3.927769095e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 52
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 52
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 53       Time : 0.053    Time step : 0.001    CFL : 7.022153708e-06
+Transient iteration : 53       Time : 0.053    Time step : 0.001    CFL : 7.022154832e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07630778779,  y: 0.0004993074674,  z: -0.0004993074756,  v_x: -0.1960928503,  v_y: -3.909140652e-05,  vz: 3.909175066e-05
+id: 0,  x: 0.07630779296,  y: 0.0004993076407,  z: -0.000499307649,  v_x: -0.1960927123,  v_y: -3.90908977e-05,  vz: 3.909123733e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 53
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 53
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 54       Time : 0.054    Time step : 0.001    CFL : 6.544225135e-06
+Transient iteration : 54       Time : 0.054    Time step : 0.001    CFL : 6.544226313e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07611093281,  y: 0.0004992684996,  z: -0.0004992685074,  v_x: -0.1976020236,  v_y: -3.884670854e-05,  vz: 3.884718468e-05
+id: 0,  x: 0.07611093812,  y: 0.0004992686733,  z: -0.0004992686812,  v_x: -0.1976018927,  v_y: -3.884633036e-05,  vz: 3.884680184e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 54
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 54
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 55       Time : 0.055    Time step : 0.001    CFL : 6.101338765e-06
+Transient iteration : 55       Time : 0.055    Time step : 0.001    CFL : 6.101339991e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07591259804,  y: 0.0004992298031,  z: -0.0004992298104,  v_x: -0.1990530019,  v_y: -3.85491465e-05,  vz: 3.854975222e-05
+id: 0,  x: 0.07591260348,  y: 0.0004992299772,  z: -0.0004992299845,  v_x: -0.1990528777,  v_y: -3.854884702e-05,  vz: 3.854944793e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 55
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 55
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 56       Time : 0.056    Time step : 0.001    CFL : 5.689615982e-06
+Transient iteration : 56       Time : 0.056    Time step : 0.001    CFL : 5.689617248e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07571284072,  y: 0.0004991914285,  z: -0.0004991914351,  v_x: -0.2004476984,  v_y: -3.820358145e-05,  vz: 3.820431428e-05
+id: 0,  x: 0.07571284627,  y: 0.0004991916029,  z: -0.0004991916095,  v_x: -0.2004475805,  v_y: -3.820331389e-05,  vz: 3.820404178e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 56
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 56
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 57       Time : 0.057    Time step : 0.001    CFL : 5.305778299e-06
+Transient iteration : 57       Time : 0.057    Time step : 0.001    CFL : 5.3057796e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07551171617,  y: 0.0004991534213,  z: -0.0004991534271,  v_x: -0.2017879916,  v_y: -3.781464532e-05,  vz: 3.781550279e-05
+id: 0,  x: 0.07551172184,  y: 0.000499153596,  z: -0.0004991536018,  v_x: -0.2017878797,  v_y: -3.781436779e-05,  vz: 3.781522019e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 57
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 57
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 58       Time : 0.058    Time step : 0.001    CFL : 4.947029844e-06
+Transient iteration : 58       Time : 0.058    Time step : 0.001    CFL : 4.947031174e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07530927788,  y: 0.0004991158228,  z: -0.0004991158276,  v_x: -0.2030757228,  v_y: -3.738672093e-05,  vz: 3.738770058e-05
+id: 0,  x: 0.07530928366,  y: 0.0004991159977,  z: -0.0004991160027,  v_x: -0.2030756165,  v_y: -3.738639611e-05,  vz: 3.738737057e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 58
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 58
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 59       Time : 0.059    Time step : 0.001    CFL : 4.725174433e-06
+Transient iteration : 59       Time : 0.059    Time step : 0.001    CFL : 4.725174432e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07510557748,  y: 0.0004990786698,  z: -0.0004990786736,  v_x: -0.2043126947,  v_y: -3.692393149e-05,  vz: 3.692503087e-05
+id: 0,  x: 0.07510558337,  y: 0.0004990788451,  z: -0.000499078849,  v_x: -0.2043125937,  v_y: -3.69235263e-05,  vz: 3.692462039e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 59
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 59
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 60       Time : 0.06     Time step : 0.001    CFL : 4.662530488e-06
+Transient iteration : 60       Time : 0.06     Time step : 0.001    CFL : 4.662530484e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07490066486,  y: 0.0004990419952,  z: -0.0004990419979,  v_x: -0.2055006701,  v_y: -3.643013724e-05,  vz: 3.643135389e-05
+id: 0,  x: 0.07490067084,  y: 0.000499042171,  z: -0.0004990421737,  v_x: -0.2055005741,  v_y: -3.642962257e-05,  vz: 3.643083384e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 60
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 60
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 61       Time : 0.061    Time step : 0.001    CFL : 4.601443416e-06
+Transient iteration : 61       Time : 0.061    Time step : 0.001    CFL : 4.601443408e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07469458814,  y: 0.0004990058283,  z: -0.0004990058297,  v_x: -0.2066413705,  v_y: -3.590893754e-05,  vz: 3.591026905e-05
+id: 0,  x: 0.07469459421,  y: 0.0004990060046,  z: -0.0004990060061,  v_x: -0.2066412792,  v_y: -3.590828791e-05,  vz: 3.590961395e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 61
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 61
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 62       Time : 0.062    Time step : 0.001    CFL : 4.541922945e-06
+Transient iteration : 62       Time : 0.062    Time step : 0.001    CFL : 4.541922933e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07448739374,  y: 0.0004989701947,  z: -0.0004989701947,  v_x: -0.2077364755,  v_y: -3.536367692e-05,  vz: 3.536512086e-05
+id: 0,  x: 0.0744873999,  y: 0.0004989703718,  z: -0.0004989703719,  v_x: -0.2077363886,  v_y: -3.536287019e-05,  vz: 3.536430858e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 62
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 62
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 63       Time : 0.063    Time step : 0.001    CFL : 4.483966991e-06
+Transient iteration : 63       Time : 0.063    Time step : 0.001    CFL : 4.483966976e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07427912643,  y: 0.000498935117,  z: -0.0004989351155,  v_x: -0.2087876221,  v_y: -3.479745382e-05,  vz: 3.479900777e-05
+id: 0,  x: 0.07427913268,  y: 0.0004989352949,  z: -0.0004989352935,  v_x: -0.2087875394,  v_y: -3.479647091e-05,  vz: 3.479801924e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 63
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 63
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 64       Time : 0.064    Time step : 0.001    CFL : 4.42756407e-06
+Transient iteration : 64       Time : 0.064    Time step : 0.001    CFL : 4.427564051e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07406982938,  y: 0.0004989006146,  z: -0.0004989006115,  v_x: -0.2097964043,  v_y: -3.421313125e-05,  vz: 3.421479281e-05
+id: 0,  x: 0.07406983571,  y: 0.0004989007936,  z: -0.0004989007906,  v_x: -0.2097963255,  v_y: -3.421195586e-05,  vz: 3.421361173e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 64
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 64
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 65       Time : 0.065    Time step : 0.001    CFL : 4.372695272e-06
+Transient iteration : 65       Time : 0.065    Time step : 0.001    CFL : 4.37269525e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07385954415,  y: 0.0004988667043,  z: -0.0004988666995,  v_x: -0.2107643727,  v_y: -3.361334865e-05,  vz: 3.36151154e-05
+id: 0,  x: 0.07385955055,  y: 0.0004988668847,  z: -0.00049886688,  v_x: -0.2107642975,  v_y: -3.361196701e-05,  vz: 3.361372803e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 65
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 65
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 66       Time : 0.066    Time step : 0.001    CFL : 4.319335885e-06
+Transient iteration : 66       Time : 0.066    Time step : 0.001    CFL : 4.319335859e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.0736483108,  y: 0.0004988334005,  z: -0.0004988333938,  v_x: -0.2116930344,  v_y: -3.300053434e-05,  vz: 3.300240389e-05
+id: 0,  x: 0.07364831728,  y: 0.0004988335823,  z: -0.0004988335758,  v_x: -0.2116929627,  v_y: -3.2998935e-05,  vz: 3.300079877e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 66
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 66
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 67       Time : 0.067    Time step : 0.001    CFL : 4.267456722e-06
+Transient iteration : 67       Time : 0.067    Time step : 0.001    CFL : 4.267456692e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.0734361679,  y: 0.0004988007149,  z: -0.0004988007063,  v_x: -0.2125838532,  v_y: -3.237691827e-05,  vz: 3.237888821e-05
+id: 0,  x: 0.07343617445,  y: 0.0004988008984,  z: -0.00049880089,  v_x: -0.2125837848,  v_y: -3.237509184e-05,  vz: 3.237705596e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 67
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 67
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 68       Time : 0.068    Time step : 0.001    CFL : 4.21702522e-06
+Transient iteration : 68       Time : 0.068    Time step : 0.001    CFL : 4.217025187e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07322315258,  y: 0.0004987686573,  z: -0.0004987686467,  v_x: -0.2134382497,  v_y: -3.17445447e-05,  vz: 3.174661264e-05
+id: 0,  x: 0.0732231592,  y: 0.0004987688428,  z: -0.0004987688323,  v_x: -0.2134381844,  v_y: -3.174248367e-05,  vz: 3.174454575e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 68
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 68
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 69       Time : 0.069    Time step : 0.001    CFL : 4.168006339e-06
+Transient iteration : 69       Time : 0.069    Time step : 0.001    CFL : 4.168006303e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07300930056,  y: 0.0004987372356,  z: -0.0004987372229,  v_x: -0.2142576015,  v_y: -3.110528467e-05,  vz: 3.11074482e-05
+id: 0,  x: 0.07300930724,  y: 0.0004987374232,  z: -0.0004987374107,  v_x: -0.2142575391,  v_y: -3.11029832e-05,  vz: 3.110514086e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 69
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 69
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 70       Time : 0.07     Time step : 0.001    CFL : 4.1203633e-06
+Transient iteration : 70       Time : 0.07     Time step : 0.001    CFL : 4.120363261e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07279464621,  y: 0.0004987064557,  z: -0.0004987064408,  v_x: -0.2150432438,  v_y: -3.046084799e-05,  vz: 3.046310473e-05
+id: 0,  x: 0.07279465295,  y: 0.0004987066458,  z: -0.0004987066311,  v_x: -0.2150431841,  v_y: -3.045830178e-05,  vz: 3.046055262e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 70
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 70
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 71       Time : 0.071    Time step : 0.001    CFL : 4.074058187e-06
+Transient iteration : 71       Time : 0.071    Time step : 0.001    CFL : 4.074058145e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07257922258,  y: 0.0004986763221,  z: -0.0004986763049,  v_x: -0.2157964694,  v_y: -2.981279485e-05,  vz: 2.981514239e-05
+id: 0,  x: 0.07257922938,  y: 0.0004986765149,  z: -0.0004986764978,  v_x: -0.2157964123,  v_y: -2.981000092e-05,  vz: 2.981234256e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 71
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 71
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 72       Time : 0.072    Time step : 0.001    CFL : 4.029052444e-06
+Transient iteration : 72       Time : 0.072    Time step : 0.001    CFL : 4.029052398e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07236306147,  y: 0.0004986468377,  z: -0.0004986468181,  v_x: -0.2165185299,  v_y: -2.916254674e-05,  vz: 2.91649827e-05
+id: 0,  x: 0.07236306833,  y: 0.0004986470334,  z: -0.000498647014,  v_x: -0.2165184752,  v_y: -2.915950334e-05,  vz: 2.91619334e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 72
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 72
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 73       Time : 0.073    Time step : 0.001    CFL : 3.985307269e-06
+Transient iteration : 73       Time : 0.073    Time step : 0.001    CFL : 3.985307221e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07214619343,  y: 0.000498618004,  z: -0.0004986179819,  v_x: -0.2172106358,  v_y: -2.851139686e-05,  vz: 2.851391887e-05
+id: 0,  x: 0.07214620034,  y: 0.0004986182029,  z: -0.0004986181809,  v_x: -0.2172105834,  v_y: -2.850810331e-05,  vz: 2.851061941e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 73
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 73
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 74       Time : 0.074    Time step : 0.001    CFL : 3.942783941e-06
+Transient iteration : 74       Time : 0.074    Time step : 0.001    CFL : 3.94278389e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07192864782,  y: 0.0004985898213,  z: -0.0004985897967,  v_x: -0.2178739576,  v_y: -2.786051991e-05,  vz: 2.786312558e-05
+id: 0,  x: 0.07192865478,  y: 0.0004985900236,  z: -0.0004985899991,  v_x: -0.2178739073,  v_y: -2.785697646e-05,  vz: 2.785957623e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 74
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 74
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 75       Time : 0.075    Time step : 0.001    CFL : 3.901444071e-06
+Transient iteration : 75       Time : 0.075    Time step : 0.001    CFL : 3.901444017e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07171045285,  y: 0.0004985622888,  z: -0.0004985622615,  v_x: -0.2185096261,  v_y: -2.721098116e-05,  vz: 2.721366812e-05
+id: 0,  x: 0.07171045986,  y: 0.0004985624947,  z: -0.0004985624676,  v_x: -0.2185095778,  v_y: -2.720718892e-05,  vz: 2.720987e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 75
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 75
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 76       Time : 0.076    Time step : 0.001    CFL : 3.861249813e-06
+Transient iteration : 76       Time : 0.076    Time step : 0.001    CFL : 3.861249756e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07149163562,  y: 0.0004985354047,  z: -0.0004985353747,  v_x: -0.2191187337,  v_y: -2.656374507e-05,  vz: 2.656651096e-05
+id: 0,  x: 0.07149164268,  y: 0.0004985356145,  z: -0.0004985355847,  v_x: -0.2191186873,  v_y: -2.655970589e-05,  vz: 2.656246591e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 76
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 76
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 77       Time : 0.077    Time step : 0.001    CFL : 3.822164014e-06
+Transient iteration : 77       Time : 0.077    Time step : 0.001    CFL : 3.822163954e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07127222217,  y: 0.0004985091662,  z: -0.0004985091334,  v_x: -0.2197023347,  v_y: -2.59196832e-05,  vz: 2.592252567e-05
+id: 0,  x: 0.07127222927,  y: 0.0004985093802,  z: -0.0004985093476,  v_x: -0.2197022901,  v_y: -2.591539956e-05,  vz: 2.591823619e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 77
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 77
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 78       Time : 0.078    Time step : 0.001    CFL : 3.784150343e-06
+Transient iteration : 78       Time : 0.078    Time step : 0.001    CFL : 3.784150281e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07105223748,  y: 0.0004984835697,  z: -0.0004984835341,  v_x: -0.2202614465,  v_y: -2.527958162e-05,  vz: 2.528249832e-05
+id: 0,  x: 0.07105224463,  y: 0.0004984837882,  z: -0.0004984837527,  v_x: -0.2202614036,  v_y: -2.527505658e-05,  vz: 2.527796746e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 78
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 78
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 79       Time : 0.079    Time step : 0.001    CFL : 3.747173381e-06
+Transient iteration : 79       Time : 0.079    Time step : 0.001    CFL : 3.747173316e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07083170556,  y: 0.0004984586111,  z: -0.0004984585724,  v_x: -0.2207970505,  v_y: -2.464414774e-05,  vz: 2.464713635e-05
+id: 0,  x: 0.07083171275,  y: 0.0004984588341,  z: -0.0004984587957,  v_x: -0.2207970091,  v_y: -2.463938483e-05,  vz: 2.464236764e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 79
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 79
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 80       Time : 0.08     Time step : 0.001    CFL : 3.711198683e-06
+Transient iteration : 80       Time : 0.08     Time step : 0.001    CFL : 3.711198616e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07061064942,  y: 0.0004984342851,  z: -0.0004984342435,  v_x: -0.2213100926,  v_y: -2.401401668e-05,  vz: 2.401707487e-05
+id: 0,  x: 0.07061065665,  y: 0.0004984345131,  z: -0.0004984344716,  v_x: -0.2213100527,  v_y: -2.400901986e-05,  vz: 2.401207229e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 80
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 80
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 81       Time : 0.081    Time step : 0.001    CFL : 3.676192828e-06
+Transient iteration : 81       Time : 0.081    Time step : 0.001    CFL : 3.676192758e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07038909117,  y: 0.0004984105864,  z: -0.0004984105416,  v_x: -0.2218014847,  v_y: -2.338975714e-05,  vz: 2.33928826e-05
+id: 0,  x: 0.07038909844,  y: 0.0004984108194,  z: -0.0004984107749,  v_x: -0.2218014461,  v_y: -2.338453072e-05,  vz: 2.338765047e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 81
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 81
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 82       Time : 0.082    Time step : 0.001    CFL : 3.642123443e-06
+Transient iteration : 82       Time : 0.082    Time step : 0.001    CFL : 3.642123371e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.07016705203,  y: 0.0004983875086,  z: -0.0004983874607,  v_x: -0.222272105,  v_y: -2.277187678e-05,  vz: 2.277506723e-05
+id: 0,  x: 0.07016705933,  y: 0.000498387747,  z: -0.0004983876993,  v_x: -0.2222720676,  v_y: -2.276642538e-05,  vz: 2.276961015e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 82
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 82
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 83       Time : 0.083    Time step : 0.001    CFL : 3.608959223e-06
+Transient iteration : 83       Time : 0.083    Time step : 0.001    CFL : 3.608959148e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06994455232,  y: 0.0004983650453,  z: -0.0004983649942,  v_x: -0.2227227994,  v_y: -2.216082726e-05,  vz: 2.216408042e-05
+id: 0,  x: 0.06994455966,  y: 0.0004983652893,  z: -0.0004983652384,  v_x: -0.2227227632,  v_y: -2.215515575e-05,  vz: 2.215840327e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 83
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 83
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 84       Time : 0.084    Time step : 0.001    CFL : 3.576669929e-06
+Transient iteration : 84       Time : 0.084    Time step : 0.001    CFL : 3.576669853e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06972161157,  y: 0.0004983431894,  z: -0.000498343135,  v_x: -0.2231543822,  v_y: -2.155700887e-05,  vz: 2.156032248e-05
+id: 0,  x: 0.06972161895,  y: 0.0004983434392,  z: -0.000498343385,  v_x: -0.2231543472,  v_y: -2.155112231e-05,  vz: 2.155443033e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 84
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 84
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 85       Time : 0.085    Time step : 0.001    CFL : 3.545226388e-06
+Transient iteration : 85       Time : 0.085    Time step : 0.001    CFL : 3.54522631e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.0694982485,  y: 0.0004983219335,  z: -0.0004983218758,  v_x: -0.2235676372,  v_y: -2.096077472e-05,  vz: 2.096414653e-05
+id: 0,  x: 0.06949825591,  y: 0.0004983221893,  z: -0.0004983221317,  v_x: -0.2235676032,  v_y: -2.095467835e-05,  vz: 2.095804463e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 85
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 85
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 86       Time : 0.086    Time step : 0.001    CFL : 3.514600476e-06
+Transient iteration : 86       Time : 0.086    Time step : 0.001    CFL : 3.514600395e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06927448104,  y: 0.0004983012699,  z: -0.0004983012087,  v_x: -0.2239633184,  v_y: -2.037243471e-05,  vz: 2.037586251e-05
+id: 0,  x: 0.06927448849,  y: 0.0004983015318,  z: -0.0004983014709,  v_x: -0.2239632854,  v_y: -2.03661339e-05,  vz: 2.036955623e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 86
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 86
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 87       Time : 0.087    Time step : 0.001    CFL : 3.484765103e-06
+Transient iteration : 87       Time : 0.087    Time step : 0.001    CFL : 3.48476502e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06905032641,  y: 0.0004982811904,  z: -0.0004982811258,  v_x: -0.2243421509,  v_y: -1.979225914e-05,  vz: 1.979574071e-05
+id: 0,  x: 0.06905033389,  y: 0.0004982814588,  z: -0.0004982813944,  v_x: -0.2243421188,  v_y: -1.978575935e-05,  vz: 1.978923551e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 87
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 87
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 88       Time : 0.088    Time step : 0.001    CFL : 3.455694187e-06
+Transient iteration : 88       Time : 0.088    Time step : 0.001    CFL : 3.455694102e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06882580111,  y: 0.0004982616869,  z: -0.0004982616188,  v_x: -0.2247048322,  v_y: -1.922048198e-05,  vz: 1.922401515e-05
+id: 0,  x: 0.06882580862,  y: 0.0004982619619,  z: -0.000498261894,  v_x: -0.2247048009,  v_y: -1.921378874e-05,  vz: 1.921731656e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 88
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 88
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 89       Time : 0.089    Time step : 0.001    CFL : 3.427362636e-06
+Transient iteration : 89       Time : 0.089    Time step : 0.001    CFL : 3.427362549e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06860092094,  y: 0.0004982427508,  z: -0.0004982426791,  v_x: -0.2250520326,  v_y: -1.865730399e-05,  vz: 1.86608866e-05
+id: 0,  x: 0.06860092848,  y: 0.0004982430326,  z: -0.0004982429611,  v_x: -0.225052002,  v_y: -1.865042287e-05,  vz: 1.86540002e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 89
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 89
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 90       Time : 0.09     Time step : 0.001    CFL : 3.39974631e-06
+Transient iteration : 90       Time : 0.09     Time step : 0.001    CFL : 3.399746222e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06837570106,  y: 0.0004982243735,  z: -0.0004982242982,  v_x: -0.2253843962,  v_y: -1.810289549e-05,  vz: 1.81065254e-05
+id: 0,  x: 0.06837570863,  y: 0.0004982246622,  z: -0.0004982245872,  v_x: -0.2253843664,  v_y: -1.80958321e-05,  vz: 1.809945679e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 90
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 90
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 91       Time : 0.091    Time step : 0.001    CFL : 3.372822002e-06
+Transient iteration : 91       Time : 0.091    Time step : 0.001    CFL : 3.372821911e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.068150156,  y: 0.0004982065461,  z: -0.0004982064671,  v_x: -0.2257025423,  v_y: -1.755739898e-05,  vz: 1.756107407e-05
+id: 0,  x: 0.0681501636,  y: 0.0004982068419,  z: -0.0004982067632,  v_x: -0.2257025131,  v_y: -1.75501589e-05,  vz: 1.755382884e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 91
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 91
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 92       Time : 0.092    Time step : 0.001    CFL : 3.346567398e-06
+Transient iteration : 92       Time : 0.092    Time step : 0.001    CFL : 3.346567306e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06792429968,  y: 0.0004981892596,  z: -0.000498189177,  v_x: -0.2260070654,  v_y: -1.702093151e-05,  vz: 1.702464968e-05
+id: 0,  x: 0.06792430731,  y: 0.0004981895628,  z: -0.0004981894804,  v_x: -0.2260070367,  v_y: -1.701352031e-05,  vz: 1.701723341e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 92
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 92
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 93       Time : 0.093    Time step : 0.001    CFL : 3.320961053e-06
+Transient iteration : 93       Time : 0.093    Time step : 0.001    CFL : 3.320960959e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06769814542,  y: 0.000498172505,  z: -0.0004981724186,  v_x: -0.2262985365,  v_y: -1.649358685e-05,  vz: 1.649734604e-05
+id: 0,  x: 0.06769815308,  y: 0.0004981728157,  z: -0.0004981727295,  v_x: -0.2262985085,  v_y: -1.648601007e-05,  vz: 1.648976426e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 93
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 93
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 94       Time : 0.094    Time step : 0.001    CFL : 3.295982355e-06
+Transient iteration : 94       Time : 0.094    Time step : 0.001    CFL : 3.29598226e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.067471706,  y: 0.0004981562731,  z: -0.0004981561829,  v_x: -0.2265775042,  v_y: -1.597543755e-05,  vz: 1.597923571e-05
+id: 0,  x: 0.06747171369,  y: 0.0004981565914,  z: -0.0004981565015,  v_x: -0.2265774766,  v_y: -1.596770067e-05,  vz: 1.597149391e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 94
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 94
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 95       Time : 0.095    Time step : 0.001    CFL : 3.271611498e-06
+Transient iteration : 95       Time : 0.095    Time step : 0.001    CFL : 3.271611401e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06724499367,  y: 0.0004981405546,  z: -0.0004981404606,  v_x: -0.2268444948,  v_y: -1.546653676e-05,  vz: 1.547037188e-05
+id: 0,  x: 0.06724500138,  y: 0.0004981408808,  z: -0.0004981407871,  v_x: -0.2268444676,  v_y: -1.545864522e-05,  vz: 1.546247549e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 95
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 95
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 96       Time : 0.096    Time step : 0.001    CFL : 3.247829444e-06
+Transient iteration : 96       Time : 0.096    Time step : 0.001    CFL : 3.247829346e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06701802014,  y: 0.0004981253404,  z: -0.0004981252425,  v_x: -0.2271000135,  v_y: -1.496691996e-05,  vz: 1.497079004e-05
+id: 0,  x: 0.06701802788,  y: 0.0004981256745,  z: -0.0004981255769,  v_x: -0.2270999868,  v_y: -1.495887912e-05,  vz: 1.496274442e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 96
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 96
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 97       Time : 0.097    Time step : 0.001    CFL : 3.2246179e-06
+Transient iteration : 97       Time : 0.097    Time step : 0.001    CFL : 3.2246178e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06679079663,  y: 0.0004981106211,  z: -0.0004981105193,  v_x: -0.2273445454,  v_y: -1.447660652e-05,  vz: 1.448050959e-05
+id: 0,  x: 0.0667908044,  y: 0.0004981109633,  z: -0.0004981108619,  v_x: -0.2273445191,  v_y: -1.446842165e-05,  vz: 1.447232003e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 97
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 97
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 98       Time : 0.098    Time step : 0.001    CFL : 3.201959283e-06
+Transient iteration : 98       Time : 0.098    Time step : 0.001    CFL : 3.201959183e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06656333391,  y: 0.0004980963874,  z: -0.0004980962817,  v_x: -0.2275785557,  v_y: -1.399560116e-05,  vz: 1.399953527e-05
+id: 0,  x: 0.06656334171,  y: 0.0004980967379,  z: -0.0004980966325,  v_x: -0.2275785297,  v_y: -1.398727745e-05,  vz: 1.399120695e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 98
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 98
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 99       Time : 0.099    Time step : 0.001    CFL : 3.179836695e-06
+Transient iteration : 99       Time : 0.099    Time step : 0.001    CFL : 3.179836594e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06633564227,  y: 0.00049808263,  z: -0.0004980825204,  v_x: -0.2278024906,  v_y: -1.352389524e-05,  vz: 1.352785849e-05
+id: 0,  x: 0.06633565009,  y: 0.0004980829889,  z: -0.0004980828796,  v_x: -0.227802465,  v_y: -1.351543778e-05,  vz: 1.351939651e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 99
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
 Finished 100 DEM iterations 
-DEM contact search at step 99
-Finished DEM contact search 
 
 *****************************************************************
-Transient iteration : 100      Time : 0.1      Time step : 0.001    CFL : 3.158233891e-06
+Transient iteration : 100      Time : 0.1      Time step : 0.001    CFL : 3.158233788e-06
 *****************************************************************
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: 0.06610773156,  y: 0.0004980693396,  z: -0.000498069226,  v_x: -0.2280167784,  v_y: -1.306146804e-05,  vz: 1.306545854e-05
+id: 0,  x: 0.06610773941,  y: 0.000498069707,  z: -0.0004980695937,  v_x: -0.228016753,  v_y: -1.305288184e-05,  vz: 1.305686789e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 Starting DEM iterations at step 100
-Finished 100 DEM iterations 
-DEM contact search at step 100
-Finished DEM contact search 
+DEM contact search at dem step 0
+DEM contact search at dem step 10
+DEM contact search at dem step 20
+DEM contact search at dem step 30
+DEM contact search at dem step 40
+DEM contact search at dem step 50
+DEM contact search at dem step 60
+DEM contact search at dem step 70
+DEM contact search at dem step 80
+DEM contact search at dem step 90
+Finished 100 DEM iterations
