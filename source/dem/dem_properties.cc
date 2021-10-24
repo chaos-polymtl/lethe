@@ -27,15 +27,18 @@ namespace DEM
   {
     std::vector<std::pair<std::string, int>> properties(
       PropertiesIndex::n_properties);
-    properties[PropertiesIndex::type]    = std::make_pair("Type", 1);
-    properties[PropertiesIndex::dp]      = std::make_pair("Diameter", 1);
-    properties[PropertiesIndex::v_x]     = std::make_pair("Velocity", dim);
-    properties[PropertiesIndex::v_y]     = std::make_pair("Velocity", 1);
-    properties[PropertiesIndex::v_z]     = std::make_pair("Velocity", 1);
-    properties[PropertiesIndex::omega_x] = std::make_pair("Omega", dim);
-    properties[PropertiesIndex::omega_y] = std::make_pair("Omega", 1);
-    properties[PropertiesIndex::omega_z] = std::make_pair("Omega", 1);
-    properties[PropertiesIndex::mass]    = std::make_pair("Mass", 1);
+    properties[PropertiesIndex::type]        = std::make_pair("Type", 1);
+    properties[PropertiesIndex::dp]          = std::make_pair("Diameter", 1);
+    properties[PropertiesIndex::v_x]         = std::make_pair("Velocity", dim);
+    properties[PropertiesIndex::v_y]         = std::make_pair("Velocity", 1);
+    properties[PropertiesIndex::v_z]         = std::make_pair("Velocity", 1);
+    properties[PropertiesIndex::omega_x]     = std::make_pair("Omega", dim);
+    properties[PropertiesIndex::omega_y]     = std::make_pair("Omega", 1);
+    properties[PropertiesIndex::omega_z]     = std::make_pair("Omega", 1);
+    properties[PropertiesIndex::fem_force_x] = std::make_pair("FemForce", dim);
+    properties[PropertiesIndex::fem_force_y] = std::make_pair("FemForce", 1);
+    properties[PropertiesIndex::fem_force_z] = std::make_pair("FemForce", 1);
+    properties[PropertiesIndex::mass]        = std::make_pair("Mass", 1);
 
     return properties;
   }

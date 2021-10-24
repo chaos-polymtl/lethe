@@ -121,11 +121,6 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
   fluid_velocity_at_particle_location =
     std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
   cell_void_fraction = std::vector<double>(n_global_max_particles_per_cell);
-
-  fluid_particle_force =
-    std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
-  local_particle_id =
-    std::vector<unsigned int>(n_global_max_particles_per_cell);
 }
 
 

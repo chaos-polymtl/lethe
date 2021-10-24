@@ -8,7 +8,6 @@ subsection simulation control
   set time end       					 = 0.6
   set log frequency				         = 1000
   set output frequency            			 = 1000
-  set output path                                      = ./output_dem/
 end
 
 #---------------------------------------------------
@@ -43,7 +42,7 @@ end
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
-subsection physical properties
+subsection lagrangian physical properties
     set gx            		 			= -9.8
     set gy            		 			= 0.0
     set gz						= 0
