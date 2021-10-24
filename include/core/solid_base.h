@@ -154,19 +154,37 @@ public:
   get_solid_velocity();
 
   /**
-   * @brief Updates particle positions in solid_particle_handler by integrating velocity using a Runge-Kutta method
+   * @brief Updates particle positions in solid_particle_handler by integrating velocity using an explicit Runge-Kutta 4 method.
+   *
+   * @param time_step The time_step value for this iteration
+   *
+   * @param initial_time The initial time (time t) of the timestep. This is used to
+   * set the time of the velocity function.
    */
   void
-  integrate_velocity(double time_step);
+  integrate_velocity(double time_step, double initial_time);
 
   /**
-   * @brief Moves the dofs of the solid_triangulation
+   * @brief Moves the vertices of the solid triangulation. This function
+   * uses an Runge-Kutta 4 explicit time integrator to displace the vertices
+   * of the solid triangulation and stores the displacement in an array
+   * in order to allow correct checkpointing of the triangulation.
+   *               See
+   https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
+               for more details
+   *
+   * @param time_step The time_step value for this iteration
+   *
+   * @param initial_time The initial time (time t) of the timestep. This is used to
+   * set the time of the velocity function.
    */
   void
-  move_solid_triangulation(double time_step);
+  move_solid_triangulation(double time_step, double initial_time);
 
   /**
-   * @brief Moves the dofs of the solid_triangulation
+   * @brief Moves the dofs of the solid_triangulation by using the displacement vector.
+   * This is only use to move the solid triangulation at the correct location
+   * when the simulation is restarted.
    */
   void
   move_solid_triangulation_with_displacement();

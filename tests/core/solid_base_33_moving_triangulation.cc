@@ -110,7 +110,7 @@ test()
 
   for (unsigned int i = 0; i < 100; ++i)
     {
-      solid.move_solid_triangulation(time_step);
+      solid.move_solid_triangulation(time_step, 0);
       data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
       double time = (i + 1) * time_step;
       if ((i + 1) % 10 == 0)

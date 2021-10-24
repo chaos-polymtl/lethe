@@ -100,7 +100,7 @@ test()
 
   for (unsigned int i = 0; i < 100; ++i)
     {
-      solid.integrate_velocity(time_step);
+      solid.integrate_velocity(time_step, 0);
       if ((i + 1) % 10 == 0)
         {
           output(solid_particle_handler, mpi_communicator, i + 1);
