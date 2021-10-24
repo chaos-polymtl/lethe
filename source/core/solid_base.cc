@@ -486,11 +486,23 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step,
   // than unity
   for (unsigned int it = 0; it < sub_particles_iterations; ++it)
     {
-      // Set the time of the velocity function
       for (auto particle = solid_particle_handler->begin();
            particle != solid_particle_handler->end();
            ++particle)
         {
+          // Calculate the next position of the particle using the RK4
+          // time integration scheme
+          // x(t+dt) = x(t) + 1/6 (k1+2*k2+2*k3+k4)
+          // k1 = dt * v(t,x(t))
+          // k2 = dt * v(t+0.5*dt,x+k1/2)
+          // k3 = dt * v(t+0.5*dt,x+k2/2)
+          // k4 = dt * vt(t+dt,x+k3)
+          // The four stages (1 to 4) are built successively
+          // For each stage, the time of the function must be "reset"
+          // to ensure adequate evaluation of the RK4 scheme.
+          // See https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods for
+          // more details
+
           Point<spacedim> particle_location = particle->get_location();
 
           Tensor<1, spacedim> k1;
@@ -561,6 +573,19 @@ SolidBase<dim, spacedim>::move_solid_triangulation(const double time_step,
                vertex < cell->reference_cell().n_vertices();
                ++vertex)
             {
+              // Calculate the next position of the particle using the RK4
+              // time integration scheme
+              // x(t+dt) = x(t) + 1/6 (k1+2*k2+2*k3+k4)
+              // k1 = dt * v(t,x(t))
+              // k2 = dt * v(t+0.5*dt,x+k1/2)
+              // k3 = dt * v(t+0.5*dt,x+k2/2)
+              // k4 = dt * vt(t+dt,x+k3)
+              // The four stages (1 to 4) are built successively
+              // For each stage, the time of the function must be "reset"
+              // to ensure adequate evaluation of the RK4 scheme.
+              // See https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
+              // for more details
+
               const auto       dof_index = cell->vertex_dof_index(vertex, 0);
               Point<spacedim> &vertex_position  = cell->vertex(vertex);
               const unsigned   global_vertex_no = cell->vertex_index(vertex);

@@ -98,7 +98,7 @@ subsection nitsche
 		end
 		set enable particles motion = true
 		subsection solid velocity
-			set Function expression = cos(pi*t)*-pi*y; cos(pi*t)*pi*x #if(t>=0.5,pi*y,-pi*y) ; if(t>=0.5,-pi*x,pi*x)
+			set Function expression = cos(pi*t)*-pi*y; cos(pi*t)*pi*x 
 		end
 	end
 	subsection nitsche solid 1
