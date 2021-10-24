@@ -45,8 +45,11 @@ namespace DEM
     omega_x      = 5,
     omega_y      = 6,
     omega_z      = 7,
-    mass         = 8,
-    n_properties = 9,
+    fem_force_x  = 8,
+    fem_force_y  = 9,
+    fem_force_z  = 10,
+    mass         = 11,
+    n_properties = 12,
   };
 
   unsigned int

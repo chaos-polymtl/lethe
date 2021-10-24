@@ -51,7 +51,7 @@ end
 subsection lagrangian physical properties
     set gx            		 			= 0.0
     set gy            		 			= -9.81
-    set number of particle types	                = 2
+    set number of particle types	                = 1
     	subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            	 	= 0.005
@@ -62,17 +62,6 @@ subsection lagrangian physical properties
     		set restitution coefficient particles	= 0.2
     		set friction coefficient particles      = 0.1
     		set rolling friction particles         	= 0.05
-	end
-    	subsection particle type 1
-		set size distribution type		= uniform
-    		set diameter            	 	= 0.003
-    		set number				= 10
-    		set density particles  	 		= 1000
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.35
-    		set restitution coefficient particles	= 0.21
-    		set friction coefficient particles      = 0.12
-    		set rolling friction particles         	= 0.07
 	end
     set young modulus wall            			= 1000000
     set poisson ratio wall            			= 0.3

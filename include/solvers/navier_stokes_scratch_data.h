@@ -429,6 +429,12 @@ public:
       {
         auto particle_properties = particle.get_properties();
 
+        // Set the parctile_fluid_interactions properties to zero
+        for (int d = 0; d < dim; ++d)
+          {
+            particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
+          }
+
         cell_void_fraction[particle_number]                  = 0;
         fluid_velocity_at_particle_location[particle_number] = 0;
 
@@ -472,7 +478,6 @@ public:
         average_particle_velocity = average_particle_velocity / particle_number;
       }
   }
-
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
@@ -548,9 +553,6 @@ public:
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double                                                            cell_volume;
   double                                                            beta_drag;
-  std::vector<Tensor<1, dim>> fluid_particle_force;
-  std::vector<unsigned int>   local_particle_id;
-  unsigned int                particle_index;
 };
 
 #endif
