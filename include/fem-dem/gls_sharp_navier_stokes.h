@@ -478,42 +478,7 @@ Return a bool that describes  if a cell contains a specific point
    */
 
 private:
-  /**
-   * @brief Calculate non-linear (Hertzian) particle-particle contact force
-   */
-  void
-  calculate_pp_contact_force(const double &               dt_dem,
-                             std::vector<Tensor<1, dim>> &contact_force,
-                             std::vector<Tensor<1, 3>> &contact_torque);
 
-
-  /**
-   * @brief Calculate non-linear (Hertzian) particle-wall contact force
-   */
-  void
-  calculate_pw_contact_force(const double &               dt_dem,
-                             std::vector<Tensor<1, dim>> &contact_force,
-                             std::vector<Tensor<1, 3>> &contact_torque);
-
-  void
-  update_particles_boundary_contact();
-
-
-  /** This function is used to find the projection of vector_a on
-   * vector_b
-   * @param vector_a A vector which is going to be projected on vector_b
-   * @param vector_b The projection vector of vector_a
-   * @return The projection of vector_a on vector_b
-   */
-  inline Tensor<1, dim>
-  find_projection(const Tensor<1, dim> &vector_a,
-                  const Tensor<1, dim> &vector_b)
-  {
-    Tensor<1, dim> vector_c;
-    vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
-
-    return vector_c;
-  }
 
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
@@ -549,48 +514,15 @@ private:
   const double                 GLS_u_scale = 1;
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
-  std::vector<IBParticle<dim>> dem_particles;
 
   std::vector<TableHandler> table_p;
 
-  // A struct to store contact tangential history
-  struct ContactTangentialHistory
-  {
-    Tensor<1, dim> tangential_relative_velocity;
-    Tensor<1, dim> tangential_overlap;
-  };
   // Particles contact history
 
-  // A struct to store boundary cells' information
-  struct BoundaryCellsInfo
-  {
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-      for(unsigned int i=0; i<dim; ++i){
-          ar & normal_vector;
-          ar &  point_on_boundary;
-        }
-    }
-
-    Tensor<1, dim> normal_vector;
-    Point<dim>     point_on_boundary;
-
-  };
-
-
-  // Particles contact history
-  std::map<unsigned int, std::map<unsigned int, contact_tangential_history>>
-    contact_map;
   TableHandler table_residual;
-  std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
-    pp_contact_map;
-  std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
-    pw_contact_map;
 
   IBParticlesDEM<dim> ib_dem;
 
-  std::map<unsigned int, boundary_cells_info> boundary_cells;
 };
 
 

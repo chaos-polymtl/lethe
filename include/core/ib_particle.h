@@ -127,9 +127,6 @@ public:
   Tensor<1, 3> omega_impulsion;
   Tensor<1, 3> omega_impulsion_iter;
 
-  Tensor<1, 3> omega_impulsion;
-  Tensor<1, 3> omega_impulsion_iter;
-
   // Allow the definition of a local relaxation parameter for each particle in
   // the integration process.
   double local_alpha_torque;
