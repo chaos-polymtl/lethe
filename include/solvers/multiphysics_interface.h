@@ -142,7 +142,7 @@ public:
                           physics_id) != active_physics.end(),
                 ExcInternalError());
 
-    physics[physics_id]->solve_non_linear_system(time_stepping_method, false);
+    physics[physics_id]->solve_non_linear_system(false);
   }
 
   /**
@@ -160,8 +160,7 @@ public:
                           physics_id) != active_physics.end(),
                 ExcInternalError());
 
-    block_physics[physics_id]->solve_non_linear_system(time_stepping_method,
-                                                       false);
+    block_physics[physics_id]->solve_non_linear_system(false);
   }
 
 

@@ -166,7 +166,7 @@ private:
         integrate_particles();
         generate_cut_cells_map();
       }
-    this->simulation_control->set_assembly_method(this->time_stepping_method);
+    // this->simulation_control->set_assembly_method(this->time_stepping_method);
     {
       TimerOutput::Scope t(this->computing_timer, "assemble_system");
       this->GLSNavierStokesSolver<
@@ -194,7 +194,7 @@ private:
   assemble_rhs()
   {
     TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-    this->simulation_control->set_assembly_method(this->time_stepping_method);
+    // this->simulation_control->set_assembly_method(this->time_stepping_method);
 
     this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
     sharp_edge();

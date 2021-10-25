@@ -71,15 +71,10 @@ public:
   /**
    * @brief solve_non_linear_system Solves the non linear system of equations
    *
-   * @param time_stepping_method Indicates the time stepping scheme
-   *
    * @param first_iteration Indicates whether it is the first iteration of the non linear solver
    */
   void
-  solve_non_linear_system(
-    const Parameters::SimulationControl::TimeSteppingMethod
-               time_stepping_method,
-    const bool first_iteration);
+  solve_non_linear_system(const bool first_iteration);
 
   /**
    * @brief Applies constraints to a local_evaluation_point
@@ -158,12 +153,9 @@ PhysicsSolver<VectorType>::PhysicsSolver(
 
 template <typename VectorType>
 void
-PhysicsSolver<VectorType>::solve_non_linear_system(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              first_iteration)
+PhysicsSolver<VectorType>::solve_non_linear_system(const bool first_iteration)
 {
   {
-    this->time_stepping_method = time_stepping_method;
     this->non_linear_solver->solve(first_iteration);
   }
 }
