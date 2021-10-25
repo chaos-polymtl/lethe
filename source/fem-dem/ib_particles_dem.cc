@@ -747,7 +747,7 @@ IBParticlesDEM<dim>::particles_dem(double dt)
           current_fluid_force[p_i] =dem_particles[p_i].forces;
           current_fluid_torque[p_i] =dem_particles[p_i].torques;
 
-          // Explicit Euler
+          // Explicite Euler
           dem_particles[p_i].velocity =
             dem_particles[p_i].velocity +
             (current_fluid_force[p_i] + contact_force[p_i] +

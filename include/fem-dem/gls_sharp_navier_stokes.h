@@ -165,7 +165,7 @@ private:
     if (this->simulation_parameters.particlesParameters->integrate_motion)
       {
         force_on_ib();
-        this->integrate_particles();
+        integrate_particles();
         generate_cut_cells_map();
       }
     // this->simulation_control->set_assembly_method(this->time_stepping_method);
