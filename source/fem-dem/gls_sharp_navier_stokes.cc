@@ -1960,7 +1960,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           particles[p].impulsion_iter = particles[p].impulsion;
 
           if(particles[p].contact_impulsion.norm()<1e-12)
-            particles[p].position=particles[p].last_position+(particles[p].velocity)*0.5*dt;
+            particles[p].position=particles[p].last_position+(particles[p].velocity+particles[p].last_velocity)*0.5*dt;
           else
             particles[p].position=ib_dem.dem_particles[p].position;
 
