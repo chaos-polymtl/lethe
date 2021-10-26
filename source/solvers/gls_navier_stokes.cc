@@ -182,7 +182,8 @@ GLSNavierStokesSolver<dim>::update_boundary_condition(){
   define_non_zero_constraints();
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(this->present_solution);
+  nonzero_constraints.distribute(this->local_evaluation_point);
+  this->present_solution=this->local_evaluation_point;
   this->pcout<<"update_boundary_condition end"<<std::endl;
 }
 
@@ -325,6 +326,7 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
             this->fe->component_mask(velocities));
         }
     }
+  this->zero_constraints.close();
 }
 
 
