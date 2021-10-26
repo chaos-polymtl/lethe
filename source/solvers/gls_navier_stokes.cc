@@ -364,7 +364,6 @@ void
 GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
-  this->simulation_control->set_assembly_method(this->time_stepping_method);
 
   this->system_matrix = 0;
   setup_assemblers();
@@ -465,7 +464,6 @@ void
 GLSNavierStokesSolver<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
-  this->simulation_control->set_assembly_method(this->time_stepping_method);
 
   this->system_rhs = 0;
   setup_assemblers();
@@ -606,8 +604,10 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
         this->simulation_parameters.physical_properties.viscosity;
       this->simulation_parameters.physical_properties.viscosity =
         this->simulation_parameters.initial_condition->viscosity;
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::steady, false);
+        false);
       this->finish_time_step_fd();
       this->simulation_parameters.physical_properties.viscosity = viscosity;
     }
