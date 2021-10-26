@@ -55,8 +55,7 @@ template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &             param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
-  std::shared_ptr<Mapping<spacedim>> fluid_mapping,
-  const unsigned int                 degree_velocity)
+  std::shared_ptr<Mapping<spacedim>> fluid_mapping)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -64,14 +63,13 @@ SolidBase<dim, spacedim>::SolidBase(
   , fluid_mapping(fluid_mapping)
   , param(param)
   , velocity(&param->solid_velocity)
-  , degree_velocity(degree_velocity)
 {
   if (param->solid_mesh.simplex)
     {
       // for simplex meshes
       fe            = std::make_shared<FE_SimplexP<dim, spacedim>>(1);
       solid_mapping = std::make_shared<MappingFE<dim, spacedim>>(*fe);
-      quadrature    = std::make_shared<QGaussSimplex<dim>>(degree_velocity + 1);
+      quadrature    = std::make_shared<QGaussSimplex<dim>>(param->n_points_1D);
       solid_tria    = std::make_shared<
         parallel::fullydistributed::Triangulation<dim, spacedim>>(
         this->mpi_communicator);
@@ -85,7 +83,7 @@ SolidBase<dim, spacedim>::SolidBase(
       // Usual case, for quad/hex meshes
       fe            = std::make_shared<FE_Q<dim, spacedim>>(1);
       solid_mapping = std::make_shared<MappingQGeneric<dim, spacedim>>(1);
-      quadrature    = std::make_shared<QGauss<dim>>(degree_velocity + 1);
+      quadrature    = std::make_shared<QGauss<dim>>(param->n_points_1D);
       solid_tria =
         std::make_shared<parallel::distributed::Triangulation<dim, spacedim>>(
           mpi_communicator,

@@ -60,17 +60,16 @@ test()
   param->solid_mesh.simplex            = false;
   param->solid_mesh.translate          = false;
   param->solid_mesh.rotate             = false;
+  param->n_points_1D                   = 2;
 
 
   // Mesh of the fluid
   GridGenerator::hyper_cube(*fluid_tria, -1, 1);
 
-  const unsigned int degree_velocity = 1;
-
   // SolidBase class
   std::shared_ptr<Mapping<3>> fluid_mapping =
     std::make_shared<MappingQGeneric<3>>(1);
-  SolidBase<3, 3> solid(param, fluid_tria, fluid_mapping, degree_velocity);
+  SolidBase<3, 3> solid(param, fluid_tria, fluid_mapping);
   solid.initial_setup();
   solid.setup_particles();
 
