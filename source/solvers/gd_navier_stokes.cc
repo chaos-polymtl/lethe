@@ -116,7 +116,7 @@ void
 GDNavierStokesSolver<dim>::assemble_system_matrix()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
-  this->simulation_control->set_assembly_method(this->time_stepping_method);
+  // this->simulation_control->set_assembly_method(this->time_stepping_method);
 
   this->system_matrix = 0;
   setup_assemblers();
@@ -233,7 +233,7 @@ void
 GDNavierStokesSolver<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
-  this->simulation_control->set_assembly_method(this->time_stepping_method);
+  // this->simulation_control->set_assembly_method(this->time_stepping_method);
 
   this->system_rhs = 0;
   setup_assemblers();
@@ -726,9 +726,10 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
         this->simulation_parameters.physical_properties.viscosity;
       this->simulation_parameters.physical_properties.viscosity =
         this->simulation_parameters.initial_condition->viscosity;
-      PhysicsSolver<TrilinosWrappers::MPI::BlockVector>::
-        solve_non_linear_system(
-          Parameters::SimulationControl::TimeSteppingMethod::steady, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::steady);
+      PhysicsSolver<
+        TrilinosWrappers::MPI::BlockVector>::solve_non_linear_system(false);
       this->finish_time_step_fd();
       this->simulation_parameters.physical_properties.viscosity = viscosity;
     }
