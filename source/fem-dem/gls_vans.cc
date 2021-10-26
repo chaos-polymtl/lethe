@@ -527,9 +527,10 @@ GLSVANSSolver<dim>::first_iteration()
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
 
-
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+        false);
       this->percolate_time_vectors_fd();
       percolate_void_fraction();
 
@@ -544,9 +545,10 @@ GLSVANSSolver<dim>::first_iteration()
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
 
-
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2, false);
+        false);
 
       this->simulation_control->set_suggested_time_step(timeParameters.dt);
     }
@@ -567,9 +569,10 @@ GLSVANSSolver<dim>::first_iteration()
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
 
-
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+        false);
       this->percolate_time_vectors_fd();
       percolate_void_fraction();
 
@@ -581,9 +584,10 @@ GLSVANSSolver<dim>::first_iteration()
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
 
-
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+        false);
       this->percolate_time_vectors_fd();
       percolate_void_fraction();
 
@@ -596,9 +600,10 @@ GLSVANSSolver<dim>::first_iteration()
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
 
-
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf3);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf3, false);
+        false);
       this->simulation_control->set_suggested_time_step(timeParameters.dt);
     }
 }
@@ -613,10 +618,11 @@ GLSVANSSolver<dim>::iterate()
   calculate_void_fraction(this->simulation_control->get_current_time());
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
-  PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+
+  this->simulation_control->set_assembly_method(
     this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
-      .method,
-    false);
+      .method);
+  PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(false);
 }
 
 template <int dim>
@@ -685,7 +691,6 @@ void
 GLSVANSSolver<dim>::assemble_system_matrix()
 {
   this->system_matrix = 0;
-  this->simulation_control->set_assembly_method(this->time_stepping_method);
 
   setup_assemblers();
 
@@ -785,7 +790,7 @@ void
 GLSVANSSolver<dim>::assemble_system_rhs()
 {
   this->system_rhs = 0;
-  this->simulation_control->set_assembly_method(this->time_stepping_method);
+
   setup_assemblers();
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
