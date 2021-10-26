@@ -174,6 +174,18 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    &this->present_solution);
 }
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::update_boundary_condition(){
+  this->pcout<<"update_boundary_condition begin"<<std::endl;
+  define_non_zero_constraints();
+  // Distribute constraints
+  auto &nonzero_constraints = this->nonzero_constraints;
+  nonzero_constraints.distribute(this->present_solution);
+  this->pcout<<"update_boundary_condition end"<<std::endl;
+}
+
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::define_non_zero_constraints()
@@ -382,6 +394,8 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix()
   // Assemble the preconditioner
   this->setup_preconditioner();
 }
+
+
 
 template <int dim>
 void
@@ -1161,9 +1175,16 @@ GLSNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      define_non_zero_constraints();
+      if (this->simulation_control->get_step_number() %
+            this->simulation_parameters.mesh_adaptation.frequency !=
+          0 || this->simulation_control->is_at_start())
+        {
+          update_boundary_condition();
+        }
+
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
+
 
       if (this->simulation_control->is_at_start())
         this->first_iteration();

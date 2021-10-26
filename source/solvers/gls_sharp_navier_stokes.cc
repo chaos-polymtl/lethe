@@ -2452,10 +2452,11 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      this->define_non_zero_constraints();
+      this->update_boundary_condition();
       if (this->simulation_parameters.particlesParameters.integrate_motion ==
           false)
         integrate_particles();
+
 
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
@@ -2485,8 +2486,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
     }
 
   if (this->simulation_parameters.particlesParameters.calculate_force_ib)
-
-
     this->finish_simulation();
 }
 

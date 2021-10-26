@@ -64,6 +64,9 @@ protected:
   virtual void
   setup_dofs_fd();
 
+  void
+  update_boundary_condition();
+
   /**
    * @brief Sets the initial condition for the solver
    *
