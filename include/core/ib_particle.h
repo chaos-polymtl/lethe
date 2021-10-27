@@ -16,8 +16,8 @@
  * Author: Lucka Barbeau, Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#include <deal.II/base/point.h>
 #include <deal.II/base/parsed_function.h>
+#include <deal.II/base/point.h>
 
 #ifndef lethe_ib_particle_h
 #  define lethe_ib_particle_h
@@ -28,7 +28,6 @@ template <int dim>
 class IBParticle
 {
 public:
-
   // Function to initialise the value associated with each particle.
   enum PropertiesIndex : int
   {
@@ -115,9 +114,9 @@ public:
   // iteration.
   Tensor<1, 3> omega_iter;
 
-  Functions::ParsedFunction<dim>*  f_velocity;
-  Functions::ParsedFunction<dim>*  f_position;
-  Functions::ParsedFunction<dim>*   f_omega;
+  Functions::ParsedFunction<dim> *f_velocity;
+  Functions::ParsedFunction<dim> *f_position;
+  Functions::ParsedFunction<dim> *f_omega;
 
 
   // Allow the definition of a local relaxation parameter for each particle in

@@ -59,7 +59,7 @@ public:
   AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
   SourceTerms::SourceTerm<dim> *                    source_term;
   Parameters::VelocitySource                        velocity_sources;
-  Parameters::IBParticles<dim>*                     particlesParameters;
+  Parameters::IBParticles<dim> *                    particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
   Parameters::Multiphysics                          multiphysics;
 

@@ -107,7 +107,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
 {
   // initialized the particles
 
-  particles=this->simulation_parameters.particlesParameters->particles;
+  particles = this->simulation_parameters.particlesParameters->particles;
 
   table_p.resize(particles.size());
 }
@@ -606,7 +606,8 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
           {
             std::string filename =
               this->simulation_parameters.simulation_control.output_folder +
-              this->simulation_parameters.particlesParameters->ib_force_output_file +
+              this->simulation_parameters.particlesParameters
+                ->ib_force_output_file +
               "." + Utilities::int_to_string(p, 2) + ".dat";
             std::ofstream output(filename.c_str());
 
@@ -731,7 +732,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
 
-          if (cell_is_cut == false && cell_is_inside==false )
+          if (cell_is_cut == false && cell_is_inside == false)
             {
               auto &evaluation_point = this->evaluation_point;
               fe_values.reinit(cell);
@@ -762,17 +763,15 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
     Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
   exact_pressure_integral =
     Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
-  volume =
-    Utilities::MPI::sum(volume, this->mpi_communicator);
+  volume = Utilities::MPI::sum(volume, this->mpi_communicator);
 
   // double global_volume    =
   // GridTools::volume(dof_handler.get_triangulation(),*mapping);
   double global_volume =
     GridTools::volume(this->dof_handler.get_triangulation(), *this->mapping);
-  double average_pressure       = pressure_integral /volume;
-  double average_exact_pressure = exact_pressure_integral /volume;
-  cell = this->dof_handler
-           .begin_active(),endc = this->dof_handler.end();
+  double average_pressure       = pressure_integral / volume;
+  double average_exact_pressure = exact_pressure_integral / volume;
+  cell = this->dof_handler.begin_active(), endc = this->dof_handler.end();
   for (; cell != endc; ++cell)
     {
       if (cell->is_locally_owned())
@@ -831,7 +830,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                       l2errorU += (uz_sim - uz_exact) * (uz_sim - uz_exact) *
                                   fe_values.JxW(q);
                     }
-                  if(cell_is_inside==false)
+                  if (cell_is_inside == false)
                     {
                       double p_sim =
                         local_pressure_values[q] - average_pressure;
@@ -867,37 +866,42 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   // fix point algorithm in parallel to the newton iteration used for the fluid
   // resolution.
   using numbers::PI;
-  double         dt    = this->simulation_control->get_time_steps_vector()[0];
-  double time =this->simulation_control->get_current_time();
-  double         alpha = this->simulation_parameters.particlesParameters->alpha;
+  double dt    = this->simulation_control->get_time_steps_vector()[0];
+  double time  = this->simulation_control->get_current_time();
+  double alpha = this->simulation_parameters.particlesParameters->alpha;
   this->simulation_parameters.particlesParameters->f_gravity.set_time(time);
 
-  double         rho = this->simulation_parameters.particlesParameters->density;
-  particle_residual  = 0;
+  double rho        = this->simulation_parameters.particlesParameters->density;
+  particle_residual = 0;
   if (this->simulation_parameters.particlesParameters->integrate_motion)
     {
       Tensor<1, dim> gravity;
 
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
-          Tensor<1, dim> g  ;
+          Tensor<1, dim> g;
           // Translation
           // Define the gravity force applied on the particle based on his masse
           // and the density of fluide applied on it.
 
           if (dim == 2)
             {
-              g[0]=  this->simulation_parameters.particlesParameters->f_gravity.value(particles[p].position,0);
-              g[1]=  this->simulation_parameters.particlesParameters->f_gravity.value(particles[p].position,1);
+              g[0] = this->simulation_parameters.particlesParameters->f_gravity
+                       .value(particles[p].position, 0);
+              g[1] = this->simulation_parameters.particlesParameters->f_gravity
+                       .value(particles[p].position, 1);
               gravity =
                 g * (particles[p].mass -
                      particles[p].radius * particles[p].radius * PI * rho);
             }
           if (dim == 3)
             {
-              g[0]=  this->simulation_parameters.particlesParameters->f_gravity.value(particles[p].position,0);
-              g[1]=  this->simulation_parameters.particlesParameters->f_gravity.value(particles[p].position,1);
-              g[2]=  this->simulation_parameters.particlesParameters->f_gravity.value(particles[p].position,2);
+              g[0] = this->simulation_parameters.particlesParameters->f_gravity
+                       .value(particles[p].position, 0);
+              g[1] = this->simulation_parameters.particlesParameters->f_gravity
+                       .value(particles[p].position, 1);
+              g[2] = this->simulation_parameters.particlesParameters->f_gravity
+                       .value(particles[p].position, 2);
               gravity =
                 g * (particles[p].mass - 4.0 / 3.0 * particles[p].radius *
                                            particles[p].radius *
@@ -1093,18 +1097,26 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           particles[p].f_velocity->set_time(time);
           particles[p].f_omega->set_time(time);
           particles[p].last_position = particles[p].position;
-          particles[p].position[0] =particles[p].f_position->value(particles[p].position,0);
-          particles[p].position[1] =particles[p].f_position->value(particles[p].position,1);
-          particles[p].velocity[0] =particles[p].f_velocity->value(particles[p].position,0);
-          particles[p].velocity[1] =particles[p].f_velocity->value(particles[p].position,1);
-          particles[p].omega[0] =particles[p].f_omega->value(particles[p].position,0);
-          particles[p].omega[1] =particles[p].f_omega->value(particles[p].position,1);
-          particles[p].omega[2] =particles[p].f_omega->value(particles[p].position,2);
+          particles[p].position[0] =
+            particles[p].f_position->value(particles[p].position, 0);
+          particles[p].position[1] =
+            particles[p].f_position->value(particles[p].position, 1);
+          particles[p].velocity[0] =
+            particles[p].f_velocity->value(particles[p].position, 0);
+          particles[p].velocity[1] =
+            particles[p].f_velocity->value(particles[p].position, 1);
+          particles[p].omega[0] =
+            particles[p].f_omega->value(particles[p].position, 0);
+          particles[p].omega[1] =
+            particles[p].f_omega->value(particles[p].position, 1);
+          particles[p].omega[2] =
+            particles[p].f_omega->value(particles[p].position, 2);
           if (dim == 3)
             {
               particles[p].position[2] =
                 particles[p].f_position->value(particles[p].position, 2);
-              particles[p].velocity[2] =particles[p].f_velocity->value(particles[p].position,2);
+              particles[p].velocity[2] =
+                particles[p].f_velocity->value(particles[p].position, 2);
             }
         }
     }
@@ -1611,7 +1623,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       .norm() < particles[ib_particle_id].radius;
                   bool use_ib_for_pressure =
                     (dof_is_inside) && (component_i == dim) &&
-                    (this->simulation_parameters.particlesParameters->assemble_navier_stokes_inside == false);
+                    (this->simulation_parameters.particlesParameters
+                       ->assemble_navier_stokes_inside == false);
 
 
                   // Check if the DOfs is owned and if it's not a hanging node.
@@ -2024,7 +2037,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   if (cell_is_cut)
     return;
 
-  double time =this->simulation_control->get_current_time();
+  double time = this->simulation_control->get_current_time();
 
   scratch_data.reinit(cell,
                       this->evaluation_point,
@@ -2059,7 +2072,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
-  if (cell_is_inside && this->simulation_parameters.particlesParameters->assemble_navier_stokes_inside == false)
+  if (cell_is_inside && this->simulation_parameters.particlesParameters
+                            ->assemble_navier_stokes_inside == false)
     {
       for (auto &assembler : this->assemblers_inside_ib)
         {
@@ -2117,7 +2131,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   if (cell_is_cut)
     return;
-  double time =this->simulation_control->get_current_time();
+  double time = this->simulation_control->get_current_time();
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
@@ -2153,7 +2167,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
-  if (cell_is_inside && this->simulation_parameters.particlesParameters->assemble_navier_stokes_inside == false)
+  if (cell_is_inside && this->simulation_parameters.particlesParameters
+                            ->assemble_navier_stokes_inside == false)
     {
       for (auto &assembler : this->assemblers_inside_ib)
         {
@@ -2417,7 +2432,8 @@ GLSSharpNavierStokesSolver<dim>::solve()
   while (this->simulation_control->integrate())
     {
       this->update_boundary_condition();
-      this->forcing_function->set_time(this->simulation_control->get_current_time());
+      this->forcing_function->set_time(
+        this->simulation_control->get_current_time());
 
       if (this->simulation_parameters.particlesParameters->integrate_motion ==
           false)

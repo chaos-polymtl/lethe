@@ -122,7 +122,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
-  auto &nonzero_constraints = this->get_nonzero_constraints();
+  auto &                 nonzero_constraints = this->get_nonzero_constraints();
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
@@ -177,20 +177,20 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::update_boundary_condition(){
+GLSNavierStokesSolver<dim>::update_boundary_condition()
+{
   define_non_zero_constraints();
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);
-  this->present_solution=this->local_evaluation_point;
+  this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::define_non_zero_constraints()
 {
-
-  double time=this->simulation_control->get_current_time();
+  double time = this->simulation_control->get_current_time();
   FEValuesExtractors::Vector velocities(0);
   // Non-zero constraints
   auto &nonzero_constraints = this->get_nonzero_constraints();
@@ -231,12 +231,12 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
         else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::function)
           {
-            this->simulation_parameters.boundary_conditions
-              .bcFunctions[i_bc].u.set_time(time);
-            this->simulation_parameters.boundary_conditions
-              .bcFunctions[i_bc].v.set_time(time);
-            this->simulation_parameters.boundary_conditions
-              .bcFunctions[i_bc].w.set_time(time);
+            this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+              .u.set_time(time);
+            this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+              .v.set_time(time);
+            this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+              .w.set_time(time);
             VectorTools::interpolate_boundary_values(
               *this->mapping,
               this->dof_handler,
@@ -953,7 +953,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
         }
       iter += 1;
     }
-  current_preconditioner_fill_level=initial_preconditioner_fill_level;
+  current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
 template <int dim>
@@ -1032,7 +1032,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
         }
       iter += 1;
     }
-  current_preconditioner_fill_level=initial_preconditioner_fill_level;
+  current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
 template <int dim>
@@ -1118,7 +1118,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
         }
       iter += 1;
     }
-  current_preconditioner_fill_level=initial_preconditioner_fill_level;
+  current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
 
@@ -1176,8 +1176,9 @@ GLSNavierStokesSolver<dim>::solve()
   while (this->simulation_control->integrate())
     {
       if (this->simulation_control->get_step_number() %
-            this->simulation_parameters.mesh_adaptation.frequency !=
-          0 || this->simulation_control->is_at_start())
+              this->simulation_parameters.mesh_adaptation.frequency !=
+            0 ||
+          this->simulation_control->is_at_start())
         {
           update_boundary_condition();
         }

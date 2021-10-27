@@ -1198,24 +1198,25 @@ namespace Parameters
 
   template <int dim>
   void
-  IBParticles<dim>::declare_default_entry(ParameterHandler &prm,unsigned int index)
+  IBParticles<dim>::declare_default_entry(ParameterHandler &prm,
+                                          unsigned int      index)
   {
     prm.enter_subsection("position");
-    particles[index].f_position->declare_parameters(prm,dim);
+    particles[index].f_position->declare_parameters(prm, dim);
     if (dim == 2)
       prm.set("Function expression", "0; 0");
     if (dim == 3)
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
     prm.enter_subsection("velocity");
-    particles[index].f_velocity->declare_parameters(prm,dim);
+    particles[index].f_velocity->declare_parameters(prm, dim);
     if (dim == 2)
       prm.set("Function expression", "0; 0");
     if (dim == 3)
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
     prm.enter_subsection("omega");
-    particles[index].f_omega->declare_parameters(prm,dim);
+    particles[index].f_omega->declare_parameters(prm, dim);
     if (dim == 2)
       prm.set("Function expression", "0; 0");
     if (dim == 3)
@@ -1321,7 +1322,7 @@ namespace Parameters
 
       prm.enter_subsection("gravity");
 
-      f_gravity.declare_parameters(prm,dim);
+      f_gravity.declare_parameters(prm, dim);
       if (dim == 2)
         prm.set("Function expression", "0; 0");
       if (dim == 3)
@@ -1335,53 +1336,53 @@ namespace Parameters
 
       prm.enter_subsection("particle info 0");
       {
-        declare_default_entry(prm,0);
+        declare_default_entry(prm, 0);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 1");
       {
-        IBParticles::declare_default_entry(prm,1);
+        IBParticles::declare_default_entry(prm, 1);
       }
       prm.leave_subsection();
 
       prm.enter_subsection("particle info 2");
       {
-        IBParticles::declare_default_entry(prm,2);
+        IBParticles::declare_default_entry(prm, 2);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 3");
       {
-        IBParticles::declare_default_entry(prm,3);
+        IBParticles::declare_default_entry(prm, 3);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 4");
       {
-        IBParticles::declare_default_entry(prm,4);
+        IBParticles::declare_default_entry(prm, 4);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 5");
       {
-        IBParticles::declare_default_entry(prm,5);
+        IBParticles::declare_default_entry(prm, 5);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 6");
       {
-        IBParticles::declare_default_entry(prm,6);
+        IBParticles::declare_default_entry(prm, 6);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 7");
       {
-        IBParticles::declare_default_entry(prm,7);
+        IBParticles::declare_default_entry(prm, 7);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 8");
       {
-        IBParticles::declare_default_entry(prm,8);
+        IBParticles::declare_default_entry(prm, 8);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 9");
       {
-        IBParticles::declare_default_entry(prm,9);
+        IBParticles::declare_default_entry(prm, 9);
       }
       prm.leave_subsection();
     }
@@ -1421,32 +1422,39 @@ namespace Parameters
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
-          particles[i].f_position=new Functions::ParsedFunction<dim>(dim);
-          particles[i].f_velocity=new Functions::ParsedFunction<dim>(dim);
-          particles[i].f_omega=new Functions::ParsedFunction<dim>(dim);
+          particles[i].f_position = new Functions::ParsedFunction<dim>(dim);
+          particles[i].f_velocity = new Functions::ParsedFunction<dim>(dim);
+          particles[i].f_omega    = new Functions::ParsedFunction<dim>(dim);
           particles[i].initialise_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
 
           prm.enter_subsection("position");
           particles[i].f_position->parse_parameters(prm);
-          //particles[i].f_position->set_time(0);
+          // particles[i].f_position->set_time(0);
           prm.leave_subsection();
           prm.enter_subsection("velocity");
           particles[i].f_velocity->parse_parameters(prm);
-         // particles[i].f_velocity->set_time(0);
+          // particles[i].f_velocity->set_time(0);
           prm.leave_subsection();
           prm.enter_subsection("omega");
           particles[i].f_omega->parse_parameters(prm);
-        //  particles[i].f_omega->set_time(0);
+          //  particles[i].f_omega->set_time(0);
           prm.leave_subsection();
-          particles[i].position[0]= particles[i].f_position->value(particles[i].position,0);
-          particles[i].position[1]= particles[i].f_position->value(particles[i].position,1);
-          particles[i].velocity[0]= particles[i].f_velocity->value(particles[i].position,0);
-          particles[i].velocity[1]= particles[i].f_velocity->value(particles[i].position,1);
-          particles[i].omega[0]= particles[i].f_omega->value(particles[i].position,0);
-          particles[i].omega[1]= particles[i].f_omega->value(particles[i].position,1);
-          particles[i].omega[2]= particles[i].f_omega->value(particles[i].position,2);
+          particles[i].position[0] =
+            particles[i].f_position->value(particles[i].position, 0);
+          particles[i].position[1] =
+            particles[i].f_position->value(particles[i].position, 1);
+          particles[i].velocity[0] =
+            particles[i].f_velocity->value(particles[i].position, 0);
+          particles[i].velocity[1] =
+            particles[i].f_velocity->value(particles[i].position, 1);
+          particles[i].omega[0] =
+            particles[i].f_omega->value(particles[i].position, 0);
+          particles[i].omega[1] =
+            particles[i].f_omega->value(particles[i].position, 1);
+          particles[i].omega[2] =
+            particles[i].f_omega->value(particles[i].position, 2);
 
 
           particles[i].radius               = prm.get_double("radius");
@@ -1458,8 +1466,10 @@ namespace Parameters
 
           if (dim == 3)
             {
-              particles[i].position[2]= particles[i].f_position->value(particles[i].position,2);
-              particles[i].velocity[2]= particles[i].f_velocity->value(particles[i].position,2);
+              particles[i].position[2] =
+                particles[i].f_position->value(particles[i].position, 2);
+              particles[i].velocity[2] =
+                particles[i].f_velocity->value(particles[i].position, 2);
               particles[i].pressure_location[2] = prm.get_double("pressure z");
               particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
                                   particles[i].radius * particles[i].radius *
