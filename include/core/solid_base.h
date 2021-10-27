@@ -69,8 +69,7 @@ public:
   SolidBase(std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param,
             std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
                                                fluid_tria,
-            std::shared_ptr<Mapping<spacedim>> fluid_mapping,
-            const unsigned int                 degree_velocity);
+            std::shared_ptr<Mapping<spacedim>> fluid_mapping);
 
   /**
    * @brief Manages solid triangulation and particles setup
@@ -242,8 +241,7 @@ private:
 
   Function<spacedim> *velocity;
 
-  const unsigned int degree_velocity;
-  unsigned int       initial_number_of_particles;
+  unsigned int initial_number_of_particles;
 };
 
 #endif
