@@ -1513,57 +1513,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
       this->simulation_parameters.simulation_control.method)
     dt = 1;
 
-  Point<dim> pressure_reference_location(1.99,0.00001,0.00001);
-  const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
-    this->dof_handler, pressure_reference_location);
-
-  if (cell->is_locally_owned())
-    {
-      cell->get_dof_indices(local_dof_indices);
-      double sum_line = 0;
-      fe_values.reinit(cell);
-      std::vector<int> set_pressure_cell;
-      set_pressure_cell.resize(particles.size());
-
-      // Define the order of magnitude for the stencil.
-      for (unsigned int qf = 0; qf < n_q_points; ++qf)
-        sum_line += fe_values.JxW(qf);
-
-      sum_line = sum_line / dt;
-      // Clear the line in the matrix
-      unsigned int inside_index = local_dof_indices[dim];
-      // Check on which DOF of the cell to impose the pressure. If the dof
-      // is on a hanging node, it is already constrained and
-      // the pressure cannot be imposed there. So we just go to the next
-      // pressure DOF of the cell.
-
-      for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-        {
-          const unsigned int component_i =
-            this->fe->system_to_component_index(i).first;
-          if (this->zero_constraints.is_constrained(local_dof_indices[i]) ==
-                false &&
-              this->locally_owned_dofs.is_element(local_dof_indices[i]) &&
-              component_i == dim)
-            {
-              inside_index = local_dof_indices[i];
-              break;
-            }
-        }
-
-      this->system_matrix.clear_row(inside_index);
-      // this->system_matrix.clear_row(inside_index)
-      // is not reliable on edge case
-
-      // Set the new equation for the first pressure dofs of the
-      // cell. this is the new reference pressure inside a
-      // particle
-
-      this->system_matrix.set(inside_index, inside_index, sum_line);
-      this->system_rhs(inside_index) =
-        0 - this->evaluation_point(inside_index) * sum_line;
-    }
-
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
