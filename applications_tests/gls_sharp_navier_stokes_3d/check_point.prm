@@ -89,19 +89,20 @@ subsection particles
 	set refine mesh outside radius factor = 1.5
 	set initial refinement = 3
 	set fluid density =0.000960
-	set gravity_y =-981
 	set integrate motion = true
 	set alpha =0.5
 	set assemble Navier-Stokes inside particles = false
-
+    subsection gravity
+        set Function expression =0;-981;0
+    end
 
     subsection particle info 0 
-            set x = 5.0000
-	    set y = 12.75
-	    set z = 5.0000
-	    set u = 0
-	    set v = 0
-	    set w = 0
+        subsection position
+            set Function expression =5;12.75;5
+        end
+        subsection velocity
+            set Function expression =0;0;0
+        end
 	    set omega x = 0
 	    set omega y = 0
 	    set omega z = 0
