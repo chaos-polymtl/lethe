@@ -45,7 +45,7 @@ namespace Parameters
 
     // Solid mesh
     Parameters::Mesh solid_mesh;
-    unsigned int     n_points_1D;
+    unsigned int     number_quadrature_points;
 
     // Solid velocity
     Functions::ParsedFunction<dim> solid_velocity;
@@ -87,12 +87,12 @@ namespace Parameters
         "enables the uses of a higher CFL condition for the Nitsche solver while preventing the loss of particles");
 
       prm.declare_entry(
-        "n points 1D",
+        "number quadrature points",
         "2",
         Patterns::Integer(),
-        "Number of Nitsche particles to insert in a 1D cell. The number of"
-        "inserted particles will be higher for higher dimensions. Increasing this"
-        "number will lead to a higher particles density inside the solid.");
+        "Number of Nitsche (quadrature) points to insert in a 1D cell. The number of"
+        "inserted points will be higher for higher dimensions. Increasing this"
+        "number will lead to a higher points density inside the solid.");
 
       prm.enter_subsection("center of rotation");
       prm.declare_entry("x", "0", Patterns::Double(), "X COR");
@@ -115,7 +115,7 @@ namespace Parameters
       prm.leave_subsection();
       enable_particles_motion  = prm.get_bool("enable particles motion");
       particles_sub_iterations = prm.get_integer("particles sub iterations");
-      n_points_1D              = prm.get_integer("n points 1D");
+      number_quadrature_points = prm.get_integer("number quadrature points");
 
       prm.enter_subsection("center of rotation");
       center_of_rotation[0] = prm.get_double("x");

@@ -69,8 +69,9 @@ SolidBase<dim, spacedim>::SolidBase(
       // for simplex meshes
       fe            = std::make_shared<FE_SimplexP<dim, spacedim>>(1);
       solid_mapping = std::make_shared<MappingFE<dim, spacedim>>(*fe);
-      quadrature    = std::make_shared<QGaussSimplex<dim>>(param->n_points_1D);
-      solid_tria    = std::make_shared<
+      quadrature =
+        std::make_shared<QGaussSimplex<dim>>(param->number_quadrature_points);
+      solid_tria = std::make_shared<
         parallel::fullydistributed::Triangulation<dim, spacedim>>(
         this->mpi_communicator);
 
@@ -83,7 +84,8 @@ SolidBase<dim, spacedim>::SolidBase(
       // Usual case, for quad/hex meshes
       fe            = std::make_shared<FE_Q<dim, spacedim>>(1);
       solid_mapping = std::make_shared<MappingQGeneric<dim, spacedim>>(1);
-      quadrature    = std::make_shared<QGauss<dim>>(param->n_points_1D);
+      quadrature =
+        std::make_shared<QGauss<dim>>(param->number_quadrature_points);
       solid_tria =
         std::make_shared<parallel::distributed::Triangulation<dim, spacedim>>(
           mpi_communicator,

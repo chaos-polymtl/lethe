@@ -70,7 +70,7 @@ test()
   param->solid_mesh.simplex            = false;
   param->solid_mesh.translate          = false;
   param->solid_mesh.rotate             = false;
-  param->n_points_1D                   = 2;
+  param->number_quadrature_points      = 2;
 
   double time_step = 0.01;
   param->solid_velocity.declare_parameters(prm, 3);

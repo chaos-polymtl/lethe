@@ -75,7 +75,7 @@ test()
   param->particles_sub_iterations      = 1;
   param->solid_mesh.translate          = false;
   param->solid_mesh.rotate             = false;
-  param->n_points_1D                   = 2;
+  param->number_quadrature_points      = 2;
 
 
   double time_step = 0.01;

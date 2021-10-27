@@ -76,7 +76,7 @@ subsection nitsche
 	set beta = 100
 
     subsection nitsche solid 0
-        set n points 1D = 3
+        set number quadrature points = 3
 	    subsection mesh
 	        set type = dealii
 	        set grid type = hyper_rectangle

@@ -62,7 +62,7 @@ test()
   param->solid_mesh.simplex            = false;
   param->solid_mesh.translate          = false;
   param->solid_mesh.rotate             = false;
-  param->n_points_1D                   = 2;
+  param->number_quadrature_points      = 2;
 
   // Mesh of the fluid
   GridGenerator::hyper_cube(*fluid_tria, -1, 1);
