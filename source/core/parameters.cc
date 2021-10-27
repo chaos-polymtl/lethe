@@ -1412,14 +1412,13 @@ namespace Parameters
       ib_particles_pvd_file  = prm.get("ib particles pvd file");
       particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
 
-      std::cout<<"before first function load "<<std::endl;
+
       prm.enter_subsection("gravity");
       f_gravity.parse_parameters(prm);
       prm.leave_subsection();
-      std::cout<<"before after function load "<<std::endl;
+
 
       particles.resize(nb);
-      std::cout<<"load particle "<<std::endl;
       for (unsigned int i = 0; i < nb; ++i)
         {
           particles[i].f_position=new Functions::ParsedFunction<dim>(dim);
@@ -1475,7 +1474,6 @@ namespace Parameters
           particles[i].initialise_last();
           prm.leave_subsection();
         }
-      std::cout<<"finish load particle "<<std::endl;
       prm.leave_subsection();
     }
   }

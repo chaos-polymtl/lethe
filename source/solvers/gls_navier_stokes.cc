@@ -178,13 +178,11 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::update_boundary_condition(){
-  this->pcout<<"update_boundary_condition begin"<<std::endl;
   define_non_zero_constraints();
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);
   this->present_solution=this->local_evaluation_point;
-  this->pcout<<"update_boundary_condition end"<<std::endl;
 }
 
 template <int dim>
