@@ -160,7 +160,7 @@ private:
   virtual void
   assemble_matrix_and_rhs()
   {
-    if (this->simulation_parameters.particlesParameters.integrate_motion)
+    if (this->simulation_parameters.particlesParameters->integrate_motion)
       {
         force_on_ib();
         integrate_particles();
@@ -392,7 +392,7 @@ Return a bool that describes  if a cell contains a specific point
   {
     double scalling =
       this->simulation_parameters.non_linear_solver.tolerance /
-      this->simulation_parameters.particlesParameters.particle_nonlinear_tol;
+      this->simulation_parameters.particlesParameters->particle_nonlinear_tol;
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
   }
 

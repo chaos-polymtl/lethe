@@ -17,7 +17,7 @@
  */
 
 #include <deal.II/base/point.h>
-
+#include <deal.II/base/parsed_function.h>
 
 #ifndef lethe_ib_particle_h
 #  define lethe_ib_particle_h
@@ -28,8 +28,8 @@ template <int dim>
 class IBParticle
 {
 public:
-  // Function to initialise the value associated with each particle.
 
+  // Function to initialise the value associated with each particle.
   enum PropertiesIndex : int
   {
     id           = 0,
@@ -114,6 +114,11 @@ public:
   // Store the last  angular velocity of the of the particle for the fix point
   // iteration.
   Tensor<1, 3> omega_iter;
+
+  Functions::ParsedFunction<dim>*  f_velocity;
+  Functions::ParsedFunction<dim>*  f_position;
+  Functions::ParsedFunction<dim>*   f_omega;
+
 
   // Allow the definition of a local relaxation parameter for each particle in
   // the integration process.

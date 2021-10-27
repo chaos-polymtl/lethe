@@ -1198,17 +1198,30 @@ namespace Parameters
 
   template <int dim>
   void
-  IBParticles<dim>::declare_default_entry(ParameterHandler &prm)
+  IBParticles<dim>::declare_default_entry(ParameterHandler &prm,unsigned int index)
   {
-    prm.declare_entry("x", "0", Patterns::Double(), "x cor ");
-    prm.declare_entry("y", "0", Patterns::Double(), "y cor ");
-    prm.declare_entry("z", "0", Patterns::Double(), "z cor ");
-    prm.declare_entry("u", "0", Patterns::Double(), "speed in x ");
-    prm.declare_entry("v", "0", Patterns::Double(), "speed in y ");
-    prm.declare_entry("w", "0", Patterns::Double(), "speed  in z ");
-    prm.declare_entry("omega x", "0", Patterns::Double(), "rotation speed x ");
-    prm.declare_entry("omega y", "0", Patterns::Double(), "rotation speed y ");
-    prm.declare_entry("omega z", "0", Patterns::Double(), "rotation speed z ");
+    prm.enter_subsection("position");
+    particles[index].f_position->declare_parameters(prm,dim);
+    if (dim == 2)
+      prm.set("Function expression", "0; 0");
+    if (dim == 3)
+      prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+    prm.enter_subsection("velocity");
+    particles[index].f_velocity->declare_parameters(prm,dim);
+    if (dim == 2)
+      prm.set("Function expression", "0; 0");
+    if (dim == 3)
+      prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+    prm.enter_subsection("omega");
+    particles[index].f_omega->declare_parameters(prm,dim);
+    if (dim == 2)
+      prm.set("Function expression", "0; 0");
+    if (dim == 3)
+      prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+
     prm.declare_entry(
       "pressure x",
       "0",
@@ -1305,18 +1318,16 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "density of the fluid");
-      prm.declare_entry("gravity_x",
-                        "0",
-                        Patterns::Double(),
-                        "gravitational acceleration");
-      prm.declare_entry("gravity_y",
-                        "-9.81",
-                        Patterns::Double(),
-                        "gravitational acceleration");
-      prm.declare_entry("gravity_z",
-                        "0",
-                        Patterns::Double(),
-                        "gravitational acceleration");
+
+      prm.enter_subsection("gravity");
+
+      f_gravity.declare_parameters(prm,dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0");
+      prm.leave_subsection();
+
       prm.declare_entry("alpha",
                         "1",
                         Patterns::Double(),
@@ -1324,53 +1335,53 @@ namespace Parameters
 
       prm.enter_subsection("particle info 0");
       {
-        declare_default_entry(prm);
+        declare_default_entry(prm,0);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 1");
       {
-        IBParticles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm,1);
       }
       prm.leave_subsection();
 
       prm.enter_subsection("particle info 2");
       {
-        IBParticles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm,2);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 3");
       {
-        IBParticles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm,3);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 4");
       {
-        IBParticles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm,4);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 5");
       {
-        IBParticles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm,5);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 6");
       {
-        IBParticles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm,6);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 7");
       {
-        IBParticles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm,7);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 8");
       {
-        IBParticles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm,8);
       }
       prm.leave_subsection();
       prm.enter_subsection("particle info 9");
       {
-        IBParticles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm,9);
       }
       prm.leave_subsection();
     }
@@ -1394,33 +1405,51 @@ namespace Parameters
       density              = prm.get_double("fluid density");
       integrate_motion     = prm.get_bool("integrate motion");
       alpha                = prm.get_double("alpha");
-      gravity[0]           = prm.get_double("gravity_x");
-      gravity[1]           = prm.get_double("gravity_y");
+
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
       length_ratio           = prm.get_double("length ratio");
       ib_particles_pvd_file  = prm.get("ib particles pvd file");
       particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
 
-
-      if (dim == 3)
-        gravity[2] = prm.get_double("gravity_z");
-
-
+      std::cout<<"before first function load "<<std::endl;
+      prm.enter_subsection("gravity");
+      f_gravity.parse_parameters(prm);
+      prm.leave_subsection();
+      std::cout<<"before after function load "<<std::endl;
 
       particles.resize(nb);
+      std::cout<<"load particle "<<std::endl;
       for (unsigned int i = 0; i < nb; ++i)
         {
+          particles[i].f_position=new Functions::ParsedFunction<dim>(dim);
+          particles[i].f_velocity=new Functions::ParsedFunction<dim>(dim);
+          particles[i].f_omega=new Functions::ParsedFunction<dim>(dim);
           particles[i].initialise_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
-          particles[i].position[0]          = prm.get_double("x");
-          particles[i].position[1]          = prm.get_double("y");
-          particles[i].velocity[0]          = prm.get_double("u");
-          particles[i].velocity[1]          = prm.get_double("v");
-          particles[i].omega[0]             = prm.get_double("omega x");
-          particles[i].omega[1]             = prm.get_double("omega y");
-          particles[i].omega[2]             = prm.get_double("omega z");
+
+          prm.enter_subsection("position");
+          particles[i].f_position->parse_parameters(prm);
+          //particles[i].f_position->set_time(0);
+          prm.leave_subsection();
+          prm.enter_subsection("velocity");
+          particles[i].f_velocity->parse_parameters(prm);
+         // particles[i].f_velocity->set_time(0);
+          prm.leave_subsection();
+          prm.enter_subsection("omega");
+          particles[i].f_omega->parse_parameters(prm);
+        //  particles[i].f_omega->set_time(0);
+          prm.leave_subsection();
+          particles[i].position[0]= particles[i].f_position->value(particles[i].position,0);
+          particles[i].position[1]= particles[i].f_position->value(particles[i].position,1);
+          particles[i].velocity[0]= particles[i].f_velocity->value(particles[i].position,0);
+          particles[i].velocity[1]= particles[i].f_velocity->value(particles[i].position,1);
+          particles[i].omega[0]= particles[i].f_omega->value(particles[i].position,0);
+          particles[i].omega[1]= particles[i].f_omega->value(particles[i].position,1);
+          particles[i].omega[2]= particles[i].f_omega->value(particles[i].position,2);
+
+
           particles[i].radius               = prm.get_double("radius");
           particles[i].inertia[0][0]        = prm.get_double("inertia");
           particles[i].inertia[1][1]        = prm.get_double("inertia");
@@ -1430,8 +1459,8 @@ namespace Parameters
 
           if (dim == 3)
             {
-              particles[i].position[2]          = prm.get_double("z");
-              particles[i].velocity[2]          = prm.get_double("w");
+              particles[i].position[2]= particles[i].f_position->value(particles[i].position,2);
+              particles[i].velocity[2]= particles[i].f_velocity->value(particles[i].position,2);
               particles[i].pressure_location[2] = prm.get_double("pressure z");
               particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
                                   particles[i].radius * particles[i].radius *
@@ -1446,6 +1475,7 @@ namespace Parameters
           particles[i].initialise_last();
           prm.leave_subsection();
         }
+      std::cout<<"finish load particle "<<std::endl;
       prm.leave_subsection();
     }
   }

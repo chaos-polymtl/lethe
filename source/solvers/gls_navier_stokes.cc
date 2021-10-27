@@ -955,7 +955,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
         }
       iter += 1;
     }
-  current_preconditioner_fill_level=this->simulation_parameters.linear_solver.ilu_precond_fill;
+  current_preconditioner_fill_level=initial_preconditioner_fill_level;
 }
 
 template <int dim>
@@ -1034,7 +1034,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
         }
       iter += 1;
     }
-  current_preconditioner_fill_level=this->simulation_parameters.linear_solver.ilu_precond_fill;
+  current_preconditioner_fill_level=initial_preconditioner_fill_level;
 }
 
 template <int dim>
@@ -1120,7 +1120,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
         }
       iter += 1;
     }
-  current_preconditioner_fill_level=this->simulation_parameters.linear_solver.amg_precond_ilu_fill;
+  current_preconditioner_fill_level=initial_preconditioner_fill_level;
 }
 
 

@@ -677,6 +677,16 @@ namespace Parameters
   class IBParticles
   {
   public:
+    IBParticles():
+      f_gravity(dim)
+    {}
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    declare_default_entry(ParameterHandler &prm,unsigned int index);
+    void
+    parse_parameters(ParameterHandler &prm);
+
     unsigned int                 nb;
     unsigned int                 order;
     unsigned int                 initial_refinement;
@@ -687,22 +697,17 @@ namespace Parameters
     bool                         assemble_navier_stokes_inside;
     std::string                  ib_force_output_file;
     double                       density;
-    Tensor<1, dim>               gravity;
+    Functions::ParsedFunction<dim> f_gravity;
     double                       particle_nonlinear_tol;
     double                       length_ratio;
-
-    double      alpha;
-    bool        integrate_motion;
-    std::string ib_particles_pvd_file;
-
+    double                       alpha;
+    bool                         integrate_motion;
+    std::string                  ib_particles_pvd_file;
 
 
-    static void
-    declare_parameters(ParameterHandler &prm);
-    static void
-    declare_default_entry(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
+
+
+
   };
 
   /**
