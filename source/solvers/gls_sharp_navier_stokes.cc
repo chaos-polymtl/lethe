@@ -1120,8 +1120,8 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       // Particle location
-      patches[p].vertices[0]    = particles[p].position;
-      patches[p].patch_index    = p;
+      patches[p].vertices[0] = particles[p].position;
+      patches[p].patch_index = p;
       patches[p].data.reinit(particles[p].get_number_properties(), 1);
 
       // ID and other properties
