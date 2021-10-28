@@ -1217,9 +1217,6 @@ namespace Parameters
     prm.leave_subsection();
     prm.enter_subsection("omega");
     particles[index].f_omega->declare_parameters(prm, dim);
-    if (dim == 2)
-      prm.set("Function expression", "0; 0");
-    if (dim == 3)
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
 
@@ -1424,22 +1421,22 @@ namespace Parameters
         {
           particles[i].f_position = new Functions::ParsedFunction<dim>(dim);
           particles[i].f_velocity = new Functions::ParsedFunction<dim>(dim);
-          particles[i].f_omega    = new Functions::ParsedFunction<dim>(dim);
+          particles[i].f_omega    = new Functions::ParsedFunction<dim>(3);
           particles[i].initialise_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
 
           prm.enter_subsection("position");
           particles[i].f_position->parse_parameters(prm);
-          // particles[i].f_position->set_time(0);
+          particles[i].f_position->set_time(0);
           prm.leave_subsection();
           prm.enter_subsection("velocity");
           particles[i].f_velocity->parse_parameters(prm);
-          // particles[i].f_velocity->set_time(0);
+          particles[i].f_velocity->set_time(0);
           prm.leave_subsection();
           prm.enter_subsection("omega");
           particles[i].f_omega->parse_parameters(prm);
-          //  particles[i].f_omega->set_time(0);
+          particles[i].f_omega->set_time(0);
           prm.leave_subsection();
           particles[i].position[0] =
             particles[i].f_position->value(particles[i].position, 0);
