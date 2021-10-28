@@ -64,6 +64,9 @@ protected:
   virtual void
   setup_dofs_fd();
 
+  /**
+   * @brief update non zero constraint if the boundary is time dependant
+   */
   void
   update_boundary_condition();
 

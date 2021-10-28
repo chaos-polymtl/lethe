@@ -214,6 +214,11 @@ namespace Parameters
                         Patterns::Double(),
                         "Tracer diffusivity");
 
+      prm.enter_subsection("gravity");
+      f_gravity->declare_parameters(prm, 3);
+        prm.set("Function expression", "0; 0; 0");
+      prm.leave_subsection();
+
       prm.declare_entry("number of fluids",
                         "0",
                         Patterns::Integer(),
@@ -240,6 +245,12 @@ namespace Parameters
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
+
+      f_gravity=new Functions::ParsedFunction<3>(3);
+      prm.enter_subsection("gravity");
+      f_gravity->parse_parameters(prm);
+      prm.leave_subsection();
+
 
       // Multiphasic simulations parameters definition
       number_fluids = prm.get_integer("number of fluids");
@@ -1316,16 +1327,6 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "density of the fluid");
-
-      prm.enter_subsection("gravity");
-
-      f_gravity.declare_parameters(prm, dim);
-      if (dim == 2)
-        prm.set("Function expression", "0; 0");
-      if (dim == 3)
-        prm.set("Function expression", "0; 0; 0");
-      prm.leave_subsection();
-
       prm.declare_entry("alpha",
                         "1",
                         Patterns::Double(),
@@ -1409,11 +1410,6 @@ namespace Parameters
       length_ratio           = prm.get_double("length ratio");
       ib_particles_pvd_file  = prm.get("ib particles pvd file");
       particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
-
-
-      prm.enter_subsection("gravity");
-      f_gravity.parse_parameters(prm);
-      prm.leave_subsection();
 
 
       particles.resize(nb);
