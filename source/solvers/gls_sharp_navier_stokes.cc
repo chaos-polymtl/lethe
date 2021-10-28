@@ -916,7 +916,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           Tensor<1, dim> velocity_iter;
           velocity_iter =
             particles[p].last_velocity +
-            (particles[p].forces +  g*particles[p].mass ) * dt / particles[p].mass;
+            (particles[p].forces + gravity) * dt / particles[p].mass;
 
           // This section is used to check if the fix point iteration is
           // diverging. If, between 2 iterations, the correction changes its
