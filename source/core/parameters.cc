@@ -1217,7 +1217,7 @@ namespace Parameters
     prm.leave_subsection();
     prm.enter_subsection("omega");
     particles[index].f_omega->declare_parameters(prm, dim);
-      prm.set("Function expression", "0; 0; 0");
+    prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
 
     prm.declare_entry(
