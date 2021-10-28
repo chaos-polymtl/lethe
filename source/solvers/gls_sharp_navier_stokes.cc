@@ -883,13 +883,13 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           if (dim == 2)
             {
               Point<3> gravity_eval_point;
-              gravity_eval_point[0]=particles[p].position[0];
-              gravity_eval_point[1]=particles[p].position[1];
-              gravity_eval_point[2]=0;
+              gravity_eval_point[0] = particles[p].position[0];
+              gravity_eval_point[1] = particles[p].position[1];
+              gravity_eval_point[2] = 0;
               g[0] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value( gravity_eval_point, 0);
+                       ->value(gravity_eval_point, 0);
               g[1] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value( gravity_eval_point, 1);
+                       ->value(gravity_eval_point, 1);
               gravity =
                 g * (particles[p].mass -
                      particles[p].radius * particles[p].radius * PI * rho);
@@ -897,15 +897,15 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           if (dim == 3)
             {
               Point<3> gravity_eval_point;
-              gravity_eval_point[0]=particles[p].position[0];
-              gravity_eval_point[1]=particles[p].position[1];
-              gravity_eval_point[2]=particles[p].position[2];
+              gravity_eval_point[0] = particles[p].position[0];
+              gravity_eval_point[1] = particles[p].position[1];
+              gravity_eval_point[2] = particles[p].position[2];
               g[0] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value( gravity_eval_point, 0);
+                       ->value(gravity_eval_point, 0);
               g[1] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value( gravity_eval_point, 1);
+                       ->value(gravity_eval_point, 1);
               g[2] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value( gravity_eval_point, 2);
+                       ->value(gravity_eval_point, 2);
               gravity =
                 g * (particles[p].mass - 4.0 / 3.0 * particles[p].radius *
                                            particles[p].radius *

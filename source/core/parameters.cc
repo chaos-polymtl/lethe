@@ -216,7 +216,7 @@ namespace Parameters
 
       prm.enter_subsection("gravity");
       f_gravity->declare_parameters(prm, 3);
-        prm.set("Function expression", "0; 0; 0");
+      prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
       prm.declare_entry("number of fluids",
@@ -246,7 +246,7 @@ namespace Parameters
       thermal_conductivity = prm.get_double("thermal conductivity");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
 
-      f_gravity=new Functions::ParsedFunction<3>(3);
+      f_gravity = new Functions::ParsedFunction<3>(3);
       prm.enter_subsection("gravity");
       f_gravity->parse_parameters(prm);
       prm.leave_subsection();

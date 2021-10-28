@@ -195,7 +195,7 @@ namespace Parameters
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
 
-    Functions::ParsedFunction<3>* f_gravity;
+    Functions::ParsedFunction<3> *f_gravity;
 
     // Fluid objects for multiphasic simulations
     std::vector<Fluid>        fluids;
@@ -686,22 +686,22 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
 
-    unsigned int                   nb;
-    unsigned int                   order;
-    unsigned int                   initial_refinement;
-    double                         inside_radius;
-    double                         outside_radius;
-    std::vector<IBParticle<dim>>   particles;
-    bool                           calculate_force_ib;
-    bool                           assemble_navier_stokes_inside;
-    std::string                    ib_force_output_file;
-    double                         density;
+    unsigned int                 nb;
+    unsigned int                 order;
+    unsigned int                 initial_refinement;
+    double                       inside_radius;
+    double                       outside_radius;
+    std::vector<IBParticle<dim>> particles;
+    bool                         calculate_force_ib;
+    bool                         assemble_navier_stokes_inside;
+    std::string                  ib_force_output_file;
+    double                       density;
 
-    double                         particle_nonlinear_tol;
-    double                         length_ratio;
-    double                         alpha;
-    bool                           integrate_motion;
-    std::string                    ib_particles_pvd_file;
+    double      particle_nonlinear_tol;
+    double      length_ratio;
+    double      alpha;
+    bool        integrate_motion;
+    std::string ib_particles_pvd_file;
   };
 
   /**
