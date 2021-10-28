@@ -1176,9 +1176,9 @@ GLSNavierStokesSolver<dim>::solve()
   while (this->simulation_control->integrate())
     {
       if ((this->simulation_control->get_step_number() %
-              this->simulation_parameters.mesh_adaptation.frequency !=
-            0 ||
-          this->simulation_control->is_at_start())&& this->simulation_parameters.boundary_conditions.time_dependant)
+               this->simulation_parameters.mesh_adaptation.frequency !=
+             0 || this->simulation_parameters.mesh_adaptation.type==Parameters::MeshAdaptation::Type::none||
+           this->simulation_control->is_at_start())&& this->simulation_parameters.boundary_conditions.time_dependant)
         {
           update_boundary_condition();
         }
