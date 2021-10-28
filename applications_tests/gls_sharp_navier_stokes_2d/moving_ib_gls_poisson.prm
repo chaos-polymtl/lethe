@@ -88,6 +88,9 @@ subsection particles
 	set integrate motion = true
 	set alpha=0.5
 	set assemble Navier-Stokes inside particles=false
+	subsection gravity
+        set Function expression =0;-9.81
+    end
     subsection particle info 0 
         subsection position
             set Function expression =1;1
@@ -95,9 +98,9 @@ subsection particles
         subsection velocity
             set Function expression =0;0
         end
-	    set omega x = 0
-	    set omega y = 0
-	    set omega z = 0
+	    subsection omega
+            set Function expression =0;0;0
+        end
 	    set pressure x =0.00001
 	    set pressure y =0.00001
 	    set radius = 0.5

@@ -97,9 +97,9 @@ subsection particles
         subsection velocity
             set Function expression =0;0;0
         end
-	    set omega x = 1
-	    set omega y = 1
-	    set omega z = 1
+        subsection omega
+            set Function expression =1;1;1
+        end
 	    set pressure x =0.12501
 	    set pressure y =0.12501
 	    set pressure z =0.00001
@@ -112,9 +112,9 @@ subsection particle info 1
         subsection velocity
             set Function expression =0;0;0
         end
-	    set omega x = 0
-	    set omega y = 0
-	    set omega z = 0
+        subsection omega
+            set Function expression =0;0;0
+        end
 	    set pressure x =0.40001
 	    set pressure y =0.125001
 	    set pressure z =0.125001
