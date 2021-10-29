@@ -57,6 +57,10 @@ Visualization<dim>::build_patches(
       // Particle location
       patches[i].vertices[0] = particle->get_location();
       patches[i].patch_index = i;
+
+
+
+      
       patches[i].data.reinit(DEM::get_number_properties(), 1);
 
       // ID and other properties
