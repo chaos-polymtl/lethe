@@ -14,12 +14,6 @@
  * ---------------------------------------------------------------------
  */
 
-#include <core/bdf.h>
-#include <core/parameters.h>
-
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
-
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -32,6 +26,11 @@
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
+
+#include <core/bdf.h>
+#include <core/parameters.h>
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
 
 
 #ifndef lethe_navier_stokes_scratch_data_h
@@ -431,7 +430,7 @@ public:
       {
         auto particle_properties = particle.get_properties();
 
-        // Set the parctile_fluid_interactions properties and vectors to 0
+        // Set the particle_fluid_interactions properties and vectors to 0
         for (int d = 0; d < dim; ++d)
           {
             particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;

@@ -20,21 +20,6 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/time_integration_utilities.h"
-#include <core/grids.h>
-#include <core/parameters.h>
-
-#include "solvers/gls_navier_stokes.h"
-#include "solvers/postprocessing_cfd.h"
-
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
-#include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <fem-dem/vans_assemblers.h>
-
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q.h>
@@ -44,6 +29,20 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+
+#include <core/grids.h>
+#include <core/parameters.h>
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
+#include <fem-dem/cfd_dem_simulation_parameters.h>
+#include <fem-dem/vans_assemblers.h>
+
+#include "core/bdf.h"
+#include "core/grids.h"
+#include "core/manifolds.h"
+#include "core/time_integration_utilities.h"
+#include "solvers/gls_navier_stokes.h"
+#include "solvers/postprocessing_cfd.h"
 
 
 
@@ -93,6 +92,9 @@ private:
    */
   virtual void
   finish_time_step_fd();
+
+  void
+  read_dem();
 
 protected:
   /**
@@ -205,9 +207,6 @@ protected:
    */
 
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
-
-  void
-  read_dem();
 
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;

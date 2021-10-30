@@ -1,5 +1,4 @@
 #include <core/solutions_output.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_maximum_particle_size.h>
@@ -407,7 +406,6 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
-  TimerOutput::Scope t(this->computing_timer, "DEM_Contact_Build");
   // Check to see if it is contact search step
   contact_detection_step = check_contact_search_step_constant(counter);
 
