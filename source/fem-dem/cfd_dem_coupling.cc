@@ -1,4 +1,5 @@
 #include <core/solutions_output.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_maximum_particle_size.h>
