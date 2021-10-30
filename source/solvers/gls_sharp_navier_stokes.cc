@@ -865,7 +865,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   double dt    = this->simulation_control->get_time_steps_vector()[0];
   double time  = this->simulation_control->get_current_time();
   double alpha = this->simulation_parameters.particlesParameters->alpha;
-  this->simulation_parameters.physical_properties.f_gravity->set_time(time);
+  this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
 
   double rho        = this->simulation_parameters.particlesParameters->density;
   particle_residual = 0;
@@ -882,30 +882,22 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
           if (dim == 2)
             {
-              Point<3> gravity_eval_point;
-              gravity_eval_point[0] = particles[p].position[0];
-              gravity_eval_point[1] = particles[p].position[1];
-              gravity_eval_point[2] = 0;
-              g[0] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value(gravity_eval_point, 0);
-              g[1] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value(gravity_eval_point, 1);
+              g[0] = this->simulation_parameters.particlesParameters->f_gravity
+                       ->value(particles[p].position, 0);
+              g[1] = this->simulation_parameters.particlesParameters->f_gravity
+                       ->value(particles[p].position, 1);
               gravity =
                 g * (particles[p].mass -
                      particles[p].radius * particles[p].radius * PI * rho);
             }
           if (dim == 3)
             {
-              Point<3> gravity_eval_point;
-              gravity_eval_point[0] = particles[p].position[0];
-              gravity_eval_point[1] = particles[p].position[1];
-              gravity_eval_point[2] = particles[p].position[2];
-              g[0] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value(gravity_eval_point, 0);
-              g[1] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value(gravity_eval_point, 1);
-              g[2] = this->simulation_parameters.physical_properties.f_gravity
-                       ->value(gravity_eval_point, 2);
+              g[0] = this->simulation_parameters.particlesParameters->f_gravity
+                       ->value(particles[p].position, 0);
+              g[1] = this->simulation_parameters.particlesParameters->f_gravity
+                       ->value(particles[p].position, 1);
+              g[2] = this->simulation_parameters.particlesParameters->f_gravity
+                       ->value(particles[p].position, 2);
               gravity =
                 g * (particles[p].mass - 4.0 / 3.0 * particles[p].radius *
                                            particles[p].radius *

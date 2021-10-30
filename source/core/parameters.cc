@@ -214,10 +214,7 @@ namespace Parameters
                         Patterns::Double(),
                         "Tracer diffusivity");
 
-      prm.enter_subsection("gravity");
-      f_gravity->declare_parameters(prm, 3);
-      prm.set("Function expression", "0; 0; 0");
-      prm.leave_subsection();
+
 
       prm.declare_entry("number of fluids",
                         "0",
@@ -246,10 +243,6 @@ namespace Parameters
       thermal_conductivity = prm.get_double("thermal conductivity");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
 
-      f_gravity = new Functions::ParsedFunction<3>(3);
-      prm.enter_subsection("gravity");
-      f_gravity->parse_parameters(prm);
-      prm.leave_subsection();
 
 
       // Multiphasic simulations parameters definition
@@ -1332,6 +1325,14 @@ namespace Parameters
                         Patterns::Double(),
                         "relaxation parameter");
 
+      prm.enter_subsection("gravity");
+      f_gravity->declare_parameters(prm, dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0");
+      prm.leave_subsection();
+
       prm.enter_subsection("particle info 0");
       {
         declare_default_entry(prm, 0);
@@ -1411,13 +1412,20 @@ namespace Parameters
       ib_particles_pvd_file  = prm.get("ib particles pvd file");
       particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
 
+      f_gravity = std::make_shared<Functions::ParsedFunction<dim>>(dim);
+      prm.enter_subsection("gravity");
+      f_gravity->parse_parameters(prm);
+      prm.leave_subsection();
 
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
-          particles[i].f_position = new Functions::ParsedFunction<dim>(dim);
-          particles[i].f_velocity = new Functions::ParsedFunction<dim>(dim);
-          particles[i].f_omega    = new Functions::ParsedFunction<dim>(3);
+          particles[i].f_position =
+            std::make_shared<Functions::ParsedFunction<dim>>(dim);
+          particles[i].f_velocity =
+            std::make_shared<Functions::ParsedFunction<dim>>(dim);
+          particles[i].f_omega =
+            std::make_shared<Functions::ParsedFunction<dim>>(3);
           particles[i].initialise_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);

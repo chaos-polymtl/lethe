@@ -114,9 +114,9 @@ public:
   // iteration.
   Tensor<1, 3> omega_iter;
 
-  Functions::ParsedFunction<dim> *f_velocity;
-  Functions::ParsedFunction<dim> *f_position;
-  Functions::ParsedFunction<dim> *f_omega;
+  std::shared_ptr<Functions::ParsedFunction<dim>> f_velocity;
+  std::shared_ptr<Functions::ParsedFunction<dim>> f_position;
+  std::shared_ptr<Functions::ParsedFunction<dim>> f_omega;
 
 
   // Allow the definition of a local relaxation parameter for each particle in
