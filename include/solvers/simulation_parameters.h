@@ -59,7 +59,7 @@ public:
   AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
   SourceTerms::SourceTerm<dim> *                    source_term;
   Parameters::VelocitySource                        velocity_sources;
-  Parameters::IBParticles<dim> *                    particlesParameters;
+  std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
   Parameters::Multiphysics                          multiphysics;
 
@@ -92,7 +92,7 @@ public:
     Parameters::LinearSolver::declare_parameters(prm);
     Parameters::PostProcessing::declare_parameters(prm);
     Parameters::DynamicFlowControl ::declare_parameters(prm);
-    particlesParameters = new Parameters::IBParticles<dim>;
+    particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
 
