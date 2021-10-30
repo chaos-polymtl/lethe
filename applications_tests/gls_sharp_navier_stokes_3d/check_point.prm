@@ -19,9 +19,6 @@ end
 #---------------------------------------------------
 subsection physical properties
     set kinematic viscosity            = 0.604166666666667
-    subsection gravity
-        set Function expression =0;-981;0
-    end
 end
 
 #---------------------------------------------------
