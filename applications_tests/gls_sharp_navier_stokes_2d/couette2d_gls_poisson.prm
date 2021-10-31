@@ -91,30 +91,30 @@ subsection particles
 	set stencil order = 6
 	set assemble Navier-Stokes inside particles=false
     subsection particle info 0 
-            set x = 0
-	    set y = 0
-	    set z = 0
-	    set u = 0
-	    set v = 0
-	    set w = 0
-	    set omega x = 0
-	    set omega y = 0
-	    set omega z = 1
+        subsection position
+            set Function expression =0;0
+        end
+        subsection velocity
+            set Function expression =0;0
+        end
+        subsection omega
+            set Function expression =0;0;1
+        end
 	    set pressure x =0.00001
 	    set pressure y =0.00001
 	    set radius = 0.25
 
     end
     subsection particle info 1 
-            set x = 0
-	    set y = 0
-	    set z = 0
-	    set u = 0
-	    set v = 0
-	    set w = 0
-	    set omega x = 0
-	    set omega y = 0
-	    set omega z = 0
+        subsection position
+            set Function expression =0;0
+        end
+        subsection velocity
+            set Function expression =0;0
+        end
+        subsection omega
+            set Function expression =0;0;0
+        end
 	    set pressure x =0.40001
 	    set pressure y =0.00001
 	    set radius = 0.5
