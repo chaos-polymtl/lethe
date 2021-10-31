@@ -14,3 +14,6 @@ file(COPY packed_bed_files/dem.triangulation_variable.data DESTINATION ${CMAKE_C
 
 DEAL_II_PICKUP_TESTS()
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
+       	set_tests_properties(gls_vans_3d/packed_bed.debug PROPERTIES TIMEOUT 1200) 
+ENDIF()

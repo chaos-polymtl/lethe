@@ -160,12 +160,8 @@ template <int dim>
 class GLSVansAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDiFelice(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties)
-
-    : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
+  GLSVansAssemblerDiFelice(Parameters::PhysicalProperties physical_properties)
+    : physical_properties(physical_properties)
 
   {}
 
@@ -178,8 +174,7 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
+  Parameters::PhysicalProperties physical_properties;
 };
 
 /**
@@ -203,11 +198,8 @@ template <int dim>
 class GLSVansAssemblerRong : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerRong(std::shared_ptr<SimulationControl> simulation_control,
-                       Parameters::PhysicalProperties     physical_properties)
-
-    : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
+  GLSVansAssemblerRong(Parameters::PhysicalProperties physical_properties)
+    : physical_properties(physical_properties)
 
   {}
 
@@ -220,8 +212,7 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
+  Parameters::PhysicalProperties physical_properties;
 };
 
 /**
@@ -240,19 +231,16 @@ class GLSVansAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>
 {
 public:
   GLSVansAssemblerBuoyancy(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
+    Parameters::PhysicalProperties physical_properties,
     Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
       lagrangian_physical_properties)
-
-    : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
+    : physical_properties(physical_properties)
     , lagrangian_physical_properties(lagrangian_physical_properties)
 
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -260,10 +248,64 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
+  Parameters::PhysicalProperties physical_properties;
   Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
     lagrangian_physical_properties;
+};
+
+/**
+ * @brief Class that assembles the particle pressure force that will then
+ * be added to particle_fluid_interactions
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerPressureForce : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerPressureForce()
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculates the pressure force
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+};
+
+/**
+ * @brief Class that assembles the particle shear force that will then
+ * be added to particle_fluid_interactions
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerShearForce : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerShearForce(Parameters::PhysicalProperties physical_properties)
+    : physical_properties(physical_properties)
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculates the shear force
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::PhysicalProperties physical_properties;
 };
 
 /**
@@ -279,13 +321,7 @@ template <int dim>
 class GLSVansAssemblerFPI : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerFPI(std::shared_ptr<SimulationControl> simulation_control,
-                      Parameters::PhysicalProperties     physical_properties,
-                      Parameters::CFDDEM                 cfd_dem)
-
-    : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
-    , cfd_dem(cfd_dem)
+  GLSVansAssemblerFPI()
 
   {}
 
@@ -306,10 +342,6 @@ public:
   virtual void
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
-  Parameters::CFDDEM                 cfd_dem;
 };
 
 

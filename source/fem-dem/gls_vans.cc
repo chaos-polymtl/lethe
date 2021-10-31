@@ -188,7 +188,6 @@ GLSVANSSolver<dim>::read_dem()
     }
 }
 
-
 template <int dim>
 void
 GLSVANSSolver<dim>::initialize_void_fraction()
@@ -434,6 +433,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 {
+  TimerOutput::Scope t(this->computing_timer,
+                       "solve_linear_system_void_fraction");
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
 
@@ -458,8 +459,6 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
                                true);
 
   TrilinosWrappers::SolverCG solver(solver_control);
-
-  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
@@ -639,7 +638,6 @@ GLSVANSSolver<dim>::setup_assemblers()
       // DiFelice Model drag Assembler
       particle_fluid_assemblers.push_back(
         std::make_shared<GLSVansAssemblerDiFelice<dim>>(
-          this->simulation_control,
           this->cfd_dem_simulation_parameters.cfd_parameters
             .physical_properties));
     }
@@ -650,7 +648,6 @@ GLSVANSSolver<dim>::setup_assemblers()
       // Rong Model drag Assembler
       particle_fluid_assemblers.push_back(
         std::make_shared<GLSVansAssemblerRong<dim>>(
-          this->simulation_control,
           this->cfd_dem_simulation_parameters.cfd_parameters
             .physical_properties));
     }
@@ -658,11 +655,18 @@ GLSVANSSolver<dim>::setup_assemblers()
   // Buoyancy Force Assembler
   particle_fluid_assemblers.push_back(
     std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
-      this->simulation_control,
       this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
       this->cfd_dem_simulation_parameters.dem_parameters
         .lagrangian_physical_properties));
 
+  // Pressure Force
+  particle_fluid_assemblers.push_back(
+    std::make_shared<GLSVansAssemblerPressureForce<dim>>());
+
+  // Shear Force
+  particle_fluid_assemblers.push_back(
+    std::make_shared<GLSVansAssemblerShearForce<dim>>(
+      this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties));
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
@@ -672,10 +676,7 @@ GLSVANSSolver<dim>::setup_assemblers()
     }
 
   //  Fluid_Particle Interactions Assembler
-  this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>(
-    this->simulation_control,
-    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-    this->cfd_dem_simulation_parameters.cfd_dem));
+  this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>());
 
   // The core assembler should always be the last assembler to be called in the
   // stabilized formulation as to have all strong residual and jacobian stored.
@@ -690,6 +691,7 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_system_matrix()
 {
+  TimerOutput::Scope t(this->computing_timer, "Assemble_Matrix");
   this->system_matrix = 0;
 
   setup_assemblers();
@@ -750,7 +752,9 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     std::vector<TrilinosWrappers::MPI::Vector>());
 
 
-  scratch_data.reinit_particle_fluid_interactions(this->previous_solutions[0],
+  scratch_data.reinit_particle_fluid_interactions(cell,
+                                                  this->evaluation_point,
+                                                  this->previous_solutions[0],
                                                   nodal_void_fraction_relevant,
                                                   particle_handler,
                                                   this->dof_handler,
@@ -789,6 +793,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_system_rhs()
 {
+  TimerOutput::Scope t(this->computing_timer, "Assemble_RHS");
+
   this->system_rhs = 0;
 
   setup_assemblers();
@@ -853,7 +859,9 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     previous_void_fraction,
     std::vector<TrilinosWrappers::MPI::Vector>());
 
-  scratch_data.reinit_particle_fluid_interactions(this->previous_solutions[0],
+  scratch_data.reinit_particle_fluid_interactions(cell,
+                                                  this->evaluation_point,
+                                                  this->previous_solutions[0],
                                                   nodal_void_fraction_relevant,
                                                   particle_handler,
                                                   this->dof_handler,
