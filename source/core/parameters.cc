@@ -1206,6 +1206,7 @@ namespace Parameters
                                           unsigned int      index)
   {
     prm.enter_subsection("position");
+    particles[index].f_position=std::make_shared<Functions::ParsedFunction<dim>>(dim);
     particles[index].f_position->declare_parameters(prm, dim);
     if (dim == 2)
       prm.set("Function expression", "0; 0");
@@ -1213,6 +1214,7 @@ namespace Parameters
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
     prm.enter_subsection("velocity");
+    particles[index].f_velocity=std::make_shared<Functions::ParsedFunction<dim>>(dim);
     particles[index].f_velocity->declare_parameters(prm, dim);
     if (dim == 2)
       prm.set("Function expression", "0; 0");
@@ -1220,6 +1222,7 @@ namespace Parameters
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
     prm.enter_subsection("omega");
+    particles[index].f_omega=std::make_shared<Functions::ParsedFunction<dim>>(3);
     particles[index].f_omega->declare_parameters(prm, dim);
     prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
@@ -1325,6 +1328,7 @@ namespace Parameters
                         Patterns::Double(),
                         "relaxation parameter");
 
+
       prm.enter_subsection("gravity");
       f_gravity->declare_parameters(prm, dim);
       if (dim == 2)
@@ -1333,57 +1337,18 @@ namespace Parameters
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
-      prm.enter_subsection("particle info 0");
-      {
-        declare_default_entry(prm, 0);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 1");
-      {
-        IBParticles::declare_default_entry(prm, 1);
-      }
-      prm.leave_subsection();
+      unsigned int max_ib_particles=50;
+      particles.resize(max_ib_particles);
+      for (unsigned int i = 0; i < max_ib_particles; ++i)
+        {
+          std::string section = "particle info " + std::to_string(i);
+          prm.enter_subsection(section);
+          {
+            declare_default_entry(prm, i);
+          }
+          prm.leave_subsection();
+        }
 
-      prm.enter_subsection("particle info 2");
-      {
-        IBParticles::declare_default_entry(prm, 2);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 3");
-      {
-        IBParticles::declare_default_entry(prm, 3);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 4");
-      {
-        IBParticles::declare_default_entry(prm, 4);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 5");
-      {
-        IBParticles::declare_default_entry(prm, 5);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 6");
-      {
-        IBParticles::declare_default_entry(prm, 6);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 7");
-      {
-        IBParticles::declare_default_entry(prm, 7);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 8");
-      {
-        IBParticles::declare_default_entry(prm, 8);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 9");
-      {
-        IBParticles::declare_default_entry(prm, 9);
-      }
-      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -1420,12 +1385,6 @@ namespace Parameters
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
-          particles[i].f_position =
-            std::make_shared<Functions::ParsedFunction<dim>>(dim);
-          particles[i].f_velocity =
-            std::make_shared<Functions::ParsedFunction<dim>>(dim);
-          particles[i].f_omega =
-            std::make_shared<Functions::ParsedFunction<dim>>(3);
           particles[i].initialise_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
