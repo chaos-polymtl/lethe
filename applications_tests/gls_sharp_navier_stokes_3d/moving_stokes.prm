@@ -63,7 +63,7 @@ end
 #---------------------------------------------------
 subsection boundary conditions
 set number                  = 6
-set time dependant =true
+set time dependent =true
     subsection bc 0
 	set id = 0
         set type              = function

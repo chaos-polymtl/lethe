@@ -61,7 +61,7 @@ namespace BoundaryConditions
     // Number of boundary conditions
     unsigned int size;
     unsigned int max_size;
-    bool         time_dependant;
+    bool         time_dependent;
 
     // Periodic boundary condition matching
     std::vector<unsigned int> periodic_id;
@@ -252,10 +252,10 @@ namespace BoundaryConditions
                         Patterns::Integer(),
                         "Number of boundary conditions");
       prm.declare_entry(
-        "time dependant",
+        "time dependent",
         "false",
         Patterns::Bool(),
-        "Bool to define if the boundary condition is time dependant");
+        "Bool to define if the boundary condition is time dependent");
       this->id.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
@@ -287,7 +287,7 @@ namespace BoundaryConditions
     prm.enter_subsection("boundary conditions");
     {
       this->size           = prm.get_integer("number");
-      this->time_dependant = prm.get_bool("time dependant");
+      this->time_dependent = prm.get_bool("time dependent");
       this->type.resize(this->size);
       this->id.resize(this->size);
       this->periodic_direction.resize(this->size);
