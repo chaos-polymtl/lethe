@@ -16,11 +16,11 @@ Running on 1 MPI rank(s)...
 Steady iteration :        1/1
 *****************************************************************
 div u : 0.00441806
-L2 error velocity : 0.0350449 L2 error pressure: 0.186096
+L2 error velocity : 0.0350449 L2 error pressure: 0.17405
 +------------------------------------------+
 |  Force  summary particle 0               |
 +------------------------------------------+
 particle_ID    T_x      T_y       T_z      f_x      f_y      f_z    
           0 -0.000442 0.009554 -0.004382 8.153508 0.011247 0.009379 
 cells error_velocity error_pressure 
- 6096 3.504495e-02 - 1.860960e-01 - 
+ 6096 3.504495e-02 - 1.740502e-01 - 
