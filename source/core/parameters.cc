@@ -1206,7 +1206,8 @@ namespace Parameters
                                           unsigned int      index)
   {
     prm.enter_subsection("position");
-    particles[index].f_position=std::make_shared<Functions::ParsedFunction<dim>>(dim);
+    particles[index].f_position =
+      std::make_shared<Functions::ParsedFunction<dim>>(dim);
     particles[index].f_position->declare_parameters(prm, dim);
     if (dim == 2)
       prm.set("Function expression", "0; 0");
@@ -1214,7 +1215,8 @@ namespace Parameters
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
     prm.enter_subsection("velocity");
-    particles[index].f_velocity=std::make_shared<Functions::ParsedFunction<dim>>(dim);
+    particles[index].f_velocity =
+      std::make_shared<Functions::ParsedFunction<dim>>(dim);
     particles[index].f_velocity->declare_parameters(prm, dim);
     if (dim == 2)
       prm.set("Function expression", "0; 0");
@@ -1222,7 +1224,8 @@ namespace Parameters
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
     prm.enter_subsection("omega");
-    particles[index].f_omega=std::make_shared<Functions::ParsedFunction<dim>>(3);
+    particles[index].f_omega =
+      std::make_shared<Functions::ParsedFunction<dim>>(3);
     particles[index].f_omega->declare_parameters(prm, dim);
     prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
@@ -1337,7 +1340,7 @@ namespace Parameters
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
-      unsigned int max_ib_particles=50;
+      unsigned int max_ib_particles = 50;
       particles.resize(max_ib_particles);
       for (unsigned int i = 0; i < max_ib_particles; ++i)
         {
@@ -1348,7 +1351,6 @@ namespace Parameters
           }
           prm.leave_subsection();
         }
-
     }
     prm.leave_subsection();
   }

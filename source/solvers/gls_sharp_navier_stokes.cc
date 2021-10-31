@@ -108,9 +108,12 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
   // initialized the particles
 
   particles.resize(this->simulation_parameters.particlesParameters->nb);
-  for (unsigned int i = 0; i < this->simulation_parameters.particlesParameters->nb; ++i)
+  for (unsigned int i = 0;
+       i < this->simulation_parameters.particlesParameters->nb;
+       ++i)
     {
-  particles[i] = this->simulation_parameters.particlesParameters->particles[i];
+      particles[i] =
+        this->simulation_parameters.particlesParameters->particles[i];
     }
 
   table_p.resize(particles.size());
