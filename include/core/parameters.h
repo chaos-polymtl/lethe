@@ -698,7 +698,7 @@ namespace Parameters
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 
 
-    double      particle_nonlinear_tol;
+    double      particle_nonlinear_tolerance;
     double      length_ratio;
     double      alpha;
     bool        integrate_motion;
