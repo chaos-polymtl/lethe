@@ -94,6 +94,9 @@ private:
   virtual void
   finish_time_step_fd();
 
+  void
+  read_dem();
+
 protected:
   /**
    * @brief asocciate the degrees of freedom to each vertex of the finite elements
@@ -205,10 +208,6 @@ protected:
    */
 
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
-
-private:
-  void
-  read_dem();
 
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;
