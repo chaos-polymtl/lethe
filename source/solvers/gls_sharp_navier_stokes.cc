@@ -2440,7 +2440,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
            this->simulation_control->is_at_start()) &&
           this->simulation_parameters.boundary_conditions.time_dependent)
         {
-          this->update_boundary_condition();
+          this->update_boundary_conditions();
         }
 
       if (this->simulation_parameters.particlesParameters->integrate_motion ==

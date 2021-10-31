@@ -68,7 +68,7 @@ protected:
    * @brief update non zero constraint if the boundary is time dependant
    */
   void
-  update_boundary_condition();
+  update_boundary_conditions();
 
   /**
    * @brief Sets the initial condition for the solver

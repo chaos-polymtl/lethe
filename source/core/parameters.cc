@@ -1377,7 +1377,7 @@ namespace Parameters
         prm.get_bool("assemble Navier-Stokes inside particles");
       length_ratio           = prm.get_double("length ratio");
       ib_particles_pvd_file  = prm.get("ib particles pvd file");
-      particle_nonlinear_tol = prm.get_double("particle nonlinear tolerance");
+      particle_nonlinear_tolerance = prm.get_double("particle nonlinear tolerance");
 
       f_gravity = std::make_shared<Functions::ParsedFunction<dim>>(dim);
       prm.enter_subsection("gravity");

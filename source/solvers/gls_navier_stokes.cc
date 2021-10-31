@@ -177,7 +177,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::update_boundary_condition()
+GLSNavierStokesSolver<dim>::update_boundary_conditions()
 {
   define_non_zero_constraints();
   // Distribute constraints
@@ -1183,7 +1183,7 @@ GLSNavierStokesSolver<dim>::solve()
            this->simulation_control->is_at_start()) &&
           this->simulation_parameters.boundary_conditions.time_dependent)
         {
-          update_boundary_condition();
+          update_boundary_conditions();
         }
 
       this->simulation_control->print_progression(this->pcout);

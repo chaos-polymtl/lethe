@@ -392,7 +392,7 @@ Return a bool that describes  if a cell contains a specific point
   {
     double scalling =
       this->simulation_parameters.non_linear_solver.tolerance /
-      this->simulation_parameters.particlesParameters->particle_nonlinear_tol;
+      this->simulation_parameters.particlesParameters->particle_nonlinear_tolerance;
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
   }
 
