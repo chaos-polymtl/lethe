@@ -41,8 +41,8 @@ using namespace dealii;
 template <int dim>
 class CFDDEMSolver : public GLSVANSSolver<dim>
 {
-    using FuncPtrType = bool (CFDDEMSolver<dim>::*)(const unsigned int &counter);
-    FuncPtrType check_contact_search_step;
+  using FuncPtrType = bool (CFDDEMSolver<dim>::*)(const unsigned int &counter);
+  FuncPtrType check_contact_search_step;
 
 public:
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
@@ -111,7 +111,7 @@ private:
   /**
    * Finds contact search steps for dynamic contact search method
    */
-   bool
+  bool
   check_contact_search_step_dynamic(const unsigned int &counter);
 
 

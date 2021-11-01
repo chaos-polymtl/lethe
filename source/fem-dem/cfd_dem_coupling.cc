@@ -2,6 +2,7 @@
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
+#include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
 #include <dem/pp_linear_force.h>
@@ -9,7 +10,6 @@
 #include <dem/pw_linear_force.h>
 #include <dem/pw_nonlinear_force.h>
 #include <dem/velocity_verlet_integrator.h>
-#include <dem/find_contact_detection_step.h>
 #include <fem-dem/cfd_dem_coupling.h>
 
 // Constructor for class CFD-DEM
@@ -78,21 +78,22 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
 
   if (dem_parameters.model_parameters.contact_detection_method ==
       Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-  {
+    {
       check_contact_search_step =
         &CFDDEMSolver<dim>::check_contact_search_step_constant;
-  }
+    }
   else if (dem_parameters.model_parameters.contact_detection_method ==
-           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::dynamic)
-  {
+           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
+             dynamic)
+    {
       check_contact_search_step =
         &CFDDEMSolver<dim>::check_contact_search_step_dynamic;
-  }
+    }
   else
-  {
+    {
       throw std::runtime_error(
         "Specified contact detection method is not valid");
-  }
+    }
 
   // Initilize contact detection step
   contact_detection_step = true;
@@ -171,28 +172,29 @@ CFDDEMSolver<dim>::read_dem()
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::check_contact_search_step_constant(const unsigned int &counter)
+CFDDEMSolver<dim>::check_contact_search_step_constant(
+  const unsigned int &counter)
 {
   return ((counter % contact_detection_frequency) == 0);
 }
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &counter)
+CFDDEMSolver<dim>::check_contact_search_step_dynamic(
+  const unsigned int &counter)
 {
+  bool sorting_in_subdomains_step =
+    (checkpoint_step || load_balance_step || contact_detection_step);
 
-    bool sorting_in_subdomains_step =
-      (checkpoint_step || load_balance_step || contact_detection_step);
+  contact_detection_step =
+    find_contact_detection_step<dim>(this->particle_handler,
+                                     counter,
+                                     smallest_contact_search_criterion,
+                                     this->mpi_communicator,
+                                     sorting_in_subdomains_step,
+                                     displacement);
 
-    contact_detection_step =
-      find_contact_detection_step<dim>(this->particle_handler,
-                                       counter,
-                                       smallest_contact_search_criterion,
-                                       this->mpi_communicator,
-                                       sorting_in_subdomains_step,
-                                       displacement);
-
-    return contact_detection_step;
+  return contact_detection_step;
 }
 
 
