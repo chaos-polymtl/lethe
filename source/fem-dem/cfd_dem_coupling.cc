@@ -171,14 +171,14 @@ CFDDEMSolver<dim>::read_dem()
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::check_contact_search_step_constant(unsigned int counter)
+CFDDEMSolver<dim>::check_contact_search_step_constant(const unsigned int &counter)
 {
   return ((counter % contact_detection_frequency) == 0);
 }
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::check_contact_search_step_dynamic(unsigned int counter)
+CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &counter)
 {
 
     bool sorting_in_subdomains_step =
@@ -443,7 +443,7 @@ void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
   // Check to see if it is contact search step
-  contact_detection_step = (this->*check_contact_search_step)();
+  contact_detection_step = (this->*check_contact_search_step)(counter);
 
   // Sort particles in cells
   if (contact_detection_step || checkpoint_step || load_balance_step)
