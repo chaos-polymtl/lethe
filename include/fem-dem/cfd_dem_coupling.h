@@ -41,6 +41,9 @@ using namespace dealii;
 template <int dim>
 class CFDDEMSolver : public GLSVANSSolver<dim>
 {
+    using FuncPtrType = bool (CFDDEMSolver<dim>::*)();
+    FuncPtrType check_contact_search_step;
+
 public:
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
 
@@ -104,6 +107,14 @@ private:
   inline bool
   check_contact_search_step_constant(unsigned int counter);
 
+
+  /**
+   * Finds contact search steps for dynamic contact search method
+   */
+  inline bool
+  check_contact_search_step_dynamic(unsigned int counter);
+
+
   /**
    * @brief Updates moment of inertia container after sorting particles
    * into subdomains
@@ -152,7 +163,7 @@ private:
 
 
   unsigned int                coupling_frequency;
-  bool                        contact_detection_step = false;
+  bool                        contact_detection_step = true;
   bool                        checkpoint_step        = false;
   bool                        load_balance_step      = false;
   std::vector<Tensor<1, dim>> momentum;

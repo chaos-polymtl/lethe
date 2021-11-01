@@ -9,6 +9,7 @@
 #include <dem/pw_linear_force.h>
 #include <dem/pw_nonlinear_force.h>
 #include <dem/velocity_verlet_integrator.h>
+#include <dem/find_contact_detection_step.h>
 #include <fem-dem/cfd_dem_coupling.h>
 
 // Constructor for class CFD-DEM
@@ -76,11 +77,25 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
     this->simulation_control->get_time_step() / coupling_frequency;
 
   if (dem_parameters.model_parameters.contact_detection_method ==
-      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::dynamic)
-    this->pcout
-      << "CFD-DEM solver uses constant contact detection method " << std::endl
-      << "The contact detection method is changed to constant with contact detection freuqncy of "
-      << contact_detection_frequency << std::endl;
+      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
+  {
+      check_contact_search_step =
+        &CFDDEMSolver<dim>::check_contact_search_step_constant;
+  }
+  else if (dem_parameters.model_parameters.contact_detection_method ==
+           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::dynamic)
+  {
+      check_contact_search_step =
+        &CFDDEMSolver<dim>::check_contact_search_step_dynamic;
+  }
+  else
+  {
+      throw std::runtime_error(
+        "Specified contact detection method is not valid");
+  }
+
+  // Initilize contact detection step
+  contact_detection_step = true;
 }
 
 template <int dim>
@@ -160,6 +175,26 @@ CFDDEMSolver<dim>::check_contact_search_step_constant(unsigned int counter)
 {
   return ((counter % contact_detection_frequency) == 0);
 }
+
+template <int dim>
+inline bool
+CFDDEMSolver<dim>::check_contact_search_step_dynamic(unsigned int counter)
+{
+
+    bool sorting_in_subdomains_step =
+      (checkpoint_step || load_balance_step || contact_detection_step);
+
+    contact_detection_step =
+      find_contact_detection_step<dim>(this->particle_handler,
+                                       counter,
+                                       smallest_contact_search_criterion,
+                                       this->mpi_communicator,
+                                       sorting_in_subdomains_step,
+                                       displacement);
+
+    return contact_detection_step;
+}
+
 
 template <int dim>
 void
@@ -408,7 +443,7 @@ void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
   // Check to see if it is contact search step
-  contact_detection_step = check_contact_search_step_constant(counter);
+  contact_detection_step = (this->*check_contact_search_step)();
 
   // Sort particles in cells
   if (contact_detection_step || checkpoint_step || load_balance_step)
