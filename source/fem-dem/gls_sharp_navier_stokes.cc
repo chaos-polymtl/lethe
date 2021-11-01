@@ -165,7 +165,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                       (support_points[local_dof_indices[j]] - center_immersed)
                           .norm() >= particles[p].radius *
                                        this->simulation_parameters
-                                         .particlesParameters->inside_radius)
+                                         .particlesParameters->inside_radius))
                     {
                       ++count_small;
                     }
@@ -1088,7 +1088,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
   particle_residual=0;
 
-  ib_dem.update_particles(particles);
+
   TimerOutput::Scope t(this->computing_timer, "integrate particles");
   // Integrate the velocity of the particle. If integrate motion is defined as
   // true in the parameter this function will also integrate the force to update
@@ -1103,7 +1103,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   double time  = this->simulation_control->get_current_time();
   double alpha = this->simulation_parameters.particlesParameters->alpha;
   this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
-
+  ib_dem.update_particles(particles,time);
   double density    = this->simulation_parameters.particlesParameters->density;
   particle_residual = 0;
   if (this->simulation_parameters.particlesParameters->integrate_motion)
@@ -1119,32 +1119,12 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           double volume=0;
           if (dim == 2)
             {
-              g[0] = this->simulation_parameters.particlesParameters->f_gravity
-                       ->value(particles[p].position, 0);
-              g[1] = this->simulation_parameters.particlesParameters->f_gravity
-                       ->value(particles[p].position, 1);
-              gravity =
-                g * (particles[p].mass -
-                     particles[p].radius * particles[p].radius * PI * rho);
-            volume=particles[p].radius * particles[p].radius * PI * rho;
-            volume = particles[p].radius * particles[p].radius * PI * rho;
+              volume = particles[p].radius * particles[p].radius * PI * rho;
             }
           if (dim == 3)
             {
               volume = 4.0 / 3.0 * particles[p].radius * particles[p].radius *
                        particles[p].radius * PI;
-              g[0] = this->simulation_parameters.particlesParameters->f_gravity
-                       ->value(particles[p].position, 0);
-              g[1] = this->simulation_parameters.particlesParameters->f_gravity
-                       ->value(particles[p].position, 1);
-              g[2] = this->simulation_parameters.particlesParameters->f_gravity
-                       ->value(particles[p].position, 2);
-              gravity =
-                g * (particles[p].mass - 4.0 / 3.0 * particles[p].radius *
-                                           particles[p].radius *
-                                           particles[p].radius * PI * density);
-              volume= 4.0 / 3.0 * particles[p].radius *
-                       particles[p].radius *particles[p].radius * PI;
             }
           // Translation
           // and the density of fluide applied on it.
@@ -1190,9 +1170,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             particles[p].velocity_iter -
             residual_velocity * invert(jac_velocity) * alpha  ;
           particles[p].impulsion_iter = particles[p].impulsion;
-
+          
           if(particles[p].contact_impulsion.norm()<1e-12)
-            particles[p].position=particles[p].last_position+(particles[p].velocity+particles[p].last_velocity)*0.5*dt;
+            particles[p].position=particles[p].last_position+particles[p].velocity*dt;
           else
             particles[p].position=ib_dem.dem_particles[p].position;
 
@@ -1235,7 +1215,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
           particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
 
-
+          residual_velocity=particles[p].velocity_iter -particles[p].velocity;
           double this_particle_residual=sqrt(residual_velocity.norm()*residual_velocity.norm()+residual_omega.norm()*residual_omega.norm());
 
           if (this->simulation_parameters.non_linear_solver.verbosity !=
@@ -1248,7 +1228,14 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                           << " residual "
                           << (particles[p].position-ib_dem.dem_particles[p].position).norm()
                           << " particle position "
-                          << particles[p].position << std::endl;
+                          << particles[p].position
+                          << " particle force"
+                          << particles[p].forces
+                          << " particle impulsion "
+                          << particles[p].impulsion
+                          << " particle jac 0 0 "
+                          <<jac_velocity[0][0]<< std::endl;
+
             }
           particles[p].residual=this_particle_residual;
           if(this_particle_residual>particle_residual)
@@ -1265,7 +1252,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           particles[p].f_position->set_time(time);
           particles[p].f_velocity->set_time(time);
           particles[p].f_omega->set_time(time);
-          particles[p].last_position = particles[p].position;
+
           particles[p].position[0] =
             particles[p].f_position->value(particles[p].position, 0);
           particles[p].position[1] =
@@ -1412,6 +1399,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
                             iter,
                             group_files,
                             this->mpi_communicator);
+
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       particles[p].last_position      = particles[p].position;
@@ -1429,7 +1417,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 
-      if (this->simulation_parameters.particlesParameters.integrate_motion)
+      if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           this->pcout << "particule " << p << " position "
                       << particles[p].position << std::endl;
@@ -2644,6 +2632,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
+
       if ((this->simulation_control->get_step_number() %
                this->simulation_parameters.mesh_adaptation.frequency !=
              0 ||

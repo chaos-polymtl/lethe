@@ -1723,9 +1723,6 @@ namespace Parameters
       wall_restitution_coefficient= prm.get_double("wall restitution coefficient");
       coupling_frequency= prm.get_double("DEM coupling frequency");
 
-      if (dim == 3)
-        gravity[2] = prm.get_double("gravity_z");
-
 
 
       particles.resize(nb);

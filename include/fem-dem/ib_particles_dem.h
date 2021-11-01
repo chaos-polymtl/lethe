@@ -57,7 +57,7 @@ public:
    * @param particles The particles vector containing all the IB particles.
    */
   void
-  update_particles(std::vector<IBParticle<dim>> particles);
+  update_particles(std::vector<IBParticle<dim>> particles,double time);
 
 
   /**
@@ -166,6 +166,8 @@ private:
 
   // A vector of vectors of candidate cells for each of the particle.
   std::vector<std::vector<BoundaryCellsInfo>> boundary_cells;
+private:
+  double cfd_time;
 
 };
 

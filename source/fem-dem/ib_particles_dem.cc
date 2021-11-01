@@ -16,8 +16,9 @@ IBParticlesDEM<dim>::initialize(
 template <int dim>
 void
 IBParticlesDEM<dim>::update_particles(
-  std::vector<IBParticle<dim>> particles){
+  std::vector<IBParticle<dim>> particles,double time){
   dem_particles=particles;
+  cfd_time=time;
 
 }
 
@@ -404,17 +405,17 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
   std::vector<Tensor<1, 3>>   &contact_torque)
 {
   double wall_youngs_modulus =
-    parameters.particlesParameters.wall_youngs_modulus;
+    parameters.particlesParameters->wall_youngs_modulus;
   double wall_poisson_ratio =
-    parameters.particlesParameters.wall_poisson_ratio;
+    parameters.particlesParameters->wall_poisson_ratio;
   double wall_rolling_friction_coefficient =
     parameters.particlesParameters
-      .wall_rolling_friction_coefficient;
+      ->wall_rolling_friction_coefficient;
   double wall_friction_coefficient =
-    parameters.particlesParameters.wall_friction_coefficient;
+    parameters.particlesParameters->wall_friction_coefficient;
   double wall_restitution_coefficient =
     parameters.particlesParameters
-      .wall_restitution_coefficient;
+      ->wall_restitution_coefficient;
 
 
   for (auto &particle : dem_particles)
@@ -675,9 +676,10 @@ void
 IBParticlesDEM<dim>::particles_dem(double dt)
 { // add refilling containers
   using numbers::PI;
-  Tensor<1, dim> g   =parameters.particlesParameters.gravity;
-  double         rho =parameters.particlesParameters.density;
-  double         dt_dem             = dt /parameters.particlesParameters.coupling_frequency ;
+
+
+  double         rho =parameters.particlesParameters->density;
+  double         dt_dem             = dt /parameters.particlesParameters->coupling_frequency ;
 
   std::vector<Tensor<1, dim>> contact_force(dem_particles.size());
   std::vector<Tensor<1, 3>>   contact_torque(dem_particles.size());
@@ -692,6 +694,8 @@ IBParticlesDEM<dim>::particles_dem(double dt)
 
   // local time for the dem step
   double         t = 0;
+  Tensor<1, dim> g;
+  this->parameters.particlesParameters->f_gravity->set_time(cfd_time);
   Tensor<1, dim> gravity;
   // initialized the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
@@ -701,7 +705,14 @@ IBParticlesDEM<dim>::particles_dem(double dt)
       dem_particles[p_i].omega       = dem_particles[p_i].last_omega;
       dem_particles[p_i].impulsion       = 0;
       dem_particles[p_i].omega_impulsion = 0;
-      dem_particles[p_i].contact_impulsion =0;
+      dem_particles[p_i].contact_impulsion = 0;
+      g[0] = this->parameters.particlesParameters->f_gravity
+               ->value(dem_particles[p_i].position, 0);
+      g[1] = this->parameters.particlesParameters->f_gravity
+               ->value(dem_particles[p_i].position, 1);
+      if(dim==3)
+        g[2] = this->parameters.particlesParameters->f_gravity
+               ->value(dem_particles[p_i].position, 2);
     }
 
   // integrate on the with the sub_time_step

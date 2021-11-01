@@ -847,7 +847,6 @@ namespace Parameters
     std::string                  ib_force_output_file;
     double                       density;
     Tensor<1, dim>               gravity;
-    double                       length_ratio;
     double                       particle_nonlinear_tol;
     double                       wall_youngs_modulus;
     double                       wall_poisson_ratio;
