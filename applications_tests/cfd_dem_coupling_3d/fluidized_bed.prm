@@ -7,14 +7,12 @@ subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
   set output name              = result_
-  set output frequency	  	= 1
+  set output frequency	  	= 100
   set startup time scaling         = 0.6
   set time end                     = 0.005
   set time step                    = 0.001
   set subdivision             = 1 
   set log precision     = 10 
-  set output path                  	 = ./output/
-#  set output boundaries    = true
 end
 
 
