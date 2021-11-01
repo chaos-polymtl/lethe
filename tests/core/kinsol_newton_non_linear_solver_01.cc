@@ -19,7 +19,7 @@ test()
     Parameters::NonLinearSolver::SolverType::kinsol_newton,
     Parameters::NonLinearSolver::KinsolStrategy::line_search, // kinsol strategy
     1e-8,                                                     // tolerance
-    10,                                                       // maxIter
+    20,                                                       // maxIter
     4,    // display precision
     false // force rhs calculation
   };
