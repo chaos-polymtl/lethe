@@ -180,19 +180,19 @@ CFDDEMSolver<dim>::check_contact_search_step_constant(
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::check_contact_search_step_dynamic(
-  const unsigned int &counter)
+CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &)
 {
   bool sorting_in_subdomains_step =
     (checkpoint_step || load_balance_step || contact_detection_step);
 
-  contact_detection_step =
-    find_contact_detection_step<dim>(this->particle_handler,
-                                     counter,
-                                     smallest_contact_search_criterion,
-                                     this->mpi_communicator,
-                                     sorting_in_subdomains_step,
-                                     displacement);
+  contact_detection_step = find_contact_detection_step<dim>(
+    this->particle_handler,
+    this->simulation_control->get_time_step() /
+      this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency,
+    smallest_contact_search_criterion,
+    this->mpi_communicator,
+    sorting_in_subdomains_step,
+    displacement);
 
   return contact_detection_step;
 }

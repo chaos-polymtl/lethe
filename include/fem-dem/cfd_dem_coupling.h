@@ -112,7 +112,7 @@ private:
    * Finds contact search steps for dynamic contact search method
    */
   bool
-  check_contact_search_step_dynamic(const unsigned int &counter);
+  check_contact_search_step_dynamic(const unsigned int & /*counter*/);
 
 
   /**
