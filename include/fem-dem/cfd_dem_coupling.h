@@ -150,6 +150,12 @@ private:
   void
   read_dem();
 
+  void
+  write_checkpoint() override;
+
+  void
+  read_checkpoint() override;
+
 
   unsigned int                coupling_frequency;
   bool                        contact_detection_step = false;
