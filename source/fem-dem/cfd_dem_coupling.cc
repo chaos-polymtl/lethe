@@ -81,6 +81,20 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
       << "CFD-DEM solver uses constant contact detection method " << std::endl
       << "The contact detection method is changed to constant with contact detection freuqncy of "
       << contact_detection_frequency << std::endl;
+
+  // Necessary signals for writing and reading checkpoints
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+
+  parallel_triangulation->signals.pre_distributed_save.connect(std::bind(
+    &Particles::ParticleHandler<dim>::register_store_callback_function,
+    &this->particle_handler));
+
+  parallel_triangulation->signals.post_distributed_load.connect(
+    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
+              &this->particle_handler,
+              true));
 }
 
 template <int dim>
@@ -93,17 +107,8 @@ CFDDEMSolver<dim>::read_dem()
 {
   this->pcout << "Reading DEM checkpoint " << std::endl;
 
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
-
   std::string prefix =
     this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
-
-  parallel_triangulation->signals.post_distributed_load.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &this->particle_handler,
-              true));
 
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
@@ -152,6 +157,209 @@ CFDDEMSolver<dim>::read_dem()
               << this->particle_handler.n_global_particles()
               << " particles are in the simulation " << std::endl;
   write_DEM_output_results();
+}
+
+template <int dim>
+void
+CFDDEMSolver<dim>::write_checkpoint()
+{
+  TimerOutput::Scope timer(this->computing_timer, "Write_Checkpoint");
+  this->pcout << "Writing restart file" << std::endl;
+
+  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string prefix_particles = prefix + "_particles";
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      this->simulation_control->save(prefix);
+      this->pvdhandler.save(prefix);
+      particles_pvdhandler.save(prefix_particles);
+    }
+
+  std::ostringstream            oss;
+  boost::archive::text_oarchive oa(oss, boost::archive::no_header);
+  oa << this->particle_handler;
+
+  // Write additional particle information for deserialization
+  std::string   particle_filename = prefix + ".particles";
+  std::ofstream output(particle_filename.c_str());
+  output << oss.str() << std::endl;
+
+  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+  sol_set_transfer.push_back(&this->present_solution);
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      sol_set_transfer.push_back(&this->previous_solutions[i]);
+    }
+
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      std::vector<const TrilinosWrappers::MPI::Vector *> av_set_transfer =
+        this->average_velocities->save(prefix);
+
+      // Insert average velocities vectors into the set transfer vector
+      sol_set_transfer.insert(sol_set_transfer.end(),
+                              av_set_transfer.begin(),
+                              av_set_transfer.end());
+    }
+
+  // Prepare for Serialization
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    system_trans_vectors(this->dof_handler);
+  system_trans_vectors.prepare_for_serialization(sol_set_transfer);
+
+  // Void Fraction
+  std::vector<const TrilinosWrappers::MPI::Vector *> vf_set_transfer;
+  vf_set_transfer.push_back(&this->nodal_void_fraction_relevant);
+  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+    {
+      vf_set_transfer.push_back(&this->previous_void_fraction[i]);
+    }
+
+  // Prepare for Serialization
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    vf_system_trans_vectors(this->void_fraction_dof_handler);
+  vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);
+
+  if (auto parallel_triangulation =
+        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+          &*this->triangulation))
+    {
+      std::string triangulationName = prefix + ".triangulation";
+      parallel_triangulation->save(prefix + ".triangulation");
+    }
+
+  this->multiphysics->write_checkpoint();
+}
+
+template <int dim>
+void
+CFDDEMSolver<dim>::read_checkpoint()
+{
+  TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
+  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string prefix_particles = prefix + "_particles";
+
+  this->simulation_control->read(prefix);
+  this->pvdhandler.read(prefix);
+  particles_pvdhandler.read(prefix_particles);
+
+  // Gather particle serialization information
+  std::string   particle_filename = prefix + ".particles";
+  std::ifstream input(particle_filename.c_str());
+  AssertThrow(input, ExcFileNotOpen(particle_filename));
+
+  std::string buffer;
+  std::getline(input, buffer);
+  std::istringstream            iss(buffer);
+  boost::archive::text_iarchive ia(iss, boost::archive::no_header);
+
+  ia >> this->particle_handler;
+
+  const std::string filename = prefix + ".triangulation";
+  std::ifstream     in(filename.c_str());
+  if (!in)
+    AssertThrow(false,
+                ExcMessage(
+                  std::string(
+                    "You are trying to restart a previous computation, "
+                    "but the restart file <") +
+                  filename + "> does not appear to exist!"));
+
+  try
+    {
+      if (auto parallel_triangulation =
+            dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+              this->triangulation.get()))
+        parallel_triangulation->load(filename.c_str());
+    }
+  catch (...)
+    {
+      AssertThrow(false,
+                  ExcMessage("Cannot open snapshot mesh file or read the "
+                             "triangulation stored there."));
+    }
+
+  this->setup_dofs();
+
+  // Velocity Vectors
+  std::vector<TrilinosWrappers::MPI::Vector *> x_system(
+    1 + this->previous_solutions.size());
+
+  TrilinosWrappers::MPI::Vector distributed_system(this->locally_owned_dofs,
+                                                   this->mpi_communicator);
+
+  x_system[0] = &(distributed_system);
+
+  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
+
+  distributed_previous_solutions.reserve(this->previous_solutions.size());
+
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      distributed_previous_solutions.emplace_back(
+        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
+                                      this->mpi_communicator));
+      x_system[i + 1] = &distributed_previous_solutions[i];
+    }
+
+
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    system_trans_vectors(this->dof_handler);
+
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      std::vector<TrilinosWrappers::MPI::Vector *> sum_vectors =
+        this->average_velocities->read(prefix);
+
+      x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
+    }
+
+  system_trans_vectors.deserialize(x_system);
+
+  this->present_solution = distributed_system;
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      this->previous_solutions[i] = distributed_previous_solutions[i];
+    }
+
+  x_system.clear();
+
+  // Void Fraction Vectors
+  std::vector<TrilinosWrappers::MPI::Vector *> vf_system(
+    1 + this->previous_void_fraction.size());
+
+  TrilinosWrappers::MPI::Vector vf_distributed_system(
+    this->locally_owned_dofs_voidfraction, this->mpi_communicator);
+
+  vf_system[0] = &(vf_distributed_system);
+
+  std::vector<TrilinosWrappers::MPI::Vector> vf_distributed_previous_solutions;
+
+  vf_distributed_previous_solutions.reserve(
+    this->previous_void_fraction.size());
+
+  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+    {
+      vf_distributed_previous_solutions.emplace_back(
+        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs_voidfraction,
+                                      this->mpi_communicator));
+      vf_system[i + 1] = &vf_distributed_previous_solutions[i];
+    }
+
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    vf_system_trans_vectors(this->void_fraction_dof_handler);
+
+  vf_system_trans_vectors.deserialize(vf_system);
+
+  this->nodal_void_fraction_relevant = vf_distributed_system;
+  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+    {
+      this->previous_void_fraction[i] = vf_distributed_previous_solutions[i];
+    }
+
+  vf_system.clear();
+
+  this->multiphysics->read_checkpoint();
 }
 
 template <int dim>
@@ -666,7 +874,7 @@ CFDDEMSolver<dim>::solve()
     true,
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
-  // Reading DEM restart file information
+  // Reading DEM start file information
   if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
       this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
           .restart == false)
