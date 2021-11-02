@@ -1,3 +1,4 @@
+Running on 1 MPI rank(s)...
 Reading DEM checkpoint 
 Finished reading DEM checkpoint 
 2000 particles are in the simulation 
@@ -55,4 +56,3 @@ Finished 40 DEM iterations
 Mass Source: -1.379574249e-10 s^-1
 Average Void Fraction in Bed: -nan
 Pressure Drop: 5.685013208 m^2.s^-2
-
