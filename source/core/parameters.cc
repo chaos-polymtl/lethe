@@ -569,9 +569,9 @@ namespace Parameters
       prm.declare_entry(
         "solver",
         "newton",
-        Patterns::Selection("newton|kinsol_newton|inexact_newton_iteration"),
+        Patterns::Selection("newton|kinsol_newton|inexact_newton"),
         "Non-linear solver that will be used "
-        "Choices are <newton|kinsol_newton|inexact_newton_iteration>."
+        "Choices are <newton|kinsol_newton|inexact_newton>."
         " The newton solver is a traditional newton solver with"
         "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
         "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
@@ -622,6 +622,11 @@ namespace Parameters
                         "4",
                         Patterns::Integer(),
                         "Number of digits displayed when showing residuals");
+      prm.declare_entry(
+        "reuse matrix",
+        "false",
+        Patterns::Bool(),
+        "Reuse the last jacobian matrix for the next non-linear problem solution");
     }
     prm.leave_subsection();
   }
@@ -644,8 +649,8 @@ namespace Parameters
         solver = SolverType::newton;
       else if (str_solver == "kinsol_newton")
         solver = SolverType::kinsol_newton;
-      else if (str_solver == "inexact_newton_iteration")
-        solver = SolverType::inexact_newton_iteration;
+      else if (str_solver == "inexact_newton")
+        solver = SolverType::inexact_newton;
       else
         throw(std::runtime_error("Invalid non-linear solver "));
 
@@ -666,6 +671,7 @@ namespace Parameters
       max_iterations        = prm.get_integer("max iterations");
       display_precision     = prm.get_integer("residual precision");
       force_rhs_calculation = prm.get_bool("force rhs calculation");
+      reuse_matrix          = prm.get_bool("reuse matrix");
     }
     prm.leave_subsection();
   }

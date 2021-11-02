@@ -26,7 +26,7 @@
  * decreasing.
  */
 template <typename VectorType>
-class InexactNewtonIterationNonLinearSolver : public NonLinearSolver<VectorType>
+class InexactNewtonNonLinearSolver : public NonLinearSolver<VectorType>
 {
 public:
   /**
@@ -37,9 +37,8 @@ public:
    * @param param Non-linear solver parameters
    *
    */
-  InexactNewtonIterationNonLinearSolver(
-    PhysicsSolver<VectorType> *        physics_solver,
-    const Parameters::NonLinearSolver &param);
+  InexactNewtonNonLinearSolver(PhysicsSolver<VectorType> *physics_solver,
+                               const Parameters::NonLinearSolver &param);
 
 
   /**
@@ -50,20 +49,22 @@ public:
    */
   void
   solve(const bool is_initial_step) override;
+
+private:
+  bool matrix_requires_assembly;
 };
 
 template <typename VectorType>
-InexactNewtonIterationNonLinearSolver<VectorType>::
-  InexactNewtonIterationNonLinearSolver(
-    PhysicsSolver<VectorType> *        physics_solver,
-    const Parameters::NonLinearSolver &params)
+InexactNewtonNonLinearSolver<VectorType>::InexactNewtonNonLinearSolver(
+  PhysicsSolver<VectorType> *        physics_solver,
+  const Parameters::NonLinearSolver &params)
   : NonLinearSolver<VectorType>(physics_solver, params)
+  , matrix_requires_assembly(true)
 {}
 
 template <typename VectorType>
 void
-InexactNewtonIterationNonLinearSolver<VectorType>::solve(
-  const bool is_initial_step)
+InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
   double       global_res;
   double       current_res;
@@ -87,7 +88,8 @@ InexactNewtonIterationNonLinearSolver<VectorType>::solve(
   auto &evaluation_point = solver->get_evaluation_point();
   auto &present_solution = solver->get_present_solution();
 
-  bool matrix_requires_assembly = true;
+  if (!this->params.reuse_matrix)
+    matrix_requires_assembly = true;
 
   while ((global_res > this->params.tolerance) &&
          outer_iteration < this->params.max_iterations)
