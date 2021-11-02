@@ -351,9 +351,11 @@ class BuoyancyAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
   BuoyancyAssembly(std::shared_ptr<SimulationControl> simulation_control,
-                  Parameters::PhysicalProperties     physical_properties)
+                   Parameters::PhysicalProperties     physical_properties,
+                   Parameters::VelocitySource         velocity_sources)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
+    , velocity_sources(velocity_sources)
   {}
 
   /**
@@ -378,6 +380,7 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
+  Parameters::VelocitySource         velocity_sources;
 };
 
 

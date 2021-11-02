@@ -658,7 +658,7 @@ namespace Parameters
    * @brief VelocitySource - Adds velocity-dependent
    * source term to the Navier-Stokes equations with
    * the appropriate jacobian matrix. Currently only
-   * a change to a rotating frame is supported, but additional
+   * gravity and a change to a rotating frame are supported, but additional
    * terms such as a Darcy force or similar could be easily
    * added.
    */
@@ -668,12 +668,16 @@ namespace Parameters
     enum class VelocitySourceType
     {
       none,
-      srf
+      srf,
+      gravity
     };
     VelocitySourceType type;
     double             omega_x;
     double             omega_y;
     double             omega_z;
+    double             g_x;
+    double             g_y;
+    double             g_z;
     static void
     declare_parameters(ParameterHandler &prm);
     void
