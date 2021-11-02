@@ -166,6 +166,8 @@ namespace Parameters
     double specific_heat;
     // thermal conductivity (k) in W/m/K
     double thermal_conductivity;
+    // thermal expansion coefficient (alpha) in 1/K
+    double thermal_expansion;
     // tracer diffusivity) in L^2/s
     double tracer_diffusivity;
   };
@@ -192,6 +194,8 @@ namespace Parameters
     double specific_heat;
     // thermal conductivity (k) in W/m/K
     double thermal_conductivity;
+    // thermal expansion coefficient (alpha) in 1/K
+    double thermal_expansion;
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
 

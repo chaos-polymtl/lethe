@@ -208,13 +208,15 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Thermal conductivity");
+      prm.declare_entry("thermal expansion",
+                        "1",
+                        Patterns::Double(),
+                        "Thermal Expansion");
 
       prm.declare_entry("tracer diffusivity",
                         "0",
                         Patterns::Double(),
                         "Tracer diffusivity");
-
-
 
       prm.declare_entry("number of fluids",
                         "0",
@@ -241,6 +243,8 @@ namespace Parameters
       density              = prm.get_double("density");
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
+      thermal_expansion = prm.get_double("thermal expansion");
+
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
 
 
@@ -293,6 +297,12 @@ namespace Parameters
         "Thermal conductivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
+        "thermal expansion",
+        "1",
+        Patterns::Double(),
+        "Thermal expansion coefficient for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+      prm.declare_entry(
         "tracer diffusivity",
         "0",
         Patterns::Double(),
@@ -311,6 +321,7 @@ namespace Parameters
       viscosity            = prm.get_double("kinematic viscosity");
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
+      thermal_expansion = prm.get_double("thermal expansion");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
     }
     prm.leave_subsection();
