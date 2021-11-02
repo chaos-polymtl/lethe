@@ -163,16 +163,16 @@ private:
 
 
   unsigned int                coupling_frequency;
-  bool                        contact_detection_step = true;
-  bool                        checkpoint_step        = false;
-  bool                        load_balance_step      = false;
+  bool                        contact_detection_step;
+  bool                        checkpoint_step;
+  bool                        load_balance_step;
   std::vector<Tensor<1, dim>> momentum;
   std::vector<Tensor<1, dim>> force;
   std::vector<double>         displacement;
   std::vector<double>         MOI;
   double                      neighborhood_threshold_squared;
   double                      maximum_particle_diameter;
-  const double                standard_deviation_multiplier = 2.5;
+  double                      standard_deviation_multiplier;
   unsigned int                contact_detection_frequency;
   double                      smallest_contact_search_criterion;
   double                      triangulation_cell_diameter;

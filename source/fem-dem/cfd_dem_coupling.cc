@@ -97,6 +97,10 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
 
   // Initilize contact detection step
   contact_detection_step = true;
+  checkpoint_step        = false;
+  load_balance_step      = false;
+
+  standard_deviation_multiplier = 2.5;
 }
 
 template <int dim>
