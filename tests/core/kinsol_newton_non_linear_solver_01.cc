@@ -27,7 +27,7 @@ test()
   deallog << "Creating solver" << std::endl;
 
   // Create an instantiation of the Test Class
-  std::unique_ptr<TestClass> solver = std::make_unique<TestClass>(params);
+  std::unique_ptr<NonLinearProblemTestClass> solver = std::make_unique<NonLinearProblemTestClass>(params);
 
 
   deallog << "Solving non-linear system " << std::endl;

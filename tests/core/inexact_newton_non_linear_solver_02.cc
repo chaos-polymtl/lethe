@@ -1,6 +1,7 @@
 /**
- * @brief The TestClass tests the non-linear solvers using a simple systme of two
- * equations, only one of which is non-linear
+ * @brief Test the solution of a non-linear problem, then resets
+ * the solution vector of the problem to solve it again
+ * while reusing the previous matrix.
  */
 
 // Lethe
@@ -16,7 +17,7 @@ test()
 {
   Parameters::NonLinearSolver params{
     Parameters::Verbosity::verbose,
-    Parameters::NonLinearSolver::SolverType::newton,
+    Parameters::NonLinearSolver::SolverType::inexact_newton,
     Parameters::NonLinearSolver::KinsolStrategy::
       normal_newton, // kinsol strategy, not used in this case
     1e-8,            // tolerance
@@ -25,8 +26,7 @@ test()
     false,           // force rhs calculation
     0.1,             // matrix tolerance
     0.99,            // step_tolerance
-    false            // reuse matrix accross problems
-
+    true             // reuse matrix accross problems
   };
 
   deallog << "Creating solver" << std::endl;
@@ -37,7 +37,12 @@ test()
 
 
   deallog << "Solving non-linear system " << std::endl;
-  // Solve the non-linear system of equation
+  // Solve the non-linear system of equation a first time
+  solver->solve_non_linear_system(true);
+
+  solver->reset();
+
+  // Solve it again reusing the system matrix
   solver->solve_non_linear_system(true);
 
   auto &present_solution = solver->get_present_solution();

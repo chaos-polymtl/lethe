@@ -16,7 +16,7 @@ test()
 {
   Parameters::NonLinearSolver params{
     Parameters::Verbosity::verbose,
-    Parameters::NonLinearSolver::SolverType::inexact_newton_iteration,
+    Parameters::NonLinearSolver::SolverType::inexact_newton,
     Parameters::NonLinearSolver::KinsolStrategy::
       normal_newton, // kinsol strategy, not used in this case
     1e-8,            // tolerance
@@ -24,13 +24,15 @@ test()
     4,               // display precision
     false,           // force rhs calculation
     0.1,             // matrix tolerance
-    0.99             // step_tolerance
+    0.99,            // step_tolerance
+    false            // reuse matrix accross problems
   };
 
   deallog << "Creating solver" << std::endl;
 
   // Create an instantiation of the Test Class
-  std::unique_ptr<TestClass> solver = std::make_unique<TestClass>(params);
+  std::unique_ptr<NonLinearProblemTestClass> solver =
+    std::make_unique<NonLinearProblemTestClass>(params);
 
 
   deallog << "Solving non-linear system " << std::endl;
