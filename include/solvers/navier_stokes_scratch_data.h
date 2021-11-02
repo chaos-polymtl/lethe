@@ -129,6 +129,10 @@ public:
                            sd.fe_values_void_fraction->get_mapping());
     if (sd.gather_particles_information)
       enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell);
+    if (sd.gather_temperature)
+        enable_heat_transfer(sd.fe_values_free_surface->get_fe(),
+                             sd.fe_values_free_surface->get_quadrature(),
+                             sd.fe_values_free_surface->get_mapping());
   }
 
 
@@ -517,6 +521,59 @@ public:
       current_solution, fluid_pressure_gradients_at_particle_location);
   }
 
+
+  /**
+   * @brief enable_heat_transfer Enables the collection of the heat transfer data by the scratch
+   *
+   * @param fe FiniteElement associated with the heat transfer.
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   */
+
+  void
+  enable_heat_transfer(const FiniteElement<dim> &fe,
+                      const Quadrature<dim> &   quadrature,
+                      const Mapping<dim> &      mapping);
+
+  /** @brief Reinitialize the content of the scratch for the heat transfer
+   *
+   * @param cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the heat transfer FE and not the
+   * Navier-Stokes FE
+   *
+   * @param current_solution The present value of the solution for temperature
+   *
+   * @param previous_solutions The solutions at the previous time steps for temperature
+   *
+   */
+
+  template <typename VectorType>
+  void
+  reinit_heat_transfer(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType &                                    current_solution,
+    const std::vector<VectorType> &                       previous_solutions,
+    const std::vector<VectorType> & /*solution_stages*/)
+  {
+      this->fe_values_temperature->reinit(cell);
+
+    // Gather phase fraction (values, gradient)
+    this->fe_values_temperature->get_function_values(current_solution, this->temperature_values);
+
+    this->fe_values_temperature->get_function_gradients(
+      current_solution, this->temperature_values);
+
+    // Gather previous phase fraction values
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        this->fe_values_temperature->get_function_values(
+          previous_solutions[p], previous_temperature_values[p]);
+      }
+  }
+
+
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
   unsigned int               n_dofs;
@@ -594,6 +651,17 @@ public:
   double                                                            cell_volume;
   double                                                            beta_drag;
   Tensor<1, dim> undisturbed_flow_force;
+
+  /**
+   * Scratch component for the heat transfer
+   */
+  bool                             gather_temperature;
+  unsigned int                     n_dofs_heat_transfer;
+  std::vector<double>              temperature_values;
+  std::vector<std::vector<double>> previous_temperature_values;
+  // This is stored as a shared_ptr because it is only instantiated when needed
+  std::shared_ptr<FEValues<dim>> fe_values_temperature;
+
 };
 
 #endif

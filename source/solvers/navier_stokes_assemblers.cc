@@ -955,11 +955,9 @@ template class LaplaceAssembly<3>;
 template <int dim>
 void
 BuoyancyAssembly<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &copy_data)
-{
-
-}
+  NavierStokesScratchData<dim> &        /*scratch_data*/,
+  StabilizedMethodsTensorCopyData<dim> &/*copy_data*/)
+{}
 
 template <int dim>
 void
@@ -967,7 +965,43 @@ BuoyancyAssembly<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+    // Scheme and physical properties
+    const double thermal_expansion = physical_properties.thermal_expansion;
 
+    // Loop and quadrature informations
+    const auto &       JxW_vec    = scratch_data.JxW;
+    const unsigned int n_q_points = scratch_data.n_q_points;
+    const unsigned int n_dofs     = scratch_data.n_dofs;
+    const double       h          = scratch_data.cell_size;
+
+
+    auto &local_rhs = copy_data.local_rhs;
+
+    // Time steps and inverse time steps which is used for stabilization constant
+    std::vector<double> time_steps_vector =
+      this->simulation_control->get_time_steps_vector();
+
+    // Loop over the quadrature points
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        // Store JxW in local variable for faster access;
+        const double JxW = JxW_vec[q];
+
+
+        // Assembly of the right-hand side
+        for (unsigned int i = 0; i < n_dofs; ++i)
+          {
+            const auto phi_u_i      = scratch_data.phi_u[q][i];
+
+            double local_rhs_i = 0;
+
+            // Laplacian on the velocity terms
+            local_rhs_i +=
+              - gravity * thermal_expansion * () * phi_u_i * JxW;
+
+            local_rhs(i) += local_rhs_i;
+          }
+      }
 }
 
 template class BuoyancyAssembly<2>;
