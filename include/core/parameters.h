@@ -371,7 +371,7 @@ namespace Parameters
     enum class SolverType
     {
       newton,
-      inexact_newton_iteration,
+      inexact_newton,
       kinsol_newton
     };
 
@@ -417,6 +417,9 @@ namespace Parameters
 
     // Relative Tolerance
     double step_tolerance;
+
+    // Carry jacobian matrix over to the new non-linear problem
+    bool reuse_matrix;
 
 
     static void
