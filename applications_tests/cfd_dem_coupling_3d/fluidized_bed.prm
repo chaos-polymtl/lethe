@@ -7,7 +7,7 @@ subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
   set output name              = result_
-  set output frequency	  	= 100
+  set output frequency	  	= 1
   set startup time scaling         = 0.6
   set time end                     = 0.005
   set time step                    = 0.001
@@ -24,6 +24,7 @@ subsection FEM
     set pressure order            = 1
 end
 
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
@@ -38,7 +39,7 @@ end
 subsection mesh
     set type                 				= dealii
     set grid type            				= subdivided_hyper_rectangle
-    set grid arguments       				= 1,5,1:-0.01,-0.1,-0.01:0.01,0.1,0.01:true
+    set grid arguments       				= 1,5,1:-0.02,-0.1,-0.02:0.02,0.1,0.02:true
     set initial refinement   				= 3
 end
 
@@ -136,6 +137,7 @@ end
 #---------------------------------------------------
 subsection model parameters
   set contact detection method 		   		 = dynamic
+  set contact detection frequency                 	 = 10
   set dynamic contact search size coefficient	 	 = 0.9
   set neighborhood threshold				 = 1.8
   set particle particle contact force method             = pp_nonlinear
@@ -154,7 +156,7 @@ subsection lagrangian physical properties
     subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            	 	= 0.001
-    		set number				= 5000
+    		set number				= 2000
     		set density particles         	        = 1500
     		set young modulus particles         	= 1000000
     		set poisson ratio particles          	= 0.3

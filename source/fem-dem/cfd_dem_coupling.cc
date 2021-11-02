@@ -1,5 +1,4 @@
 #include <core/solutions_output.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -23,6 +22,8 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   contact_detection_frequency =
     this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
       .contact_detection_frequency;
+
+  standard_deviation_multiplier = 2.5;
 
   maximum_particle_diameter =
     find_maximum_particle_size(this->cfd_dem_simulation_parameters
@@ -99,8 +100,6 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   contact_detection_step = true;
   checkpoint_step        = false;
   load_balance_step      = false;
-
-  standard_deviation_multiplier = 2.5;
 }
 
 template <int dim>
@@ -186,6 +185,10 @@ template <int dim>
 inline bool
 CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &)
 {
+  // The sorting into subdomain step checks whether or not the current time step
+  // is a step that requires sorting particles into subdomains and cells. This
+  // is applicable if any of the following three conditions apply:if its a load
+  // balancing step, a restart simulation step, or a contact detection tsep.
   bool sorting_in_subdomains_step =
     (checkpoint_step || load_balance_step || contact_detection_step);
 

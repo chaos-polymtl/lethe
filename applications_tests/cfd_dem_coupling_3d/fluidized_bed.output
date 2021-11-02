@@ -1,58 +1,58 @@
-Running on 1 MPI rank(s)...
 Reading DEM checkpoint 
 Finished reading DEM checkpoint 
-5000 particles are in the simulation 
+2000 particles are in the simulation 
    Number of active cells:       2560
    Number of degrees of freedom: 13284
-   Volume of triangulation:      8e-05
+   Volume of triangulation:      0.00032
 Initializing DEM parameters 
 Finished initializing DEM parameters 
 DEM time-step is 2.5e-05 s 
 *****************************************************************
-Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0.4036246466
+Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0.2542675943
 *****************************************************************
 Starting DEM iterations at step 1
 Finished 40 DEM iterations 
-Mass Source: -7.375662895e-12 s^-1
-Average Void Fraction in Bed: 0.4873011491
-Pressure Drop: 391.7802479 m^2.s^-2
+Mass Source: 6.033619397e-12 s^-1
+Average Void Fraction in Bed: -nan
+Pressure Drop: 397.3673761 m^2.s^-2
 
 *****************************************************************
-Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 1.151099983
+Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.3545383451
 *****************************************************************
 Starting DEM iterations at step 2
 Finished 40 DEM iterations 
-Mass Source: -6.232127245e-13 s^-1
-Average Void Fraction in Bed: 0.4873011491
-Pressure Drop: 546.9840226 m^2.s^-2
+Mass Source: 5.68534448e-11 s^-1
+Average Void Fraction in Bed: -nan
+Pressure Drop: 6.157628138 m^2.s^-2
 
 *****************************************************************
-Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 1.389568548
+Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.3505625505
 *****************************************************************
 Starting DEM iterations at step 3
-DEM contact search at dem step 35
 Finished 40 DEM iterations 
-Mass Source: 4.610365397e-11 s^-1
-Average Void Fraction in Bed: 0.4873011491
-Pressure Drop: 487.2364132 m^2.s^-2
+Mass Source: -2.747409003e-11 s^-1
+Average Void Fraction in Bed: -nan
+Pressure Drop: 5.802743655 m^2.s^-2
 
 *****************************************************************
-Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 1.066747062
+Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 0.3555361766
 *****************************************************************
 Starting DEM iterations at step 4
-DEM contact search at dem step 18
 Finished 40 DEM iterations 
-Mass Source: -4.115832739e-12 s^-1
-Average Void Fraction in Bed: 0.4924223538
-Pressure Drop: 429.2540943 m^2.s^-2
+Mass Source: 1.481636003e-10 s^-1
+Average Void Fraction in Bed: -nan
+Pressure Drop: 5.73260764 m^2.s^-2
 
 *****************************************************************
-Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 1.079785044
+Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 0.3592675001
 *****************************************************************
 Starting DEM iterations at step 5
-DEM contact search at dem step 5
-DEM contact search at dem step 31
+DEM contact search at dem step 1
+DEM contact search at dem step 8
+DEM contact search at dem step 18
+DEM contact search at dem step 29
 Finished 40 DEM iterations 
-Mass Source: 1.120860844e-10 s^-1
-Average Void Fraction in Bed: 0.4958367425
-Pressure Drop: 392.0054199 m^2.s^-2
+Mass Source: -1.379574249e-10 s^-1
+Average Void Fraction in Bed: -nan
+Pressure Drop: 5.685013208 m^2.s^-2
+
