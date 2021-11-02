@@ -950,3 +950,25 @@ LaplaceAssembly<dim>::assemble_rhs(
 
 template class LaplaceAssembly<2>;
 template class LaplaceAssembly<3>;
+
+
+template <int dim>
+void
+BuoyancyAssembly<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+
+}
+
+template <int dim>
+void
+BuoyancyAssembly<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+
+}
+
+template class BuoyancyAssembly<2>;
+template class BuoyancyAssembly<3>;
