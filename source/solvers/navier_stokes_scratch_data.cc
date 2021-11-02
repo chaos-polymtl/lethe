@@ -136,9 +136,7 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
 
   // Free surface
   temperature_values = std::vector<double>(this->n_q_points);
-  previous_temperature_values =
-    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
-                                     std::vector<double>(this->n_q_points));
+  previous_temperature_values = std::vector<double>(this->n_q_points);
 }
 
 

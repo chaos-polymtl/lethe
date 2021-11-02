@@ -658,7 +658,7 @@ public:
   bool                             gather_temperature;
   unsigned int                     n_dofs_heat_transfer;
   std::vector<double>              temperature_values;
-  std::vector<std::vector<double>> previous_temperature_values;
+  std::vector<double> previous_temperature_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
 

@@ -972,8 +972,6 @@ BuoyancyAssembly<dim>::assemble_rhs(
     const auto &       JxW_vec    = scratch_data.JxW;
     const unsigned int n_q_points = scratch_data.n_q_points;
     const unsigned int n_dofs     = scratch_data.n_dofs;
-    const double       h          = scratch_data.cell_size;
-
 
     auto &local_rhs = copy_data.local_rhs;
 
@@ -987,6 +985,10 @@ BuoyancyAssembly<dim>::assemble_rhs(
         // Store JxW in local variable for faster access;
         const double JxW = JxW_vec[q];
 
+        // Current and previous temperature values
+
+       double current_temperature = scratch_data.temperature_values[q];
+       double previous_temperature = scratch_data.previous_temperature_values[q];
 
         // Assembly of the right-hand side
         for (unsigned int i = 0; i < n_dofs; ++i)
@@ -997,7 +999,7 @@ BuoyancyAssembly<dim>::assemble_rhs(
 
             // Laplacian on the velocity terms
             local_rhs_i +=
-              - gravity * thermal_expansion * () * phi_u_i * JxW;
+              - gravity * thermal_expansion * (current_temperature - previous_temperature) * phi_u_i * JxW;
 
             local_rhs(i) += local_rhs_i;
           }
