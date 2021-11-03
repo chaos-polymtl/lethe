@@ -130,13 +130,12 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
   const Quadrature<dim> &   quadrature,
   const Mapping<dim> &      mapping)
 {
-  gather_temperature    = true;
-  fe_values_temperature = std::make_shared<FEValues<dim>>(
-    mapping, fe, quadrature, update_values | update_gradients);
+  gather_temperature = true;
+  fe_values_temperature =
+    std::make_shared<FEValues<dim>>(mapping, fe, quadrature, update_values);
 
   // Free surface
-  temperature_values          = std::vector<double>(this->n_q_points);
-  previous_temperature_values = std::vector<double>(this->n_q_points);
+  temperature_values = std::vector<double>(this->n_q_points);
 }
 
 

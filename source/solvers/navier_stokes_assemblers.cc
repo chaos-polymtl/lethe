@@ -973,7 +973,8 @@ BuoyancyAssembly<dim>::assemble_rhs(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  auto &local_rhs = copy_data.local_rhs;
+  auto &local_rhs       = copy_data.local_rhs;
+  auto &strong_residual = copy_data.strong_residual;
 
   // Read gravity vector
   Tensor<1, dim> gravity_vector;
@@ -983,10 +984,6 @@ BuoyancyAssembly<dim>::assemble_rhs(
   if (dim == 3)
     gravity_vector[2] = velocity_sources.g_z;
 
-  // Time steps and inverse time steps which is used for stabilization constant
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -995,22 +992,19 @@ BuoyancyAssembly<dim>::assemble_rhs(
 
       // Current and previous temperature values
 
-      double current_temperature  = scratch_data.temperature_values[q];
-      double previous_temperature = scratch_data.previous_temperature_values[q];
+      double current_temperature = scratch_data.temperature_values[q];
+
+      strong_residual[q] +=
+        -gravity_vector * thermal_expansion * current_temperature;
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
 
-          double local_rhs_i = 0;
-
           // Laplacian on the velocity terms
-          local_rhs_i += -gravity_vector * thermal_expansion *
-                         (current_temperature - previous_temperature) *
-                         phi_u_i * JxW;
-
-          local_rhs(i) += local_rhs_i;
+          local_rhs(i) += -gravity_vector * thermal_expansion *
+                          current_temperature * phi_u_i * JxW;
         }
     }
 }

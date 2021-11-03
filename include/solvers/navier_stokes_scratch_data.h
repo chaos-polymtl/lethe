@@ -95,6 +95,7 @@ public:
     gather_free_surface          = false;
     gather_void_fraction         = false;
     gather_particles_information = false;
+    gather_temperature           = false;
   }
 
   /**
@@ -559,19 +560,9 @@ public:
   {
     this->fe_values_temperature->reinit(cell);
 
-    // Gather phase fraction (values, gradient)
+    // Gather temperature
     this->fe_values_temperature->get_function_values(current_solution,
                                                      this->temperature_values);
-
-    this->fe_values_temperature->get_function_gradients(
-      current_solution, this->temperature_values);
-
-    // Gather previous phase fraction values
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values_temperature->get_function_values(
-          previous_solutions[p], previous_temperature_values[p]);
-      }
   }
 
 
@@ -659,7 +650,6 @@ public:
   bool                gather_temperature;
   unsigned int        n_dofs_heat_transfer;
   std::vector<double> temperature_values;
-  std::vector<double> previous_temperature_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
 };
