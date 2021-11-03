@@ -228,6 +228,7 @@ CFDDEMSolver<dim>::read_dem()
   this->pcout << "Finished reading DEM checkpoint " << std::endl
               << this->particle_handler.n_global_particles()
               << " particles are in the simulation " << std::endl;
+
   write_DEM_output_results();
 }
 
@@ -256,6 +257,14 @@ CFDDEMSolver<dim>::write_checkpoint()
   std::ofstream output(particle_filename.c_str());
   output << oss.str() << std::endl;
 
+  if (auto parallel_triangulation =
+        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+          &*this->triangulation))
+    {
+      std::string triangulationName = prefix + ".triangulation";
+      parallel_triangulation->save(prefix + ".triangulation");
+    }
+
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
   sol_set_transfer.push_back(&this->present_solution);
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
@@ -279,6 +288,7 @@ CFDDEMSolver<dim>::write_checkpoint()
     system_trans_vectors(this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
+
   // Void Fraction
   std::vector<const TrilinosWrappers::MPI::Vector *> vf_set_transfer;
   vf_set_transfer.push_back(&this->nodal_void_fraction_relevant);
@@ -301,56 +311,6 @@ CFDDEMSolver<dim>::write_checkpoint()
     }
 
   this->multiphysics->write_checkpoint();
-}
-
-template <int dim>
-unsigned int
-CFDDEMSolver<dim>::cell_weight(
-  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-  const
-{
-  // Assign no weight to cells we do not own.
-  if (!cell->is_locally_owned())
-    return 0;
-
-  // This determines how important particle work is compared to cell
-  // work (by default every cell has a weight of 1000).
-  // We set the weight per particle much higher to indicate that
-  // the particle load is more important than the fluid load. The optimal
-  // value of this number depends on the application and can range from 0
-  // (cheap particle operations, expensive cell operations) to much larger
-  // than 1000 (expensive particle operations, cheap cell operations, like in
-  // this case). This parameter will need to be tuned for different cases of
-  // CFD-DEM coupling.
-  const unsigned int particle_weight = 2000;
-
-  // This does not use adaptive refinement, therefore every cell
-  // should have the status CELL_PERSIST. However this function can also
-  // be used to distribute load during refinement, therefore we consider
-  // refined or coarsened cells as well.
-  if (status == parallel::distributed::Triangulation<dim>::CELL_PERSIST ||
-      status == parallel::distributed::Triangulation<dim>::CELL_REFINE)
-    {
-      const unsigned int n_particles_in_cell =
-        this->particle_handler.n_particles_in_cell(cell);
-      return n_particles_in_cell * particle_weight;
-    }
-  else if (status == parallel::distributed::Triangulation<dim>::CELL_COARSEN)
-    {
-      unsigned int n_particles_in_cell = 0;
-
-      for (unsigned int child_index = 0;
-           child_index < GeometryInfo<dim>::max_children_per_cell;
-           ++child_index)
-        n_particles_in_cell +=
-          this->particle_handler.n_particles_in_cell(cell->child(child_index));
-
-      return n_particles_in_cell * particle_weight;
-    }
-
-  Assert(false, ExcInternalError());
-  return 0;
 }
 
 template <int dim>
@@ -485,6 +445,56 @@ CFDDEMSolver<dim>::read_checkpoint()
 }
 
 template <int dim>
+unsigned int
+CFDDEMSolver<dim>::cell_weight(
+  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
+  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+  const
+{
+  // Assign no weight to cells we do not own.
+  if (!cell->is_locally_owned())
+    return 0;
+
+  // This determines how important particle work is compared to cell
+  // work (by default every cell has a weight of 1000).
+  // We set the weight per particle much higher to indicate that
+  // the particle load is more important than the fluid load. The optimal
+  // value of this number depends on the application and can range from 0
+  // (cheap particle operations, expensive cell operations) to much larger
+  // than 1000 (expensive particle operations, cheap cell operations, like in
+  // this case). This parameter will need to be tuned for different cases of
+  // CFD-DEM coupling.
+  const unsigned int particle_weight = 2000;
+
+  // This does not use adaptive refinement, therefore every cell
+  // should have the status CELL_PERSIST. However this function can also
+  // be used to distribute load during refinement, therefore we consider
+  // refined or coarsened cells as well.
+  if (status == parallel::distributed::Triangulation<dim>::CELL_PERSIST ||
+      status == parallel::distributed::Triangulation<dim>::CELL_REFINE)
+    {
+      const unsigned int n_particles_in_cell =
+        this->particle_handler.n_particles_in_cell(cell);
+      return n_particles_in_cell * particle_weight;
+    }
+  else if (status == parallel::distributed::Triangulation<dim>::CELL_COARSEN)
+    {
+      unsigned int n_particles_in_cell = 0;
+
+      for (unsigned int child_index = 0;
+           child_index < GeometryInfo<dim>::max_children_per_cell;
+           ++child_index)
+        n_particles_in_cell +=
+          this->particle_handler.n_particles_in_cell(cell->child(child_index));
+
+      return n_particles_in_cell * particle_weight;
+    }
+
+  Assert(false, ExcInternalError());
+  return 0;
+}
+
+template <int dim>
 void
 CFDDEMSolver<dim>::load_balance()
 {
@@ -555,9 +565,7 @@ CFDDEMSolver<dim>::check_load_balance_once()
 
   if (load_balance_step || checkpoint_step)
     {
-      write_checkpoint();
       load_balance();
-      read_checkpoint();
     }
 
   return load_balance_step;
@@ -574,9 +582,7 @@ CFDDEMSolver<dim>::check_load_balance_frequent()
 
   if (load_balance_step || checkpoint_step)
     {
-      write_checkpoint();
       load_balance();
-      read_checkpoint();
     }
 
   return load_balance_step;
@@ -609,9 +615,7 @@ CFDDEMSolver<dim>::check_load_balance_dynamic()
                this->n_mpi_processes) ||
           checkpoint_step)
         {
-          write_checkpoint();
           load_balance();
-          read_checkpoint();
           load_balance_step = true;
         }
     }
@@ -819,8 +823,6 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 {
-  TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
-
   // Particle-particle contact force
   pp_contact_force_object->calculate_pp_contact_force(local_adjacent_particles,
                                                       ghost_adjacent_particles,
@@ -967,8 +969,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::write_DEM_output_results()
 {
-  TimerOutput::Scope t(this->computing_timer, "DEM_Output_Results");
-  const std::string  folder = this->cfd_dem_simulation_parameters.dem_parameters
+  const std::string folder = this->cfd_dem_simulation_parameters.dem_parameters
                                .simulation_control.output_folder;
   const std::string particles_solution_name =
     this->cfd_dem_simulation_parameters.dem_parameters.simulation_control
@@ -1181,6 +1182,7 @@ CFDDEMSolver<dim>::solve()
           for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
                ++dem_counter)
             {
+              TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
               // dem_iterator carries out the particle-particle and
               // particle_wall force calculations, integration and
               // update_ghost
@@ -1231,6 +1233,7 @@ CFDDEMSolver<dim>::solve()
           for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
                ++dem_counter)
             {
+              TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
               // dem_iterator carries out the particle-particle and
               // particle_wall force calculations, integration and
               // update_ghost
