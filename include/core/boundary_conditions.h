@@ -34,6 +34,7 @@ namespace BoundaryConditions
     slip,
     function,
     periodic,
+    pressure,
     // for heat transfer
     temperature,      // Dirichlet
     convection,       // Robin
@@ -68,6 +69,7 @@ namespace BoundaryConditions
     std::vector<unsigned int> periodic_direction;
   };
 
+
   /**
    * @brief This class manages the functions associated with function-type boundary conditions
    * of the Navier-Stokes equations
@@ -86,6 +88,21 @@ namespace BoundaryConditions
     Point<dim> center_of_rotation;
   };
 
+  /**
+   * @brief This class manages the functions associated with function-type boundary conditions
+   * of the Navier-Stokes equations
+   *
+   */
+  template <int dim>
+  class NSPressureBoundaryFunctions
+  {
+  public:
+    // Velocity components
+    Functions::ParsedFunction<dim> p;
+
+    // Point for the center of rotation
+    Point<dim> center_of_rotation;
+  };
 
   /**
    * @brief This class manages the boundary conditions for Navier-Stokes solver
@@ -98,6 +115,7 @@ namespace BoundaryConditions
   public:
     // Functions for (u,v,w) for all boundaries
     NSBoundaryFunctions<dim> *bcFunctions;
+    NSPressureBoundaryFunctions<dim> *bcPressureFunction;
 
     void
     parse_boundary(ParameterHandler &prm, unsigned int i_bc);
@@ -175,6 +193,11 @@ namespace BoundaryConditions
     prm.set("Function expression", "0");
     prm.leave_subsection();
 
+    prm.enter_subsection("p");
+    bcPressureFunction[i_bc].p.declare_parameters(prm, 1);
+    prm.set("Function expression", "0");
+    prm.leave_subsection();
+
     // Center of rotation of the boundary condition for torque calculation
     prm.enter_subsection("center of rotation");
     prm.declare_entry("x", "0", Patterns::Double(), "X COR");
@@ -214,6 +237,20 @@ namespace BoundaryConditions
 
         prm.enter_subsection("w");
         bcFunctions[i_bc].w.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("center of rotation");
+        bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
+        bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
+        if (dim == 3)
+          bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
+        prm.leave_subsection();
+      }
+    if (op == "pressure")
+      {
+        this->type[i_bc] = BoundaryType::function;
+        prm.enter_subsection("p");
+        bcPressureFunction[i_bc].p.parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("center of rotation");

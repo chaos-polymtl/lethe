@@ -79,14 +79,20 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  NavierStokesScratchData(const FESystem<dim> &  fe,
+  NavierStokesScratchData(const FESystem<dim>   &fe,
                           const Quadrature<dim> &quadrature,
-                          const Mapping<dim> &   mapping)
+                          const Mapping<dim>    &mapping)
     : fe_values(mapping,
                 fe,
                 quadrature,
                 update_values | update_quadrature_points | update_JxW_values |
                   update_gradients | update_hessians)
+    , fe_face_values(mapping,
+                     fe,
+                     quadrature,
+                     update_values | update_quadrature_points |
+                       update_JxW_values | update_gradients | update_hessians |
+                       update_normal_vectors)
   {
     allocate();
 
@@ -169,10 +175,10 @@ public:
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType &                                    current_solution,
+         const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages,
-         Function<dim> *                forcing_function,
+         Function<dim>                 *forcing_function,
          Tensor<1, dim>                 beta_force)
   {
     this->fe_values.reinit(cell);
@@ -258,6 +264,102 @@ public:
             this->grad_phi_p[q][k] = this->fe_values[pressure].gradient(k, q);
           }
       }
+
+    this->is_boundary_cell = cell->at_boundary();
+    if (cell->at_boundary())
+      {
+        n_faces          = cell->n_faces();
+        is_boundary_face = std::vector<bool>(n_faces, false);
+        n_faces_q_points = fe_face_values.get_quadrature().size();
+        boundary_face_id = std::vector<unsigned int>(n_faces);
+
+        face_JxW = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+
+        this->face_velocity_values =
+          std::vector<std::vector<std::vector<double>>>(
+            n_faces,
+            std::vector<std::vector<double>>(n_faces_q_points,
+                                             std::vector<double>(n_dofs)));
+
+
+        // Velocity and pressure values
+        // First vector is face number, second quadrature point
+        std::vector<std::vector<Tensor<1, dim>>> face_velocity_values;
+        this->face_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces,
+          std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        std::vector<std::vector<double>> face_velocity_divergences;
+        this->face_velocity_divergences = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        std::vector<std::vector<Tensor<2, dim>>> face_velocity_gradients;
+        this->face_velocity_gradients =std::vector<std::vector<Tensor<2, dim>>>(
+          n_faces,
+          std::vector<Tensor<2, dim>>(n_faces_q_points));
+
+        std::vector<std::vector<Tensor<1, dim>>> face_velocity_laplacians;
+        face_velocity_laplacians=std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces,
+          std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        std::vector<std::vector<double>>         face_pressure_values;
+        this->face_pressure_values= std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        std::vector<std::vector<Tensor<1, dim>>> face_pressure_gradients;
+        face_pressure_gradients=std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces,
+          std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+
+        // Shape functions
+        // First vector is face number, second quadrature point, third DOF
+        std::vector<std::vector<std::vector<double>>>         face_div_phi_u;
+        std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_phi_u;
+        std::vector<std::vector<std::vector<Tensor<3, dim>>>> face_hess_phi_u;
+        std::vector<std::vector<std::vector<Tensor<1, dim>>>>
+          face_laplacian_phi_u;
+        std::vector<std::vector<std::vector<Tensor<2, dim>>>> face_grad_phi_u;
+        std::vector<std::vector<std::vector<double>>>         face_phi_p;
+        std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
+
+
+        for (const auto face : cell->face_indices())
+          {
+            this->is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (this->is_boundary_face[face])
+              {
+                fe_face_values.reinit(cell, face);
+                boundary_face_id[face] = cell->face(face)->boundary_id();
+
+                // Gather velocity (values, gradient and laplacian)
+                this->fe_face_values[velocities].get_function_values(
+                  current_solution, this->face_velocity_values);
+                this->fe_face_values[velocities].get_function_gradients(
+                  current_solution, this->face_velocity_gradients);
+                this->fe_face_values[velocities].get_function_laplacians(
+                  current_solution, this->face_velocity_laplacians);
+                // Gather pressure (values, gradient)
+                this->fe_values[pressure].get_function_values(
+                  current_solution, this->face_pressure_values);
+                this->fe_values[pressure].get_function_gradients(
+                  current_solution, this->face_pressure_gradients);
+
+                for (unsigned int q = 0; q < n_faces_q_points; ++q)
+                  {
+                    face_JxW[face][q] = fe_face_values.JxW(q);
+                    for (const unsigned int k : fe_face_values.dof_indices())
+                      {
+                        this->phi_face_T[face][q][k] =
+                          this->fe_face_values.shape_value(k, q);
+                      }
+                  }
+              }
+          }
+      }
   }
 
 
@@ -273,8 +375,8 @@ public:
 
   void
   enable_free_surface(const FiniteElement<dim> &fe,
-                      const Quadrature<dim> &   quadrature,
-                      const Mapping<dim> &      mapping);
+                      const Quadrature<dim>    &quadrature,
+                      const Mapping<dim>       &mapping);
 
   /** @brief Reinitialize the content of the scratch for the free surface
    *
@@ -294,8 +396,8 @@ public:
   void
   reinit_free_surface(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
+    const VectorType                                     &current_solution,
+    const std::vector<VectorType>                        &previous_solutions,
     const std::vector<VectorType> & /*solution_stages*/)
   {
     this->fe_values_free_surface->reinit(cell);
@@ -325,8 +427,8 @@ public:
 
   void
   enable_void_fraction(const FiniteElement<dim> &fe,
-                       const Quadrature<dim> &   quadrature,
-                       const Mapping<dim> &      mapping);
+                       const Quadrature<dim>    &quadrature,
+                       const Mapping<dim>       &mapping);
 
   /** @brief Reinitialize the content of the scratch for the void fraction
    *
@@ -346,8 +448,8 @@ public:
   void
   reinit_void_fraction(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
+    const VectorType                                     &current_solution,
+    const std::vector<VectorType>                        &previous_solutions,
     const std::vector<VectorType> & /*solution_stages*/)
   {
     this->fe_values_void_fraction->reinit(cell);
@@ -402,8 +504,8 @@ public:
     const VectorType                                      previous_solution,
     const VectorType                       void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
-    DoFHandler<dim> &                      dof_handler,
-    DoFHandler<dim> &                      void_fraction_dof_handler)
+    DoFHandler<dim>                       &dof_handler,
+    DoFHandler<dim>                       &void_fraction_dof_handler)
   {
     const FiniteElement<dim> &fe = this->fe_values.get_fe();
     const FiniteElement<dim> &fe_void_fraction =
@@ -506,10 +608,10 @@ public:
     // Create a quadrature that is based on the particle reference location
     Quadrature<dim> q_local(particle_reference_location, particle_weights);
     FEValues<dim>   fe_values_local_particles(fe,
-                                            q_local,
-                                            update_quadrature_points |
-                                              update_gradients | update_values |
-                                              update_hessians);
+                                              q_local,
+                                              update_quadrature_points |
+                                                update_gradients | update_values |
+                                                update_hessians);
 
     // Evaluate the relevant information at the
     // quadrature points to do the interpolation.
@@ -650,6 +752,47 @@ public:
   std::vector<double> temperature_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
+
+  /**
+   * Is boundary cell indicator
+   */
+  bool is_boundary_cell;
+
+  FEFaceValues<dim> fe_face_values;
+
+
+  unsigned int n_faces;
+  unsigned int n_faces_q_points;
+
+  // If boundary cell indicator
+  std::vector<bool>         is_boundary_face;
+  std::vector<unsigned int> boundary_face_id;
+
+
+  // Quadrature
+  std::vector<std::vector<double>>         face_JxW;
+  std::vector<Point<dim>>                  face_quadrature_points;
+  std::vector<std::vector<Tensor<1, dim>>> face_normal;
+
+  // Velocity and pressure values
+  // First vector is face number, second quadrature point
+  std::vector<std::vector<Tensor<1, dim>>> face_velocity_values;
+  std::vector<std::vector<double>>         face_velocity_divergences;
+  std::vector<std::vector<Tensor<2, dim>>> face_velocity_gradients;
+  std::vector<std::vector<Tensor<1, dim>>> face_velocity_laplacians;
+  std::vector<std::vector<double>>         face_pressure_values;
+  std::vector<std::vector<Tensor<1, dim>>> face_pressure_gradients;
+
+
+  // Shape functions
+  // First vector is face number, second quadrature point, third DOF
+  std::vector<std::vector<std::vector<double>>>         face_div_phi_u;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_phi_u;
+  std::vector<std::vector<std::vector<Tensor<3, dim>>>> face_hess_phi_u;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_laplacian_phi_u;
+  std::vector<std::vector<std::vector<Tensor<2, dim>>>> face_grad_phi_u;
+  std::vector<std::vector<std::vector<double>>>         face_phi_p;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
 };
 
 #endif
