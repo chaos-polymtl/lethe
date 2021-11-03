@@ -344,6 +344,16 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_control,
               this->simulation_parameters.physical_properties));
         }
+
+      // Buoyant force
+      if (this->simulation_parameters.multiphysics.buoyant_force)
+        {
+          this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties,
+            this->simulation_parameters.velocity_sources));
+        }
+
       // Core assembler
       this->assemblers.push_back(
         std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
@@ -364,6 +374,15 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
               this->simulation_control));
+        }
+
+      // Buoyant force
+      if (this->simulation_parameters.multiphysics.buoyant_force)
+        {
+          this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties,
+            this->simulation_parameters.velocity_sources));
         }
 
       // Velocity sources term

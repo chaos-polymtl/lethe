@@ -38,6 +38,7 @@ namespace Parameters
     bool heat_transfer;
     bool tracer;
     bool free_surface;
+    bool buoyant_force;
 
     // subparameter for heat_transfer
     bool viscous_dissipation;
