@@ -1015,7 +1015,6 @@ PressureBoundaryCondition<dim>::assemble_matrix(
 {
   if (!scratch_data.is_boundary_cell)
     return;
-
   // Scheme and physical properties
   const double viscosity = physical_properties.viscosity;
 
@@ -1063,7 +1062,7 @@ PressureBoundaryCondition<dim>::assemble_matrix(
                       const double JxW = scratch_data.face_JxW[f][q];
                       for (const unsigned int j : scratch_data.fe_face_values.dof_indices())
                         {
-                          gn_j[f][q][j]=scratch_data.face_normal[f][q]*(scratch_data.face_phi_p[f][q][j]*identity-(scratch_data.face_grad_phi_u[f][q][j]+ transpose(scratch_data.face_grad_phi_u[f][q][j])));
+                          gn_j[f][q][j]=scratch_data.face_normal[f][q]*(scratch_data.face_phi_p[f][q][j]*identity-viscosity*(scratch_data.face_grad_phi_u[f][q][j]+ transpose(scratch_data.face_grad_phi_u[f][q][j])));
                         }
                       for (const unsigned int i : scratch_data.fe_face_values.dof_indices())
                         {
@@ -1087,7 +1086,6 @@ PressureBoundaryCondition<dim>::assemble_rhs(
 {
   if (!scratch_data.is_boundary_cell)
     return;
-
   // Scheme and physical properties
   const double viscosity = physical_properties.viscosity;
 
@@ -1130,13 +1128,14 @@ PressureBoundaryCondition<dim>::assemble_rhs(
                        ++q)
                     {
                       const double JxW = scratch_data.face_JxW[f][q];
-                      prescribed_pressure_values[f][q]=this->pressure_boundary_conditions.bcPressureFunction->p.value(scratch_data.face_quadrature_points[f][q],i_bc);
+                      prescribed_pressure_values[f][q]=100;
 
                       gn[f][q]=scratch_data.face_normal[f][q]*(scratch_data.face_pressure_values[f][q]*identity-(scratch_data.face_velocity_gradients[f][q]+ transpose(scratch_data.face_velocity_gradients[f][q])));
-                      gn_bc[f][q]=scratch_data.face_normal[f][q]*(prescribed_pressure_values[f][q]*identity-(scratch_data.face_velocity_gradients[f][q]+ transpose(scratch_data.face_velocity_gradients[f][q])));
+                      gn_bc[f][q]=scratch_data.face_normal[f][q]*(prescribed_pressure_values[f][q]*identity-viscosity*(scratch_data.face_velocity_gradients[f][q]+ transpose(scratch_data.face_velocity_gradients[f][q])));
                       for (const unsigned int i : scratch_data.fe_face_values.dof_indices())
                         {
-                          local_rhs(i)-=scratch_data.face_phi_u[f][q][i]*(gn[f][q]-gn_bc[f][q]);
+                          //std::cout<<" this rhs as this substracted "<< scratch_data.face_phi_u[f][q][i]*(gn[f][q]-gn_bc[f][q])*JxW<<std::endl;
+                          local_rhs(i)-=scratch_data.face_phi_u[f][q][i]*(gn[f][q]-gn_bc[f][q])*JxW;
                         }
                     }
                 }

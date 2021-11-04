@@ -161,7 +161,7 @@ namespace BoundaryConditions
                       "noslip",
                       Patterns::Selection("noslip|slip|function|periodic|pressure"),
                       "Type of boundary condition"
-                      "Choices are <noslip|slip|function|periodic>.");
+                      "Choices are <noslip|slip|function|periodic|pressure>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -248,7 +248,7 @@ namespace BoundaryConditions
       }
     if (op == "pressure")
       {
-        this->type[i_bc] = BoundaryType::function;
+        this->type[i_bc] = BoundaryType::pressure;
         prm.enter_subsection("p");
         bcPressureFunction[i_bc].p.parse_parameters(prm);
         prm.leave_subsection();

@@ -312,6 +312,10 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
               .periodic_direction[i_bc],
             this->zero_constraints);
         }
+      else if  (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::pressure){
+
+        }
       else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
            // || Parameters::function)
         {
