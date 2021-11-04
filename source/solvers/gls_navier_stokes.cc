@@ -350,8 +350,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         {
           this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
             this->simulation_control,
-            this->simulation_parameters.physical_properties,
-            this->simulation_parameters.velocity_sources));
+            this->simulation_parameters.physical_properties));
         }
 
       // Core assembler
@@ -381,8 +380,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         {
           this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
             this->simulation_control,
-            this->simulation_parameters.physical_properties,
-            this->simulation_parameters.velocity_sources));
+            this->simulation_parameters.physical_properties));
         }
 
       // Velocity sources term
