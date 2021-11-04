@@ -1,4 +1,5 @@
 #include <core/solutions_output.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_maximum_particle_size.h>
@@ -257,14 +258,6 @@ CFDDEMSolver<dim>::write_checkpoint()
   std::ofstream output(particle_filename.c_str());
   output << oss.str() << std::endl;
 
-  if (auto parallel_triangulation =
-        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-          &*this->triangulation))
-    {
-      std::string triangulationName = prefix + ".triangulation";
-      parallel_triangulation->save(prefix + ".triangulation");
-    }
-
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
   sol_set_transfer.push_back(&this->present_solution);
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
@@ -498,6 +491,34 @@ template <int dim>
 void
 CFDDEMSolver<dim>::load_balance()
 {
+  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+  sol_set_transfer.push_back(&this->present_solution);
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      sol_set_transfer.push_back(&this->previous_solutions[i]);
+    }
+
+  // Prepare for Serialization
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    system_trans_vectors(this->dof_handler);
+  system_trans_vectors.prepare_for_coarsening_and_refinement(sol_set_transfer);
+
+
+  // Void Fraction
+  std::vector<const TrilinosWrappers::MPI::Vector *> vf_set_transfer;
+  vf_set_transfer.push_back(&this->nodal_void_fraction_relevant);
+  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+    {
+      vf_set_transfer.push_back(&this->previous_void_fraction[i]);
+    }
+
+  // Prepare for Serialization
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    vf_system_trans_vectors(this->void_fraction_dof_handler);
+  vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
+    vf_set_transfer);
+
+
   this->pcout << "-->Repartitionning triangulation" << std::endl;
 
   const auto parallel_triangulation =
@@ -538,6 +559,72 @@ CFDDEMSolver<dim>::load_balance()
     << "Minimum and maximum number of cells owned by the processors are "
     << average_minimum_maximum_cells.min << " and "
     << average_minimum_maximum_cells.max << std::endl;
+
+  this->pcout << "Setup DOFs" << std::endl;
+  this->setup_dofs();
+
+  // Velocity Vectors
+  std::vector<TrilinosWrappers::MPI::Vector *> x_system(
+    1 + this->previous_solutions.size());
+
+  TrilinosWrappers::MPI::Vector distributed_system(this->locally_owned_dofs,
+                                                   this->mpi_communicator);
+
+  x_system[0] = &(distributed_system);
+
+  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
+
+  distributed_previous_solutions.reserve(this->previous_solutions.size());
+
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      distributed_previous_solutions.emplace_back(
+        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
+                                      this->mpi_communicator));
+      x_system[i + 1] = &distributed_previous_solutions[i];
+    }
+
+  system_trans_vectors.interpolate(x_system);
+
+  this->present_solution = distributed_system;
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      this->previous_solutions[i] = distributed_previous_solutions[i];
+    }
+
+  x_system.clear();
+
+  // Void Fraction Vectors
+  std::vector<TrilinosWrappers::MPI::Vector *> vf_system(
+    1 + this->previous_void_fraction.size());
+
+  TrilinosWrappers::MPI::Vector vf_distributed_system(
+    this->locally_owned_dofs_voidfraction, this->mpi_communicator);
+
+  vf_system[0] = &(vf_distributed_system);
+
+  std::vector<TrilinosWrappers::MPI::Vector> vf_distributed_previous_solutions;
+
+  vf_distributed_previous_solutions.reserve(
+    this->previous_void_fraction.size());
+
+  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+    {
+      vf_distributed_previous_solutions.emplace_back(
+        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs_voidfraction,
+                                      this->mpi_communicator));
+      vf_system[i + 1] = &vf_distributed_previous_solutions[i];
+    }
+
+  vf_system_trans_vectors.interpolate(vf_system);
+
+  this->nodal_void_fraction_relevant = vf_distributed_system;
+  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+    {
+      this->previous_void_fraction[i] = vf_distributed_previous_solutions[i];
+    }
+
+  vf_system.clear();
 }
 
 template <int dim>
@@ -823,6 +910,11 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 {
+  // dem_contact_build carries out the particle-particle and particle-wall
+  // broad and fine searches, sort_particles_into_subdomains_and_cells, and
+  // exchange_ghost
+  dem_contact_build(counter);
+
   // Particle-particle contact force
   pp_contact_force_object->calculate_pp_contact_force(local_adjacent_particles,
                                                       ghost_adjacent_particles,
@@ -857,11 +949,6 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
         force,
         MOI);
     }
-
-  // dem_contact_build carries out the particle-particle and particle-wall
-  // broad and fine searches, sort_particles_into_subdomains_and_cells, and
-  // exchange_ghost
-  dem_contact_build(counter);
 }
 
 template <int dim>
@@ -948,8 +1035,9 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Particles-wall fine search
       particle_wall_fine_search();
 
-      // Reset restart step
-      checkpoint_step = false;
+      // Reset different steps
+      checkpoint_step   = false;
+      load_balance_step = false;
     }
 
   // Visualization
@@ -1246,11 +1334,11 @@ CFDDEMSolver<dim>::solve()
       this->postprocess(false);
       this->finish_time_step();
 
-      // Load balancing
-      load_balance_step = (this->*check_load_balance_step)();
-
       if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
         this->post_processing();
+
+      // Load balancing
+      load_balance_step = (this->*check_load_balance_step)();
     }
   this->finish_simulation();
 }

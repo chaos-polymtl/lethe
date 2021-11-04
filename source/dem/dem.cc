@@ -118,6 +118,15 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
               &particle_handler,
               false));
 
+  triangulation.signals.pre_distributed_save.connect(std::bind(
+    &Particles::ParticleHandler<dim>::register_store_callback_function,
+    &particle_handler));
+
+  triangulation.signals.post_distributed_load.connect(
+    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
+              &particle_handler,
+              true));
+
   // Setting contact detection method (constant or dynamic)
   if (parameters.model_parameters.contact_detection_method ==
       Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
