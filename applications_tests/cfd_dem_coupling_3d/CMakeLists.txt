@@ -39,7 +39,7 @@ DEAL_II_PICKUP_TESTS()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
        	set_tests_properties(cfd_dem_coupling_3d/particle_sedimentation.debug PROPERTIES TIMEOUT 1200) 
-       	set_tests_properties(cfd_dem_coupling_3d/restart_particle_sedimentation.debug PROPERTIES TIMEOUT 1200)    
+       	set_tests_properties(cfd_dem_coupling_3d/restart_particle_sedimentation.debug PROPERTIES TIMEOUT 1200)       
        	set_tests_properties(cfd_dem_coupling_3d/dynamic_contact_search.debug PROPERTIES TIMEOUT 1200)   
 ENDIF()
 
