@@ -1,4 +1,5 @@
 #include <core/solutions_output.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -648,7 +649,7 @@ CFDDEMSolver<dim>::load_balance()
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::no_load_balance()
+CFDDEMSolver<dim>::no_load_balance(const unsigned int &)
 {
   return false;
 }
@@ -661,10 +662,33 @@ CFDDEMSolver<dim>::check_contact_search_step_constant(
   return ((counter % contact_detection_frequency) == 0);
 }
 
+template <int dim>
+inline bool
+CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &)
+{
+  // The sorting into subdomain step checks whether or not the current time step
+  // is a step that requires sorting particles into subdomains and cells. This
+  // is applicable if any of the following three conditions apply:if its a load
+  // balancing step, a restart simulation step, or a contact detection tsep.
+  bool sorting_in_subdomains_step =
+    (checkpoint_step || load_balance_step || contact_detection_step);
+
+  contact_detection_step = find_contact_detection_step<dim>(
+    this->particle_handler,
+    this->simulation_control->get_time_step() /
+      this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency,
+    smallest_contact_search_criterion,
+    this->mpi_communicator,
+    sorting_in_subdomains_step,
+    displacement);
+
+  return contact_detection_step;
+}
+
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::check_load_balance_once()
+CFDDEMSolver<dim>::check_load_balance_once(const unsigned int &)
 {
   bool load_balance_step = (this->simulation_control->get_step_number() ==
                             this->cfd_dem_simulation_parameters.dem_parameters
@@ -680,7 +704,7 @@ CFDDEMSolver<dim>::check_load_balance_once()
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::check_load_balance_frequent()
+CFDDEMSolver<dim>::check_load_balance_frequent(const unsigned int &)
 {
   bool load_balance_step = (this->simulation_control->get_step_number() %
                               this->cfd_dem_simulation_parameters.dem_parameters
@@ -697,7 +721,7 @@ CFDDEMSolver<dim>::check_load_balance_frequent()
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::check_load_balance_dynamic()
+CFDDEMSolver<dim>::check_load_balance_dynamic(const unsigned int &)
 {
   bool load_balance_step = false;
   if (this->simulation_control->get_step_number() %
@@ -729,30 +753,6 @@ CFDDEMSolver<dim>::check_load_balance_dynamic()
 
   return load_balance_step;
 }
-
-template <int dim>
-inline bool
-CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &)
-{
-  // The sorting into subdomain step checks whether or not the current time step
-  // is a step that requires sorting particles into subdomains and cells. This
-  // is applicable if any of the following three conditions apply:if its a load
-  // balancing step, a restart simulation step, or a contact detection tsep.
-  bool sorting_in_subdomains_step =
-    (checkpoint_step || load_balance_step || contact_detection_step);
-
-  contact_detection_step = find_contact_detection_step<dim>(
-    this->particle_handler,
-    this->simulation_control->get_time_step() /
-      this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency,
-    smallest_contact_search_criterion,
-    this->mpi_communicator,
-    sorting_in_subdomains_step,
-    displacement);
-
-  return contact_detection_step;
-}
-
 
 template <int dim>
 void
@@ -1382,7 +1382,7 @@ CFDDEMSolver<dim>::solve()
         this->post_processing();
 
       // Load balancing
-      load_balance_step = (this->*check_load_balance_step)();
+      load_balance_step = (this->*check_load_balance_step)(0);
     }
   this->finish_simulation();
 }

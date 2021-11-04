@@ -18,6 +18,14 @@
 #ifndef lethe_dem_cfd_coupling_h
 #define lethe_dem_cfd_coupling_h
 
+#include <solvers/navier_stokes_scratch_data.h>
+
+#include <dem/dem.h>
+#include <dem/dem_solver_parameters.h>
+#include <dem/find_contact_detection_step.h>
+#include <fem-dem/cfd_dem_simulation_parameters.h>
+#include <fem-dem/gls_vans.h>
+
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -28,13 +36,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-#include <dem/dem.h>
-#include <dem/dem_solver_parameters.h>
-#include <dem/find_contact_detection_step.h>
-#include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <fem-dem/gls_vans.h>
-#include <solvers/navier_stokes_scratch_data.h>
-
 using namespace dealii;
 
 template <int dim>
@@ -42,8 +43,6 @@ class CFDDEMSolver : public GLSVANSSolver<dim>
 {
   using FuncPtrType = bool (CFDDEMSolver<dim>::*)(const unsigned int &counter);
   FuncPtrType check_contact_search_step;
-
-  using FuncPtrType = bool (CFDDEMSolver<dim>::*)();
   FuncPtrType check_load_balance_step;
 
 public:
@@ -91,25 +90,25 @@ public:
    * Finds load-balance step for single-step load-balance
    */
   inline bool
-  check_load_balance_once();
+  check_load_balance_once(const unsigned int & /*counter*/);
 
   /**
    * For cases where load balance method is equal to none
    */
   inline bool
-  no_load_balance();
+  no_load_balance(const unsigned int & /*counter*/);
 
   /**
    * Finds load-balance step for frequent load-balance
    */
   inline bool
-  check_load_balance_frequent();
+  check_load_balance_frequent(const unsigned int & /*counter*/);
 
   /**
    * Finds load-balance step for dynamic load-balance
    */
   inline bool
-  check_load_balance_dynamic();
+  check_load_balance_dynamic(const unsigned int & /*counter*/);
 
 protected:
 private:
