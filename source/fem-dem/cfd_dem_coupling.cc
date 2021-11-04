@@ -1,5 +1,4 @@
 #include <core/solutions_output.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -649,18 +648,12 @@ CFDDEMSolver<dim>::load_balance()
 
 template <int dim>
 inline bool
-CFDDEMSolver<dim>::no_load_balance(const unsigned int &)
-{
-  return false;
-}
-
-template <int dim>
-inline bool
 CFDDEMSolver<dim>::check_contact_search_step_constant(
   const unsigned int &counter)
 {
   return ((counter % contact_detection_frequency) == 0);
 }
+
 
 template <int dim>
 inline bool
@@ -685,6 +678,12 @@ CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &)
   return contact_detection_step;
 }
 
+template <int dim>
+inline bool
+CFDDEMSolver<dim>::no_load_balance(const unsigned int &)
+{
+  return false;
+}
 
 template <int dim>
 inline bool
