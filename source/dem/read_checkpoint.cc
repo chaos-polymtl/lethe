@@ -16,11 +16,6 @@ read_checkpoint(TimerOutput &                              computing_timer,
   simulation_control->read(prefix);
   particles_pvdhandler.read(prefix);
 
-  triangulation.signals.post_distributed_load.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &particle_handler,
-              true));
-
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
   std::ifstream input(particle_filename.c_str());
