@@ -1,4 +1,5 @@
 #include <core/bdf.h>
+#include <core/boundary_conditions.h>
 #include <core/sdirk.h>
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
@@ -1012,6 +1013,9 @@ PressureBoundaryCondition<dim>::assemble_matrix(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+  if (!scratch_data.is_boundary_cell)
+    return;
+
   // Scheme and physical properties
   const double viscosity = physical_properties.viscosity;
 
@@ -1020,48 +1024,56 @@ PressureBoundaryCondition<dim>::assemble_matrix(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
+  Tensor<2,dim> identity;
+  for (unsigned int d=0; d<dim;++d)
+    {
+     identity[d][d]=1;
+    }
 
-  // Copy data elements
+  std::vector<std::vector<Tensor<1, dim>>> gn;
+  gn =std::vector<std::vector<Tensor<1, dim>>>(
+    scratch_data.n_faces, std::vector<Tensor<1, dim>>(scratch_data.n_faces_q_points));
+
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> gn_j;
+  gn_j =std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+    scratch_data.n_faces,
+    std::vector<std::vector<Tensor<1, dim>>>(
+      scratch_data.n_faces_q_points,
+      std::vector<Tensor<1, dim>>(scratch_data.n_dofs)));
+
+
+
   auto &local_matrix = copy_data.local_matrix;
 
-  // Time steps and inverse time steps which is used for stabilization constant
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
-
-  // Loop over the quadrature points
-  for (unsigned int q = 0; q < n_q_points; ++q)
+  // Robin boundary condition, loop on faces (Newton's cooling law)
+  // implementation similar to deal.ii step-7
+  for (unsigned int i_bc = 0; i_bc < this->pressure_boundary_conditions.size; ++i_bc)
     {
-      // Store JxW in local variable for faster access;
-      const double JxW = JxW_vec[q];
-
-
-      for (unsigned int i = 0; i < n_dofs; ++i)
+      if (this->pressure_boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::pressure)
         {
-          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
-
-          for (unsigned int j = 0; j < n_dofs; ++j)
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
-              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
-
-              // Laplacian on the velocity terms
-              double local_matrix_ij =
-                viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i);
-
-              // Laplacian on the pressure terms
-              local_matrix_ij +=
-                1 / viscosity * h * scalar_product(grad_phi_p_j, grad_phi_p_i);
-
-              // The jacobian matrix for the SUPG formulation
-              // currently does not include the jacobian of the stabilization
-              // parameter tau. Our experience has shown that does not alter the
-              // number of newton iteration for convergence, but greatly
-              // simplifies assembly.
-
-              local_matrix_ij *= JxW;
-              local_matrix(i, j) += local_matrix_ij;
+              if (scratch_data.boundary_face_id[f] ==
+                  this->pressure_boundary_conditions.id[i_bc])
+                {
+                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
+                       ++q)
+                    {
+                      const double JxW = scratch_data.face_JxW[f][q];
+                      for (const unsigned int j : scratch_data.fe_face_values.dof_indices())
+                        {
+                          gn_j[f][q][j]=scratch_data.face_normal[f][q]*(scratch_data.face_phi_p[f][q][j]*identity-(scratch_data.face_grad_phi_u[f][q][j]+ transpose(scratch_data.face_grad_phi_u[f][q][j])));
+                        }
+                      for (const unsigned int i : scratch_data.fe_face_values.dof_indices())
+                        {
+                          for (const unsigned int j : scratch_data.fe_face_values.dof_indices())
+                            {
+                              local_matrix[i][j]+=scratch_data.face_phi_u[f][q][i]*gn_j[f][q][j]*JxW;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -1084,56 +1096,49 @@ PressureBoundaryCondition<dim>::assemble_rhs(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
-
+  Tensor<2,dim> identity;
+  for (unsigned int d=0; d<dim;++d)
+    {
+      identity[d][d]=1;
+    }
+  std::vector<std::vector<double>>      prescribed_pressure_values;
+  prescribed_pressure_values=std::vector<std::vector<double>>(
+    scratch_data.n_faces, std::vector<double>( scratch_data.n_faces_q_points));
+  std::vector<std::vector<Tensor<1, dim>>> gn;
+  gn =std::vector<std::vector<Tensor<1, dim>>>(
+    scratch_data.n_faces, std::vector<Tensor<1, dim>>(scratch_data.n_faces_q_points));
+  std::vector<std::vector<Tensor<1, dim>>> gn_bc;
+  gn_bc =std::vector<std::vector<Tensor<1, dim>>>(
+    scratch_data.n_faces, std::vector<Tensor<1, dim>>(scratch_data.n_faces_q_points));
 
 
   auto &local_rhs = copy_data.local_rhs;
 
-  // Time steps and inverse time steps which is used for stabilization constant
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-  for (const auto face_i : scratch_data.boundary_cell->face_indices())
+  // Pressure boundary condition, loop on faces
+  // implementation similar to deal.ii step-22
+  for (unsigned int i_bc = 0; i_bc < this->pressure_boundary_conditions.size; ++i_bc)
     {
-      if (scratch_data.boundary_cell->face(face_i)->at_boundary())
+      if (this->pressure_boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::pressure)
         {
-          fe_face_value.reinit(scratch_data.boundary_cell,face_i);
-          // Loop over the quadrature points
-          for (unsigned int q = 0; q < n_q_points; ++q)
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
-              // Velocity
-
-              const Tensor<2, dim> velocity_gradient =
-                scratch_data.velocity_gradients[q];
-
-              // Pressure
-              const Tensor<1, dim> pressure_gradient =
-                scratch_data.pressure_gradients[q];
-
-              // Store JxW in local variable for faster access;
-              const double JxW = JxW_vec[q];
-
-
-              // Assembly of the right-hand side
-              for (unsigned int i = 0; i < n_dofs; ++i)
+              if (scratch_data.boundary_face_id[f] ==
+                  this->pressure_boundary_conditions.id[i_bc])
                 {
-                  const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-                  const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
+                       ++q)
+                    {
+                      const double JxW = scratch_data.face_JxW[f][q];
+                      prescribed_pressure_values[f][q]=this->pressure_boundary_conditions.bcPressureFunction->p.value(scratch_data.face_quadrature_points[f][q],i_bc);
 
-
-                  double local_rhs_i = 0;
-
-                  // Laplacian on the velocity terms
-                  local_rhs_i +=
-                    -viscosity *
-                    scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
-
-
-                  // Laplacian on the pressure terms
-                  local_rhs_i +=
-                    -1 / viscosity * h *
-                    scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
-
-                  local_rhs(i) += local_rhs_i;
+                      gn[f][q]=scratch_data.face_normal[f][q]*(scratch_data.face_pressure_values[f][q]*identity-(scratch_data.face_velocity_gradients[f][q]+ transpose(scratch_data.face_velocity_gradients[f][q])));
+                      gn_bc[f][q]=scratch_data.face_normal[f][q]*(prescribed_pressure_values[f][q]*identity-(scratch_data.face_velocity_gradients[f][q]+ transpose(scratch_data.face_velocity_gradients[f][q])));
+                      for (const unsigned int i : scratch_data.fe_face_values.dof_indices())
+                        {
+                          local_rhs(i)-=scratch_data.face_phi_u[f][q][i]*(gn[f][q]-gn_bc[f][q]);
+                        }
+                    }
                 }
             }
         }

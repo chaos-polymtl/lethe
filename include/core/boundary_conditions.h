@@ -298,7 +298,7 @@ namespace BoundaryConditions
       this->periodic_direction.resize(this->max_size);
       this->type.resize(this->max_size);
       bcFunctions = new NSBoundaryFunctions<dim>[this->max_size];
-
+      bcPressureFunction = new NSPressureBoundaryFunctions<dim>[this->max_size];
       for (unsigned int n = 0; n < this->max_size; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));

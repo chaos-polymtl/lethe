@@ -416,7 +416,8 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.free_surface)
     {
@@ -516,7 +517,8 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.free_surface)
     {
