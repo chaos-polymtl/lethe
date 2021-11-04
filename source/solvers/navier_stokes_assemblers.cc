@@ -1069,7 +1069,7 @@ PressureBoundaryCondition<dim>::assemble_matrix(
                         {
                           for (const unsigned int j : scratch_data.fe_face_values.dof_indices())
                             {
-                              local_matrix[i][j]+=scratch_data.face_phi_u[f][q][i]*gn_j[f][q][j]*JxW;
+                              local_matrix[i][j]+=-scratch_data.face_phi_u[f][q][i]*gn_j[f][q][j]*JxW;
                             }
                         }
                     }
@@ -1136,7 +1136,7 @@ PressureBoundaryCondition<dim>::assemble_rhs(
                       gn_bc[f][q]=scratch_data.face_normal[f][q]*(prescribed_pressure_values[f][q]*identity-viscosity*(scratch_data.face_velocity_gradients[f][q]+ transpose(scratch_data.face_velocity_gradients[f][q])));
                       for (const unsigned int i : scratch_data.fe_face_values.dof_indices())
                         {
-                          local_rhs(i)-=scratch_data.face_phi_u[f][q][i]*(gn[f][q]-gn_bc[f][q])*JxW;
+                          local_rhs(i)-=-scratch_data.face_phi_u[f][q][i]*(gn_bc[f][q])*JxW;
                         }
                     }
                 }
