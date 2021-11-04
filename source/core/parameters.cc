@@ -1172,7 +1172,7 @@ namespace Parameters
         "none",
         Patterns::Selection("none|srf|gravity"),
         "Velocity-dependent source terms"
-        "Choices are <none|srf|gravity>. The srf stands"
+        "Choices are <none|srf>. The srf stands"
         "for single rotating frame and adds"
         "the coriolis and the centrifugal force to the Navier-Stokes equations");
 
@@ -1193,21 +1193,6 @@ namespace Parameters
         "0 ",
         Patterns::Double(),
         "Z component of the angular velocity vector of the frame of reference");
-
-      prm.declare_entry("g_x",
-                        "0 ",
-                        Patterns::Double(),
-                        "X component of the gravitational acceleration");
-
-      prm.declare_entry("g_y",
-                        "0 ",
-                        Patterns::Double(),
-                        "Y component of the gravitational acceleration");
-
-      prm.declare_entry("g_z",
-                        "0 ",
-                        Patterns::Double(),
-                        "Z component of the gravitational acceleration");
     }
     prm.leave_subsection();
   }
@@ -1222,18 +1207,12 @@ namespace Parameters
         type = VelocitySourceType::none;
       else if (op == "srf")
         type = VelocitySourceType::srf;
-      else if (op == "gravity")
-        type = VelocitySourceType::gravity;
       else
         throw std::logic_error("Error, invalid velocity source type");
 
       omega_x = prm.get_double("omega_x");
       omega_y = prm.get_double("omega_y");
       omega_z = prm.get_double("omega_z");
-
-      g_x = prm.get_double("g_x");
-      g_y = prm.get_double("g_y");
-      g_z = prm.get_double("g_z");
     }
     prm.leave_subsection();
   }

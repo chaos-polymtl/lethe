@@ -976,17 +976,13 @@ BuoyancyAssembly<dim>::assemble_rhs(
   auto &local_rhs       = copy_data.local_rhs;
   auto &strong_residual = copy_data.strong_residual;
 
-  // Read gravity vector
-  Tensor<1, dim> gravity_vector;
-
-  gravity_vector[0] = velocity_sources.g_x;
-  gravity_vector[1] = velocity_sources.g_y;
-  if (dim == 3)
-    gravity_vector[2] = velocity_sources.g_z;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Forcing term (gravity)
+      const Tensor<1, dim> force = scratch_data.force[q];
+
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
@@ -994,8 +990,7 @@ BuoyancyAssembly<dim>::assemble_rhs(
 
       double current_temperature = scratch_data.temperature_values[q];
 
-      strong_residual[q] +=
-        -gravity_vector * thermal_expansion * current_temperature;
+      strong_residual[q] += -force * thermal_expansion * current_temperature;
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -1003,8 +998,8 @@ BuoyancyAssembly<dim>::assemble_rhs(
           const auto phi_u_i = scratch_data.phi_u[q][i];
 
           // Laplacian on the velocity terms
-          local_rhs(i) += -gravity_vector * thermal_expansion *
-                          current_temperature * phi_u_i * JxW;
+          local_rhs(i) +=
+            -force * thermal_expansion * current_temperature * phi_u_i * JxW;
         }
     }
 }
