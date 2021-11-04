@@ -159,7 +159,7 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "noslip",
-                      Patterns::Selection("noslip|slip|function|periodic"),
+                      Patterns::Selection("noslip|slip|function|periodic|pressure"),
                       "Type of boundary condition"
                       "Choices are <noslip|slip|function|periodic>.");
 
@@ -254,10 +254,10 @@ namespace BoundaryConditions
         prm.leave_subsection();
 
         prm.enter_subsection("center of rotation");
-        bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
-        bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
+        bcPressureFunction[i_bc].center_of_rotation[0] = prm.get_double("x");
+        bcPressureFunction[i_bc].center_of_rotation[1] = prm.get_double("y");
         if (dim == 3)
-          bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
+          bcPressureFunction[i_bc].center_of_rotation[2] = prm.get_double("z");
         prm.leave_subsection();
       }
     if (op == "periodic")

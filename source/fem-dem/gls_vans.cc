@@ -698,7 +698,8 @@ GLSVANSSolver<dim>::assemble_system_matrix()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
   scratch_data.enable_void_fraction(fe_void_fraction,
                                     *this->cell_quadrature,
@@ -801,7 +802,8 @@ GLSVANSSolver<dim>::assemble_system_rhs()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
 
   scratch_data.enable_void_fraction(fe_void_fraction,

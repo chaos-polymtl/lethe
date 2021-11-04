@@ -283,6 +283,7 @@ public:
         face_JxW = std::vector<std::vector<double>>(
           n_faces, std::vector<double>(n_faces_q_points));
 
+
         // Velocity and pressure values
         // First vector is face number, second quadrature point
         this->face_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
@@ -309,8 +310,55 @@ public:
         this->face_normal=std::vector<std::vector<Tensor<1, dim>>>(
           n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
 
+        this->face_quadrature_points=std::vector<std::vector<Point<dim>>> (
+                                         n_faces, std::vector<Point<dim>>(n_faces_q_points));
 
+        this->face_div_phi_u =
+          std::vector<std::vector<std::vector<double>>>(
+            n_faces,
+            std::vector<std::vector<double>>(
+              n_faces_q_points, std::vector<double>(n_dofs)));
 
+        this->face_phi_u =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points,
+              std::vector<Tensor<1, dim>>(n_dofs)));
+
+        this->face_hess_phi_u =
+          std::vector<std::vector<std::vector<Tensor<3, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<3, dim>>>(
+              n_faces_q_points,
+              std::vector<Tensor<3, dim>>(n_dofs)));
+
+        this->face_laplacian_phi_u =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points,
+              std::vector<Tensor<1, dim>>(n_dofs)));
+
+        this->face_grad_phi_u =
+          std::vector<std::vector<std::vector<Tensor<2, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<2, dim>>>(
+              n_faces_q_points,
+              std::vector<Tensor<2, dim>>(n_dofs)));
+
+        this->face_phi_p =
+          std::vector<std::vector<std::vector<double>>>(
+            n_faces,
+            std::vector<std::vector<double>>(
+              n_faces_q_points, std::vector<double>(n_dofs)));
+
+        this->face_grad_phi_p =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points,
+              std::vector<Tensor<1, dim>>(n_dofs)));
         for (const auto face : cell->face_indices())
           {
             this->is_boundary_face[face] = cell->face(face)->at_boundary();
@@ -322,52 +370,6 @@ public:
                 // Shape functions
                 // First vector is face number, second quadrature point, third
                 // DOF
-                this->face_div_phi_u =
-                  std::vector<std::vector<std::vector<double>>>(
-                    n_faces,
-                    std::vector<std::vector<double>>(
-                      n_faces_q_points, std::vector<double>(n_dofs)));
-
-                this->face_phi_u =
-                  std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
-                    n_faces,
-                    std::vector<std::vector<Tensor<1, dim>>>(
-                      n_faces_q_points,
-                      std::vector<Tensor<1, dim>>(n_dofs)));
-
-                this->face_hess_phi_u =
-                  std::vector<std::vector<std::vector<Tensor<3, dim>>>>(
-                    n_faces,
-                    std::vector<std::vector<Tensor<3, dim>>>(
-                      n_faces_q_points,
-                      std::vector<Tensor<3, dim>>(n_dofs)));
-
-                this->face_laplacian_phi_u =
-                  std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
-                    n_faces,
-                    std::vector<std::vector<Tensor<1, dim>>>(
-                      n_faces_q_points,
-                      std::vector<Tensor<1, dim>>(n_dofs)));
-
-                this->face_grad_phi_u =
-                  std::vector<std::vector<std::vector<Tensor<2, dim>>>>(
-                    n_faces,
-                    std::vector<std::vector<Tensor<2, dim>>>(
-                      n_faces_q_points,
-                      std::vector<Tensor<2, dim>>(n_dofs)));
-
-                this->face_phi_p =
-                  std::vector<std::vector<std::vector<double>>>(
-                    n_faces,
-                    std::vector<std::vector<double>>(
-                      n_faces_q_points, std::vector<double>(n_dofs)));
-
-                this->face_grad_phi_p =
-                  std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
-                    n_faces,
-                    std::vector<std::vector<Tensor<1, dim>>>(
-                      n_faces_q_points,
-                      std::vector<Tensor<1, dim>>(n_dofs)));
 
                 // Gather velocity (values, gradient and laplacian)
                 this->fe_face_values[velocities].get_function_values(
@@ -383,7 +385,6 @@ public:
                 this->fe_values[pressure].get_function_gradients(
                   current_solution, this->face_pressure_gradients[face]);
 
-
                 for (unsigned int q = 0; q < n_faces_q_points; ++q)
                   {
                     this->face_JxW[face][q] = this->fe_face_values.JxW(q);
@@ -394,11 +395,11 @@ public:
                         // Velocity
                         this->face_phi_u[face][q][k] = this->fe_face_values[velocities].value(k, q);
                         this->face_div_phi_u[face][q][k] =
-                          this->face_fe_values[velocities].divergence(k, q);
+                          this->fe_face_values[velocities].divergence(k, q);
                         this->face_grad_phi_u[face][q][k] = this->fe_face_values[velocities].gradient(k, q);
                         this->face_hess_phi_u[face][q][k] = this->fe_face_values[velocities].hessian(k, q);
                         for (int d = 0; d < dim; ++d)
-                          this->face_laplacian_phi_u[face][q][k][d] = trace(this->face_hess_phi_u[q][k][d]);
+                          this->face_laplacian_phi_u[face][q][k][d] = trace(this->face_hess_phi_u[face][q][k][d]);
                         // Pressure
                         this->face_phi_p[face][q][k]      = this->fe_face_values[pressure].value(k, q);
                         this->face_grad_phi_p[face][q][k] = this->fe_face_values[pressure].gradient(k, q);

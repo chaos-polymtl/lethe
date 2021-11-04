@@ -15,7 +15,7 @@
 
 
 #include <core/simulation_control.h>
-
+#include <core/boundary_conditions.h>
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_scratch_data.h>
 
