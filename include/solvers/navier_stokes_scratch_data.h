@@ -556,7 +556,7 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType &                                    current_solution)
   {
-      this->fe_values_temperature->reinit(cell);
+    this->fe_values_temperature->reinit(cell);
 
     // Gather temperature
     this->fe_values_temperature->get_function_values(current_solution,

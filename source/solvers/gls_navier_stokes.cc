@@ -532,8 +532,8 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
       const DoFHandler<dim> *dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
       scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
-                                       *this->cell_quadrature,
-                                       *this->mapping);
+                                        *this->cell_quadrature,
+                                        *this->mapping);
     }
 
 
@@ -605,9 +605,9 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         cell->index(),
         dof_handler_ht);
 
-      scratch_data.reinit_heat_transfer(
-        temperature_cell,
-        *this->multiphysics->get_solution(PhysicsID::heat_transfer));
+      scratch_data.reinit_heat_transfer(temperature_cell,
+                                        *this->multiphysics->get_solution(
+                                          PhysicsID::heat_transfer));
     }
 
   copy_data.reset();

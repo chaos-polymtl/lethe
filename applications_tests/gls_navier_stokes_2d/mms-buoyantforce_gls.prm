@@ -79,13 +79,13 @@ subsection analytical solution
   set enable                 = true
   set verbosity = verbose
     subsection uvwp
-    	    set Function constants = nu=1, g=-9.81, beta=0.01, B=0.05, deltaT=100
+    	    set Function constants = nu=1, g=9.81, beta=0.01, B=0.025, deltaT=100
     	    
-            set Function expression =  0 ; ((g*beta*deltaT*B*B)/(12*nu))*((y/B)^3-(y/B)) ; 0
+            set Function expression =  0 ; ((g*beta*deltaT*B*B)/(12*nu))*(((x-B)/B)^3-((x-B)/B)) ; 0
     end
     subsection temperature
-    	    set Function constants = Tbar=50, deltaT=100, B=0.05
-            set Function expression =  Tbar-0.5*deltaT*y/B
+    	    set Function constants = Tbar=50, deltaT=100, B=0.025
+            set Function expression = Tbar-0.5*deltaT*((x-B)/B)
     end
 end
 
@@ -117,7 +117,7 @@ subsection boundary conditions heat transfer
     subsection bc 0
     set id = 0
         set type              = temperature
-	set value             = 1000
+	set value             = 100
     end
     subsection bc 1
     set id = 1
@@ -141,7 +141,7 @@ end
 #---------------------------------------------------
 subsection non-linear solver
   set verbosity               = quiet
-  set tolerance               = 1e-15
+  set tolerance               = 1e-10
   set max iterations          = 20
 end
 
