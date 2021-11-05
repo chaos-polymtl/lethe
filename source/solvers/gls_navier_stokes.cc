@@ -179,6 +179,20 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::update_boundary_conditions()
 {
+  double time = this->simulation_control->get_current_time();
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+        .u.set_time(time);
+      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+        .v.set_time(time);
+      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+        .w.set_time(time);
+      this->simulation_parameters.boundary_conditions.bcPressureFunction[i_bc]
+        .p.set_time(time);
+    }
   define_non_zero_constraints();
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
@@ -260,7 +274,7 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
           {
             this->simulation_parameters.boundary_conditions.bcPressureFunction[i_bc]
               .p.set_time(time);
-            VectorTools::interpolate_boundary_values(
+            /*VectorTools::interpolate_boundary_values(
               *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
@@ -269,7 +283,7 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
                    .bcPressureFunction[i_bc]
                    .p),
               nonzero_constraints,
-              this->fe->component_mask(pressure));
+              this->fe->component_mask(pressure));*/
           }
 
         else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
@@ -332,13 +346,17 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
         }
       else if  (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::pressure){
-          VectorTools::interpolate_boundary_values(
+          /*VectorTools::interpolate_boundary_values(
             *this->mapping,
             this->dof_handler,
             this->simulation_parameters.boundary_conditions.id[i_bc],
             dealii::Functions::ZeroFunction<dim>(dim + 1),
             this->zero_constraints,
-            this->fe->component_mask(pressure));
+            this->fe->component_mask(pressure));*/
+        }
+      else if  (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::function_weak){
+
         }
       else
         {

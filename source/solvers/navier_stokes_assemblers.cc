@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-
 #include <core/sdirk.h>
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
@@ -1024,22 +1023,24 @@ PressureBoundaryCondition<dim>::assemble_matrix(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
-  Tensor<2,dim> identity;
-  for (unsigned int d=0; d<dim;++d)
+  Tensor<2, dim>     identity;
+  for (unsigned int d = 0; d < dim; ++d)
     {
-     identity[d][d]=1;
+      identity[d][d] = 1;
     }
 
   std::vector<std::vector<Tensor<1, dim>>> gn;
-  gn =std::vector<std::vector<Tensor<1, dim>>>(
-    scratch_data.n_faces, std::vector<Tensor<1, dim>>(scratch_data.n_faces_q_points));
+  gn =
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_faces_q_points));
 
   std::vector<std::vector<std::vector<Tensor<1, dim>>>> gn_j;
-  gn_j =std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+  gn_j = std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
     scratch_data.n_faces,
-    std::vector<std::vector<Tensor<1, dim>>>(
-      scratch_data.n_faces_q_points,
-      std::vector<Tensor<1, dim>>(scratch_data.n_dofs)));
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces_q_points,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_dofs)));
 
 
 
@@ -1047,29 +1048,42 @@ PressureBoundaryCondition<dim>::assemble_matrix(
 
   // Robin boundary condition, loop on faces (Newton's cooling law)
   // implementation similar to deal.ii step-7
-  for (unsigned int i_bc = 0; i_bc < this->pressure_boundary_conditions.size; ++i_bc)
+  for (unsigned int i_bc = 0; i_bc < this->pressure_boundary_conditions.size;
+       ++i_bc)
     {
       if (this->pressure_boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::pressure)
         {
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
-              if (scratch_data.boundary_face_id[f] ==
-                  this->pressure_boundary_conditions.id[i_bc])
+              if (scratch_data.is_boundary_face[f])
                 {
-                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
-                       ++q)
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->pressure_boundary_conditions.id[i_bc])
                     {
-                      const double JxW = scratch_data.face_JxW[f][q];
-                      for (const unsigned int j : scratch_data.fe_face_values.dof_indices())
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
                         {
-                          gn_j[f][q][j]=(scratch_data.face_phi_p[f][q][j]*identity-viscosity*(scratch_data.face_grad_phi_u[f][q][j]))*scratch_data.face_normal[f][q];
-                        }
-                      for (const unsigned int i : scratch_data.fe_face_values.dof_indices())
-                        {
-                          for (const unsigned int j : scratch_data.fe_face_values.dof_indices())
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (const unsigned int j :
+                               scratch_data.fe_face_values.dof_indices())
                             {
-                              local_matrix[i][j]+=-scratch_data.face_phi_u[f][q][i]*gn_j[f][q][j]*JxW;
+                              gn_j[f][q][j] =
+                                (-viscosity *
+                                   (scratch_data.face_grad_phi_u[f][q][j])) *
+                                scratch_data.face_normal[f][q];
+                            }
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              for (const unsigned int j :
+                                   scratch_data.fe_face_values.dof_indices())
+                                {
+                                  local_matrix[i][j] +=
+                                    -scratch_data.face_phi_u[f][q][i] *
+                                    gn_j[f][q][j] * JxW;
+                                }
                             }
                         }
                     }
@@ -1096,46 +1110,64 @@ PressureBoundaryCondition<dim>::assemble_rhs(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
-  Tensor<2,dim> identity;
-  for (unsigned int d=0; d<dim;++d)
+  Tensor<2, dim>     identity;
+  for (unsigned int d = 0; d < dim; ++d)
     {
-      identity[d][d]=1;
+      identity[d][d] = 1;
     }
-  std::vector<std::vector<double>>      prescribed_pressure_values;
-  prescribed_pressure_values=std::vector<std::vector<double>>(
-    scratch_data.n_faces, std::vector<double>( scratch_data.n_faces_q_points));
+  std::vector<std::vector<double>> prescribed_pressure_values;
+  prescribed_pressure_values = std::vector<std::vector<double>>(
+    scratch_data.n_faces, std::vector<double>(scratch_data.n_faces_q_points));
   std::vector<std::vector<Tensor<1, dim>>> gn;
-  gn =std::vector<std::vector<Tensor<1, dim>>>(
-    scratch_data.n_faces, std::vector<Tensor<1, dim>>(scratch_data.n_faces_q_points));
+  gn =
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_faces_q_points));
   std::vector<std::vector<Tensor<1, dim>>> gn_bc;
-  gn_bc =std::vector<std::vector<Tensor<1, dim>>>(
-    scratch_data.n_faces, std::vector<Tensor<1, dim>>(scratch_data.n_faces_q_points));
+  gn_bc =
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_faces_q_points));
 
 
   auto &local_rhs = copy_data.local_rhs;
 
   // Pressure boundary condition, loop on faces
   // implementation similar to deal.ii step-22
-  for (unsigned int i_bc = 0; i_bc < this->pressure_boundary_conditions.size; ++i_bc)
+  for (unsigned int i_bc = 0; i_bc < this->pressure_boundary_conditions.size;
+       ++i_bc)
     {
       if (this->pressure_boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::pressure)
         {
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
-              if (scratch_data.boundary_face_id[f] ==
-                  this->pressure_boundary_conditions.id[i_bc])
+              if (scratch_data.is_boundary_face[f])
                 {
-                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
-                       ++q)
+                  NavierStokesPressureFunctionDefined<dim> function_p(
+                    &pressure_boundary_conditions.bcPressureFunction[i_bc].p);
+
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->pressure_boundary_conditions.id[i_bc])
                     {
-                      const double JxW = scratch_data.face_JxW[f][q];
-                      //prescribed_pressure_values[f][q]=this->pressure_boundary_conditions.bcPressureFunction->p.value(scratch_data.face_quadrature_points[f][q],i_bc);
-                      prescribed_pressure_values[f][q]=0;
-                      gn_bc[f][q]=(prescribed_pressure_values[f][q]*identity-0*(scratch_data.face_velocity_gradients[f][q]))*scratch_data.face_normal[f][q];
-                      for (const unsigned int i : scratch_data.fe_face_values.dof_indices())
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
                         {
-                          local_rhs(i)-=-scratch_data.face_phi_u[f][q][i]*(gn_bc[f][q])*JxW;
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          prescribed_pressure_values[f][q] = function_p.value(
+                            scratch_data.face_quadrature_points[f][q], dim);
+                          gn_bc[f][q] =
+                            (-prescribed_pressure_values[f][q] * identity -
+                             viscosity*(scratch_data.face_velocity_gradients[f][q])) *
+                            scratch_data.face_normal[f][q];
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              local_rhs(i) -=
+                                -scratch_data.face_phi_u[f][q][i] *
+                                (gn_bc[f][q]) * JxW;
+                            }
                         }
                     }
                 }
@@ -1146,3 +1178,183 @@ PressureBoundaryCondition<dim>::assemble_rhs(
 
 template class PressureBoundaryCondition<2>;
 template class PressureBoundaryCondition<3>;
+
+template <int dim>
+void
+WeakBoundaryCondition<dim>::assemble_matrix(
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  // Scheme and physical properties
+  const double viscosity = physical_properties.viscosity;
+
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+  Tensor<2, dim>     identity;
+  for (unsigned int d = 0; d < dim; ++d)
+    {
+      identity[d][d] = 1;
+    }
+  std::vector<std::vector<Tensor<1, dim>>> prescribed_velocity_values;
+  prescribed_velocity_values =
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_faces_q_points));
+
+  scratch_data.cell_size;
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size * scratch_data.cell_size, double(dim-1) / double(dim));
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+  auto &local_matrix = copy_data.local_matrix;
+  double beta=boundary_conditions.beta;
+  // Pressure boundary condition, loop on faces
+  // implementation similar to deal.ii step-22
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::function_weak)
+        {
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              if (scratch_data.is_boundary_face[f])
+                {
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  for (const unsigned int j :
+                                       scratch_data.fe_face_values
+                                         .dof_indices())
+                                    {
+                                      const auto comp_j =
+                                        fe.system_to_component_index(j).first;
+                                      if (comp_i == comp_j)
+                                        local_matrix(i, j) +=
+                                          penalty_parameter * beta *
+                                          scratch_data.face_phi_u[f][q][i] *
+                                          scratch_data.face_phi_u[f][q][j] *
+                                          JxW;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+WeakBoundaryCondition<dim>::assemble_rhs(
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  // Scheme and physical properties
+  const double viscosity = physical_properties.viscosity;
+
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+  Tensor<2, dim>     identity;
+  for (unsigned int d = 0; d < dim; ++d)
+    {
+      identity[d][d] = 1;
+    }
+  std::vector<std::vector<Tensor<1, dim>>> prescribed_velocity_values;
+  prescribed_velocity_values =
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_faces_q_points));
+
+  scratch_data.cell_size;
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size * scratch_data.cell_size, double(dim-1) / double(dim));
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+  auto &local_rhs = copy_data.local_rhs;
+  double beta=boundary_conditions.beta;
+  // Pressure boundary condition, loop on faces
+  // implementation similar to deal.ii step-22
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::function_weak)
+        {
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              if(scratch_data.is_boundary_face[f])
+                {
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      NavierStokesFunctionDefined<dim> function_v(
+                        &boundary_conditions.bcFunctions[i_bc].u,
+                        &boundary_conditions.bcFunctions[i_bc].v,
+                        &boundary_conditions.bcFunctions[i_bc].w);
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (unsigned int d = 0; d < dim; ++d)
+                            {
+                              prescribed_velocity_values[f][q][d] =
+                                function_v.value(
+                                  scratch_data.face_quadrature_points[f][q], d);
+                            }
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  double this_rhs =
+                                    -penalty_parameter * beta *
+                                      scratch_data
+                                        .face_velocity_values[f][q][comp_i] *
+                                      scratch_data.face_phi_u[f][q][i][comp_i] *
+                                      JxW +
+                                    penalty_parameter * beta *
+                                      function_v.value(
+                                        scratch_data
+                                          .face_quadrature_points[f][q],
+                                        comp_i) *
+                                      scratch_data.face_phi_u[f][q][i][comp_i] *
+                                      JxW;
+                                  local_rhs(i) += this_rhs;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template class WeakBoundaryCondition<2>;
+template class WeakBoundaryCondition<3>;

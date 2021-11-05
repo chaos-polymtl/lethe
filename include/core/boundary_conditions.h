@@ -33,6 +33,7 @@ namespace BoundaryConditions
     noslip,
     slip,
     function,
+    function_weak,
     periodic,
     pressure,
     // for heat transfer
@@ -58,6 +59,8 @@ namespace BoundaryConditions
 
     // List of boundary type for each number
     std::vector<BoundaryType> type;
+
+    double beta;
 
     // Number of boundary conditions
     unsigned int size;
@@ -159,9 +162,10 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "noslip",
-                      Patterns::Selection("noslip|slip|function|periodic|pressure"),
+                      Patterns::Selection("noslip|slip|function|periodic|pressure|function weak"),
                       "Type of boundary condition"
-                      "Choices are <noslip|slip|function|periodic|pressure>.");
+                      "Choices are <noslip|slip|function|periodic|pressure|function weak>.");
+
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -246,6 +250,28 @@ namespace BoundaryConditions
           bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
         prm.leave_subsection();
       }
+    if (op == "function weak")
+      {
+        this->type[i_bc] = BoundaryType::function_weak;
+        prm.enter_subsection("u");
+        bcFunctions[i_bc].u.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("v");
+        bcFunctions[i_bc].v.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("w");
+        bcFunctions[i_bc].w.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("center of rotation");
+        bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
+        bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
+        if (dim == 3)
+          bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
+        prm.leave_subsection();
+      }
     if (op == "pressure")
       {
         this->type[i_bc] = BoundaryType::pressure;
@@ -293,6 +319,11 @@ namespace BoundaryConditions
         "false",
         Patterns::Bool(),
         "Bool to define if the boundary condition is time dependent");
+      prm.declare_entry(
+        "beta",
+        "0",
+        Patterns::Double(),
+        "penalty parameter for weak boundary condition");
       this->id.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
@@ -325,6 +356,7 @@ namespace BoundaryConditions
     {
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
+      this->beta =prm.get_double("beta");
       this->type.resize(this->size);
       this->id.resize(this->size);
       this->periodic_direction.resize(this->size);

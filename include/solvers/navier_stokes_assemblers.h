@@ -385,6 +385,55 @@ public:
 
 };
 
+/**
+ * @brief Class that assembles a Poisson problem for all velocity components and pressure variables .
+ * This class assembles the weak form of: d^2 U/dx^2=0 and  d^2 P/dx^2=0
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class WeakBoundaryCondition : public NavierStokesAssemblerBase<dim>
+{
+public:
+  WeakBoundaryCondition(std::shared_ptr<SimulationControl> simulation_control,
+                            Parameters::PhysicalProperties     physical_properties,
+                            const BoundaryConditions::NSBoundaryConditions<dim>
+                              &pressure_boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , boundary_conditions(pressure_boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+
+};
+
+
 
 /**
  * @brief Class that assembles a buoyancy forcing term using the Boussinesq

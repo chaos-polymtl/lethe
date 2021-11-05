@@ -272,8 +272,8 @@ public:
           }
       }
 
-    this->is_boundary_cell = cell->at_boundary();
-    if (cell->at_boundary())
+    is_boundary_cell = cell->at_boundary();
+    if (is_boundary_cell)
       {
         n_faces          = cell->n_faces();
         is_boundary_face = std::vector<bool>(n_faces, false);
@@ -361,8 +361,8 @@ public:
               std::vector<Tensor<1, dim>>(n_dofs)));
         for (const auto face : cell->face_indices())
           {
-            this->is_boundary_face[face] = cell->face(face)->at_boundary();
-            if (this->is_boundary_face[face])
+            is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (is_boundary_face[face])
               {
                 fe_face_values.reinit(cell, face);
                 n_dofs      = fe_face_values.get_fe().n_dofs_per_cell();
