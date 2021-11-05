@@ -1,4 +1,5 @@
 #include <core/solutions_output.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -654,7 +655,6 @@ CFDDEMSolver<dim>::check_contact_search_step_constant(
   return ((counter % contact_detection_frequency) == 0);
 }
 
-
 template <int dim>
 inline bool
 CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &)
@@ -665,6 +665,18 @@ CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &)
   // balancing step, a restart simulation step, or a contact detection tsep.
   bool sorting_in_subdomains_step =
     (checkpoint_step || load_balance_step || contact_detection_step);
+
+  if (sorting_in_subdomains_step)
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+    displacement.resize(this->particle_handler.get_max_local_particle_index());
+#else
+    {
+      unsigned int max_particle_id = 0;
+      for (const auto &particle : this->particle_handler)
+        max_particle_id = std::max(max_particle_id, particle.get_id());
+      displacement.resize(max_particle_id + 1);
+    }
+#endif
 
   contact_detection_step = find_contact_detection_step<dim>(
     this->particle_handler,
@@ -758,8 +770,6 @@ void
 CFDDEMSolver<dim>::initialize_dem_parameters()
 {
   this->pcout << "Initializing DEM parameters " << std::endl;
-
-  // TODO write read checkpoint for CFD-DEM
 
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
@@ -1033,7 +1043,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
     }
 
   // Broad particle-particle contact search
-  // TODO add checkpoint step
   if (load_balance_step || checkpoint_step || contact_detection_step)
     {
       pp_broad_search_object.find_particle_particle_contact_pairs(
@@ -1090,10 +1099,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
     }
 
   // TODO add DEM post-processing
-
-  // TODO checkpointing should be defined for CFD-DEM. We have to write
-  // checkpointing for the GLS VANS solver and use the DEM checkpoint that
-  // already exists.
 }
 
 template <int dim>
