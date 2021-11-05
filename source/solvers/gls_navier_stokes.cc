@@ -192,6 +192,7 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
 {
   double time = this->simulation_control->get_current_time();
   FEValuesExtractors::Vector velocities(0);
+  FEValuesExtractors::Scalar pressure(dim);
   // Non-zero constraints
   auto &nonzero_constraints = this->get_nonzero_constraints();
   {
@@ -254,6 +255,22 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
               nonzero_constraints,
               this->fe->component_mask(velocities));
           }
+        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+                 BoundaryConditions::BoundaryType::pressure)
+          {
+            this->simulation_parameters.boundary_conditions.bcPressureFunction[i_bc]
+              .p.set_time(time);
+            VectorTools::interpolate_boundary_values(
+              *this->mapping,
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions.id[i_bc],
+              NavierStokesPressureFunctionDefined<dim>(
+                &this->simulation_parameters.boundary_conditions
+                   .bcPressureFunction[i_bc]
+                   .p),
+              nonzero_constraints,
+              this->fe->component_mask(pressure));
+          }
 
         else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
@@ -276,6 +293,7 @@ void
 GLSNavierStokesSolver<dim>::define_zero_constraints()
 {
   FEValuesExtractors::Vector velocities(0);
+  FEValuesExtractors::Scalar pressure(dim);
   this->zero_constraints.clear();
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
                                           this->locally_relevant_dofs);
@@ -314,10 +332,15 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
         }
       else if  (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::pressure){
-
+          VectorTools::interpolate_boundary_values(
+            *this->mapping,
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions.id[i_bc],
+            dealii::Functions::ZeroFunction<dim>(dim + 1),
+            this->zero_constraints,
+            this->fe->component_mask(pressure));
         }
-      else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
-           // || Parameters::function)
+      else
         {
           VectorTools::interpolate_boundary_values(
             *this->mapping,

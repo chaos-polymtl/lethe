@@ -723,4 +723,45 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
   return 0.;
 }
 
+/**
+ * @brief This class implements a boundary conditions for the Navier-Stokes equation
+ * where the velocity component are defined using individual functions
+ */
+template <int dim>
+class NavierStokesPressureFunctionDefined : public Function<dim>
+{
+private:
+  Functions::ParsedFunction<dim> *p;
+
+public:
+  NavierStokesPressureFunctionDefined(Functions::ParsedFunction<dim> *p_p)
+    : Function<dim>(dim + 1)
+    , p(p_p)
+  {}
+
+  virtual double
+  value(const Point<dim> &p, const unsigned int component) const override;
+};
+
+
+/**
+ * @brief Calculates the value of a Function-type Navier-Stokes equations
+ *
+ * @param p A point (generally a gauss point)
+ *
+ * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
+ */
+template <int dim>
+double
+NavierStokesPressureFunctionDefined<dim>::value(const Point<dim> & point,
+                                        const unsigned int component) const
+{
+
+  if (component == dim)
+    {
+      return p->value(point);
+    }
+  return 0.;
+}
+
 #endif
