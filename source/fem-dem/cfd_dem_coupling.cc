@@ -477,7 +477,9 @@ CFDDEMSolver<dim>::cell_weight(
   // than 1000 (expensive particle operations, cheap cell operations, like in
   // this case). This parameter will need to be tuned for different cases of
   // CFD-DEM coupling.
-  const unsigned int particle_weight = 2000;
+  const unsigned int particle_weight =
+    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
+      .load_balance_particle_weight;
 
   // This does not use adaptive refinement, therefore every cell
   // should have the status CELL_PERSIST. However this function can also

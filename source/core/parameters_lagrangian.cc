@@ -416,6 +416,11 @@ namespace Parameters
                           Patterns::Integer(),
                           "Checking frequency for dynamic load-balancing");
 
+        prm.declare_entry(
+          "load balance particle weight",
+          "2000",
+          Patterns::Integer(),
+          "The particle weight based on a default cell weight of 1000");
 
         prm.declare_entry("contact detection method",
                           "dynamic",
@@ -475,6 +480,9 @@ namespace Parameters
       prm.enter_subsection("model parameters");
       {
         const std::string load_balance = prm.get("load balance method");
+
+        load_balance_particle_weight =
+          prm.get_integer("load balance particle weight");
 
         if (load_balance == "once")
           {
