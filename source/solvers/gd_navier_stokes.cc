@@ -71,14 +71,6 @@ GDNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_parameters.physical_properties));
         }
 
-      // Buoyant force
-      if (this->simulation_parameters.multiphysics.buoyant_force)
-        {
-          this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
-            this->simulation_control,
-            this->simulation_parameters.physical_properties));
-        }
-
       // Core assembler
       this->assemblers.push_back(
         std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
@@ -101,14 +93,6 @@ GDNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_control));
         }
 
-      // Buoyant force
-      if (this->simulation_parameters.multiphysics.buoyant_force)
-        {
-          this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
-            this->simulation_control,
-            this->simulation_parameters.physical_properties));
-        }
-
       // Velocity sources term
       if (this->simulation_parameters.velocity_sources.type ==
           Parameters::VelocitySource::VelocitySourceType::srf)
@@ -118,6 +102,13 @@ GDNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_parameters.velocity_sources));
         }
 
+      // Buoyant force
+      if (this->simulation_parameters.multiphysics.buoyant_force)
+        {
+          this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties));
+        }
 
       // Core assembler
       this->assemblers.push_back(
@@ -268,6 +259,15 @@ GDNavierStokesSolver<dim>::assemble_system_rhs()
                                        *this->mapping);
     }
 
+  if (this->simulation_parameters.multiphysics.buoyant_force)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+                                       *this->cell_quadrature,
+                                       *this->mapping);
+    }
+
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -324,6 +324,22 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
         *this->multiphysics->get_solution(PhysicsID::free_surface),
         previous_solutions,
         std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+  if (this->simulation_parameters.multiphysics.buoyant_force)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+      typename DoFHandler<dim>::active_cell_iterator temperature_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_ht);
+
+      scratch_data.reinit_heat_transfer(
+        temperature_cell,
+        *this->multiphysics->get_solution(PhysicsID::heat_transfer));
     }
 
   copy_data.reset();

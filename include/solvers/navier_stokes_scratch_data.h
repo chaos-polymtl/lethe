@@ -131,9 +131,9 @@ public:
     if (sd.gather_particles_information)
       enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell);
     if (sd.gather_temperature)
-      enable_heat_transfer(sd.fe_values_free_surface->get_fe(),
-                           sd.fe_values_free_surface->get_quadrature(),
-                           sd.fe_values_free_surface->get_mapping());
+      enable_heat_transfer(sd.fe_values_temperature->get_fe(),
+                           sd.fe_values_temperature->get_quadrature(),
+                           sd.fe_values_temperature->get_mapping());
   }
 
 
@@ -554,11 +554,9 @@ public:
   void
   reinit_heat_transfer(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
-    const std::vector<VectorType> & /*solution_stages*/)
+    const VectorType &                                    current_solution)
   {
-    this->fe_values_temperature->reinit(cell);
+      this->fe_values_temperature->reinit(cell);
 
     // Gather temperature
     this->fe_values_temperature->get_function_values(current_solution,

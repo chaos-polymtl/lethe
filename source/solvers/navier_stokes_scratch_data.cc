@@ -134,7 +134,6 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
   fe_values_temperature =
     std::make_shared<FEValues<dim>>(mapping, fe, quadrature, update_values);
 
-  // Free surface
   temperature_values = std::vector<double>(this->n_q_points);
 }
 
