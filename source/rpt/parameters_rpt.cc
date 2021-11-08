@@ -1,5 +1,6 @@
 #include <rpt/parameters_rpt.h>
 #include <time.h>
+
 #include <sstream>
 
 void
@@ -176,21 +177,27 @@ Parameters::DetectorParameters::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry("dead time",
                       "1",
-                      Patterns::Anything(),
+                      Patterns::List(Patterns::Double()),
                       "Dead time of the detector per accepted pulse");
 
     prm.declare_entry("activity",
                       "1",
-                      Patterns::Anything(),
+                      Patterns::List(Patterns::Double()),
                       "Activity of the tracer");
 
     prm.declare_entry("attenuation coefficient reactor",
                       "1",
-                      Patterns::Anything(),
+                      Patterns::List(Patterns::Double()),
                       "Total linear attenuation coefficient of the medium");
   }
   prm.leave_subsection();
 }
+
+// Dead time of the detector, activity of the tracer particle and attenuation
+// coefficient of the reactor with respect to each detector can be defined in
+// detector parameter subsection in the parameter file. Having more than one
+// detector, these parameters can be defined as the Following format: (For
+// example for dead time and having 3 detectors: Deadtime = 1,1,1)
 
 void
 Parameters::DetectorParameters::parse_parameters(ParameterHandler &prm)
@@ -201,53 +208,27 @@ Parameters::DetectorParameters::parse_parameters(ParameterHandler &prm)
     length                  = prm.get_double("length");
     detector_positions_file = prm.get("detector positions file");
 
-    // Transform string to vector of double
-    std::string dead_time_string  = prm.get("dead time");
-    std::string activity_string = prm.get("activity");
-    std::string attenuation_coefficient_reactor_string =
+    // Read dead time, activity and attenuation coefficient reactor as a single
+    // string
+    std::string dead_time_str = prm.get("dead time");
+    std::string activity_str  = prm.get("activity");
+    std::string attenuation_coefficient_reactor_str =
       prm.get("attenuation coefficient reactor");
+    // Convert "dead time, activity and attenuation coefficient reactor" strings
+    // to vector of strings
+    std::vector<std::string> dead_time_str_list(
+      Utilities::split_string_list(dead_time_str));
+    std::vector<std::string> activity_str_list(
+      Utilities::split_string_list(activity_str));
+    std::vector<std::string> attenuation_coefficient_reactor_str_list(
+      Utilities::split_string_list(attenuation_coefficient_reactor_str));
 
-    // Separate arguments of the string
-      std::vector<std::string> arguments;
-      std::stringstream        s_stream(dead_time_string);
-      while (s_stream.good())
-        {
-          std::string substr;
-          getline(s_stream, substr, ':');
-          arguments.push_back(substr);
-        }
-
-   dead_time =
-          dealii::Utilities::string_to_double(arguments);
-
-   // Separate arguments of the string
-     arguments.clear();
-     s_stream.clear();
-     s_stream.str(activity_string);
-     while (s_stream.good())
-       {
-         std::string substr;
-         getline(s_stream, substr, ':');
-         arguments.push_back(substr);
-       }
-
-     activity =
-         dealii::Utilities::string_to_double(arguments);;
-
-     // Separate arguments of the string
-       arguments.clear();
-       s_stream.clear();
-       s_stream.str(attenuation_coefficient_reactor_string);
-       while (s_stream.good())
-         {
-           std::string substr;
-           getline(s_stream, substr, ':');
-           arguments.push_back(substr);
-         }
-
-   attenuation_coefficient_reactor =
-           dealii::Utilities::string_to_double(arguments);
-
+    // Convert "dead time, activity and attenuation coefficient reactor" string
+    // vector to double vector
+    dead_time = Utilities::string_to_double(dead_time_str_list);
+    activity  = Utilities::string_to_double(activity_str_list);
+    attenuation_coefficient_reactor =
+      Utilities::string_to_double(attenuation_coefficient_reactor_str_list);
   }
 
   prm.leave_subsection();

@@ -38,9 +38,3 @@ subsection detector parameters
     set activity  			 = 2e6:2e6:2e6:2e6:2e6:2e6
     set attenuation coefficient reactor  = 10:10:10:10:10:10
 end
-
-
-
-
-
-
