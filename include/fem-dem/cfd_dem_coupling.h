@@ -225,13 +225,6 @@ private:
   void
   read_checkpoint() override;
 
-  //  void
-  //  write_load_balance_data();
-
-  //  void
-  //  read_load_balance_data();
-
-
   unsigned int                coupling_frequency;
   bool                        contact_detection_step;
   bool                        checkpoint_step;

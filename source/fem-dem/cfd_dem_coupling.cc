@@ -1397,6 +1397,9 @@ CFDDEMSolver<dim>::solve()
         this->post_processing();
 
       // Load balancing
+      // The input argument to this function is set to zero as this integer is
+      // not used for the check_load_balance_step function and is only important
+      // for the check_contact_search_step function.
       load_balance_step = (this->*check_load_balance_step)(0);
     }
   this->finish_simulation();
