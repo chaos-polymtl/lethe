@@ -813,8 +813,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                   double present_velocity_divergence =
                     trace(present_velocity_gradients[q]);
                   double mass_source=this->simulation_parameters.source_term->navier_stokes_source.value(fe_values.get_quadrature_points()[q],dim);
-                  total_velocity_divergence +=
-                    (present_velocity_divergence-mass_source) * fe_values.JxW(q);
+
 
                   // Find the values of x and u_h (the finite element solution)
                   // at the quadrature points
@@ -837,6 +836,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                     }
                   if (cell_is_inside == false)
                     {
+                      total_velocity_divergence +=
+                        (present_velocity_divergence-mass_source) * fe_values.JxW(q);
                       double p_sim =
                         local_pressure_values[q] - average_pressure;
                       double p_exact =
