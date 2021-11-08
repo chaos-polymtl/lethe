@@ -47,7 +47,7 @@ jobs:
       - name: Compile Lethe (Release-deal.ii:${{ matrix.dealii_version }})
         run: |
           mkdir build-release
-          cd build
+          cd build-release
           cmake ../ -DCMAKE_BUILD_TYPE=Release
           make -j${{ env.COMPILE_JOBS }}
 
