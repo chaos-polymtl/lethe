@@ -121,20 +121,29 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
 
-  parallel_triangulation->signals.cell_weight.connect(
-    [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-          &cell,
-        const typename parallel::distributed::Triangulation<dim>::CellStatus
-          status) -> unsigned int { return this->cell_weight(cell, status); });
+  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
+        .load_balance_method !=
+      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
+    {
+      parallel_triangulation->signals.cell_weight.connect(
+        [&](const typename parallel::distributed::Triangulation<
+              dim>::cell_iterator &cell,
+            const typename parallel::distributed::Triangulation<dim>::CellStatus
+              status) -> unsigned int {
+          return this->cell_weight(cell, status);
+        });
 
-  parallel_triangulation->signals.pre_distributed_repartition.connect(std::bind(
-    &Particles::ParticleHandler<dim>::register_store_callback_function,
-    &this->particle_handler));
+      parallel_triangulation->signals.pre_distributed_repartition.connect(
+        std::bind(
+          &Particles::ParticleHandler<dim>::register_store_callback_function,
+          &this->particle_handler));
 
-  parallel_triangulation->signals.post_distributed_repartition.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &this->particle_handler,
-              false));
+      parallel_triangulation->signals.post_distributed_repartition.connect(
+        std::bind(
+          &Particles::ParticleHandler<dim>::register_load_callback_function,
+          &this->particle_handler,
+          false));
+    }
   parallel_triangulation->signals.pre_distributed_refinement.connect(std::bind(
     &Particles::ParticleHandler<dim>::register_store_callback_function,
     &this->particle_handler));
