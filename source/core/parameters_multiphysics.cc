@@ -53,7 +53,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     heat_transfer  = prm.get_bool("heat transfer");
     tracer         = prm.get_bool("tracer");
     free_surface   = prm.get_bool("free surface");
-    buoyancy_force  = prm.get_bool("buoyancy force");
+    buoyancy_force = prm.get_bool("buoyancy force");
 
     // subparameter for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
