@@ -524,7 +524,7 @@ public:
 
 
   /**
-   * @brief enable_heat_transfer Enables the collection of the heat transfer data by the scratch
+   * @brief enable_heat_transfer Enables the collection of the heat transfer data (Temperature field) by the scratch
    *
    * @param fe FiniteElement associated with the heat transfer.
    *

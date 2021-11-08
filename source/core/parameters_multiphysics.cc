@@ -30,7 +30,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "Free surface calculation <true|false>");
 
-    prm.declare_entry("buoyant force",
+    prm.declare_entry("buoyancy force",
                       "false",
                       Patterns::Bool(),
                       "Buoyant force calculation <true|false>");
@@ -53,7 +53,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     heat_transfer  = prm.get_bool("heat transfer");
     tracer         = prm.get_bool("tracer");
     free_surface   = prm.get_bool("free surface");
-    buoyant_force  = prm.get_bool("buoyant force");
+    buoyancy_force  = prm.get_bool("buoyancy force");
 
     // subparameter for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");

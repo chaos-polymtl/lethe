@@ -377,7 +377,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         }
 
       // Buoyant force
-      if (this->simulation_parameters.multiphysics.buoyant_force)
+      if (this->simulation_parameters.multiphysics.buoyancy_force)
         {
           this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
             this->simulation_control,
@@ -527,7 +527,7 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                                        *this->mapping);
     }
 
-  if (this->simulation_parameters.multiphysics.buoyant_force)
+  if (this->simulation_parameters.multiphysics.buoyancy_force)
     {
       const DoFHandler<dim> *dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
@@ -594,7 +594,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
-  if (this->simulation_parameters.multiphysics.buoyant_force)
+  if (this->simulation_parameters.multiphysics.buoyancy_force)
     {
       const DoFHandler<dim> *dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);

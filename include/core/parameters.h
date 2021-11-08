@@ -658,7 +658,7 @@ namespace Parameters
    * @brief VelocitySource - Adds velocity-dependent
    * source term to the Navier-Stokes equations with
    * the appropriate jacobian matrix. Currently only
-   * gravity and a change to a rotating frame are supported, but additional
+   * a change to a rotating frame is supported, but additional
    * terms such as a Darcy force or similar could be easily
    * added.
    */

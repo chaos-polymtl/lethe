@@ -986,8 +986,7 @@ BuoyancyAssembly<dim>::assemble_rhs(
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      // Current and previous temperature values
-      // NOT FROM SCRACH DATA BUT FROM HT SCRATCH DATA
+      // Current temperature values
       double current_temperature = scratch_data.temperature_values[q];
 
       strong_residual[q] += -force * thermal_expansion * current_temperature;

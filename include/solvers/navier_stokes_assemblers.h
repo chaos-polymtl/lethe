@@ -339,7 +339,9 @@ public:
 
 
 /**
- * @brief Class that assembles the Buoyancy using Boussinesq approximation
+ * @brief Class that assembles a buoyancy forcing term using the Boussinesq
+ * approximation. For more information, read Chapter 10 of Transport phenomena
+ * by Bird et al., or "Boussinesq approximation (buoyancy)" page on Wikipedia.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -367,7 +369,7 @@ public:
 
 
   /**
-   * @brief assemble_rhs Assembles the rhs
+   * @brief assemble_rhs Assembles the weak form of: $$-\mathbf{g} \times \alpha \times (T - T_0)$$
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */

@@ -1170,7 +1170,7 @@ namespace Parameters
       prm.declare_entry(
         "type",
         "none",
-        Patterns::Selection("none|srf|gravity"),
+        Patterns::Selection("none|srf"),
         "Velocity-dependent source terms"
         "Choices are <none|srf>. The srf stands"
         "for single rotating frame and adds"

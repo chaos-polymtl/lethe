@@ -7,7 +7,7 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set number mesh adapt       = 3
+  set number mesh adapt       = 2
   set output name             = mms_22
   set output frequency        = 1
   set subdivision             = 1
@@ -61,8 +61,8 @@ end
 # Multiphysics
 #---------------------------------------------------
 subsection multiphysics
-	set buoyant force = true
-	set heat transfer = true
+	set buoyancy force = true
+	set heat transfer  = true
 end
 
 # --------------------------------------------------
