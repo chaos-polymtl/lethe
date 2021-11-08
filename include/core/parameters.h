@@ -371,7 +371,7 @@ namespace Parameters
     enum class SolverType
     {
       newton,
-      inexact_newton_iteration,
+      inexact_newton,
       kinsol_newton
     };
 
@@ -417,6 +417,9 @@ namespace Parameters
 
     // Relative Tolerance
     double step_tolerance;
+
+    // Carry jacobian matrix over to the new non-linear problem
+    bool reuse_matrix;
 
 
     static void
@@ -677,6 +680,13 @@ namespace Parameters
   class IBParticles
   {
   public:
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    declare_default_entry(ParameterHandler &prm, unsigned int index);
+    void
+    parse_parameters(ParameterHandler &prm);
+
     unsigned int                 nb;
     unsigned int                 order;
     unsigned int                 initial_refinement;
@@ -687,22 +697,15 @@ namespace Parameters
     bool                         assemble_navier_stokes_inside;
     std::string                  ib_force_output_file;
     double                       density;
-    Tensor<1, dim>               gravity;
-    double                       particle_nonlinear_tol;
-    double                       length_ratio;
 
+    std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
+
+
+    double      particle_nonlinear_tolerance;
+    double      length_ratio;
     double      alpha;
     bool        integrate_motion;
     std::string ib_particles_pvd_file;
-
-
-
-    static void
-    declare_parameters(ParameterHandler &prm);
-    static void
-    declare_default_entry(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
   };
 
   /**

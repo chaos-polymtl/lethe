@@ -43,7 +43,7 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-  set thermal conductivity = 0.01
+  set tracer diffusivity = 0.01
 end
 
 #---------------------------------------------------

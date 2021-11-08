@@ -487,34 +487,40 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   if (simulation_parameters.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
       this->solution_stages[0] = present_solution;
 
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
     }
 
   else if (simulation_parameters.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       this->solution_stages[0] = present_solution;
 
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       this->solution_stages[1] = present_solution;
 
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
     }
   else
     {
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        simulation_parameters.simulation_control.method, false);
+      this->simulation_control->set_assembly_method(
+        simulation_parameters.simulation_control.method);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
       multiphysics->solve(simulation_parameters.simulation_control.method);
     }
 }
@@ -543,8 +549,10 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       double time_step =
         timeParameters.dt * timeParameters.startup_timestep_scaling;
       simulation_control->set_current_time_step(time_step);
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       multiphysics->solve(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1);
@@ -559,8 +567,9 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       simulation_control->set_current_time_step(time_step);
 
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       multiphysics->solve(
         Parameters::SimulationControl::TimeSteppingMethod::bdf2);
@@ -580,8 +589,9 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       simulation_control->set_current_time_step(time_step);
 
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       multiphysics->solve(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1);
@@ -593,12 +603,13 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       simulation_control->set_current_time_step(time_step);
 
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
 
       multiphysics->solve(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
 
       percolate_time_vectors();
 
@@ -608,8 +619,9 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
         timeParameters.dt * (1. - 2. * timeParameters.startup_timestep_scaling);
       simulation_control->set_current_time_step(time_step);
 
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf3, false);
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf3);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       multiphysics->solve(
         Parameters::SimulationControl::TimeSteppingMethod::bdf3);

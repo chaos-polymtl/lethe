@@ -160,13 +160,13 @@ private:
   virtual void
   assemble_matrix_and_rhs()
   {
-    if (this->simulation_parameters.particlesParameters.integrate_motion)
+    if (this->simulation_parameters.particlesParameters->integrate_motion)
       {
         force_on_ib();
         integrate_particles();
         generate_cut_cells_map();
       }
-    this->simulation_control->set_assembly_method(this->time_stepping_method);
+    // this->simulation_control->set_assembly_method(this->time_stepping_method);
     {
       TimerOutput::Scope t(this->computing_timer, "assemble_system");
       this->GLSNavierStokesSolver<
@@ -194,7 +194,7 @@ private:
   assemble_rhs()
   {
     TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-    this->simulation_control->set_assembly_method(this->time_stepping_method);
+    // this->simulation_control->set_assembly_method(this->time_stepping_method);
 
     this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
     sharp_edge();
@@ -390,9 +390,9 @@ Return a bool that describes  if a cell contains a specific point
   double
   get_current_residual() override
   {
-    double scalling =
-      this->simulation_parameters.non_linear_solver.tolerance /
-      this->simulation_parameters.particlesParameters.particle_nonlinear_tol;
+    double scalling = this->simulation_parameters.non_linear_solver.tolerance /
+                      this->simulation_parameters.particlesParameters
+                        ->particle_nonlinear_tolerance;
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
   }
 

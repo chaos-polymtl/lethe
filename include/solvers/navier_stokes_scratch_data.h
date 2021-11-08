@@ -392,7 +392,9 @@ public:
   template <typename VectorType>
   void
   reinit_particle_fluid_interactions(
-    const VectorType                       velocity_solution,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType                                      current_solution,
+    const VectorType                                      previous_solution,
     const VectorType                       void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
     DoFHandler<dim> &                      dof_handler,
@@ -429,6 +431,13 @@ public:
       {
         auto particle_properties = particle.get_properties();
 
+        // Set the particle_fluid_interactions properties and vectors to 0
+        for (int d = 0; d < dim; ++d)
+          {
+            particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
+            undisturbed_flow_force[d]                                  = 0;
+          }
+
         cell_void_fraction[particle_number]                  = 0;
         fluid_velocity_at_particle_location[particle_number] = 0;
 
@@ -450,7 +459,7 @@ public:
             const auto comp_j = fe.system_to_component_index(j).first;
             if (comp_j < dim)
               {
-                auto &evaluation_point = velocity_solution;
+                auto &evaluation_point = previous_solution;
                 fluid_velocity_at_particle_location[particle_number][comp_j] +=
                   evaluation_point[fluid_dof_indices[j]] *
                   fe.shape_value(j, reference_location);
@@ -471,8 +480,42 @@ public:
       {
         average_particle_velocity = average_particle_velocity / particle_number;
       }
-  }
 
+    // Vectors for interpolation of pressure gradients and velocity laplacians
+    // at particle positions
+    std::vector<Point<dim>> particle_reference_location(particle_number + 1);
+    std::vector<double>     particle_weights(particle_number + 1);
+    fluid_pressure_gradients_at_particle_location.resize(particle_number + 1);
+    fluid_velocity_laplacian_at_particle_location.resize(particle_number + 1);
+
+    // Loop over particles in cell
+    for (auto &particle : pic)
+      {
+        // Store particle positions and weights
+        // Reference location of the particle
+        auto reference_location = particle.get_reference_location();
+        particle_reference_location[particle_number] = reference_location;
+        particle_weights[particle_number]            = 1;
+      }
+
+    // Create a quadrature that is based on the particle reference location
+    Quadrature<dim> q_local(particle_reference_location, particle_weights);
+    FEValues<dim>   fe_values_local_particles(fe,
+                                            q_local,
+                                            update_quadrature_points |
+                                              update_gradients | update_values |
+                                              update_hessians);
+
+    // Evaluate the relevant information at the
+    // quadrature points to do the interpolation.
+    fe_values_local_particles.reinit(cell);
+
+    fe_values_local_particles[velocities].get_function_laplacians(
+      current_solution, fluid_velocity_laplacian_at_particle_location);
+
+    fe_values_local_particles[pressure].get_function_gradients(
+      current_solution, fluid_pressure_gradients_at_particle_location);
+  }
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
@@ -542,15 +585,15 @@ public:
   std::vector<Tensor<1, dim>> particle_velocity;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
+  std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
+  std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
   std::vector<double>         cell_void_fraction;
   unsigned int                max_number_of_particles_per_cell;
   unsigned int                number_of_locally_owned_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double                                                            cell_volume;
   double                                                            beta_drag;
-  std::vector<Tensor<1, dim>> fluid_particle_force;
-  std::vector<unsigned int>   local_particle_id;
-  unsigned int                particle_index;
+  Tensor<1, dim> undisturbed_flow_force;
 };
 
 #endif

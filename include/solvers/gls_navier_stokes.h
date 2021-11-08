@@ -65,6 +65,12 @@ protected:
   setup_dofs_fd();
 
   /**
+   * @brief update non zero constraint if the boundary is time dependant
+   */
+  void
+  update_boundary_conditions();
+
+  /**
    * @brief Sets the initial condition for the solver
    *
    * If the simulation is restarted from a checkpoint, the initial solution
@@ -107,6 +113,18 @@ protected:
    */
   void
   setup_preconditioner();
+
+  /**
+   * @brief  defined the non zero constraints used to solved the problem.
+   */
+  void
+  define_non_zero_constraints();
+
+  /**
+   * @brief defined the zero_constraints used to solved the problem.
+   */
+  void
+  define_zero_constraints();
 
   /**
    * @brief Assemble the local matrix for a given cell.

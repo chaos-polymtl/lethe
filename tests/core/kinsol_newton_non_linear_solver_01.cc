@@ -19,7 +19,7 @@ test()
     Parameters::NonLinearSolver::SolverType::kinsol_newton,
     Parameters::NonLinearSolver::KinsolStrategy::line_search, // kinsol strategy
     1e-8,                                                     // tolerance
-    10,                                                       // maxIter
+    20,                                                       // maxIter
     4,    // display precision
     false // force rhs calculation
   };
@@ -27,13 +27,13 @@ test()
   deallog << "Creating solver" << std::endl;
 
   // Create an instantiation of the Test Class
-  std::unique_ptr<TestClass> solver = std::make_unique<TestClass>(params);
+  std::unique_ptr<NonLinearProblemTestClass> solver =
+    std::make_unique<NonLinearProblemTestClass>(params);
 
 
   deallog << "Solving non-linear system " << std::endl;
   // Solve the non-linear system of equation
-  solver->solve_non_linear_system(
-    Parameters::SimulationControl::TimeSteppingMethod::steady, true);
+  solver->solve_non_linear_system(true);
 
   auto &present_solution = solver->get_present_solution();
   deallog << "The final solution is : " << present_solution[0] << " "

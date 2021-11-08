@@ -2,6 +2,7 @@
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
+#include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
 #include <dem/pp_linear_force.h>
@@ -19,10 +20,11 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
-  contact_detection_frequency = coupling_frequency;
-  this->pcout << "Warning: DEM contact detection frequency is set to "
-              << contact_detection_frequency
-              << " (equal to coupling frequency) " << std::endl;
+  contact_detection_frequency =
+    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
+      .contact_detection_frequency;
+
+  standard_deviation_multiplier = 2.5;
 
   maximum_particle_diameter =
     find_maximum_particle_size(this->cfd_dem_simulation_parameters
@@ -77,11 +79,42 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
     this->simulation_control->get_time_step() / coupling_frequency;
 
   if (dem_parameters.model_parameters.contact_detection_method ==
-      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::dynamic)
-    this->pcout
-      << "CFD-DEM solver uses constant contact detection method " << std::endl
-      << "The contact detection method is changed to constant with contact detection freuqncy of "
-      << contact_detection_frequency << std::endl;
+      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
+    {
+      check_contact_search_step =
+        &CFDDEMSolver<dim>::check_contact_search_step_constant;
+    }
+  else if (dem_parameters.model_parameters.contact_detection_method ==
+           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
+             dynamic)
+    {
+      check_contact_search_step =
+        &CFDDEMSolver<dim>::check_contact_search_step_dynamic;
+    }
+  else
+    {
+      throw std::runtime_error(
+        "Specified contact detection method is not valid");
+    }
+
+  // Necessary signals for writing and reading checkpoints
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+
+  parallel_triangulation->signals.pre_distributed_save.connect(std::bind(
+    &Particles::ParticleHandler<dim>::register_store_callback_function,
+    &this->particle_handler));
+
+  parallel_triangulation->signals.post_distributed_load.connect(
+    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
+              &this->particle_handler,
+              true));
+
+  // Initilize contact detection step
+  contact_detection_step = true;
+  checkpoint_step        = false;
+  load_balance_step      = false;
 }
 
 template <int dim>
@@ -94,17 +127,8 @@ CFDDEMSolver<dim>::read_dem()
 {
   this->pcout << "Reading DEM checkpoint " << std::endl;
 
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
-
   std::string prefix =
     this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
-
-  parallel_triangulation->signals.post_distributed_load.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &this->particle_handler,
-              true));
 
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
@@ -156,13 +180,238 @@ CFDDEMSolver<dim>::read_dem()
 }
 
 template <int dim>
-inline bool
-CFDDEMSolver<dim>::check_contact_search_step_constant()
+void
+CFDDEMSolver<dim>::write_checkpoint()
 {
-  return ((this->simulation_control->get_step_number() %
-           contact_detection_frequency) == 0);
+  TimerOutput::Scope timer(this->computing_timer, "Write_Checkpoint");
+  this->pcout << "Writing restart file" << std::endl;
+
+  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string prefix_particles = prefix + "_particles";
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      this->simulation_control->save(prefix);
+      this->pvdhandler.save(prefix);
+      particles_pvdhandler.save(prefix_particles);
+    }
+
+  std::ostringstream            oss;
+  boost::archive::text_oarchive oa(oss, boost::archive::no_header);
+  oa << this->particle_handler;
+
+  // Write additional particle information for deserialization
+  std::string   particle_filename = prefix + ".particles";
+  std::ofstream output(particle_filename.c_str());
+  output << oss.str() << std::endl;
+
+  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+  sol_set_transfer.push_back(&this->present_solution);
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      sol_set_transfer.push_back(&this->previous_solutions[i]);
+    }
+
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      std::vector<const TrilinosWrappers::MPI::Vector *> av_set_transfer =
+        this->average_velocities->save(prefix);
+
+      // Insert average velocities vectors into the set transfer vector
+      sol_set_transfer.insert(sol_set_transfer.end(),
+                              av_set_transfer.begin(),
+                              av_set_transfer.end());
+    }
+
+  // Prepare for Serialization
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    system_trans_vectors(this->dof_handler);
+  system_trans_vectors.prepare_for_serialization(sol_set_transfer);
+
+  // Void Fraction
+  std::vector<const TrilinosWrappers::MPI::Vector *> vf_set_transfer;
+  vf_set_transfer.push_back(&this->nodal_void_fraction_relevant);
+  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+    {
+      vf_set_transfer.push_back(&this->previous_void_fraction[i]);
+    }
+
+  // Prepare for Serialization
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    vf_system_trans_vectors(this->void_fraction_dof_handler);
+  vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);
+
+  if (auto parallel_triangulation =
+        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+          &*this->triangulation))
+    {
+      std::string triangulationName = prefix + ".triangulation";
+      parallel_triangulation->save(prefix + ".triangulation");
+    }
+
+  this->multiphysics->write_checkpoint();
 }
 
+template <int dim>
+void
+CFDDEMSolver<dim>::read_checkpoint()
+{
+  TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
+  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string prefix_particles = prefix + "_particles";
+
+  this->simulation_control->read(prefix);
+  this->pvdhandler.read(prefix);
+  particles_pvdhandler.read(prefix_particles);
+
+  // Gather particle serialization information
+  std::string   particle_filename = prefix + ".particles";
+  std::ifstream input(particle_filename.c_str());
+  AssertThrow(input, ExcFileNotOpen(particle_filename));
+
+  std::string buffer;
+  std::getline(input, buffer);
+  std::istringstream            iss(buffer);
+  boost::archive::text_iarchive ia(iss, boost::archive::no_header);
+
+  ia >> this->particle_handler;
+
+  const std::string filename = prefix + ".triangulation";
+  std::ifstream     in(filename.c_str());
+  if (!in)
+    AssertThrow(false,
+                ExcMessage(
+                  std::string(
+                    "You are trying to restart a previous computation, "
+                    "but the restart file <") +
+                  filename + "> does not appear to exist!"));
+
+  try
+    {
+      if (auto parallel_triangulation =
+            dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+              this->triangulation.get()))
+        parallel_triangulation->load(filename.c_str());
+    }
+  catch (...)
+    {
+      AssertThrow(false,
+                  ExcMessage("Cannot open snapshot mesh file or read the "
+                             "triangulation stored there."));
+    }
+
+  this->setup_dofs();
+
+  // Velocity Vectors
+  std::vector<TrilinosWrappers::MPI::Vector *> x_system(
+    1 + this->previous_solutions.size());
+
+  TrilinosWrappers::MPI::Vector distributed_system(this->locally_owned_dofs,
+                                                   this->mpi_communicator);
+
+  x_system[0] = &(distributed_system);
+
+  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
+
+  distributed_previous_solutions.reserve(this->previous_solutions.size());
+
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      distributed_previous_solutions.emplace_back(
+        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
+                                      this->mpi_communicator));
+      x_system[i + 1] = &distributed_previous_solutions[i];
+    }
+
+
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    system_trans_vectors(this->dof_handler);
+
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      std::vector<TrilinosWrappers::MPI::Vector *> sum_vectors =
+        this->average_velocities->read(prefix);
+
+      x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
+    }
+
+  system_trans_vectors.deserialize(x_system);
+
+  this->present_solution = distributed_system;
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      this->previous_solutions[i] = distributed_previous_solutions[i];
+    }
+
+  x_system.clear();
+
+  // Void Fraction Vectors
+  std::vector<TrilinosWrappers::MPI::Vector *> vf_system(
+    1 + this->previous_void_fraction.size());
+
+  TrilinosWrappers::MPI::Vector vf_distributed_system(
+    this->locally_owned_dofs_voidfraction, this->mpi_communicator);
+
+  vf_system[0] = &(vf_distributed_system);
+
+  std::vector<TrilinosWrappers::MPI::Vector> vf_distributed_previous_solutions;
+
+  vf_distributed_previous_solutions.reserve(
+    this->previous_void_fraction.size());
+
+  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+    {
+      vf_distributed_previous_solutions.emplace_back(
+        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs_voidfraction,
+                                      this->mpi_communicator));
+      vf_system[i + 1] = &vf_distributed_previous_solutions[i];
+    }
+
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    vf_system_trans_vectors(this->void_fraction_dof_handler);
+
+  vf_system_trans_vectors.deserialize(vf_system);
+
+  this->nodal_void_fraction_relevant = vf_distributed_system;
+  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+    {
+      this->previous_void_fraction[i] = vf_distributed_previous_solutions[i];
+    }
+
+  vf_system.clear();
+
+  this->multiphysics->read_checkpoint();
+}
+
+template <int dim>
+inline bool
+CFDDEMSolver<dim>::check_contact_search_step_constant(
+  const unsigned int &counter)
+{
+  return ((counter % contact_detection_frequency) == 0);
+}
+
+template <int dim>
+inline bool
+CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &)
+{
+  // The sorting into subdomain step checks whether or not the current time step
+  // is a step that requires sorting particles into subdomains and cells. This
+  // is applicable if any of the following three conditions apply:if its a load
+  // balancing step, a restart simulation step, or a contact detection tsep.
+  bool sorting_in_subdomains_step =
+    (checkpoint_step || load_balance_step || contact_detection_step);
+
+  contact_detection_step = find_contact_detection_step<dim>(
+    this->particle_handler,
+    this->simulation_control->get_time_step() /
+      this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency,
+    smallest_contact_search_criterion,
+    this->mpi_communicator,
+    sorting_in_subdomains_step,
+    displacement);
+
+  return contact_detection_step;
+}
 
 
 template <int dim>
@@ -213,8 +462,6 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
 
   this->particle_handler.exchange_ghost_particles(true);
-
-
 
   // Updating moment of inertia container
   update_moment_of_inertia(this->particle_handler, MOI);
@@ -342,16 +589,32 @@ template <int dim>
 void
 CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
 {
-  for (unsigned int counter = 0; counter < force.size(); ++counter)
+  for (auto particle = this->particle_handler.begin();
+       particle != this->particle_handler.end();
+       ++particle)
     {
-      force[counter] += this->fluid_solid_force[counter];
+      auto particle_properties = particle->get_properties();
+
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      types::particle_index particle_id = particle->get_local_index();
+#else
+      types::particle_index particle_id = particle->get_id();
+#endif
+
+      force[particle_id][0] +=
+        particle_properties[DEM::PropertiesIndex::fem_force_x];
+      force[particle_id][1] +=
+        particle_properties[DEM::PropertiesIndex::fem_force_y];
+      force[particle_id][2] +=
+        particle_properties[DEM::PropertiesIndex::fem_force_z];
     }
 }
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_iterator()
+CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 {
+  TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
   // Particle-particle contact force
   pp_contact_force_object->calculate_pp_contact_force(local_adjacent_particles,
                                                       ghost_adjacent_particles,
@@ -386,20 +649,24 @@ CFDDEMSolver<dim>::dem_iterator()
         force,
         MOI);
     }
+
+  // dem_contact_build carries out the particle-particle and particle-wall
+  // broad and fine searches, sort_particles_into_subdomains_and_cells, and
+  // exchange_ghost
+  dem_contact_build(counter);
 }
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_contact_build()
+CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
   // Check to see if it is contact search step
-  contact_detection_step = check_contact_search_step_constant();
+  contact_detection_step = (this->*check_contact_search_step)(counter);
 
   // Sort particles in cells
   if (contact_detection_step || checkpoint_step || load_balance_step)
     {
-      this->pcout << "DEM contact search at step "
-                  << this->simulation_control->get_step_number() << std::endl;
+      this->pcout << "DEM contact search at dem step " << counter << std::endl;
 
       // Reset checkpoint step
       checkpoint_step = false;
@@ -421,8 +688,6 @@ CFDDEMSolver<dim>::dem_contact_build()
       momentum.resize(displacement.size());
 
       this->particle_handler.exchange_ghost_particles(true);
-
-
 
       // Updating moment of inertia container
       update_moment_of_inertia(this->particle_handler, MOI);
@@ -477,8 +742,6 @@ CFDDEMSolver<dim>::dem_contact_build()
 
       // Particles-wall fine search
       particle_wall_fine_search();
-
-      this->pcout << "Finished DEM contact search " << std::endl;
     }
 
   // Visualization
@@ -498,7 +761,8 @@ template <int dim>
 void
 CFDDEMSolver<dim>::write_DEM_output_results()
 {
-  const std::string folder = this->cfd_dem_simulation_parameters.dem_parameters
+  TimerOutput::Scope t(this->computing_timer, "DEM_Output_Results");
+  const std::string  folder = this->cfd_dem_simulation_parameters.dem_parameters
                                .simulation_control.output_folder;
   const std::string particles_solution_name =
     this->cfd_dem_simulation_parameters.dem_parameters.simulation_control
@@ -655,8 +919,11 @@ CFDDEMSolver<dim>::solve()
     true,
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
-  // Reading DEM restart file information
-  read_dem();
+  // Reading DEM start file information
+  if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
+      this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+          .restart == false)
+    read_dem();
 
   this->setup_dofs();
   this->calculate_void_fraction(this->simulation_control->get_current_time());
@@ -710,14 +977,8 @@ CFDDEMSolver<dim>::solve()
             {
               // dem_iterator carries out the particle-particle and
               // particle_wall force calculations, integration and update_ghost
-              dem_iterator();
+              dem_iterator(dem_counter);
             }
-
-          // dem_contact_build carries out the particle-particle and
-          // particle-wall broad and fine searches,
-          // sort_particles_into_subdomains_and_cells, and exchange_ghost
-          dem_contact_build();
-
 
           this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                       << std::endl;
@@ -765,16 +1026,11 @@ CFDDEMSolver<dim>::solve()
             {
               // dem_iterator carries out the particle-particle and
               // particle_wall force calculations, integration and update_ghost
-              dem_iterator();
+              dem_iterator(dem_counter);
             }
           this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                       << std::endl;
         }
-
-      // dem_contact_build carries out the particle-particle and particle-wall
-      // broad and fine searches, sort_particles_into_subdomains_and_cells, and
-      // exchange_ghost
-      dem_contact_build();
 
       this->postprocess(false);
       this->finish_time_step();

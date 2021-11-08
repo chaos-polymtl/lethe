@@ -49,8 +49,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
       solid.push_back(std::make_shared<SolidBase<dim, spacedim>>(
         this->simulation_parameters.nitsche->nitsche_solids[i_solid],
         this->triangulation,
-        this->mapping,
-        p_nsparam.fem_parameters.velocity_order));
+        this->mapping));
     }
 
   pvdhandler_solid_particles.resize(n_solids);
@@ -666,10 +665,16 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
             if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
                   ->enable_particles_motion)
               {
-                solid[i_solid]->integrate_velocity(
-                  this->simulation_control->get_time_step());
-                solid[i_solid]->move_solid_triangulation(
-                  this->simulation_control->get_time_step());
+                // Particle and solid displacement is explicit, thus it must go
+                // from t to t+dt
+                const double time_step =
+                  this->simulation_control->get_time_step();
+                const double initial_time =
+                  this->simulation_control->get_current_time() - time_step;
+
+                solid[i_solid]->integrate_velocity(time_step, initial_time);
+                solid[i_solid]->move_solid_triangulation(time_step,
+                                                         initial_time);
               }
           }
       }

@@ -1,0 +1,20 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 5508
+   Volume of triangulation:      16
+   Number of active cells:       4552
+   Number of degrees of freedom: 22172
+   Volume of triangulation:      16
+
+*****************************************************************
+Transient iteration : 1        Time : 0.125    Time step : 0.125    CFL : 0       
+*****************************************************************
+div u : 0.000590735
+L2 error velocity : 0.00412312 L2 error pressure: 0.0276662
++------------------------------------------+
+|  Force  summary particle 0               |
++------------------------------------------+
+particle_ID  time     T_x      T_y       T_z      f_x      f_y      f_z    
+0           0.1250 -0.000000 0.001168 -0.001168 1.009152 0.000040 0.000040 
+ time  error_velocity error_pressure 
+0.1250 4.123123e-03   0.0277         

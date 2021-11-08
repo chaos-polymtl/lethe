@@ -55,8 +55,7 @@ template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &             param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
-  std::shared_ptr<Mapping<spacedim>> fluid_mapping,
-  const unsigned int                 degree_velocity)
+  std::shared_ptr<Mapping<spacedim>> fluid_mapping)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -64,15 +63,15 @@ SolidBase<dim, spacedim>::SolidBase(
   , fluid_mapping(fluid_mapping)
   , param(param)
   , velocity(&param->solid_velocity)
-  , degree_velocity(degree_velocity)
 {
   if (param->solid_mesh.simplex)
     {
       // for simplex meshes
       fe            = std::make_shared<FE_SimplexP<dim, spacedim>>(1);
       solid_mapping = std::make_shared<MappingFE<dim, spacedim>>(*fe);
-      quadrature    = std::make_shared<QGaussSimplex<dim>>(degree_velocity + 1);
-      solid_tria    = std::make_shared<
+      quadrature =
+        std::make_shared<QGaussSimplex<dim>>(param->number_quadrature_points);
+      solid_tria = std::make_shared<
         parallel::fullydistributed::Triangulation<dim, spacedim>>(
         this->mpi_communicator);
 
@@ -85,7 +84,8 @@ SolidBase<dim, spacedim>::SolidBase(
       // Usual case, for quad/hex meshes
       fe            = std::make_shared<FE_Q<dim, spacedim>>(1);
       solid_mapping = std::make_shared<MappingQGeneric<dim, spacedim>>(1);
-      quadrature    = std::make_shared<QGauss<dim>>(degree_velocity + 1);
+      quadrature =
+        std::make_shared<QGauss<dim>>(param->number_quadrature_points);
       solid_tria =
         std::make_shared<parallel::distributed::Triangulation<dim, spacedim>>(
           mpi_communicator,
@@ -467,11 +467,15 @@ SolidBase<dim, spacedim>::get_solid_velocity()
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::integrate_velocity(double time_step)
+SolidBase<dim, spacedim>::integrate_velocity(double time_step,
+                                             double initial_time)
 {
   const unsigned int sub_particles_iterations = param->particles_sub_iterations;
   AssertThrow(sub_particles_iterations >= 1,
               ExcMessage("Sub particles iterations must be 1 or larger"));
+
+
+
   double sub_iteration_relaxation = 1. / sub_particles_iterations;
   time_step                       = time_step * sub_iteration_relaxation;
   // Particle sub iterations divide the time step in a number of "sub
@@ -486,14 +490,29 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
            particle != solid_particle_handler->end();
            ++particle)
         {
+          // Calculate the next position of the particle using the RK4
+          // time integration scheme
+          // x(t+dt) = x(t) + 1/6 (k1+2*k2+2*k3+k4)
+          // k1 = dt * v(t,x(t))
+          // k2 = dt * v(t+0.5*dt,x+k1/2)
+          // k3 = dt * v(t+0.5*dt,x+k2/2)
+          // k4 = dt * vt(t+dt,x+k3)
+          // The four stages (1 to 4) are built successively
+          // For each stage, the time of the function must be "reset"
+          // to ensure adequate evaluation of the RK4 scheme.
+          // See https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods for
+          // more details
+
           Point<spacedim> particle_location = particle->get_location();
 
           Tensor<1, spacedim> k1;
+          velocity->set_time(initial_time);
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k1[comp_i] = velocity->value(particle_location, comp_i);
 
           Point<spacedim>     p1 = particle_location + time_step / 2 * k1;
           Tensor<1, spacedim> k2;
+          velocity->set_time(initial_time + time_step / 2);
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k2[comp_i] = velocity->value(p1, comp_i);
 
@@ -504,6 +523,7 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
 
           Point<spacedim>     p3 = particle_location + time_step * k3;
           Tensor<1, spacedim> k4;
+          velocity->set_time(initial_time + time_step);
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k4[comp_i] = velocity->value(p3, comp_i);
 
@@ -511,6 +531,7 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
           particle->set_location(particle_location);
         }
       solid_particle_handler->sort_particles_into_subdomains_and_cells();
+      initial_time += time_step;
     }
 
   if (initial_number_of_particles !=
@@ -531,7 +552,8 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
+SolidBase<dim, spacedim>::move_solid_triangulation(const double time_step,
+                                                   const double initial_time)
 {
   // First we calculate the displacement that the solid triangulation
   // will feel during this iteration.
@@ -542,6 +564,7 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
   std::vector<bool> vertex_moved(this->solid_tria->n_vertices(), false);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
+
   for (const auto &cell : displacement_dh.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -550,6 +573,19 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
                vertex < cell->reference_cell().n_vertices();
                ++vertex)
             {
+              // Calculate the next position of the particle using the RK4
+              // time integration scheme
+              // x(t+dt) = x(t) + 1/6 (k1+2*k2+2*k3+k4)
+              // k1 = dt * v(t,x(t))
+              // k2 = dt * v(t+0.5*dt,x+k1/2)
+              // k3 = dt * v(t+0.5*dt,x+k2/2)
+              // k4 = dt * vt(t+dt,x+k3)
+              // The four stages (1 to 4) are built successively
+              // For each stage, the time of the function must be "reset"
+              // to ensure adequate evaluation of the RK4 scheme.
+              // See https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
+              // for more details
+
               const auto       dof_index = cell->vertex_dof_index(vertex, 0);
               Point<spacedim> &vertex_position  = cell->vertex(vertex);
               const unsigned   global_vertex_no = cell->vertex_index(vertex);
@@ -558,11 +594,13 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
                 continue;
 
               Tensor<1, spacedim> k1;
+              velocity->set_time(initial_time);
               for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k1[comp_i] = velocity->value(vertex_position, comp_i);
 
               Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
               Tensor<1, spacedim> k2;
+              velocity->set_time(initial_time + time_step / 2);
               for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k2[comp_i] = velocity->value(p1, comp_i);
 
@@ -573,6 +611,7 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
 
               Point<spacedim>     p3 = vertex_position + time_step * k3;
               Tensor<1, spacedim> k4;
+              velocity->set_time(initial_time + time_step);
               for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k4[comp_i] = velocity->value(p3, comp_i);
 

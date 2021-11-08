@@ -51,10 +51,6 @@ public:
   /**
    * @brief Solve the non-linear system of equation.
    *
-   * @param time_stepping_method Time stepping method being used. This is
-   * required since the jacobian of the matrix is going to depend on the method
-   * used
-   *
    * @param is_initial_step Boolean variable that controls which constraints are
    * going to be applied to the equations
    */

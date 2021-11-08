@@ -301,7 +301,6 @@ protected:
   dynamic_flow_control();
 
 
-
   /**
    * @brief iterate
    * Do a regular CFD iteration
