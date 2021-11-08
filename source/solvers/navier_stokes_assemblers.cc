@@ -48,6 +48,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       // Forcing term
       const Tensor<1, dim> force = scratch_data.force[q];
+      double               mass_source = scratch_data.mass_source[q];
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
@@ -70,7 +71,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
-                             viscosity * velocity_laplacian - force +
+                             viscosity * velocity_laplacian - force +mass_source * velocity+
                              strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -88,8 +89,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
-            (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
-             grad_phi_p_j - viscosity * laplacian_phi_u_j);
+            (velocity_gradient * phi_u_j + grad_phi_u_j * velocity  +
+             grad_phi_p_j - viscosity * laplacian_phi_u_j+ mass_source * phi_u_j);
 
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
@@ -125,6 +126,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
                 viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
                 velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j +
+                 mass_source * phi_u_j * phi_u_i+
                 // Continuity
                 phi_p_i * div_phi_u_j;
 
@@ -192,7 +194,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
 
       // Forcing term
       const Tensor<1, dim> force = scratch_data.force[q];
-
+      double               mass_source = scratch_data.mass_source[q];
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
@@ -215,7 +217,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
-                             viscosity * velocity_laplacian - force +
+                             viscosity * velocity_laplacian - force +mass_source * velocity+
                              strong_residual_vec[q];
 
       // Assembly of the right-hand side
@@ -236,8 +238,9 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
               -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) -
               velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
               force * phi_u_i -
+               mass_source * velocity * phi_u_i-
               // Continuity
-              velocity_divergence * phi_p_i) *
+              velocity_divergence * phi_p_i+ mass_source* phi_p_i) *
             JxW;
 
           // PSPG GLS term
