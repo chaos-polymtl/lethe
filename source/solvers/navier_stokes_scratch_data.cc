@@ -123,6 +123,20 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
   cell_void_fraction = std::vector<double>(n_global_max_particles_per_cell);
 }
 
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_heat_transfer(
+  const FiniteElement<dim> &fe,
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
+{
+  gather_temperature = true;
+  fe_values_temperature =
+    std::make_shared<FEValues<dim>>(mapping, fe, quadrature, update_values);
+
+  temperature_values = std::vector<double>(this->n_q_points);
+}
+
 
 template class NavierStokesScratchData<2>;
 template class NavierStokesScratchData<3>;
