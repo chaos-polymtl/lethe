@@ -14,8 +14,9 @@
  * ---------------------------------------------------------------------*/
 
 
-#include <core/simulation_control.h>
 #include <core/boundary_conditions.h>
+#include <core/simulation_control.h>
+
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_scratch_data.h>
 
@@ -350,10 +351,11 @@ template <int dim>
 class PressureBoundaryCondition : public NavierStokesAssemblerBase<dim>
 {
 public:
-  PressureBoundaryCondition(std::shared_ptr<SimulationControl> simulation_control,
-                  Parameters::PhysicalProperties     physical_properties,
-                            const BoundaryConditions::NSBoundaryConditions<dim>
-                              &pressure_boundary_conditions_input)
+  PressureBoundaryCondition(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const BoundaryConditions::NSBoundaryConditions<dim>
+      &pressure_boundary_conditions_input)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
     , pressure_boundary_conditions(pressure_boundary_conditions_input)
@@ -381,8 +383,8 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
-  const BoundaryConditions::NSBoundaryConditions<dim> &pressure_boundary_conditions;
-
+  const BoundaryConditions::NSBoundaryConditions<dim>
+    &pressure_boundary_conditions;
 };
 
 /**
@@ -399,9 +401,9 @@ class WeakBoundaryCondition : public NavierStokesAssemblerBase<dim>
 {
 public:
   WeakBoundaryCondition(std::shared_ptr<SimulationControl> simulation_control,
-                            Parameters::PhysicalProperties     physical_properties,
-                            const BoundaryConditions::NSBoundaryConditions<dim>
-                              &pressure_boundary_conditions_input)
+                        Parameters::PhysicalProperties     physical_properties,
+                        const BoundaryConditions::NSBoundaryConditions<dim>
+                          &pressure_boundary_conditions_input)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
     , boundary_conditions(pressure_boundary_conditions_input)
@@ -427,10 +429,9 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
+  std::shared_ptr<SimulationControl>                   simulation_control;
+  Parameters::PhysicalProperties                       physical_properties;
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
-
 };
 
 

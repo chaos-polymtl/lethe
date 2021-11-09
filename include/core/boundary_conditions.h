@@ -117,7 +117,7 @@ namespace BoundaryConditions
   {
   public:
     // Functions for (u,v,w) for all boundaries
-    NSBoundaryFunctions<dim> *bcFunctions;
+    NSBoundaryFunctions<dim> *        bcFunctions;
     NSPressureBoundaryFunctions<dim> *bcPressureFunction;
 
     void
@@ -160,11 +160,13 @@ namespace BoundaryConditions
   NSBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm,
                                                  unsigned int      i_bc)
   {
-    prm.declare_entry("type",
-                      "noslip",
-                      Patterns::Selection("noslip|slip|function|periodic|pressure|function weak"),
-                      "Type of boundary condition"
-                      "Choices are <noslip|slip|function|periodic|pressure|function weak>.");
+    prm.declare_entry(
+      "type",
+      "noslip",
+      Patterns::Selection(
+        "noslip|slip|function|periodic|pressure|function weak"),
+      "Type of boundary condition"
+      "Choices are <noslip|slip|function|periodic|pressure|function weak>.");
 
 
     prm.declare_entry("id",
@@ -319,16 +321,15 @@ namespace BoundaryConditions
         "false",
         Patterns::Bool(),
         "Bool to define if the boundary condition is time dependent");
-      prm.declare_entry(
-        "beta",
-        "0",
-        Patterns::Double(),
-        "penalty parameter for weak boundary condition");
+      prm.declare_entry("beta",
+                        "0",
+                        Patterns::Double(),
+                        "penalty parameter for weak boundary condition");
       this->id.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
       this->type.resize(this->max_size);
-      bcFunctions = new NSBoundaryFunctions<dim>[this->max_size];
+      bcFunctions        = new NSBoundaryFunctions<dim>[this->max_size];
       bcPressureFunction = new NSPressureBoundaryFunctions<dim>[this->max_size];
       for (unsigned int n = 0; n < this->max_size; n++)
         {
@@ -356,7 +357,7 @@ namespace BoundaryConditions
     {
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
-      this->beta =prm.get_double("beta");
+      this->beta           = prm.get_double("beta");
       this->type.resize(this->size);
       this->id.resize(this->size);
       this->periodic_direction.resize(this->size);
@@ -785,10 +786,10 @@ public:
  */
 template <int dim>
 double
-NavierStokesPressureFunctionDefined<dim>::value(const Point<dim> & point,
-                                        const unsigned int component) const
+NavierStokesPressureFunctionDefined<dim>::value(
+  const Point<dim> & point,
+  const unsigned int component) const
 {
-
   if (component == dim)
     {
       return p->value(point);

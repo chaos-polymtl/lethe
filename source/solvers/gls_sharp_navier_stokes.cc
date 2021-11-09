@@ -812,7 +812,10 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                 {
                   double present_velocity_divergence =
                     trace(present_velocity_gradients[q]);
-                  double mass_source=this->simulation_parameters.source_term->navier_stokes_source.value(fe_values.get_quadrature_points()[q],dim);
+                  double mass_source =
+                    this->simulation_parameters.source_term
+                      ->navier_stokes_source.value(
+                        fe_values.get_quadrature_points()[q], dim);
 
 
                   // Find the values of x and u_h (the finite element solution)
@@ -837,7 +840,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                   if (cell_is_inside == false)
                     {
                       total_velocity_divergence +=
-                        (present_velocity_divergence-mass_source) * fe_values.JxW(q);
+                        (present_velocity_divergence - mass_source) *
+                        fe_values.JxW(q);
                       double p_sim =
                         local_pressure_values[q] - average_pressure;
                       double p_exact =
@@ -1966,14 +1970,14 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
   this->assemblers.clear();
   assemblers_inside_ib.clear();
 
-  this->assemblers.push_back(
-    std::make_shared<WeakBoundaryCondition<dim>>(
-      this->simulation_control,
-      this->simulation_parameters.physical_properties,this->simulation_parameters.boundary_conditions));
-  this->assemblers.push_back(
-    std::make_shared<PressureBoundaryCondition<dim>>(
-      this->simulation_control,
-      this->simulation_parameters.physical_properties,this->simulation_parameters.boundary_conditions));
+  this->assemblers.push_back(std::make_shared<WeakBoundaryCondition<dim>>(
+    this->simulation_control,
+    this->simulation_parameters.physical_properties,
+    this->simulation_parameters.boundary_conditions));
+  this->assemblers.push_back(std::make_shared<PressureBoundaryCondition<dim>>(
+    this->simulation_control,
+    this->simulation_parameters.physical_properties,
+    this->simulation_parameters.boundary_conditions));
 
   if (this->simulation_parameters.multiphysics.free_surface)
     {
