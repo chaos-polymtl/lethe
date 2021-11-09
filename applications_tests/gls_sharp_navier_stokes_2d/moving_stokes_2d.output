@@ -1,0 +1,26 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       512
+   Number of degrees of freedom: 1683
+   Volume of triangulation:      8
+
+*****************************************************************
+Transient iteration : 1        Time : 1        Time step : 1        CFL : 0       
+*****************************************************************
+div u : -3.39537e-06
+L2 error velocity : 0.0398503 L2 error pressure: 1.54292
+
+*****************************************************************
+Transient iteration : 2        Time : 2        Time step : 1        CFL : 5.96587 
+*****************************************************************
+div u : 3.48634e-06
+L2 error velocity : 0.0388646 L2 error pressure: 1.87264
+
+*****************************************************************
+Transient iteration : 3        Time : 3        Time step : 1        CFL : 6.44675 
+*****************************************************************
+div u : -1.01832e-06
+L2 error velocity : 0.00661909 L2 error pressure: 0.239008
+ time  error_velocity error_pressure 
+1.0000 3.985034e-02   1.5429         
+2.0000 3.886458e-02   1.8726         
+3.0000 6.619088e-03   0.2390         

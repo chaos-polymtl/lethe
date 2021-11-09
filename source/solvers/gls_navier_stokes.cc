@@ -270,23 +270,6 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
               this->fe->component_mask(velocities));
           }
         else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::pressure)
-          {
-            this->simulation_parameters.boundary_conditions.bcPressureFunction[i_bc]
-              .p.set_time(time);
-            /*VectorTools::interpolate_boundary_values(
-              *this->mapping,
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              NavierStokesPressureFunctionDefined<dim>(
-                &this->simulation_parameters.boundary_conditions
-                   .bcPressureFunction[i_bc]
-                   .p),
-              nonzero_constraints,
-              this->fe->component_mask(pressure));*/
-          }
-
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
@@ -346,17 +329,11 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
         }
       else if  (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::pressure){
-          /*VectorTools::interpolate_boundary_values(
-            *this->mapping,
-            this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
-            dealii::Functions::ZeroFunction<dim>(dim + 1),
-            this->zero_constraints,
-            this->fe->component_mask(pressure));*/
+          /*do nothing*/
         }
       else if  (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::function_weak){
-
+          /*do nothing*/
         }
       else
         {
