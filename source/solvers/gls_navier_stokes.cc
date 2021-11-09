@@ -357,7 +357,14 @@ void
 GLSNavierStokesSolver<dim>::setup_assemblers()
 {
   this->assemblers.clear();
-
+  this->assemblers.push_back(std::make_shared<WeakBoundaryCondition<dim>>(
+    this->simulation_control,
+    this->simulation_parameters.physical_properties,
+    this->simulation_parameters.boundary_conditions));
+  this->assemblers.push_back(std::make_shared<PressureBoundaryCondition<dim>>(
+    this->simulation_control,
+    this->simulation_parameters.physical_properties,
+    this->simulation_parameters.boundary_conditions));
   if (this->simulation_parameters.multiphysics.free_surface)
     {
       // Time-stepping schemes
