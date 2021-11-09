@@ -25,14 +25,9 @@
 #ifndef lethe_free_surface_h
 #define lethe_free_surface_h
 
-#include <core/bdf.h>
-#include <core/simulation_control.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/multiphysics_interface.h>
-
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
@@ -44,6 +39,13 @@
 
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <deal.II/numerics/error_estimator.h>
+
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
 
 
 template <int dim>
@@ -203,6 +205,22 @@ public:
   post_mesh_adaptation();
 
   /**
+   * @brief Allow the refinement of the mesh.
+   *  Contrary to the NavierStokes solver, only one method is implemented here.
+   */
+  void
+  refine_mesh();
+
+  /**
+   * @brief Allow the refinement of the mesh based on the Kelly error estimator.
+   * See :
+   * https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html
+   * for more information on the Kelly error estimator.
+   */
+  void
+  refine_mesh_kelly();
+
+  /**
    * @brief Prepares auxiliary physics to write checkpoint
    */
   void
@@ -307,6 +325,8 @@ private:
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;
 
+  // Variables for mesh refinement with Kelly estimator
+  //  TimerOutput computing_timer;
 
   // Solution storage:
   IndexSet locally_owned_dofs;

@@ -1098,7 +1098,7 @@ namespace Parameters
 
       prm.declare_entry("variable",
                         "velocity",
-                        Patterns::Selection("velocity|pressure"),
+                        Patterns::Selection("velocity|pressure|phase"),
                         "Variable for kelly estimation"
                         "Choices are <velocity|pressure>.");
       prm.declare_entry(
