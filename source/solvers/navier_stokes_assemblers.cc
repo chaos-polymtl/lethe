@@ -1218,8 +1218,7 @@ WeakBoundaryCondition<dim>::assemble_matrix(
   const FiniteElement<dim> &fe           = scratch_data.fe_face_values.get_fe();
   auto &                    local_matrix = copy_data.local_matrix;
   double                    beta         = boundary_conditions.beta;
-  // Pressure boundary condition, loop on faces
-  // implementation similar to deal.ii step-22
+
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
       if (this->boundary_conditions.type[i_bc] ==

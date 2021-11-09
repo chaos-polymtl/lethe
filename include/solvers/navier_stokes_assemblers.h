@@ -339,11 +339,11 @@ public:
 };
 
 /**
- * @brief Class that assembles a Poisson problem for all velocity components and pressure variables .
- * This class assembles the weak form of: d^2 U/dx^2=0 and  d^2 P/dx^2=0
+ * @brief Class that assembles a Neumann boundary condition.
+ * This class assembles the weak form of: (p-mu*grad_u)*n at the boundary
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
- *
+ * @tparam pressure_boundary_condition The boundary condition objects us to store the function.
  * @ingroup assemblers
  */
 
@@ -388,11 +388,11 @@ public:
 };
 
 /**
- * @brief Class that assembles a Poisson problem for all velocity components and pressure variables .
- * This class assembles the weak form of: d^2 U/dx^2=0 and  d^2 P/dx^2=0
+ * @brief Class that assembles the weak formulation of a function boundary condition using the Nitsche method
+ * This class assembles the weak form of: (u_ib-u)
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
- *
+ * @tparam pressure_boundary_condition The boundary condition objects us to store the function.
  * @ingroup assemblers
  */
 
