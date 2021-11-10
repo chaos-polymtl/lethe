@@ -1032,12 +1032,6 @@ PressureBoundaryCondition<dim>::assemble_matrix(
       identity[d][d] = 1;
     }
 
-  std::vector<std::vector<Tensor<1, dim>>> gn;
-  gn =
-    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
-                                             std::vector<Tensor<1, dim>>(
-                                               scratch_data.n_faces_q_points));
-
   std::vector<std::vector<std::vector<Tensor<1, dim>>>> gn_j;
   gn_j = std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
     scratch_data.n_faces,
