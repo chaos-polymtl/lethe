@@ -13,10 +13,7 @@ subsection rpt parameters
     set peak-to-total ratio  			 = 0.4
     set sampling time        			 = 1
     set gamma-rays emitted        		 = 2
-    set attenuation coefficient detector = 21.477
-    set dead time       				 = 1e-5
-    set activity  						 = 2e6
-    set attenuation coefficient reactor  = 10
+    set attenuation coefficient detector  = 21.477
 end
 
 
@@ -37,7 +34,7 @@ subsection detector parameters
 	set detector positions file          = positions.detector
     set radius       			    	 = 0.0381 
     set length					         = 0.0762
+    set dead time       		 = 1e-5,1e-5,1e-5,1e-5,1e-5,1e-5
+    set activity  			 = 2e6,2e6,2e6,2e6,2e6,2e6
+    set attenuation coefficient reactor  = 10,10,10,10,10,10
 end
-
-
-
