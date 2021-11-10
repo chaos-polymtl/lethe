@@ -47,6 +47,11 @@ public:
    *
    * @param rpt_parameters All other parameters needed for the count calculation
    *
+   * @param dead_time Dead_time defines the parameter dead-time for the detector
+   *
+   * @param activity Activity defines the activity of the radioactive source with respect to the detector
+   *
+   * @param attenuation_coefficient_reactor Attenuation_coefficient_reactor defines the homogeneous attenuation coefficient of the reactor with respect to the reactor
    */
   ParticleDetectorInteractions(RadioParticle<dim> &       particle,
                                Detector<dim> &            detector,
@@ -57,6 +62,9 @@ public:
     , detector_radius(detector.get_radius())
     , detector_length(detector.get_length())
     , parameters(rpt_parameters)
+    , dead_time(detector.dead_time)
+    , activity(detector.activity)
+    , attenuation_coefficient_reactor(detector.attenuation_coefficient_reactor)
   {}
 
   /**
@@ -176,6 +184,9 @@ private:
 
   double                    detector_radius;
   double                    detector_length;
+  double                    dead_time;
+  double                    activity;
+  double                    attenuation_coefficient_reactor;
   Parameters::RPTParameters parameters;
 };
 
