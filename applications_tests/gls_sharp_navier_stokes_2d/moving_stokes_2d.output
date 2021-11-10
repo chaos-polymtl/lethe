@@ -7,20 +7,23 @@ Running on 1 MPI rank(s)...
 Transient iteration : 1        Time : 1        Time step : 1        CFL : 0       
 *****************************************************************
 div u : -3.39537e-06
-L2 error velocity : 0.0398503 L2 error pressure: 1.54292
+error at the weak BC : 0.00206288
+L2 error velocity : 0.0398487 L2 error pressure: 1.5449
 
 *****************************************************************
 Transient iteration : 2        Time : 2        Time step : 1        CFL : 5.96587 
 *****************************************************************
-div u : 3.48634e-06
-L2 error velocity : 0.0388646 L2 error pressure: 1.87264
+div u : 3.48635e-06
+error at the weak BC : 0.00345113
+L2 error velocity : 0.03886 L2 error pressure: 1.87087
 
 *****************************************************************
 Transient iteration : 3        Time : 3        Time step : 1        CFL : 6.44675 
 *****************************************************************
 div u : -1.01832e-06
-L2 error velocity : 0.00661909 L2 error pressure: 0.239008
+error at the weak BC : 0.0004696
+L2 error velocity : 0.00661858 L2 error pressure: 0.238988
  time  error_velocity error_pressure 
-1.0000 3.985034e-02   1.5429         
-2.0000 3.886458e-02   1.8726         
-3.0000 6.619088e-03   0.2390         
+1.0000 3.984867e-02   1.5449         
+2.0000 3.885999e-02   1.8709         
+3.0000 6.618581e-03   0.2390         

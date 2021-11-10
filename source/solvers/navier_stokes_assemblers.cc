@@ -1384,5 +1384,5 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
     }
 }
 
-template class WeakBoundaryCondition<2>;
-template class WeakBoundaryCondition<3>;
+template class WeakDirichletBoundaryCondition<2>;
+template class WeakDirichletBoundaryCondition<3>;
