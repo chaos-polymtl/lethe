@@ -302,10 +302,11 @@ namespace BoundaryConditions
         "false",
         Patterns::Bool(),
         "Bool to define if the boundary condition is time dependent");
-      prm.declare_entry("beta",
-                        "0",
-                        Patterns::Double(),
-                        "penalty parameter for weak boundary condition imposed through Nitsche's method");
+      prm.declare_entry(
+        "beta",
+        "0",
+        Patterns::Double(),
+        "penalty parameter for weak boundary condition imposed through Nitsche's method");
       this->id.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
