@@ -739,8 +739,7 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &p,
 }
 
 /**
- * @brief This class implements a boundary conditions for the Navier-Stokes equation
- * where the velocity component are defined using individual functions
+ * @brief This class implements a pressure boundary condition for the Navier-Stokes equations.
  */
 template <int dim>
 class NavierStokesPressureFunctionDefined : public Function<dim>
