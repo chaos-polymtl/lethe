@@ -1051,19 +1051,25 @@ PressureBoundaryCondition<dim>::assemble_matrix(
 
   // Robin boundary condition, loop on faces (Newton's cooling law)
   // implementation similar to deal.ii step-7
+  // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->pressure_boundary_conditions.size;
        ++i_bc)
     {
+      // Check if this BC is a pressure BC.
       if (this->pressure_boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::pressure)
         {
+          // Loop over the faces of the cell.
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
+              //Check if the face is on a boundary
               if (scratch_data.is_boundary_face[f])
                 {
+                  //Check if the face is part of the boundary that as a pressure BC.
                   if (scratch_data.boundary_face_id[f] ==
                       this->pressure_boundary_conditions.id[i_bc])
                     {
+                      //Assemble the matrix of the BC
                       for (unsigned int q = 0;
                            q < scratch_data.n_faces_q_points;
                            ++q)
@@ -1121,11 +1127,7 @@ PressureBoundaryCondition<dim>::assemble_rhs(
   std::vector<std::vector<double>> prescribed_pressure_values;
   prescribed_pressure_values = std::vector<std::vector<double>>(
     scratch_data.n_faces, std::vector<double>(scratch_data.n_faces_q_points));
-  std::vector<std::vector<Tensor<1, dim>>> gn;
-  gn =
-    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
-                                             std::vector<Tensor<1, dim>>(
-                                               scratch_data.n_faces_q_points));
+
   std::vector<std::vector<Tensor<1, dim>>> gn_bc;
   gn_bc =
     std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
@@ -1137,22 +1139,27 @@ PressureBoundaryCondition<dim>::assemble_rhs(
 
   // Pressure boundary condition, loop on faces
   // implementation similar to deal.ii step-22
+  // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->pressure_boundary_conditions.size;
        ++i_bc)
     {
+      // Check if this BC is a pressure BC.
       if (this->pressure_boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::pressure)
         {
+          // Loop over the faces of the cell.
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
+              //Check if the face is on a boundary
               if (scratch_data.is_boundary_face[f])
                 {
                   NavierStokesPressureFunctionDefined<dim> function_p(
                     &pressure_boundary_conditions.bcPressureFunction[i_bc].p);
-
+                  //Check if the face is part of the boundary that as a pressure BC.
                   if (scratch_data.boundary_face_id[f] ==
                       this->pressure_boundary_conditions.id[i_bc])
                     {
+                      //Assemble the rhs of the BC
                       for (unsigned int q = 0;
                            q < scratch_data.n_faces_q_points;
                            ++q)
@@ -1218,19 +1225,24 @@ WeakBoundaryCondition<dim>::assemble_matrix(
   const FiniteElement<dim> &fe           = scratch_data.fe_face_values.get_fe();
   auto &                    local_matrix = copy_data.local_matrix;
   double                    beta         = boundary_conditions.beta;
-
+  // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
+      // Check if this BC is a pressure BC.
       if (this->boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::function_weak)
         {
+          // Loop over the faces of the cell.
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
+              //Check if the face is on a boundary
               if (scratch_data.is_boundary_face[f])
                 {
+                  //Check if the face is part of the boundary that as a pressure BC.
                   if (scratch_data.boundary_face_id[f] ==
                       this->boundary_conditions.id[i_bc])
                     {
+                      //Assemble the matrix of the BC
                       for (unsigned int q = 0;
                            q < scratch_data.n_faces_q_points;
                            ++q)
@@ -1254,7 +1266,12 @@ WeakBoundaryCondition<dim>::assemble_matrix(
                                           penalty_parameter * beta *
                                           scratch_data.face_phi_u[f][q][i] *
                                           scratch_data.face_phi_u[f][q][j] *
-                                          JxW;
+                                          JxW-
+                                          (scratch_data.face_phi_u[f][q][j] *
+                                           (scratch_data.face_grad_phi_u[f][q][i] *
+                                            scratch_data.face_normal[f][q]))*
+                                            JxW
+                                          ;
                                     }
                                 }
                             }
@@ -1301,17 +1318,20 @@ WeakBoundaryCondition<dim>::assemble_rhs(
   const FiniteElement<dim> &fe        = scratch_data.fe_face_values.get_fe();
   auto &                    local_rhs = copy_data.local_rhs;
   double                    beta      = boundary_conditions.beta;
-  // Pressure boundary condition, loop on faces
-  // implementation similar to deal.ii step-22
+  // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
+      // Check if this BC is a pressure BC.
       if (this->boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::function_weak)
         {
+          // Loop over the faces of the cell.
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
+              //Check if the face is on a boundary
               if (scratch_data.is_boundary_face[f])
                 {
+                  //Check if the face is part of the boundary that as a pressure BC.
                   if (scratch_data.boundary_face_id[f] ==
                       this->boundary_conditions.id[i_bc])
                     {
@@ -1337,20 +1357,25 @@ WeakBoundaryCondition<dim>::assemble_rhs(
                                 fe.system_to_component_index(i).first;
                               if (comp_i < dim)
                                 {
-                                  double this_rhs =
+                                  double this_rhs_beta =
                                     -penalty_parameter * beta *
                                       scratch_data
                                         .face_velocity_values[f][q][comp_i] *
                                       scratch_data.face_phi_u[f][q][i][comp_i] *
                                       JxW +
                                     penalty_parameter * beta *
-                                      function_v.value(
-                                        scratch_data
-                                          .face_quadrature_points[f][q],
-                                        comp_i) *
+                                      prescribed_velocity_values[f][q][comp_i] *
                                       scratch_data.face_phi_u[f][q][i][comp_i] *
                                       JxW;
-                                  local_rhs(i) += this_rhs;
+                                  double this_rhs_grad =
+                                    (-(prescribed_velocity_values[f][q] *
+                                       (scratch_data.face_grad_phi_u[f][q][i] *
+                                        scratch_data.face_normal[f][q])) +
+                                     (scratch_data.face_velocity_values[f][q] *
+                                      (scratch_data.face_grad_phi_u[f][q][i] *
+                                       scratch_data.face_normal[f][q]))) *
+                                      JxW;
+                                  local_rhs(i) += this_rhs_beta+this_rhs_grad;
                                 }
                             }
                         }

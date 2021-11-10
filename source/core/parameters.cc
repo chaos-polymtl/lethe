@@ -869,9 +869,9 @@ namespace Parameters
       prm.declare_entry(
         "verbosity",
         "verbose",
-        Patterns::Selection("quiet|verbose"),
+        Patterns::Selection("quiet|verbose|extra verbose"),
         "State whether output from solver runs should be printed. "
-        "Choices are <quiet|verbose>.");
+        "Choices are <quiet|verbose|extra verbose>.");
       prm.declare_entry(
         "method",
         "gmres",
@@ -966,11 +966,14 @@ namespace Parameters
   {
     prm.enter_subsection("linear solver");
     {
+
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
         verbosity = Parameters::Verbosity::verbose;
       else if (op == "quiet")
         verbosity = Parameters::Verbosity::quiet;
+      else if (op == "extra verbose")
+        verbosity = Parameters::Verbosity::extra_verbose;
       else
         throw(
           std::runtime_error("Unknown verbosity mode for the linear solver"));
