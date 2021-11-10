@@ -305,7 +305,7 @@ namespace BoundaryConditions
       prm.declare_entry("beta",
                         "0",
                         Patterns::Double(),
-                        "penalty parameter for weak boundary condition");
+                        "penalty parameter for weak boundary condition imposed through Nitsche's method");
       this->id.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
