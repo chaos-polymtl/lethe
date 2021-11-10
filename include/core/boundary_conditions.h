@@ -117,8 +117,8 @@ namespace BoundaryConditions
   {
   public:
     // Functions for (u,v,w) for all boundaries
-    NSBoundaryFunctions<dim> *        bcFunctions;
-    NSPressureBoundaryFunctions<dim> *bcPressureFunction;
+    std::shared_ptr<NSBoundaryFunctions<dim>[]>         bcFunctions;
+    std::shared_ptr<NSPressureBoundaryFunctions<dim>[]> bcPressureFunction;
 
     void
     parse_boundary(ParameterHandler &prm, unsigned int i_bc);
@@ -230,31 +230,12 @@ namespace BoundaryConditions
       this->type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
       this->type[i_bc] = BoundaryType::slip;
-    if (op == "function")
+    if (op == "function" || op == "function weak")
       {
-        this->type[i_bc] = BoundaryType::function;
-        prm.enter_subsection("u");
-        bcFunctions[i_bc].u.parse_parameters(prm);
-        prm.leave_subsection();
-
-        prm.enter_subsection("v");
-        bcFunctions[i_bc].v.parse_parameters(prm);
-        prm.leave_subsection();
-
-        prm.enter_subsection("w");
-        bcFunctions[i_bc].w.parse_parameters(prm);
-        prm.leave_subsection();
-
-        prm.enter_subsection("center of rotation");
-        bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
-        bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
-        if (dim == 3)
-          bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
-        prm.leave_subsection();
-      }
-    if (op == "function weak")
-      {
-        this->type[i_bc] = BoundaryType::function_weak;
+        if (op == "function")
+          this->type[i_bc] = BoundaryType::function;
+        else
+          this->type[i_bc] = BoundaryType::function_weak;
         prm.enter_subsection("u");
         bcFunctions[i_bc].u.parse_parameters(prm);
         prm.leave_subsection();
@@ -329,8 +310,9 @@ namespace BoundaryConditions
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
       this->type.resize(this->max_size);
-      bcFunctions        = new NSBoundaryFunctions<dim>[this->max_size];
-      bcPressureFunction = new NSPressureBoundaryFunctions<dim>[this->max_size];
+      bcFunctions = std::make_shared<NSBoundaryFunctions<dim>[this->max_size]>;
+      bcPressureFunction =
+        std::make_shared<NSPressureBoundaryFunctions<dim>[this->max_size]>;
       for (unsigned int n = 0; n < this->max_size; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
@@ -736,7 +718,7 @@ public:
  */
 template <int dim>
 double
-NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
+NavierStokesFunctionDefined<dim>::value(const Point<dim>  &p,
                                         const unsigned int component) const
 {
   Assert(component < this->n_components,
@@ -787,7 +769,7 @@ public:
 template <int dim>
 double
 NavierStokesPressureFunctionDefined<dim>::value(
-  const Point<dim> & point,
+  const Point<dim>  &point,
   const unsigned int component) const
 {
   if (component == dim)

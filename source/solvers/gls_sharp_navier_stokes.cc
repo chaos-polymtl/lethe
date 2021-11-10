@@ -2059,14 +2059,31 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
   this->assemblers.clear();
   assemblers_inside_ib.clear();
 
-  this->assemblers.push_back(std::make_shared<WeakBoundaryCondition<dim>>(
-    this->simulation_control,
-    this->simulation_parameters.physical_properties,
-    this->simulation_parameters.boundary_conditions));
-  this->assemblers.push_back(std::make_shared<PressureBoundaryCondition<dim>>(
-    this->simulation_control,
-    this->simulation_parameters.physical_properties,
-    this->simulation_parameters.boundary_conditions));
+  bool need_boundary_assembler=false;
+  //Loop over the boundary to check if they need assembler on their face.
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions
+            .type[i_bc] ==
+          BoundaryConditions::BoundaryType::function_weak || this->simulation_parameters.boundary_conditions
+              .type[i_bc] ==
+            BoundaryConditions::BoundaryType::pressure)
+      need_boundary_assembler=true;
+    }
+  if(need_boundary_assembler)
+    {
+      this->assemblers.push_back(std::make_shared<WeakBoundaryCondition<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.physical_properties,
+        this->simulation_parameters.boundary_conditions));
+      this->assemblers.push_back(
+        std::make_shared<PressureBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties,
+          this->simulation_parameters.boundary_conditions));
+    }
 
   if (this->simulation_parameters.multiphysics.free_surface)
     {
