@@ -214,7 +214,8 @@ DEMSolver<dim>::cell_weight(
   // expensive cell operations) to much larger than 1000 (expensive
   // particle operations, cheap cell operations, like in this case).
   // This parameter will need to be tuned for the case of DEM.
-  const unsigned int particle_weight = 10000;
+  const unsigned int particle_weight =
+    this->parameters.model_parameters.load_balance_particle_weight;
 
   // This does not use adaptive refinement, therefore every cell
   // should have the status CELL_PERSIST. However this function can also

@@ -418,7 +418,7 @@ namespace Parameters
 
         prm.declare_entry(
           "load balance particle weight",
-          "2000",
+          "10000",
           Patterns::Integer(),
           "The particle weight based on a default cell weight of 1000");
 

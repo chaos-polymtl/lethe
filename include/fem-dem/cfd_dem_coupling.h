@@ -86,31 +86,6 @@ public:
   void
   load_balance();
 
-  /**
-   * Finds load-balance step for single-step load-balance
-   */
-  inline bool
-  check_load_balance_once(const unsigned int & /*counter*/);
-
-  /**
-   * For cases where load balance method is equal to none
-   */
-  inline bool
-  no_load_balance(const unsigned int & /*counter*/);
-
-  /**
-   * Finds load-balance step for frequent load-balance
-   */
-  inline bool
-  check_load_balance_frequent(const unsigned int & /*counter*/);
-
-
-  /**
-   * Finds load-balance step for dynamic load-balance
-   */
-  inline bool
-  check_load_balance_dynamic(const unsigned int & /*counter*/);
-
 protected:
 private:
   /**
@@ -159,19 +134,6 @@ private:
    */
   void
   particle_wall_contact_force();
-
-  /**
-   * Finds contact search steps for constant contact search method
-   */
-  bool
-  check_contact_search_step_constant(const unsigned int &counter);
-
-
-  /**
-   * Finds contact search steps for dynamic contact search method
-   */
-  bool
-  check_contact_search_step_dynamic(const unsigned int & /*counter*/);
 
   /**
    * @brief Updates moment of inertia container after sorting particles
@@ -236,7 +198,6 @@ private:
   double                      neighborhood_threshold_squared;
   double                      maximum_particle_diameter;
   double                      standard_deviation_multiplier;
-  unsigned int                contact_detection_frequency;
   unsigned int                load_balancing_frequency;
   double                      smallest_contact_search_criterion;
   double                      triangulation_cell_diameter;

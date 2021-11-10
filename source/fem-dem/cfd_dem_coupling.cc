@@ -12,6 +12,131 @@
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
 
+
+template <int dim>
+bool
+check_contact_detection_method(
+  unsigned int                          counter,
+  CFDDEMSimulationParameters<dim> &     param,
+  std::vector<double> &                 displacement,
+  Particles::ParticleHandler<dim, dim> &particle_handler,
+  MPI_Comm                              mpi_communicator,
+  std::shared_ptr<SimulationControl>    simulation_control,
+  bool                                  contact_detection_step,
+  bool                                  checkpoint_step,
+  bool                                  load_balance_step,
+  double                                smallest_contact_search_criterion)
+{
+  if (param.dem_parameters.model_parameters.contact_detection_method ==
+      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
+    {
+      return ((counter % param.dem_parameters.model_parameters
+                           .contact_detection_frequency) == 0);
+    }
+  else if (param.dem_parameters.model_parameters.contact_detection_method ==
+           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
+             dynamic)
+    { // The sorting into subdomain step checks whether or not the current time
+      // step
+      // is a step that requires sorting particles into subdomains and cells.
+      // This is applicable if any of the following three conditions apply:if
+      // its a load balancing step, a restart simulation step, or a contact
+      // detection tsep.
+      bool sorting_in_subdomains_step =
+        (checkpoint_step || load_balance_step || contact_detection_step);
+
+      if (sorting_in_subdomains_step)
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+        displacement.resize(particle_handler.get_max_local_particle_index());
+#else
+        {
+          unsigned int max_particle_id = 0;
+          for (const auto &particle : particle_handler)
+            max_particle_id = std::max(max_particle_id, particle.get_id());
+          displacement.resize(max_particle_id + 1);
+        }
+#endif
+
+      contact_detection_step =
+        find_contact_detection_step<dim>(particle_handler,
+                                         simulation_control->get_time_step() /
+                                           param.cfd_dem.coupling_frequency,
+                                         smallest_contact_search_criterion,
+                                         mpi_communicator,
+                                         sorting_in_subdomains_step,
+                                         displacement);
+
+      return contact_detection_step;
+    }
+  else
+    {
+      throw std::runtime_error(
+        "Specified contact detection method is not valid");
+    }
+}
+
+template <int dim>
+bool
+check_load_balance_method(
+  CFDDEMSimulationParameters<dim> &     param,
+  Particles::ParticleHandler<dim, dim> &particle_handler,
+  const MPI_Comm &                      mpi_communicator,
+  const unsigned int                    n_mpi_processes,
+  std::shared_ptr<SimulationControl>    simulation_control)
+{ // Setting load-balance method (single-step, frequent or dynamic)
+  if (param.dem_parameters.model_parameters.load_balance_method ==
+      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
+    {
+      return (simulation_control->get_step_number() ==
+              param.dem_parameters.model_parameters.load_balance_step);
+    }
+  else if (param.dem_parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::frequent)
+    {
+      return (simulation_control->get_step_number() %
+                param.dem_parameters.model_parameters.load_balance_frequency ==
+              0);
+    }
+  else if (param.dem_parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::dynamic)
+    {
+      bool load_balance_step = false;
+      if (simulation_control->get_step_number() %
+            param.dem_parameters.model_parameters
+              .dynamic_load_balance_check_frequency ==
+          0)
+        {
+          unsigned int maximum_particle_number_on_proc = 0;
+          unsigned int minimum_particle_number_on_proc = 0;
+
+          maximum_particle_number_on_proc =
+            Utilities::MPI::max(particle_handler.n_locally_owned_particles(),
+                                mpi_communicator);
+          minimum_particle_number_on_proc =
+            Utilities::MPI::min(particle_handler.n_locally_owned_particles(),
+                                mpi_communicator);
+
+          if ((maximum_particle_number_on_proc -
+               minimum_particle_number_on_proc) >
+              param.dem_parameters.model_parameters.load_balance_threshold *
+                (particle_handler.n_global_particles() / n_mpi_processes))
+            {
+              load_balance_step = true;
+            }
+        }
+      return load_balance_step;
+    }
+  else if (param.dem_parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
+    {
+      return false;
+    }
+  else
+    {
+      throw std::runtime_error("Specified load balance method is not valid");
+    }
+}
+
 // Constructor for class CFD-DEM
 template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
@@ -20,15 +145,16 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
-  contact_detection_frequency =
-    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-      .contact_detection_frequency;
-
   standard_deviation_multiplier = 2.5;
 
   load_balancing_frequency = this->cfd_dem_simulation_parameters.dem_parameters
                                .model_parameters.load_balance_frequency;
 
+  // In the case the simulation is being restarted from a checkpoint file, the
+  // checkpoint_step parameter is set to true. This allows to perform all
+  // operations related to restarting a simulation. Once all operations have
+  // been performed, this checkpoint_step is reset to false. It is only set once
+  // and reset once since restarting only occurs once.
   if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
         .restart == true)
     checkpoint_step = true;
@@ -85,38 +211,9 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   dem_time_step =
     this->simulation_control->get_time_step() / coupling_frequency;
 
-  if (dem_parameters.model_parameters.contact_detection_method ==
-      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-    {
-      check_contact_search_step =
-        &CFDDEMSolver<dim>::check_contact_search_step_constant;
-    }
-  else if (dem_parameters.model_parameters.contact_detection_method ==
-           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
-             dynamic)
-    {
-      check_contact_search_step =
-        &CFDDEMSolver<dim>::check_contact_search_step_dynamic;
-    }
-  else
-    {
-      throw std::runtime_error(
-        "Specified contact detection method is not valid");
-    }
-
-  // In order to consider the particles when repartitioning the triangulation
-  // the algorithm needs to know three things:
-  //
-  // 1. How much weight to assign to each cell (how many particles are in
-  // there)
-  // 2. How to pack the particles before shipping data around
-  // 3. How to unpack the particles after repartitioning
-  //
-  // Attach the correct functions to the signals inside
-  // parallel::distributed::Triangulation, which will be called every time the
-  // repartition() or refinement functions are called.
-  // These connections only need to be created once, so we
-  // have set them up in the constructor of this class.
+  // Necessary signals for load balancing. This signals are only connected if
+  // load balancing is enabled. This helps prevent errors in read_dem function
+  // for Deal.II version 9.3
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
@@ -144,6 +241,8 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
           &this->particle_handler,
           false));
     }
+
+  // Necessary signals for solution transfer after load balancing
   parallel_triangulation->signals.pre_distributed_refinement.connect(std::bind(
     &Particles::ParticleHandler<dim>::register_store_callback_function,
     &this->particle_handler));
@@ -167,36 +266,6 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   contact_detection_step = true;
   checkpoint_step        = false;
   load_balance_step      = false;
-
-  // Setting load-balance method (single-step, frequent or dynamic)
-  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-        .load_balance_method ==
-      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
-    {
-      check_load_balance_step = &CFDDEMSolver<dim>::check_load_balance_once;
-    }
-  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::frequent)
-    {
-      check_load_balance_step = &CFDDEMSolver<dim>::check_load_balance_frequent;
-    }
-  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::dynamic)
-    {
-      check_load_balance_step = &CFDDEMSolver<dim>::check_load_balance_dynamic;
-    }
-  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .load_balance_method ==
-           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
-    {
-      check_load_balance_step = &CFDDEMSolver<dim>::no_load_balance;
-    }
-  else
-    {
-      throw std::runtime_error("Specified load balance method is not valid");
-    }
 }
 
 template <int dim>
@@ -479,7 +548,7 @@ CFDDEMSolver<dim>::cell_weight(
 
   // This determines how important particle work is compared to cell
   // work (by default every cell has a weight of 1000).
-  // We set the weight per particle much higher to indicate that
+  // We set the weight per particle higher to indicate that
   // the particle load is more important than the fluid load. The optimal
   // value of this number depends on the application and can range from 0
   // (cheap particle operations, expensive cell operations) to much larger
@@ -656,124 +725,6 @@ CFDDEMSolver<dim>::load_balance()
     }
 
   vf_system.clear();
-}
-
-template <int dim>
-inline bool
-CFDDEMSolver<dim>::check_contact_search_step_constant(
-  const unsigned int &counter)
-{
-  return ((counter % contact_detection_frequency) == 0);
-}
-
-template <int dim>
-inline bool
-CFDDEMSolver<dim>::check_contact_search_step_dynamic(const unsigned int &)
-{
-  // The sorting into subdomain step checks whether or not the current time step
-  // is a step that requires sorting particles into subdomains and cells. This
-  // is applicable if any of the following three conditions apply:if its a load
-  // balancing step, a restart simulation step, or a contact detection tsep.
-  bool sorting_in_subdomains_step =
-    (checkpoint_step || load_balance_step || contact_detection_step);
-
-  if (sorting_in_subdomains_step)
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-    displacement.resize(this->particle_handler.get_max_local_particle_index());
-#else
-    {
-      unsigned int max_particle_id = 0;
-      for (const auto &particle : this->particle_handler)
-        max_particle_id = std::max(max_particle_id, particle.get_id());
-      displacement.resize(max_particle_id + 1);
-    }
-#endif
-
-  contact_detection_step = find_contact_detection_step<dim>(
-    this->particle_handler,
-    this->simulation_control->get_time_step() /
-      this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency,
-    smallest_contact_search_criterion,
-    this->mpi_communicator,
-    sorting_in_subdomains_step,
-    displacement);
-
-  return contact_detection_step;
-}
-
-template <int dim>
-inline bool
-CFDDEMSolver<dim>::no_load_balance(const unsigned int &)
-{
-  return false;
-}
-
-template <int dim>
-inline bool
-CFDDEMSolver<dim>::check_load_balance_once(const unsigned int &)
-{
-  bool load_balance_step = (this->simulation_control->get_step_number() ==
-                            this->cfd_dem_simulation_parameters.dem_parameters
-                              .model_parameters.load_balance_step);
-
-  if (load_balance_step || checkpoint_step)
-    {
-      load_balance();
-    }
-
-  return load_balance_step;
-}
-
-template <int dim>
-inline bool
-CFDDEMSolver<dim>::check_load_balance_frequent(const unsigned int &)
-{
-  bool load_balance_step = (this->simulation_control->get_step_number() %
-                              this->cfd_dem_simulation_parameters.dem_parameters
-                                .model_parameters.load_balance_frequency ==
-                            0);
-
-  if (load_balance_step || checkpoint_step)
-    {
-      load_balance();
-    }
-
-  return load_balance_step;
-}
-
-template <int dim>
-inline bool
-CFDDEMSolver<dim>::check_load_balance_dynamic(const unsigned int &)
-{
-  bool load_balance_step = false;
-  if (this->simulation_control->get_step_number() %
-        this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-          .dynamic_load_balance_check_frequency ==
-      0)
-    {
-      unsigned int maximum_particle_number_on_proc = 0;
-      unsigned int minimum_particle_number_on_proc = 0;
-
-      maximum_particle_number_on_proc =
-        Utilities::MPI::max(this->particle_handler.n_locally_owned_particles(),
-                            this->mpi_communicator);
-      minimum_particle_number_on_proc =
-        Utilities::MPI::min(this->particle_handler.n_locally_owned_particles(),
-                            this->mpi_communicator);
-
-      if ((maximum_particle_number_on_proc - minimum_particle_number_on_proc) >
-            this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-                .load_balance_threshold *
-              (this->particle_handler.n_global_particles() /
-               this->n_mpi_processes) ||
-          checkpoint_step)
-        {
-          load_balance();
-          load_balance_step = true;
-        }
-    }
-
-  return load_balance_step;
 }
 
 template <int dim>
@@ -1020,7 +971,17 @@ void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
   // Check to see if it is contact search step
-  contact_detection_step = (this->*check_contact_search_step)(counter);
+  contact_detection_step =
+    check_contact_detection_method(counter,
+                                   this->cfd_dem_simulation_parameters,
+                                   displacement,
+                                   this->particle_handler,
+                                   this->mpi_communicator,
+                                   this->simulation_control,
+                                   contact_detection_step,
+                                   checkpoint_step,
+                                   load_balance_step,
+                                   smallest_contact_search_criterion);
 
   // Sort particles in cells
   if (contact_detection_step || checkpoint_step || load_balance_step)
@@ -1098,7 +1059,13 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Particles-wall fine search
       particle_wall_fine_search();
 
-      // Reset different steps
+      // Reset different steps. The contact build should be performed everytime
+      // we restart the simulation or everytime load balancing is performed. At
+      // the end of the restart step or the load balance step, and after all
+      // necessary contact build, vector resizing, and solution transfers have
+      // been performed, this functions are set to false. The checkpoint_step
+      // remains false for the duration of the simulation while the load
+      // balancing is reset everytime load balancing is called.
       checkpoint_step   = false;
       load_balance_step = false;
     }
@@ -1400,7 +1367,17 @@ CFDDEMSolver<dim>::solve()
       // The input argument to this function is set to zero as this integer is
       // not used for the check_load_balance_step function and is only important
       // for the check_contact_search_step function.
-      load_balance_step = (this->*check_load_balance_step)(0);
+      load_balance_step =
+        check_load_balance_method(this->cfd_dem_simulation_parameters,
+                                  this->particle_handler,
+                                  this->mpi_communicator,
+                                  this->n_mpi_processes,
+                                  this->simulation_control);
+
+      if (load_balance_step || checkpoint_step)
+        {
+          load_balance();
+        }
     }
   this->finish_simulation();
 }
