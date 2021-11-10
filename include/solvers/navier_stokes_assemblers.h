@@ -397,7 +397,7 @@ public:
  */
 
 template <int dim>
-class WeakBoundaryCondition : public NavierStokesAssemblerBase<dim>
+class WeakDirichletBoundaryCondition : public NavierStokesAssemblerBase<dim>
 {
 public:
   WeakBoundaryCondition(std::shared_ptr<SimulationControl> simulation_control,
