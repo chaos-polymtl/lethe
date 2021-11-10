@@ -361,7 +361,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
   if (this->check_existance_of_bc(
         BoundaryConditions::BoundaryType::function_weak))
     {
-      this->assemblers.push_back(std::make_shared<WeakBoundaryCondition<dim>>(
+      this->assemblers.push_back(std::make_shared<WeakDirichletBoundaryCondition<dim>>(
         this->simulation_control,
         this->simulation_parameters.physical_properties,
         this->simulation_parameters.boundary_conditions));

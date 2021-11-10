@@ -1188,7 +1188,7 @@ template class PressureBoundaryCondition<3>;
 
 template <int dim>
 void
-WeakBoundaryCondition<dim>::assemble_matrix(
+WeakDirichletBoundaryCondition<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1282,7 +1282,7 @@ WeakBoundaryCondition<dim>::assemble_matrix(
 
 template <int dim>
 void
-WeakBoundaryCondition<dim>::assemble_rhs(
+WeakDirichletBoundaryCondition<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {

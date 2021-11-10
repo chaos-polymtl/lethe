@@ -400,7 +400,7 @@ template <int dim>
 class WeakDirichletBoundaryCondition : public NavierStokesAssemblerBase<dim>
 {
 public:
-  WeakBoundaryCondition(std::shared_ptr<SimulationControl> simulation_control,
+  WeakDirichletBoundaryCondition(std::shared_ptr<SimulationControl> simulation_control,
                         Parameters::PhysicalProperties     physical_properties,
                         const BoundaryConditions::NSBoundaryConditions<dim>
                           &pressure_boundary_conditions_input)
