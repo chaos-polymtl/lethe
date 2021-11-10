@@ -305,7 +305,7 @@ namespace BoundaryConditions
       prm.declare_entry("beta",
                         "0",
                         Patterns::Double(),
-                        "penalty parameter for weak boundary condition");
+                        "penalty parameter for weak boundary condition imposed through Nitsche's method");
       this->id.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
@@ -738,8 +738,7 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
 }
 
 /**
- * @brief This class implements a boundary conditions for the Navier-Stokes equation
- * where the velocity component are defined using individual functions
+ * @brief This class implements a pressure boundary condition for the Navier-Stokes equations.
  */
 template <int dim>
 class NavierStokesPressureFunctionDefined : public Function<dim>

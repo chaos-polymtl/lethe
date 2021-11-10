@@ -343,7 +343,7 @@ public:
  * This class assembles the weak form of: (p-mu*grad_u)*n at the boundary
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
- * @tparam pressure_boundary_condition The boundary condition objects us to store the function.
+ * @param pressure_boundary_condition The boundary condition objects use to store the function.
  * @ingroup assemblers
  */
 
@@ -397,7 +397,7 @@ public:
  */
 
 template <int dim>
-class WeakBoundaryCondition : public NavierStokesAssemblerBase<dim>
+class WeakDirichletBoundaryCondition : public NavierStokesAssemblerBase<dim>
 {
 public:
   WeakBoundaryCondition(std::shared_ptr<SimulationControl> simulation_control,
