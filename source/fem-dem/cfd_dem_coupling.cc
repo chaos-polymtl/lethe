@@ -1,5 +1,4 @@
 #include <core/solutions_output.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -146,9 +145,6 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
   standard_deviation_multiplier = 2.5;
-
-  load_balancing_frequency = this->cfd_dem_simulation_parameters.dem_parameters
-                               .model_parameters.load_balance_frequency;
 
   // In the case the simulation is being restarted from a checkpoint file, the
   // checkpoint_step parameter is set to true. This allows to perform all

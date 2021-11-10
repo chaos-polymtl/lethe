@@ -18,14 +18,6 @@
 #ifndef lethe_dem_cfd_coupling_h
 #define lethe_dem_cfd_coupling_h
 
-#include <solvers/navier_stokes_scratch_data.h>
-
-#include <dem/dem.h>
-#include <dem/dem_solver_parameters.h>
-#include <dem/find_contact_detection_step.h>
-#include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <fem-dem/gls_vans.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -35,6 +27,13 @@
 #include <deal.II/grid/grid_generator.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <dem/dem.h>
+#include <dem/dem_solver_parameters.h>
+#include <dem/find_contact_detection_step.h>
+#include <fem-dem/cfd_dem_simulation_parameters.h>
+#include <fem-dem/gls_vans.h>
+#include <solvers/navier_stokes_scratch_data.h>
 
 using namespace dealii;
 
@@ -198,7 +197,6 @@ private:
   double                      neighborhood_threshold_squared;
   double                      maximum_particle_diameter;
   double                      standard_deviation_multiplier;
-  unsigned int                load_balancing_frequency;
   double                      smallest_contact_search_criterion;
   double                      triangulation_cell_diameter;
 
