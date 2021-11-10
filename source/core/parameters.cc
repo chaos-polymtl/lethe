@@ -966,7 +966,6 @@ namespace Parameters
   {
     prm.enter_subsection("linear solver");
     {
-
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
         verbosity = Parameters::Verbosity::verbose;

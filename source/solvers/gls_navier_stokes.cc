@@ -184,8 +184,8 @@ GLSNavierStokesSolver<dim>::update_boundary_conditions()
        i_bc < this->simulation_parameters.boundary_conditions.size;
        ++i_bc)
     {
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc].
-        u.set_time(time);
+      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+        .u.set_time(time);
       this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
         .v.set_time(time);
       this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
@@ -357,26 +357,17 @@ void
 GLSNavierStokesSolver<dim>::setup_assemblers()
 {
   this->assemblers.clear();
-  bool need_boundary_assembler=false;
-  //Loop over the boundary to check if they need assembler on their face.
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
-    {
-      if (this->simulation_parameters.boundary_conditions
-              .type[i_bc] ==
-            BoundaryConditions::BoundaryType::function_weak || this->simulation_parameters.boundary_conditions
-              .type[i_bc] ==
-            BoundaryConditions::BoundaryType::pressure)
-        need_boundary_assembler=true;
-    }
 
-  if(need_boundary_assembler)
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::function_weak))
     {
       this->assemblers.push_back(std::make_shared<WeakBoundaryCondition<dim>>(
         this->simulation_control,
         this->simulation_parameters.physical_properties,
         this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+    {
       this->assemblers.push_back(
         std::make_shared<PressureBoundaryCondition<dim>>(
           this->simulation_control,
@@ -992,9 +983,10 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             linear_solver_tolerance,
             true,
             true);
-          bool extra_verobse=false;
-          if(this->simulation_parameters.linear_solver.verbosity==Parameters::Verbosity::extra_verbose)
-            extra_verobse=true;
+          bool extra_verobse = false;
+          if (this->simulation_parameters.linear_solver.verbosity ==
+              Parameters::Verbosity::extra_verbose)
+            extra_verobse = true;
 
           TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
             extra_verobse,
@@ -1076,9 +1068,10 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
           TrilinosWrappers::MPI::Vector completely_distributed_solution(
             this->locally_owned_dofs, this->mpi_communicator);
 
-          bool extra_verobse=false;
-          if(this->simulation_parameters.linear_solver.verbosity==Parameters::Verbosity::extra_verbose)
-            extra_verobse=true;
+          bool extra_verobse = false;
+          if (this->simulation_parameters.linear_solver.verbosity ==
+              Parameters::Verbosity::extra_verbose)
+            extra_verobse = true;
           TrilinosWrappers::SolverBicgstab::AdditionalData solver_parameters(
             extra_verobse);
 
@@ -1087,7 +1080,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
             linear_solver_tolerance,
             true,
             true);
-          TrilinosWrappers::SolverBicgstab solver(solver_control,solver_parameters);
+          TrilinosWrappers::SolverBicgstab solver(solver_control,
+                                                  solver_parameters);
 
           if (!ilu_preconditioner)
             setup_preconditioner();
@@ -1165,9 +1159,10 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
             linear_solver_tolerance,
             true,
             true);
-          bool extra_verobse=false;
-          if(this->simulation_parameters.linear_solver.verbosity==Parameters::Verbosity::extra_verbose)
-            extra_verobse=true;
+          bool extra_verobse = false;
+          if (this->simulation_parameters.linear_solver.verbosity ==
+              Parameters::Verbosity::extra_verbose)
+            extra_verobse = true;
           TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
             extra_verobse,
             this->simulation_parameters.linear_solver.max_krylov_vectors);
