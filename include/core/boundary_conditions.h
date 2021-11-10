@@ -93,7 +93,7 @@ namespace BoundaryConditions
 
   /**
    * @brief This class manages the functions associated with function-type  pressure boundary conditions
-   * of the Navier-Stokes equations
+   * for the Navier-Stokes equations
    *
    */
   template <int dim>
