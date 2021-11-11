@@ -799,8 +799,9 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
-          if (cell->at_boundary()&& this->check_existance_of_bc(
-                                           BoundaryConditions::BoundaryType::function_weak))
+          if (cell->at_boundary() &&
+              this->check_existance_of_bc(
+                BoundaryConditions::BoundaryType::function_weak))
             {
               for (unsigned int i_bc = 0;
                    i_bc < this->simulation_parameters.boundary_conditions.size;
@@ -948,11 +949,11 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
   this->pcout << "div u : " << total_velocity_divergence << std::endl;
   if (this->check_existance_of_bc(
-                             BoundaryConditions::BoundaryType::function_weak))
-  {
-  this->pcout << "error at the weak BC : " << std::sqrt(l2errorU_boundary)
-              << std::endl;
-  }
+        BoundaryConditions::BoundaryType::function_weak))
+    {
+      this->pcout << "error at the weak BC : " << std::sqrt(l2errorU_boundary)
+                  << std::endl;
+    }
 
   return std::make_pair(std::sqrt(l2errorU), std::sqrt(l2errorP));
 }
