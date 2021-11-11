@@ -92,7 +92,7 @@ private:
 
   std::vector<Vector<double>> nodal_counts;
 
-  RPTCalculatingParameters   rpt_parameters;
+  RPTCalculatingParameters  rpt_parameters;
   std::vector<Detector<dim>> detectors;
 };
 

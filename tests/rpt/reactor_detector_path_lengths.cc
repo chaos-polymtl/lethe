@@ -12,7 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
  * Author: Audrey Collard-Daigneault Polytechnique Montreal, 2021
  */
@@ -56,13 +55,16 @@ test()
   Parameters::DetectorParameters detector_param;
   detector_param.radius = 0.5;
   detector_param.length = 1;
-  Point<3>    FP        = {0.5, 0, 1};
-  Point<3>    MP        = {1, 0, 1};
+  detector_param.dead_time.push_back(1);
+  detector_param.activity.push_back(1);
+  detector_param.attenuation_coefficient_reactor.push_back(1);
+  Point<3>    FP = {0.5, 0, 1};
+  Point<3>    MP = {1, 0, 1};
   Detector<3> detector(detector_param, 0, FP, MP);
 
   // Other parameters
-  RPTCalculatingParameters rpt_parameters;
-  rpt_parameters.rpt_param.reactor_radius = 0.5;
+  Parameters::RPTParameters rpt_param;
+  rpt_param.reactor_radius = 0.5;
 
   // Two sets of n values to check when rho < r => theta < theta_cri & theta >
   // theta_cri
@@ -74,7 +76,7 @@ test()
       for (unsigned int i_n = 0; i_n < 3; i_n++)
         {
           ParticleDetectorInteractions<3> particle_detector_interactions(
-            particle_positions[i_particle], detector, rpt_parameters);
+            particle_positions[i_particle], detector, rpt_param);
 
           double detector_path_length =
             particle_detector_interactions.get_detector_path_length(

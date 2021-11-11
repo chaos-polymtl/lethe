@@ -86,7 +86,7 @@ RPTFEMReconstruction<dim>::assemble_system(unsigned detector_no)
           RadioParticle<dim> particle(q_point_position, 0);
 
           ParticleDetectorInteractions<dim> p_q_interaction(
-            particle, detectors[detector_no], rpt_parameters);
+            particle, detectors[detector_no], rpt_parameters.rpt_param);
 
           double count = p_q_interaction.calculate_count();
 
