@@ -12,7 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
  * Author: Audrey Collard-Daigneault Polytechnique Montreal, 2021
  */
@@ -57,12 +56,15 @@ test()
   Parameters::DetectorParameters detector_param;
   detector_param.radius = 0.5;
   detector_param.length = 1;
-  Point<3> FP0          = {0.5, 0, 1};
-  Point<3> MP0          = {1, 0, 1};
+  detector_param.dead_time.push_back(1);
+  detector_param.activity.push_back(1);
+  detector_param.attenuation_coefficient_reactor.push_back(1);
+  Point<3> FP0 = {0.5, 0, 1};
+  Point<3> MP0 = {1, 0, 1};
 
   Detector<3> detector0(detector_param, 0, FP0, MP0);
 
-  RPTCalculatingParameters rpt_parameters;
+  Parameters::RPTParameters rpt_parameters;
 
   // Two sets of n values to check when rho < r => theta < theta_cri & theta >
   // theta_cri and both alpha_min & theta_min
