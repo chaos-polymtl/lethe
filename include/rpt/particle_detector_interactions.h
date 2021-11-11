@@ -12,7 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
 *
 * Authors: Audrey Collard-Daigneault, Polytechnique Montreal, 2021-
 */
@@ -66,7 +65,7 @@ public:
     , attenuation_coefficient_reactor(
         detector.get_attenuation_coefficient_reactor())
     , parameters(rpt_parameters)
-
+>>>>>>> aacc7202 (Modify code to get multiple  detectors)
   {}
 
   /**
@@ -183,8 +182,6 @@ private:
   Point<dim> particle_position;
   Point<dim> detector_face_position;
   Point<dim> detector_middle_position;
-
-
 
   double                    detector_radius;
   double                    detector_length;

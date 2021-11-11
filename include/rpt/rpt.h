@@ -12,7 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
 *
 * Authors: Bruno Blais, Ghazaleh Mirakhori, Audrey Collard-Daigneault,
 * Polytechnique Montreal, 2020-
