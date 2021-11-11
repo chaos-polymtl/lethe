@@ -105,7 +105,7 @@ GDNavierStokesSolver<dim>::setup_assemblers()
       {
         // Core assembler with Non newtonian viscosity
        this->assemblers.push_back(
-        std::make_shared<GDNavierStokesAssemblerCarreauCore<dim>>(
+        std::make_shared<GDNavierStokesAssemblerNonNewtonianCore<dim>>(
           this->simulation_control,
           this->simulation_parameters.physical_properties,
           gamma));

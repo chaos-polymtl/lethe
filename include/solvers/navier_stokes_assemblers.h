@@ -294,10 +294,10 @@ public:
 };
 
 template <int dim>
-class GDNavierStokesAssemblerCarreauCore : public NavierStokesAssemblerBase<dim>
+class GDNavierStokesAssemblerNonNewtonianCore : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GDNavierStokesAssemblerCarreauCore(
+  GDNavierStokesAssemblerNonNewtonianCore(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
     const double                       gamma)

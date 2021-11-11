@@ -683,7 +683,7 @@ template class GLSNavierStokesAssemblerSDIRK<3>;
 
 template <int dim>
 void
-GDNavierStokesAssemblerCarreauCore<dim>::assemble_matrix(
+GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -783,7 +783,7 @@ GDNavierStokesAssemblerCarreauCore<dim>::assemble_matrix(
 
 template <int dim>
 void
-GDNavierStokesAssemblerCarreauCore<dim>::assemble_rhs(
+GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -862,8 +862,8 @@ GDNavierStokesAssemblerCarreauCore<dim>::assemble_rhs(
     }
 }
 
-template class GDNavierStokesAssemblerCarreauCore<2>;
-template class GDNavierStokesAssemblerCarreauCore<3>;
+template class GDNavierStokesAssemblerNonNewtonianCore<2>;
+template class GDNavierStokesAssemblerNonNewtonianCore<3>;
 
 
 template <int dim>
