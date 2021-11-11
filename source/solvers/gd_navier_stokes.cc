@@ -321,8 +321,6 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
     }
 
   copy_data.reset();
-
-
   for (auto &assembler : this->assemblers)
     {
       assembler->assemble_rhs(scratch_data, copy_data);
