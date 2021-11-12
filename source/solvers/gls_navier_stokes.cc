@@ -1069,7 +1069,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
           TrilinosWrappers::MPI::Vector completely_distributed_solution(
             this->locally_owned_dofs, this->mpi_communicator);
 
-          bool extra_verobse = false;
+          bool extra_verbose = false;
           if (this->simulation_parameters.linear_solver.verbosity ==
               Parameters::Verbosity::extra_verbose)
             extra_verobse = true;
