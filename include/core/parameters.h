@@ -166,6 +166,8 @@ namespace Parameters
     double specific_heat;
     // thermal conductivity (k) in W/m/K
     double thermal_conductivity;
+    // thermal expansion coefficient (alpha) in 1/K
+    double thermal_expansion;
     // tracer diffusivity) in L^2/s
     double tracer_diffusivity;
   };
@@ -217,6 +219,8 @@ namespace Parameters
     double specific_heat;
     // thermal conductivity (k) in W/m/K
     double thermal_conductivity;
+    // thermal expansion coefficient (alpha) in 1/K
+    double thermal_expansion;
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
     // Non Newtonian parameters
@@ -314,6 +318,15 @@ namespace Parameters
     // Enable velocity post-processing
     bool calculate_average_velocities;
 
+    // Enable pressure drop post-processing
+    bool calculate_pressure_drop;
+
+    // The outlet boundary ID for pressure drop calculation
+    unsigned int inlet_boundary_id;
+
+    // The outlet boundary ID for pressure drop calculation
+    unsigned int outlet_boundary_id;
+
     // Set initial time to start calculations for velocities
     double initial_time;
 
@@ -325,6 +338,9 @@ namespace Parameters
 
     // Prefix for kinectic energy output
     std::string kinetic_energy_output_name;
+
+    // Prefix for pressure drop output
+    std::string pressure_drop_output_name;
 
     // Prefix for the enstrophy output
     std::string enstrophy_output_name;
@@ -387,6 +403,7 @@ namespace Parameters
     enum class SolverType
     {
       newton,
+      inexact_newton,
       kinsol_newton
     };
 
@@ -409,14 +426,33 @@ namespace Parameters
     // Tolerance
     double tolerance;
 
-    // Relative Tolerance
-    double step_tolerance;
-
     // Maximal number of iterations for the Newton solver
     unsigned int max_iterations;
 
     // Residual precision
     unsigned int display_precision;
+
+
+    // Force RHS recalculation at the beginning of every non-linear steps
+    // This is required if there is a fixed point component to the non-linear
+    // solver that is changed at the beginning of every newton iteration.
+    // This is notably the case of the sharp edge method.
+    // The default value of this parameter is false.
+    bool force_rhs_calculation;
+
+    // Matrix reconstruction tolerance
+    // This parameter controls the reconstruction of the system matrix
+    // If the residual after a newton step is lower than previous_residual *
+    // matrix_tolerance then that iteration is considered sufficient and the
+    // matrix is not reassembled at the next iteration.
+    double matrix_tolerance;
+
+    // Relative Tolerance
+    double step_tolerance;
+
+    // Carry jacobian matrix over to the new non-linear problem
+    bool reuse_matrix;
+
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -528,6 +564,9 @@ namespace Parameters
     // Target size when automatically refining initial mesh
     double target_size;
 
+    // Enables checking the input grid for diamond-shaped cells
+    bool check_for_diamond_cells;
+
     // Grid displacement at initiation
     bool   translate;
     double delta_x;
@@ -597,6 +636,19 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  struct MeshBoxRefinement
+  {
+    // GMSH or dealii
+    std::shared_ptr<Mesh> box_mesh;
+    // Initial refinement level of primitive mesh contained in the box
+    unsigned int initial_refinement;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
 
   /**
    * @brief Testing - Some solvers have a specific testing
@@ -650,6 +702,7 @@ namespace Parameters
     double             omega_x;
     double             omega_y;
     double             omega_z;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -660,9 +713,15 @@ namespace Parameters
   class IBParticles
   {
   public:
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    declare_default_entry(ParameterHandler &prm, unsigned int index);
+    void
+    parse_parameters(ParameterHandler &prm);
+
     unsigned int                 nb;
     unsigned int                 order;
-    unsigned int                 nb_force_eval;
     unsigned int                 initial_refinement;
     double                       inside_radius;
     double                       outside_radius;
@@ -671,19 +730,15 @@ namespace Parameters
     bool                         assemble_navier_stokes_inside;
     std::string                  ib_force_output_file;
     double                       density;
-    Tensor<1, dim>               gravity;
 
-    double alpha;
-    bool   integrate_motion;
+    std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 
 
-
-    static void
-    declare_parameters(ParameterHandler &prm);
-    static void
-    declare_default_entry(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
+    double      particle_nonlinear_tolerance;
+    double      length_ratio;
+    double      alpha;
+    bool        integrate_motion;
+    std::string ib_particles_pvd_file;
   };
 
   /**

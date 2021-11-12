@@ -7,8 +7,8 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = bdf1
-  set time step		      = 0.01
-  set time end 		      = 0.1
+  set time step		      = 0.05
+  set time end 		      = 1.
   set number mesh adapt       = 0
   set output name             = two-bar-mixer
   set output frequency        = 1

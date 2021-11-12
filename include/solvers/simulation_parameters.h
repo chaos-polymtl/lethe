@@ -24,12 +24,14 @@
 #include <core/manifolds.h>
 #include <core/nitsche.h>
 #include <core/parameters.h>
-#include <core/parameters_cfd_dem.h>
 #include <core/parameters_multiphysics.h>
 
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/source_terms.h>
+
+#include <dem/dem_solver_parameters.h>
+#include <fem-dem/parameters_cfd_dem.h>
 
 template <int dim>
 class SimulationParameters
@@ -40,6 +42,7 @@ public:
   Parameters::NonLinearSolver                       non_linear_solver;
   Parameters::MeshAdaptation                        mesh_adaptation;
   Parameters::Mesh                                  mesh;
+  std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
   Parameters::PhysicalProperties                    physical_properties;
   Parameters::SimulationControl                     simulation_control;
@@ -56,9 +59,7 @@ public:
   AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
   SourceTerms::SourceTerm<dim> *                    source_term;
   Parameters::VelocitySource                        velocity_sources;
-  Parameters::IBParticles<dim>                      particlesParameters;
-  std::shared_ptr<Parameters::VoidFraction<dim>>    void_fraction;
-  Parameters::CFDDEM                                cfd_dem;
+  std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
   Parameters::NonNewtonian                          non_newtonian;
   Parameters::Multiphysics                          multiphysics;
@@ -85,11 +86,15 @@ public:
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     Parameters::MeshAdaptation::declare_parameters(prm);
+    mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
+    mesh_box_refinement->declare_parameters(prm);
+
     Parameters::NonLinearSolver::declare_parameters(prm);
     Parameters::LinearSolver::declare_parameters(prm);
     Parameters::PostProcessing::declare_parameters(prm);
     Parameters::DynamicFlowControl ::declare_parameters(prm);
-    particlesParameters.declare_parameters(prm);
+    particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
+    particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
     non_newtonian.declare_parameters(prm);
 
@@ -100,10 +105,6 @@ public:
     Parameters::Testing::declare_parameters(prm);
 
     Parameters::VelocitySource::declare_parameters(prm);
-
-    void_fraction = std::make_shared<Parameters::VoidFraction<dim>>();
-    void_fraction->declare_parameters(prm);
-    Parameters::CFDDEM::declare_parameters(prm);
 
     multiphysics.declare_parameters(prm);
   }
@@ -116,6 +117,7 @@ public:
     non_linear_solver.parse_parameters(prm);
     mesh_adaptation.parse_parameters(prm);
     mesh.parse_parameters(prm);
+    mesh_box_refinement->parse_parameters(prm);
     nitsche->parse_parameters(prm);
     physical_properties.parse_parameters(prm);
     multiphysics.parse_parameters(prm);
@@ -135,9 +137,8 @@ public:
     source_term->parse_parameters(prm);
     simulation_control.parse_parameters(prm);
     velocity_sources.parse_parameters(prm);
-    particlesParameters.parse_parameters(prm);
-    void_fraction->parse_parameters(prm);
-    cfd_dem.parse_parameters(prm);
+    particlesParameters->parse_parameters(prm);
+
     multiphysics.parse_parameters(prm);
 
     // Check consistency of parameters parsed in different subsections

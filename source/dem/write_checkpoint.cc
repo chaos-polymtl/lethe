@@ -24,10 +24,6 @@ write_checkpoint(TimerOutput &                       computing_timer,
       particles_pvdhandler.save(prefix);
     }
 
-  triangulation.signals.pre_distributed_save.connect(std::bind(
-    &Particles::ParticleHandler<dim>::register_store_callback_function,
-    &particle_handler));
-
   std::ostringstream            oss;
   boost::archive::text_oarchive oa(oss, boost::archive::no_header);
   oa << particle_handler;

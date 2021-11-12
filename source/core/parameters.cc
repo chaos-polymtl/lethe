@@ -262,6 +262,10 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Thermal conductivity");
+      prm.declare_entry("thermal expansion",
+                        "1",
+                        Patterns::Double(),
+                        "Thermal Expansion");
 
       prm.declare_entry("tracer diffusivity",
                         "0",
@@ -303,6 +307,10 @@ namespace Parameters
       non_newtonian_flow   = prm.get_bool("non newtonian flow");
       non_newtonian_parameters.parse_parameters(prm);
       
+      thermal_expansion    = prm.get_double("thermal expansion");
+
+
+
       // Multiphasic simulations parameters definition
       number_fluids = prm.get_integer("number of fluids");
       for (unsigned int i_fluid = 0; i_fluid < number_fluids; ++i_fluid)
@@ -351,6 +359,12 @@ namespace Parameters
         "Thermal conductivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
+        "thermal expansion",
+        "1",
+        Patterns::Double(),
+        "Thermal expansion coefficient for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+      prm.declare_entry(
         "tracer diffusivity",
         "0",
         Patterns::Double(),
@@ -369,6 +383,7 @@ namespace Parameters
       viscosity            = prm.get_double("kinematic viscosity");
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
+      thermal_expansion    = prm.get_double("thermal expansion");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
     }
     prm.leave_subsection();
@@ -522,6 +537,21 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of average velocities.");
 
+      prm.declare_entry("calculate pressure drop",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of between two boundaries.");
+
+      prm.declare_entry("inlet boundary id",
+                        "0",
+                        Patterns::Integer(),
+                        "Inlet boundary ID for pressure drop calculation");
+
+      prm.declare_entry("outlet boundary id",
+                        "1",
+                        Patterns::Integer(),
+                        "Outlet boundary ID for pressure drop calculation");
+
       prm.declare_entry(
         "initial time",
         "0.0",
@@ -532,6 +562,11 @@ namespace Parameters
                         "kinetic_energy",
                         Patterns::FileName(),
                         "File output kinetic energy");
+
+      prm.declare_entry("pressure drop name",
+                        "pressure_drop",
+                        Patterns::FileName(),
+                        "File output pressure drop");
 
       prm.declare_entry("enstrophy name",
                         "enstrophy",
@@ -577,8 +612,12 @@ namespace Parameters
       calculate_enstrophy      = prm.get_bool("calculate enstrophy");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
+      calculate_pressure_drop     = prm.get_bool("calculate pressure drop");
+      inlet_boundary_id           = prm.get_integer("inlet boundary id");
+      outlet_boundary_id          = prm.get_integer("outlet boundary id");
       initial_time                = prm.get_double("initial time");
       kinetic_energy_output_name  = prm.get("kinetic energy name");
+      pressure_drop_output_name   = prm.get("pressure drop name");
       enstrophy_output_name       = prm.get("enstrophy name");
       calculation_frequency       = prm.get_integer("calculation frequency");
       output_frequency            = prm.get_integer("output frequency");
@@ -603,9 +642,9 @@ namespace Parameters
       prm.declare_entry(
         "solver",
         "newton",
-        Patterns::Selection("newton|kinsol_newton"),
+        Patterns::Selection("newton|kinsol_newton|inexact_newton"),
         "Non-linear solver that will be used "
-        "Choices are <newton|kinsol_newton>."
+        "Choices are <newton|kinsol_newton|inexact_newton>."
         " The newton solver is a traditional newton solver with"
         "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
         "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
@@ -635,10 +674,32 @@ namespace Parameters
         " * previous residual then the theta relaxation"
         " is applied until this criteria is satisfied");
 
+      prm.declare_entry(
+        "matrix tolerance",
+        "0.1",
+        Patterns::Double(),
+        "This parameter controls the frequency at which the matrix is refreshed in the inexact Newton solvers"
+        "If the residual after a newton step < previous residual * matrix tolerance, the matrix is not re-assembled");
+
+      prm.declare_entry(
+        "force rhs calculation",
+        "false",
+        Patterns::Bool(),
+        "This is required if there is a fixed point component to the non-linear"
+        "solver that is changed at the beginning of every newton iteration."
+        "This is notably the case of the sharp edge method."
+        "The default value of this parameter is false.");
+
+
       prm.declare_entry("residual precision",
                         "4",
                         Patterns::Integer(),
                         "Number of digits displayed when showing residuals");
+      prm.declare_entry(
+        "reuse matrix",
+        "false",
+        Patterns::Bool(),
+        "Reuse the last jacobian matrix for the next non-linear problem solution");
     }
     prm.leave_subsection();
   }
@@ -661,6 +722,8 @@ namespace Parameters
         solver = SolverType::newton;
       else if (str_solver == "kinsol_newton")
         solver = SolverType::kinsol_newton;
+      else if (str_solver == "inexact_newton")
+        solver = SolverType::inexact_newton;
       else
         throw(std::runtime_error("Invalid non-linear solver "));
 
@@ -675,10 +738,13 @@ namespace Parameters
         throw(
           std::runtime_error("Invalid strategy for kinsol non-linear solver "));
 
-      tolerance         = prm.get_double("tolerance");
-      step_tolerance    = prm.get_double("step tolerance");
-      max_iterations    = prm.get_integer("max iterations");
-      display_precision = prm.get_integer("residual precision");
+      tolerance             = prm.get_double("tolerance");
+      step_tolerance        = prm.get_double("step tolerance");
+      matrix_tolerance      = prm.get_double("matrix tolerance");
+      max_iterations        = prm.get_integer("max iterations");
+      display_precision     = prm.get_integer("residual precision");
+      force_rhs_calculation = prm.get_bool("force rhs calculation");
+      reuse_matrix          = prm.get_bool("reuse matrix");
     }
     prm.leave_subsection();
   }
@@ -724,6 +790,12 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Indicates that the mesh used is a mesh made of only simplex elements.");
+
+      prm.declare_entry(
+        "check diamond cells",
+        "false",
+        Patterns::Bool(),
+        "Enables checking the input grid for diamond-shaped cells.");
 
 
       prm.declare_entry("target size",
@@ -807,6 +879,7 @@ namespace Parameters
 
       refine_until_target_size = prm.get_bool("enable target size");
       simplex                  = prm.get_bool("simplex");
+      check_for_diamond_cells  = prm.get_bool("check diamond cells");
       target_size              = prm.get_double("target size");
 
 
@@ -818,6 +891,34 @@ namespace Parameters
       rotate = prm.get_bool("rotate");
       axis   = prm.get_integer("axis");
       angle  = prm.get_double("angle");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  MeshBoxRefinement::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("box refinement");
+    {
+      box_mesh = std::make_shared<Mesh>();
+      box_mesh->declare_parameters(prm);
+
+      prm.declare_entry("initial refinement",
+                        "0",
+                        Patterns::Integer(),
+                        "Initial refinement of the principal mesh");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  MeshBoxRefinement::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("box refinement");
+    {
+      box_mesh->parse_parameters(prm);
+
+      initial_refinement = prm.get_integer("initial refinement");
     }
     prm.leave_subsection();
   }
@@ -1180,17 +1281,34 @@ namespace Parameters
 
   template <int dim>
   void
-  IBParticles<dim>::declare_default_entry(ParameterHandler &prm)
+  IBParticles<dim>::declare_default_entry(ParameterHandler &prm,
+                                          unsigned int      index)
   {
-    prm.declare_entry("x", "0", Patterns::Double(), "x cor ");
-    prm.declare_entry("y", "0", Patterns::Double(), "y cor ");
-    prm.declare_entry("z", "0", Patterns::Double(), "z cor ");
-    prm.declare_entry("u", "0", Patterns::Double(), "speed in x ");
-    prm.declare_entry("v", "0", Patterns::Double(), "speed in y ");
-    prm.declare_entry("w", "0", Patterns::Double(), "speed  in z ");
-    prm.declare_entry("omega x", "0", Patterns::Double(), "rotation speed x ");
-    prm.declare_entry("omega y", "0", Patterns::Double(), "rotation speed y ");
-    prm.declare_entry("omega z", "0", Patterns::Double(), "rotation speed z ");
+    prm.enter_subsection("position");
+    particles[index].f_position =
+      std::make_shared<Functions::ParsedFunction<dim>>(dim);
+    particles[index].f_position->declare_parameters(prm, dim);
+    if (dim == 2)
+      prm.set("Function expression", "0; 0");
+    if (dim == 3)
+      prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+    prm.enter_subsection("velocity");
+    particles[index].f_velocity =
+      std::make_shared<Functions::ParsedFunction<dim>>(dim);
+    particles[index].f_velocity->declare_parameters(prm, dim);
+    if (dim == 2)
+      prm.set("Function expression", "0; 0");
+    if (dim == 3)
+      prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+    prm.enter_subsection("omega");
+    particles[index].f_omega =
+      std::make_shared<Functions::ParsedFunction<dim>>(3);
+    particles[index].f_omega->declare_parameters(prm, dim);
+    prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+
     prm.declare_entry(
       "pressure x",
       "0",
@@ -1228,7 +1346,6 @@ namespace Parameters
         "1",
         Patterns::Integer(),
         "Number of particles reprensented by IB max number of particles = 10 ");
-
       prm.declare_entry(
         "initial refinement",
         "0",
@@ -1250,11 +1367,6 @@ namespace Parameters
         Patterns::Double(),
         "The factor that multiplie the radius to define the outside bound for the refinement of the mesh");
       prm.declare_entry(
-        "nb force evaluation",
-        "100",
-        Patterns::Integer(),
-        "Number of evaluation of the pressure and viscosity force at the boundary per particle  ");
-      prm.declare_entry(
         "calculate force",
         "true",
         Patterns::Bool(),
@@ -1263,7 +1375,12 @@ namespace Parameters
         "ib force output file",
         "ib_force",
         Patterns::FileName(),
-        "Bool to define if the force is evaluated on each particle ");
+        "The name of the file where the data on the force of each particle is stored");
+      prm.declare_entry(
+        "ib particles pvd file",
+        "ib_particles_data",
+        Patterns::FileName(),
+        "The output files of the pvd data for the ib particles");
       prm.declare_entry(
         "integrate motion",
         "false",
@@ -1274,78 +1391,45 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Bool to define if you assemble the inside of particles with the NS equation.");
+      prm.declare_entry(
+        "length ratio",
+        "4",
+        Patterns::Double(),
+        "The length ratio used to define the points for the IB stencil. See definition of epsilon_n in the paper on sharp IB.");
+      prm.declare_entry(
+        "particle nonlinear tolerance",
+        "1e-6",
+        Patterns::Double(),
+        "The nonlinear tolerance for the coupling of the particle dynamics and the fluid");
       prm.declare_entry("fluid density",
                         "1",
                         Patterns::Double(),
                         "density of the fluid");
-      prm.declare_entry("gravity_x",
-                        "0",
-                        Patterns::Double(),
-                        "gravitational acceleration");
-      prm.declare_entry("gravity_y",
-                        "-9.81",
-                        Patterns::Double(),
-                        "gravitational acceleration");
-      prm.declare_entry("gravity_z",
-                        "0",
-                        Patterns::Double(),
-                        "gravitational acceleration");
       prm.declare_entry("alpha",
                         "1",
                         Patterns::Double(),
                         "relaxation parameter");
 
-      prm.enter_subsection("particle info 0");
-      {
-        declare_default_entry(prm);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 1");
-      {
-        IBParticles::declare_default_entry(prm);
-      }
+
+      prm.enter_subsection("gravity");
+      f_gravity->declare_parameters(prm, dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
-      prm.enter_subsection("particle info 2");
-      {
-        IBParticles::declare_default_entry(prm);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 3");
-      {
-        IBParticles::declare_default_entry(prm);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 4");
-      {
-        IBParticles::declare_default_entry(prm);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 5");
-      {
-        IBParticles::declare_default_entry(prm);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 6");
-      {
-        IBParticles::declare_default_entry(prm);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 7");
-      {
-        IBParticles::declare_default_entry(prm);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 8");
-      {
-        IBParticles::declare_default_entry(prm);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("particle info 9");
-      {
-        IBParticles::declare_default_entry(prm);
-      }
-      prm.leave_subsection();
+      unsigned int max_ib_particles = 50;
+      particles.resize(max_ib_particles);
+      for (unsigned int i = 0; i < max_ib_particles; ++i)
+        {
+          std::string section = "particle info " + std::to_string(i);
+          prm.enter_subsection(section);
+          {
+            declare_default_entry(prm, i);
+          }
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }
@@ -1362,21 +1446,23 @@ namespace Parameters
       initial_refinement = prm.get_integer("initial refinement");
       inside_radius      = prm.get_double("refine mesh inside radius factor");
       outside_radius     = prm.get_double("refine mesh outside radius factor");
-      nb_force_eval      = prm.get_integer("nb force evaluation");
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
       density              = prm.get_double("fluid density");
       integrate_motion     = prm.get_bool("integrate motion");
       alpha                = prm.get_double("alpha");
-      gravity[0]           = prm.get_double("gravity_x");
-      gravity[1]           = prm.get_double("gravity_y");
+
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
+      length_ratio          = prm.get_double("length ratio");
+      ib_particles_pvd_file = prm.get("ib particles pvd file");
+      particle_nonlinear_tolerance =
+        prm.get_double("particle nonlinear tolerance");
 
-      if (dim == 3)
-        gravity[2] = prm.get_double("gravity_z");
-
-
+      f_gravity = std::make_shared<Functions::ParsedFunction<dim>>(dim);
+      prm.enter_subsection("gravity");
+      f_gravity->parse_parameters(prm);
+      prm.leave_subsection();
 
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
@@ -1384,13 +1470,35 @@ namespace Parameters
           particles[i].initialise_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
-          particles[i].position[0]          = prm.get_double("x");
-          particles[i].position[1]          = prm.get_double("y");
-          particles[i].velocity[0]          = prm.get_double("u");
-          particles[i].velocity[1]          = prm.get_double("v");
-          particles[i].omega[0]             = prm.get_double("omega x");
-          particles[i].omega[1]             = prm.get_double("omega y");
-          particles[i].omega[2]             = prm.get_double("omega z");
+
+          prm.enter_subsection("position");
+          particles[i].f_position->parse_parameters(prm);
+          particles[i].f_position->set_time(0);
+          prm.leave_subsection();
+          prm.enter_subsection("velocity");
+          particles[i].f_velocity->parse_parameters(prm);
+          particles[i].f_velocity->set_time(0);
+          prm.leave_subsection();
+          prm.enter_subsection("omega");
+          particles[i].f_omega->parse_parameters(prm);
+          particles[i].f_omega->set_time(0);
+          prm.leave_subsection();
+          particles[i].position[0] =
+            particles[i].f_position->value(particles[i].position, 0);
+          particles[i].position[1] =
+            particles[i].f_position->value(particles[i].position, 1);
+          particles[i].velocity[0] =
+            particles[i].f_velocity->value(particles[i].position, 0);
+          particles[i].velocity[1] =
+            particles[i].f_velocity->value(particles[i].position, 1);
+          particles[i].omega[0] =
+            particles[i].f_omega->value(particles[i].position, 0);
+          particles[i].omega[1] =
+            particles[i].f_omega->value(particles[i].position, 1);
+          particles[i].omega[2] =
+            particles[i].f_omega->value(particles[i].position, 2);
+
+
           particles[i].radius               = prm.get_double("radius");
           particles[i].inertia[0][0]        = prm.get_double("inertia");
           particles[i].inertia[1][1]        = prm.get_double("inertia");
@@ -1400,8 +1508,10 @@ namespace Parameters
 
           if (dim == 3)
             {
-              particles[i].position[2]          = prm.get_double("z");
-              particles[i].velocity[2]          = prm.get_double("w");
+              particles[i].position[2] =
+                particles[i].f_position->value(particles[i].position, 2);
+              particles[i].velocity[2] =
+                particles[i].f_velocity->value(particles[i].position, 2);
               particles[i].pressure_location[2] = prm.get_double("pressure z");
               particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
                                   particles[i].radius * particles[i].radius *

@@ -118,6 +118,16 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
               &particle_handler,
               false));
 
+  // Necessary signals for checkpointing
+  triangulation.signals.pre_distributed_save.connect(std::bind(
+    &Particles::ParticleHandler<dim>::register_store_callback_function,
+    &particle_handler));
+
+  triangulation.signals.post_distributed_load.connect(
+    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
+              &particle_handler,
+              true));
+
   // Setting contact detection method (constant or dynamic)
   if (parameters.model_parameters.contact_detection_method ==
       Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
@@ -164,13 +174,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       throw std::runtime_error("Specified load balance method is not valid");
     }
 
-
-
   // Calling input_parameter_inspection to evaluate input parameters in the
   // parameter handler file, finding maximum particle diameter used in
   // polydisperse systems
   maximum_particle_diameter =
-    find_maximum_particle_size(parameters.physical_properties,
+    find_maximum_particle_size(parameters.lagrangian_physical_properties,
                                standard_deviation_multiplier);
   neighborhood_threshold_squared =
     std::pow(parameters.model_parameters.neighborhood_threshold *
@@ -206,7 +214,8 @@ DEMSolver<dim>::cell_weight(
   // expensive cell operations) to much larger than 1000 (expensive
   // particle operations, cheap cell operations, like in this case).
   // This parameter will need to be tuned for the case of DEM.
-  const unsigned int particle_weight = 10000;
+  const unsigned int particle_weight =
+    parameters.model_parameters.load_balance_particle_weight;
 
   // This does not use adaptive refinement, therefore every cell
   // should have the status CELL_PERSIST. However this function can also
@@ -260,7 +269,9 @@ DEMSolver<dim>::load_balance()
 
   boundary_cell_object.build(triangulation,
                              parameters.floating_walls,
-                             parameters.boundary_conditions.outlet_boundaries);
+                             parameters.boundary_conditions.outlet_boundaries,
+                             parameters.mesh.check_for_diamond_cells,
+                             pcout);
 
   if (parameters.grid_motion.motion_type !=
       Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
@@ -506,16 +517,18 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 
   particle_point_line_contact_force_object
-    .calculate_particle_point_contact_force(&particle_points_in_contact,
-                                            parameters.physical_properties,
-                                            force);
+    .calculate_particle_point_contact_force(
+      &particle_points_in_contact,
+      parameters.lagrangian_physical_properties,
+      force);
 
   if (dim == 3)
     {
       particle_point_line_contact_force_object
-        .calculate_particle_line_contact_force(&particle_lines_in_contact,
-                                               parameters.physical_properties,
-                                               force);
+        .calculate_particle_line_contact_force(
+          &particle_lines_in_contact,
+          parameters.lagrangian_physical_properties,
+          force);
     }
 }
 
@@ -817,7 +830,9 @@ DEMSolver<dim>::solve()
   // Finding boundary cells with faces
   boundary_cell_object.build(triangulation,
                              parameters.floating_walls,
-                             parameters.boundary_conditions.outlet_boundaries);
+                             parameters.boundary_conditions.outlet_boundaries,
+                             parameters.mesh.check_for_diamond_cells,
+                             pcout);
 
   // Setting chosen contact force, insertion and integration methods
   insertion_object        = set_insertion_type(parameters);
@@ -876,9 +891,6 @@ DEMSolver<dim>::solve()
       if (particles_insertion_step || load_balance_step ||
           contact_detection_step || checkpoint_step)
         {
-          // Reset checkpoint step
-          checkpoint_step = false;
-
           particle_handler.sort_particles_into_subdomains_and_cells();
 
 #if DEAL_II_VERSION_GTE(10, 0, 0)
@@ -906,8 +918,11 @@ DEMSolver<dim>::solve()
 
       // Broad particle-particle contact search
       if (particles_insertion_step || load_balance_step ||
-          contact_detection_step)
+          contact_detection_step || checkpoint_step)
         {
+          // Reset checkpoint step
+          checkpoint_step = false;
+
           pp_broad_search_object.find_particle_particle_contact_pairs(
             particle_handler,
             &cells_local_neighbor_list,
@@ -983,18 +998,19 @@ DEMSolver<dim>::solve()
         {
           integrator_object->integrate_half_step_location(
             particle_handler,
-            parameters.physical_properties.g,
+            parameters.lagrangian_physical_properties.g,
             force,
             simulation_control->get_time_step());
         }
       else
         {
-          integrator_object->integrate(particle_handler,
-                                       parameters.physical_properties.g,
-                                       simulation_control->get_time_step(),
-                                       momentum,
-                                       force,
-                                       MOI);
+          integrator_object->integrate(
+            particle_handler,
+            parameters.lagrangian_physical_properties.g,
+            simulation_control->get_time_step(),
+            momentum,
+            force,
+            MOI);
         }
 
       // Visualization

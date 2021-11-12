@@ -25,6 +25,9 @@
 #include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/distributed/fully_distributed_tria.h>
+#include <deal.II/distributed/solution_transfer.h>
+
+#include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_values.h>
@@ -34,6 +37,8 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
+
+#include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/data_out.h>
 
@@ -50,8 +55,7 @@ template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &             param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
-  std::shared_ptr<Mapping<spacedim>> fluid_mapping,
-  const unsigned int                 degree_velocity)
+  std::shared_ptr<Mapping<spacedim>> fluid_mapping)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -59,35 +63,48 @@ SolidBase<dim, spacedim>::SolidBase(
   , fluid_mapping(fluid_mapping)
   , param(param)
   , velocity(&param->solid_velocity)
-  , degree_velocity(degree_velocity)
 {
   if (param->solid_mesh.simplex)
     {
       // for simplex meshes
       fe            = std::make_shared<FE_SimplexP<dim, spacedim>>(1);
       solid_mapping = std::make_shared<MappingFE<dim, spacedim>>(*fe);
-      quadrature    = std::make_shared<QGaussSimplex<dim>>(degree_velocity + 1);
-      solid_tria    = std::make_shared<
+      quadrature =
+        std::make_shared<QGaussSimplex<dim>>(param->number_quadrature_points);
+      solid_tria = std::make_shared<
         parallel::fullydistributed::Triangulation<dim, spacedim>>(
         this->mpi_communicator);
-      solid_dh.clear();
-      solid_dh.reinit(*this->solid_tria);
+
+      displacement_fe =
+        std::make_shared<FESystem<dim, spacedim>>(FE_SimplexP<dim, spacedim>(1),
+                                                  spacedim);
     }
   else
     {
       // Usual case, for quad/hex meshes
       fe            = std::make_shared<FE_Q<dim, spacedim>>(1);
       solid_mapping = std::make_shared<MappingQGeneric<dim, spacedim>>(1);
-      quadrature    = std::make_shared<QGauss<dim>>(degree_velocity + 1);
+      quadrature =
+        std::make_shared<QGauss<dim>>(param->number_quadrature_points);
       solid_tria =
         std::make_shared<parallel::distributed::Triangulation<dim, spacedim>>(
           mpi_communicator,
           typename Triangulation<dim, spacedim>::MeshSmoothing(
             Triangulation<dim, spacedim>::smoothing_on_refinement |
             Triangulation<dim, spacedim>::smoothing_on_coarsening));
-      solid_dh.clear();
-      solid_dh.reinit(*this->solid_tria);
+
+      displacement_fe =
+        std::make_shared<FESystem<dim, spacedim>>(FE_Q<dim, spacedim>(1),
+                                                  spacedim);
     }
+
+  // Dof handler associated with particles
+  solid_dh.clear();
+  solid_dh.reinit(*this->solid_tria);
+
+  // Dof handler associated with mesh displacement
+  displacement_dh.clear();
+  displacement_dh.reinit(*this->solid_tria);
 }
 
 template <int dim, int spacedim>
@@ -97,8 +114,11 @@ SolidBase<dim, spacedim>::initial_setup()
   // initial_setup is called if the simulation is not a restarted one
   // Set-up of Nitsche triangulation, then particles (order important)
   setup_triangulation(false);
+  setup_displacement();
   setup_particles();
 }
+
+
 
 template <int dim, int spacedim>
 void
@@ -358,50 +378,18 @@ SolidBase<dim, spacedim>::setup_particles()
 
 
 
-  // if Triangulation is a parallel::distributed::triangulation, use the naive
-  // bounding box algorithm of deal.II
-  if (auto tria =
-        dynamic_cast<parallel::distributed::Triangulation<spacedim> *>(
-          fluid_tria.get()))
-    {
-      unsigned int minimal_cell_level = 100;
-      for (const auto &cell : fluid_tria->active_cell_iterators())
-        {
-          if (cell->is_locally_owned())
-            {
-              unsigned int cell_level = cell->level();
-              minimal_cell_level = std::min(minimal_cell_level, cell_level);
-            }
-        }
+  // Use the more general boost rtree bounding boxes
+  std::vector<BoundingBox<spacedim>> all_boxes;
+  all_boxes.reserve(fluid_tria->n_locally_owned_active_cells());
+  for (const auto cell : fluid_tria->active_cell_iterators())
+    if (cell->is_locally_owned())
+      all_boxes.emplace_back(cell->bounding_box());
+  const auto tree        = pack_rtree(all_boxes);
+  const auto local_boxes = extract_rtree_level(
+    tree, std::max(int(log10(fluid_tria->n_locally_owned_active_cells())), 1));
 
-      minimal_cell_level =
-        Utilities::MPI::min(minimal_cell_level, mpi_communicator);
-
-      // Increase number of bounding box level to ensure that insertion is
-      // faster. Right now this is set to the maximum refinement level-1 which
-      // is a decent heuristic.
-      // const unsigned int bounding_box_level = fluid_tria->n_global_levels() -
-      // 1;
-      const auto my_bounding_box =
-        GridTools::compute_mesh_predicate_bounding_box(
-          *tria, IteratorFilters::LocallyOwnedCell(), minimal_cell_level, true);
-      global_fluid_bounding_boxes =
-        Utilities::MPI::all_gather(mpi_communicator, my_bounding_box);
-    }
-  // else, use the more general boost rtree bounding boxes
-  else
-    {
-      std::vector<BoundingBox<spacedim>> all_boxes;
-      all_boxes.reserve(fluid_tria->n_locally_owned_active_cells());
-      for (const auto cell : fluid_tria->active_cell_iterators())
-        if (cell->is_locally_owned())
-          all_boxes.emplace_back(cell->bounding_box());
-      const auto tree        = pack_rtree(all_boxes);
-      const auto local_boxes = extract_rtree_level(tree, 1);
-
-      global_fluid_bounding_boxes =
-        Utilities::MPI::all_gather(mpi_communicator, local_boxes);
-    }
+  global_fluid_bounding_boxes =
+    Utilities::MPI::all_gather(mpi_communicator, local_boxes);
 
   // Fill solid particle handler
   solid_particle_handler->insert_global_particles(quadrature_points_vec,
@@ -441,6 +429,22 @@ SolidBase<dim, spacedim>::get_solid_dof_handler()
 }
 
 template <int dim, int spacedim>
+DoFHandler<dim, spacedim> &
+SolidBase<dim, spacedim>::get_displacement_dof_handler()
+{
+  return displacement_dh;
+}
+
+
+template <int dim, int spacedim>
+TrilinosWrappers::MPI::Vector &
+SolidBase<dim, spacedim>::get_displacement_vector()
+{
+  displacement_relevant = displacement;
+  return displacement_relevant;
+}
+
+template <int dim, int spacedim>
 std::shared_ptr<Particles::ParticleHandler<spacedim>> &
 SolidBase<dim, spacedim>::get_solid_particle_handler()
 {
@@ -463,11 +467,15 @@ SolidBase<dim, spacedim>::get_solid_velocity()
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::integrate_velocity(double time_step)
+SolidBase<dim, spacedim>::integrate_velocity(double time_step,
+                                             double initial_time)
 {
   const unsigned int sub_particles_iterations = param->particles_sub_iterations;
   AssertThrow(sub_particles_iterations >= 1,
               ExcMessage("Sub particles iterations must be 1 or larger"));
+
+
+
   double sub_iteration_relaxation = 1. / sub_particles_iterations;
   time_step                       = time_step * sub_iteration_relaxation;
   // Particle sub iterations divide the time step in a number of "sub
@@ -482,14 +490,29 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
            particle != solid_particle_handler->end();
            ++particle)
         {
+          // Calculate the next position of the particle using the RK4
+          // time integration scheme
+          // x(t+dt) = x(t) + 1/6 (k1+2*k2+2*k3+k4)
+          // k1 = dt * v(t,x(t))
+          // k2 = dt * v(t+0.5*dt,x+k1/2)
+          // k3 = dt * v(t+0.5*dt,x+k2/2)
+          // k4 = dt * vt(t+dt,x+k3)
+          // The four stages (1 to 4) are built successively
+          // For each stage, the time of the function must be "reset"
+          // to ensure adequate evaluation of the RK4 scheme.
+          // See https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods for
+          // more details
+
           Point<spacedim> particle_location = particle->get_location();
 
           Tensor<1, spacedim> k1;
+          velocity->set_time(initial_time);
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k1[comp_i] = velocity->value(particle_location, comp_i);
 
           Point<spacedim>     p1 = particle_location + time_step / 2 * k1;
           Tensor<1, spacedim> k2;
+          velocity->set_time(initial_time + time_step / 2);
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k2[comp_i] = velocity->value(p1, comp_i);
 
@@ -500,6 +523,7 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
 
           Point<spacedim>     p3 = particle_location + time_step * k3;
           Tensor<1, spacedim> k4;
+          velocity->set_time(initial_time + time_step);
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k4[comp_i] = velocity->value(p3, comp_i);
 
@@ -507,6 +531,7 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
           particle->set_location(particle_location);
         }
       solid_particle_handler->sort_particles_into_subdomains_and_cells();
+      initial_time += time_step;
     }
 
   if (initial_number_of_particles !=
@@ -527,45 +552,114 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
+SolidBase<dim, spacedim>::move_solid_triangulation(const double time_step,
+                                                   const double initial_time)
 {
-  const unsigned int n_dofs = solid_dh.n_dofs();
-  std::vector<bool>  displacement(n_dofs, false);
+  // First we calculate the displacement that the solid triangulation
+  // will feel during this iteration.
+  // Then, we apply this displacement to the triangulation
+  const unsigned int      dofs_per_cell = displacement_fe->dofs_per_cell;
+  const std::vector<bool> locally_owned_vertices =
+    GridTools::get_locally_owned_vertices(*this->solid_tria);
+  std::vector<bool> vertex_moved(this->solid_tria->n_vertices(), false);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  for (const auto &cell : solid_dh.active_cell_iterators())
+
+  for (const auto &cell : displacement_dh.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
-          for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell;
-               ++i)
+          for (unsigned int vertex = 0;
+               vertex < cell->reference_cell().n_vertices();
+               ++vertex)
             {
-              if (!displacement[cell->vertex_index(i)])
+              // Calculate the next position of the particle using the RK4
+              // time integration scheme
+              // x(t+dt) = x(t) + 1/6 (k1+2*k2+2*k3+k4)
+              // k1 = dt * v(t,x(t))
+              // k2 = dt * v(t+0.5*dt,x+k1/2)
+              // k3 = dt * v(t+0.5*dt,x+k2/2)
+              // k4 = dt * vt(t+dt,x+k3)
+              // The four stages (1 to 4) are built successively
+              // For each stage, the time of the function must be "reset"
+              // to ensure adequate evaluation of the RK4 scheme.
+              // See https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
+              // for more details
+
+              const auto       dof_index = cell->vertex_dof_index(vertex, 0);
+              Point<spacedim> &vertex_position  = cell->vertex(vertex);
+              const unsigned   global_vertex_no = cell->vertex_index(vertex);
+              if (vertex_moved[global_vertex_no] ||
+                  !locally_owned_vertices[global_vertex_no])
+                continue;
+
+              Tensor<1, spacedim> k1;
+              velocity->set_time(initial_time);
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k1[comp_i] = velocity->value(vertex_position, comp_i);
+
+              Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
+              Tensor<1, spacedim> k2;
+              velocity->set_time(initial_time + time_step / 2);
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k2[comp_i] = velocity->value(p1, comp_i);
+
+              Point<spacedim>     p2 = vertex_position + time_step / 2 * k2;
+              Tensor<1, spacedim> k3;
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k3[comp_i] = velocity->value(p2, comp_i);
+
+              Point<spacedim>     p3 = vertex_position + time_step * k3;
+              Tensor<1, spacedim> k4;
+              velocity->set_time(initial_time + time_step);
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k4[comp_i] = velocity->value(p3, comp_i);
+
+              auto vertex_displacement =
+                time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+
+              vertex_position += vertex_displacement;
+
+              for (unsigned d = 0; d < spacedim; ++d)
+                displacement[dof_index + d] =
+                  displacement[dof_index + d] + vertex_displacement[d];
+
+              vertex_moved[global_vertex_no] = true;
+            }
+        }
+    }
+  this->solid_tria->communicate_locally_moved_vertices(locally_owned_vertices);
+}
+
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::move_solid_triangulation_with_displacement()
+{
+  const unsigned int     dofs_per_cell = displacement_fe->dofs_per_cell;
+  std::set<unsigned int> dof_vertex_displaced;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  for (const auto &cell : displacement_dh.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (unsigned int vertex = 0;
+               vertex < cell->reference_cell().n_vertices();
+               ++vertex)
+            {
+              if (!dof_vertex_displaced.count(cell->vertex_index(vertex)))
                 {
-                  Point<spacedim> &vertex_position = cell->vertex(i);
+                  const auto dof_index = cell->vertex_dof_index(vertex, 0);
+                  Point<spacedim> &vertex_position = cell->vertex(vertex);
 
-                  Tensor<1, spacedim> k1;
-                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                    k1[comp_i] = velocity->value(vertex_position, comp_i);
+                  for (unsigned d = 0; d < spacedim; ++d)
+                    {
+                      vertex_position[d] = vertex_position[d] +
+                                           displacement_relevant[dof_index + d];
+                    }
 
-                  Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
-                  Tensor<1, spacedim> k2;
-                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                    k2[comp_i] = velocity->value(p1, comp_i);
-
-                  Point<spacedim>     p2 = vertex_position + time_step / 2 * k2;
-                  Tensor<1, spacedim> k3;
-                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                    k3[comp_i] = velocity->value(p2, comp_i);
-
-                  Point<spacedim>     p3 = vertex_position + time_step * k3;
-                  Tensor<1, spacedim> k4;
-                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                    k4[comp_i] = velocity->value(p3, comp_i);
-
-                  vertex_position +=
-                    time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
-
-                  displacement[cell->vertex_index(i)] = true;
+                  dof_vertex_displaced.insert(cell->vertex_index(vertex));
                 }
             }
         }
@@ -594,6 +688,116 @@ SolidBase<dim, spacedim>::print_particle_positions()
                 << std::setprecision(2) << particle_location << std::endl;
     }
 }
+
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
+{
+#if (DEAL_II_VERSION_MAJOR < 10)
+  parallel::distributed::SolutionTransfer<dim,
+                                          TrilinosWrappers::MPI::Vector,
+                                          DoFHandler<dim, spacedim>>
+    system_trans_vectors(this->displacement_dh);
+#else
+  parallel::distributed::
+    SolutionTransfer<dim, TrilinosWrappers::MPI::Vector, spacedim>
+      system_trans_vectors(this->displacement_dh);
+#endif
+
+  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+  displacement_relevant = displacement;
+  sol_set_transfer.push_back(&displacement_relevant);
+
+  system_trans_vectors.prepare_for_serialization(sol_set_transfer);
+
+  if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+        this->solid_tria.get()))
+    {
+      std::string triangulationName = prefix + ".triangulation";
+      tria->save(prefix + ".triangulation");
+    }
+}
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
+{
+  // Setup an un-refined triangulation before loading
+  setup_triangulation(true);
+
+  // Read the triangulation from the checkpoint
+  const std::string filename = prefix + ".triangulation";
+  std::ifstream     in(filename.c_str());
+  if (!in)
+    AssertThrow(false,
+                ExcMessage(
+                  std::string("You are trying to read a solid triangulation, "
+                              "but the restart file <") +
+                  filename + "> does not appear to exist!"));
+
+  try
+    {
+      if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+            this->solid_tria.get()))
+        tria->load(filename.c_str());
+    }
+  catch (...)
+    {
+      AssertThrow(false,
+                  ExcMessage("Cannot open snapshot mesh file or read the "
+                             "triangulation stored there."));
+    }
+
+  // Setup dof-handler for solid and displacement
+  solid_dh.distribute_dofs(*fe);
+  setup_displacement();
+
+
+  // Read displacement vector
+  std::vector<TrilinosWrappers::MPI::Vector *> x_system(1);
+  x_system[0] = &(displacement);
+
+#if (DEAL_II_VERSION_MAJOR < 10)
+  parallel::distributed::SolutionTransfer<dim,
+                                          TrilinosWrappers::MPI::Vector,
+                                          DoFHandler<dim, spacedim>>
+    system_trans_vectors(this->displacement_dh);
+#else
+  parallel::distributed::
+    SolutionTransfer<dim, TrilinosWrappers::MPI::Vector, spacedim>
+      system_trans_vectors(this->displacement_dh);
+#endif
+
+  system_trans_vectors.deserialize(x_system);
+  displacement_relevant = displacement;
+
+  // Reset triangulation position using displacement vector
+  move_solid_triangulation_with_displacement();
+
+
+  // We did not checkpoint particles, we re-create them from scratch
+  setup_particles();
+}
+
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::setup_displacement()
+{
+  displacement_dh.distribute_dofs(*this->displacement_fe);
+  locally_owned_dofs = displacement_dh.locally_owned_dofs();
+  DoFTools::extract_locally_relevant_dofs(displacement_dh,
+                                          locally_relevant_dofs);
+
+  displacement.reinit(locally_owned_dofs, mpi_communicator);
+  displacement_relevant.reinit(locally_owned_dofs,
+                               locally_relevant_dofs,
+                               mpi_communicator);
+
+  displacement = 0;
+}
+
 
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can
 // occur

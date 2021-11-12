@@ -49,8 +49,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
       solid.push_back(std::make_shared<SolidBase<dim, spacedim>>(
         this->simulation_parameters.nitsche->nitsche_solids[i_solid],
         this->triangulation,
-        this->mapping,
-        p_nsparam.fem_parameters.velocity_order));
+        this->mapping));
     }
 
   pvdhandler_solid_particles.resize(n_solids);
@@ -666,10 +665,16 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
             if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
                   ->enable_particles_motion)
               {
-                solid[i_solid]->integrate_velocity(
-                  this->simulation_control->get_time_step());
-                solid[i_solid]->move_solid_triangulation(
-                  this->simulation_control->get_time_step());
+                // Particle and solid displacement is explicit, thus it must go
+                // from t to t+dt
+                const double time_step =
+                  this->simulation_control->get_time_step();
+                const double initial_time =
+                  this->simulation_control->get_current_time() - time_step;
+
+                solid[i_solid]->integrate_velocity(time_step, initial_time);
+                solid[i_solid]->move_solid_triangulation(time_step,
+                                                         initial_time);
               }
           }
       }
@@ -754,6 +759,32 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   DoFHandler<dim, spacedim> &solid_dh = solid[i_solid]->get_solid_dof_handler();
   data_out.attach_dof_handler(solid_dh);
 
+  DoFHandler<dim, spacedim> &displacement_dh =
+    solid[i_solid]->get_displacement_dof_handler();
+  data_out.attach_dof_handler(displacement_dh);
+
+  std::vector<std::string> solution_names(spacedim, "displacement");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    data_component_interpretation(
+      spacedim, DataComponentInterpretation::component_is_part_of_vector);
+  TrilinosWrappers::MPI::Vector &displacement_vector =
+    solid[i_solid]->get_displacement_vector();
+
+#if (DEAL_II_VERSION_MAJOR < 10)
+  data_out.add_data_vector(
+    displacement_vector,
+    solution_names,
+    DataOut<dim, DoFHandler<dim, spacedim>>::type_dof_data,
+    data_component_interpretation);
+#else
+  data_out.add_data_vector(displacement_vector,
+                           solution_names,
+                           DataOut<dim, spacedim>::type_dof_data,
+                           data_component_interpretation);
+#endif
+
+
+
   data_out.build_patches();
 
   const std::string folder = this->simulation_control->get_output_path();
@@ -806,7 +837,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
-  // Write data in paraview format (pvd)
+  // Write data about paraview format (pvd)
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       this->simulation_control->save(prefix);
@@ -816,11 +847,22 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
       for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
         {
           pvdhandler_solid_particles[i_solid].save(
-            prefix + "_sol_particles_" + Utilities::int_to_string(i_solid, 2));
+            prefix + "_solid_particles_" +
+            Utilities::int_to_string(i_solid, 2));
           pvdhandler_solid_triangulation[i_solid].save(
-            prefix + "_sol_triangulation_" +
+            prefix + "_solid_triangulation_" +
             Utilities::int_to_string(i_solid, 2));
         }
+    }
+
+  // Write solid base checkpoint
+  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+    {
+      std::string filename =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename + "_solid_" +
+        Utilities::int_to_string(i_solid, 2);
+      this->solid[i_solid]->write_checkpoint(filename);
     }
 }
 
@@ -833,28 +875,16 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
   TimerOutput::Scope t(this->computing_timer,
                        "Reset Nitsche solid mesh and particles");
 
+
   // Reload initial configurations
   for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-    solid[i_solid]->initial_setup();
-
-  // Move configuration to current location
-  double       time      = 0;
-  const double time_step = this->simulation_control->get_time_step();
-  while (time < this->simulation_control->get_current_time())
     {
-      for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-        {
-          if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
-                ->enable_particles_motion)
-            {
-              solid[i_solid]->integrate_velocity(
-                this->simulation_control->get_time_step());
-              solid[i_solid]->move_solid_triangulation(
-                this->simulation_control->get_time_step());
-            }
-        }
-      time += time_step;
-      this->pcout << "Solid is now at time : " << time << std::endl;
+      std::string prefix =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename + "_solid_" +
+        Utilities::int_to_string(i_solid, 2);
+
+      solid[i_solid]->read_checkpoint(prefix);
     }
 
   // Reload particle and solid pvd handlers
@@ -865,9 +895,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
     {
       // Load Paraview pvd handler for solid triangulation and particles
       pvdhandler_solid_particles[i_solid].read(
-        prefix + "_sol_particles_" + Utilities::int_to_string(i_solid, 2));
+        prefix + "_solid_particles_" + Utilities::int_to_string(i_solid, 2));
       pvdhandler_solid_triangulation[i_solid].read(
-        prefix + "_sol_triangulation_" + Utilities::int_to_string(i_solid, 2));
+        prefix + "_solid_triangulation_" +
+        Utilities::int_to_string(i_solid, 2));
     }
 }
 

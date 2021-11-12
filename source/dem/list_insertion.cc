@@ -15,7 +15,7 @@ template <int dim>
 ListInsertion<dim>::ListInsertion(
   const DEMSolverParameters<dim> &dem_parameters)
   : remaining_particles_of_each_type(
-      dem_parameters.physical_properties.number.at(0))
+      dem_parameters.lagrangian_physical_properties.number.at(0))
 {
   // Inializing current inserting particle type
   current_inserting_particle_type = 0;
@@ -56,10 +56,10 @@ ListInsertion<dim>::insert(
   // TODO refactor into a function call
   if (remaining_particles_of_each_type == 0 &&
       current_inserting_particle_type !=
-        dem_parameters.physical_properties.particle_type_number - 1)
+        dem_parameters.lagrangian_physical_properties.particle_type_number - 1)
     {
       remaining_particles_of_each_type =
-        dem_parameters.physical_properties.number.at(
+        dem_parameters.lagrangian_physical_properties.number.at(
           ++current_inserting_particle_type);
     }
 

@@ -63,16 +63,22 @@ public:
    * @param floating_wall_properties Properties of floating walls specified in
    * the parameter handler file
    * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   * @param check_diamond_cells If true, the diamond shaped cells are found and added to the particle-wall contact search cells
+   * @param pcout
    */
   void
   build(
     const parallel::distributed::Triangulation<dim> & triangulation,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-    const std::vector<unsigned int> &                 outlet_boundaries);
+    const std::vector<unsigned int> &                 outlet_boundaries,
+    const bool &                                      check_diamond_cells,
+    const ConditionalOStream &                        pcout);
 
   void
   build(const parallel::distributed::Triangulation<dim> &triangulation,
-        const std::vector<unsigned int> &                outlet_boundaries);
+        const std::vector<unsigned int> &                outlet_boundaries,
+        const bool &                                     check_diamond_cells,
+        const ConditionalOStream &                       pcout);
 
   std::map<int, boundary_cells_info_struct<dim>> &
   get_boundary_cells_information()
@@ -133,6 +139,20 @@ private:
     const std::vector<unsigned int> &                outlet_boundaries);
 
   /**
+   * Loops over all the cells to find boundary cells, find the global boundary
+   * cells with faces. Note that the boundary_cells_with_faces container only
+   * stores the local boundary cells, while global_boundary_cells_with_faces
+   * stores all the boundary cells with faces.
+   *
+   * @param triangulation Triangulation to access the information of the cells
+   * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   */
+  void
+  find_global_boundary_cells_with_faces(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    const std::vector<unsigned int> &                outlet_boundaries);
+
+  /**
    * Loops over all the cells to find cells which should be searched for
    * particle-line contact, boundary lines and a point locating on each line are
    * obtained
@@ -149,6 +169,27 @@ private:
   void
   find_particle_point_and_line_contact_cells(
     const parallel::distributed::Triangulation<dim> &triangulation);
+
+  /**
+   * Adds the cells with boundary lines to the boundary cells information
+   * (boundary_cells_information), First , it loops through the
+   * boundary_cells_with_lines vector, then it loops through the neighbors of
+   * boundary cells with lines, if a neighbor is a member of
+   * boundary_cells_with_faces, then it adds the neighbor cell to the
+   * boundary_cells_information with the normal vector and point of the neighbor
+   * cell.
+   *
+   * @param triangulation Triangulation to access the information of the cells
+   * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   * @param check_diamond_cells If true, the diamond shaped cells are found and added to the particle-wall contact search cells
+   * @param pcout
+   */
+  void
+  add_cells_with_boundary_lines_to_boundary_cells(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    const std::vector<unsigned int> &                outlet_boundaries,
+    const bool &                                     check_diamond_cells,
+    const ConditionalOStream &                       pcout);
 
   /**
    * Loops over all the cells to find cells which should be searched for
@@ -170,6 +211,12 @@ private:
   // Structure that contains the necessary information for boundaries
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
 
+  // A vector that contains geometrical information of all (global) boundary
+  // cells. This vector is used in
+  // add_cells_with_boundary_lines_to_boundary_cells function
+  std::map<int, boundary_cells_info_struct<dim>>
+    global_boundary_cells_information;
+
   // Structure that contains the boundary cells which have a line
   std::unordered_map<
     std::string,
@@ -177,6 +224,11 @@ private:
                Point<dim>,
                Point<dim>>>
     boundary_cells_with_lines;
+
+  // A vector of all the local cells with boundary lines. This vector is used in
+  // add_cells_with_boundary_lines_to_boundary_cells function.
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+    local_cells_with_boundary_lines;
 
   // Structure that contains the boundary cells which have a point
   std::unordered_map<
@@ -190,9 +242,13 @@ private:
     std::set<typename Triangulation<dim>::active_cell_iterator>>
     boundary_cells_for_floating_walls;
 
-  // Structure that contains the boundary cells faces
+  // Structure that contains the local boundary cells with faces
   std::vector<typename Triangulation<dim>::active_cell_iterator>
     boundary_cells_with_faces;
+
+  // Structure that contains the global boundary cells with faces
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+    global_boundary_cells_with_faces;
 
   // A map that contains updated points on boundaries and normal vectors of the
   // boundary faces. This container is used when the grid is moving. We use this
@@ -200,6 +256,9 @@ private:
   // contact list.
   std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
     updated_boundary_points_and_normal_vectors;
+
+  // A boolean variable used for printing a warning only once
+  bool first_time_warning = true;
 };
 
 #endif /* find_boundary_cells_information_h */

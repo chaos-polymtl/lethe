@@ -70,22 +70,27 @@ test()
 
   // Defining general simulation parameters
   Tensor<1, dim> g{{0, 0, 0}};
-  double         dt                                             = 0.000001;
-  double         particle_diameter                              = 0.001;
-  unsigned int   rotating_wall_maximum_number                   = 6;
-  dem_parameters.physical_properties.particle_type_number       = 1;
-  dem_parameters.physical_properties.youngs_modulus_particle[0] = 200000000000;
-  dem_parameters.physical_properties.youngs_modulus_wall        = 200000000000;
-  dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.3;
-  dem_parameters.physical_properties.poisson_ratio_wall         = 0.3;
-  dem_parameters.physical_properties.restitution_coefficient_particle[0] = 0.5;
-  dem_parameters.physical_properties.restitution_coefficient_wall        = 0.5;
-  dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.3;
-  dem_parameters.physical_properties.friction_coefficient_wall           = 0.3;
-  dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
-    0.1;
-  dem_parameters.physical_properties.rolling_friction_wall  = 0.1;
-  dem_parameters.physical_properties.density_particle[0]    = 7850;
+  double         dt                                                  = 0.000001;
+  double         particle_diameter                                   = 0.001;
+  unsigned int   rotating_wall_maximum_number                        = 6;
+  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
+  dem_parameters.lagrangian_physical_properties.youngs_modulus_particle[0] =
+    200000000000;
+  dem_parameters.lagrangian_physical_properties.youngs_modulus_wall =
+    200000000000;
+  dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[0] = 0.3;
+  dem_parameters.lagrangian_physical_properties.poisson_ratio_wall        = 0.3;
+  dem_parameters.lagrangian_physical_properties
+    .restitution_coefficient_particle[0] = 0.5;
+  dem_parameters.lagrangian_physical_properties.restitution_coefficient_wall =
+    0.5;
+  dem_parameters.lagrangian_physical_properties
+    .friction_coefficient_particle[0]                                     = 0.3;
+  dem_parameters.lagrangian_physical_properties.friction_coefficient_wall = 0.3;
+  dem_parameters.lagrangian_physical_properties
+    .rolling_friction_coefficient_particle[0]                         = 0.1;
+  dem_parameters.lagrangian_physical_properties.rolling_friction_wall = 0.1;
+  dem_parameters.lagrangian_physical_properties.density_particle[0]   = 7850;
   dem_parameters.model_parameters.rolling_resistance_method = Parameters::
     Lagrangian::ModelParameters::RollingResistanceMethod::constant_resistance;
 
@@ -140,7 +145,7 @@ test()
   BoundaryCellsInformation<dim> boundary_cells_object;
   std::vector<unsigned int>     outlet_boundaries;
 
-  boundary_cells_object.build(tr, outlet_boundaries);
+  boundary_cells_object.build(tr, outlet_boundaries, false, std::cout);
 
   // P-W broad search
   PWBroadSearch<dim> pw_broad_search_object;

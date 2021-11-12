@@ -340,7 +340,7 @@ public:
 
 
 /**
- * @brief Class that assembles a Poisson problem for all velocity components and pressure variables .
+ * @brief Class that assembles a Poisson problem for all velocity components and pressure variables.
  * This class assembles the weak form of: d^2 U/dx^2=0 and  d^2 P/dx^2=0
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -370,6 +370,51 @@ public:
 
   /**
    * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+};
+
+
+/**
+ * @brief Class that assembles a buoyancy forcing term using the Boussinesq
+ * approximation. For more information, read Chapter 10 of Transport phenomena
+ * by Bird et al., or "Boussinesq approximation (buoyancy)" page on Wikipedia.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class BuoyancyAssembly : public NavierStokesAssemblerBase<dim>
+{
+public:
+  BuoyancyAssembly(std::shared_ptr<SimulationControl> simulation_control,
+                   Parameters::PhysicalProperties     physical_properties)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the weak form of: $$-\mathbf{g} \times \alpha \times (T - T_0)$$
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */

@@ -160,13 +160,13 @@ private:
   virtual void
   assemble_matrix_and_rhs()
   {
-    if (this->simulation_parameters.particlesParameters.integrate_motion)
+    if (this->simulation_parameters.particlesParameters->integrate_motion)
       {
         force_on_ib();
         integrate_particles();
         generate_cut_cells_map();
       }
-    this->simulation_control->set_assembly_method(this->time_stepping_method);
+    // this->simulation_control->set_assembly_method(this->time_stepping_method);
     {
       TimerOutput::Scope t(this->computing_timer, "assemble_system");
       this->GLSNavierStokesSolver<
@@ -194,7 +194,7 @@ private:
   assemble_rhs()
   {
     TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-    this->simulation_control->set_assembly_method(this->time_stepping_method);
+    // this->simulation_control->set_assembly_method(this->time_stepping_method);
 
     this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
     sharp_edge();
@@ -281,7 +281,7 @@ private:
    * method and its application to incompressible flow problems,» Computers &
    * Fluids, 2020, in press, ref. CAF-D-20-0077
    */
-  double
+  std::pair<double, double>
   calculate_L2_error_particles();
 
 
@@ -384,6 +384,21 @@ Return a bool that describes  if a cell contains a specific point
 
   /**
    * @brief
+   *  A override of the get_current_residual to take into account the particles
+   * coupling residual.
+   */
+  double
+  get_current_residual() override
+  {
+    double scalling = this->simulation_parameters.non_linear_solver.tolerance /
+                      this->simulation_parameters.particlesParameters
+                        ->particle_nonlinear_tolerance;
+    return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
+  }
+
+
+  /**
+   * @brief
    *Return a vector of cells around a cell including vertex neighbors
    *
    * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
@@ -393,6 +408,89 @@ Return a bool that describes  if a cell contains a specific point
     const typename DoFHandler<dim>::active_cell_iterator &cell);
 
 
+  /**
+   * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
+   */
+  struct Visualization_IB : public dealii::DataOutInterface<0, dim>
+  {
+  public:
+    /**
+     * Carries out building the patches of properties of particles for
+     * visualization
+     *
+     * @param particles The vector fo IB_particles
+     */
+    void
+    build_patches(std::vector<IBParticle<dim>> particles);
+
+
+    ~Visualization_IB();
+
+  private:
+    /**
+     * Implementation of the corresponding function of the base class.
+     */
+    virtual const std::vector<DataOutBase::Patch<0, dim>> &
+    get_patches() const;
+
+    /**
+     * Implementation of the corresponding function of the base class.
+     */
+    virtual std::vector<std::string>
+    get_dataset_names() const;
+
+    virtual std::vector<
+      std::tuple<unsigned int,
+                 unsigned int,
+                 std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
+    get_nonscalar_data_ranges() const;
+
+
+    /**
+     * Output information that is filled by build_patches() and
+     * written by the write function of the base class.
+     */
+    std::vector<DataOutBase::Patch<0, dim>> patches;
+
+    /**
+     * A list of field names for all data components stored in patches.
+     */
+    std::vector<std::string> dataset_names;
+
+    /**
+     * Store which of the data fields are vectors.
+     */
+
+    std::vector<
+      std::tuple<unsigned int,
+                 unsigned int,
+                 std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
+      vector_datasets;
+
+
+    /**
+     * Particle properties that are written in output files
+     */
+    std::vector<std::pair<std::string, int>> properties_to_write;
+  };
+
+
+
+  /**
+   * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
+   */
+
+  virtual void
+  write_checkpoint() override;
+
+  /**
+   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart
+   */
+
+  virtual void
+  read_checkpoint() override;
 
   /**
    * Members
@@ -424,13 +522,15 @@ private:
   std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>>
     assemblers_inside_ib;
 
+  PVDHandler ib_particles_pvdhandler;
+
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
   const double                 GLS_u_scale = 1;
   std::vector<IBParticle<dim>> particles;
+  double                       particle_residual;
 
-  std::vector<TableHandler> table_f;
-  std::vector<TableHandler> table_t;
+  std::vector<TableHandler> table_p;
 };
 
 

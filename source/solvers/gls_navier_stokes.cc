@@ -88,124 +88,11 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
   FEValuesExtractors::Vector velocities(0);
 
-  // Non-zero constraints
-  auto &nonzero_constraints = this->get_nonzero_constraints();
-  {
-    nonzero_constraints.clear();
+  // Non Zero constraints
+  define_non_zero_constraints();
 
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            nonzero_constraints);
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions.size;
-         ++i_bc)
-      {
-        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::noslip)
-          {
-            VectorTools::interpolate_boundary_values(
-              *this->mapping,
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              dealii::Functions::ZeroFunction<dim>(dim + 1),
-              nonzero_constraints,
-              this->fe->component_mask(velocities));
-          }
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::slip)
-          {
-            std::set<types::boundary_id> no_normal_flux_boundaries;
-            no_normal_flux_boundaries.insert(
-              this->simulation_parameters.boundary_conditions.id[i_bc]);
-            VectorTools::compute_no_normal_flux_constraints(
-              this->dof_handler,
-              0,
-              no_normal_flux_boundaries,
-              nonzero_constraints,
-              *this->mapping);
-          }
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::function)
-          {
-            VectorTools::interpolate_boundary_values(
-              *this->mapping,
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              NavierStokesFunctionDefined<dim>(
-                &this->simulation_parameters.boundary_conditions
-                   .bcFunctions[i_bc]
-                   .u,
-                &this->simulation_parameters.boundary_conditions
-                   .bcFunctions[i_bc]
-                   .v,
-                &this->simulation_parameters.boundary_conditions
-                   .bcFunctions[i_bc]
-                   .w),
-              nonzero_constraints,
-              this->fe->component_mask(velocities));
-          }
-
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints(
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-              this->simulation_parameters.boundary_conditions
-                .periodic_direction[i_bc],
-              nonzero_constraints);
-          }
-      }
-  }
-  nonzero_constraints.close();
-
-  {
-    this->zero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->zero_constraints);
-
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions.size;
-         ++i_bc)
-      {
-        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::slip)
-          {
-            std::set<types::boundary_id> no_normal_flux_boundaries;
-            no_normal_flux_boundaries.insert(
-              this->simulation_parameters.boundary_conditions.id[i_bc]);
-            VectorTools::compute_no_normal_flux_constraints(
-              this->dof_handler,
-              0,
-              no_normal_flux_boundaries,
-              this->zero_constraints,
-              *this->mapping);
-          }
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints(
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-              this->simulation_parameters.boundary_conditions
-                .periodic_direction[i_bc],
-              this->zero_constraints);
-          }
-        else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
-             // || Parameters::function)
-          {
-            VectorTools::interpolate_boundary_values(
-              *this->mapping,
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              dealii::Functions::ZeroFunction<dim>(dim + 1),
-              this->zero_constraints,
-              this->fe->component_mask(velocities));
-          }
-      }
-  }
-  this->zero_constraints.close();
+  // Zero constraints
+  define_zero_constraints();
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -235,7 +122,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
-
+  auto &                 nonzero_constraints = this->get_nonzero_constraints();
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
@@ -246,6 +133,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
     this->dof_handler.locally_owned_dofs(),
     this->mpi_communicator,
     this->locally_relevant_dofs);
+
   system_matrix.reinit(this->locally_owned_dofs,
                        this->locally_owned_dofs,
                        dsp,
@@ -289,6 +177,159 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
 template <int dim>
 void
+GLSNavierStokesSolver<dim>::update_boundary_conditions()
+{
+  define_non_zero_constraints();
+  // Distribute constraints
+  auto &nonzero_constraints = this->nonzero_constraints;
+  nonzero_constraints.distribute(this->local_evaluation_point);
+  this->present_solution = this->local_evaluation_point;
+}
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::define_non_zero_constraints()
+{
+  double time = this->simulation_control->get_current_time();
+  FEValuesExtractors::Vector velocities(0);
+  // Non-zero constraints
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+  {
+    nonzero_constraints.clear();
+    nonzero_constraints.reinit(this->locally_relevant_dofs);
+
+    DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                            nonzero_constraints);
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions.size;
+         ++i_bc)
+      {
+        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+            BoundaryConditions::BoundaryType::noslip)
+          {
+            VectorTools::interpolate_boundary_values(
+              *this->mapping,
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions.id[i_bc],
+              dealii::Functions::ZeroFunction<dim>(dim + 1),
+              nonzero_constraints,
+              this->fe->component_mask(velocities));
+          }
+        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+                 BoundaryConditions::BoundaryType::slip)
+          {
+            std::set<types::boundary_id> no_normal_flux_boundaries;
+            no_normal_flux_boundaries.insert(
+              this->simulation_parameters.boundary_conditions.id[i_bc]);
+            VectorTools::compute_no_normal_flux_constraints(
+              this->dof_handler,
+              0,
+              no_normal_flux_boundaries,
+              nonzero_constraints,
+              *this->mapping);
+          }
+        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+                 BoundaryConditions::BoundaryType::function)
+          {
+            this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+              .u.set_time(time);
+            this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+              .v.set_time(time);
+            this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+              .w.set_time(time);
+            VectorTools::interpolate_boundary_values(
+              *this->mapping,
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions.id[i_bc],
+              NavierStokesFunctionDefined<dim>(
+                &this->simulation_parameters.boundary_conditions
+                   .bcFunctions[i_bc]
+                   .u,
+                &this->simulation_parameters.boundary_conditions
+                   .bcFunctions[i_bc]
+                   .v,
+                &this->simulation_parameters.boundary_conditions
+                   .bcFunctions[i_bc]
+                   .w),
+              nonzero_constraints,
+              this->fe->component_mask(velocities));
+          }
+
+        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+                 BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions.id[i_bc],
+              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+              this->simulation_parameters.boundary_conditions
+                .periodic_direction[i_bc],
+              nonzero_constraints);
+          }
+      }
+  }
+  nonzero_constraints.close();
+}
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::define_zero_constraints()
+{
+  FEValuesExtractors::Vector velocities(0);
+  this->zero_constraints.clear();
+  DoFTools::extract_locally_relevant_dofs(this->dof_handler,
+                                          this->locally_relevant_dofs);
+  this->zero_constraints.reinit(this->locally_relevant_dofs);
+
+  DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                          this->zero_constraints);
+
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::slip)
+        {
+          std::set<types::boundary_id> no_normal_flux_boundaries;
+          no_normal_flux_boundaries.insert(
+            this->simulation_parameters.boundary_conditions.id[i_bc]);
+          VectorTools::compute_no_normal_flux_constraints(
+            this->dof_handler,
+            0,
+            no_normal_flux_boundaries,
+            this->zero_constraints,
+            *this->mapping);
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions.id[i_bc],
+            this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+            this->simulation_parameters.boundary_conditions
+              .periodic_direction[i_bc],
+            this->zero_constraints);
+        }
+      else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
+           // || Parameters::function)
+        {
+          VectorTools::interpolate_boundary_values(
+            *this->mapping,
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions.id[i_bc],
+            dealii::Functions::ZeroFunction<dim>(dim + 1),
+            this->zero_constraints,
+            this->fe->component_mask(velocities));
+        }
+    }
+  this->zero_constraints.close();
+}
+
+
+template <int dim>
+void
 GLSNavierStokesSolver<dim>::setup_assemblers()
 {
   this->assemblers.clear();
@@ -303,6 +344,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_control,
               this->simulation_parameters.physical_properties));
         }
+
       // Core assembler
       this->assemblers.push_back(
         std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
@@ -334,6 +376,13 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_parameters.velocity_sources));
         }
 
+      // Buoyant force
+      if (this->simulation_parameters.multiphysics.buoyancy_force)
+        {
+          this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties));
+        }
 
       // Core assembler
       this->assemblers.push_back(
@@ -354,12 +403,13 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix()
   this->setup_preconditioner();
 }
 
+
+
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
-  this->simulation_control->set_assembly_method(this->time_stepping_method);
 
   this->system_matrix = 0;
   setup_assemblers();
@@ -460,7 +510,6 @@ void
 GLSNavierStokesSolver<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
-  this->simulation_control->set_assembly_method(this->time_stepping_method);
 
   this->system_rhs = 0;
   setup_assemblers();
@@ -476,6 +525,15 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
       scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
                                        *this->cell_quadrature,
                                        *this->mapping);
+    }
+
+  if (this->simulation_parameters.multiphysics.buoyancy_force)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
     }
 
 
@@ -534,6 +592,22 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         *this->multiphysics->get_solution(PhysicsID::free_surface),
         previous_solutions,
         std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+  if (this->simulation_parameters.multiphysics.buoyancy_force)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+      typename DoFHandler<dim>::active_cell_iterator temperature_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_ht);
+
+      scratch_data.reinit_heat_transfer(temperature_cell,
+                                        *this->multiphysics->get_solution(
+                                          PhysicsID::heat_transfer));
     }
 
   copy_data.reset();
@@ -601,8 +675,10 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
         this->simulation_parameters.physical_properties.viscosity;
       this->simulation_parameters.physical_properties.viscosity =
         this->simulation_parameters.initial_condition->viscosity;
+      this->simulation_control->set_assembly_method(
+        Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::steady, false);
+        false);
       this->finish_time_step_fd();
       this->simulation_parameters.physical_properties.viscosity = viscosity;
     }
@@ -910,6 +986,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
         }
       iter += 1;
     }
+  current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
 template <int dim>
@@ -988,6 +1065,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
         }
       iter += 1;
     }
+  current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
 template <int dim>
@@ -1073,6 +1151,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
         }
       iter += 1;
     }
+  current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
 
@@ -1129,8 +1208,20 @@ GLSNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
+      if ((this->simulation_control->get_step_number() %
+               this->simulation_parameters.mesh_adaptation.frequency !=
+             0 ||
+           this->simulation_parameters.mesh_adaptation.type ==
+             Parameters::MeshAdaptation::Type::none ||
+           this->simulation_control->is_at_start()) &&
+          this->simulation_parameters.boundary_conditions.time_dependent)
+        {
+          update_boundary_conditions();
+        }
+
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
+
 
       if (this->simulation_control->is_at_start())
         this->first_iteration();

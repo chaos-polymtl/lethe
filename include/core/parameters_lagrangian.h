@@ -34,7 +34,7 @@ namespace Parameters
   namespace Lagrangian
   {
     template <int dim>
-    class PhysicalProperties
+    class LagrangianPhysicalProperties
     {
     public:
       // Gravitational acceleration
@@ -182,6 +182,9 @@ namespace Parameters
 
       // Particle-particle, particle-wall broad and fine search frequency
       unsigned int contact_detection_frequency;
+
+      // The particle weight based on a default cell weight of 1000
+      unsigned int load_balance_particle_weight;
 
       // Security factor for dynamic contact search
       double dynamic_contact_search_factor;
@@ -334,7 +337,7 @@ namespace Parameters
       parse_boundary_conditions(ParameterHandler &prm);
 
     private:
-      const unsigned int DEM_BC_number_max = 10;
+      unsigned int DEM_BC_number_max = 10;
       void
       initialize_containers(
         std::unordered_map<unsigned int, Tensor<1, dim>>

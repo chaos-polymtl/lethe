@@ -55,7 +55,10 @@ test()
 
   // Fining boundary cellds information
   BoundaryCellsInformation<dim> boundary_cells_object;
-  boundary_cells_object.build(triangulation, outlet_boundaries);
+  boundary_cells_object.build(triangulation,
+                              outlet_boundaries,
+                              false,
+                              std::cout);
 
   // Reporting the information of boundary cells
   for (auto boundary_cells_information_iterator =

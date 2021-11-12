@@ -26,12 +26,13 @@
 #include "core/time_integration_utilities.h"
 #include <core/grids.h>
 #include <core/parameters.h>
-#include <core/parameters_cfd_dem.h>
 
 #include "solvers/gls_navier_stokes.h"
+#include "solvers/postprocessing_cfd.h"
 
 #include <dem/dem.h>
 #include <dem/dem_properties.h>
+#include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/vans_assemblers.h>
 
 #include <deal.II/distributed/tria.h>
@@ -62,7 +63,7 @@ template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
 {
 public:
-  GLSVANSSolver(SimulationParameters<dim> &nsparam);
+  GLSVANSSolver(CFDDEMSimulationParameters<dim> &nsparam);
 
   ~GLSVANSSolver();
 
@@ -80,33 +81,10 @@ private:
   initialize_void_fraction();
 
   void
-  read_dem();
-
-  void
-  calculate_void_fraction(const double time);
-
-  void
   assemble_L2_projection_void_fraction();
 
   void
   solve_L2_system_void_fraction();
-
-  void
-  post_processing();
-
-  virtual void
-  iterate() override;
-
-  virtual void
-  first_iteration() override;
-
-  /**
-   * @brief asocciate the degrees of freedom to each vertex of the finite elements
-   * and initialize the void fraction
-   */
-  virtual void
-  setup_dofs() override;
-
 
   /**
    * @brief finish_time_step
@@ -116,7 +94,29 @@ private:
   virtual void
   finish_time_step_fd();
 
+  void
+  read_dem();
+
 protected:
+  /**
+   * @brief asocciate the degrees of freedom to each vertex of the finite elements
+   * and initialize the void fraction
+   */
+  virtual void
+  setup_dofs() override;
+
+  virtual void
+  iterate() override;
+
+  virtual void
+  first_iteration() override;
+
+  void
+  calculate_void_fraction(const double time);
+
+  void
+  post_processing();
+
   /**
    *  @brief Assembles the matrix associated with the solver
    */
@@ -128,7 +128,6 @@ protected:
    */
   void
   assemble_system_rhs();
-
 
   /**
    * @brief Assemble the local matrix for a given cell.
@@ -208,14 +207,12 @@ protected:
    *Member Variables
    */
 
-protected:
-private:
+  CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
+
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;
 
-
-  MappingQGeneric<dim>                 particle_mapping;
-  Particles::ParticleHandler<dim, dim> particle_handler;
+  MappingQGeneric<dim> particle_mapping;
 
   IndexSet locally_owned_dofs_voidfraction;
   IndexSet locally_relevant_dofs_voidfraction;
@@ -247,6 +244,9 @@ private:
   const bool   PSPG        = true;
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
+
+protected:
+  Particles::ParticleHandler<dim, dim> particle_handler;
 };
 
 #endif

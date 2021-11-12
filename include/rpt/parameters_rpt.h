@@ -69,13 +69,9 @@ namespace Parameters
     double peak_to_total_ratio;
     double sampling_time; // [s]
 
-    // Parameters to tune or fixed parameters if tuning is disable
-    double dead_time;          // Dead time of the detector per accepted pulse
-    double activity;           // Activity of the tracer
+    // Fixed parameters
     double gamma_rays_emitted; // Number of gamma-rays emitted by each
     // disintegration
-    double attenuation_coefficient_reactor; // Total linear attenuation
-    // coefficient of the medium
     double attenuation_coefficient_detector; // Total linear attenuation
     // coefficient of the detector
 
@@ -126,6 +122,12 @@ namespace Parameters
     double      length;
     std::string detector_positions_file;
 
+    // Tuned parameters
+    std::vector<double>
+                        dead_time; // Dead time of the detector per accepted pulse
+    std::vector<double> activity; // Activity of the tracer
+    // Total linear attenuation coefficient of the medium
+    std::vector<double> attenuation_coefficient_reactor;
     static void
     declare_parameters(ParameterHandler &prm);
     void

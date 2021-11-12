@@ -75,6 +75,7 @@ test()
   param->particles_sub_iterations      = 1;
   param->solid_mesh.translate          = false;
   param->solid_mesh.rotate             = false;
+  param->number_quadrature_points      = 2;
 
 
   double time_step = 0.01;
@@ -85,12 +86,10 @@ test()
   // Mesh of the fluid
   GridGenerator::hyper_cube(*fluid_tria, -1, 1);
 
-  const unsigned int degree_velocity = 1;
-
   // SolidBase class
   std::shared_ptr<Mapping<3>> fluid_mapping =
     std::make_shared<MappingQGeneric<3>>(1);
-  SolidBase<3, 3> solid(param, fluid_tria, fluid_mapping, degree_velocity);
+  SolidBase<3, 3> solid(param, fluid_tria, fluid_mapping);
   solid.initial_setup();
   solid.setup_particles();
   std::shared_ptr<Particles::ParticleHandler<3>> solid_particle_handler =
@@ -100,7 +99,7 @@ test()
 
   for (unsigned int i = 0; i < 100; ++i)
     {
-      solid.integrate_velocity(time_step);
+      solid.integrate_velocity(time_step, 0);
       if ((i + 1) % 10 == 0)
         {
           output(solid_particle_handler, mpi_communicator, i + 1);

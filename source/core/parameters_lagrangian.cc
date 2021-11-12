@@ -6,7 +6,8 @@ namespace Parameters
   {
     template <int dim>
     void
-    PhysicalProperties<dim>::declareDefaultEntry(ParameterHandler &prm)
+    LagrangianPhysicalProperties<dim>::declareDefaultEntry(
+      ParameterHandler &prm)
     {
       prm.declare_entry("size distribution type",
                         "uniform",
@@ -57,7 +58,7 @@ namespace Parameters
 
     template <int dim>
     void
-    PhysicalProperties<dim>::parse_particle_properties(
+    LagrangianPhysicalProperties<dim>::parse_particle_properties(
       const unsigned int &particle_type,
       ParameterHandler &  prm)
     {
@@ -95,9 +96,9 @@ namespace Parameters
 
     template <int dim>
     void
-    PhysicalProperties<dim>::declare_parameters(ParameterHandler &prm)
+    LagrangianPhysicalProperties<dim>::declare_parameters(ParameterHandler &prm)
     {
-      prm.enter_subsection("physical properties");
+      prm.enter_subsection("lagrangian physical properties");
       {
         prm.declare_entry("gx",
                           "1.",
@@ -157,9 +158,9 @@ namespace Parameters
 
     template <int dim>
     void
-    PhysicalProperties<dim>::parse_parameters(ParameterHandler &prm)
+    LagrangianPhysicalProperties<dim>::parse_parameters(ParameterHandler &prm)
     {
-      prm.enter_subsection("physical properties");
+      prm.enter_subsection("lagrangian physical properties");
       initialize_containers(particle_average_diameter,
                             particle_size_std,
                             number,
@@ -231,7 +232,7 @@ namespace Parameters
 
     template <int dim>
     void
-    PhysicalProperties<dim>::initialize_containers(
+    LagrangianPhysicalProperties<dim>::initialize_containers(
       std::unordered_map<unsigned int, double> &particle_average_diameter,
       std::unordered_map<unsigned int, double> &particle_size_std,
       std::unordered_map<unsigned int, int> &   number,
@@ -415,6 +416,11 @@ namespace Parameters
                           Patterns::Integer(),
                           "Checking frequency for dynamic load-balancing");
 
+        prm.declare_entry(
+          "load balance particle weight",
+          "10000",
+          Patterns::Integer(),
+          "The particle weight based on a default cell weight of 1000");
 
         prm.declare_entry("contact detection method",
                           "dynamic",
@@ -474,6 +480,9 @@ namespace Parameters
       prm.enter_subsection("model parameters");
       {
         const std::string load_balance = prm.get("load balance method");
+
+        load_balance_particle_weight =
+          prm.get_integer("load balance particle weight");
 
         if (load_balance == "once")
           {
@@ -1124,8 +1133,8 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template class PhysicalProperties<2>;
-    template class PhysicalProperties<3>;
+    template class LagrangianPhysicalProperties<2>;
+    template class LagrangianPhysicalProperties<3>;
     template class ForceTorqueOnWall<2>;
     template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;

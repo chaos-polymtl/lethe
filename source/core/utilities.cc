@@ -94,100 +94,113 @@ make_table_tensors_scalars(
   return table;
 }
 
-
-template <int dim>
-typename DoFHandler<dim>::active_cell_iterator
-find_cell_around_point_with_tree(const DoFHandler<dim> &dof_handler,
-                                 Point<dim>             point)
+void
+fill_table_from_file(TableHandler &    table,
+                     std::string       file,
+                     const std::string delimiter)
 {
-  // find cell around point using tree properties instead of looping on all cell
-
-  // define stuff for the search
-  MappingQ1<dim> map;
-  const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
-  unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
-  typename DoFHandler<dim>::cell_iterator best_cell_iter;
-
-  bool cell_0_found = false;
-
-  // loop on the cell on lvl 0 of the mesh
-  for (const auto &cell : cell_iterator)
+  table.clear();
+  std::ifstream myfile(file);
+  // open the file
+  if (myfile.is_open())
     {
-      try
+      std::string              line;
+      std::vector<std::string> vector_of_column_names;
+      std::vector<double>      line_of_data;
+      unsigned int             line_count = 0;
+
+      while (std::getline(myfile, line))
         {
-          const Point<dim, double> p_cell =
-            map.transform_real_to_unit_cell(cell, point);
-
-          const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-
-          if (dist == 0)
+          // read the line and clean the resulting vector
+          std::vector<std::string> list_of_words_base =
+            Utilities::split_string_list(line, delimiter);
+          std::vector<std::string> list_of_words_clean;
+          for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
             {
-              // cell on lvl 0 found
-              cell_0_found   = true;
-              best_cell_iter = cell;
-            }
-        }
-      catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-        {}
-    }
-
-  if (cell_0_found)
-    {
-      // the cell on lvl 0 contain the point so now loop on the childs of
-      // this cell when we found the child of the cell that containt it we
-      // stop and loop if the cell is active if the cell is not active loop
-      // on the child of the cell. Repeat
-      unsigned int lvl = 0;
-      while (best_cell_iter->is_active() == false)
-        {
-          bool         cell_found = false;
-          double       best_dist  = DBL_MAX;
-          unsigned int best_index = 0;
-          for (unsigned int i = 0; i < max_childs; ++i)
-            {
-              try
+              if (list_of_words_base[i] != "")
                 {
-                  const Point<dim, double> p_cell =
-                    map.transform_real_to_unit_cell(best_cell_iter->child(i),
-                                                    point);
-                  const double dist =
-                    GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-                  bool inside = true;
-
-
-                  if (dist <= best_dist and inside)
-                    {
-                      best_dist  = dist;
-                      best_index = i;
-                      cell_found = true;
-                      if (dist == 0)
-                        break;
-                    }
+                  list_of_words_clean.push_back(list_of_words_base[i]);
                 }
-              catch (
-                const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-                {}
             }
-
-          best_cell_iter = best_cell_iter->child(best_index);
-
-          if (cell_found == false)
+          //  If it's the first line, we only initialize the variable names.
+          if (line_count != 0)
             {
-              std::cout << "cell not found" << point << std::endl;
-              break;
+              line_of_data = Utilities::string_to_double(list_of_words_clean);
+              for (unsigned int i = 0; i < line_of_data.size(); ++i)
+                {
+                  table.add_value(vector_of_column_names[i], line_of_data[i]);
+                }
             }
-
-          lvl += 1;
+          else
+            {
+              // the line contains words we assume these are the column
+              vector_of_column_names = list_of_words_clean;
+            }
+          ++line_count;
         }
-
-      //      break;
+      myfile.close();
     }
-
-
-  return best_cell_iter;
+  else
+    std::cout << "Unable to open file";
 }
 
+void
+fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
+                       std::string                                 file,
+                       const std::string                           delimiter)
+{
+  // fill a pair, first being a vector of vector name and the second being the
+  // vector of vector associated with the vector name.
 
+
+  std::ifstream myfile(file);
+  // open the file.
+  if (myfile.is_open())
+    {
+      std::string              line;
+      std::vector<std::string> column_names;
+      std::vector<double>      line_of_data;
+      unsigned int             line_count = 0;
+
+      while (std::getline(myfile, line))
+        {
+          // read the line and clean the resulting vector.
+          std::vector<std::string> list_of_words_base =
+            Utilities::split_string_list(line, delimiter);
+          std::vector<std::string> list_of_words_clean;
+          for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+            {
+              if (list_of_words_base[i] != "")
+                {
+                  list_of_words_clean.push_back(list_of_words_base[i]);
+                }
+            }
+          // check if the line is contained words or numbers.
+          if (line_count != 0)
+            {
+              line_of_data = Utilities::string_to_double(list_of_words_clean);
+              for (unsigned int i = 0; i < line_of_data.size(); ++i)
+                {
+                  map[column_names[i]].push_back(line_of_data[i]);
+                }
+            }
+          else
+            {
+              // the line contains words, we assume these are the columns names.
+              column_names = list_of_words_clean;
+              for (unsigned int i = 0; i < list_of_words_clean.size(); ++i)
+                {
+                  std::vector<double> base_vector;
+                  map[column_names[i]] = base_vector;
+                }
+            }
+          ++line_count;
+        }
+      myfile.close();
+    }
+  else
+    std::cout << "Unable to open file";
+}
 
 template TableHandler
 make_table_scalars_tensors(
@@ -268,10 +281,3 @@ make_table_tensors_scalars(
   const std::vector<double> &      dependent_values,
   const std::string &              dependent_column_name,
   const unsigned int               display_precision);
-
-template typename DoFHandler<3>::active_cell_iterator
-find_cell_around_point_with_tree(const DoFHandler<3> &dof_handler,
-                                 Point<3>             point);
-template typename DoFHandler<2>::active_cell_iterator
-find_cell_around_point_with_tree(const DoFHandler<2> &dof_handler,
-                                 Point<2>             point);

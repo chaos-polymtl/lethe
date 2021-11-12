@@ -24,7 +24,7 @@
 #include <core/physics_solver.h>
 
 /**
- * @brief The TestClass houses a very simple non-linear system that is used to test the various non-linear solvers
+ * @brief The NonLinearProblemTestClass houses a very simple non-linear system that is used to test the various non-linear solvers
  * The linear solution is obtained using LAPACK
  * it uses a LAPACKMatrix and a Vector to store the analytical jacobian et the
  * right-hand side respectively
@@ -39,10 +39,10 @@
  *
  */
 
-class TestClass : public PhysicsSolver<Vector<double>>
+class NonLinearProblemTestClass : public PhysicsSolver<Vector<double>>
 {
 public:
-  TestClass(Parameters::NonLinearSolver &params)
+  NonLinearProblemTestClass(Parameters::NonLinearSolver &params)
     : PhysicsSolver(params)
   {
     // Initialize the vectors needed for the Physics Solver
@@ -141,6 +141,14 @@ public:
   {
     return dummy_constraints;
   };
+
+  // Reset present solution to initial value
+  void
+  reset()
+  {
+    present_solution[0] = 1;
+    present_solution[1] = 0;
+  }
 
 
 private:

@@ -1,6 +1,8 @@
 #include <rpt/parameters_rpt.h>
 #include <time.h>
 
+#include <sstream>
+
 void
 Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
 {
@@ -58,25 +60,11 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
                       Patterns::Double(),
                       "Sampling time of the counting");
 
-    prm.declare_entry("dead time",
-                      "1",
-                      Patterns::Double(),
-                      "Dead time of the detector per accepted pulse");
-
-    prm.declare_entry("activity",
-                      "1",
-                      Patterns::Double(),
-                      "Activity of the tracer");
-
     prm.declare_entry("gamma-rays emitted",
                       "1",
                       Patterns::Double(),
                       "Number of gamma-rays emitted by each disintegration");
 
-    prm.declare_entry("attenuation coefficient reactor",
-                      "1",
-                      Patterns::Double(),
-                      "Total linear attenuation coefficient of the medium");
 
     prm.declare_entry("attenuation coefficient detector",
                       "1",
@@ -99,11 +87,7 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
     reactor_radius          = prm.get_double("reactor radius");
     peak_to_total_ratio     = prm.get_double("peak-to-total ratio");
     sampling_time           = prm.get_double("sampling time");
-    dead_time               = prm.get_double("dead time");
-    activity                = prm.get_double("activity");
     gamma_rays_emitted      = prm.get_double("gamma-rays emitted");
-    attenuation_coefficient_reactor =
-      prm.get_double("attenuation coefficient reactor");
     attenuation_coefficient_detector =
       prm.get_double("attenuation coefficient detector");
 
@@ -190,9 +174,30 @@ Parameters::DetectorParameters::declare_parameters(ParameterHandler &prm)
                       "none",
                       Patterns::FileName(),
                       "Detector positions file name");
+
+    prm.declare_entry("dead time",
+                      "1",
+                      Patterns::List(Patterns::Double()),
+                      "Dead time of the detector per accepted pulse");
+
+    prm.declare_entry("activity",
+                      "1",
+                      Patterns::List(Patterns::Double()),
+                      "Activity of the tracer");
+
+    prm.declare_entry("attenuation coefficient reactor",
+                      "1",
+                      Patterns::List(Patterns::Double()),
+                      "Total linear attenuation coefficient of the medium");
   }
   prm.leave_subsection();
 }
+
+// Dead time of the detector, activity of the tracer particle and attenuation
+// coefficient of the reactor with respect to each detector can be defined in
+// detector parameter subsection in the parameter file. Having more than one
+// detector, these parameters can be defined as the Following format: (For
+// example for dead time and having 3 detectors: Deadtime = 1,1,1)
 
 void
 Parameters::DetectorParameters::parse_parameters(ParameterHandler &prm)
@@ -202,7 +207,30 @@ Parameters::DetectorParameters::parse_parameters(ParameterHandler &prm)
     radius                  = prm.get_double("radius");
     length                  = prm.get_double("length");
     detector_positions_file = prm.get("detector positions file");
+
+    // Read dead time, activity and attenuation coefficient reactor as a single
+    // string
+    std::string dead_time_str = prm.get("dead time");
+    std::string activity_str  = prm.get("activity");
+    std::string attenuation_coefficient_reactor_str =
+      prm.get("attenuation coefficient reactor");
+    // Convert "dead time, activity and attenuation coefficient reactor" strings
+    // to vector of strings
+    std::vector<std::string> dead_time_str_list(
+      Utilities::split_string_list(dead_time_str));
+    std::vector<std::string> activity_str_list(
+      Utilities::split_string_list(activity_str));
+    std::vector<std::string> attenuation_coefficient_reactor_str_list(
+      Utilities::split_string_list(attenuation_coefficient_reactor_str));
+
+    // Convert "dead time, activity and attenuation coefficient reactor" string
+    // vector to double vector
+    dead_time = Utilities::string_to_double(dead_time_str_list);
+    activity  = Utilities::string_to_double(activity_str_list);
+    attenuation_coefficient_reactor =
+      Utilities::string_to_double(attenuation_coefficient_reactor_str_list);
   }
+
   prm.leave_subsection();
 }
 

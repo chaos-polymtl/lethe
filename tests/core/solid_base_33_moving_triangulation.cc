@@ -70,6 +70,7 @@ test()
   param->solid_mesh.simplex            = false;
   param->solid_mesh.translate          = false;
   param->solid_mesh.rotate             = false;
+  param->number_quadrature_points      = 2;
 
   double time_step = 0.01;
   param->solid_velocity.declare_parameters(prm, 3);
@@ -79,12 +80,10 @@ test()
   // Mesh of the fluid
   GridGenerator::hyper_cube(*fluid_tria, -1, 1);
 
-  const unsigned int degree_velocity = 1;
-
   // SolidBase class
   std::shared_ptr<Mapping<3>> fluid_mapping =
     std::make_shared<MappingQGeneric<3>>(1);
-  SolidBase<3, 3> solid(param, fluid_tria, fluid_mapping, degree_velocity);
+  SolidBase<3, 3> solid(param, fluid_tria, fluid_mapping);
   solid.initial_setup();
   solid.setup_particles();
   DoFHandler<3, 3> &solid_dh = solid.get_solid_dof_handler();
@@ -93,7 +92,7 @@ test()
   data_out.attach_dof_handler(solid_dh);
 
   const bool        mapping_all = true;
-  const MappingQ<3> mapping(degree_velocity, mapping_all);
+  const MappingQ<3> mapping(1, mapping_all);
   data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
 
   PVDHandler pvdhandler;
@@ -110,7 +109,7 @@ test()
 
   for (unsigned int i = 0; i < 100; ++i)
     {
-      solid.move_solid_triangulation(time_step);
+      solid.move_solid_triangulation(time_step, 0);
       data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
       double time = (i + 1) * time_step;
       if ((i + 1) % 10 == 0)

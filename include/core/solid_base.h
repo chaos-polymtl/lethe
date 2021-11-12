@@ -43,8 +43,9 @@
 
 #include <deal.II/grid/grid_generator.h>
 
-#include <deal.II/particles/particle_handler.h>
+#include <deal.II/lac/trilinos_vector.h>
 
+#include <deal.II/particles/particle_handler.h>
 
 
 using namespace dealii;
@@ -68,8 +69,7 @@ public:
   SolidBase(std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param,
             std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
                                                fluid_tria,
-            std::shared_ptr<Mapping<spacedim>> fluid_mapping,
-            const unsigned int                 degree_velocity);
+            std::shared_ptr<Mapping<spacedim>> fluid_mapping);
 
   /**
    * @brief Manages solid triangulation and particles setup
@@ -82,6 +82,13 @@ public:
    */
   void
   setup_triangulation(const bool restart);
+
+  /**
+   * @brief Sets-up particles with particle handler, in the fluid triangulation domain that holds the particles of the solid
+   * according to a specific quadrature
+   */
+  void
+  setup_displacement();
 
   /**
    * @brief Creates a particle handler in the fluid triangulation domain
@@ -128,22 +135,58 @@ public:
   get_solid_dof_handler();
 
   /**
+   * @return the reference to the displacement dof handler
+   */
+  DoFHandler<dim, spacedim> &
+  get_displacement_dof_handler();
+
+  /**
+   * @return the reference to the displacement vector
+   */
+  TrilinosWrappers::MPI::Vector &
+  get_displacement_vector();
+
+  /**
    * @return Function<spacedim> of the solid velocity
    */
   Function<spacedim> *
   get_solid_velocity();
 
   /**
-   * @brief Updates particle positions in solid_particle_handler by integrating velocity using a Runge-Kutta method
+   * @brief Updates particle positions in solid_particle_handler by integrating velocity using an explicit Runge-Kutta 4 method.
+   *
+   * @param time_step The time_step value for this iteration
+   *
+   * @param initial_time The initial time (time t) of the timestep. This is used to
+   * set the time of the velocity function.
    */
   void
-  integrate_velocity(double time_step);
+  integrate_velocity(double time_step, double initial_time);
 
   /**
-   * @brief Moves the dofs of the solid_triangulation
+   * @brief Moves the vertices of the solid triangulation. This function
+   * uses an Runge-Kutta 4 explicit time integrator to displace the vertices
+   * of the solid triangulation and stores the displacement in an array
+   * in order to allow correct checkpointing of the triangulation.
+   *               See
+   https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
+               for more details
+   *
+   * @param time_step The time_step value for this iteration
+   *
+   * @param initial_time The initial time (time t) of the timestep. This is used to
+   * set the time of the velocity function.
    */
   void
-  move_solid_triangulation(double time_step);
+  move_solid_triangulation(double time_step, double initial_time);
+
+  /**
+   * @brief Moves the dofs of the solid_triangulation by using the displacement vector.
+   * This is only use to move the solid triangulation at the correct location
+   * when the simulation is restarted.
+   */
+  void
+  move_solid_triangulation_with_displacement();
 
   /**
    * @brief prints the positions of the particles
@@ -154,8 +197,22 @@ public:
   void
   rotate_grid(double angle, int axis);
 
+  /**
+   * @brief read solid base triangulation checkpoint
+   */
+  void
+  read_checkpoint(std::string prefix_name);
+
+  /**
+   * @brief write solid base triangulation checkpoint
+   */
+  void
+  write_checkpoint(std::string prefix_name);
+
 
 private:
+  IndexSet locally_owned_dofs;
+  IndexSet locally_relevant_dofs;
   // Member variables
   MPI_Comm           mpi_communicator;
   const unsigned int n_mpi_processes;
@@ -173,12 +230,18 @@ private:
   std::shared_ptr<Mapping<spacedim>>      fluid_mapping;
   std::shared_ptr<Quadrature<dim>>        quadrature;
 
+
+  DoFHandler<dim, spacedim>                displacement_dh;
+  std::shared_ptr<FESystem<dim, spacedim>> displacement_fe;
+  TrilinosWrappers::MPI::Vector            displacement;
+  TrilinosWrappers::MPI::Vector            displacement_relevant;
+
+
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param;
 
   Function<spacedim> *velocity;
 
-  const unsigned int degree_velocity;
-  unsigned int       initial_number_of_particles;
+  unsigned int initial_number_of_particles;
 };
 
 #endif
