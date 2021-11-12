@@ -204,19 +204,9 @@ namespace Parameters
                         "2",
                         Patterns::Double(),
                         "Viscosity for an infinite constraint");
-      prm.declare_entry("lambda",
-                        "1",
-                        Patterns::Double(),
-                        "Relaxation time");
-      prm.declare_entry("a",
-                        "1",
-                        Patterns::Double(),
-                        "Relaxation time");
-      prm.declare_entry("n",
-                        "1",
-                        Patterns::Double(),
-                        "Power parameter");
-            
+      prm.declare_entry("lambda", "1", Patterns::Double(), "Relaxation time");
+      prm.declare_entry("a", "1", Patterns::Double(), "Relaxation time");
+      prm.declare_entry("n", "1", Patterns::Double(), "Power parameter");
     }
     prm.leave_subsection();
   }
@@ -231,11 +221,12 @@ namespace Parameters
         if (op == "carreau")
           model = Model::Carreau;
       }
-      viscosity_0     = prm.get_double("viscosity_0");;
-      viscosity_inf   = prm.get_double("viscosity_inf");
-      lambda          = prm.get_double("lambda");
-      a               = prm.get_double("a");
-      n               = prm.get_double("n");
+      viscosity_0 = prm.get_double("viscosity_0");
+      ;
+      viscosity_inf = prm.get_double("viscosity_inf");
+      lambda        = prm.get_double("lambda");
+      a             = prm.get_double("a");
+      n             = prm.get_double("n");
     }
     prm.leave_subsection();
   }
@@ -306,8 +297,8 @@ namespace Parameters
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
       non_newtonian_flow   = prm.get_bool("non newtonian flow");
       non_newtonian_parameters.parse_parameters(prm);
-      
-      thermal_expansion    = prm.get_double("thermal expansion");
+
+      thermal_expansion = prm.get_double("thermal expansion");
 
 
 

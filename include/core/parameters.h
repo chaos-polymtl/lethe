@@ -172,8 +172,8 @@ namespace Parameters
     double tracer_diffusivity;
   };
 
-    /**
-   * @brief Non Newtonian - Defines the parameters for 
+  /**
+   * @brief Non Newtonian - Defines the parameters for
    * non newtonian flows.
    */
 
@@ -224,7 +224,7 @@ namespace Parameters
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
     // Non Newtonian parameters
-    bool non_newtonian_flow;
+    bool         non_newtonian_flow;
     NonNewtonian non_newtonian_parameters;
 
     // Fluid objects for multiphasic simulations

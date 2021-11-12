@@ -704,11 +704,12 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         scratch_data.velocity_gradients[q];
 
       // Calculate shear rate (at each q)
-      const Tensor<2, dim> shear_rate = velocity_gradient 
-        + transpose(velocity_gradient);
+      const Tensor<2, dim> shear_rate =
+        velocity_gradient + transpose(velocity_gradient);
 
-      //Calculate de current non newtonian viscosity on each quadrature point        
-      const double non_newtonian_viscosity = rheological_model->get_viscosity(shear_rate);
+      // Calculate de current non newtonian viscosity on each quadrature point
+      const double non_newtonian_viscosity =
+        rheological_model->get_viscosity(shear_rate);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -746,10 +747,12 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
               const auto &phi_p_j = scratch_data.phi_p[q][j];
 
-              const auto &grad_phi_u_j_non_newtonian = grad_phi_u_j + transpose(grad_phi_u_j);
+              const auto &grad_phi_u_j_non_newtonian =
+                grad_phi_u_j + transpose(grad_phi_u_j);
 
               double local_matrix_ij =
-                non_newtonian_viscosity * scalar_product(grad_phi_u_j_non_newtonian, grad_phi_u_i) +
+                non_newtonian_viscosity *
+                  scalar_product(grad_phi_u_j_non_newtonian, grad_phi_u_i) +
                 velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j -
                 // Continuity
@@ -788,12 +791,13 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
         scratch_data.velocity_gradients[q];
 
       // Calculate shear rate (at each q)
-      const Tensor<2, dim> shear_rate = velocity_gradient 
-        + transpose(velocity_gradient);
+      const Tensor<2, dim> shear_rate =
+        velocity_gradient + transpose(velocity_gradient);
 
-      //Calculate de current non newtonian viscosity on each quadrature point        
-      const double non_newtonian_viscosity = rheological_model->get_viscosity(shear_rate);
-      
+      // Calculate de current non newtonian viscosity on each quadrature point
+      const double non_newtonian_viscosity =
+        rheological_model->get_viscosity(shear_rate);
+
       // Pressure
       const double pressure = scratch_data.pressure_values[q];
 
@@ -814,16 +818,16 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
           double local_rhs_i = 0;
 
           // Navier-Stokes Residual
-          local_rhs_i +=
-            (
-              // Momentum
-              -non_newtonian_viscosity  * scalar_product(shear_rate, grad_phi_u_i) -
-              velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
-              force * phi_u_i +
-              // Continuity
-              velocity_divergence * phi_p_i -
-              gamma * velocity_divergence * div_phi_u_i) *
-            JxW;
+          local_rhs_i += (
+                           // Momentum
+                           -non_newtonian_viscosity *
+                             scalar_product(shear_rate, grad_phi_u_i) -
+                           velocity_gradient * velocity * phi_u_i +
+                           pressure * div_phi_u_i + force * phi_u_i +
+                           // Continuity
+                           velocity_divergence * phi_p_i -
+                           gamma * velocity_divergence * div_phi_u_i) *
+                         JxW;
 
           local_rhs(i) += local_rhs_i;
         }
@@ -858,7 +862,7 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
-        
+
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 

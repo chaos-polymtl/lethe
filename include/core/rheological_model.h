@@ -22,7 +22,7 @@
 using namespace dealii;
 
 /**
- * @brief RheologicalModel. Abstract class that allows to calculate the 
+ * @brief RheologicalModel. Abstract class that allows to calculate the
  * non-newtonian viscosity on each quadrature point and the shear rate
  * magnitude. RheologicalModel::get_viscosity() is a pure virtual method,
  * since it can only be calculated knowing the rheological model that's
@@ -31,43 +31,42 @@ using namespace dealii;
 template <int dim>
 class RheologicalModel
 {
-public: 
+public:
   /**
    * @brief Default constructor
    */
   RheologicalModel()
-    {}
+  {}
 
   /**
    * @brief Returns the non-newtonian viscosity.
    *
-   * @param shear_rate The shear rate tensor at the position of the 
+   * @param shear_rate The shear rate tensor at the position of the
    * considered quadratured point
    */
-  virtual double get_viscosity(const Tensor<2, dim> shear_rate) = 0;
-  
+  virtual double
+  get_viscosity(const Tensor<2, dim> shear_rate) = 0;
+
   /**
    * @brief Returns the magnitude of the shear rate tensor given in parameter.
    *
-   * @param shear_rate The shear rate tensor at the position of the 
+   * @param shear_rate The shear rate tensor at the position of the
    * considered quadratured point
    */
-  double 
+  double
   get_shear_rate_magnitude(const Tensor<2, dim> shear_rate)
   {
     double shear_rate_magnitude = 0;
     for (unsigned int i = 0; i < dim; ++i)
-    {
-      for (unsigned int j = 0; j < dim; ++j)
       {
-        shear_rate_magnitude += (shear_rate[i][j] * shear_rate[j][i]);
+        for (unsigned int j = 0; j < dim; ++j)
+          {
+            shear_rate_magnitude += (shear_rate[i][j] * shear_rate[j][i]);
+          }
       }
-    }
     shear_rate_magnitude = sqrt(0.5 * shear_rate_magnitude);
     return shear_rate_magnitude;
   }
-
-  
 };
 
 template <int dim>
@@ -76,7 +75,7 @@ class Carreau : public RheologicalModel<dim>
 public:
   /**
    * @brief Parameter constructor
-   * 
+   *
    * @param non_newtonian_parameters The non newtonian parameters
    */
   Carreau(Parameters::NonNewtonian non_newtonian_parameters)
@@ -85,21 +84,24 @@ public:
     , lambda(non_newtonian_parameters.lambda)
     , a(non_newtonian_parameters.a)
     , n(non_newtonian_parameters.n)
-    {}
+  {}
 
   /**
    * @brief Returns the non-newtonian viscosity.
    *
-   * @param shear_rate The shear rate tensor at the position of the 
+   * @param shear_rate The shear rate tensor at the position of the
    * considered quadratured point
    */
-  double 
+  double
   get_viscosity(const Tensor<2, dim> shear_rate) override
   {
     double shear_rate_magnitude = this->get_shear_rate_magnitude(shear_rate);
-    return viscosity_inf + (viscosity_0 - viscosity_inf) * std::pow(1.0 + std::pow(shear_rate_magnitude * lambda, a), (n - 1)/a);
+    return viscosity_inf +
+           (viscosity_0 - viscosity_inf) *
+             std::pow(1.0 + std::pow(shear_rate_magnitude * lambda, a),
+                      (n - 1) / a);
   }
-  
+
 private:
   double viscosity_0;
   double viscosity_inf;

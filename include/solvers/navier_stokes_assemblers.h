@@ -14,11 +14,11 @@
  * ---------------------------------------------------------------------*/
 
 
+#include <core/rheological_model.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_scratch_data.h>
-#include <core/rheological_model.h>
 
 #ifndef lethe_navier_stokes_assemblers_h
 #  define lethe_navier_stokes_assemblers_h
@@ -295,7 +295,8 @@ public:
 };
 
 template <int dim>
-class GDNavierStokesAssemblerNonNewtonianCore : public NavierStokesAssemblerBase<dim>
+class GDNavierStokesAssemblerNonNewtonianCore
+  : public NavierStokesAssemblerBase<dim>
 {
 public:
   GDNavierStokesAssemblerNonNewtonianCore(
@@ -306,9 +307,11 @@ public:
     , physical_properties(physical_properties)
     , gamma(gamma)
   {
-    //if (physical_properties.non_newtonian_parameters.model == Parameters::NonNewtonian::Model::Carreau)
+    // if (physical_properties.non_newtonian_parameters.model ==
+    // Parameters::NonNewtonian::Model::Carreau)
     //{
-      rheological_model = std::make_shared<Carreau<dim>>(physical_properties.non_newtonian_parameters);
+    rheological_model = std::make_shared<Carreau<dim>>(
+      physical_properties.non_newtonian_parameters);
     //}
   }
 
@@ -332,10 +335,10 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
-  double                             gamma;
-  std::shared_ptr<RheologicalModel<dim>>  rheological_model;
+  std::shared_ptr<SimulationControl>     simulation_control;
+  Parameters::PhysicalProperties         physical_properties;
+  double                                 gamma;
+  std::shared_ptr<RheologicalModel<dim>> rheological_model;
 };
 
 
