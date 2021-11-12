@@ -21,16 +21,37 @@
 
 using namespace dealii;
 
+/**
+ * @brief RheologicalModel. Abstract class that allows to calculate the 
+ * non-newtonian viscosity on each quadrature point and the shear rate
+ * magnitude. RheologicalModel::get_viscosity() is a pure virtual method,
+ * since it can only be calculated knowing the rheological model that's
+ * being used.
+ */
 template <int dim>
 class RheologicalModel
 {
 public: 
-
+  /**
+   * @brief Default constructor
+   */
   RheologicalModel()
     {}
 
-  virtual double get_viscosity(double shear_rate_magnitude) = 0;
+  /**
+   * @brief Returns the non-newtonian viscosity.
+   *
+   * @param shear_rate The shear rate tensor at the position of the 
+   * considered quadratured point
+   */
+  virtual double get_viscosity(const Tensor<2, dim> shear_rate) = 0;
   
+  /**
+   * @brief Returns the magnitude of the shear rate tensor given in parameter.
+   *
+   * @param shear_rate The shear rate tensor at the position of the 
+   * considered quadratured point
+   */
   double 
   get_shear_rate_magnitude(const Tensor<2, dim> shear_rate)
   {
@@ -53,6 +74,11 @@ template <int dim>
 class Carreau : public RheologicalModel<dim>
 {
 public:
+  /**
+   * @brief Parameter constructor
+   * 
+   * @param non_newtonian_parameters The non newtonian parameters
+   */
   Carreau(Parameters::NonNewtonian non_newtonian_parameters)
     : viscosity_0(non_newtonian_parameters.viscosity_0)
     , viscosity_inf(non_newtonian_parameters.viscosity_inf)
@@ -61,8 +87,16 @@ public:
     , n(non_newtonian_parameters.n)
     {}
 
-  double get_viscosity(double shear_rate_magnitude) override
+  /**
+   * @brief Returns the non-newtonian viscosity.
+   *
+   * @param shear_rate The shear rate tensor at the position of the 
+   * considered quadratured point
+   */
+  double 
+  get_viscosity(const Tensor<2, dim> shear_rate) override
   {
+    double shear_rate_magnitude = this->get_shear_rate_magnitude(shear_rate);
     return viscosity_inf + (viscosity_0 - viscosity_inf) * std::pow(1.0 + std::pow(shear_rate_magnitude * lambda, a), (n - 1)/a);
   }
   

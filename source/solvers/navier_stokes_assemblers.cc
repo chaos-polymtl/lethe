@@ -707,11 +707,8 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const Tensor<2, dim> shear_rate = velocity_gradient 
         + transpose(velocity_gradient);
 
-      //Get the magnitude of the shear rate
-      double = rheological_model->get_shear_rate_magnitude(shear_rate);
-
       //Calculate de current non newtonian viscosity on each quadrature point        
-      double non_newtonian_viscosity = rheological_model->get_viscosity(shear_rate_magnitude);
+      const double non_newtonian_viscosity = rheological_model->get_viscosity(shear_rate);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -794,11 +791,8 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const Tensor<2, dim> shear_rate = velocity_gradient 
         + transpose(velocity_gradient);
 
-      //Get the magnitude of the shear rate
-      double shear_rate_magnitude = rheological_model->get_shear_rate_magnitude(shear_rate);
-
       //Calculate de current non newtonian viscosity on each quadrature point        
-      double non_newtonian_viscosity = rheological_model->get_viscosity(shear_rate_magnitude);
+      const double non_newtonian_viscosity = rheological_model->get_viscosity(shear_rate);
       
       // Pressure
       const double pressure = scratch_data.pressure_values[q];
@@ -806,7 +800,7 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       // Forcing term
       const Tensor<1, dim> force = scratch_data.force[q];
 
-      // Store JxW in local variable for faster access;
+      // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
 
       // Assembly of the right-hand side
