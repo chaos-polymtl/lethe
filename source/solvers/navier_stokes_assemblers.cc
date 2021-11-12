@@ -687,13 +687,6 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Non newtonian parameters
-  const double viscosity_0    = physical_properties.non_newtonian_parameters.viscosity_0;
-  const double viscosity_inf  = physical_properties.non_newtonian_parameters.viscosity_inf;
-  const double lambda         = physical_properties.non_newtonian_parameters.lambda;
-  const double a              = physical_properties.non_newtonian_parameters.a;
-  const double n              = physical_properties.non_newtonian_parameters.n;
-
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -713,20 +706,13 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate = velocity_gradient 
         + transpose(velocity_gradient);
-      double shear_rate_magnitude = 0;
-      for (unsigned int i = 0; i < dim; ++i)
-      {
-        for (unsigned int j = 0; j < dim; ++j)
-        {
-          shear_rate_magnitude += (shear_rate[i][j] * shear_rate[j][i]);
-        }
-      }
-      shear_rate_magnitude = sqrt(0.5 * shear_rate_magnitude);
 
-      //Calculate de current non newtonian viscosity on each quadrature point
-      double non_newtonian_viscosity = viscosity_inf + (viscosity_0 - viscosity_inf) * 
-        std::pow(1.0 + std::pow(shear_rate_magnitude * lambda, a), (n - 1)/a);
-        
+      //Get the magnitude of the shear rate
+      double = rheological_model->get_shear_rate_magnitude(shear_rate);
+
+      //Calculate de current non newtonian viscosity on each quadrature point        
+      double non_newtonian_viscosity = rheological_model->get_viscosity(shear_rate_magnitude);
+
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
@@ -787,13 +773,6 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Non newtonian parameters
-  const double viscosity_0    = physical_properties.non_newtonian_parameters.viscosity_0;
-  const double viscosity_inf  = physical_properties.non_newtonian_parameters.viscosity_inf;
-  const double lambda         = physical_properties.non_newtonian_parameters.lambda;
-  const double a              = physical_properties.non_newtonian_parameters.a;
-  const double n              = physical_properties.non_newtonian_parameters.n;
-
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -815,16 +794,11 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const Tensor<2, dim> shear_rate = velocity_gradient 
         + transpose(velocity_gradient);
 
-      double shear_rate_magnitude = 0;
-      for (unsigned int d = 0; d < dim; ++d)
-      {
-        shear_rate_magnitude += (shear_rate[d] * shear_rate[d]);
-      }
-      shear_rate_magnitude = sqrt(0.5 * shear_rate_magnitude);
+      //Get the magnitude of the shear rate
+      double shear_rate_magnitude = rheological_model->get_shear_rate_magnitude(shear_rate);
 
-      //Calculate de current non newtonian viscosity on each quadrature point
-      double non_newtonian_viscosity = (viscosity_inf + (viscosity_0 - viscosity_inf) * 
-        std::pow(1 + std::pow(shear_rate_magnitude * lambda, a), (n - 1)/a));
+      //Calculate de current non newtonian viscosity on each quadrature point        
+      double non_newtonian_viscosity = rheological_model->get_viscosity(shear_rate_magnitude);
       
       // Pressure
       const double pressure = scratch_data.pressure_values[q];

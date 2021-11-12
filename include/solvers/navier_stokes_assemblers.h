@@ -18,6 +18,7 @@
 
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_scratch_data.h>
+#include <core/rheological_model.h>
 
 #ifndef lethe_navier_stokes_assemblers_h
 #  define lethe_navier_stokes_assemblers_h
@@ -304,7 +305,12 @@ public:
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
     , gamma(gamma)
-  {}
+  {
+    //if (physical_properties.non_newtonian_parameters.model == Parameters::NonNewtonian::Model::Carreau)
+    //{
+      rheological_model = std::make_shared<Carreau<dim>>(physical_properties.non_newtonian_parameters);
+    //}
+  }
 
   /**
    * @brief assemble_matrix Assembles the matrix
@@ -329,6 +335,7 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
   double                             gamma;
+  std::shared_ptr<RheologicalModel<dim>>  rheological_model;
 };
 
 

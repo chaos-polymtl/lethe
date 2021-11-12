@@ -180,7 +180,7 @@ namespace Parameters
     // Non Newtonian model
     enum class Model
     {
-      carreau
+      Carreau
     };
 
     Model  model;

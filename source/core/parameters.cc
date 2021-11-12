@@ -192,10 +192,10 @@ namespace Parameters
     prm.enter_subsection("non newtonian");
     {
       prm.declare_entry("model",
-                        "none",
-                        Patterns::Selection("none|carreau"),
+                        "carreau",
+                        Patterns::Selection("carreau"),
                         "Non newtonian model "
-                        "Choices are <none|carreau>.");
+                        "Choices are <carreau>.");
       prm.declare_entry("viscosity_0",
                         "1",
                         Patterns::Double(),
@@ -229,7 +229,7 @@ namespace Parameters
       {
         const std::string op = prm.get("model");
         if (op == "carreau")
-          model = Model::carreau;
+          model = Model::Carreau;
       }
       viscosity_0     = prm.get_double("viscosity_0");;
       viscosity_inf   = prm.get_double("viscosity_inf");
