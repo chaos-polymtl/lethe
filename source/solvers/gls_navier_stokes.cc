@@ -984,13 +984,13 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             linear_solver_tolerance,
             true,
             true);
-          bool extra_verobse = false;
+          bool extra_verbose = false;
           if (this->simulation_parameters.linear_solver.verbosity ==
               Parameters::Verbosity::extra_verbose)
-            extra_verobse = true;
+            extra_verbose = true;
 
           TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-            extra_verobse,
+            extra_verbose,
             this->simulation_parameters.linear_solver.max_krylov_vectors);
 
           if (!ilu_preconditioner)
@@ -1072,9 +1072,9 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
           bool extra_verbose = false;
           if (this->simulation_parameters.linear_solver.verbosity ==
               Parameters::Verbosity::extra_verbose)
-            extra_verobse = true;
+            extra_verbose = true;
           TrilinosWrappers::SolverBicgstab::AdditionalData solver_parameters(
-            extra_verobse);
+            extra_verbose);
 
           SolverControl solver_control(
             this->simulation_parameters.linear_solver.max_iterations,
@@ -1160,12 +1160,12 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
             linear_solver_tolerance,
             true,
             true);
-          bool extra_verobse = false;
+          bool extra_verbose = false;
           if (this->simulation_parameters.linear_solver.verbosity ==
               Parameters::Verbosity::extra_verbose)
-            extra_verobse = true;
+            extra_verbose = true;
           TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-            extra_verobse,
+            extra_verbose,
             this->simulation_parameters.linear_solver.max_krylov_vectors);
 
           TrilinosWrappers::SolverGMRES solver(solver_control,
