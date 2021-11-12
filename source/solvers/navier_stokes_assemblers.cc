@@ -1259,20 +1259,30 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
                                       const auto comp_j =
                                         fe.system_to_component_index(j).first;
                                       if (comp_i == comp_j)
-                                        local_matrix(i, j) +=
-                                          penalty_parameter * beta *
-                                            scratch_data.face_phi_u[f][q][i] *
-                                            scratch_data.face_phi_u[f][q][j] *
-                                            JxW +
-                                          (scratch_data.face_phi_u[f][q][j] *
-                                           (scratch_data
-                                              .face_grad_phi_u[f][q][i] *
-                                            scratch_data.face_normal[f][q])) *
-                                            JxW +
-                                          ((scratch_data
-                                              .face_grad_phi_u[f][q][j] *
-                                            scratch_data.face_normal[f][q]) *
-                                           scratch_data.face_phi_u[f][q][i]);
+                                        {
+                                          double beta_terms =
+                                            penalty_parameter * beta *
+                                            (-scratch_data.face_phi_u[f][q][j][comp_i]) *
+                                            scratch_data.face_phi_u[f][q][i][comp_i] *
+                                            JxW;
+                                          double grad_phi_terms =
+                                            ((scratch_data.face_phi_u[f][q][j]) *
+                                             (scratch_data.face_grad_phi_u[f][q][i] *
+                                              scratch_data.face_normal[f][q])) *
+                                            JxW;
+                                          double surface_stress_term =
+                                            (viscosity *
+                                              scratch_data
+                                                .face_grad_phi_u[f][q][j] *
+                                              scratch_data.face_normal[f][q]) *
+                                               scratch_data.face_phi_u[f][q][i] *
+                                            JxW;
+
+                                          local_matrix(i, j) += -beta_terms -
+                                                          grad_phi_terms -
+                                                          surface_stress_term;
+
+                                        }
                                     }
                                 }
                             }
@@ -1359,32 +1369,30 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
                                 fe.system_to_component_index(i).first;
                               if (comp_i < dim)
                                 {
-                                  double this_rhs_beta =
-                                    -penalty_parameter * beta *
-                                      scratch_data
-                                        .face_velocity_values[f][q][comp_i] *
-                                      scratch_data.face_phi_u[f][q][i][comp_i] *
-                                      JxW +
+                                  double beta_terms =
                                     penalty_parameter * beta *
-                                      prescribed_velocity_values[f][q][comp_i] *
-                                      scratch_data.face_phi_u[f][q][i][comp_i] *
-                                      JxW;
-                                  double this_rhs_grad =
-                                    ((prescribed_velocity_values[f][q] *
-                                      (scratch_data.face_grad_phi_u[f][q][i] *
-                                       scratch_data.face_normal[f][q])) -
-                                     (scratch_data.face_velocity_values[f][q] *
-                                      (scratch_data.face_grad_phi_u[f][q][i] *
-                                       scratch_data.face_normal[f][q]))) *
+                                    (prescribed_velocity_values[f][q][comp_i] -
+                                     scratch_data
+                                       .face_velocity_values[f][q][comp_i]) *
+                                    scratch_data.face_phi_u[f][q][i][comp_i] *
                                     JxW;
-                                  double surface_stress =
-                                    (scratch_data
-                                       .face_velocity_gradients[f][q] *
-                                     scratch_data.face_normal[f][q]) *
-                                    scratch_data.face_phi_u[f][q][i] * JxW;
-                                  local_rhs(i) += this_rhs_beta +
-                                                  this_rhs_grad +
-                                                  surface_stress;
+                                  double grad_phi_terms =
+                                    ((scratch_data.face_velocity_values[f][q] -
+                                      prescribed_velocity_values[f][q]) *
+                                     (scratch_data.face_grad_phi_u[f][q][i] *
+                                      scratch_data.face_normal[f][q])) *
+                                    JxW;
+                                  double surface_stress_term =
+                                    (viscosity *
+                                      scratch_data
+                                        .face_velocity_gradients[f][q] *
+                                      scratch_data.face_normal[f][q]*
+                                       scratch_data.face_phi_u[f][q][i]) *
+                                    JxW;
+
+                                  local_rhs(i) += beta_terms +
+                                                  grad_phi_terms +
+                                                  surface_stress_term;
                                 }
                             }
                         }
