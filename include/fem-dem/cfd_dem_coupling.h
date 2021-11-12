@@ -43,6 +43,7 @@ class CFDDEMSolver : public GLSVANSSolver<dim>
 {
   using FuncPtrType = bool (CFDDEMSolver<dim>::*)(const unsigned int &counter);
   FuncPtrType check_contact_search_step;
+  FuncPtrType check_load_balance_step;
 
 public:
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
@@ -51,6 +52,39 @@ public:
 
   virtual void
   solve() override;
+
+  /**
+   * The cell_weight() function indicates to the triangulation how much
+   * computational work is expected to happen on this cell, and consequently
+   * how the domain needs to be partitioned so that every MPI rank receives a
+   * roughly equal amount of work (potentially not an equal number of cells).
+   * While the function is called from the outside, it is connected to the
+   * corresponding signal from inside this class, therefore it can be private.
+   * This function is the key component that allow us to dynamically balance the
+   * computational load. The function attributes a weight to
+   * every cell that represents the computational work on this cell. Here the
+   * majority of work is expected to happen on the particles, therefore the
+   * return value of this function (representing "work for this cell") is
+   * calculated based on the number of particles in the current cell.
+   * The function is connected to the cell_weight() signal inside the
+   * triangulation, and will be called once per cell, whenever the triangulation
+   * repartitions the domain between ranks (the connection is created inside the
+   * particles_generation() function of this class).
+   */
+  unsigned int
+  cell_weight(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+      &                                                                  cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
+
+  /**
+   * @brief Manages the call to the load balancing. Returns true if
+   * load balancing is performed
+   *
+   */
+  void
+  load_balance();
 
 protected:
 private:
@@ -100,20 +134,6 @@ private:
    */
   void
   particle_wall_contact_force();
-
-  /**
-   * Finds contact search steps for constant contact search method
-   */
-  bool
-  check_contact_search_step_constant(const unsigned int &counter);
-
-
-  /**
-   * Finds contact search steps for dynamic contact search method
-   */
-  bool
-  check_contact_search_step_dynamic(const unsigned int & /*counter*/);
-
 
   /**
    * @brief Updates moment of inertia container after sorting particles
@@ -167,7 +187,6 @@ private:
   void
   read_checkpoint() override;
 
-
   unsigned int                coupling_frequency;
   bool                        contact_detection_step;
   bool                        checkpoint_step;
@@ -179,7 +198,6 @@ private:
   double                      neighborhood_threshold_squared;
   double                      maximum_particle_diameter;
   double                      standard_deviation_multiplier;
-  unsigned int                contact_detection_frequency;
   double                      smallest_contact_search_criterion;
   double                      triangulation_cell_diameter;
 

@@ -128,7 +128,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
               &particle_handler,
               true));
 
-
   // Setting contact detection method (constant or dynamic)
   if (parameters.model_parameters.contact_detection_method ==
       Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
@@ -175,8 +174,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       throw std::runtime_error("Specified load balance method is not valid");
     }
 
-
-
   // Calling input_parameter_inspection to evaluate input parameters in the
   // parameter handler file, finding maximum particle diameter used in
   // polydisperse systems
@@ -217,7 +214,8 @@ DEMSolver<dim>::cell_weight(
   // expensive cell operations) to much larger than 1000 (expensive
   // particle operations, cheap cell operations, like in this case).
   // This parameter will need to be tuned for the case of DEM.
-  const unsigned int particle_weight = 10000;
+  const unsigned int particle_weight =
+    parameters.model_parameters.load_balance_particle_weight;
 
   // This does not use adaptive refinement, therefore every cell
   // should have the status CELL_PERSIST. However this function can also
