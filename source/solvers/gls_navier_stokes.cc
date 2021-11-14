@@ -179,6 +179,20 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::update_boundary_conditions()
 {
+  double time = this->simulation_control->get_current_time();
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+        .u.set_time(time);
+      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+        .v.set_time(time);
+      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
+        .w.set_time(time);
+      this->simulation_parameters.boundary_conditions.bcPressureFunction[i_bc]
+        .p.set_time(time);
+    }
   define_non_zero_constraints();
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
@@ -192,6 +206,7 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
 {
   double time = this->simulation_control->get_current_time();
   FEValuesExtractors::Vector velocities(0);
+  FEValuesExtractors::Scalar pressure(dim);
   // Non-zero constraints
   auto &nonzero_constraints = this->get_nonzero_constraints();
   {
@@ -254,7 +269,6 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
               nonzero_constraints,
               this->fe->component_mask(velocities));
           }
-
         else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
@@ -276,6 +290,7 @@ void
 GLSNavierStokesSolver<dim>::define_zero_constraints()
 {
   FEValuesExtractors::Vector velocities(0);
+  FEValuesExtractors::Scalar pressure(dim);
   this->zero_constraints.clear();
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
                                           this->locally_relevant_dofs);
@@ -312,8 +327,17 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
               .periodic_direction[i_bc],
             this->zero_constraints);
         }
-      else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
-           // || Parameters::function)
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::pressure)
+        {
+          /*do nothing*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::function_weak)
+        {
+          /*do nothing*/
+        }
+      else
         {
           VectorTools::interpolate_boundary_values(
             *this->mapping,
@@ -334,6 +358,23 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::function_weak))
+    {
+      this->assemblers.push_back(
+        std::make_shared<WeakDirichletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties,
+          this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+    {
+      this->assemblers.push_back(
+        std::make_shared<PressureBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties,
+          this->simulation_parameters.boundary_conditions));
+    }
   if (this->simulation_parameters.multiphysics.free_surface)
     {
       // Time-stepping schemes
@@ -416,7 +457,8 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.free_surface)
     {
@@ -516,7 +558,8 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.free_surface)
     {
@@ -941,9 +984,13 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             linear_solver_tolerance,
             true,
             true);
+          bool extra_verbose = false;
+          if (this->simulation_parameters.linear_solver.verbosity ==
+              Parameters::Verbosity::extra_verbose)
+            extra_verbose = true;
 
           TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-            false,
+            extra_verbose,
             this->simulation_parameters.linear_solver.max_krylov_vectors);
 
           if (!ilu_preconditioner)
@@ -1022,12 +1069,20 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
           TrilinosWrappers::MPI::Vector completely_distributed_solution(
             this->locally_owned_dofs, this->mpi_communicator);
 
+          bool extra_verbose = false;
+          if (this->simulation_parameters.linear_solver.verbosity ==
+              Parameters::Verbosity::extra_verbose)
+            extra_verbose = true;
+          TrilinosWrappers::SolverBicgstab::AdditionalData solver_parameters(
+            extra_verbose);
+
           SolverControl solver_control(
             this->simulation_parameters.linear_solver.max_iterations,
             linear_solver_tolerance,
             true,
             true);
-          TrilinosWrappers::SolverBicgstab solver(solver_control);
+          TrilinosWrappers::SolverBicgstab solver(solver_control,
+                                                  solver_parameters);
 
           if (!ilu_preconditioner)
             setup_preconditioner();
@@ -1105,9 +1160,12 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
             linear_solver_tolerance,
             true,
             true);
-
+          bool extra_verbose = false;
+          if (this->simulation_parameters.linear_solver.verbosity ==
+              Parameters::Verbosity::extra_verbose)
+            extra_verbose = true;
           TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-            false,
+            extra_verbose,
             this->simulation_parameters.linear_solver.max_krylov_vectors);
 
           TrilinosWrappers::SolverGMRES solver(solver_control,

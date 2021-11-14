@@ -228,6 +228,23 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
     }
 }
 
+template <int dim, typename VectorType, typename DofsType>
+bool
+NavierStokesBase<dim, VectorType, DofsType>::check_existance_of_bc(
+  BoundaryConditions::BoundaryType bc)
+{
+  bool bc_exist = false;
+  // Loop over the boundary to check if they need assembler on their face.
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] == bc)
+        bc_exist = true;
+    }
+  return bc_exist;
+}
+
 
 // This is a primitive first implementation that could be greatly improved by
 // doing a single pass instead of N boundary passes

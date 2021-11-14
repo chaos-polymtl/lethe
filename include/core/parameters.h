@@ -46,7 +46,8 @@ namespace Parameters
   enum class Verbosity
   {
     quiet,
-    verbose
+    verbose,
+    extra_verbose
   };
 
   /**
