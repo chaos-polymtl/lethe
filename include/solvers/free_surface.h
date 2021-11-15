@@ -205,20 +205,13 @@ public:
   post_mesh_adaptation();
 
   /**
-   * @brief Allow the refinement of the mesh.
-   *  Contrary to the NavierStokes solver, only one method is implemented here.
-   */
-  void
-  refine_mesh();
-
-  /**
-   * @brief Allow the refinement of the mesh based on the Kelly error estimator.
+   * @brief Compute the Kelly error estimator on the phase parameter for mesh refinement.
    * See :
    * https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html
    * for more information on the Kelly error estimator.
    */
   void
-  refine_mesh_kelly();
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell);
 
   /**
    * @brief Prepares auxiliary physics to write checkpoint
@@ -324,9 +317,6 @@ private:
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;
-
-  // Variables for mesh refinement with Kelly estimator
-  //  TimerOutput computing_timer;
 
   // Solution storage:
   IndexSet locally_owned_dofs;

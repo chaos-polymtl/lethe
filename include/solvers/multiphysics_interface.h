@@ -24,13 +24,6 @@
 #ifndef lethe_multiphysics_interface_h
 #define lethe_multiphysics_interface_h
 
-#include <core/multiphysics.h>
-#include <core/parameters_multiphysics.h>
-#include <core/simulation_control.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/simulation_parameters.h>
-
 #include <deal.II/base/exceptions.h>
 
 #include <deal.II/distributed/tria_base.h>
@@ -39,6 +32,12 @@
 
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <core/multiphysics.h>
+#include <core/parameters_multiphysics.h>
+#include <core/simulation_control.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/simulation_parameters.h>
 
 #include <map>
 #include <memory>
@@ -533,6 +532,23 @@ public:
                 ExcInternalError());
     block_physics_solutions_m1[physics_id] = solution_vector;
   }
+
+  /**
+   * @brief Mesh refinement according to an auxiliary physic parameter
+   * NB : only implemented for free_surface for now
+   */
+  virtual void
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->compute_kelly(estimated_error_per_cell);
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->compute_kelly(estimated_error_per_cell);
+      }
+  };
 
   /**
    * @brief Prepares auxiliary physics to write simulation checkpoint

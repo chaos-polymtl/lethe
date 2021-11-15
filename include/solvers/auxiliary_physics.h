@@ -17,14 +17,13 @@
 #ifndef lethe_auxiliary_physics_h
 #define lethe_auxiliary_physics_h
 
-#include <core/parameters.h>
-#include <core/physics_solver.h>
-
-#include <solvers/simulation_parameters.h>
-
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/numerics/data_out.h>
+
+#include <core/parameters.h>
+#include <core/physics_solver.h>
+#include <solvers/simulation_parameters.h>
 
 
 /**
@@ -140,12 +139,17 @@ public:
   virtual void
   write_checkpoint() = 0;
 
-
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
    */
   virtual void
   read_checkpoint() = 0;
+
+  /**
+   * @brief Compute the Kelly error estimator used to refine mesh on a auxiliary physic parameter.
+   */
+  virtual void
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell) = 0;
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.

@@ -599,39 +599,13 @@ FreeSurface<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-FreeSurface<dim>::refine_mesh()
+FreeSurface<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
 {
-  if (simulation_control->get_step_number() %
-        simulation_parameters.mesh_adaptation.frequency ==
-      0)
-    {
-      if (simulation_parameters.mesh_adaptation.type ==
-          Parameters::MeshAdaptation::Type::kelly)
-        refine_mesh_kelly();
-    }
-}
-
-template <int dim>
-void
-FreeSurface<dim>::refine_mesh_kelly()
-{
-  if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-        triangulation.get()) == nullptr)
-    return;
-
-  auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-    triangulation.get());
-
-  // Time monitoring
-  //  TimerOutput::Scope t(this->computing_timer, "refine");
-
-  // Step 1 : estimate error
-  Vector<float> estimated_error_per_cell(tria.n_active_cells());
-  const FEValuesExtractors::Scalar phase(dim);
-  auto &                           present_solution = this->present_solution;
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::phase)
     {
+      const FEValuesExtractors::Scalar phase(dim);
+
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,
         dof_handler,
@@ -639,106 +613,8 @@ FreeSurface<dim>::refine_mesh_kelly()
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
         present_solution,
         estimated_error_per_cell,
-        this->fe->component_mask(phase));
+        fe->component_mask(phase));
     }
-
-  // Step 2 : manage refinement options given in .prm
-  if (this->simulation_parameters.mesh_adaptation.fractionType ==
-      Parameters::MeshAdaptation::FractionType::number)
-    {
-      parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
-        tria,
-        estimated_error_per_cell,
-        this->simulation_parameters.mesh_adaptation.refinement_fraction,
-        this->simulation_parameters.mesh_adaptation.coarsening_fraction,
-        this->simulation_parameters.mesh_adaptation.maximum_number_elements);
-    }
-  else if (this->simulation_parameters.mesh_adaptation.fractionType ==
-           Parameters::MeshAdaptation::FractionType::fraction)
-    {
-      parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
-        tria,
-        estimated_error_per_cell,
-        this->simulation_parameters.mesh_adaptation.refinement_fraction,
-        this->simulation_parameters.mesh_adaptation.coarsening_fraction);
-    }
-
-  if (tria.n_levels() >
-      this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
-    {
-      for (typename Triangulation<dim>::active_cell_iterator cell =
-             tria.begin_active(this->simulation_parameters.mesh_adaptation
-                                 .maximum_refinement_level);
-           cell != tria.end();
-           ++cell)
-        cell->clear_refine_flag();
-    }
-  for (typename Triangulation<dim>::active_cell_iterator cell =
-         tria.begin_active(this->simulation_parameters.mesh_adaptation
-                             .minimum_refinement_level);
-       cell !=
-       tria.end_active(
-         this->simulation_parameters.mesh_adaptation.minimum_refinement_level);
-       ++cell)
-    {
-      cell->clear_coarsen_flag();
-    }
-
-  // Step 3 : prepare for mesh adaptation
-  tria.prepare_coarsening_and_refinement();
-
-  // Solution transfer objects for all the solutions
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer(dof_handler);
-  std::vector<
-    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
-    previous_solutions_transfer;
-  // Important to reserve to prevent pointer dangling
-  previous_solutions_transfer.reserve(previous_solutions.size());
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-    {
-      previous_solutions_transfer.push_back(
-        parallel::distributed::SolutionTransfer<dim,
-                                                TrilinosWrappers::MPI::Vector>(
-          dof_handler));
-      previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
-        previous_solutions[i]);
-    }
-
-  solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
-
-  multiphysics->prepare_for_mesh_adaptation();
-
-  // Step 4 : execute mesh adaptation
-  tria.execute_coarsening_and_refinement();
-
-  // Step 5 : deploy solution to the new grid
-  this->setup_dofs();
-
-  // Set up the vectors for the transfer
-  auto mpi_communicator = triangulation->get_communicator();
-  TrilinosWrappers::MPI::Vector tmp(locally_owned_dofs, mpi_communicator);
-
-  // Interpolate the solution at time and previous time
-  solution_transfer.interpolate(tmp);
-
-  // Distribute constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(tmp);
-
-  // Fix on the new mesh
-  present_solution = tmp;
-
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-    {
-      TrilinosWrappers::MPI::Vector tmp_previous_solution(locally_owned_dofs,
-                                                          mpi_communicator);
-      previous_solutions_transfer[i].interpolate(tmp_previous_solution);
-      nonzero_constraints.distribute(tmp_previous_solution);
-      previous_solutions[i] = tmp_previous_solution;
-    }
-
-  multiphysics->post_mesh_adaptation();
 }
 
 template <int dim>
