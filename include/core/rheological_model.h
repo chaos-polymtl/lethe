@@ -51,7 +51,7 @@ public:
    * @brief Returns the magnitude of the shear rate tensor given in parameter.
    *
    * @param shear_rate The shear rate tensor at the position of the
-   * considered quadratured point
+   * considered quadrature point
    */
   double
   get_shear_rate_magnitude(const Tensor<2, dim> shear_rate)
