@@ -197,16 +197,16 @@ namespace Parameters
                         "Non newtonian model "
                         "Choices are <carreau>.");
       prm.declare_entry("viscosity_0",
-                        "1",
+                        "1.0",
                         Patterns::Double(),
                         "Viscosity at rest");
       prm.declare_entry("viscosity_inf",
-                        "2",
+                        "1.0",
                         Patterns::Double(),
                         "Viscosity for an infinite constraint");
-      prm.declare_entry("lambda", "1", Patterns::Double(), "Relaxation time");
-      prm.declare_entry("a", "1", Patterns::Double(), "Relaxation time");
-      prm.declare_entry("n", "1", Patterns::Double(), "Power parameter");
+      prm.declare_entry("lambda", "1.0", Patterns::Double(), "Relaxation time");
+      prm.declare_entry("a", "2.0", Patterns::Double(), "Carreau parameter");
+      prm.declare_entry("n", "0.5", Patterns::Double(), "Power parameter");
     }
     prm.leave_subsection();
   }
