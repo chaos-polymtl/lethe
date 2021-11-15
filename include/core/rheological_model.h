@@ -42,7 +42,7 @@ public:
    * @brief Returns the non-newtonian viscosity.
    *
    * @param shear_rate The shear rate tensor at the position of the
-   * considered quadratured point
+   * considered quadrature point
    */
   virtual double
   get_viscosity(const Tensor<2, dim> shear_rate) = 0;
