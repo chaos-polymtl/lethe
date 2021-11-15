@@ -33,7 +33,9 @@ namespace BoundaryConditions
     noslip,
     slip,
     function,
+    function_weak,
     periodic,
+    pressure,
     // for heat transfer
     temperature,      // Dirichlet
     convection,       // Robin
@@ -58,6 +60,8 @@ namespace BoundaryConditions
     // List of boundary type for each number
     std::vector<BoundaryType> type;
 
+    double beta;
+
     // Number of boundary conditions
     unsigned int size;
     unsigned int max_size;
@@ -67,6 +71,7 @@ namespace BoundaryConditions
     std::vector<unsigned int> periodic_id;
     std::vector<unsigned int> periodic_direction;
   };
+
 
   /**
    * @brief This class manages the functions associated with function-type boundary conditions
@@ -86,6 +91,21 @@ namespace BoundaryConditions
     Point<dim> center_of_rotation;
   };
 
+  /**
+   * @brief This class manages the functions associated with function-type  pressure boundary conditions
+   * for the Navier-Stokes equations
+   *
+   */
+  template <int dim>
+  class NSPressureBoundaryFunctions
+  {
+  public:
+    // Velocity components
+    Functions::ParsedFunction<dim> p;
+
+    // Point for the center of rotation
+    Point<dim> center_of_rotation;
+  };
 
   /**
    * @brief This class manages the boundary conditions for Navier-Stokes solver
@@ -97,7 +117,8 @@ namespace BoundaryConditions
   {
   public:
     // Functions for (u,v,w) for all boundaries
-    NSBoundaryFunctions<dim> *bcFunctions;
+    NSBoundaryFunctions<dim> *        bcFunctions;
+    NSPressureBoundaryFunctions<dim> *bcPressureFunction;
 
     void
     parse_boundary(ParameterHandler &prm, unsigned int i_bc);
@@ -139,11 +160,14 @@ namespace BoundaryConditions
   NSBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm,
                                                  unsigned int      i_bc)
   {
-    prm.declare_entry("type",
-                      "noslip",
-                      Patterns::Selection("noslip|slip|function|periodic"),
-                      "Type of boundary condition"
-                      "Choices are <noslip|slip|function|periodic>.");
+    prm.declare_entry(
+      "type",
+      "noslip",
+      Patterns::Selection(
+        "noslip|slip|function|periodic|pressure|function weak"),
+      "Type of boundary condition"
+      "Choices are <noslip|slip|function|periodic|pressure|function weak>.");
+
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -175,6 +199,11 @@ namespace BoundaryConditions
     prm.set("Function expression", "0");
     prm.leave_subsection();
 
+    prm.enter_subsection("p");
+    bcPressureFunction[i_bc].p.declare_parameters(prm, 1);
+    prm.set("Function expression", "0");
+    prm.leave_subsection();
+
     // Center of rotation of the boundary condition for torque calculation
     prm.enter_subsection("center of rotation");
     prm.declare_entry("x", "0", Patterns::Double(), "X COR");
@@ -201,9 +230,12 @@ namespace BoundaryConditions
       this->type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
       this->type[i_bc] = BoundaryType::slip;
-    if (op == "function")
+    if (op == "function" || op == "function weak")
       {
-        this->type[i_bc] = BoundaryType::function;
+        if (op == "function")
+          this->type[i_bc] = BoundaryType::function;
+        else
+          this->type[i_bc] = BoundaryType::function_weak;
         prm.enter_subsection("u");
         bcFunctions[i_bc].u.parse_parameters(prm);
         prm.leave_subsection();
@@ -221,6 +253,20 @@ namespace BoundaryConditions
         bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
         if (dim == 3)
           bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
+        prm.leave_subsection();
+      }
+    if (op == "pressure")
+      {
+        this->type[i_bc] = BoundaryType::pressure;
+        prm.enter_subsection("p");
+        bcPressureFunction[i_bc].p.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("center of rotation");
+        bcPressureFunction[i_bc].center_of_rotation[0] = prm.get_double("x");
+        bcPressureFunction[i_bc].center_of_rotation[1] = prm.get_double("y");
+        if (dim == 3)
+          bcPressureFunction[i_bc].center_of_rotation[2] = prm.get_double("z");
         prm.leave_subsection();
       }
     if (op == "periodic")
@@ -256,12 +302,17 @@ namespace BoundaryConditions
         "false",
         Patterns::Bool(),
         "Bool to define if the boundary condition is time dependent");
+      prm.declare_entry(
+        "beta",
+        "0",
+        Patterns::Double(),
+        "penalty parameter for weak boundary condition imposed through Nitsche's method");
       this->id.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
       this->type.resize(this->max_size);
-      bcFunctions = new NSBoundaryFunctions<dim>[this->max_size];
-
+      bcFunctions        = new NSBoundaryFunctions<dim>[this->max_size];
+      bcPressureFunction = new NSPressureBoundaryFunctions<dim>[this->max_size];
       for (unsigned int n = 0; n < this->max_size; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
@@ -288,6 +339,7 @@ namespace BoundaryConditions
     {
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
+      this->beta           = prm.get_double("beta");
       this->type.resize(this->size);
       this->id.resize(this->size);
       this->periodic_direction.resize(this->size);
@@ -682,6 +734,46 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
   else if (component == 2)
     {
       return w->value(p);
+    }
+  return 0.;
+}
+
+/**
+ * @brief This class implements a pressure boundary condition for the Navier-Stokes equations.
+ */
+template <int dim>
+class NavierStokesPressureFunctionDefined : public Function<dim>
+{
+private:
+  Functions::ParsedFunction<dim> *p;
+
+public:
+  NavierStokesPressureFunctionDefined(Functions::ParsedFunction<dim> *p_p)
+    : Function<dim>(dim + 1)
+    , p(p_p)
+  {}
+
+  virtual double
+  value(const Point<dim> &p, const unsigned int component) const override;
+};
+
+
+/**
+ * @brief Calculates the value of a Function-type Navier-Stokes equations
+ *
+ * @param p A point (generally a gauss point)
+ *
+ * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
+ */
+template <int dim>
+double
+NavierStokesPressureFunctionDefined<dim>::value(
+  const Point<dim> & point,
+  const unsigned int component) const
+{
+  if (component == dim)
+    {
+      return p->value(point);
     }
   return 0.;
 }

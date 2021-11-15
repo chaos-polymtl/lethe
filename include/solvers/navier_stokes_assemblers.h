@@ -15,6 +15,7 @@
 
 
 #include <core/rheological_model.h>
+#include <core/boundary_conditions.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
@@ -384,6 +385,104 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
 };
+
+/**
+ * @brief Class that assembles a Neumann boundary condition.
+ * This class assembles the weak form of: (p-mu*grad_u)*n at the boundary
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @param pressure_boundary_condition The boundary condition objects use to store the function.
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class PressureBoundaryCondition : public NavierStokesAssemblerBase<dim>
+{
+public:
+  PressureBoundaryCondition(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const BoundaryConditions::NSBoundaryConditions<dim>
+      &pressure_boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , pressure_boundary_conditions(pressure_boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  const BoundaryConditions::NSBoundaryConditions<dim>
+    &pressure_boundary_conditions;
+};
+
+/**
+ * @brief Class that assembles the weak formulation of a Dirichlet boundary condition using the Nitsche method.
+ * This class assembles the weak form of: (u_ib-u)-(u,grad v)
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @param boundary_condition The boundary condition objects us to store the function.
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class WeakDirichletBoundaryCondition : public NavierStokesAssemblerBase<dim>
+{
+public:
+  WeakDirichletBoundaryCondition(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const BoundaryConditions::NSBoundaryConditions<dim>
+      &boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , boundary_conditions(boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl>                   simulation_control;
+  Parameters::PhysicalProperties                       physical_properties;
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+};
+
 
 
 /**

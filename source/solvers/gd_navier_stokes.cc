@@ -143,7 +143,8 @@ GDNavierStokesSolver<dim>::assemble_system_matrix()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.free_surface)
     {
@@ -260,7 +261,8 @@ GDNavierStokesSolver<dim>::assemble_system_rhs()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.free_surface)
     {

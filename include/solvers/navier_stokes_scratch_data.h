@@ -79,14 +79,21 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  NavierStokesScratchData(const FESystem<dim> &  fe,
-                          const Quadrature<dim> &quadrature,
-                          const Mapping<dim> &   mapping)
+  NavierStokesScratchData(const FESystem<dim> &      fe,
+                          const Quadrature<dim> &    quadrature,
+                          const Mapping<dim> &       mapping,
+                          const Quadrature<dim - 1> &face_quadrature)
     : fe_values(mapping,
                 fe,
                 quadrature,
                 update_values | update_quadrature_points | update_JxW_values |
                   update_gradients | update_hessians)
+    , fe_face_values(mapping,
+                     fe,
+                     face_quadrature,
+                     update_values | update_quadrature_points |
+                       update_JxW_values | update_gradients | update_hessians |
+                       update_normal_vectors)
   {
     allocate();
 
@@ -117,6 +124,12 @@ public:
                 sd.fe_values.get_quadrature(),
                 update_values | update_quadrature_points | update_JxW_values |
                   update_gradients | update_hessians)
+    , fe_face_values(sd.fe_face_values.get_mapping(),
+                     sd.fe_face_values.get_fe(),
+                     sd.fe_face_values.get_quadrature(),
+                     update_values | update_quadrature_points |
+                       update_JxW_values | update_gradients | update_hessians |
+                       update_normal_vectors)
   {
     allocate();
     if (sd.gather_free_surface)
@@ -256,6 +269,144 @@ public:
             // Pressure
             this->phi_p[q][k]      = this->fe_values[pressure].value(k, q);
             this->grad_phi_p[q][k] = this->fe_values[pressure].gradient(k, q);
+          }
+      }
+
+    is_boundary_cell = cell->at_boundary();
+    if (is_boundary_cell)
+      {
+        n_faces          = cell->n_faces();
+        is_boundary_face = std::vector<bool>(n_faces, false);
+        n_faces_q_points = fe_face_values.get_quadrature().size();
+        boundary_face_id = std::vector<unsigned int>(n_faces);
+
+        face_JxW = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+
+        // Velocity and pressure values
+        // First vector is face number, second quadrature point
+        this->face_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_velocity_divergences = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        this->face_velocity_gradients =
+          std::vector<std::vector<Tensor<2, dim>>>(
+            n_faces, std::vector<Tensor<2, dim>>(n_faces_q_points));
+
+        this->face_velocity_laplacians =
+          std::vector<std::vector<Tensor<1, dim>>>(
+            n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_pressure_values = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        this->face_pressure_gradients =
+          std::vector<std::vector<Tensor<1, dim>>>(
+            n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_quadrature_points = std::vector<std::vector<Point<dim>>>(
+          n_faces, std::vector<Point<dim>>(n_faces_q_points));
+
+        this->face_div_phi_u = std::vector<std::vector<std::vector<double>>>(
+          n_faces,
+          std::vector<std::vector<double>>(n_faces_q_points,
+                                           std::vector<double>(n_dofs)));
+
+        this->face_phi_u =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+
+        this->face_hess_phi_u =
+          std::vector<std::vector<std::vector<Tensor<3, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<3, dim>>>(
+              n_faces_q_points, std::vector<Tensor<3, dim>>(n_dofs)));
+
+        this->face_laplacian_phi_u =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+
+        this->face_grad_phi_u =
+          std::vector<std::vector<std::vector<Tensor<2, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<2, dim>>>(
+              n_faces_q_points, std::vector<Tensor<2, dim>>(n_dofs)));
+
+        this->face_phi_p = std::vector<std::vector<std::vector<double>>>(
+          n_faces,
+          std::vector<std::vector<double>>(n_faces_q_points,
+                                           std::vector<double>(n_dofs)));
+
+        this->face_grad_phi_p =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+        for (const auto face : cell->face_indices())
+          {
+            is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (is_boundary_face[face])
+              {
+                fe_face_values.reinit(cell, face);
+                n_dofs = fe_face_values.get_fe().n_dofs_per_cell();
+                boundary_face_id[face] = cell->face(face)->boundary_id();
+                // Shape functions
+                // First vector is face number, second quadrature point, third
+                // DOF
+
+                // Gather velocity (values, gradient and laplacian)
+                this->fe_face_values[velocities].get_function_values(
+                  current_solution, this->face_velocity_values[face]);
+                this->fe_face_values[velocities].get_function_gradients(
+                  current_solution, this->face_velocity_gradients[face]);
+                this->fe_face_values[velocities].get_function_laplacians(
+                  current_solution, this->face_velocity_laplacians[face]);
+
+                // Gather pressure (values, gradient)
+                this->fe_values[pressure].get_function_values(
+                  current_solution, this->face_pressure_values[face]);
+                this->fe_values[pressure].get_function_gradients(
+                  current_solution, this->face_pressure_gradients[face]);
+
+                for (unsigned int q = 0; q < n_faces_q_points; ++q)
+                  {
+                    this->face_JxW[face][q] = this->fe_face_values.JxW(q);
+                    this->face_normal[face][q] =
+                      this->fe_face_values.normal_vector(q);
+                    this->face_quadrature_points[face][q] =
+                      this->fe_face_values.quadrature_point(q);
+                    for (const unsigned int k : fe_face_values.dof_indices())
+                      {
+                        // Velocity
+                        this->face_phi_u[face][q][k] =
+                          this->fe_face_values[velocities].value(k, q);
+                        this->face_div_phi_u[face][q][k] =
+                          this->fe_face_values[velocities].divergence(k, q);
+                        this->face_grad_phi_u[face][q][k] =
+                          this->fe_face_values[velocities].gradient(k, q);
+                        this->face_hess_phi_u[face][q][k] =
+                          this->fe_face_values[velocities].hessian(k, q);
+                        for (int d = 0; d < dim; ++d)
+                          this->face_laplacian_phi_u[face][q][k][d] =
+                            trace(this->face_hess_phi_u[face][q][k][d]);
+                        // Pressure
+                        this->face_phi_p[face][q][k] =
+                          this->fe_face_values[pressure].value(k, q);
+                        this->face_grad_phi_p[face][q][k] =
+                          this->fe_face_values[pressure].gradient(k, q);
+                      }
+                  }
+              }
           }
       }
   }
@@ -650,6 +801,47 @@ public:
   std::vector<double> temperature_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
+
+  /**
+   * Is boundary cell indicator
+   */
+  bool is_boundary_cell;
+
+  FEFaceValues<dim> fe_face_values;
+
+  unsigned int n_faces;
+  unsigned int n_faces_q_points;
+  unsigned int face_n_dofs;
+
+  // If boundary cell indicator
+  std::vector<bool>         is_boundary_face;
+  std::vector<unsigned int> boundary_face_id;
+
+
+  // Quadrature
+  std::vector<std::vector<double>>         face_JxW;
+  std::vector<std::vector<Point<dim>>>     face_quadrature_points;
+  std::vector<std::vector<Tensor<1, dim>>> face_normal;
+
+  // Velocity and pressure values
+  // First vector is face number, second quadrature point
+  std::vector<std::vector<Tensor<1, dim>>> face_velocity_values;
+  std::vector<std::vector<double>>         face_velocity_divergences;
+  std::vector<std::vector<Tensor<2, dim>>> face_velocity_gradients;
+  std::vector<std::vector<Tensor<1, dim>>> face_velocity_laplacians;
+  std::vector<std::vector<double>>         face_pressure_values;
+  std::vector<std::vector<Tensor<1, dim>>> face_pressure_gradients;
+
+
+  // Shape functions
+  // First vector is face number, second quadrature point, third DOF
+  std::vector<std::vector<std::vector<double>>>         face_div_phi_u;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_phi_u;
+  std::vector<std::vector<std::vector<Tensor<3, dim>>>> face_hess_phi_u;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_laplacian_phi_u;
+  std::vector<std::vector<std::vector<Tensor<2, dim>>>> face_grad_phi_u;
+  std::vector<std::vector<std::vector<double>>>         face_phi_p;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
 };
 
 #endif

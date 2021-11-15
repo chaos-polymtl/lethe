@@ -359,6 +359,13 @@ protected:
   set_nodal_values();
 
   /**
+   * @brief Check if a specifique boundary condition exist
+   * @param bc, the boundary type that we want to check if it exists
+   */
+  bool
+  check_existance_of_bc(BoundaryConditions::BoundaryType bc);
+
+  /**
    * @brief write_checkpoint
    */
   virtual void
