@@ -93,7 +93,7 @@ public:
    * considered quadratured point
    */
   double
-  get_viscosity(const Tensor<2, dim> shear_rate) override
+  get_viscosity(const Tensor<2, dim> & shear_rate) override
   {
     double shear_rate_magnitude = this->get_shear_rate_magnitude(shear_rate);
     return viscosity_inf +
@@ -107,7 +107,7 @@ private:
   double viscosity_inf;
   double lambda;
   double a;
-  double n;
+  double n;gitgit
 };
 
 
