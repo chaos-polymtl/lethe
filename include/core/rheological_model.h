@@ -45,7 +45,7 @@ public:
    * considered quadrature point
    */
   virtual double
-  get_viscosity(const Tensor<2, dim> shear_rate) = 0;
+  get_viscosity(const Tensor<2, dim> & shear_rate) = 0;
 
   /**
    * @brief Returns the magnitude of the shear rate tensor given in parameter.
