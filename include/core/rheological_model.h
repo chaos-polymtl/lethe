@@ -45,7 +45,7 @@ public:
    * considered quadrature point
    */
   virtual double
-  get_viscosity(const Tensor<2, dim> & shear_rate) = 0;
+  get_viscosity(const Tensor<2, dim> &shear_rate) = 0;
 
   /**
    * @brief Returns the magnitude of the shear rate tensor given in parameter.
@@ -91,9 +91,13 @@ public:
    *
    * @param shear_rate The shear rate tensor at the position of the
    * considered quadratured point
+   *
+   * Source : Morrison, F. A. (2001). No Memory: Generalized Newtonian Fluids.
+   * Understanding Rheology. Raymond F. Boyer Librabry Collection, Oxford
+   * University Press.
    */
   double
-  get_viscosity(const Tensor<2, dim> & shear_rate) override
+  get_viscosity(const Tensor<2, dim> &shear_rate) override
   {
     double shear_rate_magnitude = this->get_shear_rate_magnitude(shear_rate);
     return viscosity_inf +

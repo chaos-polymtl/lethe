@@ -222,7 +222,7 @@ namespace Parameters
     double n;
 
     CarreauParameters carreau_parameters;
-    
+
     void
     declare_parameters(ParameterHandler &prm);
     void

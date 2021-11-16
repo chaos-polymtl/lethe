@@ -230,7 +230,7 @@ namespace Parameters
                         Patterns::Selection("carreau"),
                         "Non newtonian model "
                         "Choices are <carreau>.");
-      carreau_parameters.declare_parameters(prm);      
+      carreau_parameters.declare_parameters(prm);
     }
     prm.leave_subsection();
   }
@@ -245,7 +245,7 @@ namespace Parameters
         {
           model = Model::carreau;
           carreau_parameters.parse_parameters(prm);
-        }   
+        }
     }
     prm.leave_subsection();
   }
