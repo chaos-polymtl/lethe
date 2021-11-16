@@ -1,4 +1,4 @@
-#include <solvers/free_surface.h>
+#include <solvers/vof.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/tracer.h>

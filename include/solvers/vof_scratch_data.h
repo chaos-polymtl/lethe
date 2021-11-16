@@ -216,11 +216,11 @@ public:
   std::vector<Point<dim>> quadrature_points;
 
   // Free surface values
-  std::vector<double>              fs_values;
-  std::vector<Tensor<1, dim>>      fs_gradients;
-  std::vector<double>              fs_laplacians;
-  std::vector<std::vector<double>> previous_fs_values;
-  std::vector<std::vector<double>> stages_fs_values;
+  std::vector<double>              phase_values;
+  std::vector<Tensor<1, dim>>      phase_gradients;
+  std::vector<double>              phase_laplacians;
+  std::vector<std::vector<double>> previous_phase_values;
+  std::vector<std::vector<double>> stages_phase_values;
 
   // Source term
   std::vector<double> source;

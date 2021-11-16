@@ -25,7 +25,7 @@
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
-#include <solvers/VOF_scratch_data.h>
+#include <solvers/vof_scratch_data.h>
 
 
 #ifndef lethe_vof_assemblers_h

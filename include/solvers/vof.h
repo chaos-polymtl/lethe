@@ -29,8 +29,8 @@
 #include <core/simulation_control.h>
 
 #include <solvers/auxiliary_physics.h>
-#include <solvers/VOF_assemblers.h>
-#include <solvers/VOF_scratch_data.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
 
 #include <deal.II/base/convergence_table.h>
