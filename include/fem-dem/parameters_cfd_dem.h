@@ -87,6 +87,10 @@ namespace Parameters
     unsigned int inlet_boundary_id;
     unsigned int outlet_boundary_id;
     unsigned int coupling_frequency;
+    bool         drag_force;
+    bool         buoyancy_force;
+    bool         shear_force;
+    bool         pressure_force;
 
     static void
     declare_parameters(ParameterHandler &prm);
