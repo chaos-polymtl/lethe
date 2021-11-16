@@ -79,11 +79,11 @@ public:
    * @param non_newtonian_parameters The non newtonian parameters
    */
   Carreau(Parameters::NonNewtonian non_newtonian_parameters)
-    : viscosity_0(non_newtonian_parameters.viscosity_0)
-    , viscosity_inf(non_newtonian_parameters.viscosity_inf)
-    , lambda(non_newtonian_parameters.lambda)
-    , a(non_newtonian_parameters.a)
-    , n(non_newtonian_parameters.n)
+    : viscosity_0(non_newtonian_parameters.carreau_parameters.viscosity_0)
+    , viscosity_inf(non_newtonian_parameters.carreau_parameters.viscosity_inf)
+    , lambda(non_newtonian_parameters.carreau_parameters.lambda)
+    , a(non_newtonian_parameters.carreau_parameters.a)
+    , n(non_newtonian_parameters.carreau_parameters.n)
   {}
 
   /**
@@ -107,7 +107,7 @@ private:
   double viscosity_inf;
   double lambda;
   double a;
-  double n;gitgit
+  double n;
 };
 
 

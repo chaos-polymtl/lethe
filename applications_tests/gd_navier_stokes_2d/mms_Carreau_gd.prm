@@ -51,11 +51,13 @@ subsection physical properties
     set non newtonian flow	= true
     subsection non newtonian
     	set model 		= carreau
-    	set viscosity_0		= 1.0
-    	set viscosity_inf 	= 0
-    	set lambda	      	= 1
-    	set a	      		= 2.0
-    	set n	      		= 0.5
+	subsection carreau
+	    	set viscosity_0		= 1.0
+	    	set viscosity_inf 	= 0
+	    	set lambda	      	= 1
+	    	set a	      		= 2.0
+	    	set n	      		= 0.5
+	end
     end
 end
 

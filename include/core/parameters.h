@@ -174,8 +174,32 @@ namespace Parameters
   };
 
   /**
+   * @brief Carreau rheological model to solve for non Newtonian
+   * flows.
+   */
+  struct CarreauParameters
+  {
+    // Viscosity of the flow when the shear rate tends to 0
+    double viscosity_0;
+    // Hypothetical viscosity of the flow when the shear rate is very high
+    double viscosity_inf;
+    // Relaxation time
+    double lambda;
+    // Carreau parameter
+    double a;
+    // Power parameter
+    double n;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Non Newtonian - Defines the parameters for
-   * non newtonian flows.
+   * non newtonian flows according to the chosen
+   * rheological model.
    */
 
   struct NonNewtonian
@@ -183,16 +207,23 @@ namespace Parameters
     // Non Newtonian model
     enum class Model
     {
-      Carreau
-    };
+      carreau
+    } model;
 
-    Model  model;
+    // Viscosity of the flow when the shear rate tends to 0
     double viscosity_0;
+    // Hypothetical viscosity of the flow when the shear rate is very high
     double viscosity_inf;
+    // Relaxation time
     double lambda;
+    // Carreau parameter
     double a;
+    // Power parameter
     double n;
-    static void
+
+    CarreauParameters carreau_parameters;
+    
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
