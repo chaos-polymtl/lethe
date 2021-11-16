@@ -28,8 +28,8 @@
 #include <solvers/VOF_scratch_data.h>
 
 
-#ifndef vof_assemblers_h
-#  define vof_assemblers_h
+#ifndef lethe_vof_assemblers_h
+#  define lethe_vof_assemblers_h
 
 
 /**
