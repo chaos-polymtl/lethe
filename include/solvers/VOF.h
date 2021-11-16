@@ -22,13 +22,15 @@
  * Author: Jeanne Joachim, Polytechnique Montreal, 2021
  */
 
-#ifndef lethe_free_surface_h
-#define lethe_free_surface_h
+#ifndef lethe_VOF_h
+#define lethe_VOF_h
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/VOF_assemblers.h>
+#include <solvers/VOF_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
 
 #include <deal.II/base/convergence_table.h>
@@ -50,13 +52,13 @@
 
 
 template <int dim>
-class FreeSurface : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class VOF: public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   /**
-   * @brief FreeSurface - Base constructor.
+   * @brief VOF - Base constructor.
    */
-  FreeSurface<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
+  VOF<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
                    const SimulationParameters<dim> &p_simulation_parameters,
                    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                                       p_triangulation,
@@ -106,29 +108,11 @@ public:
   }
 
   /**
-   * @brief FreeSurface - Base destructor. At the present
+   * @brief VOF - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  ~FreeSurface()
+  ~VOF()
   {}
-
-  /**
-   * @brief Call for the assembly of the matrix
-   */
-  virtual void
-  assemble_system_matrix()
-  {
-    assemble_matrix_and_rhs();
-  }
-
-  /**
-   * @brief Call for the assembly of the right-hand side
-   */
-  virtual void
-  assemble_system_rhs()
-  {
-    assemble_rhs();
-  }
 
 
   /**
@@ -166,20 +150,20 @@ public:
    * @brief Carry out the operations required to finish a simulation correctly.
    */
   void
-  finish_simulation();
+  finish_simulation() override;
 
   /**
    * @brief Carry out the operations required to finish a time step correctly.
    */
   void
-  finish_time_step();
+  finish_time_step() override;
 
   /**
    * @brief Carry out the operations required to rearrange the values of the
    * previous solution at the end of a time step
    */
   void
-  percolate_time_vectors();
+  percolate_time_vectors() override;
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
@@ -189,7 +173,7 @@ public:
    * function
    */
   void
-  postprocess(bool first_iteration);
+  postprocess(bool first_iteration) override;
 
 
   /**
@@ -218,20 +202,20 @@ public:
    * @brief Prepares auxiliary physics to write checkpoint
    */
   void
-  write_checkpoint();
+  write_checkpoint() override;
 
 
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
    */
   void
-  read_checkpoint();
+  read_checkpoint() override;
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
   void
-  setup_dofs();
+  setup_dofs() override;
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
@@ -239,7 +223,7 @@ public:
    * the use of L2 projection or steady-state solutions.
    */
   void
-  set_initial_conditions();
+  set_initial_conditions() override;
 
   /**
    * @brief Call for the solution of the linear system of equation using a strategy appropriate
@@ -297,15 +281,87 @@ public:
   }
 
 private:
-  template <bool assemble_matrix>
+  /**
+   *  @brief Assembles the matrix associated with the solver
+   */
   void
-  assemble_system();
+  assemble_system_matrix();
+
+  /**
+   * @brief Assemble the rhs associated with the solver
+   */
+  void
+  assemble_system_rhs();
+
+
+  /**
+   * @brief Assemble the local matrix for a given cell.
+   *
+   * This function is used by the WorkStream class to assemble
+   * the system matrix. It is a thread safe function.
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for HeatTransferScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  virtual void
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    VOFScratchData<dim> &                        scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
+
+  /**
+   * @brief Assemble the local rhs for a given cell
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for HeatTransferScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  virtual void
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    VOFScratchData<dim> &                        scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
+
+  /**
+   * @brief sets up the vector of assembler functions
+   */
+  virtual void
+  setup_assemblers();
+
+
+  /**
+   * @brief Copy local cell information to global matrix
+   */
+
+  virtual void
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsCopyData &copy_data);
+
+  /**
+   * @brief Copy local cell rhs information to global rhs
+   */
+
+  virtual void
+  copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
 
 
-  // Core elements for the free surface simulation
+  // Core elements for the VOF simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl> simulation_control;
   DoFHandler<dim>                    dof_handler;
@@ -335,6 +391,7 @@ private:
 
   // Previous solutions vectors
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+  std::vector<TrilinosWrappers::MPI::Vector> solution_stages;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
@@ -345,6 +402,18 @@ private:
 
   // Enable DCDD shock capturing scheme
   const bool DCDD = true;
+
+  // Reference for GGLS https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324
+  // Warning, this GGLS implementation is valid only for Linear elements
+  // Quad elements will be lacking the third derivative of the diffusion
+  // operator Whether this affects or not the final result is unclear to me at
+  // the moment. Additionnaly, this formulation does not use the gradient of the
+  // source term. The same applies, I have no clue if this is detrimental or not
+  // to the solution since anyway the GGLS term scales as h^(order+1)
+  const bool GGLS = true;
+
+  // Assemblers for the matrix and rhs
+  std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;
 };
 
 
