@@ -604,7 +604,7 @@ FreeSurface<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::phase)
     {
-      const FEValuesExtractors::Scalar phase(dim);
+      const FEValuesExtractors::Scalar phase(0);
 
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,
