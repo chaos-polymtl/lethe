@@ -210,17 +210,6 @@ namespace Parameters
       carreau
     } model;
 
-    // Viscosity of the flow when the shear rate tends to 0
-    double viscosity_0;
-    // Hypothetical viscosity of the flow when the shear rate is very high
-    double viscosity_inf;
-    // Relaxation time
-    double lambda;
-    // Carreau parameter
-    double a;
-    // Power parameter
-    double n;
-
     CarreauParameters carreau_parameters;
 
     void
