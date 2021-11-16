@@ -1110,11 +1110,7 @@ PressureBoundaryCondition<dim>::assemble_rhs(
   const double viscosity = physical_properties.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
-  const unsigned int n_q_points = scratch_data.n_q_points;
-  const unsigned int n_dofs     = scratch_data.n_dofs;
-  const double       h          = scratch_data.cell_size;
-  Tensor<2, dim>     identity;
+  Tensor<2, dim> identity;
   for (unsigned int d = 0; d < dim; ++d)
     {
       identity[d][d] = 1;
