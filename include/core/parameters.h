@@ -118,6 +118,14 @@ namespace Parameters
       time
     } output_control;
 
+    enum class BDFStartupMethods
+    {
+      initial_solution,
+      sdirk_step,
+      multiple_step_bdf,
+    } bdf_startup_method;
+
+
     // Frequency of the output
     unsigned int output_frequency;
 

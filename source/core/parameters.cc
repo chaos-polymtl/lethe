@@ -13,6 +13,14 @@ namespace Parameters
         Patterns::Selection("steady|steady_bdf|bdf1|bdf2|bdf3|sdirk2|sdirk3"),
         "The kind of solver for the linear system. "
         "Choices are <steady|steady_bdf|bdf1|bdf2|bdf3|sdirk2|sdirk3>.");
+
+      prm.declare_entry(
+        "bdf startup method",
+        "multiple step bdf",
+        Patterns::Selection("multiple step bdf|sdirk step|initial solution"),
+        "The kind of method use to startup high order bdf methods "
+        "Choices are <multiple step bdf|sdirk step|initial solution>.");
+
       prm.declare_entry("time step",
                         "1.",
                         Patterns::Double(),
@@ -122,6 +130,17 @@ namespace Parameters
       else
         {
           std::runtime_error("Invalid time stepping scheme");
+        }
+      const std::string bdf_startup_string= prm.get("bdf startup method");
+      if (bdf_startup_string == "multiple step bdf")
+        bdf_startup_method= BDFStartupMethods::multiple_step_bdf;
+      else if (bdf_startup_string == "sdirk step")
+        bdf_startup_method= BDFStartupMethods::sdirk_step;
+      else if (bdf_startup_string == "initial solution")
+        bdf_startup_method= BDFStartupMethods::initial_solution;
+      else
+        {
+          std::runtime_error("Invalid bdf startup scheme");
         }
 
       const std::string osv = prm.get("output control");

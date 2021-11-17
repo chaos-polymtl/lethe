@@ -501,7 +501,14 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
-  if (simulation_parameters.simulation_control.method ==
+
+  if (simulation_control->is_at_start() &&
+      is_bdf_high_order(simulation_parameters.simulation_control.method))
+    {
+      this->pcout<<"hi start"<<std::endl;
+      first_iteration();
+    }
+  else if (simulation_parameters.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       this->simulation_control->set_assembly_method(
@@ -513,7 +520,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2);
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
     }
-
   else if (simulation_parameters.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
@@ -535,6 +541,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
     }
   else
     {
+      this->pcout<<"hi normal "<<std::endl;
       this->simulation_control->set_assembly_method(
         simulation_parameters.simulation_control.method);
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
@@ -549,16 +556,14 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 {
-  // First step if the method is not a multi-step method
-  if (!is_bdf_high_order(simulation_parameters.simulation_control.method))
-    {
-      iterate();
-    }
-
   // Taking care of the multi-step methods
-  else if (simulation_parameters.simulation_control.method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+
+  if (simulation_parameters.simulation_control.method ==
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
+      simulation_parameters.simulation_control.bdf_startup_method ==
+        Parameters::SimulationControl::BDFStartupMethods::multiple_step_bdf)
     {
+      this->pcout<<"hi "<<std::endl;
       Parameters::SimulationControl timeParameters =
         simulation_parameters.simulation_control;
 
@@ -566,6 +571,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       double time_step =
         timeParameters.dt * timeParameters.startup_timestep_scaling;
       simulation_control->set_current_time_step(time_step);
+      simulation_control->set_time(time_step);
 
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1);
@@ -583,7 +589,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
         timeParameters.dt * (1. - timeParameters.startup_timestep_scaling);
 
       simulation_control->set_current_time_step(time_step);
-
+      simulation_control->set_time(timeParameters.dt);
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::bdf2);
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
@@ -595,7 +601,10 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
     }
 
   else if (simulation_parameters.simulation_control.method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+             Parameters::SimulationControl::TimeSteppingMethod::bdf3 &&
+           simulation_parameters.simulation_control.bdf_startup_method ==
+             Parameters::SimulationControl::BDFStartupMethods::
+               multiple_step_bdf)
     {
       Parameters::SimulationControl timeParameters =
         simulation_parameters.simulation_control;
@@ -645,6 +654,15 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       simulation_control->set_suggested_time_step(timeParameters.dt);
     }
+  else if (simulation_parameters.simulation_control.method ==
+             Parameters::SimulationControl::TimeSteppingMethod::bdf3 &&
+           simulation_parameters.simulation_control.bdf_startup_method ==
+             Parameters::SimulationControl::BDFStartupMethods::
+               initial_solution)
+    {
+
+    }
+
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1130,9 +1148,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
       double             kE = calculate_kinetic_energy(this->dof_handler,
-                                           present_solution,
-                                           *this->cell_quadrature,
-                                           *this->mapping);
+                                                       present_solution,
+                                                       *this->cell_quadrature,
+                                                       *this->mapping);
       this->kinetic_energy_table.add_value(
         "time", simulation_control->get_current_time());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);
@@ -1164,13 +1182,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer, "pressure_drop_calculation");
       double             pressure_drop = calculate_pressure_drop(
-        this->dof_handler,
-        this->mapping,
-        this->evaluation_point,
-        *this->cell_quadrature,
-        *this->face_quadrature,
-        this->simulation_parameters.post_processing.inlet_boundary_id,
-        this->simulation_parameters.post_processing.outlet_boundary_id);
+                    this->dof_handler,
+                    this->mapping,
+                    this->evaluation_point,
+                    *this->cell_quadrature,
+                    *this->face_quadrature,
+                    this->simulation_parameters.post_processing.inlet_boundary_id,
+                    this->simulation_parameters.post_processing.outlet_boundary_id);
       this->pressure_drop_table.add_value(
         "time", simulation_control->get_current_time());
       this->pressure_drop_table.add_value("pressure-drop", pressure_drop);

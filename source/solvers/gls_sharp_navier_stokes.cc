@@ -975,6 +975,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   double time  = this->simulation_control->get_current_time();
   double alpha = this->simulation_parameters.particlesParameters->alpha;
   this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
+  this->pcout<<"this time "<<time<<std::endl;
+  this->pcout<<"dt "<<dt<<std::endl;
 
   double rho        = this->simulation_parameters.particlesParameters->density;
   particle_residual = 0;
@@ -2575,7 +2577,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
         {
           vertices_cell_mapping();
           generate_cut_cells_map();
-          this->first_iteration();
+          this->iterate();
         }
       else
         {

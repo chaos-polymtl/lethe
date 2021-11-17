@@ -679,7 +679,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           }
       }
       if (this->simulation_control->is_at_start())
-        this->first_iteration();
+        this->iterate();
       else
         {
           this->refine_mesh();

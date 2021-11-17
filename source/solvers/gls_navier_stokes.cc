@@ -1281,13 +1281,13 @@ GLSNavierStokesSolver<dim>::solve()
       this->dynamic_flow_control();
 
 
-      if (this->simulation_control->is_at_start())
-        this->first_iteration();
+      if (this->simulation_control->is_at_start()){
+          this->iterate();
+        }
       else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          this->iterate();
         }
       this->postprocess(false);
       this->finish_time_step();
