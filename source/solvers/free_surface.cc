@@ -1,3 +1,10 @@
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+
+#include <solvers/free_surface.h>
+
 #include <deal.II/distributed/grid_refinement.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -14,12 +21,6 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-#include <solvers/free_surface.h>
 
 
 template <int dim>
