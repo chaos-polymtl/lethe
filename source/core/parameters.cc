@@ -187,6 +187,70 @@ namespace Parameters
   }
 
   void
+  CarreauParameters::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("carreau");
+    {
+      prm.declare_entry("viscosity_0",
+                        "1.0",
+                        Patterns::Double(),
+                        "Viscosity at rest");
+      prm.declare_entry("viscosity_inf",
+                        "1.0",
+                        Patterns::Double(),
+                        "Viscosity for an infinite shear rate");
+      prm.declare_entry("lambda", "1.0", Patterns::Double(), "Relaxation time");
+      prm.declare_entry("a", "2.0", Patterns::Double(), "Carreau parameter");
+      prm.declare_entry("n", "0.5", Patterns::Double(), "Power parameter");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  CarreauParameters::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("carreau");
+    {
+      viscosity_0   = prm.get_double("viscosity_0");
+      viscosity_inf = prm.get_double("viscosity_inf");
+      lambda        = prm.get_double("lambda");
+      a             = prm.get_double("a");
+      n             = prm.get_double("n");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  NonNewtonian::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("non newtonian");
+    {
+      prm.declare_entry("model",
+                        "carreau",
+                        Patterns::Selection("carreau"),
+                        "Non newtonian model "
+                        "Choices are <carreau>.");
+      carreau_parameters.declare_parameters(prm);
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  NonNewtonian::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("non newtonian");
+    {
+      const std::string op = prm.get("model");
+      if (op == "carreau")
+        {
+          model = Model::carreau;
+          carreau_parameters.parse_parameters(prm);
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  void
   PhysicalProperties::declare_parameters(ParameterHandler &prm)
   {
     fluids.resize(max_fluids);
@@ -218,10 +282,16 @@ namespace Parameters
                         Patterns::Double(),
                         "Tracer diffusivity");
 
+      prm.declare_entry("non newtonian flow",
+                        "false",
+                        Patterns::Bool(),
+                        "Non Newtonian flow");
+
       prm.declare_entry("number of fluids",
                         "0",
                         Patterns::Integer(),
                         "Number of fluids");
+      non_newtonian_parameters.declare_parameters(prm);
 
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
@@ -243,9 +313,11 @@ namespace Parameters
       density              = prm.get_double("density");
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
-      thermal_expansion    = prm.get_double("thermal expansion");
+      tracer_diffusivity   = prm.get_double("tracer diffusivity");
+      non_newtonian_flow   = prm.get_bool("non newtonian flow");
+      non_newtonian_parameters.parse_parameters(prm);
 
-      tracer_diffusivity = prm.get_double("tracer diffusivity");
+      thermal_expansion = prm.get_double("thermal expansion");
 
 
 

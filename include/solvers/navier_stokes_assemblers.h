@@ -15,6 +15,7 @@
 
 
 #include <core/boundary_conditions.h>
+#include <core/rheological_model.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
@@ -292,6 +293,53 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
   double                             gamma;
+};
+
+template <int dim>
+class GDNavierStokesAssemblerNonNewtonianCore
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GDNavierStokesAssemblerNonNewtonianCore(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const double                       gamma)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , gamma(gamma)
+  {
+    // if (physical_properties.non_newtonian_parameters.model ==
+    // Parameters::NonNewtonian::Model::Carreau)
+    //{
+    rheological_model = std::make_shared<Carreau<dim>>(
+      physical_properties.non_newtonian_parameters);
+    //}
+  }
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl>     simulation_control;
+  Parameters::PhysicalProperties         physical_properties;
+  double                                 gamma;
+  std::shared_ptr<RheologicalModel<dim>> rheological_model;
 };
 
 
