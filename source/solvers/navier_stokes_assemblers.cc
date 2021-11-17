@@ -1201,13 +1201,12 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
     std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_faces_q_points));
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
 
   const double penalty_parameter =
-    1. / std::pow(scratch_data.cell_size * scratch_data.cell_size,
-                  double(dim - 1) / double(dim));
-  const FiniteElement<dim> &fe           = scratch_data.fe_face_values.get_fe();
-  auto &                    local_matrix = copy_data.local_matrix;
-  double                    beta         = boundary_conditions.beta;
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto & local_matrix = copy_data.local_matrix;
+  double beta         = boundary_conditions.beta;
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
@@ -1249,8 +1248,8 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
                                         {
                                           double beta_terms =
                                             penalty_parameter * beta *
-                                            (-scratch_data
-                                                .face_phi_u[f][q][j][comp_i]) *
+                                            (scratch_data
+                                               .face_phi_u[f][q][j][comp_i]) *
                                             scratch_data
                                               .face_phi_u[f][q][i][comp_i] *
                                             JxW;
@@ -1271,7 +1270,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
                                             JxW;
 
                                           local_matrix(i, j) +=
-                                            -beta_terms - grad_phi_terms +
+                                            +beta_terms - grad_phi_terms -
                                             surface_stress_term;
                                         }
                                     }
@@ -1309,16 +1308,16 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_faces_q_points));
 
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
   const double penalty_parameter =
-    1. / std::pow(scratch_data.cell_size * scratch_data.cell_size,
-                  double(dim - 1) / double(dim));
-  const FiniteElement<dim> &fe        = scratch_data.fe_face_values.get_fe();
-  auto &                    local_rhs = copy_data.local_rhs;
-  double                    beta      = boundary_conditions.beta;
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto & local_rhs = copy_data.local_rhs;
+  double beta      = boundary_conditions.beta;
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
-      // Check if this BC is a pressure BC.
+      // Check if this BC is a weakly imposed Dirichlet BC
       if (this->boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::function_weak)
         {
@@ -1357,9 +1356,9 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
                                 {
                                   double beta_terms =
                                     penalty_parameter * beta *
-                                    (prescribed_velocity_values[f][q][comp_i] -
-                                     scratch_data
-                                       .face_velocity_values[f][q][comp_i]) *
+                                    (scratch_data
+                                       .face_velocity_values[f][q][comp_i] -
+                                     prescribed_velocity_values[f][q][comp_i]) *
                                     scratch_data.face_phi_u[f][q][i][comp_i] *
                                     JxW;
                                   double grad_phi_terms =
@@ -1377,7 +1376,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
                                      scratch_data.face_phi_u[f][q][i]) *
                                     JxW;
 
-                                  local_rhs(i) += beta_terms + grad_phi_terms -
+                                  local_rhs(i) += -beta_terms + grad_phi_terms +
                                                   surface_stress_term;
                                 }
                             }

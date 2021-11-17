@@ -26,6 +26,7 @@ NavierStokesScratchData<dim>::allocate()
   // Initialize arrays related to velocity and pressure
   this->velocities.first_vector_component = 0;
   this->pressure.component                = dim;
+
   // Velocity
   this->velocity_values      = std::vector<Tensor<1, dim>>(n_q_points);
   this->velocity_divergences = std::vector<double>(n_q_points);
