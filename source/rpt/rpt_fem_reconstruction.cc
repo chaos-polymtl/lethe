@@ -76,7 +76,7 @@ RPTFEMReconstruction<dim>::assemble_system(unsigned detector_no)
   unsigned int                         cell_calculated = 0;
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      std::cout << " Cell id : " << ++cell_calculated << std::endl;
+      //std::cout << " Cell id : " << ++cell_calculated << std::endl;
       cell_matrix = 0;
       cell_rhs    = 0;
       fe_values.reinit(cell);
@@ -197,7 +197,332 @@ RPTFEMReconstruction<dim>::L2_project()
       std::cout << "Solving system" << std::endl;
       solve_linear_system(d);
     }
-  output_results();
+  //output_results();
+  Loop_over_cells();
 }
+
+
+//This function using Newton methode find the local natural coordinate of associated node to experimental counts
+template<int dim>
+void
+RPTFEMReconstruction<dim>::solve()
+{
+    //I will add a part that code reads experimental counts through the prm file as soon as I make sure the code works
+    experimental_count[0]=247.096;
+    experimental_count[1]=79.2302;
+    //First guess for the Newton method
+    unknown[0]=0.1;
+    unknown[1]=0.1;
+    unknown[2]=0.1;
+    assemble_jacobian_for_Newton_method();
+    assemble_rhs();
+    double tol=1e-4;
+    double norm_dx=1;
+    while(norm_dx>tol){
+        assemble_jacobian_for_Newton_method();
+        assemble_rhs();
+        Tensor<2,3,double> inverse_jacobian= invert(jacobian_matrix);
+        Tensor<1,3,double> dx= -inverse_jacobian*rhs_matrix;
+        norm_dx=dx.norm();
+        unknown+=dx;
+    }
+    std::cout<<unknown<<std::endl;
+
+}
+
+template<int dim>
+void
+RPTFEMReconstruction<dim>::assemble_jacobian_for_Newton_method()
+{
+
+
+    jacobian_matrix[0][0]=Calculate_Jacobian_1();
+    jacobian_matrix[0][1]=Calculate_Jacobian_2();
+    jacobian_matrix[0][2]=Calculate_Jacobian_3();
+    jacobian_matrix[1][0]=Calculate_Jacobian_4();
+    jacobian_matrix[1][1]=Calculate_Jacobian_5();
+    jacobian_matrix[1][2]=Calculate_Jacobian_6();
+    jacobian_matrix[2][0]=Calculate_Jacobian_7();
+    jacobian_matrix[2][1]=Calculate_Jacobian_8();
+    jacobian_matrix[2][2]=Calculate_Jacobian_9();
+
+
+
+}
+
+template<int dim>
+void
+RPTFEMReconstruction<dim>::assemble_rhs()
+
+{
+
+
+    rhs_matrix[0]=f1();
+    rhs_matrix[1]=f2();
+    rhs_matrix[2]=f3();
+
+
+}
+
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::Calculate_Jacobian_1(){
+
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<detectors.size();i++){
+
+
+
+        sigma+=(-0.125*c[i][0]*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1]) - 0.125*c[i][2]*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[1] + 1) - 0.125*c[i][4]*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[2] + 1) - 0.125*c[i][6]*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[2] + 1)*(unknown[1] + 1))*(c[i][0]*(1 - unknown[1])*(0.125*unknown[2] - 0.125) + c[i][1]*(0.125 - 0.125*unknown[2])*(1 - unknown[1]) + c[i][2]*(1 - unknown[2])*(-0.125*unknown[1] - 0.125) + c[i][3]*(1 - unknown[2])*(0.125*unknown[1] + 0.125) + c[i][4]*(1 - unknown[1])*(-0.125*unknown[2] - 0.125) + c[i][5]*(1 - unknown[1])*(0.125*unknown[2] + 0.125) - c[i][6]*(0.125*unknown[2] + 0.125)*(unknown[1] + 1) + c[i][7]*(0.125*unknown[2] + 0.125)*(unknown[1] + 1))
+;
+
+
+    }
+    return sigma;
+
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::Calculate_Jacobian_2(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(-c[i][0]*(0.125*unknown[2] - 0.125) - c[i][1]*(0.125 - 0.125*unknown[2]) - 0.125*c[i][2]*(1 - unknown[2]) + 0.125*c[i][3]*(1 - unknown[2]) - c[i][4]*(-0.125*unknown[2] - 0.125) - c[i][5]*(0.125*unknown[2] + 0.125) - c[i][6]*(0.125*unknown[2] + 0.125) + c[i][7]*(0.125*unknown[2] + 0.125))*(0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1)*(unknown[1] + 1) - experimental_count[i]) + (-0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2]) - 0.125*c[i][1]*(1 - unknown[2])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2]) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1) - 0.125*c[i][4]*(1 - unknown[0])*(unknown[2] + 1) - 0.125*c[i][5]*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1))*(c[i][0]*(1 - unknown[1])*(0.125*unknown[2] - 0.125) + c[i][1]*(0.125 - 0.125*unknown[2])*(1 - unknown[1]) + c[i][2]*(1 - unknown[2])*(-0.125*unknown[1] - 0.125) + c[i][3]*(1 - unknown[2])*(0.125*unknown[1] + 0.125) + c[i][4]*(1 - unknown[1])*(-0.125*unknown[2] - 0.125) + c[i][5]*(1 - unknown[1])*(0.125*unknown[2] + 0.125) - c[i][6]*(0.125*unknown[2] + 0.125)*(unknown[1] + 1) + c[i][7]*(0.125*unknown[2] + 0.125)*(unknown[1] + 1))
+;
+    }
+    return sigma;
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::Calculate_Jacobian_3(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(0.125*c[i][0]*(1 - unknown[1]) - 0.125*c[i][1]*(1 - unknown[1]) - c[i][2]*(-0.125*unknown[1] - 0.125) - c[i][3]*(0.125*unknown[1] + 0.125) - 0.125*c[i][4]*(1 - unknown[1]) + 0.125*c[i][5]*(1 - unknown[1]) - 0.125*c[i][6]*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[1] + 1))*(0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1)*(unknown[1] + 1) - experimental_count[i]) + (-0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[1]) - 0.125*c[i][1]*(1 - unknown[1])*(unknown[0] + 1) - 0.125*c[i][2]*(1 - unknown[0])*(unknown[1] + 1) - 0.125*c[i][3]*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1]) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[1] + 1))*(c[i][0]*(1 - unknown[1])*(0.125*unknown[2] - 0.125) + c[i][1]*(0.125 - 0.125*unknown[2])*(1 - unknown[1]) + c[i][2]*(1 - unknown[2])*(-0.125*unknown[1] - 0.125) + c[i][3]*(1 - unknown[2])*(0.125*unknown[1] + 0.125) + c[i][4]*(1 - unknown[1])*(-0.125*unknown[2] - 0.125) + c[i][5]*(1 - unknown[1])*(0.125*unknown[2] + 0.125) - c[i][6]*(0.125*unknown[2] + 0.125)*(unknown[1] + 1) + c[i][7]*(0.125*unknown[2] + 0.125)*(unknown[1] + 1))
+;
+    }
+    return sigma;
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::Calculate_Jacobian_4(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(0.125*c[i][0]*(1 - unknown[2]) - 0.125*c[i][1]*(1 - unknown[2]) - 0.125*c[i][2]*(1 - unknown[2]) + 0.125*c[i][3]*(1 - unknown[2]) + c[i][4]*(0.125*unknown[2] + 0.125) - 0.125*c[i][5]*(unknown[2] + 1) - c[i][6]*(0.125*unknown[2] + 0.125) + 0.125*c[i][7]*(unknown[2] + 1))*(0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1)*(unknown[1] + 1) - experimental_count[i]) + (-c[i][0]*(0.125 - 0.125*unknown[0])*(1 - unknown[2]) - c[i][1]*(1 - unknown[2])*(0.125*unknown[0] + 0.125) + c[i][2]*(0.125 - 0.125*unknown[0])*(1 - unknown[2]) + c[i][3]*(1 - unknown[2])*(0.125*unknown[0] + 0.125) - c[i][4]*(1 - unknown[0])*(0.125*unknown[2] + 0.125) - c[i][5]*(0.125*unknown[0] + 0.125)*(unknown[2] + 1) + c[i][6]*(1 - unknown[0])*(0.125*unknown[2] + 0.125) + c[i][7]*(0.125*unknown[0] + 0.125)*(unknown[2] + 1))*(-0.125*c[i][0]*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1]) - 0.125*c[i][2]*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[1] + 1) - 0.125*c[i][4]*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[2] + 1) - 0.125*c[i][6]*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[2] + 1)*(unknown[1] + 1))
+;
+
+    }
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::Calculate_Jacobian_5(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(-c[i][0]*(0.125 - 0.125*unknown[0])*(1 - unknown[2]) - c[i][1]*(1 - unknown[2])*(0.125*unknown[0] + 0.125) + c[i][2]*(0.125 - 0.125*unknown[0])*(1 - unknown[2]) + c[i][3]*(1 - unknown[2])*(0.125*unknown[0] + 0.125) - c[i][4]*(1 - unknown[0])*(0.125*unknown[2] + 0.125) - c[i][5]*(0.125*unknown[0] + 0.125)*(unknown[2] + 1) + c[i][6]*(1 - unknown[0])*(0.125*unknown[2] + 0.125) + c[i][7]*(0.125*unknown[0] + 0.125)*(unknown[2] + 1))*(-0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2]) - 0.125*c[i][1]*(1 - unknown[2])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2]) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1) - 0.125*c[i][4]*(1 - unknown[0])*(unknown[2] + 1) - 0.125*c[i][5]*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1))
+;
+
+
+    }
+    return sigma;
+}
+
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::Calculate_Jacobian_6(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(c[i][0]*(0.125 - 0.125*unknown[0]) + c[i][1]*(0.125*unknown[0] + 0.125) - c[i][2]*(0.125 - 0.125*unknown[0]) - c[i][3]*(0.125*unknown[0] + 0.125) - 0.125*c[i][4]*(1 - unknown[0]) - c[i][5]*(0.125*unknown[0] + 0.125) + 0.125*c[i][6]*(1 - unknown[0]) + c[i][7]*(0.125*unknown[0] + 0.125))*(0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1)*(unknown[1] + 1) - experimental_count[i]) + (-c[i][0]*(0.125 - 0.125*unknown[0])*(1 - unknown[2]) - c[i][1]*(1 - unknown[2])*(0.125*unknown[0] + 0.125) + c[i][2]*(0.125 - 0.125*unknown[0])*(1 - unknown[2]) + c[i][3]*(1 - unknown[2])*(0.125*unknown[0] + 0.125) - c[i][4]*(1 - unknown[0])*(0.125*unknown[2] + 0.125) - c[i][5]*(0.125*unknown[0] + 0.125)*(unknown[2] + 1) + c[i][6]*(1 - unknown[0])*(0.125*unknown[2] + 0.125) + c[i][7]*(0.125*unknown[0] + 0.125)*(unknown[2] + 1))*(-0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[1]) - 0.125*c[i][1]*(1 - unknown[1])*(unknown[0] + 1) - 0.125*c[i][2]*(1 - unknown[0])*(unknown[1] + 1) - 0.125*c[i][3]*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1]) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[1] + 1))
+;
+
+    }
+    return sigma;
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::Calculate_Jacobian_7(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(0.125*c[i][0]*(1 - unknown[1]) - 0.125*c[i][1]*(1 - unknown[1]) + c[i][2]*(0.125*unknown[1] + 0.125) - 0.125*c[i][3]*(unknown[1] + 1) - 0.125*c[i][4]*(1 - unknown[1]) + 0.125*c[i][5]*(1 - unknown[1]) - c[i][6]*(0.125*unknown[1] + 0.125) + 0.125*c[i][7]*(unknown[1] + 1))*(0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1)*(unknown[1] + 1) - experimental_count[i]) + (-0.125*c[i][0]*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1]) - 0.125*c[i][2]*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[1] + 1) - 0.125*c[i][4]*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[2] + 1) - 0.125*c[i][6]*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[2] + 1)*(unknown[1] + 1))*(c[i][0]*(1 - unknown[1])*(0.125*unknown[0] - 0.125) + c[i][1]*(1 - unknown[1])*(-0.125*unknown[0] - 0.125) - c[i][2]*(1 - unknown[0])*(0.125*unknown[1] + 0.125) - c[i][3]*(0.125*unknown[0] + 0.125)*(unknown[1] + 1) + c[i][4]*(0.125 - 0.125*unknown[0])*(1 - unknown[1]) + c[i][5]*(1 - unknown[1])*(0.125*unknown[0] + 0.125) + c[i][6]*(1 - unknown[0])*(0.125*unknown[1] + 0.125) + c[i][7]*(0.125*unknown[0] + 0.125)*(unknown[1] + 1))
+;
+    }
+    return sigma;
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::Calculate_Jacobian_8(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(-c[i][0]*(0.125*unknown[0] - 0.125) - c[i][1]*(-0.125*unknown[0] - 0.125) - 0.125*c[i][2]*(1 - unknown[0]) - c[i][3]*(0.125*unknown[0] + 0.125) - c[i][4]*(0.125 - 0.125*unknown[0]) - c[i][5]*(0.125*unknown[0] + 0.125) + 0.125*c[i][6]*(1 - unknown[0]) + c[i][7]*(0.125*unknown[0] + 0.125))*(0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1)*(unknown[1] + 1) - experimental_count[i]) + (-0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2]) - 0.125*c[i][1]*(1 - unknown[2])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2]) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1) - 0.125*c[i][4]*(1 - unknown[0])*(unknown[2] + 1) - 0.125*c[i][5]*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1))*(c[i][0]*(1 - unknown[1])*(0.125*unknown[0] - 0.125) + c[i][1]*(1 - unknown[1])*(-0.125*unknown[0] - 0.125) - c[i][2]*(1 - unknown[0])*(0.125*unknown[1] + 0.125) - c[i][3]*(0.125*unknown[0] + 0.125)*(unknown[1] + 1) + c[i][4]*(0.125 - 0.125*unknown[0])*(1 - unknown[1]) + c[i][5]*(1 - unknown[1])*(0.125*unknown[0] + 0.125) + c[i][6]*(1 - unknown[0])*(0.125*unknown[1] + 0.125) + c[i][7]*(0.125*unknown[0] + 0.125)*(unknown[1] + 1))
+;
+
+    }
+    return sigma;
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::Calculate_Jacobian_9(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(-0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[1]) - 0.125*c[i][1]*(1 - unknown[1])*(unknown[0] + 1) - 0.125*c[i][2]*(1 - unknown[0])*(unknown[1] + 1) - 0.125*c[i][3]*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1]) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[1] + 1))*(c[i][0]*(1 - unknown[1])*(0.125*unknown[0] - 0.125) + c[i][1]*(1 - unknown[1])*(-0.125*unknown[0] - 0.125) - c[i][2]*(1 - unknown[0])*(0.125*unknown[1] + 0.125) - c[i][3]*(0.125*unknown[0] + 0.125)*(unknown[1] + 1) + c[i][4]*(0.125 - 0.125*unknown[0])*(1 - unknown[1]) + c[i][5]*(1 - unknown[1])*(0.125*unknown[0] + 0.125) + c[i][6]*(1 - unknown[0])*(0.125*unknown[1] + 0.125) + c[i][7]*(0.125*unknown[0] + 0.125)*(unknown[1] + 1))
+;
+    }
+    return sigma;
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::f1(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(c[i][0]*(1 - unknown[1])*(0.125*unknown[2] - 0.125) + c[i][1]*(0.125 - 0.125*unknown[2])*(1 - unknown[1]) + c[i][2]*(1 - unknown[2])*(-0.125*unknown[1] - 0.125) + c[i][3]*(1 - unknown[2])*(0.125*unknown[1] + 0.125) + c[i][4]*(1 - unknown[1])*(-0.125*unknown[2] - 0.125) + c[i][5]*(1 - unknown[1])*(0.125*unknown[2] + 0.125) - c[i][6]*(0.125*unknown[2] + 0.125)*(unknown[1] + 1) + c[i][7]*(0.125*unknown[2] + 0.125)*(unknown[1] + 1))*(0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1)*(unknown[1] + 1) - experimental_count[i])
+;
+    }
+    return sigma;
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::f2(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(-c[i][0]*(0.125 - 0.125*unknown[0])*(1 - unknown[2]) - c[i][1]*(1 - unknown[2])*(0.125*unknown[0] + 0.125) + c[i][2]*(0.125 - 0.125*unknown[0])*(1 - unknown[2]) + c[i][3]*(1 - unknown[2])*(0.125*unknown[0] + 0.125) - c[i][4]*(1 - unknown[0])*(0.125*unknown[2] + 0.125) - c[i][5]*(0.125*unknown[0] + 0.125)*(unknown[2] + 1) + c[i][6]*(1 - unknown[0])*(0.125*unknown[2] + 0.125) + c[i][7]*(0.125*unknown[0] + 0.125)*(unknown[2] + 1))*(0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1)*(unknown[1] + 1) - experimental_count[i]);
+;
+    }
+    return sigma;
+}
+
+template<int dim>
+double
+RPTFEMReconstruction<dim>::f3(){
+
+    double sigma=0;
+
+
+
+    for(unsigned int i=0;i<3;i++){
+
+
+
+        sigma+=(c[i][0]*(1 - unknown[1])*(0.125*unknown[0] - 0.125) + c[i][1]*(1 - unknown[1])*(-0.125*unknown[0] - 0.125) - c[i][2]*(1 - unknown[0])*(0.125*unknown[1] + 0.125) - c[i][3]*(0.125*unknown[0] + 0.125)*(unknown[1] + 1) + c[i][4]*(0.125 - 0.125*unknown[0])*(1 - unknown[1]) + c[i][5]*(1 - unknown[1])*(0.125*unknown[0] + 0.125) + c[i][6]*(1 - unknown[0])*(0.125*unknown[1] + 0.125) + c[i][7]*(0.125*unknown[0] + 0.125)*(unknown[1] + 1))*(0.125*c[i][0]*(1 - unknown[0])*(1 - unknown[2])*(1 - unknown[1]) + 0.125*c[i][1]*(1 - unknown[2])*(1 - unknown[1])*(unknown[0] + 1) + 0.125*c[i][2]*(1 - unknown[0])*(1 - unknown[2])*(unknown[1] + 1) + 0.125*c[i][3]*(1 - unknown[2])*(unknown[0] + 1)*(unknown[1] + 1) + 0.125*c[i][4]*(1 - unknown[0])*(1 - unknown[1])*(unknown[2] + 1) + 0.125*c[i][5]*(1 - unknown[1])*(unknown[0] + 1)*(unknown[2] + 1) + 0.125*c[i][6]*(1 - unknown[0])*(unknown[2] + 1)*(unknown[1] + 1) + 0.125*c[i][7]*(unknown[0] + 1)*(unknown[2] + 1)*(unknown[1] + 1) - experimental_count[i]);
+
+    }
+    return sigma;
+}
+
+template <int dim>
+void
+RPTFEMReconstruction<dim>::Loop_over_cells()
+{
+
+    unsigned int level=0;
+    for (const auto &cell:
+         dof_handler.cell_iterators_on_level(level)) {
+      //std::cout << "Cell -  "
+                //<< " Level : " << cell->level() << "  - Index : " << cell->index()
+                //<< std::endl;
+      //here we should call the functions that calculate Jacobians and solve the system to find three unknowns to compare
+      for(unsigned int i=0; i<detectors.size();++i){
+          std::vector<double> detectorCount;
+
+
+          for (unsigned int v=0 ;v<GeometryInfo<dim>::vertices_per_cell;++v)
+          {
+
+              auto dof_index = cell->vertex_dof_index(v,1);
+              detectorCount.push_back(nodal_counts[i][dof_index]);
+          }
+          c.push_back(detectorCount);
+          detectorCount.clear();
+      }
+      solve();
+      c.clear();
+
+
+
+    }
+}
+
+
 
 template class RPTFEMReconstruction<3>;

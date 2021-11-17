@@ -77,9 +77,58 @@ private:
   assign_detector_positions();
   void
   solve_linear_system(unsigned detector_no);
-
   void
   output_results();
+  void
+  Loop_over_cells();
+  double
+  Calculate_Jacobian_1();
+  double
+  Calculate_Jacobian_2();
+  double
+  Calculate_Jacobian_3();
+
+  double
+  Calculate_Jacobian_4();
+
+  double
+  Calculate_Jacobian_5();
+
+  double
+  Calculate_Jacobian_6();
+
+  double
+  Calculate_Jacobian_7();
+
+  double
+  Calculate_Jacobian_8();
+
+  double
+  Calculate_Jacobian_9();
+  void
+  solve();
+  double
+  f1();
+
+  double
+  f2();
+
+  double
+  f3();
+
+  void
+  assemble_jacobian_for_Newton_method();
+
+  void
+  assemble_rhs();
+
+  Tensor<2, dim>jacobian_matrix ;
+  Tensor<1, dim>rhs_matrix ;
+  Tensor<1,dim>unknown;
+  Tensor<1,dim>experimental_count;
+  std::vector<std::vector<double>> c;
+
+
 
   Triangulation<dim> triangulation;
   FE_Q<dim>          fe;
