@@ -122,7 +122,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
-  auto &                 nonzero_constraints = this->get_nonzero_constraints();
+  auto                  &nonzero_constraints = this->get_nonzero_constraints();
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
@@ -498,8 +498,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -615,8 +615,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -752,10 +752,10 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   system_matrix    = 0;
   this->system_rhs = 0;
   FEValues<dim>               fe_values(*this->mapping,
-                          *this->fe,
-                          *this->cell_quadrature,
-                          update_values | update_quadrature_points |
-                            update_JxW_values);
+                                        *this->fe,
+                                        *this->cell_quadrature,
+                                        update_values | update_quadrature_points |
+                                          update_JxW_values);
   const unsigned int          dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int          n_q_points    = this->cell_quadrature->size();
   FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
@@ -918,8 +918,8 @@ GLSNavierStokesSolver<dim>::setup_AMG()
   const unsigned int smoother_overlap =
     this->simulation_parameters.linear_solver.amg_smoother_overlap;
   const bool                                        output_details = false;
-  const char *                                      smoother_type  = "ILU";
-  const char *                                      coarse_type    = "ILU";
+  const char                                       *smoother_type  = "ILU";
+  const char                                       *coarse_type    = "ILU";
   TrilinosWrappers::PreconditionAMG::AdditionalData preconditionerOptions(
     elliptic,
     higher_order_elements,
