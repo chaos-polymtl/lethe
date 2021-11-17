@@ -1320,7 +1320,20 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_nonscalar_data_ranges()
 template <int dim>
 GLSSharpNavierStokesSolver<dim>::Visualization_IB::~Visualization_IB()
 {}
-
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::update_subtime_step_value()
+{
+  for (unsigned int p = 0; p < particles.size(); ++p)
+    {
+      particles[p].last_position      = particles[p].position;
+      particles[p].last_velocity      = particles[p].velocity;
+      particles[p].last_forces        = particles[p].forces;
+      particles[p].last_omega         = particles[p].omega;
+      particles[p].local_alpha_torque = 1;
+      particles[p].local_alpha_force  = 1;
+    }
+}
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()

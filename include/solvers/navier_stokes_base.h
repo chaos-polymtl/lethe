@@ -317,6 +317,13 @@ protected:
   first_iteration();
 
   /**
+   * @brief subtime_step_value;
+   *
+   */
+  virtual void
+  update_subtime_step_value(){};
+
+  /**
    * @brief Allow the initial refinement of all cells of the principal mesh that are partially
    * contained in one of the cells of the box refinement mesh given in the
    * parameter.

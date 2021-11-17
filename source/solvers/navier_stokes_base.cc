@@ -580,6 +580,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       multiphysics->solve(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1);
 
+      this->update_subtime_step_value();
       percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
