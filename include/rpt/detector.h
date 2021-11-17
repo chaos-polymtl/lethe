@@ -91,10 +91,25 @@ public:
     return middle_position;
   }
 
-  double dead_time; // Dead time of the detector per accepted pulse
-  double activity;  // Activity of the tracer
-  double attenuation_coefficient_reactor; // Total linear attenuation
-  // coefficient of the medium
+  double
+  get_dead_time()
+  {
+    return dead_time;
+  }
+
+  double
+  get_activity()
+  {
+    return activity;
+  }
+
+  double
+  get_attenuation_coefficient_reactor()
+  {
+    return attenuation_coefficient_reactor;
+  }
+
+
 
 private:
   double     radius;
@@ -102,6 +117,10 @@ private:
   int        id;
   Point<dim> face_position;
   Point<dim> middle_position;
+  double     dead_time; // Dead time of the detector per accepted pulse
+  double     activity;  // Activity of the tracer
+  double     attenuation_coefficient_reactor; // Total linear attenuation
+  // coefficient of the medium
 };
 
 

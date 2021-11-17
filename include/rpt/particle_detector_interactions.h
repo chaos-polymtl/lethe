@@ -61,10 +61,12 @@ public:
     , detector_middle_position(detector.get_middle_position())
     , detector_radius(detector.get_radius())
     , detector_length(detector.get_length())
+    , dead_time(detector.get_dead_time())
+    , activity(detector.get_activity())
+    , attenuation_coefficient_reactor(
+        detector.get_attenuation_coefficient_reactor())
     , parameters(rpt_parameters)
-    , dead_time(detector.dead_time)
-    , activity(detector.activity)
-    , attenuation_coefficient_reactor(detector.attenuation_coefficient_reactor)
+
   {}
 
   /**
@@ -181,6 +183,8 @@ private:
   Point<dim> particle_position;
   Point<dim> detector_face_position;
   Point<dim> detector_middle_position;
+
+
 
   double                    detector_radius;
   double                    detector_length;
