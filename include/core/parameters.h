@@ -174,6 +174,51 @@ namespace Parameters
   };
 
   /**
+   * @brief Carreau rheological model to solve for non Newtonian
+   * flows.
+   */
+  struct CarreauParameters
+  {
+    // Viscosity of the flow when the shear rate tends to 0
+    double viscosity_0;
+    // Hypothetical viscosity of the flow when the shear rate is very high
+    double viscosity_inf;
+    // Relaxation time
+    double lambda;
+    // Carreau parameter
+    double a;
+    // Power parameter
+    double n;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Non Newtonian - Defines the parameters for
+   * non newtonian flows according to the chosen
+   * rheological model.
+   */
+
+  struct NonNewtonian
+  {
+    // Non Newtonian model
+    enum class Model
+    {
+      carreau
+    } model;
+
+    CarreauParameters carreau_parameters;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief PhysicalProperties - Define the possible physical properties.
    * All continuum equations share the same physical properties object but only
    * take the subset of properties they require
@@ -199,6 +244,9 @@ namespace Parameters
     double thermal_expansion;
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
+    // Non Newtonian parameters
+    bool         non_newtonian_flow;
+    NonNewtonian non_newtonian_parameters;
 
     // Fluid objects for multiphasic simulations
     std::vector<Fluid>        fluids;
@@ -743,7 +791,6 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-
 
 } // namespace Parameters
 #endif
