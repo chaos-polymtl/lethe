@@ -33,6 +33,7 @@
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
@@ -44,6 +45,8 @@
 
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <deal.II/numerics/error_estimator.h>
 
 
 template <int dim>
@@ -203,6 +206,15 @@ public:
   post_mesh_adaptation();
 
   /**
+   * @brief Compute the Kelly error estimator on the phase parameter for mesh refinement.
+   * See :
+   * https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html
+   * for more information on the Kelly error estimator.
+   */
+  void
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell);
+
+  /**
    * @brief Prepares auxiliary physics to write checkpoint
    */
   void
@@ -306,7 +318,6 @@ private:
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;
-
 
   // Solution storage:
   IndexSet locally_owned_dofs;

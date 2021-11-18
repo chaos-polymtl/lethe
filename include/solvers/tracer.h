@@ -157,6 +157,16 @@ public:
   post_mesh_adaptation();
 
   /**
+   * @brief Compute the Kelly error estimator for mesh refinement.
+   * NB : not implemented for the tracer parameter for now.
+   */
+  void
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+  {
+    return;
+  }
+
+  /**
    * @brief Prepares Heat Transfer to write checkpoint
    */
   void
