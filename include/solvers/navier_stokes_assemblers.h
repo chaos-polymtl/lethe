@@ -163,6 +163,65 @@ public:
   Parameters::VelocitySource velocity_sources;
 };
 
+/**
+ * @brief Class that assembles the core of the Navier-Stokes equation
+ * using a Rheological model to predict non Newtonian behaviors
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+
+template <int dim>
+class GLSNavierStokesAssemblerNonNewtonianCore : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSNavierStokesAssemblerNonNewtonianCore(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+  {
+    // if (physical_properties.non_newtonian_parameters.model ==
+    // Parameters::NonNewtonian::Model::Carreau)
+    //{
+      rheological_model = std::make_shared<Carreau<dim>>(
+        physical_properties.non_newtonian_parameters);
+    //}
+  }
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * Enables SUPG stabilization for the Navier-Stokes formulation.
+   * We have not found any scenarios where it is relevant not to use SUPG
+   * stabilization yet.
+   */
+  const bool SUPG = true;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  std::shared_ptr<RheologicalModel<dim>> rheological_model;
+};
+
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
