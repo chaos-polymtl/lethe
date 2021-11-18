@@ -623,7 +623,8 @@ namespace Parameters
     enum class Variable
     {
       velocity,
-      pressure
+      pressure,
+      phase
     } variable;
 
     // Decision factor for Kelly refinement (number or fraction)

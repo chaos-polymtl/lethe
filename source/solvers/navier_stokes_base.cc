@@ -884,6 +884,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
   auto &                           present_solution = this->present_solution;
+
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::pressure)
     {
@@ -907,6 +908,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         present_solution,
         estimated_error_per_cell,
         this->fe->component_mask(velocity));
+    }
+  else
+    {
+      // refine_mesh on an auxiliary physic parameter
+      multiphysics->compute_kelly(estimated_error_per_cell);
     }
 
   if (this->simulation_parameters.mesh_adaptation.fractionType ==

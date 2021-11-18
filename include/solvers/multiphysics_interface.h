@@ -535,6 +535,23 @@ public:
   }
 
   /**
+   * @brief Mesh refinement according to an auxiliary physic parameter
+   * NB : only implemented for free_surface for now
+   */
+  virtual void
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->compute_kelly(estimated_error_per_cell);
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->compute_kelly(estimated_error_per_cell);
+      }
+  };
+
+  /**
    * @brief Prepares auxiliary physics to write simulation checkpoint
    */
   virtual void

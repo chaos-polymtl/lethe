@@ -1098,9 +1098,9 @@ namespace Parameters
 
       prm.declare_entry("variable",
                         "velocity",
-                        Patterns::Selection("velocity|pressure"),
+                        Patterns::Selection("velocity|pressure|phase"),
                         "Variable for kelly estimation"
-                        "Choices are <velocity|pressure>.");
+                        "Choices are <velocity|pressure|phase>.");
       prm.declare_entry(
         "fraction type",
         "number",
@@ -1153,6 +1153,8 @@ namespace Parameters
         variable = Variable::velocity;
       if (vop == "pressure")
         variable = Variable::pressure;
+      if (vop == "phase")
+        variable = Variable::phase;
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")

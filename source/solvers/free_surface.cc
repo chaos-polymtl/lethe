@@ -5,6 +5,8 @@
 
 #include <solvers/free_surface.h>
 
+#include <deal.II/distributed/grid_refinement.h>
+
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
@@ -598,6 +600,26 @@ FreeSurface<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
+FreeSurface<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+{
+  if (this->simulation_parameters.mesh_adaptation.variable ==
+      Parameters::MeshAdaptation::Variable::phase)
+    {
+      const FEValuesExtractors::Scalar phase(0);
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->mapping,
+        dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        present_solution,
+        estimated_error_per_cell,
+        fe->component_mask(phase));
+    }
+}
+
+template <int dim>
+void
 FreeSurface<dim>::write_checkpoint()
 {
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
@@ -711,9 +733,9 @@ FreeSurface<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::free_surface, &dof_handler);
   multiphysics->set_solution(PhysicsID::free_surface, &present_solution);
-  // the fluid at present iteration is solved before the free surface, and after
-  // percolate is called for the previous iteration, so at the time the getter
-  // is called solution_m2 = solution_m1
+  // the fluid at present iteration is solved before the free surface, and
+  // after percolate is called for the previous iteration, so at the time the
+  // getter is called solution_m2 = solution_m1
   // TODO deactivated for now (inertia is considered with a constant density),
   // see if needed / to be debugged
   multiphysics->set_solution_m1(PhysicsID::free_surface,
