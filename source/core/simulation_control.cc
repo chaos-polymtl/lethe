@@ -25,6 +25,9 @@ SimulationControl::SimulationControl(Parameters::SimulationControl param)
   , output_path(param.output_folder)
   , output_boundaries(param.output_boundaries)
   , first_assembly(true)
+  , bdf_start_method(param.bdf_startup_method)
+  , startup_timestep_scaling(param.startup_timestep_scaling)
+  , initial_time_step(param.dt)
 {
   time_step_vector.resize(numberTimeStepStored);
   time_step_vector[0] = param.dt;
@@ -46,6 +49,23 @@ bool
 SimulationControl::is_output_iteration()
 {
   return (get_step_number() % output_frequency == 0);
+}
+
+void
+SimulationControl::update_assembly_method()
+{
+  if(iteration_number<=1 && method==Parameters::SimulationControl::TimeSteppingMethod::bdf2){
+      assembly_method=Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+      set_current_time_step(initial_time_step*startup_timestep_scaling);
+    }
+  else if (iteration_number==2 && method==Parameters::SimulationControl::TimeSteppingMethod::bdf2){
+      assembly_method=Parameters::SimulationControl::TimeSteppingMethod::bdf2;
+      set_suggested_time_step(initial_time_step*(1-startup_timestep_scaling));
+    }
+  else if (iteration_number>2 && method==Parameters::SimulationControl::TimeSteppingMethod::bdf2 ){
+      assembly_method=Parameters::SimulationControl::TimeSteppingMethod::bdf2;
+      set_suggested_time_step(initial_time_step);
+    }
 }
 
 bool
@@ -117,8 +137,10 @@ SimulationControlTransient::integrate()
       previous_time  = current_time;
       first_assembly = true;
       iteration_number++;
+      update_assembly_method();
       add_time_step(calculate_time_step());
       current_time += time_step;
+
       return true;
     }
 

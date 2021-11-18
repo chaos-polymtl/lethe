@@ -502,13 +502,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
 
-  if (simulation_control->is_at_start() &&
-      is_bdf_high_order(simulation_parameters.simulation_control.method))
-    {
-      this->pcout<<"hi start"<<std::endl;
-      first_iteration();
-    }
-  else if (simulation_parameters.simulation_control.method ==
+  if (simulation_parameters.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       this->simulation_control->set_assembly_method(
@@ -542,8 +536,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   else
     {
       this->pcout<<"hi normal "<<std::endl;
-      this->simulation_control->set_assembly_method(
-        simulation_parameters.simulation_control.method);
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
       multiphysics->solve(simulation_parameters.simulation_control.method);
     }
@@ -572,7 +564,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
         timeParameters.dt * timeParameters.startup_timestep_scaling;
       simulation_control->set_current_time_step(time_step);
       simulation_control->set_time(time_step);
-
+      this->update_subtime_step_value();
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1);
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
@@ -580,27 +572,29 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       multiphysics->solve(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1);
 
-      this->update_subtime_step_value();
-      percolate_time_vectors();
+
+      /*percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps to complete the full step
-
+      this->update_subtime_step_value();
       time_step =
         timeParameters.dt * (1. - timeParameters.startup_timestep_scaling);
 
       simulation_control->set_current_time_step(time_step);
       simulation_control->set_time(timeParameters.dt);
+      this->update_subtime_step_value();
+
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::bdf2);
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       multiphysics->solve(
         Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-
+*/
       simulation_control->set_suggested_time_step(timeParameters.dt);
+     // this->update_subtime_step_value();
     }
-
   else if (simulation_parameters.simulation_control.method ==
              Parameters::SimulationControl::TimeSteppingMethod::bdf3 &&
            simulation_parameters.simulation_control.bdf_startup_method ==

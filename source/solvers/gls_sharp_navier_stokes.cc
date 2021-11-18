@@ -682,7 +682,7 @@ std::pair<double, double>
 GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
-
+  this->pcout<<"this time "<<this->simulation_control->get_current_time()<<std::endl;
   QGauss<dim>       quadrature_formula(this->number_quadrature_points + 1);
   FEValues<dim>     fe_values(*this->mapping,
                           *this->fe,
@@ -1324,6 +1324,28 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::update_subtime_step_value()
 {
+
+  double time  = this->simulation_control->get_current_time();
+  double dt    = this->simulation_control->get_time_steps_vector()[0];
+  this->pcout<<"this time "<<this->simulation_control->get_current_time()<<std::endl;
+  this->pcout<<"dt "<<dt<<std::endl;
+  this->exact_solution->set_time(
+                        this->simulation_control->get_current_time());
+  this->postprocess_fd(false);
+  this->finish_time_step();
+  this->forcing_function->set_time(
+    this->simulation_control->get_current_time());
+  if (this->simulation_parameters.particlesParameters->calculate_force_ib)
+    force_on_ib();
+  finish_time_step_particles();
+  write_force_ib();
+
+  if (
+      this->simulation_parameters.boundary_conditions.time_dependent)
+    {
+      this->update_boundary_conditions();
+    }
+
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       particles[p].last_position      = particles[p].position;
@@ -1332,7 +1354,37 @@ GLSSharpNavierStokesSolver<dim>::update_subtime_step_value()
       particles[p].last_omega         = particles[p].omega;
       particles[p].local_alpha_torque = 1;
       particles[p].local_alpha_force  = 1;
+
+      if(!this->simulation_parameters.particlesParameters->integrate_motion)
+        {
+          particles[p].f_position->set_time(time);
+          particles[p].f_velocity->set_time(time);
+          particles[p].f_omega->set_time(time);
+          particles[p].position[0] =
+            particles[p].f_position->value(particles[p].position, 0);
+          particles[p].position[1] =
+            particles[p].f_position->value(particles[p].position, 1);
+          particles[p].velocity[0] =
+            particles[p].f_velocity->value(particles[p].position, 0);
+          particles[p].velocity[1] =
+            particles[p].f_velocity->value(particles[p].position, 1);
+          particles[p].omega[0] =
+            particles[p].f_omega->value(particles[p].position, 0);
+          particles[p].omega[1] =
+            particles[p].f_omega->value(particles[p].position, 1);
+          particles[p].omega[2] =
+            particles[p].f_omega->value(particles[p].position, 2);
+          if (dim == 3)
+            {
+              particles[p].position[2] =
+                particles[p].f_position->value(particles[p].position, 2);
+              particles[p].velocity[2] =
+                particles[p].f_velocity->value(particles[p].position, 2);
+            }
+          generate_cut_cells_map();
+        }
     }
+
 }
 template <int dim>
 void
@@ -1648,6 +1700,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
+      this->pcout<<"position "<< particles[p].position<<std::endl;
       Point<dim> pressure_reference_location =
         particles[p].pressure_location + particles[p].position;
       const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
@@ -2567,6 +2620,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
+      this->simulation_control->print_progression(this->pcout);
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
       if ((this->simulation_control->get_step_number() %
@@ -2585,7 +2639,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
         integrate_particles();
 
 
-      this->simulation_control->print_progression(this->pcout);
+
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();

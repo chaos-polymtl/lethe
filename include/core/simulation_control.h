@@ -49,6 +49,9 @@ protected:
   // Time step linking the previous iteration and the current time
   double time_step;
 
+  // Initial time step given in the parameter
+  double initial_time_step ;
+
   // Simulation end time
   double end_time;
 
@@ -124,6 +127,10 @@ protected:
 
   // Indicator to tell if this is the first assembly of a step
   bool first_assembly;
+
+  Parameters::SimulationControl::BDFStartupMethods bdf_start_method;
+
+  double startup_timestep_scaling;
 
 
 
@@ -392,6 +399,9 @@ public:
   {
     assembly_method = method;
   }
+
+  void
+  update_assembly_method();
 
 
   void
