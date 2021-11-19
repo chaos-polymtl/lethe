@@ -29,9 +29,9 @@
 #include <core/simulation_control.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
-#include <solvers/multiphysics_interface.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -52,17 +52,17 @@
 
 
 template <int dim>
-class VOF: public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class VOF : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   /**
    * @brief VOF - Base constructor.
    */
   VOF<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
-                   const SimulationParameters<dim> &p_simulation_parameters,
-                   std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                      p_triangulation,
-                   std::shared_ptr<SimulationControl> p_simulation_control)
+           const SimulationParameters<dim> &p_simulation_parameters,
+           std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                              p_triangulation,
+           std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
@@ -76,7 +76,7 @@ public:
       {
         // for simplex meshes
         fe              = std::make_shared<FE_SimplexP<dim>>(1);
-        fs_mapping         = std::make_shared<MappingFE<dim>>(*fe);
+        fs_mapping      = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
@@ -85,7 +85,7 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        fe      = std::make_shared<FE_Q<dim>>(1);
+        fe         = std::make_shared<FE_Q<dim>>(1);
         fs_mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
@@ -313,7 +313,7 @@ private:
   virtual void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    VOFScratchData<dim> &                        scratch_data,
+    VOFScratchData<dim> &                                 scratch_data,
     StabilizedMethodsCopyData &                           copy_data);
 
   /**
@@ -332,7 +332,7 @@ private:
   virtual void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    VOFScratchData<dim> &                        scratch_data,
+    VOFScratchData<dim> &                                 scratch_data,
     StabilizedMethodsCopyData &                           copy_data);
 
   /**

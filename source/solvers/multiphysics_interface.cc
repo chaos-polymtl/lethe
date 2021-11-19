@@ -1,7 +1,7 @@
-#include <solvers/vof.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/tracer.h>
+#include <solvers/vof.h>
 
 
 template <int dim>

@@ -50,14 +50,12 @@ VOF<dim>::setup_assemblers()
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.push_back(
-        std::make_shared<VOFAssemblerBDF<dim>>(
-          this->simulation_control));
+        std::make_shared<VOFAssemblerBDF<dim>>(this->simulation_control));
     }
 
   // Core assembler
   this->assemblers.push_back(std::make_shared<VOFAssemblerCore<dim>>(
-    this->simulation_control,
-    this->simulation_parameters.fem_parameters));
+    this->simulation_control, this->simulation_parameters.fem_parameters));
 }
 
 template <int dim>
@@ -71,9 +69,9 @@ VOF<dim>::assemble_system_matrix()
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = VOFScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->fs_mapping,
-                                                   dof_handler_fluid->get_fe());
+                                          *this->cell_quadrature,
+                                          *this->fs_mapping,
+                                          dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -91,10 +89,9 @@ template <int dim>
 void
 VOF<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim> &                        scratch_data,
+  VOFScratchData<dim> &                                 scratch_data,
   StabilizedMethodsCopyData &                           copy_data)
 {
-
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
     return;
@@ -159,9 +156,9 @@ VOF<dim>::assemble_system_rhs()
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = VOFScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->fs_mapping,
-                                                   dof_handler_fluid->get_fe());
+                                          *this->cell_quadrature,
+                                          *this->fs_mapping,
+                                          dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -179,7 +176,7 @@ template <int dim>
 void
 VOF<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim> &                        scratch_data,
+  VOFScratchData<dim> &                                 scratch_data,
   StabilizedMethodsCopyData &                           copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
@@ -575,7 +572,7 @@ VOF<dim>::set_initial_conditions()
 template <int dim>
 void
 VOF<dim>::solve_linear_system(const bool initial_step,
-                                      const bool /*renewed_matrix*/)
+                              const bool /*renewed_matrix*/)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -641,7 +638,6 @@ VOF<dim>::solve_linear_system(const bool initial_step,
   constraints_used.distribute(completely_distributed_solution);
   newton_update = completely_distributed_solution;
 }
-
 
 
 

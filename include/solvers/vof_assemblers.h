@@ -53,7 +53,7 @@ public:
    */
 
   virtual void
-  assemble_matrix(VOFScratchData<dim> &   scratch_data,
+  assemble_matrix(VOFScratchData<dim> &      scratch_data,
                   StabilizedMethodsCopyData &copy_data) = 0;
 
 
@@ -66,15 +66,15 @@ public:
    */
 
   virtual void
-  assemble_rhs(VOFScratchData<dim> &   scratch_data,
+  assemble_rhs(VOFScratchData<dim> &      scratch_data,
                StabilizedMethodsCopyData &copy_data) = 0;
 };
 
 
 /**
  * @brief Class that assembles the core of the VOF solver.
- * This class assembles the weak form of: ***********************\\CORRECT THIS ***************************************
- * $$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 $$ with an SUPG
+ * This class assembles the weak form of:
+ * $$\mathbf{u} \cdot T \cdot \nabla T =0 $$ with an SUPG
  * stabilziation
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -88,7 +88,7 @@ class VOFAssemblerCore : public VOFAssemblerBase<dim>
 {
 public:
   VOFAssemblerCore(std::shared_ptr<SimulationControl> simulation_control,
-                      Parameters::FEM     fem_parameters)
+                   Parameters::FEM                    fem_parameters)
     : simulation_control(simulation_control)
     , fem_parameters(fem_parameters)
   {}
@@ -99,7 +99,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(VOFScratchData<dim> &   scratch_data,
+  assemble_matrix(VOFScratchData<dim> &      scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
 
 
@@ -109,19 +109,19 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(VOFScratchData<dim> &   scratch_data,
+  assemble_rhs(VOFScratchData<dim> &      scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
   const bool DCDD = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::FEM     fem_parameters;
+  Parameters::FEM                    fem_parameters;
 };
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the VOF equations. For example, if a BDF1 scheme is
- * chosen, the following is assembled ****************************\\CORRECT THIS ********************************
+ * chosen, the following is assembled
  * $$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}{\Delta t}
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -143,7 +143,7 @@ public:
    */
 
   virtual void
-  assemble_matrix(VOFScratchData<dim> &   scratch_data,
+  assemble_matrix(VOFScratchData<dim> &      scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
 
   /**
@@ -152,7 +152,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(VOFScratchData<dim> &   scratch_data,
+  assemble_rhs(VOFScratchData<dim> &      scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
