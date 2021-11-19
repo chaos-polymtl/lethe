@@ -79,8 +79,8 @@ private:
   solve_linear_system(unsigned detector_no);
   void
   output_results();
-  void
-  Loop_over_cells();
+  std::vector<typename DoFHandler<dim>::cell_iterator> find_cells_in_coarse_level();
+  std::vector<typename DoFHandler<dim>::cell_iterator> find_cells_in_fine_level(unsigned int level, std::vector<typename DoFHandler<dim>::cell_iterator> parent_cell_indexes);
   double
   Calculate_Jacobian_1();
   double
@@ -121,6 +121,11 @@ private:
 
   void
   assemble_rhs();
+
+  void
+  find_unknown_position();
+
+ std::vector<typename DoFHandler<dim>::cell_iterator> find_cells(unsigned int level, std::vector<typename DoFHandler<dim>::cell_iterator> parent_cell_indexes);
 
   Tensor<2, dim>jacobian_matrix ;
   Tensor<1, dim>rhs_matrix ;
