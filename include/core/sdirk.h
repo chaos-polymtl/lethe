@@ -76,12 +76,15 @@ number_of_intermediary_stages(
   if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
       method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
       method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
-      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
+      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33||
+      method == Parameters::SimulationControl::TimeSteppingMethod::bdf3
+      )
     n_stages = 2;
 
   if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
       method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
-      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
+      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22||
+      method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     n_stages = 1;
 
   return n_stages;

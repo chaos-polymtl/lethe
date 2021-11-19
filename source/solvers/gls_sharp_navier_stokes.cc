@@ -1700,7 +1700,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
-      this->pcout<<"position "<< particles[p].position<<std::endl;
       Point<dim> pressure_reference_location =
         particles[p].pressure_location + particles[p].position;
       const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
@@ -2655,15 +2654,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
           generate_cut_cells_map();
           this->iterate();
         }
-
       this->postprocess_fd(false);
-
       this->finish_time_step();
-
       if (this->simulation_parameters.particlesParameters->calculate_force_ib)
         force_on_ib();
       finish_time_step_particles();
-      write_force_ib();
+      write_force_ib();;
     }
 
   if (this->simulation_parameters.particlesParameters->calculate_force_ib)

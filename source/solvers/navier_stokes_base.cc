@@ -501,8 +501,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
-
-  if (simulation_parameters.simulation_control.method ==
+  if (simulation_control->get_method_to_use() ==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       this->simulation_control->set_assembly_method(
@@ -514,7 +513,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2);
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
     }
-  else if (simulation_parameters.simulation_control.method ==
+  else if (simulation_control->get_method_to_use() ==
            Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
       this->simulation_control->set_assembly_method(
@@ -535,7 +534,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
     }
   else
     {
-      this->pcout<<"hi normal "<<std::endl;
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
       multiphysics->solve(simulation_parameters.simulation_control.method);
     }
@@ -1323,6 +1321,25 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
                            this->fe->component_mask(pressure));
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
+  if(this->simulation_parameters.simulation_control.bdf_startup_method==Parameters::SimulationControl::BDFStartupMethods::initial_solution){
+      for(unsigned int i=1;i<this->previous_solutions.size();++i){
+          double previous_solution_time=-this->simulation_parameters.simulation_control.dt*i;
+          this->simulation_parameters.initial_condition->uvwp.set_time(previous_solution_time);
+          const FEValuesExtractors::Vector velocities(0);
+          const FEValuesExtractors::Scalar pressure(dim);
+          VectorTools::interpolate(*this->mapping,
+                                   this->dof_handler,
+                                   this->simulation_parameters.initial_condition->uvwp,
+                                   this->newton_update,
+                                   this->fe->component_mask(velocities));
+          VectorTools::interpolate(*this->mapping,
+                                   this->dof_handler,
+                                   this->simulation_parameters.initial_condition->uvwp,
+                                   this->newton_update,
+                                   this->fe->component_mask(pressure));
+          this->previous_solutions[i-1]= this->newton_update;
+        }
+    }
 }
 
 

@@ -394,6 +394,10 @@ public:
     return assembly_method;
   }
 
+  Parameters::SimulationControl::TimeSteppingMethod
+  get_method_to_use();
+
+
   void
   set_assembly_method(Parameters::SimulationControl::TimeSteppingMethod method)
   {
