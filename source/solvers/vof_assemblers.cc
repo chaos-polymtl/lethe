@@ -307,10 +307,8 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
                 phi_phase_j * phi_phase_i * bdf_coefs[0] * JxW[q];
             }
         }
-  }
+    }
 }
-
-
 
 template <int dim>
 void
