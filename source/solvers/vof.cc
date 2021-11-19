@@ -46,23 +46,18 @@ VOF<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
-    // ******* ADD NEW ASSEMBLERS HERE *******
-
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.push_back(
         std::make_shared<VOFAssemblerBDF<dim>>(
-          this->simulation_control,
-          this->simulation_parameters.physical_properties,
-          this->simulation_parameters.multiphysics));
+          this->simulation_control));
     }
 
   // Core assembler
   this->assemblers.push_back(std::make_shared<VOFAssemblerCore<dim>>(
     this->simulation_control,
-    this->simulation_parameters.physical_properties,
-    this->simulation_parameters.multiphysics));
+    this->simulation_parameters.fem_parameters));
 }
 
 template <int dim>
@@ -77,9 +72,8 @@ VOF<dim>::assemble_system_matrix()
 
   auto scratch_data = VOFScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->temperature_mapping,
-                                                   dof_handler_fluid->get_fe(),
-                                                   *this->face_quadrature);
+                                                   *this->fs_mapping,
+                                                   dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -100,18 +94,16 @@ VOF<dim>::assemble_local_system_matrix(
   VOFScratchData<dim> &                        scratch_data,
   StabilizedMethodsCopyData &                           copy_data)
 {
+
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
     return;
 
-  auto &source_term = simulation_parameters.source_term->vof_source;
-  source_term.set_time(simulation_control->get_current_time());
 
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      this->solution_stages,
-                      &source_term);
+                      this->solution_stages);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -136,7 +128,6 @@ VOF<dim>::assemble_local_system_matrix(
     {
       assembler->assemble_matrix(scratch_data, copy_data);
     }
-
 
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
@@ -169,9 +160,8 @@ VOF<dim>::assemble_system_rhs()
 
   auto scratch_data = VOFScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->temperature_mapping,
-                                                   dof_handler_fluid->get_fe(),
-                                                   *this->face_quadrature);
+                                                   *this->fs_mapping,
+                                                   dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -196,14 +186,10 @@ VOF<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  auto &source_term = simulation_parameters.source_term->VOF_source;
-  source_term.set_time(simulation_control->get_current_time());
-
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      this->solution_stages,
-                      &source_term);
+                      this->solution_stages);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -254,11 +240,12 @@ VOF<dim>::copy_local_rhs_to_global_rhs(
 }
 
 
+
 template <int dim>
 void
 VOF<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
-  data_out.add_data_vector(dof_handler, present_solution, "temperature");
+  data_out.add_data_vector(dof_handler, present_solution, "phase");
 }
 
 template <int dim>
@@ -267,26 +254,22 @@ VOF<dim>::calculate_L2_error()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
-  FEValues<dim> fe_values(*this->temperature_mapping,
-                          *fe,
-                          *this->error_quadrature,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
+  FEValues<dim> fe_values_fs(*this->fs_mapping,
+                             *fe,
+                             *this->error_quadrature,
+                             update_values | update_gradients |
+                               update_quadrature_points | update_JxW_values);
 
-
-
-  const unsigned int dofs_per_cell =
-    fe->dofs_per_cell; // This gives you dofs per cell
+  const unsigned int dofs_per_cell = fe->dofs_per_cell;
 
   std::vector<types::global_dof_index> local_dof_indices(
     dofs_per_cell); //  Local connectivity
 
-  const unsigned int n_q_points = this->error_quadrature->size();
-
+  const unsigned int  n_q_points = this->error_quadrature->size();
   std::vector<double> q_exact_solution(n_q_points);
   std::vector<double> q_scalar_values(n_q_points);
 
-  auto &exact_solution = simulation_parameters.analytical_solution->temperature;
+  auto &exact_solution = simulation_parameters.analytical_solution->phase;
   exact_solution.set_time(simulation_control->get_current_time());
 
   double l2error = 0.;
@@ -295,21 +278,21 @@ VOF<dim>::calculate_L2_error()
     {
       if (cell->is_locally_owned())
         {
-          fe_values.reinit(cell);
-          fe_values.get_function_values(present_solution, q_scalar_values);
+          fe_values_fs.reinit(cell);
+          fe_values_fs.get_function_values(present_solution, q_scalar_values);
 
           // Retrieve the effective "connectivity matrix" for this element
           cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
-          exact_solution.value_list(fe_values.get_quadrature_points(),
+          exact_solution.value_list(fe_values_fs.get_quadrature_points(),
                                     q_exact_solution);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               double sim   = q_scalar_values[q];
               double exact = q_exact_solution[q];
-              l2error += (sim - exact) * (sim - exact) * fe_values.JxW(q);
+              l2error += (sim - exact) * (sim - exact) * fe_values_fs.JxW(q);
             }
         }
     }
@@ -329,17 +312,14 @@ VOF<dim>::finish_simulation()
       simulation_parameters.analytical_solution->verbosity ==
         Parameters::Verbosity::verbose)
     {
-      error_table.omit_column_from_convergence_rate_evaluation("cells");
-
-
       if (simulation_parameters.simulation_control.method ==
           Parameters::SimulationControl::TimeSteppingMethod::steady)
-        {
-          error_table.evaluate_all_convergence_rates(
-            ConvergenceTable::reduction_rate_log2);
-        }
-      error_table.set_scientific("error_temperature", true);
-      error_table.set_precision("error_temperature",
+        error_table.omit_column_from_convergence_rate_evaluation("cells");
+      else
+        error_table.omit_column_from_convergence_rate_evaluation("time");
+
+      error_table.set_scientific("error_phase", true);
+      error_table.set_precision("error_phase",
                                 simulation_control->get_log_precision());
       error_table.write_text(std::cout);
     }
@@ -370,17 +350,23 @@ VOF<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
-      double temperature_error = calculate_L2_error();
+      double phase_error = calculate_L2_error();
 
-      error_table.add_value("cells",
-                            this->triangulation->n_global_active_cells());
-      error_table.add_value("error_temperature", temperature_error);
+      if (simulation_control->is_steady())
+        {
+          error_table.add_value("cells",
+                                this->triangulation->n_global_active_cells());
+        }
+      else
+        {
+          error_table.add_value("time", simulation_control->get_current_time());
+        }
+      error_table.add_value("error_phase", phase_error);
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error temperature : " << temperature_error
-                      << std::endl;
+          this->pcout << "L2 error phase : " << phase_error << std::endl;
         }
     }
 }
@@ -403,7 +389,6 @@ void
 VOF<dim>::post_mesh_adaptation()
 {
   auto mpi_communicator = triangulation->get_communicator();
-
 
   // Set up the vectors for the transfer
   TrilinosWrappers::MPI::Vector tmp(locally_owned_dofs, mpi_communicator);
@@ -430,6 +415,26 @@ VOF<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
+VOF<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+{
+  if (this->simulation_parameters.mesh_adaptation.variable ==
+      Parameters::MeshAdaptation::Variable::phase)
+    {
+      const FEValuesExtractors::Scalar phase(0);
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->fs_mapping,
+        dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        present_solution,
+        estimated_error_per_cell,
+        fe->component_mask(phase));
+    }
+}
+
+template <int dim>
+void
 VOF<dim>::write_checkpoint()
 {
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
@@ -447,7 +452,7 @@ void
 VOF<dim>::read_checkpoint()
 {
   auto mpi_communicator = triangulation->get_communicator();
-  this->pcout << "Reading VOF checkpoint" << std::endl;
+  this->pcout << "Reading free surface checkpoint" << std::endl;
 
   std::vector<TrilinosWrappers::MPI::Vector *> input_vectors(
     1 + previous_solutions.size());
@@ -484,7 +489,6 @@ VOF<dim>::setup_dofs()
 
   auto mpi_communicator = triangulation->get_communicator();
 
-
   locally_owned_dofs = dof_handler.locally_owned_dofs();
   DoFTools::extract_locally_relevant_dofs(dof_handler, locally_relevant_dofs);
 
@@ -510,23 +514,6 @@ VOF<dim>::setup_dofs()
     nonzero_constraints.clear();
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
-
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-         ++i_bc)
-      {
-        // Dirichlet condition : imposed temperature at i_bc
-        if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
-            BoundaryConditions::BoundaryType::temperature)
-          {
-            VectorTools::interpolate_boundary_values(
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions_ht.id[i_bc],
-              dealii::Functions::ConstantFunction<dim>(
-                this->simulation_parameters.boundary_conditions_ht.value[i_bc]),
-              nonzero_constraints);
-          }
-      }
   }
   nonzero_constraints.close();
 
@@ -535,21 +522,6 @@ VOF<dim>::setup_dofs()
     zero_constraints.clear();
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             zero_constraints);
-
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-         ++i_bc)
-      {
-        if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
-            BoundaryConditions::BoundaryType::temperature)
-          {
-            VectorTools::interpolate_boundary_values(
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions_ht.id[i_bc],
-              Functions::ZeroFunction<dim>(),
-              zero_constraints);
-          }
-      }
   }
   zero_constraints.close();
 
@@ -569,27 +541,41 @@ VOF<dim>::setup_dofs()
                        dsp,
                        mpi_communicator);
 
-  this->pcout << "   Number of thermal degrees of freedom: "
+  this->pcout << "   Number of free surface degrees of freedom: "
               << dof_handler.n_dofs() << std::endl;
+
+  // Provide the free surface dof_handler and solution pointers to the
+  // multiphysics interface
+  multiphysics->set_dof_handler(PhysicsID::free_surface, &dof_handler);
+  multiphysics->set_solution(PhysicsID::free_surface, &present_solution);
+  // the fluid at present iteration is solved before the free surface, and after
+  // percolate is called for the previous iteration, so at the time the getter
+  // is called solution_m2 = solution_m1
+  // TODO deactivated for now (inertia is considered with a constant density),
+  // see if needed / to be debugged
+  multiphysics->set_solution_m1(PhysicsID::free_surface,
+                                &previous_solutions[0]);
 }
 
 template <int dim>
 void
 VOF<dim>::set_initial_conditions()
 {
-  VectorTools::interpolate(*this->temperature_mapping,
-                           dof_handler,
-                           simulation_parameters.initial_condition->temperature,
-                           newton_update);
+  VectorTools::interpolate(
+    *this->fs_mapping,
+    dof_handler,
+    simulation_parameters.initial_condition->free_surface,
+    newton_update);
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
+
   finish_time_step();
 }
 
 template <int dim>
 void
 VOF<dim>::solve_linear_system(const bool initial_step,
-                                       const bool /*renewed_matrix*/)
+                                      const bool /*renewed_matrix*/)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -607,7 +593,8 @@ VOF<dim>::solve_linear_system(const bool initial_step,
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Tolerance of iterative solver is : "
+      this->pcout << "  Free Surface : " << std::endl
+                  << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
 
@@ -645,13 +632,16 @@ VOF<dim>::solve_linear_system(const bool initial_step,
   if (simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+      this->pcout << "  Free Surface : " << std::endl
+                  << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
     }
 
+  // Update constraints and newton vectors
   constraints_used.distribute(completely_distributed_solution);
   newton_update = completely_distributed_solution;
 }
+
 
 
 

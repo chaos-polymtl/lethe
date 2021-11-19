@@ -69,12 +69,13 @@ public:
     : fe_values_fs(mapping,
                        fe_fs,
                        quadrature,
-                       update_values | update_quadrature_points |
-                         update_JxW_values | update_gradients | update_hessians)
+                   update_values | update_gradients |
+                                                  update_quadrature_points | update_hessians |
+                                                  update_JxW_values)
     , fe_values_navier_stokes(mapping,
                               fe_navier_stokes,
                               quadrature,
-                              update_values)
+                              update_values | update_gradients)
   {
     allocate();
   }
@@ -96,12 +97,13 @@ public:
     : fe_values_fs(sd.fe_values_fs.get_mapping(),
                        sd.fe_values_fs.get_fe(),
                        sd.fe_values_fs.get_quadrature(),
-                       update_values | update_quadrature_points |
-                         update_JxW_values | update_gradients | update_hessians)
+                   update_values | update_gradients |
+                                                  update_quadrature_points | update_hessians |
+                                                  update_JxW_values)
     , fe_values_navier_stokes(sd.fe_values_navier_stokes.get_mapping(),
                               sd.fe_values_navier_stokes.get_fe(),
                               sd.fe_values_navier_stokes.get_quadrature(),
-                              update_values)
+                              update_values | update_gradients)
   {
     allocate();
   }
@@ -138,15 +140,11 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType &                                    current_solution,
          const std::vector<VectorType> &previous_solutions,
-         const std::vector<VectorType> &solution_stages,
-         Function<dim> *                source_function)
+         const std::vector<VectorType> &solution_stages)
   {
     this->fe_values_fs.reinit(cell);
-
     quadrature_points = this->fe_values_fs.get_quadrature_points();
     auto &fe_fs   = this->fe_values_fs.get_fe();
-
-    source_function->value_list(quadrature_points, source);
 
     if (dim == 2)
       this->cell_size =
@@ -155,26 +153,26 @@ public:
       this->cell_size =
         pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_fs.degree;
 
-    // Gather free surface (values, gradient and laplacian)
     this->fe_values_fs.get_function_values(current_solution,
-                                               this->fs_values);
+                                          this->present_phase_values);
     this->fe_values_fs.get_function_gradients(current_solution,
-                                                  this->fs_gradients);
+                                        this->phase_gradients);
     this->fe_values_fs.get_function_laplacians(current_solution,
-                                                   this->fs_laplacians);
+                                         this->phase_laplacians);
 
-    // Gather previous free surface values
+
+    // Gather previous fs values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         this->fe_values_fs.get_function_values(previous_solutions[p],
-                                                   previous_fs_values[p]);
+                                                   previous_phase_values[p]);
       }
 
-    // Gather free surface stages
+    // Gather fs stages
     for (unsigned int s = 0; s < solution_stages.size(); ++s)
       {
         this->fe_values_fs.get_function_values(solution_stages[s],
-                                                   stages_fs_values[s]);
+                                                   stages_phase_values[s]);
       }
 
 
@@ -191,6 +189,9 @@ public:
             this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
           }
       }
+
+
+
   }
 
   template <typename VectorType>
@@ -204,6 +205,16 @@ public:
       current_solution, velocity_values);
   }
 
+  template <typename VectorType>
+  void
+  reinit_velocity_gradient(const VectorType &current_solution)
+  {
+    this->fe_values_navier_stokes[velocities].get_function_gradients(
+      current_solution, velocity_gradient_values);
+  }
+
+
+
 
   // FEValues for the VOF problem
   FEValues<dim> fe_values_fs;
@@ -216,29 +227,34 @@ public:
   std::vector<Point<dim>> quadrature_points;
 
   // Free surface values
-  std::vector<double>              phase_values;
-  std::vector<Tensor<1, dim>>      phase_gradients;
-  std::vector<double>              phase_laplacians;
-  std::vector<std::vector<double>> previous_phase_values;
-  std::vector<std::vector<double>> stages_phase_values;
+  std::vector<double>         present_phase_values;
+  std::vector<Tensor<1, dim>> phase_gradients;
+  std::vector<double>         phase_laplacians;
+    std::vector<std::vector<double>> previous_phase_values;
+      std::vector<std::vector<double>> stages_phase_values;
+
+  //double velocity_fem_degree =
+  //  simulation_parameters.fem_parameters.velocity_order;
 
   // Source term
   std::vector<double> source;
 
   // Shape functions
   std::vector<std::vector<double>>         phi;
-  std::vector<std::vector<Tensor<2, dim>>> hess_phi;
-  std::vector<std::vector<double>>         laplacian_phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
+  std::vector<std::vector<Tensor<2, dim>>> hess_phi;
+    std::vector<std::vector<double>>         laplacian_phi;
 
 
   /**
    * Scratch component for the Navier-Stokes component
    */
+  FEValues<dim>               fe_values_navier_stokes;
+
   FEValuesExtractors::Vector velocities;
   // This FEValues must mandatorily be instantiated for the velocity
-  FEValues<dim>               fe_values_navier_stokes;
-  std::vector<Tensor<1, dim>> velocity_values;
+   std::vector<Tensor<1, dim>> velocity_values;
+   std::vector<Tensor<2, dim>> velocity_gradient_values;
 };
 
 #endif

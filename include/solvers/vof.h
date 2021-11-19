@@ -76,7 +76,7 @@ public:
       {
         // for simplex meshes
         fe              = std::make_shared<FE_SimplexP<dim>>(1);
-        mapping         = std::make_shared<MappingFE<dim>>(*fe);
+        fs_mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
@@ -86,7 +86,7 @@ public:
       {
         // Usual case, for quad/hex meshes
         fe      = std::make_shared<FE_Q<dim>>(1);
-        mapping = std::make_shared<MappingQ<dim>>(
+        fs_mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
@@ -370,7 +370,7 @@ private:
   ConvergenceTable                    error_table;
 
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<Mapping<dim>>        fs_mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;

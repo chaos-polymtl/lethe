@@ -88,9 +88,9 @@ class VOFAssemblerCore : public VOFAssemblerBase<dim>
 {
 public:
   VOFAssemblerCore(std::shared_ptr<SimulationControl> simulation_control,
-                      Parameters::PhysicalProperties     physical_properties)
+                      Parameters::FEM     fem_parameters)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
+    , fem_parameters(fem_parameters)
   {}
 
   /**
@@ -115,7 +115,7 @@ public:
   const bool DCDD = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
+  Parameters::FEM     fem_parameters;
 };
 
 /**
