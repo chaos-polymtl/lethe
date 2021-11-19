@@ -197,8 +197,8 @@ RPTFEMReconstruction<dim>::L2_project()
       std::cout << "Solving system" << std::endl;
       solve_linear_system(d);
     }
-  //output_results();
-  Loop_over_cells();
+  output_results();
+  find_unknown_position();
 }
 
 
@@ -208,8 +208,10 @@ void
 RPTFEMReconstruction<dim>::solve()
 {
     //I will add a part that code reads experimental counts through the prm file as soon as I make sure the code works
-    experimental_count[0]=247.096;
+    experimental_count[0]=200;
     experimental_count[1]=79.2302;
+    experimental_count[2]=1;
+
     //First guess for the Newton method
     unknown[0]=0.1;
     unknown[1]=0.1;
@@ -226,7 +228,7 @@ RPTFEMReconstruction<dim>::solve()
         norm_dx=dx.norm();
         unknown+=dx;
     }
-    std::cout<<unknown<<std::endl;
+    //std::cout<<unknown<<std::endl;
 
 }
 
@@ -295,7 +297,7 @@ RPTFEMReconstruction<dim>::Calculate_Jacobian_2(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -313,7 +315,7 @@ RPTFEMReconstruction<dim>::Calculate_Jacobian_3(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -331,7 +333,7 @@ RPTFEMReconstruction<dim>::Calculate_Jacobian_4(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -349,7 +351,7 @@ RPTFEMReconstruction<dim>::Calculate_Jacobian_5(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -370,7 +372,7 @@ RPTFEMReconstruction<dim>::Calculate_Jacobian_6(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -389,7 +391,7 @@ RPTFEMReconstruction<dim>::Calculate_Jacobian_7(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -407,7 +409,7 @@ RPTFEMReconstruction<dim>::Calculate_Jacobian_8(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -426,7 +428,7 @@ RPTFEMReconstruction<dim>::Calculate_Jacobian_9(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -444,7 +446,7 @@ RPTFEMReconstruction<dim>::f1(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -462,7 +464,7 @@ RPTFEMReconstruction<dim>::f2(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -480,7 +482,7 @@ RPTFEMReconstruction<dim>::f3(){
 
 
 
-    for(unsigned int i=0;i<3;i++){
+    for(unsigned int i=0;i<detectors.size();i++){
 
 
 
@@ -491,16 +493,17 @@ RPTFEMReconstruction<dim>::f3(){
 }
 
 template <int dim>
-void
-RPTFEMReconstruction<dim>::Loop_over_cells()
+std::vector<typename DoFHandler<dim>::cell_iterator>
+RPTFEMReconstruction<dim>::find_cells_in_coarse_level()
 {
 
     unsigned int level=0;
+    std::vector<typename DoFHandler<dim>::cell_iterator>  candidates;
     for (const auto &cell:
          dof_handler.cell_iterators_on_level(level)) {
-      //std::cout << "Cell -  "
-                //<< " Level : " << cell->level() << "  - Index : " << cell->index()
-                //<< std::endl;
+      /*std::cout << "Cell -  "
+                << " Level : " << cell->level() << "  - Index : " << cell->index()
+                << std::endl;*/
       //here we should call the functions that calculate Jacobians and solve the system to find three unknowns to compare
       for(unsigned int i=0; i<detectors.size();++i){
           std::vector<double> detectorCount;
@@ -517,12 +520,117 @@ RPTFEMReconstruction<dim>::Loop_over_cells()
       }
       solve();
       c.clear();
+      if((-1<unknown[0] && unknown[0]<1) &&
+              (-1<unknown[1] && unknown[1]<1) &&
+              (-1<unknown[2] && unknown[2]<1)){
+          //std::cout<<unknown[0]<<std::endl;
+          candidates.push_back(cell);
 
-
-
+      }
     }
+    std::cout<<"size of coarse level candidates: "<<candidates.size()<<std::endl;
+    return candidates;
 }
 
+template <int dim>
+std::vector<typename DoFHandler<dim>::cell_iterator>
+RPTFEMReconstruction<dim>::find_cells_in_fine_level(
+        unsigned int level,
+        std::vector<typename DoFHandler<dim>::cell_iterator>parent_cell_indexes)
+{
+    //loop over candidate cells from coarser level
+    std::vector<typename DoFHandler<dim>::cell_iterator>  candidates;
+    for(unsigned int j=0; j<parent_cell_indexes.size();++j)
+    {
+        //std::cout<<"j: "<<j<<std::endl;
+        auto& parent_cell=parent_cell_indexes[j];
+       //serch on the finer level of the candidate cells
+       unsigned int max_childs = GeometryInfo<dim>::max_children_per_cell;
+       for (unsigned int i=0; i<max_childs;++i){
+           typename DoFHandler<dim>::cell_iterator child_cell;
+           child_cell=parent_cell->child(i);
+           for(unsigned int i=0; i<detectors.size();++i){
+               std::vector<double> detectorCount;
 
 
+               for (unsigned int v=0 ;v<GeometryInfo<dim>::vertices_per_cell;++v)
+               {
+
+                   auto dof_index = child_cell->vertex_dof_index(v,1);
+                   detectorCount.push_back(nodal_counts[i][dof_index]);
+               }
+               c.push_back(detectorCount);
+               detectorCount.clear();
+           }
+           solve();
+           c.clear();
+           if((-1<unknown[0] && unknown[0]<1) &&
+                   (-1<unknown[1] && unknown[1]<1) &&
+                   (-1<unknown[2] && unknown[2]<1)){
+
+               candidates.push_back(child_cell);
+
+           }
+         }
+         }
+    std::cout<<"level: "<<level<<std::endl;
+    std::cout<<"size of fine level candidates: "<<candidates.size()<<std::endl;
+    return candidates;
+    }
+
+
+
+template<int dim>
+std::vector<typename DoFHandler<dim>::cell_iterator>
+RPTFEMReconstruction<dim>::find_cells(
+        unsigned int level,
+        std::vector<typename DoFHandler<dim>::cell_iterator>parent_cell_indexes)
+{
+    std::vector<typename DoFHandler<dim>::cell_iterator>index;
+    if(level==0)
+    {
+        index=find_cells_in_coarse_level();
+    }
+    else
+    {
+        index=find_cells_in_fine_level(level,parent_cell_indexes);
+
+    }
+    //std::cout<<"index size: "<<index.size()<<std::endl;
+    return index;
+}
+
+template<int dim>
+void
+RPTFEMReconstruction<dim>::find_unknown_position()
+{
+    int level=0;
+    std::vector<typename DoFHandler<dim>::cell_iterator> cells_indexes;
+
+
+    //It goes to function find_cell to find the cell index
+    cells_indexes=find_cells(level,cells_indexes);
+    //Next line prints the number of candidate cells in level 0
+    //std::cout<<"size of answer: "<<cells_indexes.size()<<std::endl;
+    //The following for loop check if the candidate cell is not active search on the children
+    bool continue_to_next_level=true;
+    for(unsigned int i=0; i<cells_indexes.size();++i)
+    {
+        if(cells_indexes[i]->is_active()){
+            std::cout<<"We reached the active cell, we stop here"<<std::endl;
+            continue_to_next_level=false;
+
+        }
+        if(cells_indexes.size()>0 && continue_to_next_level){
+            ++level;
+            //std::cout<<"level: "<<level<<std::endl;
+            cells_indexes=find_cells(level,cells_indexes);
+
+        }
+
+    }
+    cells_indexes.clear();
+
+
+}
 template class RPTFEMReconstruction<3>;
