@@ -647,9 +647,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         {
           solid[i_solid]->initial_setup();
 
-          // Output initial configuration
-          output_solid_particles(i_solid);
-          output_solid_triangulation(i_solid);
+          // Output initial configuration, if output_frequency!=0
+          if (this->simulation_control->is_output_iteration())
+            {
+              output_solid_particles(i_solid);
+              output_solid_triangulation(i_solid);
+            }
         }
     }
 
