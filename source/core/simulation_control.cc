@@ -45,7 +45,12 @@ SimulationControl::add_time_step(double p_timestep)
 bool
 SimulationControl::is_output_iteration()
 {
-  return (get_step_number() % output_frequency == 0);
+  if (output_frequency == 0)
+    return false;
+  else
+    {
+      return (get_step_number() % output_frequency == 0);
+    }
 }
 
 bool
