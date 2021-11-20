@@ -31,6 +31,9 @@ SimulationControl::SimulationControl(Parameters::SimulationControl param)
 {
   time_step_vector.resize(numberTimeStepStored);
   time_step_vector[0] = param.dt;
+  time_step_vector[1] = param.dt;
+  time_step_vector[2] = param.dt;
+  time_step_vector[3] = param.dt;
 }
 
 void
