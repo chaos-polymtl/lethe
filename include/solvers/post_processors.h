@@ -9,7 +9,7 @@
 // Numerics
 #include <deal.II/numerics/data_postprocessor.h>
 
-//Rheological models
+// Rheological models
 #include <core/rheological_model.h>
 
 
@@ -180,7 +180,8 @@ template <int dim>
 class NonNewtonianViscosityPostprocessor : public DataPostprocessorScalar<dim>
 {
 public:
-  NonNewtonianViscosityPostprocessor(Parameters::NonNewtonian p_non_newtonian_parameters)
+  NonNewtonianViscosityPostprocessor(
+    Parameters::NonNewtonian p_non_newtonian_parameters)
     : DataPostprocessorScalar<dim>("viscosity", update_gradients)
     , non_newtonian_parameters(p_non_newtonian_parameters)
   {}
@@ -188,13 +189,15 @@ public:
   evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
                         std::vector<Vector<double>> &computed_quantities) const
   {
-    Tensor<2, dim> shear_rate;
+    Tensor<2, dim>     shear_rate;
     const unsigned int n_quadrature_points = inputs.solution_gradients.size();
 
     std::shared_ptr<RheologicalModel<dim>> rheological_model;
-    if (non_newtonian_parameters.model == Parameters::NonNewtonian::Model::carreau)
+    if (non_newtonian_parameters.model ==
+        Parameters::NonNewtonian::Model::carreau)
       {
-        rheological_model = std::make_shared<Carreau<dim>>(non_newtonian_parameters);
+        rheological_model =
+          std::make_shared<Carreau<dim>>(non_newtonian_parameters);
       }
 
     for (unsigned int q = 0; q < n_quadrature_points; ++q)
@@ -205,15 +208,15 @@ public:
   }
 
   Tensor<2, dim>
-  calculate_shear_rate(const std::vector<Tensor<1, dim>>& gradients) const
+  calculate_shear_rate(const std::vector<Tensor<1, dim>> &gradients) const
   {
     Tensor<2, dim> shear_rate;
     for (int i = 0; i < dim; ++i)
       {
         for (int j = 0; j < dim; ++j)
-        {
-          shear_rate[i][j] += gradients[i][j] + gradients[j][i];
-        }
+          {
+            shear_rate[i][j] += gradients[i][j] + gradients[j][i];
+          }
       }
     return shear_rate;
   }
