@@ -49,6 +49,8 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
+#include <boost/lexical_cast.hpp>
+
 
 /*
  * Constructor for the Navier-Stokes base class
@@ -1525,6 +1527,13 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   if (simulation_parameters.velocity_sources.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     data_out.add_data_vector(solution, srf);
+
+  //if (simulation_parameters.physical_properties.non_newtonian_flow)
+  //{
+    NonNewtonianViscosityPostprocessor<dim> non_newtonian_viscosity(simulation_parameters.physical_properties.non_newtonian_parameters);
+    data_out.add_data_vector(solution, non_newtonian_viscosity);
+  //}
+ 
 
   output_field_hook(data_out);
 
