@@ -67,6 +67,12 @@ namespace AnalyticalSolutions
       return enable;
     }
 
+    void
+    set_enable(bool is_enable)
+    {
+      enable=is_enable;
+    }
+
     std::string
     get_filename()
     {

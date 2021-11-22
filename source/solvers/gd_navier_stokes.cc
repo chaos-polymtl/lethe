@@ -1171,7 +1171,7 @@ GDNavierStokesSolver<dim>::solve()
       this->dynamic_flow_control();
 
       if (this->simulation_control->is_at_start())
-        this->first_iteration();
+        this->iterate();
       else
         {
           NavierStokesBase<dim,

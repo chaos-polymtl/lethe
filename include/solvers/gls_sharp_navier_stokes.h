@@ -397,11 +397,6 @@ Return a bool that describes  if a cell contains a specific point
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
   }
 
-  void
-  update_subtime_step_value() override;
-
-
-
   /**
    * @brief
    *Return a vector of cells around a cell including vertex neighbors

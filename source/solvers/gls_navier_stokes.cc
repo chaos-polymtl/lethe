@@ -1284,6 +1284,7 @@ GLSNavierStokesSolver<dim>::solve()
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          this->iterate();
         }
       this->postprocess(false);
       this->finish_time_step();

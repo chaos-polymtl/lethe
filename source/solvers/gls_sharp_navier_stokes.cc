@@ -27,6 +27,7 @@
 
 #include <solvers/gls_sharp_navier_stokes.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
+#include <solvers/postprocessing_cfd.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -71,7 +72,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        this->dof_handler,
                                        support_points);
   cut_cells_map.clear();
-  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -634,6 +635,11 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
       this->write_output_results(this->present_solution);
     }
 
+  bool enable =this->simulation_parameters.analytical_solution->calculate_error();
+  this->simulation_parameters.analytical_solution->set_enable(false);
+  NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+    postprocess_fd(firstIter);
+  this->simulation_parameters.analytical_solution->set_enable(enable);
   // Calculate the error with respect to the analytical solution
   if (!firstIter &&
       this->simulation_parameters.analytical_solution->calculate_error())
@@ -667,7 +673,18 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
             "time", this->simulation_control->get_current_time());
           this->error_table.add_value("error_velocity", error.first);
           this->error_table.add_value("error_pressure", error.second);
+
+          auto summary = this->computing_timer.get_summary_data(
+            this->computing_timer.total_wall_time);
+          double total_time = 0;
+          for (auto it = summary.begin(); it != summary.end(); ++it)
+            {
+              total_time += summary[it->first];
+            }
+          this->error_table.add_value("total_time", total_time);
         }
+      // Calculate pressure drop between two boundaries
+
       if (this->simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
@@ -677,18 +694,18 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
     }
 }
 
+
 template <int dim>
 std::pair<double, double>
 GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
-  this->pcout<<"this time "<<this->simulation_control->get_current_time()<<std::endl;
   QGauss<dim>       quadrature_formula(this->number_quadrature_points + 1);
   FEValues<dim>     fe_values(*this->mapping,
-                          *this->fe,
-                          quadrature_formula,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
+                              *this->fe,
+                              quadrature_formula,
+                              update_values | update_gradients |
+                                update_quadrature_points | update_JxW_values);
   FEFaceValues<dim> fe_face_values(*this->mapping,
                                    *this->fe,
                                    *this->face_quadrature,
@@ -975,8 +992,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   double time  = this->simulation_control->get_current_time();
   double alpha = this->simulation_parameters.particlesParameters->alpha;
   this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
-  this->pcout<<"this time "<<time<<std::endl;
-  this->pcout<<"dt "<<dt<<std::endl;
 
   double rho        = this->simulation_parameters.particlesParameters->density;
   particle_residual = 0;
@@ -1320,72 +1335,7 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_nonscalar_data_ranges()
 template <int dim>
 GLSSharpNavierStokesSolver<dim>::Visualization_IB::~Visualization_IB()
 {}
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::update_subtime_step_value()
-{
 
-  double time  = this->simulation_control->get_current_time();
-  double dt    = this->simulation_control->get_time_steps_vector()[0];
-  this->pcout<<"this time "<<this->simulation_control->get_current_time()<<std::endl;
-  this->pcout<<"dt "<<dt<<std::endl;
-  this->exact_solution->set_time(
-                        this->simulation_control->get_current_time());
-  this->postprocess_fd(false);
-  this->finish_time_step();
-  this->forcing_function->set_time(
-    this->simulation_control->get_current_time());
-  if (this->simulation_parameters.particlesParameters->calculate_force_ib)
-    force_on_ib();
-  finish_time_step_particles();
-  write_force_ib();
-
-  if (
-      this->simulation_parameters.boundary_conditions.time_dependent)
-    {
-      this->update_boundary_conditions();
-    }
-
-  for (unsigned int p = 0; p < particles.size(); ++p)
-    {
-      particles[p].last_position      = particles[p].position;
-      particles[p].last_velocity      = particles[p].velocity;
-      particles[p].last_forces        = particles[p].forces;
-      particles[p].last_omega         = particles[p].omega;
-      particles[p].local_alpha_torque = 1;
-      particles[p].local_alpha_force  = 1;
-
-      if(!this->simulation_parameters.particlesParameters->integrate_motion)
-        {
-          particles[p].f_position->set_time(time);
-          particles[p].f_velocity->set_time(time);
-          particles[p].f_omega->set_time(time);
-          particles[p].position[0] =
-            particles[p].f_position->value(particles[p].position, 0);
-          particles[p].position[1] =
-            particles[p].f_position->value(particles[p].position, 1);
-          particles[p].velocity[0] =
-            particles[p].f_velocity->value(particles[p].position, 0);
-          particles[p].velocity[1] =
-            particles[p].f_velocity->value(particles[p].position, 1);
-          particles[p].omega[0] =
-            particles[p].f_omega->value(particles[p].position, 0);
-          particles[p].omega[1] =
-            particles[p].f_omega->value(particles[p].position, 1);
-          particles[p].omega[2] =
-            particles[p].f_omega->value(particles[p].position, 2);
-          if (dim == 3)
-            {
-              particles[p].position[2] =
-                particles[p].f_position->value(particles[p].position, 2);
-              particles[p].velocity[2] =
-                particles[p].f_velocity->value(particles[p].position, 2);
-            }
-          generate_cut_cells_map();
-        }
-    }
-
-}
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
@@ -1541,7 +1491,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p(
-  std::vector<types::global_dof_index> &         local_dof_indices,
+  std::vector<types::global_dof_index>          &local_dof_indices,
   std::map<types::global_dof_index, Point<dim>> &support_points,
   unsigned int                                   p)
 {
@@ -1575,8 +1525,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_cut(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index> &                local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>> &       support_points)
+  std::vector<types::global_dof_index>                 &local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>>        &support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -1598,8 +1548,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_inside(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index> &                local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>> &       support_points)
+  std::vector<types::global_dof_index>                 &local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>>        &support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -1662,8 +1612,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);
   FEValues<dim>      fe_values(*this->fe,
-                          q_formula,
-                          update_quadrature_points | update_JxW_values);
+                               q_formula,
+                               update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   int    order = this->simulation_parameters.particlesParameters->order;
@@ -2208,8 +2158,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2301,8 +2251,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2654,12 +2604,13 @@ GLSSharpNavierStokesSolver<dim>::solve()
           generate_cut_cells_map();
           this->iterate();
         }
+
       this->postprocess_fd(false);
       this->finish_time_step();
       if (this->simulation_parameters.particlesParameters->calculate_force_ib)
         force_on_ib();
       finish_time_step_particles();
-      write_force_ib();;
+      write_force_ib();
     }
 
   if (this->simulation_parameters.particlesParameters->calculate_force_ib)

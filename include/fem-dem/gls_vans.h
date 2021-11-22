@@ -108,8 +108,6 @@ protected:
   virtual void
   iterate() override;
 
-  virtual void
-  first_iteration() override;
 
   void
   calculate_void_fraction(const double time);
