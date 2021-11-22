@@ -12,14 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Implementation of free surface with a Volume of Fluid method.
- * Two fluid formulation. The phase indicator "phase" is equal to 0
- * in one fluid and 1 in the other. The free surface is located
- * where "phase" is equal to 0.5.
- *
- * Author: Jeanne Joachim, Polytechnique Montreal, 2021
  */
 
 #include <core/simulation_control.h>

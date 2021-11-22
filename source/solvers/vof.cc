@@ -49,8 +49,12 @@ VOF<dim>::setup_assemblers()
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      this->assemblers.push_back(
-        std::make_shared<VOFAssemblerBDF<dim>>(this->simulation_control));
+      if (is_sdirk(this->simulation_control->get_assembly_method()))
+        throw std::invalid_argument(
+          "SDIRK time-stepping scheme is not supported in the VOF solver ");
+      else
+        this->assemblers.push_back(
+          std::make_shared<VOFAssemblerBDF<dim>>(this->simulation_control));
     }
 
   // Core assembler
@@ -199,17 +203,11 @@ VOF<dim>::assemble_local_system_rhs(
       scratch_data.reinit_velocity(velocity_cell,
                                    *multiphysics->get_block_solution(
                                      PhysicsID::fluid_dynamics));
-
-      scratch_data.reinit_velocity_gradient(
-        *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
     }
   else
     {
       scratch_data.reinit_velocity(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
-
-      scratch_data.reinit_velocity_gradient(
-        *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
 
   copy_data.reset();
@@ -538,8 +536,8 @@ VOF<dim>::setup_dofs()
                        dsp,
                        mpi_communicator);
 
-  this->pcout << "   Number of free surface degrees of freedom: "
-              << dof_handler.n_dofs() << std::endl;
+  this->pcout << "   Number of VOF degrees of freedom: " << dof_handler.n_dofs()
+              << std::endl;
 
   // Provide the free surface dof_handler and solution pointers to the
   // multiphysics interface
@@ -590,7 +588,7 @@ VOF<dim>::solve_linear_system(const bool initial_step,
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  Free Surface : " << std::endl
+      this->pcout << "  VOF : " << std::endl
                   << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }

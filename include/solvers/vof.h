@@ -12,14 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Implementation of free surface with a Volume of Fluid method.
- * Two fluid formulation. The phase indicator "phase" is equal to 0
- * in one fluid and 1 in the other. The free surface is located
- * where "phase" is equal to 0.5.
- *
- * Author: Jeanne Joachim, Polytechnique Montreal, 2021
  */
 
 #ifndef lethe_VOF_h
@@ -402,15 +394,6 @@ private:
 
   // Enable DCDD shock capturing scheme
   const bool DCDD = true;
-
-  // Reference for GGLS https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324
-  // Warning, this GGLS implementation is valid only for Linear elements
-  // Quad elements will be lacking the third derivative of the diffusion
-  // operator Whether this affects or not the final result is unclear to me at
-  // the moment. Additionnaly, this formulation does not use the gradient of the
-  // source term. The same applies, I have no clue if this is detrimental or not
-  // to the solution since anyway the GGLS term scales as h^(order+1)
-  const bool GGLS = true;
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;

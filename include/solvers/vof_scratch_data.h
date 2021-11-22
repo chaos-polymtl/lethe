@@ -203,17 +203,9 @@ public:
 
     this->fe_values_navier_stokes[velocities].get_function_values(
       current_solution, velocity_values);
-  }
-
-  template <typename VectorType>
-  void
-  reinit_velocity_gradient(const VectorType &current_solution)
-  {
     this->fe_values_navier_stokes[velocities].get_function_gradients(
       current_solution, velocity_gradient_values);
   }
-
-
 
   // FEValues for the VOF problem
   FEValues<dim> fe_values_fs;
