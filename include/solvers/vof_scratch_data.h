@@ -224,9 +224,6 @@ public:
   std::vector<std::vector<double>> previous_phase_values;
   std::vector<std::vector<double>> stages_phase_values;
 
-  // double velocity_fem_degree =
-  //  simulation_parameters.fem_parameters.velocity_order;
-
   // Source term
   std::vector<double> source;
 
