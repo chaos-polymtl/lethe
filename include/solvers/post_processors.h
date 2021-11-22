@@ -181,22 +181,20 @@ public:
   NonNewtonianViscosityPostprocessor(
     Parameters::NonNewtonian p_non_newtonian_parameters)
     : DataPostprocessorScalar<dim>("viscosity", update_gradients)
-    , non_newtonian_parameters(p_non_newtonian_parameters)
-  {}
+  {
+    if (p_non_newtonian_parameters.model ==
+        Parameters::NonNewtonian::Model::carreau)
+      {
+        rheological_model =
+          std::make_shared<Carreau<dim>>(p_non_newtonian_parameters);
+      }
+  }
   virtual void
   evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
                         std::vector<Vector<double>> &computed_quantities) const
   {
     Tensor<2, dim>     shear_rate;
     const unsigned int n_quadrature_points = inputs.solution_gradients.size();
-
-    std::shared_ptr<RheologicalModel<dim>> rheological_model;
-    if (non_newtonian_parameters.model ==
-        Parameters::NonNewtonian::Model::carreau)
-      {
-        rheological_model =
-          std::make_shared<Carreau<dim>>(non_newtonian_parameters);
-      }
 
     for (unsigned int q = 0; q < n_quadrature_points; ++q)
       {
@@ -220,7 +218,7 @@ public:
   }
 
 private:
-  Parameters::NonNewtonian non_newtonian_parameters;
+  std::shared_ptr<RheologicalModel<dim>> rheological_model;
 };
 
 #endif

@@ -49,8 +49,6 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
-#include <boost/lexical_cast.hpp>
-
 
 /*
  * Constructor for the Navier-Stokes base class
