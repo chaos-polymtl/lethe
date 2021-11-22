@@ -174,8 +174,6 @@ private:
  * @brief Calculates de viscosity on each quadrature point for a non Newtonian flow.
  * The equation of the viscosity depends on the used rheological model.
  */
-
-
 template <int dim>
 class NonNewtonianViscosityPostprocessor : public DataPostprocessorScalar<dim>
 {
