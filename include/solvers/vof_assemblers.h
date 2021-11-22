@@ -67,7 +67,7 @@ public:
  * @brief Class that assembles the core of the VOF solver.
  * This class assembles the weak form of:
  * $$\mathbf{u} \cdot T \cdot \nabla T =0 $$ with an SUPG
- * stabilziation
+ * stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

@@ -296,7 +296,7 @@ private:
    *
    * @param scratch_data The scratch data which is used to store
    * the calculated finite element information at the gauss point.
-   * See the documentation for HeatTransferScratchData for more
+   * See the documentation for VOFScratchData for more
    * information
    *
    * @param copy_data The copy data which is used to store
@@ -315,7 +315,7 @@ private:
    *
    * @param scratch_data The scratch data which is used to store
    * the calculated finite element information at the gauss point.
-   * See the documentation for HeatTransferScratchData for more
+   * See the documentation for VOFScratchData for more
    * information
    *
    * @param copy_data The copy data which is used to store

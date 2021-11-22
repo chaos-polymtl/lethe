@@ -62,7 +62,7 @@ public:
    * necessary memory for all member variables. However, it does not do any
    * evalution, since this needs to be done at the cell level.
    *
-   * @param fe The FESystem used to solve the Navier-Stokes equations
+   * @param fe The FESystem used to solve the VOF equations
    *
    * @param quadrature The quadrature to use for the assembly
    *
@@ -93,7 +93,7 @@ public:
    * definition of the WorkStream mechanism it is assumed that the content of
    * the scratch will be reset on a cell basis.
    *
-   * @param fe The FESystem used to solve the Navier-Stokes equations
+   * @param fe The FESystem used to solve the VOF equations
    *
    * @param quadrature The quadrature to use for the assembly
    *
@@ -124,13 +124,13 @@ public:
 
   /** @brief Reinitialize the content of the scratch
    *
-   * Using the FeValues and the content ofthe solutions, previous solutions and
+   * Using the FeValues and the content of the solutions, previous solutions and
    * solutions stages, fills all of the class member of the scratch
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the fe which is used to fill the FeValues
    *
-   * @param current_solution The present value of the solution for [u,p]
+   * @param current_solution The present value of the solution for the free surface
    *
    * @param previous_solutions The solutions at the previous time steps
    *
