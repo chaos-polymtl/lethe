@@ -2,7 +2,7 @@ Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 3267
    Volume of triangulation:      1
-   Number of free surface degrees of freedom: 1089
+   Number of VOF degrees of freedom: 1089
 
 *****************************************************************
 Transient iteration : 1        Time : 0.02     Time step : 0.02     CFL : 0       
@@ -16,7 +16,7 @@ Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 8.8806
    Number of active cells:       448
    Number of degrees of freedom: 1596
    Volume of triangulation:      1
-   Number of free surface degrees of freedom: 532
+   Number of VOF degrees of freedom: 532
 L2 error velocity : 5.07927e-05
 L2 error phase : 0.00656601
 
@@ -26,7 +26,7 @@ Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 0.0001
    Number of active cells:       472
    Number of degrees of freedom: 1659
    Volume of triangulation:      1
-   Number of free surface degrees of freedom: 553
+   Number of VOF degrees of freedom: 553
 L2 error velocity : 3.3119e-06
 L2 error phase : 0.00656608
 
@@ -36,7 +36,7 @@ Transient iteration : 4        Time : 0.08     Time step : 0.02     CFL : 1.9636
    Number of active cells:       568
    Number of degrees of freedom: 1950
    Volume of triangulation:      1
-   Number of free surface degrees of freedom: 650
+   Number of VOF degrees of freedom: 650
 L2 error velocity : 2.7639e-06
 L2 error phase : 0.00656614
 
@@ -46,7 +46,7 @@ Transient iteration : 5        Time : 0.1      Time step : 0.02     CFL : 1.8938
    Number of active cells:       952
    Number of degrees of freedom: 3300
    Volume of triangulation:      1
-   Number of free surface degrees of freedom: 1100
+   Number of VOF degrees of freedom: 1100
 L2 error velocity : 2.40083e-06
 L2 error phase : 0.00656621
  time  error_velocity error_pressure 
@@ -60,4 +60,4 @@ L2 error phase : 0.00656621
 0.0400 6.566007e-03 
 0.0600 6.566075e-03 
 0.0800 6.566143e-03 
-0.1000 6.566208e-03
+0.1000 6.566208e-03 

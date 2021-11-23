@@ -12,24 +12,18 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Implementation of free surface with a Volume of Fluid method.
- * Two fluid formulation. The phase indicator "phase" is equal to 0
- * in one fluid and 1 in the other. The free surface is located
- * where "phase" is equal to 0.5.
- *
- * Author: Jeanne Joachim, Polytechnique Montreal, 2021
  */
 
-#ifndef lethe_free_surface_h
-#define lethe_free_surface_h
+#ifndef lethe_VOF_h
+#define lethe_VOF_h
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -50,17 +44,17 @@
 
 
 template <int dim>
-class FreeSurface : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class VOF : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   /**
-   * @brief FreeSurface - Base constructor.
+   * @brief VOF - Base constructor.
    */
-  FreeSurface<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
-                   const SimulationParameters<dim> &p_simulation_parameters,
-                   std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                      p_triangulation,
-                   std::shared_ptr<SimulationControl> p_simulation_control)
+  VOF<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
+           const SimulationParameters<dim> &p_simulation_parameters,
+           std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                              p_triangulation,
+           std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
@@ -74,7 +68,7 @@ public:
       {
         // for simplex meshes
         fe              = std::make_shared<FE_SimplexP<dim>>(1);
-        mapping         = std::make_shared<MappingFE<dim>>(*fe);
+        fs_mapping      = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
@@ -83,8 +77,8 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        fe      = std::make_shared<FE_Q<dim>>(1);
-        mapping = std::make_shared<MappingQ<dim>>(
+        fe         = std::make_shared<FE_Q<dim>>(1);
+        fs_mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
@@ -106,29 +100,11 @@ public:
   }
 
   /**
-   * @brief FreeSurface - Base destructor. At the present
+   * @brief VOF - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  ~FreeSurface()
+  ~VOF()
   {}
-
-  /**
-   * @brief Call for the assembly of the matrix
-   */
-  virtual void
-  assemble_system_matrix()
-  {
-    assemble_matrix_and_rhs();
-  }
-
-  /**
-   * @brief Call for the assembly of the right-hand side
-   */
-  virtual void
-  assemble_system_rhs()
-  {
-    assemble_rhs();
-  }
 
 
   /**
@@ -166,20 +142,20 @@ public:
    * @brief Carry out the operations required to finish a simulation correctly.
    */
   void
-  finish_simulation();
+  finish_simulation() override;
 
   /**
    * @brief Carry out the operations required to finish a time step correctly.
    */
   void
-  finish_time_step();
+  finish_time_step() override;
 
   /**
    * @brief Carry out the operations required to rearrange the values of the
    * previous solution at the end of a time step
    */
   void
-  percolate_time_vectors();
+  percolate_time_vectors() override;
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
@@ -189,7 +165,7 @@ public:
    * function
    */
   void
-  postprocess(bool first_iteration);
+  postprocess(bool first_iteration) override;
 
 
   /**
@@ -218,20 +194,20 @@ public:
    * @brief Prepares auxiliary physics to write checkpoint
    */
   void
-  write_checkpoint();
+  write_checkpoint() override;
 
 
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
    */
   void
-  read_checkpoint();
+  read_checkpoint() override;
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
   void
-  setup_dofs();
+  setup_dofs() override;
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
@@ -239,7 +215,7 @@ public:
    * the use of L2 projection or steady-state solutions.
    */
   void
-  set_initial_conditions();
+  set_initial_conditions() override;
 
   /**
    * @brief Call for the solution of the linear system of equation using a strategy appropriate
@@ -297,15 +273,87 @@ public:
   }
 
 private:
-  template <bool assemble_matrix>
+  /**
+   *  @brief Assembles the matrix associated with the solver
+   */
   void
-  assemble_system();
+  assemble_system_matrix();
+
+  /**
+   * @brief Assemble the rhs associated with the solver
+   */
+  void
+  assemble_system_rhs();
+
+
+  /**
+   * @brief Assemble the local matrix for a given cell.
+   *
+   * This function is used by the WorkStream class to assemble
+   * the system matrix. It is a thread safe function.
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for VOFScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  virtual void
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    VOFScratchData<dim> &                                 scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
+
+  /**
+   * @brief Assemble the local rhs for a given cell
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for VOFScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  virtual void
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    VOFScratchData<dim> &                                 scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
+
+  /**
+   * @brief sets up the vector of assembler functions
+   */
+  virtual void
+  setup_assemblers();
+
+
+  /**
+   * @brief Copy local cell information to global matrix
+   */
+
+  virtual void
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsCopyData &copy_data);
+
+  /**
+   * @brief Copy local cell rhs information to global rhs
+   */
+
+  virtual void
+  copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
 
 
-  // Core elements for the free surface simulation
+  // Core elements for the VOF simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl> simulation_control;
   DoFHandler<dim>                    dof_handler;
@@ -314,7 +362,7 @@ private:
   ConvergenceTable                    error_table;
 
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<Mapping<dim>>        fs_mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;
@@ -335,6 +383,7 @@ private:
 
   // Previous solutions vectors
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+  std::vector<TrilinosWrappers::MPI::Vector> solution_stages;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
@@ -345,6 +394,9 @@ private:
 
   // Enable DCDD shock capturing scheme
   const bool DCDD = true;
+
+  // Assemblers for the matrix and rhs
+  std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;
 };
 
 
