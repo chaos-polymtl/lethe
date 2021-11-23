@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_rheological_model_h
-#define lethe_rheological_model_h
+#ifndef lethe_specific_heat_model_h
+#define lethe_specific_heat_model_h
 
 #include <core/parameters.h>
 
@@ -32,21 +32,15 @@ class SpecificHeatModel
 {
 public:
   /**
-   * @brief Default constructor
-   */
-  SpecificHeatModel()
-  {}
-
-  /**
    * @brief Returns the specific heat
    *
    * @param temperature Temperature at time t+dt
    *
    * @param previous_temperature Temperature at time t
    */
-  virtual double
-  get_specific_heat(const double temperature,
-                    const double previous_temperature) = 0;
+  virtual double inline get_specific_heat(
+    const double temperature,
+    const double previous_temperature) = 0;
 };
 
 
@@ -54,13 +48,13 @@ public:
  * @brief Constant specific heat. Returns a constant specific
  * heat for a fluid
  */
-class ConstantSpecificHeat : public SpecificHeatModel
+class SpecificHeatConstant : public SpecificHeatModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  ConstantSpecificHeat(const double p_specific_heat)
+  SpecificHeatConstant(const double p_specific_heat)
     : specific_heat(p_specific_heat)
   {}
 
@@ -71,9 +65,9 @@ public:
    *
    * @param previous_temperature Temperature at time t
    */
-  virtual double
-  get_specific_heat(const double /*temperature*/,
-                    const double /*previous_temperature*/) override
+  virtual double inline get_specific_heat(
+    const double /*temperature*/,
+    const double /*previous_temperature*/) override
   {
     return specific_heat;
   }
@@ -104,9 +98,9 @@ public:
    *
    * @param previous_temperature Temperature at time t
    */
-  virtual double
-  get_specific_heat(const double temperature,
-                    const double previous_temperature) override
+  virtual double inline get_specific_heat(
+    const double temperature,
+    const double previous_temperature) override
   {
     if (temperature > previous_temperature)
       {
@@ -156,7 +150,7 @@ public:
    * @return Value of the enthalpy
    */
 
-  double
+  inline double
   enthalpy(const double T)
   {
     if (T > param.T_liquidus)
