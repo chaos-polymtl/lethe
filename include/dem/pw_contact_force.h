@@ -154,19 +154,10 @@ protected:
                                          Tensor<1, dim>     add_force,
                                          const Point<dim>   point_contact);
 
-  /** This function is used to initialize a map of vectors (force on boundaries)
-   * to gravitational force acting on the boundary, with the member class
-   * boundary index which has the keys as information
+  /** This function is used to initialize a map of vectors (force and torque on boundaries)
    */
   std::map<unsigned int, Tensor<1, dim>>
-  initialize_boundary_force();
-
-  /** This function is used to initialize a map of vectors (torque on
-   * boundaries) to gravitational torque acting on the boundary, with the member
-   * class boundary index which has the keys as information
-   */
-  std::map<unsigned int, Tensor<1, dim>>
-  initialize_boundary_torque();
+  initialize();
 
   /** This function sums all the torques from all the
    * MPI processes

@@ -107,61 +107,26 @@ PWContactForce<dim>::calculate_force_and_torque_on_boundary(
 {
   if (calculate_force_torque_on_boundary == true)
     {
-      Tensor<1, dim> force_in_rolling_direction;
-
-      for (unsigned int d = 0; d < dim; ++d)
-        {
-          if (d == this->rotation_axis)
-            force_in_rolling_direction[d] = add_force[d];
-          else
-            force_in_rolling_direction[d] = 0;
-        }
-
-      force_on_walls[boundary_id] = force_on_walls[boundary_id] - add_force;
+        force_on_walls[boundary_id] = force_on_walls[boundary_id] - add_force;
 
       if (dim == 3)
         {
-          torque_on_walls[boundary_id] +=
-            cross_product_3d(point_contact - center_mass_container,
-                             force_in_rolling_direction) -
+          torque_on_walls[boundary_id] =
+            torque_on_walls[boundary_id] -
             cross_product_3d(point_contact - center_mass_container, add_force);
+
         }
     }
 }
 
 template <int dim>
 std::map<unsigned int, Tensor<1, dim>>
-PWContactForce<dim>::initialize_boundary_force()
+PWContactForce<dim>::initialize()
 {
   std::map<unsigned int, Tensor<1, dim>> map;
   for (const auto &it : boundary_index)
     {
-      map[it] = this->triangulation_mass * this->gravity *
-                sin(this->inclined_plane_angle);
-    }
-  return map;
-}
-
-template <int dim>
-std::map<unsigned int, Tensor<1, dim>>
-PWContactForce<dim>::initialize_boundary_torque()
-{
-  std::map<unsigned int, Tensor<1, dim>> map;
-  for (const auto &it : boundary_index)
-    {
-      Tensor<1, dim> rolling_vector;
-      for (unsigned int d = 0; d < dim; ++d)
-        {
-          if (d == this->rotation_axis)
-            rolling_vector[d] = 1;
-          else
-            rolling_vector[d] = 0;
-        }
-
-      // Torque is applied only in the direction of rotation
-      map[it] = this->triangulation_mass *
-                (this->gravity.norm() * rolling_vector) *
-                this->triangulation_radius * sin(this->inclined_plane_angle);
+      map[it] = 0;
     }
   return map;
 }

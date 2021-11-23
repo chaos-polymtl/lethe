@@ -120,6 +120,9 @@ PWNonLinearForce<dim>::PWNonLinearForce(
 
   this->rotation_axis = dem_parameters.grid_motion.cylinder_rotation_axis;
   this->inclined_plane_angle = dem_parameters.grid_motion.inclined_plane_angle;
+
+  this->force_on_walls        = this->initialize();
+  this->torque_on_walls       = this->initialize();
 }
 
 template <int dim>
@@ -133,8 +136,8 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
   std::vector<Tensor<1, dim>> &momentum,
   std::vector<Tensor<1, dim>> &force)
 {
-  PWContactForce<dim>::torque_on_walls =
-    PWContactForce<dim>::initialize_boundary_torque();
+    PWContactForce<dim>::force_on_walls  = PWContactForce<dim>::initialize();
+    PWContactForce<dim>::torque_on_walls = PWContactForce<dim>::initialize();
 
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
