@@ -185,6 +185,10 @@ namespace Parameters
                         Patterns::Selection("none|iteration|end"),
                         "Clock monitoring methods "
                         "Choices are <none|iteration|end>.");
+      prm.declare_entry("write time in error table",
+                        "false",
+                        Patterns::Bool(),
+                        "Bool to define if the time is written in the error table");
     }
     prm.leave_subsection();
   }
@@ -201,6 +205,7 @@ namespace Parameters
         type = Type::iteration;
       else if (cl == "end")
         type = Type::end;
+      write_time_in_error_table=prm.get_bool("write time in error table");
     }
     prm.leave_subsection();
   }

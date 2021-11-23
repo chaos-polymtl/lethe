@@ -418,8 +418,6 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
         {
           error_table.set_scientific("error_pressure", true);
           error_table.omit_column_from_convergence_rate_evaluation("cells");
-          error_table.omit_column_from_convergence_rate_evaluation(
-            "total_time");
           error_table.evaluate_all_convergence_rates(
             ConvergenceTable::reduction_rate_log2);
         }
@@ -1165,6 +1163,18 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
               this->error_table.add_value(
                 "time", simulation_control->get_current_time());
               this->error_table.add_value("error_velocity", error_velocity);
+              if(this->simulation_parameters.timer.write_time_in_error_table)
+                {
+                  auto summary = computing_timer.get_summary_data(
+                    computing_timer.total_wall_time);
+                  double total_time = 0;
+                  for (auto it = summary.begin(); it != summary.end(); ++it)
+                    {
+                      total_time += summary[it->first];
+                    }
+                  this->error_table.add_value("total_time", total_time);
+                }
+
               // Calculate error on pressure for free surface simulations
               if (this->simulation_parameters.multiphysics.free_surface)
                 this->error_table.add_value("error_pressure", error_pressure);

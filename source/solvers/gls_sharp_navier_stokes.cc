@@ -674,14 +674,18 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
           this->error_table.add_value("error_velocity", error.first);
           this->error_table.add_value("error_pressure", error.second);
 
-          auto summary = this->computing_timer.get_summary_data(
-            this->computing_timer.total_wall_time);
-          double total_time = 0;
-          for (auto it = summary.begin(); it != summary.end(); ++it)
+          if(this->simulation_parameters.timer.write_time_in_error_table)
             {
-              total_time += summary[it->first];
+              auto summary = this->computing_timer.get_summary_data(
+                this->computing_timer.total_wall_time);
+              double total_time = 0;
+              for (auto it = summary.begin(); it != summary.end(); ++it)
+                {
+                  total_time += summary[it->first];
+                }
+              this->error_table.add_value("total_time", total_time);
             }
-          this->error_table.add_value("total_time", total_time);
+
         }
       // Calculate pressure drop between two boundaries
 
