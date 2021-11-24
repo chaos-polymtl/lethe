@@ -189,7 +189,7 @@ namespace Parameters
         "write time in error table",
         "false",
         Patterns::Bool(),
-        "Bool to define if the time is written in the error table");
+        "Boolean to define if the time is written in the error table");
     }
     prm.leave_subsection();
   }
@@ -1059,7 +1059,7 @@ namespace Parameters
         "force linear solver continuation",
         "false",
         Patterns::Bool(),
-        "A bool that will force the linear solver to continue even if it fails");
+        "A boolean that will force the linear solver to continue even if it fails");
     }
     prm.leave_subsection();
   }

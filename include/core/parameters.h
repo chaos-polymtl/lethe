@@ -287,6 +287,7 @@ namespace Parameters
     Type type;
 
     bool write_time_in_error_table;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
