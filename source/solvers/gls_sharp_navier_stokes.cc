@@ -72,7 +72,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        this->dof_handler,
                                        support_points);
   cut_cells_map.clear();
-  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -635,7 +635,8 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
       this->write_output_results(this->present_solution);
     }
 
-  bool enable =this->simulation_parameters.analytical_solution->calculate_error();
+  bool enable =
+    this->simulation_parameters.analytical_solution->calculate_error();
   this->simulation_parameters.analytical_solution->set_enable(false);
   NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
     postprocess_fd(firstIter);
@@ -674,7 +675,7 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
           this->error_table.add_value("error_velocity", error.first);
           this->error_table.add_value("error_pressure", error.second);
 
-          if(this->simulation_parameters.timer.write_time_in_error_table)
+          if (this->simulation_parameters.timer.write_time_in_error_table)
             {
               auto summary = this->computing_timer.get_summary_data(
                 this->computing_timer.total_wall_time);
@@ -685,7 +686,6 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
                 }
               this->error_table.add_value("total_time", total_time);
             }
-
         }
       // Calculate pressure drop between two boundaries
 
@@ -704,13 +704,13 @@ std::pair<double, double>
 GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
-  QGauss<dim>       quadrature_formula(this->number_quadrature_points + 1);
-  FEValues<dim>     fe_values(*this->mapping,
-                              *this->fe,
-                              quadrature_formula,
-                              update_values | update_gradients |
-                                update_quadrature_points | update_JxW_values);
-  FEFaceValues<dim> fe_face_values(*this->mapping,
+  QGauss<dim>        quadrature_formula(this->number_quadrature_points + 1);
+  FEValues<dim>      fe_values(*this->mapping,
+                          *this->fe,
+                          quadrature_formula,
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
+  FEFaceValues<dim>  fe_face_values(*this->mapping,
                                    *this->fe,
                                    *this->face_quadrature,
                                    update_values | update_gradients |
@@ -1495,7 +1495,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p(
-  std::vector<types::global_dof_index>          &local_dof_indices,
+  std::vector<types::global_dof_index> &         local_dof_indices,
   std::map<types::global_dof_index, Point<dim>> &support_points,
   unsigned int                                   p)
 {
@@ -1529,8 +1529,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_cut(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index>                 &local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>>        &support_points)
+  std::vector<types::global_dof_index> &                local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>> &       support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -1552,8 +1552,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_inside(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index>                 &local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>>        &support_points)
+  std::vector<types::global_dof_index> &                local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>> &       support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -1616,8 +1616,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);
   FEValues<dim>      fe_values(*this->fe,
-                               q_formula,
-                               update_quadrature_points | update_JxW_values);
+                          q_formula,
+                          update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   int    order = this->simulation_parameters.particlesParameters->order;
@@ -2162,8 +2162,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim>                         &scratch_data,
-  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2255,8 +2255,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim>                         &scratch_data,
-  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 

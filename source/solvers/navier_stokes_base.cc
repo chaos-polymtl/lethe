@@ -1021,9 +1021,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
       double             kE = calculate_kinetic_energy(this->dof_handler,
-                                                       present_solution,
-                                                       *this->cell_quadrature,
-                                                       *this->mapping);
+                                           present_solution,
+                                           *this->cell_quadrature,
+                                           *this->mapping);
       this->kinetic_energy_table.add_value(
         "time", simulation_control->get_current_time());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);
@@ -1055,13 +1055,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer, "pressure_drop_calculation");
       double             pressure_drop = calculate_pressure_drop(
-                    this->dof_handler,
-                    this->mapping,
-                    this->evaluation_point,
-                    *this->cell_quadrature,
-                    *this->face_quadrature,
-                    this->simulation_parameters.post_processing.inlet_boundary_id,
-                    this->simulation_parameters.post_processing.outlet_boundary_id);
+        this->dof_handler,
+        this->mapping,
+        this->evaluation_point,
+        *this->cell_quadrature,
+        *this->face_quadrature,
+        this->simulation_parameters.post_processing.inlet_boundary_id,
+        this->simulation_parameters.post_processing.outlet_boundary_id);
       this->pressure_drop_table.add_value(
         "time", simulation_control->get_current_time());
       this->pressure_drop_table.add_value("pressure-drop", pressure_drop);
@@ -1163,7 +1163,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
               this->error_table.add_value(
                 "time", simulation_control->get_current_time());
               this->error_table.add_value("error_velocity", error_velocity);
-              if(this->simulation_parameters.timer.write_time_in_error_table)
+              if (this->simulation_parameters.timer.write_time_in_error_table)
                 {
                   auto summary = computing_timer.get_summary_data(
                     computing_timer.total_wall_time);
@@ -1213,23 +1213,30 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
                            this->fe->component_mask(pressure));
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
-  if(this->simulation_parameters.simulation_control.bdf_startup_method==Parameters::SimulationControl::BDFStartupMethods::initial_solution){
-      for(unsigned int i=1;i<this->previous_solutions.size();++i){
-          double previous_solution_time=-this->simulation_parameters.simulation_control.dt*i;
-          this->simulation_parameters.initial_condition->uvwp.set_time(previous_solution_time);
+  if (this->simulation_parameters.simulation_control.bdf_startup_method ==
+      Parameters::SimulationControl::BDFStartupMethods::initial_solution)
+    {
+      for (unsigned int i = 1; i < this->previous_solutions.size(); ++i)
+        {
+          double previous_solution_time =
+            -this->simulation_parameters.simulation_control.dt * i;
+          this->simulation_parameters.initial_condition->uvwp.set_time(
+            previous_solution_time);
           const FEValuesExtractors::Vector velocities(0);
           const FEValuesExtractors::Scalar pressure(dim);
-          VectorTools::interpolate(*this->mapping,
-                                   this->dof_handler,
-                                   this->simulation_parameters.initial_condition->uvwp,
-                                   this->newton_update,
-                                   this->fe->component_mask(velocities));
-          VectorTools::interpolate(*this->mapping,
-                                   this->dof_handler,
-                                   this->simulation_parameters.initial_condition->uvwp,
-                                   this->newton_update,
-                                   this->fe->component_mask(pressure));
-          this->previous_solutions[i-1]= this->newton_update;
+          VectorTools::interpolate(
+            *this->mapping,
+            this->dof_handler,
+            this->simulation_parameters.initial_condition->uvwp,
+            this->newton_update,
+            this->fe->component_mask(velocities));
+          VectorTools::interpolate(
+            *this->mapping,
+            this->dof_handler,
+            this->simulation_parameters.initial_condition->uvwp,
+            this->newton_update,
+            this->fe->component_mask(pressure));
+          this->previous_solutions[i - 1] = this->newton_update;
         }
     }
 }

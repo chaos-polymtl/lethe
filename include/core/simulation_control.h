@@ -50,7 +50,7 @@ protected:
   double time_step;
 
   // Initial time step given in the parameter
-  double initial_time_step ;
+  double initial_time_step;
 
   // Simulation end time
   double end_time;

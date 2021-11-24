@@ -70,7 +70,7 @@ namespace AnalyticalSolutions
     void
     set_enable(bool is_enable)
     {
-      enable=is_enable;
+      enable = is_enable;
     }
 
     std::string

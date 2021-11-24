@@ -34,13 +34,12 @@ test()
 {
   Parameters::SimulationControl simulation_control_parameters;
 
-  simulation_control_parameters.dt     = 0.02;
-  simulation_control_parameters.adapt  = false;
-  simulation_control_parameters.maxCFL = 1;
-  simulation_control_parameters.method =
-
-    Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-
+  simulation_control_parameters.dt                       = 1;
+  simulation_control_parameters.adapt                    = false;
+  simulation_control_parameters.maxCFL                   = 1;
+  simulation_control_parameters.startup_timestep_scaling = 0.4;
+  simulation_control_parameters.bdf_startup_method =
+    Parameters::SimulationControl::BDFStartupMethods::multiple_step_bdf;
   simulation_control_parameters.timeEnd                = 4;
   simulation_control_parameters.number_mesh_adaptation = 0;
   simulation_control_parameters.output_name            = "test";
@@ -49,6 +48,78 @@ test()
   simulation_control_parameters.output_frequency       = 8;
 
   {
+    simulation_control_parameters.method =
+      Parameters::SimulationControl::TimeSteppingMethod::bdf2;
+    SimulationControlTransient simulation_control(
+      simulation_control_parameters);
+
+
+    // Constant time-stepping
+    deallog << "*************************************************" << std::endl;
+    deallog << "Constant time stepping - constant output" << std::endl;
+    deallog << "*************************************************" << std::endl;
+    deallog << "Iteration : " << simulation_control.get_step_number()
+            << "    Time : " << simulation_control.get_current_time()
+            << std::endl;
+
+    while (simulation_control.integrate())
+      {
+        deallog << "Iteration : " << simulation_control.get_step_number()
+                << "    Time : " << simulation_control.get_current_time()
+                << std::endl;
+      }
+  }
+  {
+    simulation_control_parameters.method =
+      Parameters::SimulationControl::TimeSteppingMethod::bdf3;
+    SimulationControlTransient simulation_control(
+      simulation_control_parameters);
+
+
+    // Constant time-stepping
+    deallog << "*************************************************" << std::endl;
+    deallog << "Constant time stepping - constant output" << std::endl;
+    deallog << "*************************************************" << std::endl;
+    deallog << "Iteration : " << simulation_control.get_step_number()
+            << "    Time : " << simulation_control.get_current_time()
+            << std::endl;
+
+    while (simulation_control.integrate())
+      {
+        deallog << "Iteration : " << simulation_control.get_step_number()
+                << "    Time : " << simulation_control.get_current_time()
+                << std::endl;
+      }
+  }
+  {
+    simulation_control_parameters.bdf_startup_method =
+      Parameters::SimulationControl::BDFStartupMethods::sdirk_step;
+    simulation_control_parameters.method =
+      Parameters::SimulationControl::TimeSteppingMethod::bdf2;
+    SimulationControlTransient simulation_control(
+      simulation_control_parameters);
+
+
+    // Constant time-stepping
+    deallog << "*************************************************" << std::endl;
+    deallog << "Constant time stepping - constant output" << std::endl;
+    deallog << "*************************************************" << std::endl;
+    deallog << "Iteration : " << simulation_control.get_step_number()
+            << "    Time : " << simulation_control.get_current_time()
+            << std::endl;
+
+    while (simulation_control.integrate())
+      {
+        deallog << "Iteration : " << simulation_control.get_step_number()
+                << "    Time : " << simulation_control.get_current_time()
+                << std::endl;
+      }
+  }
+  {
+    simulation_control_parameters.bdf_startup_method =
+      Parameters::SimulationControl::BDFStartupMethods::sdirk_step;
+    simulation_control_parameters.method =
+      Parameters::SimulationControl::TimeSteppingMethod::bdf3;
     SimulationControlTransient simulation_control(
       simulation_control_parameters);
 

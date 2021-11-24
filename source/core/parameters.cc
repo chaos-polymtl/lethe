@@ -131,13 +131,13 @@ namespace Parameters
         {
           std::runtime_error("Invalid time stepping scheme");
         }
-      const std::string bdf_startup_string= prm.get("bdf startup method");
+      const std::string bdf_startup_string = prm.get("bdf startup method");
       if (bdf_startup_string == "multiple step bdf")
-        bdf_startup_method= BDFStartupMethods::multiple_step_bdf;
+        bdf_startup_method = BDFStartupMethods::multiple_step_bdf;
       else if (bdf_startup_string == "sdirk step")
-        bdf_startup_method= BDFStartupMethods::sdirk_step;
+        bdf_startup_method = BDFStartupMethods::sdirk_step;
       else if (bdf_startup_string == "initial solution")
-        bdf_startup_method= BDFStartupMethods::initial_solution;
+        bdf_startup_method = BDFStartupMethods::initial_solution;
       else
         {
           std::runtime_error("Invalid bdf startup scheme");
@@ -185,10 +185,11 @@ namespace Parameters
                         Patterns::Selection("none|iteration|end"),
                         "Clock monitoring methods "
                         "Choices are <none|iteration|end>.");
-      prm.declare_entry("write time in error table",
-                        "false",
-                        Patterns::Bool(),
-                        "Bool to define if the time is written in the error table");
+      prm.declare_entry(
+        "write time in error table",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if the time is written in the error table");
     }
     prm.leave_subsection();
   }
@@ -205,7 +206,7 @@ namespace Parameters
         type = Type::iteration;
       else if (cl == "end")
         type = Type::end;
-      write_time_in_error_table=prm.get_bool("write time in error table");
+      write_time_in_error_table = prm.get_bool("write time in error table");
     }
     prm.leave_subsection();
   }
