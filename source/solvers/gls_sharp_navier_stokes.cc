@@ -1780,20 +1780,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // used to define the cell used for the stencil definition
                       // and the locations of the points use in the stencil
                       // calculation.
-                      Tensor<1, dim> vect_ib =
-                        (support_points[local_dof_indices[i]] -
-                         particles[ib_particle_id].position -
-                         particles[ib_particle_id].radius *
-                           (support_points[local_dof_indices[i]] -
-                            particles[ib_particle_id].position) /
-                           (support_points[local_dof_indices[i]] -
-                            particles[ib_particle_id].position)
-                             .norm());
 
-                      length_ratio =
-                        vect_ib.norm() / std::pow(volume, 1. / dim);
-                      std::vector<double> ib_coef =
-                        stencil.coefficients(order, length_ratio);
                       auto [point, interpolation_points] =
                         stencil.points(order,
                                        length_ratio,

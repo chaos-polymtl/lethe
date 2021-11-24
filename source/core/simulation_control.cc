@@ -334,6 +334,7 @@ SimulationControlSteady::integrate()
     {
       previous_time = current_time;
       iteration_number++;
+      update_assembly_method();
       // Fix the time to the iteration number so that pvd outputs
       // do not lead to confusing results
       current_time = iteration_number;
