@@ -146,7 +146,12 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   previous_solutions.resize(maximum_number_of_previous_solutions());
 
   // Pre-allocate memory for intermediary stages if there are any
-  solution_stages.resize(number_of_intermediary_stages(
+  if(this->simulation_parameters.simulation_control.bdf_startup_method==Parameters::SimulationControl::BDFStartupMethods::sdirk_step&&this->simulation_parameters.simulation_control.method==Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+      solution_stages.resize(1);
+  else if(this->simulation_parameters.simulation_control.bdf_startup_method==Parameters::SimulationControl::BDFStartupMethods::sdirk_step&&this->simulation_parameters.simulation_control.method==Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+      solution_stages.resize(2);
+  else
+      solution_stages.resize(number_of_intermediary_stages(
     simulation_parameters.simulation_control.method));
 
 
