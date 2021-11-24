@@ -687,8 +687,6 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
               this->error_table.add_value("total_time", total_time);
             }
         }
-      // Calculate pressure drop between two boundaries
-
       if (this->simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
