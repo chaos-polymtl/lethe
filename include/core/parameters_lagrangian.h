@@ -389,6 +389,9 @@ namespace Parameters
       // are modified by g * sin(theta) and g * cos(theta), respectively
       double inclined_plane_angle;
 
+      // Cylinder radius for cylinder motion
+      double cylinder_radius;
+
       static void
       declare_parameters(ParameterHandler &prm);
       void

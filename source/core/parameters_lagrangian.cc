@@ -1040,6 +1040,12 @@ namespace Parameters
           "0.",
           Patterns::Double(),
           "inclined plane angle on which the cylinder is rolling");
+
+        prm.declare_entry(
+          "cylinder radius",
+          "0.",
+          Patterns::Double(),
+          "radius of the rolling cylinder");
       }
       prm.leave_subsection();
     }
@@ -1091,6 +1097,8 @@ namespace Parameters
               }
 
             inclined_plane_angle = prm.get_double("inclined plane angle");
+
+            cylinder_radius = prm.get_double("cylinder radius");
           }
         else if (motion == "none")
           {

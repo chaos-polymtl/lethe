@@ -214,13 +214,14 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         << std::endl
         << std::endl;
 
-      dem_parameters.physical_properties.g[0] = 0;
-      dem_parameters.physical_properties.g[1] =
-        dem_parameters.physical_properties.g.norm() *
-        sin(dem_parameters.grid_motion.inclined_plane_angle);
-      dem_parameters.physical_properties.g[2] =
-        dem_parameters.physical_properties.g.norm() *
-        cos(dem_parameters.grid_motion.inclined_plane_angle);
+      const double gravity_norm = parameters.physical_properties.g.norm();
+      parameters.physical_properties.g[0] = 0;
+      parameters.physical_properties.g[1] =
+        gravity_norm *
+        sin(parameters.grid_motion.inclined_plane_angle * M_PI/180);
+      parameters.physical_properties.g[2] =
+        -gravity_norm *
+        cos(parameters.grid_motion.inclined_plane_angle * M_PI/180);
     }
 }
 
