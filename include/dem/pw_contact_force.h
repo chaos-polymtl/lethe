@@ -154,7 +154,8 @@ protected:
                                          Tensor<1, dim>     add_force,
                                          const Point<dim>   point_contact);
 
-  /** This function is used to initialize a map of vectors (force and torque on boundaries)
+  /** This function is used to initialize a map of vectors (force and torque on
+   * boundaries)
    */
   std::map<unsigned int, Tensor<1, dim>>
   initialize();

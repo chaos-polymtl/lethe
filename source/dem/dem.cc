@@ -218,10 +218,10 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       parameters.physical_properties.g[0] = 0;
       parameters.physical_properties.g[1] =
         gravity_norm *
-        sin(parameters.grid_motion.inclined_plane_angle * M_PI/180);
+        sin(parameters.grid_motion.inclined_plane_angle * M_PI / 180);
       parameters.physical_properties.g[2] =
         -gravity_norm *
-        cos(parameters.grid_motion.inclined_plane_angle * M_PI/180);
+        cos(parameters.grid_motion.inclined_plane_angle * M_PI / 180);
     }
 }
 

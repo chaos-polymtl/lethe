@@ -107,14 +107,13 @@ PWContactForce<dim>::calculate_force_and_torque_on_boundary(
 {
   if (calculate_force_torque_on_boundary == true)
     {
-        force_on_walls[boundary_id] = force_on_walls[boundary_id] - add_force;
+      force_on_walls[boundary_id] = force_on_walls[boundary_id] - add_force;
 
       if (dim == 3)
         {
           torque_on_walls[boundary_id] =
             torque_on_walls[boundary_id] -
             cross_product_3d(point_contact - center_mass_container, add_force);
-
         }
     }
 }

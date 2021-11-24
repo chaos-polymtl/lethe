@@ -133,17 +133,17 @@ private:
   unsigned int   rotation_axis;
 
   // Member variables for cylinder motion
-  const double                         triangulation_mass;
-  Tensor<1, dim>                       triangulation_inertia;
- // Tensor<1, dim>                       triangulation_forces;
+  const double   triangulation_mass;
+  Tensor<1, dim> triangulation_inertia;
+  // Tensor<1, dim>                       triangulation_forces;
   Tensor<1, dim>                       triangulation_torques;
   const double                         dt;
   Tensor<1, dim>                       boundary_translational_velocity;
   Tensor<1, dim>                       boundary_rotational_velocity;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
-  Tensor<1, dim>                         gravity;
-  double                                 inclined_plane_angle;
-  double                                cylinder_radius;
+  Tensor<1, dim>                       gravity;
+  double                               inclined_plane_angle;
+  double                               cylinder_radius;
 };
 
 

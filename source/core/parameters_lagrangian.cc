@@ -1041,11 +1041,10 @@ namespace Parameters
           Patterns::Double(),
           "inclined plane angle on which the cylinder is rolling");
 
-        prm.declare_entry(
-          "cylinder radius",
-          "0.",
-          Patterns::Double(),
-          "radius of the rolling cylinder");
+        prm.declare_entry("cylinder radius",
+                          "0.",
+                          Patterns::Double(),
+                          "radius of the rolling cylinder");
       }
       prm.leave_subsection();
     }

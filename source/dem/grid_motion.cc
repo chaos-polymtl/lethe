@@ -4,6 +4,7 @@
 
 #include <boost/math/special_functions.hpp>
 #include <boost/range/adaptor/map.hpp>
+
 #include <math.h>
 
 using namespace dealii;
@@ -54,10 +55,11 @@ GridMotion<dim>::GridMotion(
 
       for (unsigned int d = 0; d < dim; ++d)
         gravity[d] = dem_parameters.physical_properties.g[d];
-      inclined_plane_angle = dem_parameters.grid_motion.inclined_plane_angle * M_PI/180;
+      inclined_plane_angle =
+        dem_parameters.grid_motion.inclined_plane_angle * M_PI / 180;
 
       cylinder_radius = dem_parameters.grid_motion.cylinder_radius;
-    } 
+    }
 }
 
 template <>
@@ -105,7 +107,8 @@ void GridMotion<3>::cylinder_motion(
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
 
-  // the colorization of the cylinder hull is 0, so we only use the forces and torques acting on the hull
+  // the colorization of the cylinder hull is 0, so we only use the forces and
+  // torques acting on the hull
   const unsigned int cylinder_hull_colorization = 0;
 
   // Calculation of rotation angle is only performed on one process in
@@ -122,12 +125,19 @@ void GridMotion<3>::cylinder_motion(
       triangulation_torques = 0;
 
       // The angular acceleration acting on the rolling cylinder is equal to
-      // $$\alpha = (\mathbf{T_{particles}} - (\mathbf{F_{particles}} + m * \mathbf{g}) * \sin(\theta) * R) / \mathbf{I_{eff}}$$
-      // Since the gravity is already multiplied to $$\sin(\thetha)$$ in the constructor of the dem class, we only multiply the
-      // $$\mathbf{F_{particles}}$$ to $$\sin(\thetha)$$. Then we multiply the summation of the gravitational and $$\mathbf{F_{particles}}$$
-      // to cylinder_rotation_unit_vector.
+      // $$\alpha = (\mathbf{T_{particles}} - (\mathbf{F_{particles}} + m *
+      // \mathbf{g}) * \sin(\theta) * R) / \mathbf{I_{eff}}$$ Since the gravity
+      // is already multiplied to $$\sin(\thetha)$$ in the constructor of the
+      // dem class, we only multiply the
+      // $$\mathbf{F_{particles}}$$ to $$\sin(\thetha)$$. Then we multiply the
+      // summation of the gravitational and $$\mathbf{F_{particles}}$$ to
+      // cylinder_rotation_unit_vector.
 
-          triangulation_torques = torque_on_walls[cylinder_hull_colorization] - (force_on_walls[cylinder_hull_colorization][1] * sin(inclined_plane_angle) + triangulation_mass * gravity.norm()) * cylinder_rotation_unit_vector * cylinder_radius;
+      triangulation_torques = torque_on_walls[cylinder_hull_colorization] -
+                              (force_on_walls[cylinder_hull_colorization][1] *
+                                 sin(inclined_plane_angle) +
+                               triangulation_mass * gravity.norm()) *
+                                cylinder_rotation_unit_vector * cylinder_radius;
 
 
       Tensor<1, 3> rotational_velocity_one_time_step_further;
@@ -154,7 +164,8 @@ void GridMotion<3>::cylinder_motion(
   // The following line enables locking the rotation of the cylinder around
   // desired axis (cylinder_rotation_unit_vector which is equivalent to
   // "cylinder rotation axis" parameter in the parameter handler.
-    double rotation_angle_around_axis  = rotation_angle * cylinder_rotation_unit_vector;
+  double rotation_angle_around_axis =
+    rotation_angle * cylinder_rotation_unit_vector;
 
   // Broadcast the rotation angle to all the processes
   rotation_angle_around_axis =

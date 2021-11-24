@@ -113,10 +113,10 @@ PWNonLinearForce<dim>::PWNonLinearForce(
     dem_parameters.forces_torques.calculate_force_torque;
   this->center_mass_container =
     dem_parameters.forces_torques.triangulation_center_mass;
-  this->boundary_index     = boundary_index;
+  this->boundary_index = boundary_index;
 
-  this->force_on_walls        = this->initialize();
-  this->torque_on_walls       = this->initialize();
+  this->force_on_walls  = this->initialize();
+  this->torque_on_walls = this->initialize();
 }
 
 template <int dim>
@@ -130,8 +130,8 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
   std::vector<Tensor<1, dim>> &momentum,
   std::vector<Tensor<1, dim>> &force)
 {
-    PWContactForce<dim>::force_on_walls  = PWContactForce<dim>::initialize();
-    PWContactForce<dim>::torque_on_walls = PWContactForce<dim>::initialize();
+  PWContactForce<dim>::force_on_walls  = PWContactForce<dim>::initialize();
+  PWContactForce<dim>::torque_on_walls = PWContactForce<dim>::initialize();
 
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
