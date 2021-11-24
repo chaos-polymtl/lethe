@@ -79,8 +79,22 @@ private:
   solve_linear_system(unsigned detector_no);
   void
   output_results();
-  std::vector<typename DoFHandler<dim>::cell_iterator> find_cells_in_coarse_level();
-  std::vector<typename DoFHandler<dim>::cell_iterator> find_cells_in_fine_level(unsigned int level, std::vector<typename DoFHandler<dim>::cell_iterator> parent_cell_indexes);
+
+  void
+  output_raw_results_per_level();
+
+  void
+  output_counts_on_level(
+    unsigned int                                   level,
+    std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
+
+
+  std::vector<typename DoFHandler<dim>::cell_iterator>
+  find_cells_in_coarse_level();
+  std::vector<typename DoFHandler<dim>::cell_iterator>
+  find_cells_in_fine_level(
+    unsigned int                                         level,
+    std::vector<typename DoFHandler<dim>::cell_iterator> parent_cell_indexes);
   double
   Calculate_Jacobian_1();
   double
@@ -125,12 +139,15 @@ private:
   void
   find_unknown_position();
 
- std::vector<typename DoFHandler<dim>::cell_iterator> find_cells(unsigned int level, std::vector<typename DoFHandler<dim>::cell_iterator> parent_cell_indexes);
+  std::vector<typename DoFHandler<dim>::cell_iterator>
+  find_cells(
+    unsigned int                                         level,
+    std::vector<typename DoFHandler<dim>::cell_iterator> parent_cell_indexes);
 
-  Tensor<2, dim>jacobian_matrix ;
-  Tensor<1, dim>rhs_matrix ;
-  Tensor<1,dim>unknown;
-  Tensor<1,dim>experimental_count;
+  Tensor<2, dim>                   jacobian_matrix;
+  Tensor<1, dim>                   rhs_matrix;
+  Tensor<1, dim>                   unknown;
+  Tensor<1, dim>                   experimental_count;
   std::vector<std::vector<double>> c;
 
 
@@ -146,7 +163,7 @@ private:
 
   std::vector<Vector<double>> nodal_counts;
 
-  RPTCalculatingParameters  rpt_parameters;
+  RPTCalculatingParameters   rpt_parameters;
   std::vector<Detector<dim>> detectors;
 };
 
