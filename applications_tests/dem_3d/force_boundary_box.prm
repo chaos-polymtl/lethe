@@ -31,13 +31,13 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Lagrangian Physical Properties
+# Physical Properties
 #---------------------------------------------------
 subsection lagrangian physical properties
-    set gx            		 			            = 0
-    set gy            		 			            = 0
-    set gz            		 			            = -10
-    set number of particle types	                = 1
+    set gx            		 			    = 0
+    set gy            		 			    = 0
+    set gz            		 			    = -10
+    set number of particle types	                    = 1
     subsection particle type 0
         set size distribution type		            = uniform
         set diameter            	 	            = 0.005
@@ -78,13 +78,9 @@ subsection mesh
 end
 
 subsection boundary forces
-    set calculation               	                                            = true
-    set verbosity                                                               = verbose
-    set filename                                            	     		    = force_and_torque
-    set output frequency                                                        = 2000
-    subsection center of mass coordinate
-        set x                                                                       = 0.05
-        set y                                                                       = 0.05
-        set z                                                                       = 0
-    end
+    set calculate force and torque                	    = true
+    set verbosity                                           = verbose
+    set filename                                            = force_and_torque
+    set output frequency                                    = 2000
+    set center of mass					    = 0.05, 0.05, 0
 end
