@@ -5,65 +5,72 @@ Running on 2 MPI rank(s)...
    Number of thermal degrees of freedom: 1089
 
 *****************************************************************
-Transient iteration : 1        Time : 0.1      Time step : 0.1      CFL : 0       
+Transient iteration : 1        Time : 0.04     Time step : 0.04     CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 0.000139052
+L2 error temperature : 5.90979e-11
 
 *****************************************************************
-Transient iteration : 2        Time : 0.2      Time step : 0.1      CFL : 0       
+Transient iteration : 2        Time : 0.1      Time step : 0.06     CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 2.39517e-05
+L2 error temperature : 3.76436e-10
 
 *****************************************************************
-Transient iteration : 3        Time : 0.3      Time step : 0.1      CFL : 0       
+Transient iteration : 3        Time : 0.2      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 1.14834e-06
+L2 error temperature : 2.61513e-09
 
 *****************************************************************
-Transient iteration : 4        Time : 0.4      Time step : 0.1      CFL : 0       
+Transient iteration : 4        Time : 0.3      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 1.83852e-08
+L2 error temperature : 5.76317e-09
 
 *****************************************************************
-Transient iteration : 5        Time : 0.5      Time step : 0.1      CFL : 0       
+Transient iteration : 5        Time : 0.4      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 7.73849e-08
+L2 error temperature : 7.14297e-09
 
 *****************************************************************
-Transient iteration : 6        Time : 0.6      Time step : 0.1      CFL : 0       
+Transient iteration : 6        Time : 0.5      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 3.41699e-08
+L2 error temperature : 7.12373e-09
 
 *****************************************************************
-Transient iteration : 7        Time : 0.7      Time step : 0.1      CFL : 0       
+Transient iteration : 7        Time : 0.6      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 1.18031e-08
+L2 error temperature : 6.596e-09
 
 *****************************************************************
-Transient iteration : 8        Time : 0.8      Time step : 0.1      CFL : 0       
+Transient iteration : 8        Time : 0.7      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 5.78133e-09
+L2 error temperature : 5.95218e-09
 
 *****************************************************************
-Transient iteration : 9        Time : 0.9      Time step : 0.1      CFL : 0       
+Transient iteration : 9        Time : 0.8      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 4.27673e-09
+L2 error temperature : 5.2839e-09
 
 *****************************************************************
-Transient iteration : 10       Time : 1        Time step : 0.1      CFL : 0       
+Transient iteration : 10       Time : 0.9      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 3.69422e-09
+L2 error temperature : 4.60305e-09
+
+*****************************************************************
+Transient iteration : 11       Time : 1        Time step : 0.1      CFL : 0       
+*****************************************************************
+L2 error velocity : 0
+L2 error temperature : 3.92011e-09
  time  error_velocity 
+0.0400 0.000000e+00   
 0.1000 0.000000e+00   
 0.2000 0.000000e+00   
 0.3000 0.000000e+00   
@@ -75,13 +82,14 @@ L2 error temperature : 3.69422e-09
 0.9000 0.000000e+00   
 1.0000 0.000000e+00   
 cells error_temperature 
-256   1.390522e-04      
-256   2.395174e-05      
-256   1.148335e-06      
-256   1.838515e-08      
-256   7.738492e-08      
-256   3.416992e-08      
-256   1.180315e-08      
-256   5.781335e-09      
-256   4.276726e-09      
-256   3.694217e-09      
+256   5.909794e-11      
+256   3.764358e-10      
+256   2.615128e-09      
+256   5.763170e-09      
+256   7.142974e-09      
+256   7.123731e-09      
+256   6.596004e-09      
+256   5.952181e-09      
+256   5.283903e-09      
+256   4.603046e-09      
+256   3.920108e-09      

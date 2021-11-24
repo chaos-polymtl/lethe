@@ -267,17 +267,6 @@ public:
     CFL = p_CFL;
   }
 
-  /**
-   * @brief A function that allow to overwrite the current time.
-   *
-   * @param p_CFL Value of the CFL condition calculated by the solver.
-   */
-
-  void
-  set_time(const double time)
-  {
-    current_time = time;
-  }
 
   /**
    * @brief Manually force the value of the time step for the present iteration

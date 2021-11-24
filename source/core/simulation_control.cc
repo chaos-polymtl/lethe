@@ -6,6 +6,7 @@
 
 SimulationControl::SimulationControl(Parameters::SimulationControl param)
   : method(param.method)
+  , assembly_method(param.method)
   , current_time(0)
   , time_step(param.dt)
   , end_time(param.timeEnd)
