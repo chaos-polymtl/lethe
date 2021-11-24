@@ -18,7 +18,7 @@ namespace Parameters
         "bdf startup method",
         "multiple step bdf",
         Patterns::Selection("multiple step bdf|sdirk step|initial solution"),
-        "The kind of method use to startup high order bdf methods "
+        "The kind of method used to startup high order bdf methods "
         "Choices are <multiple step bdf|sdirk step|initial solution>.");
 
       prm.declare_entry("time step",
