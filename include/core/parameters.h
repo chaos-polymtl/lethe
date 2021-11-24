@@ -258,6 +258,22 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief InterfaceSharpening - Defines the parameters for
+   * interface sharpening in the VOF solver.
+   */
+
+  struct InterfaceSharpening
+  {
+      double sharpening_threshold;
+      double interface_sharpness;
+      int sharpening_frequency;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
 
   /**
    * @brief PhysicalProperties - Define the possible physical properties.

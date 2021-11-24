@@ -293,7 +293,44 @@ namespace Parameters
 
 
   void
+<<<<<<< HEAD
   PhaseChange::parse_parameters(ParameterHandler &prm)
+=======
+  InterfaceSharpening::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("interface sharpening");
+    {
+        prm.declare_entry("sharpening threshold",
+                          "0.5",
+                          Patterns::Double(),
+                          "VOF interface sharpening threshold");
+        prm.declare_entry("interface sharpness",
+                          "0.5",
+                          Patterns::Double(),
+                          "VOF interface sharpness");
+        prm.declare_entry("sharpening frequency",
+                          "1000",
+                          Patterns::Integer(),
+                          "VOF interface sharpening frequency");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  InterfaceSharpening::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("interface sharpening");
+    {
+        sharpening_threshold = prm.get_double("sharpening threshold");
+        interface_sharpness = prm.get_double("interface sharpness");
+        sharpening_frequency = prm.get_integer("sharpening frequency");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  PhysicalProperties::declare_parameters(ParameterHandler &prm)
+>>>>>>> fab89a6 (Define interface sharpening parameters)
   {
     prm.enter_subsection("phase change");
     {
