@@ -638,7 +638,7 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            pressure_force[d];
+            pressure_force[d] * physical_properties.density;
           undisturbed_flow_force[d] +=
             pressure_force[d] / scratch_data.cell_volume;
         }
@@ -682,7 +682,7 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            shear_force[d];
+            shear_force[d] * physical_properties.density;
           undisturbed_flow_force[d] +=
             shear_force[d] / scratch_data.cell_volume;
         }
