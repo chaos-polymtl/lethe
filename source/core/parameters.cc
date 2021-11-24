@@ -1112,7 +1112,8 @@ namespace Parameters
       amg_w_cycles              = prm.get_bool("amg w cycles");
       amg_smoother_sweeps       = prm.get_integer("amg smoother sweeps");
       amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
-      force_linear_solver_continuation  = prm.get_bool("force linear solver continuation");
+      force_linear_solver_continuation =
+        prm.get_bool("force linear solver continuation");
     }
     prm.leave_subsection();
   }
