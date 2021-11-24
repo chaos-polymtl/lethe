@@ -254,6 +254,11 @@ public:
     return return_value;
   };
 
+  /**
+   * @brief Define the assembly method to use while integrating. Use to start bdf 2 and bdf 3 scheme.
+   */
+  void
+  update_assembly_method();
 
   /**
    * @brief Set the value of the CFL conditoin
@@ -393,8 +398,6 @@ public:
     assembly_method = method;
   }
 
-  void
-  update_assembly_method();
 
 
   void

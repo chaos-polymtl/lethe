@@ -554,6 +554,9 @@ namespace Parameters
     // AMG Smoother overalp
     unsigned int amg_smoother_overlap;
 
+    // Block linear solver to throw error.
+    bool block_linear_solver_fail;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

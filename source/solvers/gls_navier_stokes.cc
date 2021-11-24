@@ -1027,8 +1027,9 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             << current_preconditioner_fill_level << std::endl;
           setup_preconditioner();
 
-          /*if (iter == max_iter - 1)
-            throw e;*/
+          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .block_linear_solver_fail)
+            throw e;
         }
       iter += 1;
     }
@@ -1112,8 +1113,9 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
             << current_preconditioner_fill_level << std::endl;
           setup_preconditioner();
 
-          /*if (iter == max_iter - 1)
-            throw e;*/
+          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .block_linear_solver_fail)
+            throw e;
         }
       iter += 1;
     }
@@ -1199,8 +1201,9 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
             << current_preconditioner_fill_level << std::endl;
           setup_preconditioner();
 
-          /*if (iter == max_iter - 1)
-            throw e;*/
+          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .block_linear_solver_fail)
+            throw e;
         }
       iter += 1;
     }
