@@ -175,7 +175,7 @@ RPTFEMReconstruction<dim>::output_raw_results_per_level()
           for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell;
                ++v)
             {
-              auto dof_index       = cell->vertex_dof_index(v, 1);
+              auto dof_index       = cell->vertex_dof_index(v, 0);
               auto vertex_location = cell->vertex(v);
               std::pair<types::global_dof_index, Point<dim>> dof_and_vertex(
                 dof_index, vertex_location);
