@@ -1716,11 +1716,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           double sum_line = 0;
           fe_values.reinit(cell);
 
+          double volume=0;
           // Define the order of magnitude for the stencil.
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
-            sum_line += fe_values.JxW(qf);
+            volume += fe_values.JxW(qf);
 
-          sum_line = sum_line / dt;
+          sum_line = volume / dt;
 
 
           cell->get_dof_indices(local_dof_indices);
@@ -1781,7 +1782,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // used to define the cell used for the stencil definition
                       // and the locations of the points use in the stencil
                       // calculation.
+                      Tensor<1,dim> vect_ib =
+                        (support_points[local_dof_indices[i]]- particles[ib_particle_id].position -
+                         particles[ib_particle_id].radius * (support_points[local_dof_indices[i]] - particles[ib_particle_id].position) / (support_points[local_dof_indices[i]] - particles[ib_particle_id].position).norm());
 
+                      length_ratio=vect_ib.norm()/std::pow(volume,1./dim);
+                      std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
                       auto [point, interpolation_points] =
                         stencil.points(order,
                                        length_ratio,

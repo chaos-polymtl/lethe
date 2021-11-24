@@ -133,7 +133,7 @@ SimulationControl::update_assembly_method()
              Parameters::SimulationControl::BDFStartupMethods::sdirk_step)
     {
       assembly_method =
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk22;
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33;
       set_suggested_time_step(initial_time_step);
     }
   else
@@ -142,28 +142,7 @@ SimulationControl::update_assembly_method()
     }
 }
 
-Parameters::SimulationControl::TimeSteppingMethod
-SimulationControl::get_method_to_use()
-{
-  if (iteration_number <= 1 &&
-      method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
-      bdf_start_method ==
-        Parameters::SimulationControl::BDFStartupMethods::sdirk_step)
-    {
-      return Parameters::SimulationControl::TimeSteppingMethod::sdirk22;
-    }
-  else if (iteration_number <= 2 &&
-           method == Parameters::SimulationControl::TimeSteppingMethod::bdf3 &&
-           bdf_start_method ==
-             Parameters::SimulationControl::BDFStartupMethods::sdirk_step)
-    {
-      return Parameters::SimulationControl::TimeSteppingMethod::sdirk33;
-    }
-  else
-    {
-      return method;
-    }
-}
+
 
 bool
 SimulationControl::is_verbose_iteration()

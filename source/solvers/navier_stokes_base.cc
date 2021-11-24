@@ -499,7 +499,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
-  if (simulation_control->get_method_to_use() ==
+  if (simulation_control->get_assembly_method()==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       this->simulation_control->set_assembly_method(
@@ -511,7 +511,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2);
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
     }
-  else if (simulation_control->get_method_to_use() ==
+  else if (simulation_control->get_assembly_method()==
            Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
       this->simulation_control->set_assembly_method(

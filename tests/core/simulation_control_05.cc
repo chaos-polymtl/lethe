@@ -18,8 +18,7 @@
 */
 
 /**
- * @brief This test checks that the time-step round-off errors
- * do not affect the end of the simulation
+ * @brief This test checks that the function update_assembly_method work as expected.
  */
 
 // Lethe
@@ -64,8 +63,37 @@ test()
 
     while (simulation_control.integrate())
       {
+        std::string method;
+        if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::steady)
+            method="steady";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+          method="steady_bdf";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+          method="bdf1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+          method="bdf2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+          method="bdf3";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
+          method="sdirk22";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
+          method="sdirk22_1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
+          method="sdirk22_2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
+          method="sdirk33";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
+          method="sdirk33_1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
+          method="sdirk33_2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
+          method="sdirk33_3";
+        else
+          method="the assembly method is not initialized";
+
         deallog << "Iteration : " << simulation_control.get_step_number()
                 << "    Time : " << simulation_control.get_current_time()
+                <<" Assembly method : "<< method
                 << std::endl;
       }
   }
@@ -86,14 +114,43 @@ test()
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
-                << "    Time : " << simulation_control.get_current_time()
-                << std::endl;
+        std::string method;
+        if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::steady)
+          method="steady";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+          method="steady_bdf";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+          method="bdf1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+          method="bdf2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+          method="bdf3";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
+          method="sdirk22";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
+          method="sdirk22_1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
+          method="sdirk22_2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
+          method="sdirk33";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
+          method="sdirk33_1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
+          method="sdirk33_2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
+          method="sdirk33_3";
+        else
+          method="the assembly method is not initialized";
+
+                   deallog << "Iteration : " << simulation_control.get_step_number()
+                   << "    Time : " << simulation_control.get_current_time()
+                   <<" Assembly method : "<< method
+                   << std::endl;
       }
   }
+  simulation_control_parameters.bdf_startup_method =
+    Parameters::SimulationControl::BDFStartupMethods::sdirk_step;
   {
-    simulation_control_parameters.bdf_startup_method =
-      Parameters::SimulationControl::BDFStartupMethods::sdirk_step;
     simulation_control_parameters.method =
       Parameters::SimulationControl::TimeSteppingMethod::bdf2;
     SimulationControlTransient simulation_control(
@@ -110,14 +167,41 @@ test()
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
-                << "    Time : " << simulation_control.get_current_time()
-                << std::endl;
+        std::string method;
+        if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::steady)
+          method="steady";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+          method="steady_bdf";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+          method="bdf1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+          method="bdf2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+          method="bdf3";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
+          method="sdirk22";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
+          method="sdirk22_1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
+          method="sdirk22_2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
+          method="sdirk33";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
+          method="sdirk33_1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
+          method="sdirk33_2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
+          method="sdirk33_3";
+        else
+          method="the assembly method is not initialized";
+
+                   deallog << "Iteration : " << simulation_control.get_step_number()
+                   << "    Time : " << simulation_control.get_current_time()
+                   <<" Assembly method : "<< method
+                   << std::endl;
       }
   }
   {
-    simulation_control_parameters.bdf_startup_method =
-      Parameters::SimulationControl::BDFStartupMethods::sdirk_step;
     simulation_control_parameters.method =
       Parameters::SimulationControl::TimeSteppingMethod::bdf3;
     SimulationControlTransient simulation_control(
@@ -134,9 +218,38 @@ test()
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
-                << "    Time : " << simulation_control.get_current_time()
-                << std::endl;
+        std::string method;
+        if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::steady)
+          method="steady";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+          method="steady_bdf";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+          method="bdf1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+          method="bdf2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+          method="bdf3";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
+          method="sdirk22";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
+          method="sdirk22_1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
+          method="sdirk22_2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
+          method="sdirk33";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
+          method="sdirk33_1";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
+          method="sdirk33_2";
+        else if(simulation_control.get_assembly_method()==Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
+          method="sdirk33_3";
+        else
+          method="the assembly method is not initialized";
+
+                   deallog << "Iteration : " << simulation_control.get_step_number()
+                   << "    Time : " << simulation_control.get_current_time()
+                   <<" Assembly method : "<< method
+                   << std::endl;
       }
   }
 }

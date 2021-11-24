@@ -128,8 +128,10 @@ protected:
   // Indicator to tell if this is the first assembly of a step
   bool first_assembly;
 
+  // The method use to start high order bdf scheme
   Parameters::SimulationControl::BDFStartupMethods bdf_start_method;
 
+  // The time scalling use to do small time step at te
   double startup_timestep_scaling;
 
 
@@ -387,10 +389,6 @@ public:
   {
     return assembly_method;
   }
-
-  Parameters::SimulationControl::TimeSteppingMethod
-  get_method_to_use();
-
 
   void
   set_assembly_method(Parameters::SimulationControl::TimeSteppingMethod method)

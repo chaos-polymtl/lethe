@@ -1056,10 +1056,10 @@ namespace Parameters
                         Patterns::Integer(),
                         "amg smoother overlap");
       prm.declare_entry(
-        "block linear solver fail",
+        "force linear solver continuation",
         "false",
         Patterns::Bool(),
-        "A bool that allow the use to block linear solver to throw errors");
+        "A bool that will force the linear solver to continue even if it fails");
     }
     prm.leave_subsection();
   }
@@ -1112,7 +1112,7 @@ namespace Parameters
       amg_w_cycles              = prm.get_bool("amg w cycles");
       amg_smoother_sweeps       = prm.get_integer("amg smoother sweeps");
       amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
-      block_linear_solver_fail  = prm.get_bool("block linear solver fail");
+      force_linear_solver_continuation  = prm.get_bool("force linear solver continuation");
     }
     prm.leave_subsection();
   }
