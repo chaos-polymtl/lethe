@@ -214,7 +214,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         << std::endl
         << std::endl;
 
-      const double gravity_norm = parameters.lagrangian_physical_properties.g.norm();
+      const double gravity_norm =
+        parameters.lagrangian_physical_properties.g.norm();
       parameters.lagrangian_physical_properties.g[0] = 0;
       parameters.lagrangian_physical_properties.g[1] =
         gravity_norm *

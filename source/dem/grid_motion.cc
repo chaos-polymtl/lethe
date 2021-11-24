@@ -54,7 +54,8 @@ GridMotion<dim>::GridMotion(
       dem_parameters.forces_torques.calculate_force_torque = true;
 
       for (unsigned int d = 0; d < dim; ++d)
-        gravity[d] = dem_parameters.physical_properties.g[d];
+        gravity[d] = dem_parameters.lagrangian_physical_properties.g[d];
+
       inclined_plane_angle =
         dem_parameters.grid_motion.inclined_plane_angle * M_PI / 180;
 
