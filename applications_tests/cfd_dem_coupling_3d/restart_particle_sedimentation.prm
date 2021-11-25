@@ -77,13 +77,12 @@ end
 # Initial condition
 #---------------------------------------------------
  subsection initial conditions
-    set type = viscous
-    set viscosity = 0.005
-#    subsection uvwp
-#            set Function expression = 0; 0; 0; 0
-#    end
+    set type = nodal
+    subsection uvwp
+            set Function expression = 0; 0; 0; 0
+    end
  end
-
+ 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------

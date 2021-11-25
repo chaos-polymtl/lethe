@@ -103,7 +103,7 @@ RestartNavierStokes<dim>::run()
   this->simulation_parameters.physical_properties.viscosity = 1.;
 
   this->simulation_control->print_progression(this->pcout);
-  this->first_iteration();
+  this->iterate();
   this->postprocess_fd(false);
   auto   errors_p1 = calculate_L2_error(this->dof_handler,
                                       this->present_solution,

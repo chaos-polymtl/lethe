@@ -314,6 +314,7 @@ private:
   void
   generate_cut_cells_map();
 
+
   /**
    * @brief
    * Return a bool to define if a cell is cut by an IB particle and the local
@@ -395,7 +396,6 @@ Return a bool that describes  if a cell contains a specific point
                         ->particle_nonlinear_tolerance;
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
   }
-
 
   /**
    * @brief

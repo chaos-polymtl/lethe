@@ -1258,7 +1258,7 @@ CFDDEMSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
         {
-          this->first_iteration();
+          this->iterate();
 
           if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
             { // Write particle Velocity

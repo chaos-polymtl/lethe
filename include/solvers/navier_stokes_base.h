@@ -309,12 +309,6 @@ protected:
   iterate();
 
 
-  /**
-   * @brief First iteration
-   * Do the first CFD iteration
-   */
-  virtual void
-  first_iteration();
 
   /**
    * @brief Allow the initial refinement of all cells of the principal mesh that are partially
