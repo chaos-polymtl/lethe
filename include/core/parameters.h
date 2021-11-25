@@ -118,6 +118,14 @@ namespace Parameters
       time
     } output_control;
 
+    enum class BDFStartupMethods
+    {
+      initial_solution,
+      sdirk_step,
+      multiple_step_bdf,
+    } bdf_startup_method;
+
+
     // Frequency of the output
     unsigned int output_frequency;
 
@@ -277,6 +285,9 @@ namespace Parameters
     };
 
     Type type;
+
+    bool write_time_in_error_table;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -543,6 +554,9 @@ namespace Parameters
 
     // AMG Smoother overalp
     unsigned int amg_smoother_overlap;
+
+    // Block linear solver to throw error.
+    bool force_linear_solver_continuation;
 
     static void
     declare_parameters(ParameterHandler &prm);

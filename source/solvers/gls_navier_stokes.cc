@@ -957,42 +957,41 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   unsigned int       iter     = 0;
   bool               success  = false;
 
+
+  auto &system_rhs          = this->system_rhs;
+  auto &nonzero_constraints = this->nonzero_constraints;
+
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
+  bool extra_verbose = false;
+  if (this->simulation_parameters.linear_solver.verbosity ==
+      Parameters::Verbosity::extra_verbose)
+    extra_verbose = true;
+
+  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
+    extra_verbose,
+    this->simulation_parameters.linear_solver.max_krylov_vectors);
   while (success == false and iter < max_iter)
     {
       try
         {
-          auto &system_rhs          = this->system_rhs;
-          auto &nonzero_constraints = this->nonzero_constraints;
-
-          const AffineConstraints<double> &constraints_used =
-            initial_step ? nonzero_constraints : this->zero_constraints;
-          const double linear_solver_tolerance =
-            std::max(relative_residual * system_rhs.l2_norm(),
-                     absolute_residual);
-
-          if (this->simulation_parameters.linear_solver.verbosity !=
-              Parameters::Verbosity::quiet)
-            {
-              this->pcout << "  -Tolerance of iterative solver is : "
-                          << linear_solver_tolerance << std::endl;
-            }
-          TrilinosWrappers::MPI::Vector completely_distributed_solution(
-            this->locally_owned_dofs, this->mpi_communicator);
-
-          SolverControl solver_control(
-            this->simulation_parameters.linear_solver.max_iterations,
-            linear_solver_tolerance,
-            true,
-            true);
-          bool extra_verbose = false;
-          if (this->simulation_parameters.linear_solver.verbosity ==
-              Parameters::Verbosity::extra_verbose)
-            extra_verbose = true;
-
-          TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-            extra_verbose,
-            this->simulation_parameters.linear_solver.max_krylov_vectors);
-
           if (!ilu_preconditioner)
             setup_preconditioner();
 
@@ -1028,7 +1027,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             << current_preconditioner_fill_level << std::endl;
           setup_preconditioner();
 
-          if (iter == max_iter - 1)
+          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .force_linear_solver_continuation)
             throw e;
         }
       iter += 1;
@@ -1048,42 +1048,40 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
   unsigned int       iter     = 0;
   bool               success  = false;
 
+
+  auto &system_rhs          = this->system_rhs;
+  auto &nonzero_constraints = this->nonzero_constraints;
+
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  bool extra_verbose = false;
+  if (this->simulation_parameters.linear_solver.verbosity ==
+      Parameters::Verbosity::extra_verbose)
+    extra_verbose = true;
+  TrilinosWrappers::SolverBicgstab::AdditionalData solver_parameters(
+    extra_verbose);
+
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
+  TrilinosWrappers::SolverBicgstab solver(solver_control, solver_parameters);
   while (success == false and iter < max_iter)
     {
       try
         {
-          auto &system_rhs          = this->system_rhs;
-          auto &nonzero_constraints = this->nonzero_constraints;
-
-          const AffineConstraints<double> &constraints_used =
-            initial_step ? nonzero_constraints : this->zero_constraints;
-          const double linear_solver_tolerance =
-            std::max(relative_residual * system_rhs.l2_norm(),
-                     absolute_residual);
-          if (this->simulation_parameters.linear_solver.verbosity !=
-              Parameters::Verbosity::quiet)
-            {
-              this->pcout << "  -Tolerance of iterative solver is : "
-                          << linear_solver_tolerance << std::endl;
-            }
-          TrilinosWrappers::MPI::Vector completely_distributed_solution(
-            this->locally_owned_dofs, this->mpi_communicator);
-
-          bool extra_verbose = false;
-          if (this->simulation_parameters.linear_solver.verbosity ==
-              Parameters::Verbosity::extra_verbose)
-            extra_verbose = true;
-          TrilinosWrappers::SolverBicgstab::AdditionalData solver_parameters(
-            extra_verbose);
-
-          SolverControl solver_control(
-            this->simulation_parameters.linear_solver.max_iterations,
-            linear_solver_tolerance,
-            true,
-            true);
-          TrilinosWrappers::SolverBicgstab solver(solver_control,
-                                                  solver_parameters);
-
           if (!ilu_preconditioner)
             setup_preconditioner();
 
@@ -1115,7 +1113,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
             << current_preconditioner_fill_level << std::endl;
           setup_preconditioner();
 
-          if (iter == max_iter - 1)
+          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .force_linear_solver_continuation)
             throw e;
         }
       iter += 1;
@@ -1133,44 +1132,42 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   unsigned int       iter     = 0;
   bool               success  = false;
 
+
+  auto &system_rhs          = this->system_rhs;
+  auto &nonzero_constraints = this->nonzero_constraints;
+
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? nonzero_constraints : this->zero_constraints;
+
+  const double linear_solver_tolerance =
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
+  bool extra_verbose = false;
+  if (this->simulation_parameters.linear_solver.verbosity ==
+      Parameters::Verbosity::extra_verbose)
+    extra_verbose = true;
+  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
+    extra_verbose,
+    this->simulation_parameters.linear_solver.max_krylov_vectors);
+
+  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
   while (success == false and iter < max_iter)
     {
       try
         {
-          auto &system_rhs          = this->system_rhs;
-          auto &nonzero_constraints = this->nonzero_constraints;
-
-          const AffineConstraints<double> &constraints_used =
-            initial_step ? nonzero_constraints : this->zero_constraints;
-
-          const double linear_solver_tolerance =
-            std::max(relative_residual * system_rhs.l2_norm(),
-                     absolute_residual);
-          if (this->simulation_parameters.linear_solver.verbosity !=
-              Parameters::Verbosity::quiet)
-            {
-              this->pcout << "  -Tolerance of iterative solver is : "
-                          << linear_solver_tolerance << std::endl;
-            }
-          TrilinosWrappers::MPI::Vector completely_distributed_solution(
-            this->locally_owned_dofs, this->mpi_communicator);
-
-          SolverControl solver_control(
-            this->simulation_parameters.linear_solver.max_iterations,
-            linear_solver_tolerance,
-            true,
-            true);
-          bool extra_verbose = false;
-          if (this->simulation_parameters.linear_solver.verbosity ==
-              Parameters::Verbosity::extra_verbose)
-            extra_verbose = true;
-          TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-            extra_verbose,
-            this->simulation_parameters.linear_solver.max_krylov_vectors);
-
-          TrilinosWrappers::SolverGMRES solver(solver_control,
-                                               solver_parameters);
-
           if (!amg_preconditioner)
             setup_preconditioner();
 
@@ -1204,7 +1201,8 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
             << current_preconditioner_fill_level << std::endl;
           setup_preconditioner();
 
-          if (iter == max_iter - 1)
+          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .force_linear_solver_continuation)
             throw e;
         }
       iter += 1;
@@ -1282,7 +1280,9 @@ GLSNavierStokesSolver<dim>::solve()
 
 
       if (this->simulation_control->is_at_start())
-        this->first_iteration();
+        {
+          this->iterate();
+        }
       else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::

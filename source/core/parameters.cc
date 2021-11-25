@@ -13,6 +13,14 @@ namespace Parameters
         Patterns::Selection("steady|steady_bdf|bdf1|bdf2|bdf3|sdirk2|sdirk3"),
         "The kind of solver for the linear system. "
         "Choices are <steady|steady_bdf|bdf1|bdf2|bdf3|sdirk2|sdirk3>.");
+
+      prm.declare_entry(
+        "bdf startup method",
+        "multiple step bdf",
+        Patterns::Selection("multiple step bdf|sdirk step|initial solution"),
+        "The kind of method used to startup high order bdf methods "
+        "Choices are <multiple step bdf|sdirk step|initial solution>.");
+
       prm.declare_entry("time step",
                         "1.",
                         Patterns::Double(),
@@ -123,6 +131,17 @@ namespace Parameters
         {
           std::runtime_error("Invalid time stepping scheme");
         }
+      const std::string bdf_startup_string = prm.get("bdf startup method");
+      if (bdf_startup_string == "multiple step bdf")
+        bdf_startup_method = BDFStartupMethods::multiple_step_bdf;
+      else if (bdf_startup_string == "sdirk step")
+        bdf_startup_method = BDFStartupMethods::sdirk_step;
+      else if (bdf_startup_string == "initial solution")
+        bdf_startup_method = BDFStartupMethods::initial_solution;
+      else
+        {
+          std::runtime_error("Invalid bdf startup scheme");
+        }
 
       const std::string osv = prm.get("output control");
       if (osv == "iteration")
@@ -166,6 +185,11 @@ namespace Parameters
                         Patterns::Selection("none|iteration|end"),
                         "Clock monitoring methods "
                         "Choices are <none|iteration|end>.");
+      prm.declare_entry(
+        "write time in error table",
+        "false",
+        Patterns::Bool(),
+        "Boolean to define if the time is written in the error table");
     }
     prm.leave_subsection();
   }
@@ -182,6 +206,7 @@ namespace Parameters
         type = Type::iteration;
       else if (cl == "end")
         type = Type::end;
+      write_time_in_error_table = prm.get_bool("write time in error table");
     }
     prm.leave_subsection();
   }
@@ -1030,6 +1055,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "amg smoother overlap");
+      prm.declare_entry(
+        "force linear solver continuation",
+        "false",
+        Patterns::Bool(),
+        "A boolean that will force the linear solver to continue even if it fails");
     }
     prm.leave_subsection();
   }
@@ -1082,6 +1112,8 @@ namespace Parameters
       amg_w_cycles              = prm.get_bool("amg w cycles");
       amg_smoother_sweeps       = prm.get_integer("amg smoother sweeps");
       amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
+      force_linear_solver_continuation =
+        prm.get_bool("force linear solver continuation");
     }
     prm.leave_subsection();
   }

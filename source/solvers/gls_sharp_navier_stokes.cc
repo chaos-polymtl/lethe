@@ -27,6 +27,7 @@
 
 #include <solvers/gls_sharp_navier_stokes.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
+#include <solvers/postprocessing_cfd.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -634,6 +635,12 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
       this->write_output_results(this->present_solution);
     }
 
+  bool enable =
+    this->simulation_parameters.analytical_solution->calculate_error();
+  this->simulation_parameters.analytical_solution->set_enable(false);
+  NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+    postprocess_fd(firstIter);
+  this->simulation_parameters.analytical_solution->set_enable(enable);
   // Calculate the error with respect to the analytical solution
   if (!firstIter &&
       this->simulation_parameters.analytical_solution->calculate_error())
@@ -667,6 +674,18 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
             "time", this->simulation_control->get_current_time());
           this->error_table.add_value("error_velocity", error.first);
           this->error_table.add_value("error_pressure", error.second);
+
+          if (this->simulation_parameters.timer.write_time_in_error_table)
+            {
+              auto summary = this->computing_timer.get_summary_data(
+                this->computing_timer.total_wall_time);
+              double total_time = 0;
+              for (auto it = summary.begin(); it != summary.end(); ++it)
+                {
+                  total_time += summary[it->first];
+                }
+              this->error_table.add_value("total_time", total_time);
+            }
         }
       if (this->simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
@@ -677,19 +696,19 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
     }
 }
 
+
 template <int dim>
 std::pair<double, double>
 GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
-
-  QGauss<dim>       quadrature_formula(this->number_quadrature_points + 1);
-  FEValues<dim>     fe_values(*this->mapping,
+  QGauss<dim>        quadrature_formula(this->number_quadrature_points + 1);
+  FEValues<dim>      fe_values(*this->mapping,
                           *this->fe,
                           quadrature_formula,
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
-  FEFaceValues<dim> fe_face_values(*this->mapping,
+  FEFaceValues<dim>  fe_face_values(*this->mapping,
                                    *this->fe,
                                    *this->face_quadrature,
                                    update_values | update_gradients |
@@ -1695,11 +1714,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           double sum_line = 0;
           fe_values.reinit(cell);
 
+          double volume = 0;
           // Define the order of magnitude for the stencil.
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
-            sum_line += fe_values.JxW(qf);
+            volume += fe_values.JxW(qf);
 
-          sum_line = sum_line / dt;
+          sum_line = volume / dt;
 
 
           cell->get_dof_indices(local_dof_indices);
@@ -2552,6 +2572,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
+      this->simulation_control->print_progression(this->pcout);
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
       if ((this->simulation_control->get_step_number() %
@@ -2570,12 +2591,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
         integrate_particles();
 
 
-      this->simulation_control->print_progression(this->pcout);
+
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
           generate_cut_cells_map();
-          this->first_iteration();
+          this->iterate();
         }
       else
         {
@@ -2588,9 +2609,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
         }
 
       this->postprocess_fd(false);
-
       this->finish_time_step();
-
       if (this->simulation_parameters.particlesParameters->calculate_force_ib)
         force_on_ib();
       finish_time_step_particles();

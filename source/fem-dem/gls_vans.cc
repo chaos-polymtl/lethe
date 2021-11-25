@@ -495,117 +495,6 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 }
 
 
-// Do an iteration with the NavierStokes Solver
-// Handles the fact that we may or may not be at a first
-// iteration with the solver and sets the initial conditions
-template <int dim>
-void
-GLSVANSSolver<dim>::first_iteration()
-{
-  // First step if the method is not a multi-step method
-  if (!is_bdf_high_order(this->cfd_dem_simulation_parameters.cfd_parameters
-                           .simulation_control.method))
-    {
-      iterate();
-    }
-
-  // Taking care of the multi-step methods
-  else if (this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
-             .method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    {
-      Parameters::SimulationControl timeParameters =
-        this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control;
-
-      // Start the BDF2 with a single Euler time step with a lower time step
-      double time_step =
-        timeParameters.dt * timeParameters.startup_timestep_scaling;
-      this->simulation_control->set_current_time_step(time_step);
-
-      double intermediate_time =
-        this->simulation_control->get_current_time() + time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-      this->percolate_time_vectors_fd();
-      percolate_void_fraction();
-
-      // Reset the time step and do a bdf 2 newton iteration using the two
-      // steps to complete the full step
-
-      time_step =
-        timeParameters.dt * (1. - timeParameters.startup_timestep_scaling);
-
-      this->simulation_control->set_current_time_step(time_step);
-      intermediate_time += time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-
-      this->simulation_control->set_suggested_time_step(timeParameters.dt);
-    }
-
-  else if (this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
-             .method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    {
-      Parameters::SimulationControl timeParameters =
-        this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control;
-
-      // Start the BDF3 with a single Euler time step with a lower time step
-      double time_step =
-        timeParameters.dt * timeParameters.startup_timestep_scaling;
-
-      this->simulation_control->set_current_time_step(time_step);
-
-      double intermediate_time = time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-      this->percolate_time_vectors_fd();
-      percolate_void_fraction();
-
-      // Reset the time step and do a bdf 2 newton iteration using the two
-      // steps
-
-      this->simulation_control->set_current_time_step(time_step);
-      intermediate_time += time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-      this->percolate_time_vectors_fd();
-      percolate_void_fraction();
-
-      // Reset the time step and do a bdf 3 newton iteration using the two
-      // steps to complete the full step
-      time_step =
-        timeParameters.dt * (1. - 2. * timeParameters.startup_timestep_scaling);
-      this->simulation_control->set_current_time_step(time_step);
-      intermediate_time += time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf3);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-      this->simulation_control->set_suggested_time_step(timeParameters.dt);
-    }
-}
 
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
@@ -1125,7 +1014,7 @@ GLSVANSSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
         {
-          this->first_iteration();
+          this->iterate();
         }
       else
         {
