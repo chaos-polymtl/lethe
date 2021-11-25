@@ -266,7 +266,9 @@ template <int dim>
 class GLSVansAssemblerPressureForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerPressureForce()
+  GLSVansAssemblerPressureForce(
+    Parameters::PhysicalProperties physical_properties)
+    : physical_properties(physical_properties)
   {}
 
   /**
@@ -277,6 +279,8 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::PhysicalProperties physical_properties;
 };
 
 /**

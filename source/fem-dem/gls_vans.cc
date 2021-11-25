@@ -631,42 +631,51 @@ GLSVANSSolver<dim>::setup_assemblers()
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
 
-  // Particle_Fluid Interactions Assembler
-  if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
-      Parameters::DragModel::difelice)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.drag_force == true)
     {
-      // DiFelice Model drag Assembler
-      particle_fluid_assemblers.push_back(
-        std::make_shared<GLSVansAssemblerDiFelice<dim>>(
-          this->cfd_dem_simulation_parameters.cfd_parameters
-            .physical_properties));
+      // Particle_Fluid Interactions Assembler
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::difelice)
+        {
+          // DiFelice Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerDiFelice<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_parameters
+                .physical_properties));
+        }
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::rong)
+        {
+          // Rong Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerRong<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_parameters
+                .physical_properties));
+        }
     }
 
-  if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
-      Parameters::DragModel::rong)
-    {
-      // Rong Model drag Assembler
-      particle_fluid_assemblers.push_back(
-        std::make_shared<GLSVansAssemblerRong<dim>>(
-          this->cfd_dem_simulation_parameters.cfd_parameters
-            .physical_properties));
-    }
+  if (this->cfd_dem_simulation_parameters.cfd_dem.buoyancy_force == true)
+    // Buoyancy Force Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties));
 
-  // Buoyancy Force Assembler
-  particle_fluid_assemblers.push_back(
-    std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
-      this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-      this->cfd_dem_simulation_parameters.dem_parameters
-        .lagrangian_physical_properties));
+  if (this->cfd_dem_simulation_parameters.cfd_dem.pressure_force == true)
+    // Pressure Force
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerPressureForce<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_parameters
+          .physical_properties));
 
-  // Pressure Force
-  particle_fluid_assemblers.push_back(
-    std::make_shared<GLSVansAssemblerPressureForce<dim>>());
-
-  // Shear Force
-  particle_fluid_assemblers.push_back(
-    std::make_shared<GLSVansAssemblerShearForce<dim>>(
-      this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties));
+  if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
+    // Shear Force
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerShearForce<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_parameters
+          .physical_properties));
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))

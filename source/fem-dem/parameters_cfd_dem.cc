@@ -76,6 +76,22 @@ namespace Parameters
                       "false",
                       Patterns::Bool(),
                       "Choose whether or not to apply grad_div stabilization");
+    prm.declare_entry("drag force",
+                      "true",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply drag force");
+    prm.declare_entry("buoyancy force",
+                      "true",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply buoyancy force");
+    prm.declare_entry("shear force",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply shear force");
+    prm.declare_entry("pressure force",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply pressure force");
     prm.declare_entry("drag model",
                       "difelice",
                       Patterns::Selection("difelice|rong"),
@@ -105,6 +121,10 @@ namespace Parameters
   {
     prm.enter_subsection("cfd-dem");
     grad_div             = prm.get_bool("grad div");
+    drag_force           = prm.get_bool("drag force");
+    buoyancy_force       = prm.get_bool("buoyancy force");
+    shear_force          = prm.get_bool("shear force");
+    pressure_force       = prm.get_bool("pressure force");
     post_processing      = prm.get_bool("post processing");
     inlet_boundary_id    = prm.get_integer("inlet boundary id");
     outlet_boundary_id   = prm.get_integer("outlet boundary id");
