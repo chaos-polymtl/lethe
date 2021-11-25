@@ -369,8 +369,9 @@ template class VOFAssemblerBDF<3>;
 
 template <int dim>
 void
-VOFAssemblerInterfaceSharpening<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
-                                       StabilizedMethodsCopyData &copy_data)
+VOFAssemblerInterfaceSharpening<dim>::assemble_matrix(
+  VOFScratchData<dim> &      scratch_data,
+  StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -378,27 +379,25 @@ VOFAssemblerInterfaceSharpening<dim>::assemble_matrix(VOFScratchData<dim> &     
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &local_matrix        = copy_data.local_matrix;
+  auto &local_matrix = copy_data.local_matrix;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-     for (unsigned int i = 0; i < n_dofs; ++i)
+      for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_phase_i      = scratch_data.phi[q][i];
+          const auto phi_phase_i = scratch_data.phi[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const auto phi_phase_j      = scratch_data.phi[q][j];
+              const auto phi_phase_j = scratch_data.phi[q][j];
 
-              // ***** CORRECT THIS ****** Weak form for advection: u * nabla(phase) = 0
-              local_matrix(i, j) +=
-                (phi_phase_i * phi_phase_j) * JxW;
-
+              // ***** CORRECT THIS ****** Weak form for advection: u *
+              // nabla(phase) = 0
+              local_matrix(i, j) += (phi_phase_i * phi_phase_j) * JxW;
             }
         }
     } // end loop on quadrature points
@@ -408,8 +407,9 @@ VOFAssemblerInterfaceSharpening<dim>::assemble_matrix(VOFScratchData<dim> &     
 
 template <int dim>
 void
-VOFAssemblerInterfaceSharpening<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
-                                    StabilizedMethodsCopyData &copy_data)
+VOFAssemblerInterfaceSharpening<dim>::assemble_rhs(
+  VOFScratchData<dim> &      scratch_data,
+  StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
   const auto &       JxW        = scratch_data.JxW;
@@ -417,16 +417,18 @@ VOFAssemblerInterfaceSharpening<dim>::assemble_rhs(VOFScratchData<dim> &      sc
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &local_rhs       = copy_data.local_rhs;
+  auto &local_rhs = copy_data.local_rhs;
 
   // Interface sharpening parameters
-  const double sharpening_threshold = this->interface_sharpening_parameters.sharpening_threshold;
-  const double interface_sharpness = this->interface_sharpening_parameters.interface_sharpness;
+  const double sharpening_threshold =
+    this->interface_sharpening_parameters.sharpening_threshold;
+  const double interface_sharpness =
+    this->interface_sharpening_parameters.interface_sharpness;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      const auto phase_values      = scratch_data.present_phase_values[q];
+      const auto phase_values = scratch_data.present_phase_values[q];
 
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -434,9 +436,16 @@ VOFAssemblerInterfaceSharpening<dim>::assemble_rhs(VOFScratchData<dim> &      sc
           const double phi_phase_i = scratch_data.phi[q][i];
 
           if (phase_values <= sharpening_threshold)
-            local_rhs(i) += std::pow(sharpening_threshold , (1 - interface_sharpness)) * std::pow(phase_values, interface_sharpness) * phi_phase_i * JxW[q];
+            local_rhs(i) +=
+              std::pow(sharpening_threshold, (1 - interface_sharpness)) *
+              std::pow(phase_values, interface_sharpness) * phi_phase_i *
+              JxW[q];
           else
-            local_rhs(i) += (1 - std::pow((1 - sharpening_threshold) , (1 - interface_sharpness)) * std::pow((1 - phase_values) , interface_sharpness)) * phi_phase_i * JxW[q];
+            local_rhs(i) +=
+              (1 -
+               std::pow((1 - sharpening_threshold), (1 - interface_sharpness)) *
+                 std::pow((1 - phase_values), interface_sharpness)) *
+              phi_phase_i * JxW[q];
         }
     }
 }

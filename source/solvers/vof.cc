@@ -46,15 +46,22 @@ VOF<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
-    // Interface sharpening
-    if (this->simulation_parameters.multiphysics.interface_sharpening)
+  // Interface sharpening
+  if (this->simulation_parameters.multiphysics.interface_sharpening)
     {
-        // Interface sharpening is done at a constant frequency ()
-        if (this->simulation_control->get_step_number() % this->simulation_parameters.interface_sharpening.sharpening_frequency == 0)
+      // Interface sharpening is done at a constant frequency ()
+      if (this->simulation_control->get_step_number() %
+            this->simulation_parameters.interface_sharpening
+              .sharpening_frequency ==
+          0)
         {
-            this->pcout << "Sharpening the interface at step " << this->simulation_control->get_step_number() << std::endl;
-        this->assemblers.push_back(std::make_shared<VOFAssemblerInterfaceSharpening<dim>>(
-          this->simulation_control, this->simulation_parameters.interface_sharpening));
+          this->pcout << "Sharpening the interface at step "
+                      << this->simulation_control->get_step_number()
+                      << std::endl;
+          this->assemblers.push_back(
+            std::make_shared<VOFAssemblerInterfaceSharpening<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.interface_sharpening));
         }
     }
 

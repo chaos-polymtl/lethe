@@ -265,9 +265,9 @@ namespace Parameters
 
   struct InterfaceSharpening
   {
-      double sharpening_threshold;
-      double interface_sharpness;
-      int sharpening_frequency;
+    double sharpening_threshold;
+    double interface_sharpness;
+    int    sharpening_frequency;
 
     void
     declare_parameters(ParameterHandler &prm);
