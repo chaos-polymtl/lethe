@@ -636,7 +636,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
-  // Initialize previous solutions
+  // Initialize vector of previous solutions
   for (auto &solution : this->previous_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
@@ -1171,7 +1171,7 @@ GDNavierStokesSolver<dim>::solve()
       this->dynamic_flow_control();
 
       if (this->simulation_control->is_at_start())
-        this->first_iteration();
+        this->iterate();
       else
         {
           NavierStokesBase<dim,

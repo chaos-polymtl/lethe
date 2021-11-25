@@ -49,6 +49,9 @@ protected:
   // Time step linking the previous iteration and the current time
   double time_step;
 
+  // Initial time step given in the parameter
+  double initial_time_step;
+
   // Simulation end time
   double end_time;
 
@@ -124,6 +127,12 @@ protected:
 
   // Indicator to tell if this is the first assembly of a step
   bool first_assembly;
+
+  // The method use to start high order bdf scheme
+  Parameters::SimulationControl::BDFStartupMethods bdf_start_method;
+
+  // The time scalling use to do small time step at te
+  double startup_timestep_scaling;
 
 
 
@@ -247,6 +256,11 @@ public:
     return return_value;
   };
 
+  /**
+   * @brief Define the assembly method to use while integrating. Use to start bdf 2 and bdf 3 scheme.
+   */
+  void
+  update_assembly_method();
 
   /**
    * @brief Set the value of the CFL conditoin
@@ -259,6 +273,7 @@ public:
   {
     CFL = p_CFL;
   }
+
 
   /**
    * @brief Manually force the value of the time step for the present iteration
@@ -380,6 +395,7 @@ public:
   {
     assembly_method = method;
   }
+
 
 
   void
