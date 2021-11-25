@@ -49,8 +49,10 @@ VOF<dim>::setup_assemblers()
     // Interface sharpening
     if (this->simulation_parameters.multiphysics.interface_sharpening)
     {
+        // Interface sharpening is done at a constant frequency ()
+        if (this->simulation_control->get_step_number() % this->simulation_parameters.interface_sharpening.sharpening_frequency == 0)
         this->assemblers.push_back(std::make_shared<VOFAssemblerInterfaceSharpening<dim>>(
-          this->simulation_control, this->simulation_parameters.fem_parameters));
+          this->simulation_control, this->simulation_parameters.interface_sharpening));
     }
 
   // Time-stepping schemes

@@ -165,9 +165,9 @@ class VOFAssemblerInterfaceSharpening : public VOFAssemblerBase<dim>
 {
 public:
   VOFAssemblerInterfaceSharpening(std::shared_ptr<SimulationControl> simulation_control,
-                   Parameters::FEM                    fem_parameters)
+                   Parameters::InterfaceSharpening                    interface_sharpening_parameters)
     : simulation_control(simulation_control)
-    , fem_parameters(fem_parameters)
+    , interface_sharpening_parameters(interface_sharpening_parameters)
   {}
 
   /**
@@ -192,7 +192,7 @@ public:
   const bool DCDD = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::FEM                    fem_parameters;
+  Parameters::InterfaceSharpening                    interface_sharpening_parameters;
 };
 
 
