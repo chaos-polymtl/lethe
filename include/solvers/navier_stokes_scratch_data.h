@@ -226,8 +226,8 @@ public:
       current_solution, this->velocity_gradients);
     this->fe_values[velocities].get_function_laplacians(
       current_solution, this->velocity_laplacians);
-    this->fe_values[velocities].get_function_hessians(
-      current_solution, this->velocity_hessians);
+    this->fe_values[velocities].get_function_hessians(current_solution,
+                                                      this->velocity_hessians);
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
         this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
