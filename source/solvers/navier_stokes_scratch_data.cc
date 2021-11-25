@@ -32,6 +32,7 @@ NavierStokesScratchData<dim>::allocate()
   this->velocity_divergences = std::vector<double>(n_q_points);
   this->velocity_gradients   = std::vector<Tensor<2, dim>>(n_q_points);
   this->velocity_laplacians  = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_hessians   = std::vector<Tensor<3, dim>>(n_q_points);
 
   // Velocity for BDF schemes
   this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
