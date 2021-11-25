@@ -192,6 +192,45 @@ public:
   }
 
   /**
+   * @brief Calculates an approximation of the gradient of the viscosity 
+   * @param velocity_gradient The velocity gradient tensor on the quadrature point
+     @param velocity_hessians The velocity hessian tensor on the quadrture point
+     @param shear_rate_magnitude The magnitude of the shear rate tensor on the quadrature point
+     @param grad_eta_shear_rate An approximation of the derivative of the 
+     viscosity with a slight change in the shear_rate_magnitude (therefore, a constant)
+   */
+  Tensor<1, dim> 
+  get_viscosity_gradient(const Tensor<2, dim>& velocity_gradient, 
+                  const Tensor<3, dim>& velocity_hessians, 
+                  const double & shear_rate_magnitude,
+                  const double & grad_viscosity_shear_rate) const
+  {
+    Tensor<1, dim> grad_shear_rate;
+    for (unsigned int d = 0; d < dim; ++d)
+    {
+      if (dim == 2)
+      {
+        for (unsigned int k = 0; k < dim; ++k)
+        {
+          grad_shear_rate[d] += 2*(velocity_gradient[k][k] * velocity_hessians[k][d][k]) / shear_rate_magnitude;
+        }
+        grad_shear_rate[d] += (velocity_gradient[0][1] + velocity_gradient[1][0]) *(velocity_hessians[0][d][1] + velocity_hessians[1][d][0]) / shear_rate_magnitude;
+      }
+      else
+      {
+        for (unsigned int k = 0; k < dim; ++k)
+        {
+          grad_shear_rate[d] += 2*(velocity_gradient[k][k] * velocity_hessians[k][d][k]) / shear_rate_magnitude
+            + (velocity_gradient[(k+1) % dim][(k+2) % dim] + velocity_gradient[(k+2) % dim][(k+1) % dim]) 
+            * (velocity_hessians[(k+1) % dim][d][(k+2) % dim] + velocity_hessians[(k+2) % dim][d][(k+1) % dim]) / shear_rate_magnitude;
+        }
+      }
+    }
+
+    return grad_shear_rate * grad_viscosity_shear_rate;
+  };
+
+  /**
    * @brief assemble_matrix Assembles the matrix
    * @param scratch_data (see base class)
    * @param copy_data (see base class)

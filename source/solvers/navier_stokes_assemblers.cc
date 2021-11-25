@@ -295,6 +295,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
+      const Tensor<3, dim> velocity_hessian =
+        scratch_data.velocity_hessians[q];
 
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
@@ -303,9 +305,19 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const Tensor<2, dim> shear_rate =
         velocity_gradient + transpose(velocity_gradient);
 
+      // Calculate the shear rate magnitude
+      const double shear_rate_magnitude = 
+        rheological_model->get_shear_rate_magnitude(shear_rate);
+
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
         rheological_model->get_viscosity(shear_rate);
+
+      // Calculate viscosity gradient
+      const Tensor<1, dim> viscosity_gradient = this->get_viscosity_gradient(velocity_gradient, 
+                  velocity_hessian, 
+                  shear_rate_magnitude,
+                  1.0); // Temporary constant
 
       // Forcing term
       const Tensor<1, dim> force       = scratch_data.force[q];
