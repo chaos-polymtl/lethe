@@ -30,6 +30,11 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "Free surface calculation <true|false>");
 
+    prm.declare_entry("interface sharpening",
+                      "false",
+                      Patterns::Bool(),
+                      "Interface sharpening <true|false>");
+
     prm.declare_entry("buoyancy force",
                       "false",
                       Patterns::Bool(),
@@ -66,6 +71,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     heat_transfer  = prm.get_bool("heat transfer");
     tracer         = prm.get_bool("tracer");
     free_surface   = prm.get_bool("free surface");
+    interface_sharpening   = prm.get_bool("interface sharpening");
     buoyancy_force = prm.get_bool("buoyancy force");
 
     // subparameter for heat_transfer

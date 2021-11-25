@@ -46,6 +46,13 @@ VOF<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
+    // Interface sharpening
+    if (this->simulation_parameters.multiphysics.interface_sharpening)
+    {
+        this->assemblers.push_back(std::make_shared<VOFAssemblerInterfaceSharpening<dim>>(
+          this->simulation_control, this->simulation_parameters.fem_parameters));
+    }
+
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {

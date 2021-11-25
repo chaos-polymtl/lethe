@@ -151,4 +151,49 @@ public:
 };
 
 
+/**
+ * @brief Class that assembles the interface sharpening to the VOF solver
+ * ****** CORRECT WEAK FORM AND ADD RED *****
+ * $$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}{\Delta t}
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class VOFAssemblerInterfaceSharpening : public VOFAssemblerBase<dim>
+{
+public:
+  VOFAssemblerInterfaceSharpening(std::shared_ptr<SimulationControl> simulation_control,
+                   Parameters::FEM                    fem_parameters)
+    : simulation_control(simulation_control)
+    , fem_parameters(fem_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(VOFScratchData<dim> &      scratch_data,
+                  StabilizedMethodsCopyData &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(VOFScratchData<dim> &      scratch_data,
+               StabilizedMethodsCopyData &copy_data) override;
+
+  const bool DCDD = true;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::FEM                    fem_parameters;
+};
+
+
 #endif

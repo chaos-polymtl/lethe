@@ -366,3 +366,85 @@ VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
 
 template class VOFAssemblerBDF<2>;
 template class VOFAssemblerBDF<3>;
+
+template <int dim>
+void
+VOFAssemblerInterfaceSharpening<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
+                                       StabilizedMethodsCopyData &copy_data)
+{
+  // Scheme and physical properties
+  const auto method = this->simulation_control->get_assembly_method();
+
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+
+  // Copy data elements
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+
+    } // end loop on quadrature points
+}
+
+
+
+template <int dim>
+void
+VOFAssemblerInterfaceSharpening<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
+                                    StabilizedMethodsCopyData &copy_data)
+{
+  // Scheme and physical properties
+  const auto method = this->simulation_control->get_assembly_method();
+
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const Tensor<1, dim> phase_gradient   = scratch_data.phase_gradients[q];
+      const double         phase_laplacians = scratch_data.phase_laplacians[q];
+      const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+
+    }
+}
+
+template class VOFAssemblerInterfaceSharpening<2>;
+template class VOFAssemblerInterfaceSharpening<3>;
