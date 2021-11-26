@@ -86,7 +86,7 @@ public:
   // This class defines values related to a particle used in the sharp interface
   // IB. Each particle defined will have these value used in the solver.
   Point<dim>     position;
-  Point<dim>     last_position;
+  std::vector<Point<dim>>    last_position;
   Tensor<1, dim> forces;
   Tensor<1, dim> last_forces;
   unsigned int   particle_id;
@@ -98,19 +98,19 @@ public:
   // Translational velocity
   Tensor<1, dim> velocity;
   // Store the last velocity of the fix point iteration.
-  Tensor<1, dim> last_velocity;
+  std::vector<Tensor<1, dim>> last_velocity;
   Tensor<1, dim> velocity_iter;
   // Angular velocity
 
   // By default the angular position is always 0 on every axis.
   Tensor<1, 3> angular_position;
   // Store the last angular position of the particle for integration.
-  Tensor<1, 3> last_angular_position;
+  std::vector<Tensor<1, 3>> last_angular_position;
 
   // Angular velocity
   Tensor<1, 3> omega;
   // Store the last angular velocity of the particle for integration.
-  Tensor<1, 3> last_omega;
+  std::vector<Tensor<1, 3>> last_omega;
   // Store the last  angular velocity of the of the particle for the fix point
   // iteration.
   Tensor<1, 3> omega_iter;

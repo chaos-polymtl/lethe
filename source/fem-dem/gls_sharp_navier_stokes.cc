@@ -1134,10 +1134,19 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           particles[p].impulsion=ib_dem.dem_particles[p].impulsion;
           particles[p].omega_impulsion=ib_dem.dem_particles[p].omega_impulsion;
           particles[p].contact_impulsion=ib_dem.dem_particles[p].contact_impulsion;
+          // Time stepping information
+          const auto          method = this->simulation_control->get_assembly_method();
+          std::vector<double> time_steps_vector =
+            this->simulation_control->get_time_steps_vector();
 
-          Tensor<1, dim> residual_velocity =
-            particles[p].last_velocity +
-            (particles[p].impulsion +particles[p].contact_impulsion)/ particles[p].mass - particles[p].velocity;
+          // Vector for the BDF coefficients
+          Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
+
+          Tensor<1, dim> residual_velocity=-(bdf_coefs[0] * particles[p].velocity);
+          for(unsigned int i=1;i<number_of_previous_solutions(method)+1;++i){
+              residual_velocity+=-(bdf_coefs[i] * particles[p].last_velocity[i-1]);
+            }
+          residual_velocity +=(particles[p].impulsion +particles[p].contact_impulsion)/ particles[p].mass/dt;
 
           Tensor<2, dim> jac_velocity;
           if (particles[p].impulsion_iter.norm() == 0)
@@ -1145,7 +1154,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               for (unsigned int d = 0; d < dim; ++d)
                 {
                   jac_velocity[d][d] =
-                    -1 - 0.5 * volume * rho / particles[p].mass;
+                    -bdf_coefs[0]  - 0.5 * volume * rho / particles[p].mass/dt;
                 }
             }
           else
@@ -1155,14 +1164,14 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   if ((particles[p].velocity[d] -
                        particles[p].velocity_iter[d]) != 0)
                     jac_velocity[d][d] =
-                      -1 + (particles[p].impulsion[d] -
+                      -bdf_coefs[0]  + (particles[p].impulsion[d] -
                             particles[p].impulsion_iter[d]) /
                              (particles[p].velocity[d] -
                               particles[p].velocity_iter[d]) /
-                             particles[p].mass;
+                             particles[p].mass/dt;
                   else
                     jac_velocity[d][d] =
-                      -1 - 0.5 * volume * rho / particles[p].mass;
+                      -bdf_coefs[0]  - 0.5 * volume * rho / particles[p].mass/dt;
                 }
             }
           particles[p].velocity_iter = particles[p].velocity;
@@ -1170,17 +1179,26 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             particles[p].velocity_iter -
             residual_velocity * invert(jac_velocity) * alpha  ;
           particles[p].impulsion_iter = particles[p].impulsion;
-          
-          if(particles[p].contact_impulsion.norm()<1e-12)
-            particles[p].position=particles[p].last_position+particles[p].velocity*dt;
+          if(particles[p].contact_impulsion.norm()<1e-12){
+              particles[p].position.clear();
+              for(unsigned int i=1;i<number_of_previous_solutions(method)+1;++i){
+                  particles[p].position+=-bdf_coefs[i] * particles[p].last_position[i-1]/bdf_coefs[0];
+                }
+              particles[p].position+=particles[p].velocity /bdf_coefs[0];
+            }
           else
             particles[p].position=ib_dem.dem_particles[p].position;
 
           // For the rotation velocity : same logic as the velocity.
           auto         inv_inertia = invert(particles[p].inertia);
-          Tensor<1, 3> residual_omega =
-            particles[p].last_omega +
-            inv_inertia * particles[p].omega_impulsion - particles[p].omega;
+
+
+          Tensor<1, 3> residual_omega=-(bdf_coefs[0] * particles[p].omega);
+          for(unsigned int i=1;i<number_of_previous_solutions(method)+1;++i){
+              residual_omega+=-(bdf_coefs[i] * particles[p].last_omega[i-1]);
+            }
+          residual_omega += inv_inertia*(particles[p].omega_impulsion)/dt;
+
 
           Tensor<2, 3> jac_omega;
           if (particles[p].omega_impulsion.norm() == 0)
@@ -1188,8 +1206,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               for (unsigned int d = 0; d < 3; ++d)
                 {
                   jac_omega[d][d] =
-                    -1 - 0.5 * 2. / 5 * volume * rho * particles[p].radius *
-                           particles[p].radius * inv_inertia[d][d];
+                    -bdf_coefs[0] - 0.5 * 2. / 5 * volume * rho * particles[p].radius *
+                           particles[p].radius * inv_inertia[d][d]/dt;
                 }
             }
           else
@@ -1198,15 +1216,15 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 {
                   if ((particles[p].omega[d] - particles[p].omega_iter[d]) != 0)
                     jac_omega[d][d] =
-                      -1 +
+                      -bdf_coefs[0] +
                       (particles[p].omega_impulsion[d] -
                        particles[p].omega_impulsion_iter[d]) /
                         (particles[p].omega[d] - particles[p].omega_iter[d]) *
-                        inv_inertia[d][d];
+                        inv_inertia[d][d]/dt;
                   else
                     jac_omega[d][d] =
-                      -1 - 0.5 * 2. / 5 * volume * rho * particles[p].radius *
-                             particles[p].radius * inv_inertia[d][d];
+                      -bdf_coefs[0] - 0.5 * 2. / 5 * volume * rho * particles[p].radius *
+                             particles[p].radius * inv_inertia[d][d]/dt;
                 }
             }
           particles[p].omega_iter = particles[p].omega;
@@ -1223,7 +1241,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             {
               this->pcout<< " contact_impulsion " <<particles[p].contact_impulsion<<std::endl;
               this->pcout << "particle " << p << " residual "
-                          << residual_velocity.norm() << " particle velocity"
+                          << residual_velocity.norm()
+                          << " particle velocity "
                           << particles[p].velocity
                           << " residual "
                           << (particles[p].position-ib_dem.dem_particles[p].position).norm()
@@ -1232,9 +1251,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                           << " particle force"
                           << particles[p].forces
                           << " particle impulsion "
-                          << particles[p].impulsion
-                          << " particle jac 0 0 "
-                          <<jac_velocity[0][0]<< std::endl;
+                          << particles[p].impulsion<< std::endl;
 
             }
           particles[p].residual=this_particle_residual;
@@ -1402,10 +1419,18 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
-      particles[p].last_position      = particles[p].position;
-      particles[p].last_velocity      = particles[p].velocity;
+      for (unsigned int i=particles[p].last_velocity.size()-1;i>0;--i)
+        {
+          particles[p].last_position[i] =particles[p].last_position[i-1] ;
+          particles[p].last_velocity[i] = particles[p].last_velocity[i-1] ;
+          particles[p].last_omega[i]    = particles[p].last_omega[i-1];
+        }
+
+      particles[p].last_position[0] = particles[p].position;
+      particles[p].last_velocity[0] = particles[p].velocity;
+      particles[p].last_omega[0]    = particles[p].omega;
+
       particles[p].last_forces        = particles[p].forces;
-      particles[p].last_omega         = particles[p].omega;
       particles[p].last_torques       = particles[p].torques;
       particles[p].local_alpha_torque = 1;
       particles[p].local_alpha_force  = 1;
@@ -2568,10 +2593,10 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
           particles[p_i].torques[1]  = restart_data["T_y"][p_i];
           particles[p_i].torques[2]  = restart_data["T_z"][p_i];
 
-          particles[p_i].last_position      = particles[p_i].position;
-          particles[p_i].last_velocity      = particles[p_i].velocity;
+          particles[p_i].last_position[0]      = particles[p_i].position;
+          particles[p_i].last_velocity[0]      = particles[p_i].velocity;
           particles[p_i].last_forces        = particles[p_i].forces;
-          particles[p_i].last_omega         = particles[p_i].omega;
+          particles[p_i].last_omega[0]         = particles[p_i].omega;
           particles[p_i].local_alpha_torque = 1;
           particles[p_i].local_alpha_force  = 1;
         }

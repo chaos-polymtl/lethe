@@ -46,20 +46,27 @@ IBParticle<dim>::initialise_all()
 
   last_forces           = forces;
   last_torques          = torques;
-  last_position         = position;
-  last_velocity         = velocity;
   velocity_iter         = velocity;
-  last_omega            = omega;
+
   omega_iter            = omega;
   omega_impulsion       = 0;
   omega_impulsion_iter  = 0;
-  last_angular_position = angular_position;
   impulsion             = 0;
   impulsion_iter        = 0;
   contact_impulsion     = 0;
 
+  last_position.resize(3);
+  last_velocity.resize(3);
+  last_angular_position.resize(3);
+  last_omega.resize(3);
 
-
+  for(unsigned int i=0;i<3;++i )
+    {
+      last_position[i]         = position;
+      last_velocity[i]         = velocity;
+      last_angular_position[i]  = angular_position;
+      last_omega[i]             = omega;
+    }
   youngs_modulus=10000000;
   restitution_coefficient=1;
   friction_coefficient=1;
@@ -73,14 +80,18 @@ IBParticle<dim>::initialise_last()
 {
   // initilise all the variables associated to an immersed boundary particle
   last_forces           = forces;
-  last_position         = position;
-  last_velocity         = velocity;
   velocity_iter         = velocity;
   impulsion_iter        = impulsion;
-  last_omega            = omega;
   omega_iter            = omega;
   omega_impulsion_iter  = omega_impulsion;
-  last_angular_position = angular_position;
+
+  for(unsigned int i=0;i<3;++i )
+    {
+      last_position[i]         = position;
+      last_velocity[i]         = velocity;
+      last_angular_position[i]  = angular_position;
+      last_omega[i]             = omega;
+    }
 }
 
 template <int dim>
