@@ -310,7 +310,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
-        rheological_model->get_viscosity(shear_rate);
+        rheological_model->get_viscosity(shear_rate_magnitude);
 
       // Calculate viscosity gradient
       const Tensor<1, dim> viscosity_gradient =
@@ -469,9 +469,13 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const Tensor<2, dim> shear_rate =
         velocity_gradient + transpose(velocity_gradient);
 
+      // Calculate the shear rate magnitude
+      const double shear_rate_magnitude =
+        rheological_model->get_shear_rate_magnitude(shear_rate);
+
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
-        rheological_model->get_viscosity(shear_rate);
+        rheological_model->get_viscosity(shear_rate_magnitude);
 
       // Pressure
       const double         pressure = scratch_data.pressure_values[q];
@@ -997,9 +1001,13 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const Tensor<2, dim> shear_rate =
         velocity_gradient + transpose(velocity_gradient);
 
+      // Calculate the shear rate magnitude
+      const double shear_rate_magnitude =
+        rheological_model->get_shear_rate_magnitude(shear_rate);
+
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
-        rheological_model->get_viscosity(shear_rate);
+        rheological_model->get_viscosity(shear_rate_magnitude);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -1084,9 +1092,13 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const Tensor<2, dim> shear_rate =
         velocity_gradient + transpose(velocity_gradient);
 
+      // Calculate the shear rate magnitude
+      const double shear_rate_magnitude =
+        rheological_model->get_shear_rate_magnitude(shear_rate);
+
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
-        rheological_model->get_viscosity(shear_rate);
+        rheological_model->get_viscosity(shear_rate_magnitude);
 
       // Pressure
       const double pressure = scratch_data.pressure_values[q];
