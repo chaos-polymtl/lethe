@@ -312,6 +312,18 @@ namespace Parameters
                         "1000",
                         Patterns::Integer(),
                         "VOF interface sharpening frequency");
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the interface sharpening calculations should be printed "
+        "Choices are <quiet|verbose>.");
+
+      prm.declare_entry(
+        "l2 smoothing factor",
+        "0.000001",
+        Patterns::Double(),
+        "The smoothing factor for phase fraction L2 projection");
     }
     prm.leave_subsection();
   }
@@ -324,6 +336,16 @@ namespace Parameters
       sharpening_threshold = prm.get_double("sharpening threshold");
       interface_sharpness  = prm.get_double("interface sharpness");
       sharpening_frequency = prm.get_integer("sharpening frequency");
+
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Parameters::Verbosity::verbose;
+      else if (op == "quiet")
+        verbosity = Parameters::Verbosity::quiet;
+      else
+        throw(std::runtime_error("Invalid verbosity level"));
+
+      l2_smoothing_factor = prm.get_double("l2 smoothing factor");
     }
     prm.leave_subsection();
   }

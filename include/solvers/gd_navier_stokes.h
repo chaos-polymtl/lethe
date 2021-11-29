@@ -201,6 +201,11 @@ private:
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix) override;
 
+
+  void
+  modify_solution()
+  {}
+
   /**
    * GMRES solver with ILU preconditioning
    */

@@ -38,11 +38,11 @@
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/error_estimator.h>
-
 
 template <int dim>
 class VOF : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
@@ -252,6 +252,12 @@ public:
 
 
   /**
+   * @brief Modify the phase fraction solution. Limits the phase fraction between 0 and 1, and sharpens the interface
+   */
+  void
+  modify_solution();
+
+  /**
    * @brief Getter methods to get the private attributes for the physic currently solved
    * NB : dof_handler and present_solution are passed to the multiphysics
    * interface at the end of the setup_dofs method
@@ -369,9 +375,32 @@ private:
   virtual void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
+  /**
+   * @brief Limit the phase fractions between 0 and 1. This is necessary before interface sharpening
+   */
+  void
+  update_solution_and_constraints();
+
+  /**
+   * @brief Assemble the system for interface sharpening
+   * ***** ADD WEAK FORM AND REFERENCE HERE ******
+   */
+  void
+  assemble_L2_projection_phase_fraction(VOFScratchData<dim> &scratch_data);
+
+  /**
+   * @brief Solve the assembled system to sharpen the interface
+   */
+  void
+  solve_L2_system_phase_fraction();
+
+  void
+  assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
+
+  TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
+
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
-
 
   // Core elements for the VOF simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
@@ -402,8 +431,21 @@ private:
 
 
   // Previous solutions vectors
+  TrilinosWrappers::SparseMatrix             system_matrix_phase_fraction;
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
   std::vector<TrilinosWrappers::MPI::Vector> solution_stages;
+  TrilinosWrappers::SparseMatrix complete_system_matrix_phase_fraction;
+  TrilinosWrappers::MPI::Vector  system_rhs_phase_fraction;
+  TrilinosWrappers::MPI::Vector  complete_system_rhs_phase_fraction;
+  IndexSet                       active_set;
+  TrilinosWrappers::SparseMatrix mass_matrix;
+
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+
+
+  // Lower and upper bounds of phase fraction
+  const double l2_upper_bound = 1.0;
+  const double l2_lower_bound = 0.0;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>

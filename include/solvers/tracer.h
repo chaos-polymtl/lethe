@@ -215,6 +215,10 @@ public:
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true);
 
+  void
+  modify_solution()
+  {}
+
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved

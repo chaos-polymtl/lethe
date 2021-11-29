@@ -268,6 +268,10 @@ namespace Parameters
     double sharpening_threshold;
     double interface_sharpness;
     int    sharpening_frequency;
+    // Type of verbosity for the interface sharpening calculation
+    Verbosity verbosity;
+
+    double l2_smoothing_factor;
 
     void
     declare_parameters(ParameterHandler &prm);

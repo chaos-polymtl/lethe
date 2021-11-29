@@ -46,25 +46,6 @@ VOF<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
-  // Interface sharpening
-  if (this->simulation_parameters.multiphysics.interface_sharpening)
-    {
-      // Interface sharpening is done at a constant frequency ()
-      if (this->simulation_control->get_step_number() %
-            this->simulation_parameters.interface_sharpening
-              .sharpening_frequency ==
-          0)
-        {
-          this->pcout << "Sharpening the interface at step "
-                      << this->simulation_control->get_step_number()
-                      << std::endl;
-          this->assemblers.push_back(
-            std::make_shared<VOFAssemblerInterfaceSharpening<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.interface_sharpening));
-        }
-    }
-
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
@@ -645,6 +626,26 @@ VOF<dim>::setup_dofs()
                                              locally_owned_dofs,
                                              mpi_communicator,
                                              locally_relevant_dofs);
+
+  system_matrix_phase_fraction.reinit(locally_owned_dofs,
+                                      locally_owned_dofs,
+                                      dsp,
+                                      mpi_communicator);
+
+  complete_system_matrix_phase_fraction.reinit(locally_owned_dofs,
+                                               locally_owned_dofs,
+                                               dsp,
+                                               mpi_communicator);
+
+  nodal_phase_fraction_owned.reinit(locally_owned_dofs, mpi_communicator);
+
+  system_rhs_phase_fraction.reinit(locally_owned_dofs, mpi_communicator);
+
+  complete_system_rhs_phase_fraction.reinit(locally_owned_dofs,
+                                            mpi_communicator);
+
+  active_set.set_size(dof_handler.n_dofs());
+
   system_matrix.reinit(locally_owned_dofs,
                        locally_owned_dofs,
                        dsp,
@@ -664,6 +665,13 @@ VOF<dim>::setup_dofs()
   // density (see if needed / to be debugged)
   multiphysics->set_solution_m1(PhysicsID::free_surface,
                                 &previous_solutions[0]);
+
+  mass_matrix.reinit(locally_owned_dofs,
+                     locally_owned_dofs,
+                     dsp,
+                     mpi_communicator);
+
+  assemble_mass_matrix_diagonal(mass_matrix);
 }
 
 template <int dim>
@@ -751,7 +759,311 @@ VOF<dim>::solve_linear_system(const bool initial_step,
   newton_update = completely_distributed_solution;
 }
 
+template <int dim>
+void
+VOF<dim>::modify_solution()
+{
+  // Interface sharpening is done at a constant frequency
+  if (this->simulation_control->get_step_number() %
+        this->simulation_parameters.interface_sharpening.sharpening_frequency ==
+      0)
+    {
+      // Limit the phase fractions between 0 and 1
+      update_solution_and_constraints();
 
+
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+      auto scratch_data = VOFScratchData<dim>(*this->fe,
+                                              *this->cell_quadrature,
+                                              *this->fs_mapping,
+                                              dof_handler_fluid->get_fe());
+
+      // Assemble the system for interface sharpening
+      assemble_L2_projection_phase_fraction(scratch_data);
+
+      // Solve the system for interface sharpening
+      solve_L2_system_phase_fraction();
+    }
+}
+
+template <int dim>
+void
+VOF<dim>::update_solution_and_constraints()
+{
+  const double penalty_parameter = 100;
+
+  TrilinosWrappers::MPI::Vector lambda(locally_owned_dofs);
+
+  nodal_phase_fraction_owned = present_solution;
+
+  complete_system_matrix_phase_fraction.residual(lambda,
+                                                 nodal_phase_fraction_owned,
+                                                 system_rhs_phase_fraction);
+
+  nonzero_constraints.clear();
+  active_set.clear();
+  // ***** ?? Should I create a new DOF or use dof_handler?, the same for
+  // locally_owned_dofs and locally_owned_dofs_voidfraction
+  std::vector<bool> dof_touched(dof_handler.n_dofs(), false);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell;
+               ++v)
+            {
+              Assert(dof_handler.get_fe().dofs_per_cell ==
+                       GeometryInfo<dim>::vertices_per_cell,
+                     ExcNotImplemented());
+              const unsigned int dof_index = cell->vertex_dof_index(v, 0);
+              if (locally_owned_dofs.is_element(dof_index))
+                {
+                  const double solution_value =
+                    nodal_phase_fraction_owned(dof_index);
+                  if (lambda(dof_index) + penalty_parameter *
+                                            mass_matrix(dof_index, dof_index) *
+                                            (solution_value - l2_upper_bound) >
+                      0)
+                    {
+                      active_set.add_index(dof_index);
+                      nonzero_constraints.add_line(dof_index);
+                      nonzero_constraints.set_inhomogeneity(dof_index,
+                                                            l2_upper_bound);
+                      nodal_phase_fraction_owned(dof_index) = l2_upper_bound;
+                      lambda(dof_index)                     = 0;
+                    }
+                  else if (lambda(dof_index) +
+                             penalty_parameter *
+                               mass_matrix(dof_index, dof_index) *
+                               (solution_value - l2_lower_bound) <
+                           0)
+                    {
+                      active_set.add_index(dof_index);
+                      nonzero_constraints.add_line(dof_index);
+                      nonzero_constraints.set_inhomogeneity(dof_index,
+                                                            l2_lower_bound);
+                      nodal_phase_fraction_owned(dof_index) = l2_lower_bound;
+                      lambda(dof_index)                     = 0;
+                    }
+                }
+            }
+        }
+    }
+  active_set.compress();
+  present_solution = nodal_phase_fraction_owned;
+  nonzero_constraints.close();
+}
+
+template <int dim>
+void
+VOF<dim>::assemble_L2_projection_phase_fraction(
+  VOFScratchData<dim> &scratch_data)
+{
+  const double sharpening_threshold =
+    this->simulation_parameters.interface_sharpening.sharpening_threshold;
+  const double interface_sharpness =
+    this->simulation_parameters.interface_sharpening.interface_sharpness;
+
+  // ***** IS THIS CORRECT?? ****
+  QGauss<dim> quadrature_formula(
+    this->simulation_parameters.fem_parameters.velocity_order + 1);
+
+  const MappingQ<dim> mapping(
+    1, simulation_parameters.fem_parameters.qmapping_all);
+  // const MappingQ<dim> mapping(1,
+  //                             this->simulation_parameters
+  //                              .fem_parameters.qmapping_all);
+  //
+  FEValues<dim> fe_values_phase_fraction(mapping,
+                                         *this->fe,
+                                         quadrature_formula,
+                                         update_values |
+                                           update_quadrature_points |
+                                           update_JxW_values |
+                                           update_gradients);
+
+
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int n_q_points    = quadrature_formula.size();
+  FullMatrix<double> local_matrix_phase_fraction(dofs_per_cell, dofs_per_cell);
+  Vector<double>     local_rhs_phase_fraction(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<double>                  phi_phase(dofs_per_cell);
+
+  system_rhs_phase_fraction    = 0;
+  system_matrix_phase_fraction = 0;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          scratch_data.reinit(cell,
+                              present_solution,
+                              this->previous_solutions,
+                              this->solution_stages);
+
+          fe_values_phase_fraction.reinit(cell);
+
+          local_matrix_phase_fraction = 0;
+          local_rhs_phase_fraction    = 0;
+
+
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              double phase_values = scratch_data.present_phase_values[q];
+
+              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                {
+                  phi_phase[k] = fe_values_phase_fraction.shape_value(k, q);
+                  // grad_phi_vf[k] = fe_values.shape_grad(k, q);
+                }
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  // Matrix assembly
+                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                    {
+                      local_matrix_phase_fraction(i, j) +=
+                        (phi_phase[j] * phi_phase[i]) *
+                        fe_values_phase_fraction.JxW(q);
+                    }
+
+                  if (phase_values <= sharpening_threshold)
+                    local_rhs_phase_fraction(i) +=
+                      std::pow(sharpening_threshold,
+                               (1 - interface_sharpness)) *
+                      std::pow(phase_values, interface_sharpness) *
+                      phi_phase[i] * fe_values_phase_fraction.JxW(q);
+                  else
+                    {
+                      local_rhs_phase_fraction(i) +=
+                        (1 -
+                         std::pow((1 - sharpening_threshold),
+                                  (1 - interface_sharpness)) *
+                           std::pow((1 - phase_values), interface_sharpness)) *
+                        phi_phase[i] * fe_values_phase_fraction.JxW(q);
+                    }
+                }
+            }
+          cell->get_dof_indices(local_dof_indices);
+          nonzero_constraints.distribute_local_to_global(
+            local_matrix_phase_fraction,
+            local_rhs_phase_fraction,
+            local_dof_indices,
+            system_matrix_phase_fraction,
+            system_rhs_phase_fraction);
+        }
+    }
+
+  system_matrix_phase_fraction.compress(VectorOperation::add);
+  system_rhs_phase_fraction.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+VOF<dim>::solve_L2_system_phase_fraction()
+{
+  // TimerOutput::Scope t(this->computing_timer,
+  //                  "solve_linear_system_void_fraction");
+
+  // Solve the L2 projection system
+  const double linear_solver_tolerance = 1e-15;
+
+  if (this->simulation_parameters.interface_sharpening.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  const IndexSet locally_owned_dofs_voidfraction =
+    dof_handler.locally_owned_dofs();
+
+  TrilinosWrappers::MPI::Vector completely_distributed_phase_fraction_solution(
+    locally_owned_dofs_voidfraction, triangulation->get_communicator());
+
+
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
+
+  TrilinosWrappers::SolverCG solver(solver_control);
+
+  //**********************************************
+  // Trillinos Wrapper ILU Preconditioner
+  //*********************************************
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.ilu_precond_rtol;
+
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    ilu_fill, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(system_matrix_phase_fraction,
+                                 preconditionerOptions);
+
+  solver.solve(system_matrix_phase_fraction,
+               completely_distributed_phase_fraction_solution,
+               system_rhs_phase_fraction,
+               *ilu_preconditioner);
+
+  if (this->simulation_parameters.interface_sharpening.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+    }
+
+  nonzero_constraints.distribute(
+    completely_distributed_phase_fraction_solution);
+  present_solution = completely_distributed_phase_fraction_solution;
+}
+
+template <int dim>
+void
+VOF<dim>::assemble_mass_matrix_diagonal(
+  TrilinosWrappers::SparseMatrix &mass_matrix)
+{
+  // Assert(*fe->degree == 1, ExcNotImplemented());
+  // ***** IS THIS CORRECT?? ****
+  QGauss<dim> quadrature_formula(this->cell_quadrature->size());
+
+  FEValues<dim> fe_values(*fe,
+                          quadrature_formula,
+                          update_values | update_JxW_values);
+
+
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int n_qpoints     = quadrature_formula.size();
+  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+          cell_matrix = 0;
+          for (unsigned int q = 0; q < n_qpoints; ++q)
+            for (unsigned int i = 0; i < dofs_per_cell; ++i)
+              cell_matrix(i, i) +=
+                (fe_values.shape_value(i, q) * fe_values.shape_value(i, q) *
+                 fe_values.JxW(q));
+          cell->get_dof_indices(local_dof_indices);
+          nonzero_constraints.distribute_local_to_global(cell_matrix,
+                                                         local_dof_indices,
+                                                         mass_matrix);
+        }
+    }
+}
 
 template class VOF<2>;
 template class VOF<3>;

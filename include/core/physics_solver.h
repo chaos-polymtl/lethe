@@ -69,6 +69,12 @@ public:
                       const bool renewed_matrix = true) = 0;
 
   /**
+   * @brief modify_solution Modifies the solution, in necessary, after each non-linear solution step
+   */
+  virtual void
+  modify_solution() = 0;
+
+  /**
    * @brief solve_non_linear_system Solves the non linear system of equations
    *
    * @param first_iteration Indicates whether it is the first iteration of the non linear solver
