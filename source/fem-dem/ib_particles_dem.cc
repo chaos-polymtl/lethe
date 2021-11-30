@@ -501,11 +501,13 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                     cross_product_3d((particle.radius * particle.omega),
                                      normal);
                   contact_relative_velocity[0] =
-                    particle.velocity[0] + rotational_velocity[0];
+                    particle.velocity[0] - rotational_velocity[0];
                   contact_relative_velocity[1] =
-                    particle.velocity[1] + rotational_velocity[1];
+                    particle.velocity[1] - rotational_velocity[1];
                   contact_relative_velocity[2] =
-                    particle.velocity[2] + rotational_velocity[2];
+                    particle.velocity[2] - rotational_velocity[2];
+
+
                 }
               if (dim == 2)
                 {
@@ -527,6 +529,13 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 contact_info.tangential_overlap +
                 tangential_relative_velocity * dt_dem;
 
+              // Updating the contact_info container based on the new
+              // calculated values
+              contact_history.tangential_overlap =
+                modified_tangential_overlap;
+              contact_history.tangential_relative_velocity =
+                tangential_relative_velocity;
+              pw_contact_map[particle.particle_id][boundary_index]= contact_history;
 
               const double effective_youngs_modulus =
                 (particle.youngs_modulus * wall_youngs_modulus) /
@@ -592,7 +601,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
               // Calculation of tangential force
               Tensor<1, dim> tangential_force =
-                tangential_spring_constant * contact_info.tangential_overlap;
+                tangential_spring_constant * pw_contact_map[particle.particle_id][boundary_index].tangential_overlap;
 
               const double coulomb_threshold =
                 effective_coefficient_of_friction * normal_force.norm();
@@ -606,7 +615,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                     coulomb_threshold *
                     (tangential_force / tangential_force.norm());
 
-                  contact_info.tangential_overlap =
+                  pw_contact_map[particle.particle_id][boundary_index].tangential_overlap =
                     tangential_force / (tangential_spring_constant + DBL_MIN);
                 }
 
@@ -758,6 +767,7 @@ IBParticlesDEM<dim>::particles_dem(double dt)
           current_fluid_force[p_i] =dem_particles[p_i].forces;
           current_fluid_torque[p_i] =dem_particles[p_i].torques;
 
+
           // Explicite Euler
           dem_particles[p_i].velocity =
             dem_particles[p_i].velocity +
@@ -780,6 +790,7 @@ IBParticlesDEM<dim>::particles_dem(double dt)
             dt_dem;
           dem_particles[p_i].contact_impulsion+=(contact_wall_force[p_i]+ contact_force[p_i])*
                                               dt_dem;
+
           dem_particles[p_i].omega_impulsion +=
             (current_fluid_torque[p_i] + contact_torque[p_i] +
              contact_wall_torque[p_i]) *

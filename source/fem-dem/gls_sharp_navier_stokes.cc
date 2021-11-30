@@ -198,6 +198,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     this->simulation_control->get_time_steps_vector();
   // Define a map to all dofs and their support points
   std::map<types::global_dof_index, Point<dim>> support_points;
+
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
@@ -383,7 +384,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                            ++i)
                         {
                           const unsigned int component_i =
-                            this->fe->system_to_component_index(i).first;
+                            this->fe->face_system_to_component_index(i).first;
                           // Check if that dof already have been used to
                           // extrapolate the fluid stress tensor on the IB
                           // surface.
@@ -695,8 +696,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         Utilities::MPI::sum(particles[i].torques, this->mpi_communicator) *
         density;
     }
-  // total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
-  // std::cout << "total area " << total_area << std::endl;
+
+
+   total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
+   this->pcout<< std::setprecision(17);
+   this->pcout << "total area " << total_area << std::endl;
 
 }
 
@@ -1233,7 +1237,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
           particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
 
-          residual_velocity=particles[p].velocity_iter -particles[p].velocity;
           double this_particle_residual=sqrt(residual_velocity.norm()*residual_velocity.norm()+residual_omega.norm()*residual_omega.norm());
 
           if (this->simulation_parameters.non_linear_solver.verbosity !=
@@ -2067,7 +2070,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           sum_line;
                     }
 
-                  if (component_i == dim && this->locally_owned_dofs.is_element(
+                 /* if (component_i == dim && this->locally_owned_dofs.is_element(
                                               global_index_overwrite))
                     {
                       // Applied equation on dof that have no equation
@@ -2133,7 +2136,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               system_rhs(global_index_overwrite) = 0;
                             }
                         }
-                    }
+                    }*/
                 }
             }
         }
@@ -2263,8 +2266,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
   copy_data.cell_is_cut                 = cell_is_cut;
 
-  if (cell_is_cut)
-    return;
+  /*if (cell_is_cut)
+    return;*/
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
@@ -2297,7 +2300,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
-  if (cell_is_inside && this->simulation_parameters.particlesParameters
+  if (cell_is_inside|| cell_is_cut && this->simulation_parameters.particlesParameters
                             ->assemble_navier_stokes_inside == false)
     {
       for (auto &assembler : this->assemblers_inside_ib)
@@ -2354,8 +2357,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
   copy_data.cell_is_cut                 = cell_is_cut;
 
-  if (cell_is_cut)
-    return;
+  /*if (cell_is_cut)
+    return;*/
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
@@ -2390,7 +2393,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
-  if (cell_is_inside && this->simulation_parameters.particlesParameters
+  if (cell_is_inside|| cell_is_cut&& this->simulation_parameters.particlesParameters
                             ->assemble_navier_stokes_inside == false)
     {
       for (auto &assembler : this->assemblers_inside_ib)

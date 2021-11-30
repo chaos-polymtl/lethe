@@ -195,8 +195,6 @@ private:
   virtual void
   assemble_rhs()
   {
-    TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-    // this->simulation_control->set_assembly_method(this->time_stepping_method);
 
     this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
 
