@@ -71,10 +71,9 @@ NavierStokesScratchData<dim>::allocate()
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_VOF(
-  const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+NavierStokesScratchData<dim>::enable_VOF(const FiniteElement<dim> &fe,
+                                         const Quadrature<dim> &   quadrature,
+                                         const Mapping<dim> &      mapping)
 {
   gather_VOF    = true;
   fe_values_VOF = std::make_shared<FEValues<dim>>(

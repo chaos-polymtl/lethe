@@ -36,8 +36,7 @@
  * @ingroup assemblers
  */
 template <int dim>
-class GLSNavierStokesVOFAssemblerCore
-  : public NavierStokesAssemblerBase<dim>
+class GLSNavierStokesVOFAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerCore(
@@ -84,8 +83,7 @@ public:
  */
 
 template <int dim>
-class GLSNavierStokesVOFAssemblerBDF
-  : public NavierStokesAssemblerBase<dim>
+class GLSNavierStokesVOFAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerBDF(

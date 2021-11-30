@@ -45,17 +45,19 @@
 #include <deal.II/numerics/error_estimator.h>
 
 template <int dim>
-class VolumeOfFluid : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class VolumeOfFluid
+  : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   /**
    * @brief VOF - Base constructor.
    */
-  VolumeOfFluid<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
-           const SimulationParameters<dim> &p_simulation_parameters,
-           std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                              p_triangulation,
-           std::shared_ptr<SimulationControl> p_simulation_control)
+  VolumeOfFluid<dim>(
+    MultiphysicsInterface<dim> *     multiphysics_interface,
+    const SimulationParameters<dim> &p_simulation_parameters,
+    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                       p_triangulation,
+    std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
@@ -101,7 +103,9 @@ public:
 
     // Check the value of interface sharpness
     if (simulation_parameters.interface_sharpening.interface_sharpness < 1.0)
-        this->pcout << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it." << std::endl;
+      this->pcout
+        << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it."
+        << std::endl;
   }
 
   /**
@@ -388,9 +392,11 @@ private:
   /**
    * @brief Assemble the system for interface sharpening
    *  * This function assembles the weak form of:
-   *  $$ \Phi = c ^ (1 - \alpha) * (\phi ^ \alpha)                    if 0 <= \phi <= c $$
-   *  $$ \Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha      if c <  \phi <= 1 $$
-   * Reference for sharpening method https://www.sciencedirect.com/science/article/pii/S0045782500002000
+   *  $$ \Phi = c ^ (1 - \alpha) * (\phi ^ \alpha)                    if 0 <=
+   * \phi <= c $$
+   *  $$ \Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha      if c <
+   * \phi <= 1 $$ Reference for sharpening method
+   * https://www.sciencedirect.com/science/article/pii/S0045782500002000
    */
   void
   assemble_L2_projection_phase_fraction(VOFScratchData<dim> &scratch_data);

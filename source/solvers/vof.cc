@@ -490,7 +490,8 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+VolumeOfFluid<dim>::compute_kelly(
+  dealii::Vector<float> &estimated_error_per_cell)
 {
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::phase)
@@ -643,7 +644,8 @@ VolumeOfFluid<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::VOF, &dof_handler);
   multiphysics->set_solution(PhysicsID::VOF, &present_solution);
-  // the fluid at present iteration is solved BEFORE the free surface (see map
+
+  // the fluid at present iteration is solved BEFORE the VOF (see map
   // solve_pre_fluid defined in multiphysics_interface.h), and after percolate
   // is called for the previous iteration.
   // NB: for now, inertia in fluid dynamics is considered with a constant
@@ -663,11 +665,10 @@ template <int dim>
 void
 VolumeOfFluid<dim>::set_initial_conditions()
 {
-  VectorTools::interpolate(
-    *this->fs_mapping,
-    dof_handler,
-    simulation_parameters.initial_condition->VOF,
-    newton_update);
+  VectorTools::interpolate(*this->fs_mapping,
+                           dof_handler,
+                           simulation_parameters.initial_condition->VOF,
+                           newton_update);
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
 
@@ -677,7 +678,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
 template <int dim>
 void
 VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
-                              const bool /*renewed_matrix*/)
+                                        const bool /*renewed_matrix*/)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -756,8 +757,9 @@ VolumeOfFluid<dim>::modify_solution()
       if (simulation_parameters.linear_solver.verbosity ==
           Parameters::Verbosity::verbose)
         {
-      this->pcout << "Sharpening interface at step " << this->simulation_control->get_step_number() << std::endl;
-      }
+          this->pcout << "Sharpening interface at step "
+                      << this->simulation_control->get_step_number() << std::endl;
+      }   
 
       // Limit the phase fractions between 0 and 1
       update_solution_and_constraints();
@@ -923,13 +925,15 @@ VolumeOfFluid<dim>::assemble_L2_projection_phase_fraction(
                         fe_values_phase_fraction.JxW(q);
                     }
 
-                  if (phase_values  >= 0.0 && phase_values <= sharpening_threshold)
+                  if (phase_values >= 0.0 &&
+                      phase_values <= sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
                       std::pow(sharpening_threshold,
                                (1 - interface_sharpness)) *
                       std::pow(phase_values, interface_sharpness) *
                       phi_phase[i] * fe_values_phase_fraction.JxW(q);
-                  else if (phase_values > sharpening_threshold && phase_values <= 1.0)
+                  else if (phase_values > sharpening_threshold &&
+                           phase_values <= 1.0)
                     {
                       local_rhs_phase_fraction(i) +=
                         (1 -

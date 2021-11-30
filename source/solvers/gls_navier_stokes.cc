@@ -476,8 +476,8 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
       const DoFHandler<dim> *dof_handler_fs =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       scratch_data.enable_VOF(dof_handler_fs->get_fe(),
-                                       *this->cell_quadrature,
-                                       *this->mapping);
+                              *this->cell_quadrature,
+                              *this->mapping);
     }
   if (this->simulation_parameters.physical_properties.non_newtonian_flow)
     scratch_data.enable_hessian();
@@ -525,11 +525,10 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
       previous_solutions.push_back(
         *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
-      scratch_data.reinit_VOF(
-        phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
-        previous_solutions,
-        std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_VOF(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   copy_data.reset();
@@ -578,8 +577,8 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
       const DoFHandler<dim> *dof_handler_fs =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       scratch_data.enable_VOF(dof_handler_fs->get_fe(),
-                                       *this->cell_quadrature,
-                                       *this->mapping);
+                              *this->cell_quadrature,
+                              *this->mapping);
     }
 
   if (this->simulation_parameters.multiphysics.buoyancy_force)
@@ -645,11 +644,10 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
 
-      scratch_data.reinit_VOF(
-        phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
-        previous_solutions,
-        std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_VOF(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   if (this->simulation_parameters.multiphysics.buoyancy_force)

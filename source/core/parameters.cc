@@ -304,7 +304,8 @@ namespace Parameters
                         "0.5",
                         Patterns::Double(),
                         "VOF interface sharpening threshold");
-      // This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening.
+      // This parameter must be larger than 1 for interface sharpening. Choosing
+      // values less than 1 leads to interface smoothing instead of sharpening.
       prm.declare_entry("interface sharpness",
                         "2",
                         Patterns::Double(),
@@ -571,7 +572,7 @@ namespace Parameters
       void_fraction_order = prm.get_integer("void fraction order");
       temperature_order   = prm.get_integer("temperature order");
       tracer_order        = prm.get_integer("tracer order");
-      VOF_order  = prm.get_integer("VOF order");
+      VOF_order           = prm.get_integer("VOF order");
       qmapping_all        = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();

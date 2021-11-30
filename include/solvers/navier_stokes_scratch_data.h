@@ -99,7 +99,7 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_VOF          = false;
+    gather_VOF                   = false;
     gather_void_fraction         = false;
     gather_particles_information = false;
     gather_temperature           = false;
@@ -135,8 +135,8 @@ public:
     allocate();
     if (sd.gather_VOF)
       enable_VOF(sd.fe_values_VOF->get_fe(),
-                          sd.fe_values_VOF->get_quadrature(),
-                          sd.fe_values_VOF->get_mapping());
+                 sd.fe_values_VOF->get_quadrature(),
+                 sd.fe_values_VOF->get_mapping());
 
     if (sd.gather_void_fraction)
       enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
@@ -430,8 +430,8 @@ public:
 
   void
   enable_VOF(const FiniteElement<dim> &fe,
-                      const Quadrature<dim> &   quadrature,
-                      const Mapping<dim> &      mapping);
+             const Quadrature<dim> &   quadrature,
+             const Mapping<dim> &      mapping);
 
   /** @brief Reinitialize the content of the scratch for the VOF
    *
@@ -449,24 +449,23 @@ public:
 
   template <typename VectorType>
   void
-  reinit_VOF(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
-    const std::vector<VectorType> & /*solution_stages*/)
+  reinit_VOF(const typename DoFHandler<dim>::active_cell_iterator &cell,
+             const VectorType &             current_solution,
+             const std::vector<VectorType> &previous_solutions,
+             const std::vector<VectorType> & /*solution_stages*/)
   {
     this->fe_values_VOF->reinit(cell);
     // Gather phase fraction (values, gradient)
     this->fe_values_VOF->get_function_values(current_solution,
-                                                      this->phase_values);
-    this->fe_values_VOF->get_function_gradients(
-      current_solution, this->phase_gradient_values);
+                                             this->phase_values);
+    this->fe_values_VOF->get_function_gradients(current_solution,
+                                                this->phase_gradient_values);
 
     // Gather previous phase fraction values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_VOF->get_function_values(
-          previous_solutions[p], previous_phase_values[p]);
+        this->fe_values_VOF->get_function_values(previous_solutions[p],
+                                                 previous_phase_values[p]);
       }
   }
 
