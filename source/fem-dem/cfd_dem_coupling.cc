@@ -12,6 +12,7 @@
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
 
+#include <fstream>
 
 template <int dim>
 bool
@@ -207,6 +208,34 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
 
   dem_time_step =
     this->simulation_control->get_time_step() / coupling_frequency;
+
+  double rayleigh_time_step = 0;
+
+  for (unsigned int i = 0;
+       i < this->cfd_dem_simulation_parameters.dem_parameters
+             .lagrangian_physical_properties.particle_type_number;
+       ++i)
+    rayleigh_time_step = std::max(
+      M_PI_2 *
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties.particle_average_diameter[i] *
+        sqrt(2 *
+             this->cfd_dem_simulation_parameters.dem_parameters
+               .lagrangian_physical_properties.density_particle[i] *
+             (2 + this->cfd_dem_simulation_parameters.dem_parameters
+                    .lagrangian_physical_properties.poisson_ratio_particle[i]) *
+             (1 - this->cfd_dem_simulation_parameters.dem_parameters
+                    .lagrangian_physical_properties.poisson_ratio_particle[i]) /
+             this->cfd_dem_simulation_parameters.dem_parameters
+               .lagrangian_physical_properties.youngs_modulus_particle[i]) /
+        (0.1631 * this->cfd_dem_simulation_parameters.dem_parameters
+                    .lagrangian_physical_properties.poisson_ratio_particle[i] +
+         0.8766),
+      rayleigh_time_step);
+
+  const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
+  this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
+              << "% of Rayleigh time step" << std::endl;
 
   // Necessary signals for load balancing. This signals are only connected if
   // load balancing is enabled. This helps prevent errors in read_dem function
@@ -1288,6 +1317,9 @@ CFDDEMSolver<dim>::solve()
   // Initilize DEM parameters
   initialize_dem_parameters();
 
+  ofstream pressure_file;
+  pressure_file.open("pressure_drop.txt");
+
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
@@ -1323,7 +1355,11 @@ CFDDEMSolver<dim>::solve()
       this->finish_time_step();
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
-        this->post_processing();
+        {
+          this->post_processing();
+          pressure_file << this->simulation_control->get_current_time() << "   "
+                        << this->pressure_drop << std::endl;
+        }
 
       // Load balancing
       // The input argument to this function is set to zero as this integer is
@@ -1341,6 +1377,8 @@ CFDDEMSolver<dim>::solve()
           load_balance();
         }
     }
+
+  pressure_file.close();
   this->finish_simulation();
 }
 

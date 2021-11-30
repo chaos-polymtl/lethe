@@ -847,7 +847,7 @@ GLSVANSSolver<dim>::post_processing()
   double fluid_volume          = 0;
   double bed_volume            = 0;
   double average_void_fraction = 0;
-  double pressure_drop         = 0;
+  pressure_drop                = 0;
 
   Vector<double>      bdf_coefs;
   std::vector<double> time_steps_vector =
@@ -965,19 +965,22 @@ GLSVANSSolver<dim>::post_processing()
 
   QGauss<dim>     cell_quadrature_formula(this->number_quadrature_points);
   QGauss<dim - 1> face_quadrature_formula(this->number_quadrature_points);
-  pressure_drop = calculate_pressure_drop(
-    this->dof_handler,
-    this->mapping,
-    this->evaluation_point,
-    cell_quadrature_formula,
-    face_quadrature_formula,
-    this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
-    this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id);
+  pressure_drop =
+    calculate_pressure_drop(
+      this->dof_handler,
+      this->mapping,
+      this->evaluation_point,
+      cell_quadrature_formula,
+      face_quadrature_formula,
+      this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
+      this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
+    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties
+      .density;
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
   this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
               << std::endl;
-  this->pcout << "Pressure Drop: " << pressure_drop << " m^2.s^-2" << std::endl;
+  this->pcout << "Pressure Drop: " << pressure_drop << " Pa" << std::endl;
 }
 
 template <int dim>

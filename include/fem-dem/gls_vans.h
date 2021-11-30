@@ -242,6 +242,7 @@ protected:
   const bool   PSPG        = true;
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
+  double       pressure_drop;
 
 protected:
   Particles::ParticleHandler<dim, dim> particle_handler;
