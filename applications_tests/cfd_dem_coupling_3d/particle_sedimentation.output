@@ -1,4 +1,5 @@
 Running on 1 MPI rank(s)...
+DEM time-step is 3.283542846% of Rayleigh time step
 Reading DEM checkpoint 
 Finished reading DEM checkpoint 
 1 particles are in the simulation 
