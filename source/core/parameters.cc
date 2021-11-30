@@ -304,6 +304,7 @@ namespace Parameters
                         "0.5",
                         Patterns::Double(),
                         "VOF interface sharpening threshold");
+      // This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening.
       prm.declare_entry("interface sharpness",
                         "2",
                         Patterns::Double(),

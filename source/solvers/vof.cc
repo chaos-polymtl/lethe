@@ -777,7 +777,10 @@ VolumeOfFluid<dim>::modify_solution()
       // Solve the system for interface sharpening
       solve_L2_system_phase_fraction();
 
-      // Handle wetting/peeling of the interface
+     // Re limit the phase fractions between 0 and 1 after interface sharpening
+      update_solution_and_constraints();
+
+       // Handle wetting/peeling of the interface
 
     }
 }

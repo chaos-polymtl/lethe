@@ -387,7 +387,10 @@ private:
 
   /**
    * @brief Assemble the system for interface sharpening
-   * ***** ADD WEAK FORM AND REFERENCE HERE ******
+   *  * This function assembles the weak form of:
+   *  $$ \Phi = c ^ (1 - \alpha) * (\phi ^ \alpha)                    if 0 <= \phi <= c $$
+   *  $$ \Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha      if c <  \phi <= 1 $$
+   * Reference for sharpening method https://www.sciencedirect.com/science/article/pii/S0045782500002000
    */
   void
   assemble_L2_projection_phase_fraction(VOFScratchData<dim> &scratch_data);
