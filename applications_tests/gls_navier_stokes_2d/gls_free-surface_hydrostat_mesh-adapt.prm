@@ -7,7 +7,7 @@ subsection simulation control
   set method                  = bdf1
   set time end                = 0.1
   set time step               = 0.02
-  set output name             = hydrostat_free_surface
+  set output name             = hydrostat_VOF
   set output frequency        = 1
 end
 
@@ -15,7 +15,7 @@ end
 # Multiphysics
 #---------------------------------------------------
 subsection multiphysics
-	set free surface = true
+	set VOF = true
 end
 
 #---------------------------------------------------
@@ -26,7 +26,7 @@ subsection initial conditions
     subsection uvwp
             set Function expression = 0; 0; 0
     end
-    subsection free surface
+    subsection VOF
             set Function expression = if (y<0.4, 1, 0)
     end
 end

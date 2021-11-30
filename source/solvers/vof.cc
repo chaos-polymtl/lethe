@@ -26,7 +26,7 @@
 
 template <int dim>
 void
-VOF<dim>::assemble_matrix_and_rhs()
+VolumeOfFluid<dim>::assemble_matrix_and_rhs()
 {
   assemble_system_matrix();
   assemble_system_rhs();
@@ -35,14 +35,14 @@ VOF<dim>::assemble_matrix_and_rhs()
 
 template <int dim>
 void
-VOF<dim>::assemble_rhs()
+VolumeOfFluid<dim>::assemble_rhs()
 {
   assemble_system_rhs();
 }
 
 template <int dim>
 void
-VOF<dim>::setup_assemblers()
+VolumeOfFluid<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
@@ -64,7 +64,7 @@ VOF<dim>::setup_assemblers()
 
 template <int dim>
 void
-VOF<dim>::assemble_system_matrix()
+VolumeOfFluid<dim>::assemble_system_matrix()
 {
   this->system_matrix = 0;
   setup_assemblers();
@@ -80,8 +80,8 @@ VOF<dim>::assemble_system_matrix()
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
                   *this,
-                  &VOF::assemble_local_system_matrix,
-                  &VOF::copy_local_matrix_to_global_matrix,
+                  &VolumeOfFluid::assemble_local_system_matrix,
+                  &VolumeOfFluid::copy_local_matrix_to_global_matrix,
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
@@ -91,7 +91,7 @@ VOF<dim>::assemble_system_matrix()
 
 template <int dim>
 void
-VOF<dim>::assemble_local_system_matrix(
+VolumeOfFluid<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   VOFScratchData<dim> &                                 scratch_data,
   StabilizedMethodsCopyData &                           copy_data)
@@ -135,7 +135,7 @@ VOF<dim>::assemble_local_system_matrix(
 
 template <int dim>
 void
-VOF<dim>::copy_local_matrix_to_global_matrix(
+VolumeOfFluid<dim>::copy_local_matrix_to_global_matrix(
   const StabilizedMethodsCopyData &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -150,7 +150,7 @@ VOF<dim>::copy_local_matrix_to_global_matrix(
 
 template <int dim>
 void
-VOF<dim>::assemble_system_rhs()
+VolumeOfFluid<dim>::assemble_system_rhs()
 {
   // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
   this->system_rhs = 0;
@@ -167,8 +167,8 @@ VOF<dim>::assemble_system_rhs()
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
                   *this,
-                  &VOF::assemble_local_system_rhs,
-                  &VOF::copy_local_rhs_to_global_rhs,
+                  &VolumeOfFluid::assemble_local_system_rhs,
+                  &VolumeOfFluid::copy_local_rhs_to_global_rhs,
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
@@ -178,7 +178,7 @@ VOF<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-VOF<dim>::assemble_local_system_rhs(
+VolumeOfFluid<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   VOFScratchData<dim> &                                 scratch_data,
   StabilizedMethodsCopyData &                           copy_data)
@@ -222,7 +222,7 @@ VOF<dim>::assemble_local_system_rhs(
 
 template <int dim>
 void
-VOF<dim>::copy_local_rhs_to_global_rhs(
+VolumeOfFluid<dim>::copy_local_rhs_to_global_rhs(
   const StabilizedMethodsCopyData &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -238,14 +238,14 @@ VOF<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 void
-VOF<dim>::attach_solution_to_output(DataOut<dim> &data_out)
+VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "phase");
 }
 
 template <int dim>
 double
-VOF<dim>::calculate_L2_error()
+VolumeOfFluid<dim>::calculate_L2_error()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -297,7 +297,7 @@ VOF<dim>::calculate_L2_error()
 
 template <int dim>
 double
-VOF<dim>::calculate_volume(int fluid_index)
+VolumeOfFluid<dim>::calculate_volume(int fluid_index)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -345,7 +345,7 @@ VOF<dim>::calculate_volume(int fluid_index)
 
 template <int dim>
 void
-VOF<dim>::finish_simulation()
+VolumeOfFluid<dim>::finish_simulation()
 {
   auto         mpi_communicator = triangulation->get_communicator();
   unsigned int this_mpi_process(
@@ -370,7 +370,7 @@ VOF<dim>::finish_simulation()
 
 template <int dim>
 void
-VOF<dim>::percolate_time_vectors()
+VolumeOfFluid<dim>::percolate_time_vectors()
 {
   for (unsigned int i = previous_solutions.size() - 1; i > 0; --i)
     {
@@ -381,29 +381,14 @@ VOF<dim>::percolate_time_vectors()
 
 template <int dim>
 void
-VOF<dim>::finish_time_step()
+VolumeOfFluid<dim>::finish_time_step()
 {
   percolate_time_vectors();
 }
 
 template <int dim>
 void
-VOF<dim>::modify_solution()
-{
-  if (simulation_parameters.linear_solver.verbosity ==
-      Parameters::Verbosity::verbose)
-    {
-      this->pcout << std::endl
-                  << "Modification of the VOF solution" << std::endl;
-    }
-  // Sharpen interface
-
-  // Handle wetting/peeling of the interface
-}
-
-template <int dim>
-void
-VOF<dim>::postprocess(bool first_iteration)
+VolumeOfFluid<dim>::postprocess(bool first_iteration)
 {
   if (simulation_parameters.analytical_solution->calculate_error() &&
       !first_iteration)
@@ -463,7 +448,7 @@ VOF<dim>::postprocess(bool first_iteration)
 
 template <int dim>
 void
-VOF<dim>::pre_mesh_adaptation()
+VolumeOfFluid<dim>::pre_mesh_adaptation()
 {
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
@@ -476,7 +461,7 @@ VOF<dim>::pre_mesh_adaptation()
 
 template <int dim>
 void
-VOF<dim>::post_mesh_adaptation()
+VolumeOfFluid<dim>::post_mesh_adaptation()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -505,7 +490,7 @@ VOF<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-VOF<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+VolumeOfFluid<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
 {
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::phase)
@@ -525,7 +510,7 @@ VOF<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
 
 template <int dim>
 void
-VOF<dim>::write_checkpoint()
+VolumeOfFluid<dim>::write_checkpoint()
 {
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
 
@@ -539,7 +524,7 @@ VOF<dim>::write_checkpoint()
 
 template <int dim>
 void
-VOF<dim>::read_checkpoint()
+VolumeOfFluid<dim>::read_checkpoint()
 {
   auto mpi_communicator = triangulation->get_communicator();
   this->pcout << "Reading VOF checkpoint" << std::endl;
@@ -572,7 +557,7 @@ VOF<dim>::read_checkpoint()
 
 template <int dim>
 void
-VOF<dim>::setup_dofs()
+VolumeOfFluid<dim>::setup_dofs()
 {
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
@@ -676,7 +661,7 @@ VOF<dim>::setup_dofs()
 
 template <int dim>
 void
-VOF<dim>::set_initial_conditions()
+VolumeOfFluid<dim>::set_initial_conditions()
 {
   VectorTools::interpolate(
     *this->fs_mapping,
@@ -691,7 +676,7 @@ VOF<dim>::set_initial_conditions()
 
 template <int dim>
 void
-VOF<dim>::solve_linear_system(const bool initial_step,
+VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
                               const bool /*renewed_matrix*/)
 {
   auto mpi_communicator = triangulation->get_communicator();
@@ -761,15 +746,19 @@ VOF<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-VOF<dim>::modify_solution()
-{
-    this->pcout << "Sharpening interface at step " << this->simulation_control->get_step_number() << std::endl;
-
+VolumeOfFluid<dim>::modify_solution()
+{      
   // Interface sharpening is done at a constant frequency
   if (this->simulation_control->get_step_number() %
         this->simulation_parameters.interface_sharpening.sharpening_frequency ==
       0)
     {
+      if (simulation_parameters.linear_solver.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+      this->pcout << "Sharpening interface at step " << this->simulation_control->get_step_number() << std::endl;
+      }
+
       // Limit the phase fractions between 0 and 1
       update_solution_and_constraints();
 
@@ -788,12 +777,14 @@ VOF<dim>::modify_solution()
       // Solve the system for interface sharpening
       solve_L2_system_phase_fraction();
 
+      // Handle wetting/peeling of the interface
+
     }
 }
 
 template <int dim>
 void
-VOF<dim>::update_solution_and_constraints()
+VolumeOfFluid<dim>::update_solution_and_constraints()
 {
   const double penalty_parameter = 100;
 
@@ -861,7 +852,7 @@ VOF<dim>::update_solution_and_constraints()
 
 template <int dim>
 void
-VOF<dim>::assemble_L2_projection_phase_fraction(
+VolumeOfFluid<dim>::assemble_L2_projection_phase_fraction(
   VOFScratchData<dim> &scratch_data)
 {
   const double sharpening_threshold =
@@ -962,7 +953,7 @@ VOF<dim>::assemble_L2_projection_phase_fraction(
 
 template <int dim>
 void
-VOF<dim>::solve_L2_system_phase_fraction()
+VolumeOfFluid<dim>::solve_L2_system_phase_fraction()
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
@@ -1026,7 +1017,7 @@ VOF<dim>::solve_L2_system_phase_fraction()
 
 template <int dim>
 void
-VOF<dim>::assemble_mass_matrix_diagonal(
+VolumeOfFluid<dim>::assemble_mass_matrix_diagonal(
   TrilinosWrappers::SparseMatrix &mass_matrix)
 {
   QGauss<dim> quadrature_formula(this->cell_quadrature->size());
@@ -1059,5 +1050,5 @@ VOF<dim>::assemble_mass_matrix_diagonal(
     }
 }
 
-template class VOF<2>;
-template class VOF<3>;
+template class VolumeOfFluid<2>;
+template class VolumeOfFluid<3>;

@@ -33,7 +33,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   if (multiphysics_parameters.VOF)
     {
       active_physics.push_back(PhysicsID::VOF);
-      physics[PhysicsID::VOF] = std::make_shared<VOF<dim>>(
+      physics[PhysicsID::VOF] = std::make_shared<VolumeOfFluid<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
 }

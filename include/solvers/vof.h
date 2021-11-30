@@ -45,13 +45,13 @@
 #include <deal.II/numerics/error_estimator.h>
 
 template <int dim>
-class VOF : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class VolumeOfFluid : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   /**
    * @brief VOF - Base constructor.
    */
-  VOF<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
+  VolumeOfFluid<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
            const SimulationParameters<dim> &p_simulation_parameters,
            std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                               p_triangulation,
@@ -108,7 +108,7 @@ public:
    * @brief VOF - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  ~VOF()
+  ~VolumeOfFluid()
   {}
 
 
