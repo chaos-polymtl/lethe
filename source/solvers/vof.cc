@@ -763,6 +763,8 @@ template <int dim>
 void
 VOF<dim>::modify_solution()
 {
+    this->pcout << "Sharpening interface at step " << this->simulation_control->get_step_number() << std::endl;
+
   // Interface sharpening is done at a constant frequency
   if (this->simulation_control->get_step_number() %
         this->simulation_parameters.interface_sharpening.sharpening_frequency ==
