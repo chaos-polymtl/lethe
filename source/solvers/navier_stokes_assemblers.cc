@@ -307,7 +307,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Calculate the shear rate magnitude
       const double shear_rate_magnitude =
         rheological_model->get_shear_rate_magnitude(shear_rate);
-        
+
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
         rheological_model->get_viscosity(shear_rate_magnitude);
@@ -318,7 +318,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
                                      velocity_hessian,
                                      shear_rate_magnitude,
                                      non_newtonian_viscosity,
-                                     1e-6); 
+                                     1e-6);
 
       // Forcing term
       const Tensor<1, dim> force       = scratch_data.force[q];
@@ -351,7 +351,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
                              force + mass_source * velocity +
                              strong_residual_vec[q];
 
-      // The viscosity gradient is not defined when the shear_rate_magnitude is zero
+      // The viscosity gradient is not defined when the shear_rate_magnitude is
+      // zero
       if (shear_rate_magnitude != 0)
         strong_residual -= shear_rate * viscosity_gradient;
 
@@ -370,15 +371,16 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
           const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
           const auto &grad_phi_u_j_non_newtonian =
-                grad_phi_u_j + transpose(grad_phi_u_j);
+            grad_phi_u_j + transpose(grad_phi_u_j);
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
              grad_phi_p_j - non_newtonian_viscosity * laplacian_phi_u_j +
              mass_source * phi_u_j);
-          
+
           if (shear_rate_magnitude != 0)
-            strong_jacobian_vec[q][j] -= grad_phi_u_j_non_newtonian * viscosity_gradient;
+            strong_jacobian_vec[q][j] -=
+              grad_phi_u_j_non_newtonian * viscosity_gradient;
 
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
@@ -411,7 +413,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
               const auto &phi_p_j = scratch_data.phi_p[q][j];
 
-              const auto & strong_jac = strong_jacobian_vec[q][j];
+              const auto &strong_jac = strong_jacobian_vec[q][j];
 
               double local_matrix_ij =
                 non_newtonian_viscosity *
