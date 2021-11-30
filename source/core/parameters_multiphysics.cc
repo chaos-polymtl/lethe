@@ -25,10 +25,10 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "Passive tracer calculation <true|false>");
 
-    prm.declare_entry("free surface",
+    prm.declare_entry("VOF",
                       "false",
                       Patterns::Bool(),
-                      "Free surface calculation <true|false>");
+                      "VOF calculation <true|false>");
 
     prm.declare_entry("interface sharpening",
                       "false",
@@ -70,7 +70,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     fluid_dynamics       = prm.get_bool("fluid dynamics");
     heat_transfer        = prm.get_bool("heat transfer");
     tracer               = prm.get_bool("tracer");
-    free_surface         = prm.get_bool("free surface");
+    VOF         = prm.get_bool("VOF");
     interface_sharpening = prm.get_bool("interface sharpening");
     buoyancy_force       = prm.get_bool("buoyancy force");
 

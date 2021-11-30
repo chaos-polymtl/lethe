@@ -456,8 +456,8 @@ namespace Parameters
     // Interpolation order tracer
     unsigned int tracer_order;
 
-    // Interpolation order free surface vof model
-    unsigned int free_surface_order;
+    // Interpolation order vof model
+    unsigned int VOF_order;
 
     // Apply high order mapping everywhere
     bool qmapping_all;

@@ -129,7 +129,7 @@ calculate_point_property(const double phase,
 
   // Limit parameters value (patch)
   // TODO see if necessary after compression term is added in the
-  // free_surface advection equation
+  // VOF advection equation
   const double property_min = std::min(property0, property1);
   const double property_max = std::max(property0, property1);
   if (property_eq < property_min)

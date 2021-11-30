@@ -2103,19 +2103,19 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
           this->simulation_parameters.physical_properties,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesFreeSurfaceAssemblerBDF<dim>>(
+            std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control,
               this->simulation_parameters.physical_properties));
         }
       // Core assembler
       this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
+        std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
           this->simulation_control,
           this->simulation_parameters.physical_properties));
     }
@@ -2188,10 +2188,10 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->solution_stages,
                       this->forcing_function,
                       this->beta);
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
@@ -2200,11 +2200,11 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
-      scratch_data.reinit_free_surface(
+      scratch_data.reinit_VOF(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::free_surface),
+        *this->multiphysics->get_solution(PhysicsID::VOF),
         previous_solutions,
         std::vector<TrilinosWrappers::MPI::Vector>());
     }
@@ -2281,10 +2281,10 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
                       this->forcing_function,
                       this->beta);
 
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
@@ -2293,12 +2293,12 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
 
-      scratch_data.reinit_free_surface(
+      scratch_data.reinit_VOF(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::free_surface),
+        *this->multiphysics->get_solution(PhysicsID::VOF),
         previous_solutions,
         std::vector<TrilinosWrappers::MPI::Vector>());
     }

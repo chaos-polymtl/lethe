@@ -30,10 +30,10 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
       physics[PhysicsID::tracer] = std::make_shared<Tracer<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
-  if (multiphysics_parameters.free_surface)
+  if (multiphysics_parameters.VOF)
     {
-      active_physics.push_back(PhysicsID::free_surface);
-      physics[PhysicsID::free_surface] = std::make_shared<VOF<dim>>(
+      active_physics.push_back(PhysicsID::VOF);
+      physics[PhysicsID::VOF] = std::make_shared<VOF<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
 }

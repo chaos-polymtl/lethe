@@ -548,7 +548,7 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
-      prm.declare_entry("free surface order",
+      prm.declare_entry("VOF order",
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
@@ -570,7 +570,7 @@ namespace Parameters
       void_fraction_order = prm.get_integer("void fraction order");
       temperature_order   = prm.get_integer("temperature order");
       tracer_order        = prm.get_integer("tracer order");
-      free_surface_order  = prm.get_integer("free surface order");
+      VOF_order  = prm.get_integer("VOF order");
       qmapping_all        = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();

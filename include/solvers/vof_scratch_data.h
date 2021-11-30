@@ -130,7 +130,7 @@ public:
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the fe which is used to fill the FeValues
    *
-   * @param current_solution The present value of the solution for the free surface
+   * @param current_solution The present value of the solution for the VOF
    *
    * @param previous_solutions The solutions at the previous time steps
    *
@@ -217,7 +217,7 @@ public:
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;
 
-  // Free surface values
+  // VOF values
   std::vector<double>              present_phase_values;
   std::vector<Tensor<1, dim>>      phase_gradients;
   std::vector<double>              phase_laplacians;

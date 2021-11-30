@@ -542,7 +542,7 @@ void
 VOF<dim>::read_checkpoint()
 {
   auto mpi_communicator = triangulation->get_communicator();
-  this->pcout << "Reading free surface checkpoint" << std::endl;
+  this->pcout << "Reading VOF checkpoint" << std::endl;
 
   std::vector<TrilinosWrappers::MPI::Vector *> input_vectors(
     1 + previous_solutions.size());
@@ -654,16 +654,16 @@ VOF<dim>::setup_dofs()
   this->pcout << "   Number of VOF degrees of freedom: " << dof_handler.n_dofs()
               << std::endl;
 
-  // Provide the free surface dof_handler and solution pointers to the
+  // Provide the VOF dof_handler and solution pointers to the
   // multiphysics interface
-  multiphysics->set_dof_handler(PhysicsID::free_surface, &dof_handler);
-  multiphysics->set_solution(PhysicsID::free_surface, &present_solution);
+  multiphysics->set_dof_handler(PhysicsID::VOF, &dof_handler);
+  multiphysics->set_solution(PhysicsID::VOF, &present_solution);
   // the fluid at present iteration is solved BEFORE the free surface (see map
   // solve_pre_fluid defined in multiphysics_interface.h), and after percolate
   // is called for the previous iteration.
   // NB: for now, inertia in fluid dynamics is considered with a constant
   // density (see if needed / to be debugged)
-  multiphysics->set_solution_m1(PhysicsID::free_surface,
+  multiphysics->set_solution_m1(PhysicsID::VOF,
                                 &previous_solutions[0]);
 
   mass_matrix.reinit(locally_owned_dofs,
@@ -681,7 +681,7 @@ VOF<dim>::set_initial_conditions()
   VectorTools::interpolate(
     *this->fs_mapping,
     dof_handler,
-    simulation_parameters.initial_condition->free_surface,
+    simulation_parameters.initial_condition->VOF,
     newton_update);
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
@@ -749,7 +749,7 @@ VOF<dim>::solve_linear_system(const bool initial_step,
   if (simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  Free Surface : " << std::endl
+      this->pcout << "  VOF : " << std::endl
                   << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
     }

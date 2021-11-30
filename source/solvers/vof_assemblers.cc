@@ -55,8 +55,8 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       // convection-diffusion-reaction equations. Computer methods in
       // applied mechanics and engineering, 59(3), 307-325.
 
-      // Gather the order of the free surface interpolation
-      const double order = this->fem_parameters.free_surface_order;
+      // Gather the order of the VOF interpolation
+      const double order = this->fem_parameters.VOF_order;
 
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
