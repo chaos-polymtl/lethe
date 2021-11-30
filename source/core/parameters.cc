@@ -305,7 +305,7 @@ namespace Parameters
                         Patterns::Double(),
                         "VOF interface sharpening threshold");
       prm.declare_entry("interface sharpness",
-                        "0.5",
+                        "2",
                         Patterns::Double(),
                         "VOF interface sharpness");
       prm.declare_entry("sharpening frequency",

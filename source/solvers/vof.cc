@@ -785,6 +785,7 @@ VOF<dim>::modify_solution()
 
       // Solve the system for interface sharpening
       solve_L2_system_phase_fraction();
+
     }
 }
 
@@ -804,8 +805,7 @@ VOF<dim>::update_solution_and_constraints()
 
   nonzero_constraints.clear();
   active_set.clear();
-  // ***** ?? Should I create a new DOF or use dof_handler?, the same for
-  // locally_owned_dofs and locally_owned_dofs_voidfraction
+
   std::vector<bool> dof_touched(dof_handler.n_dofs(), false);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -867,16 +867,12 @@ VOF<dim>::assemble_L2_projection_phase_fraction(
   const double interface_sharpness =
     this->simulation_parameters.interface_sharpening.interface_sharpness;
 
-  // ***** IS THIS CORRECT?? ****
   QGauss<dim> quadrature_formula(
     this->simulation_parameters.fem_parameters.velocity_order + 1);
 
   const MappingQ<dim> mapping(
     1, simulation_parameters.fem_parameters.qmapping_all);
-  // const MappingQ<dim> mapping(1,
-  //                             this->simulation_parameters
-  //                              .fem_parameters.qmapping_all);
-  //
+
   FEValues<dim> fe_values_phase_fraction(mapping,
                                          *this->fe,
                                          quadrature_formula,
@@ -884,6 +880,7 @@ VOF<dim>::assemble_L2_projection_phase_fraction(
                                            update_quadrature_points |
                                            update_JxW_values |
                                            update_gradients);
+
 
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
@@ -930,13 +927,13 @@ VOF<dim>::assemble_L2_projection_phase_fraction(
                         fe_values_phase_fraction.JxW(q);
                     }
 
-                  if (phase_values <= sharpening_threshold)
+                  if (phase_values  >= 0.0 && phase_values <= sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
                       std::pow(sharpening_threshold,
                                (1 - interface_sharpness)) *
                       std::pow(phase_values, interface_sharpness) *
                       phi_phase[i] * fe_values_phase_fraction.JxW(q);
-                  else
+                  else if (phase_values > sharpening_threshold && phase_values <= 1.0)
                     {
                       local_rhs_phase_fraction(i) +=
                         (1 -
@@ -965,9 +962,6 @@ template <int dim>
 void
 VOF<dim>::solve_L2_system_phase_fraction()
 {
-  // TimerOutput::Scope t(this->computing_timer,
-  //                  "solve_linear_system_void_fraction");
-
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
 
@@ -1033,8 +1027,6 @@ void
 VOF<dim>::assemble_mass_matrix_diagonal(
   TrilinosWrappers::SparseMatrix &mass_matrix)
 {
-  // Assert(*fe->degree == 1, ExcNotImplemented());
-  // ***** IS THIS CORRECT?? ****
   QGauss<dim> quadrature_formula(this->cell_quadrature->size());
 
   FEValues<dim> fe_values(*fe,
