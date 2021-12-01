@@ -66,9 +66,12 @@ public:
 
   void
   L2_project();
+  void
+  test();
 
 
 private:
+
   void
   setup_system();
   void
@@ -88,67 +91,21 @@ private:
     unsigned int                                   level,
     std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
 
+  std::vector<double>
+  solve(std::vector<std::vector<double> > vertex_count, Tensor<1, dim> experimental_count);
 
-  std::vector<typename DoFHandler<dim>::cell_iterator>
-  find_cells_in_coarse_level();
-  std::vector<typename DoFHandler<dim>::cell_iterator>
-  find_cells_in_fine_level(
-    unsigned int                                         level,
-    std::vector<typename DoFHandler<dim>::cell_iterator> parent_cell_indexes);
-  double
-  Calculate_Jacobian_1();
-  double
-  Calculate_Jacobian_2();
-  double
-  Calculate_Jacobian_3();
+  Tensor<2, dim>
+  assemble_jacobian_for_Newton_method(std::vector<std::vector<double>> vertex_count, Tensor<1, dim>experimental_count, Tensor<1, dim> natural_coordinate);
 
-  double
-  Calculate_Jacobian_4();
+  Tensor<1, dim>
+  assemble_rhs(std::vector<std::vector<double>> vertex_count, Tensor<1, dim>experimental_count, Tensor<1, dim> natural_coordinate);
 
-  double
-  Calculate_Jacobian_5();
+  //Tensor<2, dim>                   jacobian_matrix;
+  //Tensor<1, dim>                   rhs_matrix;
+  //Tensor<1, dim>                   vertex_count;
+  //Tensor<1, dim>                   experimental_count;
+  //std::vector<std::vector<double>> c;
 
-  double
-  Calculate_Jacobian_6();
-
-  double
-  Calculate_Jacobian_7();
-
-  double
-  Calculate_Jacobian_8();
-
-  double
-  Calculate_Jacobian_9();
-  void
-  solve();
-  double
-  f1();
-
-  double
-  f2();
-
-  double
-  f3();
-
-  void
-  assemble_jacobian_for_Newton_method();
-
-  void
-  assemble_rhs();
-
-  void
-  find_unknown_position();
-
-  std::vector<typename DoFHandler<dim>::cell_iterator>
-  find_cells(
-    unsigned int                                         level,
-    std::vector<typename DoFHandler<dim>::cell_iterator> parent_cell_indexes);
-
-  Tensor<2, dim>                   jacobian_matrix;
-  Tensor<1, dim>                   rhs_matrix;
-  Tensor<1, dim>                   unknown;
-  Tensor<1, dim>                   experimental_count;
-  std::vector<std::vector<double>> c;
 
 
 
