@@ -187,6 +187,17 @@ private:
   void
   read_checkpoint() override;
 
+  void
+  print_particles_summary();
+
+  /**
+   * @brief postprocess
+   * Post-process fluid dynamics after an iteration
+   */
+  void
+  postprocess_fd(bool first_iteration) override;
+
+
   unsigned int                coupling_frequency;
   bool                        contact_detection_step;
   bool                        checkpoint_step;
