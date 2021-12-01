@@ -760,24 +760,23 @@ VolumeOfFluid<dim>::modify_solution()
           this->pcout << "Sharpening interface at step "
                       << this->simulation_control->get_step_number() << std::endl;
       }   
+          // Limit the phase fractions between 0 and 1
+          update_solution_and_constraints();
 
-      // Limit the phase fractions between 0 and 1
-      update_solution_and_constraints();
 
+          const DoFHandler<dim> *dof_handler_fluid =
+            multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-      const DoFHandler<dim> *dof_handler_fluid =
-        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+          auto scratch_data = VOFScratchData<dim>(*this->fe,
+                                                  *this->cell_quadrature,
+                                                  *this->fs_mapping,
+                                                  dof_handler_fluid->get_fe());
 
-      auto scratch_data = VOFScratchData<dim>(*this->fe,
-                                              *this->cell_quadrature,
-                                              *this->fs_mapping,
-                                              dof_handler_fluid->get_fe());
+          // Assemble the system for interface sharpening
+          assemble_L2_projection_phase_fraction(scratch_data);
 
-      // Assemble the system for interface sharpening
-      assemble_L2_projection_phase_fraction(scratch_data);
-
-      // Solve the system for interface sharpening
-      solve_L2_system_phase_fraction();
+          // Solve the system for interface sharpening
+          solve_L2_system_phase_fraction();
 
      // Re limit the phase fractions between 0 and 1 after interface sharpening
       update_solution_and_constraints();
@@ -913,7 +912,6 @@ VolumeOfFluid<dim>::assemble_L2_projection_phase_fraction(
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
                   phi_phase[k] = fe_values_phase_fraction.shape_value(k, q);
-                  // grad_phi_vf[k] = fe_values.shape_grad(k, q);
                 }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
