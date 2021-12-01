@@ -1067,12 +1067,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       load_balance_step = false;
     }
 
-  // Visualization
-  if (this->simulation_control->is_output_iteration())
-    {
-      write_DEM_output_results();
-    }
-
   // TODO add DEM post-processing
 }
 
@@ -1222,6 +1216,47 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 }
 
 
+
+template <int dim>
+void
+CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
+{
+  this->GLSNavierStokesSolver<dim>::postprocess_fd(first_iteration);
+
+  // Visualization
+  if (this->simulation_control->is_output_iteration())
+    {
+      write_DEM_output_results();
+    }
+}
+
+template <int dim>
+void
+CFDDEMSolver<dim>::print_particles_summary()
+{
+  // Write particle Velocity
+  for (auto &particle : this->particle_handler)
+    {
+      auto particle_properties = particle.get_properties();
+      this->pcout
+        << "Particle Summary"
+        << "\n"
+        << "--------------------------------------------------------------------------"
+        << "--------------------------------------------------------------------------"
+        << "\n"
+        << "id: " << particle.get_id() << ",  "
+        << "x: " << particle.get_location()[0] << ",  "
+        << "y: " << particle.get_location()[1] << ",  "
+        << "z: " << particle.get_location()[2] << ",  "
+        << "v_x: " << particle_properties[DEM::PropertiesIndex::v_x] << ",  "
+        << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y] << ",  "
+        << "vz: " << particle_properties[DEM::PropertiesIndex::v_z] << "\n"
+        << "--------------------------------------------------------------------------"
+        << "--------------------------------------------------------------------------"
+        << std::endl;
+    }
+}
+
 template <int dim>
 void
 CFDDEMSolver<dim>::solve()
@@ -1256,103 +1291,33 @@ CFDDEMSolver<dim>::solve()
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
-      if (this->simulation_control->is_at_start())
-        {
-          this->iterate();
-
-          if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
-            { // Write particle Velocity
-              for (auto &particle : this->particle_handler)
-                {
-                  auto particle_properties = particle.get_properties();
-                  this->pcout
-                    << "Particle Summary"
-                    << "\n"
-                    << "--------------------------------------------------------------------------"
-                    << "--------------------------------------------------------------------------"
-                    << "\n"
-                    << "id: " << particle.get_id() << ",  "
-                    << "x: " << particle.get_location()[0] << ",  "
-                    << "y: " << particle.get_location()[1] << ",  "
-                    << "z: " << particle.get_location()[2] << ",  "
-                    << "v_x: " << particle_properties[DEM::PropertiesIndex::v_x]
-                    << ",  "
-                    << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y]
-                    << ",  "
-                    << "vz: " << particle_properties[DEM::PropertiesIndex::v_z]
-                    << "\n"
-                    << "--------------------------------------------------------------------------"
-                    << "--------------------------------------------------------------------------"
-                    << std::endl;
-                }
-            }
-
-          this->pcout << "Starting DEM iterations at step "
-                      << this->simulation_control->get_step_number()
-                      << std::endl;
-          for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
-               ++dem_counter)
-            {
-              TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
-              // dem_iterator carries out the particle-particle and
-              // particle_wall force calculations, integration and
-              // update_ghost
-              dem_iterator(dem_counter);
-            }
-
-          this->pcout << "Finished " << coupling_frequency << " DEM iterations "
-                      << std::endl;
-        }
-      else
+      if (!this->simulation_control->is_at_start())
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          this->iterate();
-
-          if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
-            {
-              // Write particle Velocity
-              for (auto &particle : this->particle_handler)
-                {
-                  auto particle_properties = particle.get_properties();
-                  this->pcout
-                    << "Particle Summary"
-                    << "\n"
-                    << "--------------------------------------------------------------------------"
-                    << "--------------------------------------------------------------------------"
-                    << "\n"
-                    << "id: " << particle.get_id() << ",  "
-                    << "x: " << particle.get_location()[0] << ",  "
-                    << "y: " << particle.get_location()[1] << ",  "
-                    << "z: " << particle.get_location()[2] << ",  "
-                    << "v_x: " << particle_properties[DEM::PropertiesIndex::v_x]
-                    << ",  "
-                    << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y]
-                    << ",  "
-                    << "vz: " << particle_properties[DEM::PropertiesIndex::v_z]
-                    << "\n"
-                    << "--------------------------------------------------------------------------"
-                    << "--------------------------------------------------------------------------"
-                    << std::endl;
-                }
-            }
-
-          this->pcout << "Starting DEM iterations at step "
-                      << this->simulation_control->get_step_number()
-                      << std::endl;
-
-          for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
-               ++dem_counter)
-            {
-              TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
-              // dem_iterator carries out the particle-particle and
-              // particle_wall force calculations, integration and
-              // update_ghost
-              dem_iterator(dem_counter);
-            }
-          this->pcout << "Finished " << coupling_frequency << " DEM iterations "
-                      << std::endl;
         }
+
+      this->iterate();
+
+      if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
+        {
+          print_particles_summary();
+        }
+
+      this->pcout << "Starting DEM iterations at step "
+                  << this->simulation_control->get_step_number() << std::endl;
+
+      for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
+           ++dem_counter)
+        {
+          TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
+          // dem_iterator carries out the particle-particle and
+          // particle_wall force calculations, integration and
+          // update_ghost
+          dem_iterator(dem_counter);
+        }
+      this->pcout << "Finished " << coupling_frequency << " DEM iterations "
+                  << std::endl;
 
       this->postprocess(false);
       this->finish_time_step();
