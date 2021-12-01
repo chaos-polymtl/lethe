@@ -16,6 +16,7 @@ end
 #---------------------------------------------------
 subsection multiphysics
 	set VOF = true
+	set interface sharpening = true
 end
 
 #---------------------------------------------------

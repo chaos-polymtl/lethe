@@ -215,10 +215,12 @@ public:
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true);
 
+  /**
+   * @brief Modify the solution
+   */
   void
-  modify_solution()
+  modify_solution() override
   {}
-
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved

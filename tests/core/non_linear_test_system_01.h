@@ -107,6 +107,10 @@ public:
     newton_update = system_rhs;
   }
 
+  void
+  modify_solution() override
+  {}
+
   virtual void
   apply_constraints()
   {}

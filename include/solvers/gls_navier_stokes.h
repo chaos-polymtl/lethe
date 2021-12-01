@@ -208,10 +208,6 @@ protected:
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true);
 
-  void
-  modify_solution()
-  {}
-
 private:
   /**
    * @brief Assembles an L2_projection matrix for the velocity and the pressure.

@@ -169,10 +169,6 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
       last_res         = current_res;
       ++outer_iteration;
     }
-
-  // Modifying the solution if it is necessary. For example, in the VOF solver,
-  // we need to limit the phase fraction solutions at the end of each iteration
-  solver->modify_solution();
 }
 
 #endif

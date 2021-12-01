@@ -258,12 +258,49 @@ public:
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true);
 
-
   /**
    * @brief Modify the phase fraction solution. Limits the phase fraction between 0 and 1, and sharpens the interface
    */
   void
-  modify_solution();
+  modify_solution() override
+  {
+    if (this->simulation_parameters.multiphysics.interface_sharpening)
+      {
+        // Interface sharpening is done at a constant frequency
+        if (this->simulation_control->get_step_number() %
+              this->simulation_parameters.interface_sharpening
+                .sharpening_frequency ==
+            0)
+          {
+            this->pcout << "Sharpening interface at step "
+                        << this->simulation_control->get_step_number()
+                        << std::endl;
+
+            // Limit the phase fractions between 0 and 1
+            update_solution_and_constraints();
+
+
+            const DoFHandler<dim> *dof_handler_fluid =
+              multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+            auto scratch_data =
+              VOFScratchData<dim>(*this->fe,
+                                  *this->cell_quadrature,
+                                  *this->fs_mapping,
+                                  dof_handler_fluid->get_fe());
+
+            // Assemble the system for interface sharpening
+            assemble_L2_projection_phase_fraction(scratch_data);
+
+            // Solve the system for interface sharpening
+            solve_L2_system_phase_fraction();
+
+            // Re limit the phase fractions between 0 and 1 after interface
+            // sharpening
+            update_solution_and_constraints();
+          }
+      }
+  }
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved

@@ -81,6 +81,13 @@ protected:
   {}
 
   /**
+   * @brief Modify the solution
+   */
+  void
+  modify_solution() override
+  {}
+
+  /**
    * @brief Getter methods to get the private attributes for the physic currently solved
    *
    * @param current_physics_id Indicates the number associated with the physic currently solved.

@@ -69,7 +69,9 @@ public:
                       const bool renewed_matrix = true) = 0;
 
   /**
-   * @brief modify_solution Modifies the solution, in necessary, after each non-linear solution step
+   * @brief modify_solution Modifies the solution, in necessary, after each non-linear solution
+   * step. For instance, limiting the phase fractions between 0 and 1 after each
+   * step is performed here.
    */
   virtual void
   modify_solution() = 0;
@@ -162,6 +164,7 @@ PhysicsSolver<VectorType>::solve_non_linear_system(const bool first_iteration)
 {
   {
     this->non_linear_solver->solve(first_iteration);
+    this->modify_solution();
   }
 }
 #endif
