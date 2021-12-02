@@ -1,4 +1,5 @@
 #include <core/solutions_output.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -288,7 +289,7 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
               true));
 
   // Initilize contact detection step
-  contact_detection_step = true;
+  contact_detection_step = false;
   checkpoint_step        = false;
   load_balance_step      = false;
 }
@@ -953,7 +954,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // dem_contact_build carries out the particle-particle and particle-wall
   // broad and fine searches, sort_particles_into_subdomains_and_cells, and
   // exchange_ghost
-  dem_contact_build(counter);
+  // dem_contact_build(counter);
 
   // Particle-particle contact force
   pp_contact_force_object->calculate_pp_contact_force(local_adjacent_particles,
@@ -971,6 +972,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // Integration correction step (after force calculation)
   // In the first step, we have to obtain location of particles at half-step
   // time
+
   if (this->simulation_control->get_step_number() == 0)
     {
       integrator_object->integrate_half_step_location(
@@ -1354,35 +1356,33 @@ CFDDEMSolver<dim>::solve()
 
       this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                   << std::endl;
+
+      this->postprocess(false);
+      this->finish_time_step();
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
+        {
+          this->post_processing();
+          pressure_file << this->simulation_control->get_current_time() << "   "
+                        << this->pressure_drop << std::endl;
+        }
+
+      // Load balancing
+      // The input argument to this function is set to zero as this integer is
+      // not used for the check_load_balance_step function and is only important
+      // for the check_contact_search_step function.
+      load_balance_step =
+        check_load_balance_method(this->cfd_dem_simulation_parameters,
+                                  this->particle_handler,
+                                  this->mpi_communicator,
+                                  this->n_mpi_processes,
+                                  this->simulation_control);
+
+      if (load_balance_step || checkpoint_step)
+        {
+          load_balance();
+        }
     }
-  else
-  {
-    this->postprocess(false);
-    this->finish_time_step();
-
-    if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
-      {
-        this->post_processing();
-        pressure_file << this->simulation_control->get_current_time() << "   "
-                      << this->pressure_drop << std::endl;
-      }
-
-    // Load balancing
-    // The input argument to this function is set to zero as this integer is
-    // not used for the check_load_balance_step function and is only important
-    // for the check_contact_search_step function.
-    load_balance_step =
-      check_load_balance_method(this->cfd_dem_simulation_parameters,
-                                this->particle_handler,
-                                this->mpi_communicator,
-                                this->n_mpi_processes,
-                                this->simulation_control);
-
-    if (load_balance_step || checkpoint_step)
-      {
-        load_balance();
-      }
-  }
 
   pressure_file.close();
   this->finish_simulation();
