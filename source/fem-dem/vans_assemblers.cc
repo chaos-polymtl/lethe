@@ -3,7 +3,6 @@
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-
 #include <fem-dem/vans_assemblers.h>
 
 template <int dim>
@@ -505,7 +504,6 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
-
 template class GLSVansAssemblerDiFelice<2>;
 template class GLSVansAssemblerDiFelice<3>;
 
@@ -575,6 +573,68 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
 
 template class GLSVansAssemblerRong<2>;
 template class GLSVansAssemblerRong<3>;
+
+template <int dim>
+void
+GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+
+{
+  unsigned int particle_number;
+  double       c_d       = 0;
+  auto &       beta_drag = scratch_data.beta_drag;
+
+  Tensor<1, dim> relative_velocity;
+  Tensor<1, dim> drag_force;
+
+  const auto pic  = scratch_data.pic;
+  beta_drag       = 0;
+  particle_number = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      relative_velocity =
+        scratch_data.fluid_velocity_at_particle_location[particle_number] -
+        scratch_data.particle_velocity[particle_number];
+
+      double cell_void_fraction =
+        scratch_data.cell_void_fraction[particle_number];
+
+      // Particle's Reynolds number
+      double re = 1e-1 + relative_velocity.norm() *
+                           particle_properties[DEM::PropertiesIndex::dp] /
+                           physical_properties.viscosity;
+
+      // Rong Drag Model CD Calculation
+      c_d = pow((0.63 + 4.8 / sqrt(re)), 2);
+
+      double momentum_transfer_coefficient =
+        (0.5 * c_d * M_PI *
+         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
+        relative_velocity.norm();
+
+      beta_drag += momentum_transfer_coefficient;
+
+      drag_force = this->physical_properties.density *
+                   momentum_transfer_coefficient * relative_velocity;
+
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
+        }
+
+      particle_number += 1;
+    }
+
+  beta_drag = beta_drag / scratch_data.cell_volume;
+}
+
+template class GLSVansAssemblerDallavalle<2>;
+template class GLSVansAssemblerDallavalle<3>;
 
 template <int dim>
 void

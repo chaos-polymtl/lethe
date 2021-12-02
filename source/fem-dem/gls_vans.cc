@@ -1,12 +1,12 @@
-#include "solvers/postprocessing_cfd.h"
-
-#include <fem-dem/gls_vans.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <fem-dem/gls_vans.h>
+
+#include "solvers/postprocessing_cfd.h"
 
 
 // Constructor for class GLS_VANS
@@ -503,7 +503,6 @@ template <int dim>
 void
 GLSVANSSolver<dim>::iterate()
 {
-  calculate_void_fraction(this->simulation_control->get_current_time());
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
 
@@ -539,6 +538,16 @@ GLSVANSSolver<dim>::setup_assemblers()
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
             std::make_shared<GLSVansAssemblerRong<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_parameters
+                .physical_properties));
+        }
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::dallavalle)
+        {
+          // Rong Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerDallavalle<dim>>(
               this->cfd_dem_simulation_parameters.cfd_parameters
                 .physical_properties));
         }
@@ -841,8 +850,6 @@ GLSVANSSolver<dim>::post_processing()
   std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
 
-  //  std::vector<double> present_pressure_values(n_q_points);
-
   double mass_source           = 0;
   double fluid_volume          = 0;
   double bed_volume            = 0;
@@ -1006,7 +1013,6 @@ GLSVANSSolver<dim>::solve()
     read_dem();
 
   setup_dofs();
-  calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1017,12 +1023,14 @@ GLSVANSSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
         {
+          initialize_void_fraction();
           this->iterate();
         }
       else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();
         }
 

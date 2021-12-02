@@ -1,5 +1,4 @@
 #include <core/solutions_output.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -1308,7 +1307,6 @@ CFDDEMSolver<dim>::solve()
     read_dem();
 
   this->setup_dofs();
-  this->calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1323,13 +1321,19 @@ CFDDEMSolver<dim>::solve()
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
-      if (!this->simulation_control->is_at_start())
+      if (this->simulation_control->is_at_start())
+        {
+          this->initialize_void_fraction();
+          this->iterate();
+        }
+      else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          this->calculate_void_fraction(
+            this->simulation_control->get_current_time());
+          this->iterate();
         }
-
-      this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
         {
@@ -1338,7 +1342,6 @@ CFDDEMSolver<dim>::solve()
 
       this->pcout << "Starting DEM iterations at step "
                   << this->simulation_control->get_step_number() << std::endl;
-
       for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
            ++dem_counter)
         {
@@ -1348,35 +1351,38 @@ CFDDEMSolver<dim>::solve()
           // update_ghost
           dem_iterator(dem_counter);
         }
+
       this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                   << std::endl;
-
-      this->postprocess(false);
-      this->finish_time_step();
-
-      if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
-        {
-          this->post_processing();
-          pressure_file << this->simulation_control->get_current_time() << "   "
-                        << this->pressure_drop << std::endl;
-        }
-
-      // Load balancing
-      // The input argument to this function is set to zero as this integer is
-      // not used for the check_load_balance_step function and is only important
-      // for the check_contact_search_step function.
-      load_balance_step =
-        check_load_balance_method(this->cfd_dem_simulation_parameters,
-                                  this->particle_handler,
-                                  this->mpi_communicator,
-                                  this->n_mpi_processes,
-                                  this->simulation_control);
-
-      if (load_balance_step || checkpoint_step)
-        {
-          load_balance();
-        }
     }
+  else
+  {
+    this->postprocess(false);
+    this->finish_time_step();
+
+    if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
+      {
+        this->post_processing();
+        pressure_file << this->simulation_control->get_current_time() << "   "
+                      << this->pressure_drop << std::endl;
+      }
+
+    // Load balancing
+    // The input argument to this function is set to zero as this integer is
+    // not used for the check_load_balance_step function and is only important
+    // for the check_contact_search_step function.
+    load_balance_step =
+      check_load_balance_method(this->cfd_dem_simulation_parameters,
+                                this->particle_handler,
+                                this->mpi_communicator,
+                                this->n_mpi_processes,
+                                this->simulation_control);
+
+    if (load_balance_step || checkpoint_step)
+      {
+        load_balance();
+      }
+  }
 
   pressure_file.close();
   this->finish_simulation();

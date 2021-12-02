@@ -14,15 +14,13 @@
  * ---------------------------------------------------------------------*/
 
 
-#include <core/simulation_control.h>
+#include <deal.II/particles/particle_handler.h>
 
+#include <core/simulation_control.h>
+#include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
-
-#include <fem-dem/cfd_dem_simulation_parameters.h>
-
-#include <deal.II/particles/particle_handler.h>
 
 #ifndef lethe_vans_assemblers_h
 #  define lethe_vans_assemblers_h
@@ -214,6 +212,45 @@ public:
 
   Parameters::PhysicalProperties physical_properties;
 };
+
+/**
+ * @brief Class that assembles the drag force using Rong model for the
+ * VANS equations where the drag coefficient c_d =
+        pow((0.63 + 4.8 / sqrt(re)), 2) *
+        pow(cell_void_fraction,
+            -(2.65 * (cell_void_fraction + 1) -
+              (5.3 - (3.5 * cell_void_fraction)) * pow(cell_void_fraction, 2) *
+                exp(-pow(1.5 - log10(re), 2) / 2)))
+ * and the momentum exchange coefficient
+ *  beta =(0.5 * c_d * M_PI *
+         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
+        relative_velocity.norm()
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerDallavalle(Parameters::PhysicalProperties physical_properties)
+    : physical_properties(physical_properties)
+
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::PhysicalProperties physical_properties;
+};
+
 
 /**
  * @brief Class that assembles the Buoyancy force  for the
