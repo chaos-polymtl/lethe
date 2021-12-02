@@ -216,13 +216,9 @@ public:
 };
 
 /**
- * @brief Class that assembles the drag force using Rong model for the
+ * @brief Class that assembles the drag force using Dallavalle model for the
  * VANS equations where the drag coefficient c_d =
-        pow((0.63 + 4.8 / sqrt(re)), 2) *
-        pow(cell_void_fraction,
-            -(2.65 * (cell_void_fraction + 1) -
-              (5.3 - (3.5 * cell_void_fraction)) * pow(cell_void_fraction, 2) *
-                exp(-pow(1.5 - log10(re), 2) / 2)))
+        pow((0.63 + 4.8 / sqrt(re)), 2)
  * and the momentum exchange coefficient
  *  beta =(0.5 * c_d * M_PI *
          pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
