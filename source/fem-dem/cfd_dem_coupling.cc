@@ -954,7 +954,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // dem_contact_build carries out the particle-particle and particle-wall
   // broad and fine searches, sort_particles_into_subdomains_and_cells, and
   // exchange_ghost
-  // dem_contact_build(counter);
+  dem_contact_build(counter);
 
   // Particle-particle contact force
   pp_contact_force_object->calculate_pp_contact_force(local_adjacent_particles,
