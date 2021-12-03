@@ -1011,7 +1011,12 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                                    smallest_contact_search_criterion);
 
   // Sort particles in cells
-  if (contact_detection_step || checkpoint_step || load_balance_step || this->simulation_control->is_at_start())
+  // The last statement in the if condition allows the calling of
+  // dem_contact_build for the first DEM iteration in the first CFD time step
+  // directly after reading the dem initial checkpoint files
+
+  if (contact_detection_step || checkpoint_step || load_balance_step ||
+      (this->simulation_control->is_at_start() && counter == 0))
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
 
@@ -1042,7 +1047,8 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
     }
 
   // Broad particle-particle contact search
-  if (load_balance_step || checkpoint_step || contact_detection_step || this->simulation_control->is_at_start())
+  if (load_balance_step || checkpoint_step || contact_detection_step ||
+      (this->simulation_control->is_at_start() && counter == 0))
     {
       pp_broad_search_object.find_particle_particle_contact_pairs(
         this->particle_handler,

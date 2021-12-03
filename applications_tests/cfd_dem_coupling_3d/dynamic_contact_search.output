@@ -13,6 +13,7 @@ DEM time-step is 1e-05 s
 Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0       
 *****************************************************************
 Starting DEM iterations at step 1
+DEM contact search at dem step 0
 Finished 100 DEM iterations 
 
 *****************************************************************
