@@ -3,7 +3,6 @@
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-
 #include <fem-dem/vans_assemblers.h>
 
 template <int dim>
@@ -606,7 +605,7 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
                            particle_properties[DEM::PropertiesIndex::dp] /
                            physical_properties.viscosity;
 
-      // Rong Drag Model CD Calculation
+      // Dallavalle Drag Model CD Calculation
       c_d = pow((0.63 + 4.8 / sqrt(re)), 2);
 
       double momentum_transfer_coefficient =
@@ -642,7 +641,7 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
 {
   const auto     pic = scratch_data.pic;
   Tensor<1, dim> buoyancy_force;
-  auto &         buoyancy_force_vector = scratch_data.buoyancy_force;
+  //  auto &         buoyancy_force_vector = scratch_data.buoyancy_force;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -658,8 +657,8 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
             buoyancy_force[d] * physical_properties.density;
-          buoyancy_force_vector[d] +=
-            buoyancy_force[d] / scratch_data.cell_volume;
+          //          buoyancy_force_vector[d] +=
+          //            buoyancy_force[d] / scratch_data.cell_volume;
         }
     }
 }
@@ -770,7 +769,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
   auto &local_matrix           = copy_data.local_matrix;
   auto &beta_drag              = scratch_data.beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &buoyancy_force         = scratch_data.buoyancy_force;
+  //  auto &buoyancy_force         = scratch_data.buoyancy_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
 
@@ -786,7 +785,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
       // Calculate the strong residual for GLS stabilization
       strong_residual[q] += // Drag Force
         beta_drag * (velocity - average_particles_velocity) +
-        undisturbed_flow_force + buoyancy_force;
+        undisturbed_flow_force /*+ buoyancy_force*/;
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -830,7 +829,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   auto &local_rhs              = copy_data.local_rhs;
   auto &beta_drag              = scratch_data.beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &buoyancy_force         = scratch_data.buoyancy_force;
+  //  auto &buoyancy_force         = scratch_data.buoyancy_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
 
@@ -846,7 +845,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
       // Calculate the strong residual for GLS stabilization
       strong_residual[q] += // Drag Force
         beta_drag * (velocity - average_particles_velocity) +
-        undisturbed_flow_force + buoyancy_force;
+        undisturbed_flow_force /*+ buoyancy_force*/;
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -854,7 +853,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
           const auto phi_u_i = scratch_data.phi_u[q][i];
           // Drag Force
           local_rhs(i) -= (beta_drag * (velocity - average_particles_velocity) +
-                           undisturbed_flow_force + buoyancy_force) *
+                           undisturbed_flow_force /*+ buoyancy_force*/) *
                           phi_u_i * JxW;
         }
     }
