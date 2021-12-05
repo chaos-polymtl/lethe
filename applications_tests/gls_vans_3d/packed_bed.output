@@ -6,69 +6,69 @@ Running on 1 MPI rank(s)...
 *****************************************************************
 Transient iteration : 1        Time : 0.002    Time step : 0.002    CFL : 0.06743077177
 *****************************************************************
-Mass Source: 1.582111103e-10 s^-1
+Mass Source: 2.956691559e-11 s^-1
 Average Void Fraction in Bed: 0.4409667454
-Pressure Drop: 20.89322662 Pa
+Pressure Drop: 20.94417164 Pa
 
 *****************************************************************
-Transient iteration : 2        Time : 0.004    Time step : 0.002    CFL : 0.205404953
+Transient iteration : 2        Time : 0.004    Time step : 0.002    CFL : 0.2054164873
 *****************************************************************
-Mass Source: -6.08428266e-07 s^-1
+Mass Source: -6.084279327e-07 s^-1
 Average Void Fraction in Bed: 0.4409792637
-Pressure Drop: 63.82262058 Pa
+Pressure Drop: 63.87357645 Pa
 
 *****************************************************************
-Transient iteration : 3        Time : 0.006    Time step : 0.002    CFL : 0.2143498182
+Transient iteration : 3        Time : 0.006    Time step : 0.002    CFL : 0.2143630033
 *****************************************************************
-Mass Source: 6.084597788e-07 s^-1
+Mass Source: 6.084608435e-07 s^-1
 Average Void Fraction in Bed: 0.4409667454
-Pressure Drop: 62.85613134 Pa
+Pressure Drop: 62.90714257 Pa
 
 *****************************************************************
-Transient iteration : 4        Time : 0.008    Time step : 0.002    CFL : 0.201307305
+Transient iteration : 4        Time : 0.008    Time step : 0.002    CFL : 0.2012939723
 *****************************************************************
-Mass Source: -6.084710091e-07 s^-1
+Mass Source: -6.084686846e-07 s^-1
 Average Void Fraction in Bed: 0.4409792637
-Pressure Drop: 62.28827254 Pa
+Pressure Drop: 62.33927151 Pa
 
 *****************************************************************
-Transient iteration : 5        Time : 0.01     Time step : 0.002    CFL : 0.2038887025
+Transient iteration : 5        Time : 0.01     Time step : 0.002    CFL : 0.2038916934
 *****************************************************************
-Mass Source: 6.084076852e-07 s^-1
+Mass Source: 6.084533452e-07 s^-1
 Average Void Fraction in Bed: 0.4409667454
-Pressure Drop: 62.85110272 Pa
+Pressure Drop: 62.90209128 Pa
 
 *****************************************************************
-Transient iteration : 6        Time : 0.012    Time step : 0.002    CFL : 0.2032968265
+Transient iteration : 6        Time : 0.012    Time step : 0.002    CFL : 0.2032924129
 *****************************************************************
-Mass Source: -6.084452253e-07 s^-1
+Mass Source: -6.084440653e-07 s^-1
 Average Void Fraction in Bed: 0.4409792637
-Pressure Drop: 62.29128046 Pa
+Pressure Drop: 62.34227492 Pa
 
 *****************************************************************
-Transient iteration : 7        Time : 0.014    Time step : 0.002    CFL : 0.2024179019
+Transient iteration : 7        Time : 0.014    Time step : 0.002    CFL : 0.2024196721
 *****************************************************************
-Mass Source: 6.084535559e-07 s^-1
+Mass Source: 6.084506223e-07 s^-1
 Average Void Fraction in Bed: 0.4409667454
-Pressure Drop: 62.84976001 Pa
+Pressure Drop: 62.90075159 Pa
 
 *****************************************************************
-Transient iteration : 8        Time : 0.016    Time step : 0.002    CFL : 0.2038273677
+Transient iteration : 8        Time : 0.016    Time step : 0.002    CFL : 0.2038288824
 *****************************************************************
-Mass Source: -6.084458527e-07 s^-1
+Mass Source: -6.084443293e-07 s^-1
 Average Void Fraction in Bed: 0.4409792637
-Pressure Drop: 62.29148682 Pa
+Pressure Drop: 62.34247366 Pa
 
 *****************************************************************
-Transient iteration : 9        Time : 0.018    Time step : 0.002    CFL : 0.2022029341
+Transient iteration : 9        Time : 0.018    Time step : 0.002    CFL : 0.2022045374
 *****************************************************************
-Mass Source: 6.084521863e-07 s^-1
+Mass Source: 6.084485125e-07 s^-1
 Average Void Fraction in Bed: 0.4409667454
-Pressure Drop: 62.84944996 Pa
+Pressure Drop: 62.90043215 Pa
 
 *****************************************************************
-Transient iteration : 10       Time : 0.02     Time step : 0.002    CFL : 0.2039087545
+Transient iteration : 10       Time : 0.02     Time step : 0.002    CFL : 0.2039103359
 *****************************************************************
-Mass Source: -6.084461803e-07 s^-1
+Mass Source: -6.084442354e-07 s^-1
 Average Void Fraction in Bed: 0.4409792637
-Pressure Drop: 62.2914275 Pa
+Pressure Drop: 62.3424053 Pa
