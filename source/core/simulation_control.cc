@@ -27,8 +27,8 @@ SimulationControl::SimulationControl(Parameters::SimulationControl param)
   , output_boundaries(param.output_boundaries)
   , first_assembly(true)
   , bdf_start_method(param.bdf_startup_method)
-  , startup_timestep_scaling(param.startup_timestep_scaling)
   , initial_time_step(param.dt)
+  , startup_timestep_scaling(param.startup_timestep_scaling)
 {
   time_step_vector.resize(numberTimeStepStored);
   time_step_vector[0] = param.dt;
