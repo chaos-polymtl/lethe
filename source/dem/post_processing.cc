@@ -1,5 +1,5 @@
 #include <dem/dem_properties.h>
-#include <dem/post_processing_utilities.h>
+#include <dem/post_processing.h>
 
 namespace DEM
 {

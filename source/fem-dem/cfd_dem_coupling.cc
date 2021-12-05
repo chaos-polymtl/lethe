@@ -5,7 +5,7 @@
 #include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
-#include <dem/post_processing_utilities.h>
+#include <dem/post_processing.h>
 #include <dem/pp_linear_force.h>
 #include <dem/pp_nonlinear_force.h>
 #include <dem/pw_linear_force.h>

@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef post_processing_utilities_h
-#define post_processing_utilities_h
+#ifndef dem_post_processing_h
+#define dem_post_processing_h
 
 #include <deal.II/particles/particle_handler.h>
 
