@@ -293,10 +293,8 @@ private:
 
   DEMSolverParameters<dim> dem_parameters;
   double                   dem_time_step;
-  const unsigned int       this_mpi_process =
-    Utilities::MPI::this_mpi_process(this->mpi_communicator);
-  const unsigned int n_mpi_processes =
-    Utilities::MPI::n_mpi_processes(this->mpi_communicator);
+  const unsigned int       this_mpi_process;
+  const unsigned int       n_mpi_processes;
 
   Triangulation<dim> tria;
 };

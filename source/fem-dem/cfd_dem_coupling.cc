@@ -5,6 +5,7 @@
 #include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
+#include <dem/post_processing_utilities.h>
 #include <dem/pp_linear_force.h>
 #include <dem/pp_nonlinear_force.h>
 #include <dem/pw_linear_force.h>
@@ -142,6 +143,8 @@ check_load_balance_method(
 template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   : GLSVANSSolver<dim>(nsparam)
+  , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
+  , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
 {
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
@@ -1323,6 +1326,8 @@ CFDDEMSolver<dim>::solve()
   // Initilize DEM parameters
   initialize_dem_parameters();
 
+
+  // TODO use a table mechanism and move out of the solve loop
   ofstream pressure_file;
   pressure_file.open("pressure_drop.txt");
 
@@ -1369,6 +1374,13 @@ CFDDEMSolver<dim>::solve()
       if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
         {
           this->post_processing();
+          double particle_total_kinetic_energy =
+            DEM::calculate_total_granular_kinetic_energy(
+              this->particle_handler, this->mpi_communicator);
+
+          this->pcout << "Total particles kinetic energy: "
+                      << particle_total_kinetic_energy << std::endl;
+
           pressure_file << this->simulation_control->get_current_time() << "   "
                         << this->pressure_drop << std::endl;
         }
