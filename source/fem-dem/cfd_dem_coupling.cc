@@ -1355,15 +1355,18 @@ CFDDEMSolver<dim>::solve()
 
       this->pcout << "Starting DEM iterations at step "
                   << this->simulation_control->get_step_number() << std::endl;
-      for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
-           ++dem_counter)
-        {
-          TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
-          // dem_iterator carries out the particle-particle and
-          // particle_wall force calculations, integration and
-          // update_ghost
-          dem_iterator(dem_counter);
-        }
+      {
+        TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
+
+        for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
+             ++dem_counter)
+          {
+            // dem_iterator carries out the particle-particle and
+            // particle_wall force calculations, integration and
+            // update_ghost
+            dem_iterator(dem_counter);
+          }
+      }
 
       this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                   << std::endl;
