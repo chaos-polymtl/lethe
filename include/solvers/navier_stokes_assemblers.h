@@ -248,7 +248,6 @@ public:
               }
           }
       }
-
     return grad_shear_rate * grad_viscosity_shear_rate;
   };
 

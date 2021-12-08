@@ -305,8 +305,11 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         velocity_gradient + transpose(velocity_gradient);
 
       // Calculate the shear rate magnitude
-      const double shear_rate_magnitude =
+      double shear_rate_magnitude =
         rheological_model->get_shear_rate_magnitude(shear_rate);
+      // Set the shear rate magnitude to 1e-12 if it is too close to zero,
+      // since the viscosity gradient is undefined for shear_rate_magnitude = 0
+      shear_rate_magnitude = shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
 
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
@@ -347,14 +350,11 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
+                             //shear_rate * viscosity_gradient -
                              non_newtonian_viscosity * velocity_laplacian -
                              force + mass_source * velocity +
                              strong_residual_vec[q];
-
-      // The viscosity gradient is not defined when the shear_rate_magnitude is
-      // zero
-      if (shear_rate_magnitude != 0)
-        strong_residual -= shear_rate * viscosity_gradient;
+      std::cout<<strong_residual<<std::endl;
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
@@ -375,12 +375,9 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
-             grad_phi_p_j - non_newtonian_viscosity * laplacian_phi_u_j +
+             grad_phi_p_j - non_newtonian_viscosity * laplacian_phi_u_j -
+             grad_phi_u_j_non_newtonian * viscosity_gradient +
              mass_source * phi_u_j);
-
-          if (shear_rate_magnitude != 0)
-            strong_jacobian_vec[q][j] -=
-              grad_phi_u_j_non_newtonian * viscosity_gradient;
 
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
