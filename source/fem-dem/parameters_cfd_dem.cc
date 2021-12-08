@@ -76,6 +76,10 @@ namespace Parameters
                       "false",
                       Patterns::Bool(),
                       "Choose whether or not to apply grad_div stabilization");
+    prm.declare_entry("void fraction time derivative",
+                      "true",
+                      Patterns::Bool(),
+                      "Choose whether or not to implement d(epsilon)/dt ");
     prm.declare_entry("drag force",
                       "true",
                       Patterns::Bool(),
@@ -120,7 +124,9 @@ namespace Parameters
   CFDDEM::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("cfd-dem");
-    grad_div             = prm.get_bool("grad div");
+    grad_div = prm.get_bool("grad div");
+    void_fraction_time_derivative =
+      prm.get_bool("void fraction time derivative");
     drag_force           = prm.get_bool("drag force");
     buoyancy_force       = prm.get_bool("buoyancy force");
     shear_force          = prm.get_bool("shear force");

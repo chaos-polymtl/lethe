@@ -422,10 +422,16 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
                ++p)
             {
               local_rhs_i -=
-                (bdf_coefs[p] * void_fraction[0] * (velocity[p] * phi_u_i) +
-                 bdf_coefs[p] * (void_fraction[p] * scratch_data.phi_p[q][i]));
+                (bdf_coefs[p] * void_fraction[0] * (velocity[p] * phi_u_i));
 
-              if (cfd_dem.grad_div == true)
+              if (cfd_dem.void_fraction_time_derivative == true)
+                {
+                  local_rhs_i -= bdf_coefs[p] *
+                                 (void_fraction[p] * scratch_data.phi_p[q][i]);
+                }
+
+              if (cfd_dem.grad_div == true &&
+                  cfd_dem.void_fraction_time_derivative == true)
                 {
                   local_rhs_i -=
                     (bdf_coefs[p] * void_fraction[p]) * div_phi_u_i;
