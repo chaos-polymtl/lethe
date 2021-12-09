@@ -993,6 +993,17 @@ GLSVANSSolver<dim>::post_processing()
   pressure_drop_table.add_value("time",
                                 this->simulation_control->get_current_time());
   pressure_drop_table.add_value("pressure drop", this->pressure_drop);
+
+  // Output data to a file
+  if (this->this_mpi_process == 0)
+    {
+      // Write the pressure drop into a file
+      std::string   filename = "pressure_drop.dat";
+      std::ofstream output(filename.c_str());
+      this->pressure_drop_table.set_precision("time", 12);
+      this->pressure_drop_table.set_precision("pressure drop", 12);
+      this->pressure_drop_table.write_text(output);
+    }
 }
 
 template <int dim>

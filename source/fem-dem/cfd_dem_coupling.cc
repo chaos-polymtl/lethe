@@ -1,4 +1,5 @@
 #include <core/solutions_output.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -1379,16 +1380,6 @@ CFDDEMSolver<dim>::solve()
         }
     }
 
-  if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing &&
-      this->this_mpi_process == 0)
-    {
-      // Write the pressure drop into a file
-      std::string   filename = "pressure_drop.dat";
-      std::ofstream output(filename.c_str());
-      this->pressure_drop_table.set_precision("time", 12);
-      this->pressure_drop_table.set_precision("pressure drop", 12);
-      this->pressure_drop_table.write_text(output);
-    }
   this->finish_simulation();
 }
 
