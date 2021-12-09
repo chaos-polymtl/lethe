@@ -1,5 +1,4 @@
 #include <core/solutions_output.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -161,6 +160,8 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
     this->cfd_dem_simulation_parameters.dem_parameters.floating_walls;
   dem_parameters.model_parameters =
     this->cfd_dem_simulation_parameters.dem_parameters.model_parameters;
+  dem_parameters.simulation_control =
+    this->cfd_dem_simulation_parameters.dem_parameters.simulation_control;
 
   // In the case the simulation is being restarted from a checkpoint file, the
   // checkpoint_step parameter is set to true. This allows to perform all
@@ -201,11 +202,8 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(tria) -
               maximum_particle_diameter * 0.5),
-             (this->cfd_dem_simulation_parameters.dem_parameters
-                .model_parameters.dynamic_contact_search_factor *
-              (this->cfd_dem_simulation_parameters.dem_parameters
-                 .model_parameters.neighborhood_threshold -
-               1) *
+             (dem_parameters.model_parameters.dynamic_contact_search_factor *
+              (dem_parameters.model_parameters.neighborhood_threshold - 1) *
               maximum_particle_diameter * 0.5));
 
   dem_time_step =
@@ -214,8 +212,7 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   double rayleigh_time_step = 0;
 
   for (unsigned int i = 0;
-       i < this->cfd_dem_simulation_parameters.dem_parameters
-             .lagrangian_physical_properties.particle_type_number;
+       i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     rayleigh_time_step = std::max(
       M_PI_2 *
@@ -1204,7 +1201,8 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
                                                       momentum,
                                                       force);
 
-  if (dem_parameters.forces_torques.calculate_force_torque)
+  if (this->cfd_dem_simulation_parameters.dem_parameters.forces_torques
+        .calculate_force_torque)
     {
       forces_boundary_information[this->simulation_control->get_step_number()] =
         pw_contact_force_object->get_force();
@@ -1381,7 +1379,8 @@ CFDDEMSolver<dim>::solve()
         }
     }
 
-  if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing &&
+      this->this_mpi_process == 0)
     {
       // Write the pressure drop into a file
       std::string   filename = "pressure_drop.dat";
