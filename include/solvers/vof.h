@@ -138,6 +138,13 @@ public:
   calculate_L2_error();
 
   /**
+   * @brief Calculates the volume for the fluid phase with given fluid_index.
+   * Used for conservation monitoring.
+   */
+  double
+  calculate_volume(int fluid_index);
+
+  /**
    * @brief Carry out the operations required to finish a simulation correctly.
    */
   void

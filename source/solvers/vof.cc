@@ -295,6 +295,63 @@ VOF<dim>::calculate_L2_error()
 }
 
 template <int dim>
+double
+VOF<dim>::calculate_volume(int fluid_index)
+{
+  auto mpi_communicator = triangulation->get_communicator();
+
+  FEValues<dim> fe_values_fs(*this->fs_mapping,
+                             *fe,
+                             *this->error_quadrature,
+                             update_values | update_gradients |
+                               update_quadrature_points | update_JxW_values);
+
+  const unsigned int dofs_per_cell = fe->dofs_per_cell;
+
+  //  std::vector<types::global_dof_index> local_dof_indices(
+  //    dofs_per_cell); // Local connectivity //needed?
+
+  const unsigned int  n_q_points = this->error_quadrature->size();
+  std::vector<double> q_scalar_values(n_q_points);
+
+  double volume = 0;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_fs.reinit(cell);
+          fe_values_fs.get_function_values(present_solution, q_scalar_values);
+
+          // Retrieve the effective "connectivity matrix" for this
+          // element
+          //          cell->get_dof_indices(local_dof_indices);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              switch (fluid_index)
+                {
+                  case 0:
+                    {
+                      if (q_scalar_values[q] < 0.5)
+                        volume += fe_values_fs.JxW(q) * q_scalar_values[q];
+                      break;
+                    }
+                  case 1:
+                    {
+                      if (q_scalar_values[q] > 0.5)
+                        volume += fe_values_fs.JxW(q) * q_scalar_values[q];
+                      break;
+                    }
+                }
+            }
+        }
+    }
+  volume = Utilities::MPI::sum(volume, mpi_communicator);
+  return volume;
+}
+
+template <int dim>
 void
 VOF<dim>::finish_simulation()
 {
@@ -364,56 +421,32 @@ VOF<dim>::postprocess(bool first_iteration)
         }
     }
 
-  bool   conservation_monitoring(true);
-  double monitoring_fluid_index(1);
+  bool conservation_monitoring(true);
+  int  fluid_index(1);
 
-  // Calculate volume of fluid for phase > 0.5
-  if (conservation_monitoring) // && !first_iteration)
+  if (conservation_monitoring)
     {
-      FEValues<dim> fe_values_fs(*this->fs_mapping,
-                                 *fe,
-                                 *this->error_quadrature,
-                                 update_values | update_gradients |
-                                   update_quadrature_points |
-                                   update_JxW_values);
+      double volume = calculate_volume(fluid_index);
 
-      const unsigned int dofs_per_cell = fe->dofs_per_cell;
+      auto         mpi_communicator = triangulation->get_communicator();
+      unsigned int this_mpi_process(
+        Utilities::MPI::this_mpi_process(mpi_communicator));
 
-      std::vector<types::global_dof_index> local_dof_indices(
-        dofs_per_cell); //  Local connectivity
-
-      const unsigned int  n_q_points = this->error_quadrature->size();
-      std::vector<double> q_scalar_values(n_q_points);
-
-      if (monitoring_fluid_index == 1)
+      if (this_mpi_process == 0)
         {
-          double volume_fluid_1 = 0;
-
-          for (const auto &cell : dof_handler.active_cell_iterators())
-            {
-              if (cell->is_locally_owned())
-                {
-                  fe_values_fs.reinit(cell);
-                  fe_values_fs.get_function_values(present_solution,
-                                                   q_scalar_values);
-
-                  // Retrieve the effective "connectivity matrix" for this
-                  // element
-                  cell->get_dof_indices(local_dof_indices);
-
-                  for (unsigned int q = 0; q < n_q_points; q++)
-                    {
-                      if (q_scalar_values[q] > 0.5)
-                        {
-                          volume_fluid_1 +=
-                            fe_values_fs.JxW(q) * q_scalar_values[q];
-                        }
-                    }
-                }
-            }
-          std::cout << std::endl
-                    << "volume_phase_1 = " << volume_fluid_1 << std::endl;
+          std::cout << "volume = " << volume << std::endl;
         }
+      //      if (simulation_control->is_steady())
+      //        {
+      //          error_table.add_value("cells",
+      //                                this->triangulation->n_global_active_cells());
+      //        }
+      //      else
+      //        {
+      //          error_table.add_value("time",
+      //          simulation_control->get_current_time());
+      //        }
+      //      error_table.add_value("fluid volume", volume);
     }
 }
 
@@ -594,9 +627,9 @@ VOF<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::free_surface, &dof_handler);
   multiphysics->set_solution(PhysicsID::free_surface, &present_solution);
-  // the fluid at present iteration is solved before the free surface, and after
-  // percolate is called for the previous iteration, so at the time the getter
-  // is called solution_m2 = solution_m1
+  // the fluid at present iteration is solved before the free surface, and
+  // after percolate is called for the previous iteration, so at the time the
+  // getter is called solution_m2 = solution_m1
   // TODO deactivated for now (inertia is considered with a constant density),
   // see if needed / to be debugged
   multiphysics->set_solution_m1(PhysicsID::free_surface,
