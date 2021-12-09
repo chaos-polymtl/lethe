@@ -1380,6 +1380,16 @@ CFDDEMSolver<dim>::solve()
           load_balance();
         }
     }
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
+    {
+      // Write the pressure drop into a file
+      std::string   filename = "pressure_drop.dat";
+      std::ofstream output(filename.c_str());
+      this->pressure_drop_table.set_precision("time", 12);
+      this->pressure_drop_table.set_precision("pressure drop", 12);
+      this->pressure_drop_table.write_text(output);
+    }
   this->finish_simulation();
 }
 

@@ -49,13 +49,3 @@ Mass Source: 3.248104183e-09 s^-1
 Average Void Fraction in Bed: 0.439127128
 Pressure Drop: 6.404501135 Pa
 Total particles kinetic energy: 1.272931419e-06
-
-*****************************************************************
-Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 0.003626691039
-*****************************************************************
-Starting DEM iterations at step 5
-Finished 200 DEM iterations 
-Mass Source: 5.711323072e-09 s^-1
-Average Void Fraction in Bed: 0.439127128
-Pressure Drop: -14.94825081 Pa
-Total particles kinetic energy: 2.491600846e-06
