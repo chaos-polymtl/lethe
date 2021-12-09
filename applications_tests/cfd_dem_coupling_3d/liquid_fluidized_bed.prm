@@ -13,6 +13,7 @@ subsection simulation control
   set time step                    = 0.001
   set subdivision             = 1 
   set log precision     = 10 
+#  set output boundaries    = true
 end
 
 #---------------------------------------------------
@@ -58,7 +59,7 @@ subsection void fraction
    set mode = dem
    set read dem = true
    set dem file name = dem
-   set l2 smoothing factor = 0.000005
+   set l2 smoothing factor = 0
    set l2 lower bound = 0
    set l2 upper bound = 1
    set bound void fraction = false
@@ -120,7 +121,7 @@ subsection boundary conditions
             set Function expression = 0
         end
         subsection v
-            set Function expression = 0.01  
+            set Function expression = 0.001  
         end
         subsection w
             set Function expression = 0
@@ -180,7 +181,7 @@ subsection lagrangian physical properties
     subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            	 	= 0.002664
-    		set number				= 10000
+    		set number				= 5000
     		set density particles         	        = 1028.805
     		set young modulus particles         	= 100000000
     		set poisson ratio particles          	= 0.3

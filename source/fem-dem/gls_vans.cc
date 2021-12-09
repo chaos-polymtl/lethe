@@ -545,7 +545,7 @@ GLSVANSSolver<dim>::setup_assemblers()
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
           Parameters::DragModel::dallavalle)
         {
-          // Rong Model drag Assembler
+          // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
             std::make_shared<GLSVansAssemblerDallavalle<dim>>(
               this->cfd_dem_simulation_parameters.cfd_parameters
@@ -988,6 +988,17 @@ GLSVANSSolver<dim>::post_processing()
   this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
               << std::endl;
   this->pcout << "Pressure Drop: " << pressure_drop << " Pa" << std::endl;
+
+  // Write postprocessing data to a table
+  pressure_drop_table.add_value("time",
+                                this->simulation_control->get_current_time());
+  pressure_drop_table.add_value("pressure drop", this->pressure_drop);
+
+  std::string   filename = "pressure_drop.dat";
+  std::ofstream output(filename.c_str());
+  pressure_drop_table.set_precision("time", 12);
+  pressure_drop_table.set_precision("pressure drop", 12);
+  pressure_drop_table.write_text(output);
 }
 
 template <int dim>
