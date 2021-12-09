@@ -1,3 +1,12 @@
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
+
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -14,14 +23,6 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 void
@@ -306,12 +307,8 @@ VOF<dim>::calculate_volume(int fluid_index)
                              update_values | update_gradients |
                                update_quadrature_points | update_JxW_values);
 
-  const unsigned int dofs_per_cell = fe->dofs_per_cell;
-
-  //  std::vector<types::global_dof_index> local_dof_indices(
-  //    dofs_per_cell); // Local connectivity //needed?
-
-  const unsigned int  n_q_points = this->error_quadrature->size();
+  const unsigned int  dofs_per_cell = fe->dofs_per_cell;
+  const unsigned int  n_q_points    = this->error_quadrature->size();
   std::vector<double> q_scalar_values(n_q_points);
 
   double volume = 0;
@@ -322,10 +319,6 @@ VOF<dim>::calculate_volume(int fluid_index)
         {
           fe_values_fs.reinit(cell);
           fe_values_fs.get_function_values(present_solution, q_scalar_values);
-
-          // Retrieve the effective "connectivity matrix" for this
-          // element
-          //          cell->get_dof_indices(local_dof_indices);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -421,12 +414,13 @@ VOF<dim>::postprocess(bool first_iteration)
         }
     }
 
-  bool conservation_monitoring(true);
-  int  fluid_index(1);
+  //  bool conservation_monitoring(true);
+  //  int  fluid_index(1);
 
-  if (conservation_monitoring)
+  if (simulation_parameters.multiphysics.conservation_monitoring)
     {
-      double volume = calculate_volume(fluid_index);
+      double volume =
+        calculate_volume(simulation_parameters.multiphysics.fluid_index);
 
       auto         mpi_communicator = triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -434,19 +428,25 @@ VOF<dim>::postprocess(bool first_iteration)
 
       if (this_mpi_process == 0)
         {
-          std::cout << "volume = " << volume << std::endl;
+          // Set conservation monitoring table
+          if (simulation_control->is_steady())
+            {
+              error_table_fs.add_value(
+                "cells", this->triangulation->n_global_active_cells());
+            }
+          else
+            {
+              error_table_fs.add_value("time",
+                                       simulation_control->get_current_time());
+            }
+          error_table_fs.add_value("fluid_volume", volume);
+          error_table_fs.set_scientific("fluid_volume", true);
+
+          // Save table to free_surface_monitoring.dat
+          std::string   filename = "free_surface_monitoring.dat";
+          std::ofstream output(filename.c_str());
+          error_table_fs.write_text(output);
         }
-      //      if (simulation_control->is_steady())
-      //        {
-      //          error_table.add_value("cells",
-      //                                this->triangulation->n_global_active_cells());
-      //        }
-      //      else
-      //        {
-      //          error_table.add_value("time",
-      //          simulation_control->get_current_time());
-      //        }
-      //      error_table.add_value("fluid volume", volume);
     }
 }
 
