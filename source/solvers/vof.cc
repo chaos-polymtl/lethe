@@ -1,12 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -23,6 +14,14 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 void
@@ -342,7 +341,7 @@ template <int dim>
 void
 VOF<dim>::postprocess(bool first_iteration)
 {
-  if (simulation_parameters.analytical_solution->calculate_error() == true &&
+  if (simulation_parameters.analytical_solution->calculate_error() &&
       !first_iteration)
     {
       double phase_error = calculate_L2_error();
@@ -362,6 +361,58 @@ VOF<dim>::postprocess(bool first_iteration)
           Parameters::Verbosity::verbose)
         {
           this->pcout << "L2 error phase : " << phase_error << std::endl;
+        }
+    }
+
+  bool   conservation_monitoring(true);
+  double monitoring_fluid_index(1);
+
+  // Calculate volume of fluid for phase > 0.5
+  if (conservation_monitoring) // && !first_iteration)
+    {
+      FEValues<dim> fe_values_fs(*this->fs_mapping,
+                                 *fe,
+                                 *this->error_quadrature,
+                                 update_values | update_gradients |
+                                   update_quadrature_points |
+                                   update_JxW_values);
+
+      const unsigned int dofs_per_cell = fe->dofs_per_cell;
+
+      std::vector<types::global_dof_index> local_dof_indices(
+        dofs_per_cell); //  Local connectivity
+
+      const unsigned int  n_q_points = this->error_quadrature->size();
+      std::vector<double> q_scalar_values(n_q_points);
+
+      if (monitoring_fluid_index == 1)
+        {
+          double volume_fluid_1 = 0;
+
+          for (const auto &cell : dof_handler.active_cell_iterators())
+            {
+              if (cell->is_locally_owned())
+                {
+                  fe_values_fs.reinit(cell);
+                  fe_values_fs.get_function_values(present_solution,
+                                                   q_scalar_values);
+
+                  // Retrieve the effective "connectivity matrix" for this
+                  // element
+                  cell->get_dof_indices(local_dof_indices);
+
+                  for (unsigned int q = 0; q < n_q_points; q++)
+                    {
+                      if (q_scalar_values[q] > 0.5)
+                        {
+                          volume_fluid_1 +=
+                            fe_values_fs.JxW(q) * q_scalar_values[q];
+                        }
+                    }
+                }
+            }
+          std::cout << std::endl
+                    << "volume_phase_1 = " << volume_fluid_1 << std::endl;
         }
     }
 }
