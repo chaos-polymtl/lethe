@@ -309,7 +309,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         rheological_model->get_shear_rate_magnitude(shear_rate);
       // Set the shear rate magnitude to 1e-12 if it is too close to zero,
       // since the viscosity gradient is undefined for shear_rate_magnitude = 0
-      shear_rate_magnitude = shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
+      shear_rate_magnitude =
+        shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
 
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
@@ -350,11 +351,10 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
-                             //shear_rate * viscosity_gradient -
+                             shear_rate * viscosity_gradient -
                              non_newtonian_viscosity * velocity_laplacian -
                              force + mass_source * velocity +
                              strong_residual_vec[q];
-      std::cout<<strong_residual<<std::endl;
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
