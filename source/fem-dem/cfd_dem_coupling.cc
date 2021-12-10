@@ -5,6 +5,7 @@
 #include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
+#include <dem/post_processing.h>
 #include <dem/pp_linear_force.h>
 #include <dem/pp_nonlinear_force.h>
 #include <dem/pw_linear_force.h>
@@ -12,6 +13,7 @@
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
 
+#include <fstream>
 
 template <int dim>
 bool
@@ -141,11 +143,26 @@ check_load_balance_method(
 template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   : GLSVANSSolver<dim>(nsparam)
+  , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
+  , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
 {
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
   standard_deviation_multiplier = 2.5;
+
+  // Initialize DEM Parameters
+  dem_parameters.lagrangian_physical_properties =
+    this->cfd_dem_simulation_parameters.dem_parameters
+      .lagrangian_physical_properties;
+  dem_parameters.boundary_conditions =
+    this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions;
+  dem_parameters.floating_walls =
+    this->cfd_dem_simulation_parameters.dem_parameters.floating_walls;
+  dem_parameters.model_parameters =
+    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters;
+  dem_parameters.simulation_control =
+    this->cfd_dem_simulation_parameters.dem_parameters.simulation_control;
 
   // In the case the simulation is being restarted from a checkpoint file, the
   // checkpoint_step parameter is set to true. This allows to perform all
@@ -157,12 +174,10 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
     checkpoint_step = true;
 
   maximum_particle_diameter =
-    find_maximum_particle_size(this->cfd_dem_simulation_parameters
-                                 .dem_parameters.lagrangian_physical_properties,
+    find_maximum_particle_size(dem_parameters.lagrangian_physical_properties,
                                standard_deviation_multiplier);
   neighborhood_threshold_squared =
-    std::pow(this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-                 .neighborhood_threshold *
+    std::pow(dem_parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
 
@@ -188,25 +203,38 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(tria) -
               maximum_particle_diameter * 0.5),
-             (this->cfd_dem_simulation_parameters.dem_parameters
-                .model_parameters.dynamic_contact_search_factor *
-              (this->cfd_dem_simulation_parameters.dem_parameters
-                 .model_parameters.neighborhood_threshold -
-               1) *
+             (dem_parameters.model_parameters.dynamic_contact_search_factor *
+              (dem_parameters.model_parameters.neighborhood_threshold - 1) *
               maximum_particle_diameter * 0.5));
-
-  dem_parameters.lagrangian_physical_properties =
-    this->cfd_dem_simulation_parameters.dem_parameters
-      .lagrangian_physical_properties;
-  dem_parameters.boundary_conditions =
-    this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions;
-  dem_parameters.floating_walls =
-    this->cfd_dem_simulation_parameters.dem_parameters.floating_walls;
-  dem_parameters.model_parameters =
-    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters;
 
   dem_time_step =
     this->simulation_control->get_time_step() / coupling_frequency;
+
+  double rayleigh_time_step = 0;
+
+  for (unsigned int i = 0;
+       i < dem_parameters.lagrangian_physical_properties.particle_type_number;
+       ++i)
+    rayleigh_time_step = std::max(
+      M_PI_2 *
+        dem_parameters.lagrangian_physical_properties
+          .particle_average_diameter[i] *
+        sqrt(2 *
+             dem_parameters.lagrangian_physical_properties.density_particle[i] *
+             (2 + dem_parameters.lagrangian_physical_properties
+                    .poisson_ratio_particle[i]) *
+             (1 - dem_parameters.lagrangian_physical_properties
+                    .poisson_ratio_particle[i]) /
+             dem_parameters.lagrangian_physical_properties
+               .youngs_modulus_particle[i]) /
+        (0.1631 * dem_parameters.lagrangian_physical_properties
+                    .poisson_ratio_particle[i] +
+         0.8766),
+      rayleigh_time_step);
+
+  const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
+  this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
+              << "% of Rayleigh time step" << std::endl;
 
   // Necessary signals for load balancing. This signals are only connected if
   // load balancing is enabled. This helps prevent errors in read_dem function
@@ -215,8 +243,7 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
 
-  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-        .load_balance_method !=
+  if (dem_parameters.model_parameters.load_balance_method !=
       Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
     {
       parallel_triangulation->signals.cell_weight.connect(
@@ -260,7 +287,7 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
               true));
 
   // Initilize contact detection step
-  contact_detection_step = true;
+  contact_detection_step = false;
   checkpoint_step        = false;
   load_balance_step      = false;
 }
@@ -553,8 +580,7 @@ CFDDEMSolver<dim>::cell_weight(
   // this case). This parameter will need to be tuned for different cases of
   // CFD-DEM coupling.
   const unsigned int particle_weight =
-    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-      .load_balance_particle_weight;
+    dem_parameters.model_parameters.load_balance_particle_weight;
 
   // This does not use adaptive refinement, therefore every cell
   // should have the status CELL_PERSIST. However this function can also
@@ -804,20 +830,19 @@ template <int dim>
 std::shared_ptr<Integrator<dim>>
 CFDDEMSolver<dim>::set_integrator_type()
 {
-  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-        .integration_method == Parameters::Lagrangian::ModelParameters::
-                                 IntegrationMethod::velocity_verlet)
+  if (dem_parameters.model_parameters.integration_method ==
+      Parameters::Lagrangian::ModelParameters::IntegrationMethod::
+        velocity_verlet)
     {
       integrator_object = std::make_shared<VelocityVerletIntegrator<dim>>();
     }
-  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .integration_method == Parameters::Lagrangian::ModelParameters::
-                                      IntegrationMethod::explicit_euler)
+  else if (dem_parameters.model_parameters.integration_method ==
+           Parameters::Lagrangian::ModelParameters::IntegrationMethod::
+             explicit_euler)
     {
       integrator_object = std::make_shared<ExplicitEulerIntegrator<dim>>();
     }
-  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .integration_method ==
+  else if (dem_parameters.model_parameters.integration_method ==
            Parameters::Lagrangian::ModelParameters::IntegrationMethod::gear3)
     {
       integrator_object = std::make_shared<Gear3Integrator<dim>>();
@@ -833,15 +858,13 @@ template <int dim>
 std::shared_ptr<PPContactForce<dim>>
 CFDDEMSolver<dim>::set_pp_contact_force()
 {
-  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-        .pp_contact_force_method ==
+  if (dem_parameters.model_parameters.pp_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PPContactForceModel::pp_linear)
     {
       pp_contact_force_object =
         std::make_shared<PPLinearForce<dim>>(dem_parameters);
     }
-  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .pp_contact_force_method ==
+  else if (dem_parameters.model_parameters.pp_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PPContactForceModel::
              pp_nonlinear)
     {
@@ -862,8 +885,7 @@ CFDDEMSolver<dim>::set_pw_contact_force()
   std::vector<types::boundary_id> boundary_index =
     this->triangulation->get_boundary_ids();
 
-  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-        .pw_contact_force_method ==
+  if (dem_parameters.model_parameters.pw_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
       pw_contact_force_object = std::make_shared<PWLinearForce<dim>>(
@@ -943,6 +965,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // Integration correction step (after force calculation)
   // In the first step, we have to obtain location of particles at half-step
   // time
+
   if (this->simulation_control->get_step_number() == 0)
     {
       integrator_object->integrate_half_step_location(
@@ -981,7 +1004,12 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                                    smallest_contact_search_criterion);
 
   // Sort particles in cells
-  if (contact_detection_step || checkpoint_step || load_balance_step)
+  // The last statement in the if condition allows the calling of
+  // dem_contact_build for the first DEM iteration in the first CFD time step
+  // directly after reading the dem initial checkpoint files
+
+  if (contact_detection_step || checkpoint_step || load_balance_step ||
+      (this->simulation_control->is_at_start() && counter == 0))
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
 
@@ -1012,7 +1040,8 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
     }
 
   // Broad particle-particle contact search
-  if (load_balance_step || checkpoint_step || contact_detection_step)
+  if (load_balance_step || checkpoint_step || contact_detection_step ||
+      (this->simulation_control->is_at_start() && counter == 0))
     {
       pp_broad_search_object.find_particle_particle_contact_pairs(
         this->particle_handler,
@@ -1074,17 +1103,13 @@ template <int dim>
 void
 CFDDEMSolver<dim>::write_DEM_output_results()
 {
-  const std::string folder = this->cfd_dem_simulation_parameters.dem_parameters
-                               .simulation_control.output_folder;
+  const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
-    this->cfd_dem_simulation_parameters.dem_parameters.simulation_control
-      .output_name +
-    "particles";
+    dem_parameters.simulation_control.output_name + "particles";
   const unsigned int iter = this->simulation_control->get_step_number();
   const double       time = this->simulation_control->get_current_time();
   const unsigned int group_files =
-    this->cfd_dem_simulation_parameters.dem_parameters.simulation_control
-      .group_files;
+    dem_parameters.simulation_control.group_files;
 
   // Write particles
   Visualization<dim> particle_data_out;
@@ -1112,8 +1137,7 @@ CFDDEMSolver<dim>::particle_wall_broad_search()
     pw_contact_candidates);
 
   // Particle - floating wall contact pairs
-  if (this->cfd_dem_simulation_parameters.dem_parameters.floating_walls
-        .floating_walls_number > 0)
+  if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
       pw_broad_search_object.find_particle_floating_wall_contact_pairs(
         boundary_cell_object.get_boundary_cells_with_floating_walls(),
@@ -1147,8 +1171,7 @@ CFDDEMSolver<dim>::particle_wall_fine_search()
                                                   pw_pairs_in_contact);
 
   // Particle - floating wall fine search
-  if (this->cfd_dem_simulation_parameters.dem_parameters.floating_walls
-        .floating_walls_number > 0)
+  if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
       pw_fine_search_object.particle_floating_wall_fine_search(
         pfw_contact_candidates,
@@ -1190,8 +1213,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
     }
 
   // Particle-floating wall contact force
-  if (this->cfd_dem_simulation_parameters.dem_parameters.floating_walls
-        .floating_walls_number > 0)
+  if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
       pw_contact_force_object->calculate_pw_contact_force(pfw_pairs_in_contact,
                                                           dem_time_step,
@@ -1279,7 +1301,6 @@ CFDDEMSolver<dim>::solve()
     read_dem();
 
   this->setup_dofs();
-  this->calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1291,13 +1312,19 @@ CFDDEMSolver<dim>::solve()
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
-      if (!this->simulation_control->is_at_start())
+      if (this->simulation_control->is_at_start())
+        {
+          this->initialize_void_fraction();
+          this->iterate();
+        }
+      else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          this->calculate_void_fraction(
+            this->simulation_control->get_current_time());
+          this->iterate();
         }
-
-      this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
         {
@@ -1306,16 +1333,19 @@ CFDDEMSolver<dim>::solve()
 
       this->pcout << "Starting DEM iterations at step "
                   << this->simulation_control->get_step_number() << std::endl;
+      {
+        TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
 
-      for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
-           ++dem_counter)
-        {
-          TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
-          // dem_iterator carries out the particle-particle and
-          // particle_wall force calculations, integration and
-          // update_ghost
-          dem_iterator(dem_counter);
-        }
+        for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
+             ++dem_counter)
+          {
+            // dem_iterator carries out the particle-particle and
+            // particle_wall force calculations, integration and
+            // update_ghost
+            dem_iterator(dem_counter);
+          }
+      }
+
       this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                   << std::endl;
 
@@ -1323,7 +1353,15 @@ CFDDEMSolver<dim>::solve()
       this->finish_time_step();
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
-        this->post_processing();
+        {
+          this->post_processing();
+          double particle_total_kinetic_energy =
+            DEM::calculate_total_granular_kinetic_energy(
+              this->particle_handler, this->mpi_communicator);
+
+          this->pcout << "Total particles kinetic energy: "
+                      << particle_total_kinetic_energy << std::endl;
+        }
 
       // Load balancing
       // The input argument to this function is set to zero as this integer is
@@ -1341,6 +1379,7 @@ CFDDEMSolver<dim>::solve()
           load_balance();
         }
     }
+
   this->finish_simulation();
 }
 

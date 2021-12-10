@@ -8,3 +8,7 @@ file(COPY unknown_positions_files/positions.detector DESTINATION ${CMAKE_CURRENT
 
 DEAL_II_PICKUP_TESTS()
 
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
+       	set_tests_properties(rpt_cell_reconstruction_3d/unknown_positions.debug PROPERTIES TIMEOUT 1200)
+ENDIF()

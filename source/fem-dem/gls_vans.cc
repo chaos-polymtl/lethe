@@ -503,7 +503,6 @@ template <int dim>
 void
 GLSVANSSolver<dim>::iterate()
 {
-  calculate_void_fraction(this->simulation_control->get_current_time());
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
 
@@ -539,6 +538,16 @@ GLSVANSSolver<dim>::setup_assemblers()
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
             std::make_shared<GLSVansAssemblerRong<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_parameters
+                .physical_properties));
+        }
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::dallavalle)
+        {
+          // Dallavalle Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerDallavalle<dim>>(
               this->cfd_dem_simulation_parameters.cfd_parameters
                 .physical_properties));
         }
@@ -841,13 +850,11 @@ GLSVANSSolver<dim>::post_processing()
   std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
 
-  //  std::vector<double> present_pressure_values(n_q_points);
-
   double mass_source           = 0;
   double fluid_volume          = 0;
   double bed_volume            = 0;
   double average_void_fraction = 0;
-  double pressure_drop         = 0;
+  pressure_drop                = 0;
 
   Vector<double>      bdf_coefs;
   std::vector<double> time_steps_vector =
@@ -965,19 +972,21 @@ GLSVANSSolver<dim>::post_processing()
 
   QGauss<dim>     cell_quadrature_formula(this->number_quadrature_points);
   QGauss<dim - 1> face_quadrature_formula(this->number_quadrature_points);
-  pressure_drop = calculate_pressure_drop(
-    this->dof_handler,
-    this->mapping,
-    this->evaluation_point,
-    cell_quadrature_formula,
-    face_quadrature_formula,
-    this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
-    this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id);
+  pressure_drop =
+    calculate_pressure_drop(
+      this->dof_handler,
+      this->mapping,
+      this->evaluation_point,
+      cell_quadrature_formula,
+      face_quadrature_formula,
+      this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
+      this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
+    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties
+      .density;
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
   this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
               << std::endl;
-  this->pcout << "Pressure Drop: " << pressure_drop << " m^2.s^-2" << std::endl;
 }
 
 template <int dim>
@@ -1003,7 +1012,6 @@ GLSVANSSolver<dim>::solve()
     read_dem();
 
   setup_dofs();
-  calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1014,12 +1022,14 @@ GLSVANSSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
         {
+          initialize_void_fraction();
           this->iterate();
         }
       else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();
         }
 

@@ -49,7 +49,8 @@ namespace Parameters
   enum class DragModel
   {
     difelice,
-    rong
+    rong,
+    dallavalle
   };
 
 
@@ -91,6 +92,7 @@ namespace Parameters
     bool         buoyancy_force;
     bool         shear_force;
     bool         pressure_force;
+    bool         void_fraction_time_derivative;
 
     static void
     declare_parameters(ParameterHandler &prm);
