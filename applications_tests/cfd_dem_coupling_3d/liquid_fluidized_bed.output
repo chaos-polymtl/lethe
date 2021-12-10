@@ -6,6 +6,7 @@ Finished reading DEM checkpoint
    Number of active cells:       8448
    Number of degrees of freedom: 43092
    Volume of triangulation:      1e-05
+Pressure drop: 0 Pa
 Initializing DEM parameters 
 Finished initializing DEM parameters 
 DEM time-step is 5e-06 s 
@@ -15,9 +16,9 @@ Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0.0006
 Starting DEM iterations at step 1
 DEM contact search at dem step 0
 Finished 200 DEM iterations 
+Pressure drop: 98.66601128 Pa
 Mass Source: -5.684840931e-10 s^-1
 Average Void Fraction in Bed: 0.439127128
-Pressure Drop: 98.66601128 Pa
 Total particles kinetic energy: 1.552921276e-07
 
 *****************************************************************
@@ -25,9 +26,9 @@ Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.0023
 *****************************************************************
 Starting DEM iterations at step 2
 Finished 200 DEM iterations 
+Pressure drop: 4.409942045 Pa
 Mass Source: -1.043166796e-09 s^-1
 Average Void Fraction in Bed: 0.439127128
-Pressure Drop: 4.409942045 Pa
 Total particles kinetic energy: 5.782179824e-07
 
 *****************************************************************
@@ -35,17 +36,17 @@ Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.0021
 *****************************************************************
 Starting DEM iterations at step 3
 Finished 200 DEM iterations 
+Pressure drop: -2.340453811 Pa
 Mass Source: 7.080836115e-10 s^-1
 Average Void Fraction in Bed: 0.439127128
-Pressure Drop: -2.340453811 Pa
-Total particles kinetic energy: 4.052849338e-07
+Total particles kinetic energy: 4.052849678e-07
 
 *****************************************************************
-Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 0.002994484248
+Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 0.00299448425
 *****************************************************************
 Starting DEM iterations at step 4
 Finished 200 DEM iterations 
-Mass Source: 3.248104183e-09 s^-1
+Pressure drop: 6.404504729 Pa
+Mass Source: 3.248104155e-09 s^-1
 Average Void Fraction in Bed: 0.439127128
-Pressure Drop: 6.404501135 Pa
-Total particles kinetic energy: 1.272931419e-06
+Total particles kinetic energy: 1.273015434e-06

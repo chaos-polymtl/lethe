@@ -238,8 +238,6 @@ protected:
 
   Parameters::SimulationControl::TimeSteppingMethod scheme;
 
-  TableHandler pressure_drop_table;
-
   const bool   PSPG        = true;
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
