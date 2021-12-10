@@ -27,6 +27,7 @@
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/table_handler.h>
 #include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/solution_transfer.h>
@@ -405,7 +406,7 @@ private:
     previous_solutions_transfer;
 
   // Conservation Analysis
-  ConvergenceTable error_table_fs;
+  TableHandler volume_table_fs;
 
   // Enable DCDD shock capturing scheme
   const bool DCDD = true;

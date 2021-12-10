@@ -414,9 +414,6 @@ VOF<dim>::postprocess(bool first_iteration)
         }
     }
 
-  //  bool conservation_monitoring(true);
-  //  int  fluid_index(1);
-
   if (simulation_parameters.multiphysics.conservation_monitoring)
     {
       double volume =
@@ -431,21 +428,21 @@ VOF<dim>::postprocess(bool first_iteration)
           // Set conservation monitoring table
           if (simulation_control->is_steady())
             {
-              error_table_fs.add_value(
+              volume_table_fs.add_value(
                 "cells", this->triangulation->n_global_active_cells());
             }
           else
             {
-              error_table_fs.add_value("time",
-                                       simulation_control->get_current_time());
+              volume_table_fs.add_value("time",
+                                        simulation_control->get_current_time());
             }
-          error_table_fs.add_value("fluid_volume", volume);
-          error_table_fs.set_scientific("fluid_volume", true);
+          volume_table_fs.add_value("fluid_volume", volume);
+          volume_table_fs.set_scientific("fluid_volume", true);
 
           // Save table to free_surface_monitoring.dat
           std::string   filename = "free_surface_monitoring.dat";
           std::ofstream output(filename.c_str());
-          error_table_fs.write_text(output);
+          volume_table_fs.write_text(output);
         }
     }
 }
