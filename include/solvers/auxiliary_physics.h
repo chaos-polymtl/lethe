@@ -29,12 +29,12 @@
 
 /**
  * Au auxiliary physics is defined as a physics that is solved on top of
- * a core physics, the latter being the Navier-Stokes
- * equations. Auxiliary physics are simpler physics around which the entire
- * simulation process does not need to be tailored. Examples of auxiliary
- * physics are temperature and concentration. Generally, the auxiliary physics
- * does not affect the core physics. For example, temperature is advected by the
- * fluid flow, but buoyancy effects are not taken into account.
+ * a core physics, the latter being the Navier-Stokes equations.
+ * Auxiliary physics are simpler physics around which the entire simulation
+ * process does not need to be tailored. Examples of auxiliary physics are
+ * temperature and concentration. Generally, the auxiliary physics does not
+ * affect the core physics. For example, temperature is advected by the fluid
+ * flow, but buoyancy effects are not taken into account.
  *
  * The auxiliary physics are managed by the multiphysics interface of Lethe.
  *
@@ -101,6 +101,13 @@ public:
    */
   virtual void
   percolate_time_vectors() = 0;
+
+  /**
+   * @brief Carry out modifications on the auxiliary physic solution.
+   * To be defined for some physics only (eg. free surface, see vof.h).
+   */
+  virtual void
+  modify_solution(){};
 
   /**
    * @brief Provide the dof handler associated with an auxiliary physics

@@ -340,6 +340,21 @@ VOF<dim>::finish_time_step()
 
 template <int dim>
 void
+VOF<dim>::modify_solution()
+{
+  if (simulation_parameters.linear_solver.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << std::endl
+                  << "Modification of the VOF solution" << std::endl;
+    }
+  // Sharpen interface
+
+  // Handle wetting/peeling of the interface
+}
+
+template <int dim>
+void
 VOF<dim>::postprocess(bool first_iteration)
 {
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
