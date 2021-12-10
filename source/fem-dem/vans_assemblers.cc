@@ -422,13 +422,18 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
                ++p)
             {
               local_rhs_i -=
-                (bdf_coefs[p] * void_fraction[0] * (velocity[p] * phi_u_i) +
-                 bdf_coefs[p] * (void_fraction[p] * scratch_data.phi_p[q][i]));
+                (bdf_coefs[p] * void_fraction[0] * (velocity[p] * phi_u_i));
 
-              if (cfd_dem.grad_div == true)
+              if (cfd_dem.void_fraction_time_derivative == true)
                 {
-                  local_rhs_i -=
-                    (bdf_coefs[p] * void_fraction[p]) * div_phi_u_i;
+                  local_rhs_i -= bdf_coefs[p] *
+                                 (void_fraction[p] * scratch_data.phi_p[q][i]);
+
+                  if (cfd_dem.grad_div == true)
+                    {
+                      local_rhs_i -=
+                        (bdf_coefs[p] * void_fraction[p]) * div_phi_u_i;
+                    }
                 }
             }
           local_rhs(i) += local_rhs_i * JxW[q];
@@ -505,7 +510,6 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
-
 template class GLSVansAssemblerDiFelice<2>;
 template class GLSVansAssemblerDiFelice<3>;
 
@@ -578,13 +582,71 @@ template class GLSVansAssemblerRong<3>;
 
 template <int dim>
 void
+GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+
+{
+  unsigned int particle_number;
+  double       c_d       = 0;
+  auto &       beta_drag = scratch_data.beta_drag;
+
+  Tensor<1, dim> relative_velocity;
+  Tensor<1, dim> drag_force;
+
+  const auto pic  = scratch_data.pic;
+  beta_drag       = 0;
+  particle_number = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      relative_velocity =
+        scratch_data.fluid_velocity_at_particle_location[particle_number] -
+        scratch_data.particle_velocity[particle_number];
+
+      // Particle's Reynolds number
+      double re = 1e-1 + relative_velocity.norm() *
+                           particle_properties[DEM::PropertiesIndex::dp] /
+                           physical_properties.viscosity;
+
+      // Dallavalle Drag Model CD Calculation
+      c_d = pow((0.63 + 4.8 / sqrt(re)), 2);
+
+      double momentum_transfer_coefficient =
+        (0.5 * c_d * M_PI *
+         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
+        relative_velocity.norm();
+
+      beta_drag += momentum_transfer_coefficient;
+
+      drag_force = this->physical_properties.density *
+                   momentum_transfer_coefficient * relative_velocity;
+
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
+        }
+
+      particle_number += 1;
+    }
+
+  beta_drag = beta_drag / scratch_data.cell_volume;
+}
+
+template class GLSVansAssemblerDallavalle<2>;
+template class GLSVansAssemblerDallavalle<3>;
+
+template <int dim>
+void
 GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
   const auto     pic = scratch_data.pic;
   Tensor<1, dim> buoyancy_force;
-  auto &         buoyancy_force_vector = scratch_data.buoyancy_force;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -600,8 +662,6 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
             buoyancy_force[d] * physical_properties.density;
-          buoyancy_force_vector[d] +=
-            buoyancy_force[d] / scratch_data.cell_volume;
         }
     }
 }
@@ -712,7 +772,6 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
   auto &local_matrix           = copy_data.local_matrix;
   auto &beta_drag              = scratch_data.beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &buoyancy_force         = scratch_data.buoyancy_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
 
@@ -728,7 +787,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
       // Calculate the strong residual for GLS stabilization
       strong_residual[q] += // Drag Force
         beta_drag * (velocity - average_particles_velocity) +
-        undisturbed_flow_force + buoyancy_force;
+        undisturbed_flow_force;
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -772,7 +831,6 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   auto &local_rhs              = copy_data.local_rhs;
   auto &beta_drag              = scratch_data.beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &buoyancy_force         = scratch_data.buoyancy_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
 
@@ -788,7 +846,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
       // Calculate the strong residual for GLS stabilization
       strong_residual[q] += // Drag Force
         beta_drag * (velocity - average_particles_velocity) +
-        undisturbed_flow_force + buoyancy_force;
+        undisturbed_flow_force;
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -796,7 +854,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
           const auto phi_u_i = scratch_data.phi_u[q][i];
           // Drag Force
           local_rhs(i) -= (beta_drag * (velocity - average_particles_velocity) +
-                           undisturbed_flow_force + buoyancy_force) *
+                           undisturbed_flow_force) *
                           phi_u_i * JxW;
         }
     }
