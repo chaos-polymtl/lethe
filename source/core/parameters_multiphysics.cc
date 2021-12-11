@@ -40,6 +40,19 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       "false",
                       Patterns::Bool(),
                       "Viscous dissipation in heat equation <true|false>");
+
+    // subparameter for free_surface
+    prm.declare_entry(
+      "conservation monitoring",
+      "false",
+      Patterns::Bool(),
+      "Conservation monitoring in free surface calculation <true|false>");
+
+    prm.declare_entry(
+      "fluid index",
+      "0",
+      Patterns::Integer(),
+      "Index of the fluid which conservation is monitored <0|1>");
   }
   prm.leave_subsection();
 }
@@ -57,6 +70,10 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
 
     // subparameter for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
+
+    // subparameter for free_surface
+    conservation_monitoring = prm.get_bool("conservation monitoring");
+    fluid_index             = prm.get_integer("fluid index");
   }
   prm.leave_subsection();
 }

@@ -27,6 +27,7 @@
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/table_handler.h>
 #include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/solution_transfer.h>
@@ -139,6 +140,13 @@ public:
   calculate_L2_error();
 
   /**
+   * @brief Calculates the volume for the fluid phase with given fluid_index.
+   * Used for conservation monitoring.
+   */
+  double
+  calculate_volume(int fluid_index);
+
+  /**
    * @brief Carry out the operations required to finish a simulation correctly.
    */
   void
@@ -163,6 +171,11 @@ public:
    * physics. It does not concern the output of the solution using the
    * DataOutObject, which is accomplished through the attach_solution_to_output
    * function
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for VOFScratchData for more
+   * information
    */
   void
   postprocess(bool first_iteration) override;
@@ -391,6 +404,9 @@ private:
   std::vector<
     parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
     previous_solutions_transfer;
+
+  // Conservation Analysis
+  TableHandler volume_table_fs;
 
   // Enable DCDD shock capturing scheme
   const bool DCDD = true;

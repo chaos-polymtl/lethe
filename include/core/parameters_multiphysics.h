@@ -43,6 +43,10 @@ namespace Parameters
     // subparameter for heat_transfer
     bool viscous_dissipation;
 
+    // subparameter for free_surface
+    bool conservation_monitoring;
+    int  fluid_index;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
