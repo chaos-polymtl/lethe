@@ -7,38 +7,12 @@ Running on 1 MPI rank(s)...
 *****************************************************************
 Transient iteration : 1        Time : 0.01     Time step : 0.01     CFL : 0       
 *****************************************************************
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-05
-  -Iterative solver took : 0 steps 
-		alpha = 1      res = 0
--------------
-VOF
--------------
-Newton iteration: 0  - Residual:  0
-  VOF : 
-  -Tolerance of iterative solver is : 1e-05
-  VOF : 
-  -Iterative solver took : 0 steps 
-		alpha = 1      res = 0
 L2 error velocity : 0
 L2 error phase : 1.47015
 
 *****************************************************************
 Transient iteration : 2        Time : 0.02     Time step : 0.01     CFL : 0       
 *****************************************************************
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-05
-  -Iterative solver took : 0 steps 
-		alpha = 1      res = 0
--------------
-VOF
--------------
-Newton iteration: 0  - Residual:  0
-  VOF : 
-  -Tolerance of iterative solver is : 1e-05
-  VOF : 
-  -Iterative solver took : 0 steps 
-		alpha = 1      res = 0
 Sharpening interface at step 2
 L2 error velocity : 0
 L2 error phase : 0.6331
@@ -46,41 +20,15 @@ L2 error phase : 0.6331
 *****************************************************************
 Transient iteration : 3        Time : 0.03     Time step : 0.01     CFL : 0       
 *****************************************************************
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-05
-  -Iterative solver took : 0 steps 
-		alpha = 1      res = 0
--------------
-VOF
--------------
-Newton iteration: 0  - Residual:  0
-  VOF : 
-  -Tolerance of iterative solver is : 1e-05
-  VOF : 
-  -Iterative solver took : 0 steps 
-		alpha = 1      res = 0
 L2 error velocity : 0
 L2 error phase : 0.6331
 
 *****************************************************************
 Transient iteration : 4        Time : 0.04     Time step : 0.01     CFL : 0       
 *****************************************************************
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-05
-  -Iterative solver took : 0 steps 
-		alpha = 1      res = 0
--------------
-VOF
--------------
-Newton iteration: 0  - Residual:  0
-  VOF : 
-  -Tolerance of iterative solver is : 1e-05
-  VOF : 
-  -Iterative solver took : 0 steps 
-		alpha = 1      res = 0
 Sharpening interface at step 4
 L2 error velocity : 0
-L2 error phase : 0.267111
+L2 error phase : 0.267109
  time  error_velocity error_pressure 
 0.0100 0.000000e+00   0.0000         
 0.0200 0.000000e+00   0.0000         
@@ -90,4 +38,4 @@ L2 error phase : 0.267111
 0.0100 1.470146e+00 
 0.0200 6.330998e-01 
 0.0300 6.330998e-01 
-0.0400 2.671106e-01 
+0.0400 2.671087e-01 

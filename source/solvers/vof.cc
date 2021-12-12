@@ -857,7 +857,8 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
-  VOFScratchData<dim> &scratch_data)
+  VOFScratchData<dim> &          scratch_data,
+  TrilinosWrappers::MPI::Vector &solution)
 {
   const double sharpening_threshold =
     this->simulation_parameters.interface_sharpening.sharpening_threshold;
@@ -958,7 +959,8 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_interface_sharpening()
+VolumeOfFluid<dim>::solve_interface_sharpening(
+  TrilinosWrappers::MPI::Vector &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
@@ -1017,7 +1019,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening()
 
   nonzero_constraints.distribute(
     completely_distributed_phase_fraction_solution);
-  present_solution = completely_distributed_phase_fraction_solution;
+  solution = completely_distributed_phase_fraction_solution;
 }
 
 template <int dim>

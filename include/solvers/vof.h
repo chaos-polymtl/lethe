@@ -294,10 +294,11 @@ public:
                                   dof_handler_fluid->get_fe());
 
             // Sharpen the interface of a solutio:
-            assemble_L2_projection_interface_sharpening(scratch_data);
+            assemble_L2_projection_interface_sharpening(scratch_data,
+                                                        present_solution);
 
             // Solve the system for interface sharpening
-            solve_interface_sharpening();
+            solve_interface_sharpening(present_solution);
 
             // Re limit the phase fractions between 0 and 1 after interface
             // sharpening
@@ -443,13 +444,14 @@ private:
    */
   void
   assemble_L2_projection_interface_sharpening(
-    VOFScratchData<dim> &scratch_data);
+    VOFScratchData<dim> &          scratch_data,
+    TrilinosWrappers::MPI::Vector &solution);
 
   /**
    * @brief Solve the assembled system to sharpen the interface
    */
   void
-  solve_interface_sharpening();
+  solve_interface_sharpening(TrilinosWrappers::MPI::Vector &solution);
 
   void
   assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
