@@ -696,8 +696,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  VOF : " << std::endl
-                  << "  -Tolerance of iterative solver is : "
+      this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
 
@@ -788,13 +787,14 @@ VolumeOfFluid<dim>::modify_solution()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::update_solution_and_constraints()
+VolumeOfFluid<dim>::update_solution_and_constraints(
+  TrilinosWrappers::MPI::Vector &solution)
 {
   const double penalty_parameter = 100;
 
   TrilinosWrappers::MPI::Vector lambda(locally_owned_dofs);
 
-  nodal_phase_fraction_owned = present_solution;
+  nodal_phase_fraction_owned = solution;
 
   complete_system_matrix_phase_fraction.residual(lambda,
                                                  nodal_phase_fraction_owned,
@@ -850,13 +850,13 @@ VolumeOfFluid<dim>::update_solution_and_constraints()
         }
     }
   active_set.compress();
-  present_solution = nodal_phase_fraction_owned;
+  solution = nodal_phase_fraction_owned;
   nonzero_constraints.close();
 }
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_L2_projection_phase_fraction(
+VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   VOFScratchData<dim> &scratch_data)
 {
   const double sharpening_threshold =
@@ -958,7 +958,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_phase_fraction(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_L2_system_phase_fraction()
+VolumeOfFluid<dim>::solve_interface_sharpening()
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;

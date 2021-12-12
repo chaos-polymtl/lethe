@@ -261,6 +261,7 @@ public:
   /**
    * @brief Modify the phase fraction solution. Limits the phase fraction between 0 and 1, and sharpens the interface
    */
+  // TODO MOVE TO .CC
   void
   modify_solution() override
   {
@@ -277,7 +278,10 @@ public:
                         << std::endl;
 
             // Limit the phase fractions between 0 and 1
-            update_solution_and_constraints();
+            update_solution_and_constraints(present_solution);
+            for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+              update_solution_and_constraints(previous_solutions[p]);
+
 
 
             const DoFHandler<dim> *dof_handler_fluid =
@@ -289,15 +293,17 @@ public:
                                   *this->fs_mapping,
                                   dof_handler_fluid->get_fe());
 
-            // Assemble the system for interface sharpening
-            assemble_L2_projection_phase_fraction(scratch_data);
+            // Sharpen the interface of a solutio:
+            assemble_L2_projection_interface_sharpening(scratch_data);
 
             // Solve the system for interface sharpening
-            solve_L2_system_phase_fraction();
+            solve_interface_sharpening();
 
             // Re limit the phase fractions between 0 and 1 after interface
             // sharpening
-            update_solution_and_constraints();
+            update_solution_and_constraints(present_solution);
+            for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+              update_solution_and_constraints(previous_solutions[p]);
           }
       }
   }
@@ -424,7 +430,7 @@ private:
    * @brief Limit the phase fractions between 0 and 1. This is necessary before interface sharpening
    */
   void
-  update_solution_and_constraints();
+  update_solution_and_constraints(TrilinosWrappers::MPI::Vector &solution);
 
   /**
    * @brief Assemble the system for interface sharpening
@@ -436,13 +442,14 @@ private:
    * https://www.sciencedirect.com/science/article/pii/S0045782500002000
    */
   void
-  assemble_L2_projection_phase_fraction(VOFScratchData<dim> &scratch_data);
+  assemble_L2_projection_interface_sharpening(
+    VOFScratchData<dim> &scratch_data);
 
   /**
    * @brief Solve the assembled system to sharpen the interface
    */
   void
-  solve_L2_system_phase_fraction();
+  solve_interface_sharpening();
 
   void
   assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
