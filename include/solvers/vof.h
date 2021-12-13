@@ -491,6 +491,7 @@ private:
   TrilinosWrappers::MPI::Vector  present_solution;
   TrilinosWrappers::MPI::Vector  system_rhs;
   AffineConstraints<double>      nonzero_constraints;
+  AffineConstraints<double>      bounding_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
 

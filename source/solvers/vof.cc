@@ -801,7 +801,7 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
                                                  nodal_phase_fraction_owned,
                                                  system_rhs_phase_fraction);
 
-  nonzero_constraints.clear();
+  bounding_constraints.clear();
   active_set.clear();
 
   std::vector<bool> dof_touched(dof_handler.n_dofs(), false);
@@ -827,9 +827,9 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
                       0)
                     {
                       active_set.add_index(dof_index);
-                      nonzero_constraints.add_line(dof_index);
-                      nonzero_constraints.set_inhomogeneity(dof_index,
-                                                            vof_upper_bound);
+                      bounding_constraints.add_line(dof_index);
+                      bounding_constraints.set_inhomogeneity(dof_index,
+                                                             vof_upper_bound);
                       nodal_phase_fraction_owned(dof_index) = vof_upper_bound;
                       lambda(dof_index)                     = 0;
                     }
@@ -840,9 +840,9 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
                            0)
                     {
                       active_set.add_index(dof_index);
-                      nonzero_constraints.add_line(dof_index);
-                      nonzero_constraints.set_inhomogeneity(dof_index,
-                                                            vof_lower_bound);
+                      bounding_constraints.add_line(dof_index);
+                      bounding_constraints.set_inhomogeneity(dof_index,
+                                                             vof_lower_bound);
                       nodal_phase_fraction_owned(dof_index) = vof_lower_bound;
                       lambda(dof_index)                     = 0;
                     }
@@ -852,7 +852,7 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
     }
   active_set.compress();
   solution = nodal_phase_fraction_owned;
-  nonzero_constraints.close();
+  bounding_constraints.close();
 }
 
 template <int dim>
@@ -865,15 +865,9 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   const double interface_sharpness =
     this->simulation_parameters.interface_sharpening.interface_sharpness;
 
-  QGauss<dim> quadrature_formula(
-    this->simulation_parameters.fem_parameters.velocity_order + 1);
-
-  const MappingQ<dim> mapping(
-    1, simulation_parameters.fem_parameters.qmapping_all);
-
-  FEValues<dim> fe_values_phase_fraction(mapping,
+  FEValues<dim> fe_values_phase_fraction(*this->fs_mapping,
                                          *this->fe,
-                                         quadrature_formula,
+                                         *this->cell_quadrature,
                                          update_values |
                                            update_quadrature_points |
                                            update_JxW_values |
@@ -882,7 +876,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
 
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-  const unsigned int n_q_points    = quadrature_formula.size();
+  const unsigned int n_q_points    = this->cell_quadrature->size();
   FullMatrix<double> local_matrix_phase_fraction(dofs_per_cell, dofs_per_cell);
   Vector<double>     local_rhs_phase_fraction(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
