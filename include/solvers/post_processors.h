@@ -193,12 +193,11 @@ public:
   evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
                         std::vector<Vector<double>> &computed_quantities) const
   {
-    double             shear_rate_magnitude;
     const unsigned int n_quadrature_points = inputs.solution_gradients.size();
 
     for (unsigned int q = 0; q < n_quadrature_points; ++q)
       {
-        shear_rate_magnitude =
+        const double shear_rate_magnitude =
           calculate_shear_rate_magnitude(inputs.solution_gradients[q]);
         computed_quantities[q] =
           rheological_model->get_viscosity(shear_rate_magnitude);
