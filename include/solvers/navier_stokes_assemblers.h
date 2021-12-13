@@ -196,10 +196,9 @@ public:
    * @brief Calculates an approximation of the gradient of the viscosity
    * @param velocity_gradient The velocity gradient tensor on the quadrature point
      @param velocity_hessians The velocity hessian tensor on the quadrture point
-     @param shear_rate_magnitude The magnitude of the shear rate tensor on the quadrature point
-     @param grad_eta_shear_rate An approximation of the derivative of the
-     viscosity with a slight change in the shear_rate_magnitude (therefore, a
-   constant)
+     @param non_newtonian_viscosity The viscosity at which the gradient is calculated
+     @param d_gamma_dot Th difference in the shear rate magnitude to approximate the
+     viscosity variation with a slight change in the shear_rate magnitude
    */
   Tensor<1, dim>
   get_viscosity_gradient(const Tensor<2, dim> &velocity_gradient,
