@@ -89,12 +89,11 @@ PPContactForce<dim>::update_contact_information(
   // scalar and vector product
   normal_relative_velocity_value =
     contact_relative_velocity * normal_unit_vector;
-  Tensor<1, dim> normal_relative_velocity =
-    normal_relative_velocity_value * normal_unit_vector;
 
   // Calculation of tangential relative velocity
-  Tensor<1, dim> tangential_relative_velocity =
-    contact_relative_velocity - normal_relative_velocity;
+  contact_info.tangential_relative_velocity =
+    contact_relative_velocity -
+    (normal_relative_velocity_value * normal_unit_vector);
 
   // Calculation of new tangential_overlap, since this value is
   // history-dependent it needs the value at previous time-step
@@ -104,12 +103,8 @@ PPContactForce<dim>::update_contact_information(
   // which were already in contact (pairs_in_contact) needs to
   // modified using its history, while the tangential_overlaps of
   // new particles are equal to zero
-  Tensor<1, dim> modified_tangential_overlap =
-    contact_info.tangential_overlap + tangential_relative_velocity * dt;
-
-  // Updating the contact_info container based on the new calculated values
-  contact_info.tangential_overlap           = modified_tangential_overlap;
-  contact_info.tangential_relative_velocity = tangential_relative_velocity;
+  contact_info.tangential_overlap +=
+    contact_info.tangential_relative_velocity * dt;
 }
 
 template <int dim>
