@@ -216,7 +216,8 @@ private:
    * @param particle_two_properties Properties of particle two in contact
    * @param normal_force Contact normal force
    * @param tangential_force Contact tangential force
-   * @param tangential_torque Contact tangential torque
+   * @param particle_one_tangential_torque Contact tangential torque on particle one
+   * @param particle_two_tangential_torque Contact tangential torque on particle two
    * @param rolling_friction_torque Contact rolling resistance torque
    */
   void
@@ -229,7 +230,8 @@ private:
     const ArrayView<const double> &particle_two_propertie,
     Tensor<1, dim> &               normal_force,
     Tensor<1, dim> &               tangential_force,
-    Tensor<1, dim> &               tangential_torque,
+    Tensor<1, dim> &               particle_one_tangential_torque,
+    Tensor<1, dim> &               particle_two_tangential_torque,
     Tensor<1, dim> &               rolling_resistance_torque);
 
   // Contact model parameter. It is calculated in the constructor for different
@@ -242,7 +244,8 @@ private:
   Tensor<1, dim> normal_unit_vector;
   Tensor<1, dim> normal_force;
   Tensor<1, dim> tangential_force;
-  Tensor<1, dim> tangential_torque;
+  Tensor<1, dim> particle_one_tangential_torque;
+  Tensor<1, dim> particle_two_tangential_torque;
   Tensor<1, dim> rolling_resistance_torque;
   double         normal_relative_velocity_value;
 };

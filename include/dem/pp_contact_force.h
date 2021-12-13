@@ -114,7 +114,8 @@ protected:
   inline void
   apply_force_and_torque_real(const Tensor<1, dim> &normal_force,
                               const Tensor<1, dim> &tangential_force,
-                              const Tensor<1, dim> &tangential_torque,
+                              const Tensor<1, dim> &particle_one_tangential_torque,
+                              const Tensor<1, dim> &particle_two_tangential_torque,
                               const Tensor<1, dim> &rolling_resistance_torque,
                               Tensor<1, dim> &      particle_one_momentum,
                               Tensor<1, dim> &      particle_two_momentum,
@@ -131,10 +132,10 @@ protected:
         particle_two_force[d] = particle_two_force[d] + total_force[d];
 
         particle_one_momentum[d] = particle_one_momentum[d] -
-                                   tangential_torque[d] +
+                                   particle_one_tangential_torque[d] +
                                    rolling_resistance_torque[d];
         particle_two_momentum[d] = particle_two_momentum[d] -
-                                   tangential_torque[d] -
+                                   particle_two_tangential_torque[d] -
                                    rolling_resistance_torque[d];
       }
   }
@@ -154,7 +155,7 @@ protected:
   inline void
   apply_force_and_torque_ghost(const Tensor<1, dim> &normal_force,
                                const Tensor<1, dim> &tangential_force,
-                               const Tensor<1, dim> &tangential_torque,
+                               const Tensor<1, dim> &particle_one_tangential_torque,
                                const Tensor<1, dim> &rolling_resistance_torque,
                                Tensor<1, dim> &      particle_one_momentum,
                                Tensor<1, dim> &      particle_one_force)
@@ -168,7 +169,7 @@ protected:
         particle_one_force[d] = particle_one_force[d] - total_force[d];
 
         particle_one_momentum[d] = particle_one_momentum[d] -
-                                   tangential_torque[d] +
+                                   particle_one_tangential_torque[d] +
                                    rolling_resistance_torque[d];
       }
   }

@@ -169,7 +169,8 @@ PPLinearForce<dim>::calculate_pp_contact_force(
                     particle_two_properties,
                     normal_force,
                     tangential_force,
-                    tangential_torque,
+                    particle_one_tangential_torque,
+                              particle_two_tangential_torque,
                     rolling_resistance_torque);
 
                   // Getting particles' momentum and force
@@ -195,7 +196,8 @@ PPLinearForce<dim>::calculate_pp_contact_force(
                   // pair
                   this->apply_force_and_torque_real(normal_force,
                                                     tangential_force,
-                                                    tangential_torque,
+                                                    particle_one_tangential_torque,
+                                                    particle_two_tangential_torque,
                                                     rolling_resistance_torque,
                                                     particle_one_momentum,
                                                     particle_two_momentum,
@@ -269,7 +271,8 @@ PPLinearForce<dim>::calculate_pp_contact_force(
                     particle_two_properties,
                     normal_force,
                     tangential_force,
-                    tangential_torque,
+                    particle_one_tangential_torque,
+                              particle_two_tangential_torque,
                     rolling_resistance_torque);
 
                   // Getting momentum and force of particle one
@@ -288,7 +291,7 @@ PPLinearForce<dim>::calculate_pp_contact_force(
                   // pair
                   this->apply_force_and_torque_ghost(normal_force,
                                                      tangential_force,
-                                                     tangential_torque,
+                                                     particle_one_tangential_torque,
                                                      rolling_resistance_torque,
                                                      particle_one_momentum,
                                                      particle_one_force);
@@ -320,7 +323,8 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   const ArrayView<const double> &particle_two_properties,
   Tensor<1, dim> &               normal_force,
   Tensor<1, dim> &               tangential_force,
-  Tensor<1, dim> &               tangential_torque,
+  Tensor<1, dim> &               particle_one_tangential_torque,
+        Tensor<1, dim> &               particle_two_tangential_torque,
   Tensor<1, dim> &               rolling_resistance_torque)
 {
   // Calculation of effective radius and mass
@@ -410,11 +414,10 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   // Torque caused by tangential force (tangential_torque)
   if (dim == 3)
     {
-      tangential_torque =
-        cross_product_3d((0.5 *
-                          particle_one_properties[DEM::PropertiesIndex::dp] *
-                          normal_unit_vector),
-                         tangential_force);
+      particle_one_tangential_torque =
+        cross_product_3d(normal_unit_vector,
+                         tangential_force * particle_one_properties[DEM::dp] * 0.5);
+      particle_two_tangential_torque = particle_one_tangential_torque * particle_two_properties[DEM::PropertiesIndex::dp] / particle_one_properties[DEM::PropertiesIndex::dp];
     }
 
   // Rolling resistance torque
