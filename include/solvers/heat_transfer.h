@@ -184,7 +184,7 @@ public:
    * NB : not implemented for the heat_tranfer parameter for now.
    */
   void
-  compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+  compute_kelly(dealii::Vector<float> & /*estimated_error_per_cell*/)
   {
     return;
   }

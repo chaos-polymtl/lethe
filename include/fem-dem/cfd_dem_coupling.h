@@ -187,6 +187,17 @@ private:
   void
   read_checkpoint() override;
 
+  void
+  print_particles_summary();
+
+  /**
+   * @brief postprocess
+   * Post-process fluid dynamics after an iteration
+   */
+  void
+  postprocess_fd(bool first_iteration) override;
+
+
   unsigned int                coupling_frequency;
   bool                        contact_detection_step;
   bool                        checkpoint_step;
@@ -282,10 +293,8 @@ private:
 
   DEMSolverParameters<dim> dem_parameters;
   double                   dem_time_step;
-  const unsigned int       this_mpi_process =
-    Utilities::MPI::this_mpi_process(this->mpi_communicator);
-  const unsigned int n_mpi_processes =
-    Utilities::MPI::n_mpi_processes(this->mpi_communicator);
+  const unsigned int       this_mpi_process;
+  const unsigned int       n_mpi_processes;
 
   Triangulation<dim> tria;
 };

@@ -296,6 +296,55 @@ VOF<dim>::calculate_L2_error()
 }
 
 template <int dim>
+double
+VOF<dim>::calculate_volume(int fluid_index)
+{
+  auto mpi_communicator = triangulation->get_communicator();
+
+  FEValues<dim> fe_values_fs(*this->fs_mapping,
+                             *fe,
+                             *this->error_quadrature,
+                             update_values | update_gradients |
+                               update_quadrature_points | update_JxW_values);
+
+  const unsigned int  dofs_per_cell = fe->dofs_per_cell;
+  const unsigned int  n_q_points    = this->error_quadrature->size();
+  std::vector<double> q_scalar_values(n_q_points);
+
+  double volume = 0;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_fs.reinit(cell);
+          fe_values_fs.get_function_values(present_solution, q_scalar_values);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              switch (fluid_index)
+                {
+                  case 0:
+                    {
+                      if (q_scalar_values[q] < 0.5)
+                        volume += fe_values_fs.JxW(q) * q_scalar_values[q];
+                      break;
+                    }
+                  case 1:
+                    {
+                      if (q_scalar_values[q] > 0.5)
+                        volume += fe_values_fs.JxW(q) * q_scalar_values[q];
+                      break;
+                    }
+                }
+            }
+        }
+    }
+  volume = Utilities::MPI::sum(volume, mpi_communicator);
+  return volume;
+}
+
+template <int dim>
 void
 VOF<dim>::finish_simulation()
 {
@@ -342,7 +391,7 @@ template <int dim>
 void
 VOF<dim>::postprocess(bool first_iteration)
 {
-  if (simulation_parameters.analytical_solution->calculate_error() == true &&
+  if (simulation_parameters.analytical_solution->calculate_error() &&
       !first_iteration)
     {
       double phase_error = calculate_L2_error();
@@ -362,6 +411,38 @@ VOF<dim>::postprocess(bool first_iteration)
           Parameters::Verbosity::verbose)
         {
           this->pcout << "L2 error phase : " << phase_error << std::endl;
+        }
+    }
+
+  if (simulation_parameters.multiphysics.conservation_monitoring)
+    {
+      double volume =
+        calculate_volume(simulation_parameters.multiphysics.fluid_index);
+
+      auto         mpi_communicator = triangulation->get_communicator();
+      unsigned int this_mpi_process(
+        Utilities::MPI::this_mpi_process(mpi_communicator));
+
+      if (this_mpi_process == 0)
+        {
+          // Set conservation monitoring table
+          if (simulation_control->is_steady())
+            {
+              volume_table_fs.add_value(
+                "cells", this->triangulation->n_global_active_cells());
+            }
+          else
+            {
+              volume_table_fs.add_value("time",
+                                        simulation_control->get_current_time());
+            }
+          volume_table_fs.add_value("fluid_volume", volume);
+          volume_table_fs.set_scientific("fluid_volume", true);
+
+          // Save table to free_surface_monitoring.dat
+          std::string   filename = "free_surface_monitoring.dat";
+          std::ofstream output(filename.c_str());
+          volume_table_fs.write_text(output);
         }
     }
 }
@@ -543,9 +624,9 @@ VOF<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::free_surface, &dof_handler);
   multiphysics->set_solution(PhysicsID::free_surface, &present_solution);
-  // the fluid at present iteration is solved before the free surface, and after
-  // percolate is called for the previous iteration, so at the time the getter
-  // is called solution_m2 = solution_m1
+  // the fluid at present iteration is solved before the free surface, and
+  // after percolate is called for the previous iteration, so at the time the
+  // getter is called solution_m2 = solution_m1
   // TODO deactivated for now (inertia is considered with a constant density),
   // see if needed / to be debugged
   multiphysics->set_solution_m1(PhysicsID::free_surface,

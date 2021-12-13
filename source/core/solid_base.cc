@@ -546,6 +546,27 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step,
           std::cout << "Current number of particles : "
                     << solid_particle_handler->n_global_particles()
                     << std::endl;
+          std::cout << "Try increasing the number of particles sub iterations"
+                    << std::endl;
+
+          // Stops the simulation if particles have been lost
+          // Future improvement would be to dynamically increase the number of
+          // particles subiteration if particles have been lost
+          if (param->stop_particles_lost)
+            {
+              std::cerr
+                << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+              std::cerr
+                << "Exception on processing: " << std::endl
+                << "Nitsche Particles have been lost" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+              std::exit(1);
+            }
         }
     }
 }

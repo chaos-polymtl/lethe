@@ -53,8 +53,9 @@ namespace Parameters
 
     // Particle motion integration parameters
     unsigned int particles_sub_iterations;
+    bool         stop_particles_lost;
 
-    // information for force calculation
+    // Information for force calculation
     Point<dim>
       center_of_rotation; // Center of rotation used for torque calculation
   };
@@ -87,6 +88,12 @@ namespace Parameters
         "enables the uses of a higher CFL condition for the Nitsche solver while preventing the loss of particles");
 
       prm.declare_entry(
+        "stop if particles lost",
+        "false",
+        Patterns::Bool(),
+        "Enable stopping the simulation if Nitsche particles have been lost");
+
+      prm.declare_entry(
         "number quadrature points",
         "2",
         Patterns::Integer(),
@@ -115,6 +122,7 @@ namespace Parameters
       prm.leave_subsection();
       enable_particles_motion  = prm.get_bool("enable particles motion");
       particles_sub_iterations = prm.get_integer("particles sub iterations");
+      stop_particles_lost      = prm.get_bool("stop if particles lost");
       number_quadrature_points = prm.get_integer("number quadrature points");
 
       prm.enter_subsection("center of rotation");
@@ -191,7 +199,6 @@ namespace Parameters
                         "torque_solid",
                         Patterns::FileName(),
                         "File output solid torque prefix");
-
       prm.declare_entry("number of solids",
                         "1",
                         Patterns::Integer(),

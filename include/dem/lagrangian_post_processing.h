@@ -116,6 +116,8 @@ public:
     const unsigned int &                             step_number,
     const MPI_Comm &                                 mpi_communicator);
 
+
+
 private:
   /**
    * Carries out the calculation of average particles velocity for a single

@@ -161,7 +161,7 @@ public:
    * NB : not implemented for the tracer parameter for now.
    */
   void
-  compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+  compute_kelly(dealii::Vector<float> & /*estimated_error_per_cell*/)
   {
     return;
   }
