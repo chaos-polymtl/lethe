@@ -105,8 +105,7 @@ PPContactForce<dim>::update_contact_information(
   // modified using its history, while the tangential_overlaps of
   // new particles are equal to zero
   Tensor<1, dim> modified_tangential_overlap =
-    contact_info.tangential_overlap +
-    tangential_relative_velocity * dt;
+    contact_info.tangential_overlap + tangential_relative_velocity * dt;
 
   // Updating the contact_info container based on the new calculated values
   contact_info.tangential_overlap           = modified_tangential_overlap;

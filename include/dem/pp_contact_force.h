@@ -112,15 +112,16 @@ protected:
    * @param particle_two_force Force acting on particle two
    */
   inline void
-  apply_force_and_torque_real(const Tensor<1, dim> &normal_force,
-                              const Tensor<1, dim> &tangential_force,
-                              const Tensor<1, dim> &particle_one_tangential_torque,
-                              const Tensor<1, dim> &particle_two_tangential_torque,
-                              const Tensor<1, dim> &rolling_resistance_torque,
-                              Tensor<1, dim> &      particle_one_momentum,
-                              Tensor<1, dim> &      particle_two_momentum,
-                              Tensor<1, dim> &      particle_one_force,
-                              Tensor<1, dim> &      particle_two_force)
+  apply_force_and_torque_real(
+    const Tensor<1, dim> &normal_force,
+    const Tensor<1, dim> &tangential_force,
+    const Tensor<1, dim> &particle_one_tangential_torque,
+    const Tensor<1, dim> &particle_two_tangential_torque,
+    const Tensor<1, dim> &rolling_resistance_torque,
+    Tensor<1, dim> &      particle_one_momentum,
+    Tensor<1, dim> &      particle_two_momentum,
+    Tensor<1, dim> &      particle_one_force,
+    Tensor<1, dim> &      particle_two_force)
   {
     // Calculation of total force
     Tensor<1, dim> total_force = normal_force + tangential_force;
@@ -153,12 +154,13 @@ protected:
    * @param particle_one_force Force acting on particle one
    */
   inline void
-  apply_force_and_torque_ghost(const Tensor<1, dim> &normal_force,
-                               const Tensor<1, dim> &tangential_force,
-                               const Tensor<1, dim> &particle_one_tangential_torque,
-                               const Tensor<1, dim> &rolling_resistance_torque,
-                               Tensor<1, dim> &      particle_one_momentum,
-                               Tensor<1, dim> &      particle_one_force)
+  apply_force_and_torque_ghost(
+    const Tensor<1, dim> &normal_force,
+    const Tensor<1, dim> &tangential_force,
+    const Tensor<1, dim> &particle_one_tangential_torque,
+    const Tensor<1, dim> &rolling_resistance_torque,
+    Tensor<1, dim> &      particle_one_momentum,
+    Tensor<1, dim> &      particle_one_force)
   {
     // Calculation of total force
     Tensor<1, dim> total_force = normal_force + tangential_force;

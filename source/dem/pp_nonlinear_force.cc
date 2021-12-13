@@ -188,7 +188,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                     normal_force,
                     tangential_force,
                     particle_one_tangential_torque,
-                              particle_two_tangential_torque,
+                    particle_two_tangential_torque,
                     rolling_resistance_torque);
 
                   // Getting particles' momentum and force
@@ -213,15 +213,16 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_real(normal_force,
-                                                    tangential_force,
-                                                    particle_one_tangential_torque,
-                                                    particle_two_tangential_torque,
-                                                    rolling_resistance_torque,
-                                                    particle_one_momentum,
-                                                    particle_two_momentum,
-                                                    particle_one_force,
-                                                    particle_two_force);
+                  this->apply_force_and_torque_real(
+                    normal_force,
+                    tangential_force,
+                    particle_one_tangential_torque,
+                    particle_two_tangential_torque,
+                    rolling_resistance_torque,
+                    particle_one_momentum,
+                    particle_two_momentum,
+                    particle_one_force,
+                    particle_two_force);
                 }
 
               else
@@ -294,7 +295,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                     normal_force,
                     tangential_force,
                     particle_one_tangential_torque,
-                              particle_two_tangential_torque,
+                    particle_two_tangential_torque,
                     rolling_resistance_torque);
 
                   // Getting momentum and force of particle one
@@ -311,12 +312,13 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_ghost(normal_force,
-                                                     tangential_force,
-                                                     particle_one_tangential_torque,
-                                                     rolling_resistance_torque,
-                                                     particle_one_momentum,
-                                                     particle_one_force);
+                  this->apply_force_and_torque_ghost(
+                    normal_force,
+                    tangential_force,
+                    particle_one_tangential_torque,
+                    rolling_resistance_torque,
+                    particle_one_momentum,
+                    particle_one_force);
                 }
 
               else
@@ -380,20 +382,19 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   double tangential_damping_constant =
     normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
-  // Calculation of normal force using spring and dashpot normal forces
+  // Calculation of normal force
   normal_force =
     ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
     ((normal_damping_constant * normal_relative_velocity_value) *
      normal_unit_vector);
 
-  // Calculation of tangential force using spring and dashpot tangential
-  // forces. Since we need dashpot tangential force in the gross sliding again,
-  // we define it as a separate variable
-  Tensor<1, dim> dashpot_tangential_force =
+  // Calculation of tangential force. Since we need damping tangential force in
+  // the gross sliding again, we define it as a separate variable
+  Tensor<1, dim> damping_tangential_force =
     tangential_damping_constant * contact_info.tangential_relative_velocity;
   tangential_force =
     (tangential_spring_constant * contact_info.tangential_overlap) +
-    dashpot_tangential_force;
+    damping_tangential_force;
 
   double coulomb_threshold =
     this->effective_coefficient_of_friction[particle_one_type]
@@ -408,12 +409,12 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
       contact_info.tangential_overlap =
         (coulomb_threshold *
            (tangential_force / (tangential_force.norm() + DBL_MIN)) -
-         dashpot_tangential_force) /
+         damping_tangential_force) /
         (tangential_spring_constant + DBL_MIN);
 
       tangential_force =
         (tangential_spring_constant * contact_info.tangential_overlap) +
-        dashpot_tangential_force;
+        damping_tangential_force;
     }
 
   // Calculation of torque
@@ -422,8 +423,12 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     {
       particle_one_tangential_torque =
         cross_product_3d(normal_unit_vector,
-                         tangential_force * particle_one_properties[DEM::dp] * 0.5);
-      particle_two_tangential_torque = particle_one_tangential_torque * particle_two_properties[DEM::PropertiesIndex::dp] / particle_one_properties[DEM::PropertiesIndex::dp];
+                         tangential_force * particle_one_properties[DEM::dp] *
+                           0.5);
+      particle_two_tangential_torque =
+        particle_one_tangential_torque *
+        particle_two_properties[DEM::PropertiesIndex::dp] /
+        particle_one_properties[DEM::PropertiesIndex::dp];
     }
 
   // Rolling resistance torque

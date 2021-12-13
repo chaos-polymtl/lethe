@@ -231,7 +231,7 @@ private:
     Tensor<1, dim> &               normal_force,
     Tensor<1, dim> &               tangential_force,
     Tensor<1, dim> &               particle_one_tangential_torque,
-          Tensor<1, dim> &               particle_two_tangential_torque,
+    Tensor<1, dim> &               particle_two_tangential_torque,
     Tensor<1, dim> &               rolling_resistance_torque);
 
   // Normal and tangential contact forces, tangential and rolling torques,
