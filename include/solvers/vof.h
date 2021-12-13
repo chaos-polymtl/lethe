@@ -293,12 +293,15 @@ public:
                                   *this->fs_mapping,
                                   dof_handler_fluid->get_fe());
 
-            // Sharpen the interface of a solutio:
-            assemble_L2_projection_interface_sharpening(scratch_data,
-                                                        present_solution);
+            // Sharpen the interface of all solutions:
+            {
+              // Assemble matrix
+              assemble_L2_projection_interface_sharpening(scratch_data,
+                                                          present_solution);
 
-            // Solve the system for interface sharpening
-            solve_interface_sharpening(present_solution);
+              // Solve the system for interface sharpening
+              solve_interface_sharpening(present_solution);
+            }
 
             // Re limit the phase fractions between 0 and 1 after interface
             // sharpening
