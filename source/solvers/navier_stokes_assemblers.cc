@@ -474,18 +474,30 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
+      const Tensor<3, dim> velocity_hessian = scratch_data.velocity_hessians[q];
 
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
         velocity_gradient + transpose(velocity_gradient);
 
       // Calculate the shear rate magnitude
-      const double shear_rate_magnitude =
+      double shear_rate_magnitude =
         rheological_model->get_shear_rate_magnitude(shear_rate);
+
+      shear_rate_magnitude =
+        shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
 
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
         rheological_model->get_viscosity(shear_rate_magnitude);
+
+      // Calculate viscosity gradient
+      const Tensor<1, dim> viscosity_gradient =
+        this->get_viscosity_gradient(velocity_gradient,
+                                     velocity_hessian,
+                                     shear_rate_magnitude,
+                                     non_newtonian_viscosity,
+                                     1e-6);
 
       // Pressure
       const double         pressure = scratch_data.pressure_values[q];
@@ -519,6 +531,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
+                             shear_rate * viscosity_gradient -
                              non_newtonian_viscosity * velocity_laplacian -
                              force + mass_source * velocity +
                              strong_residual_vec[q];

@@ -208,14 +208,16 @@ public:
                          const double &        non_newtonian_viscosity,
                          const double &        d_gamma_dot) const
   {
-    // Calculating the gradient of the viscosity with a slight change in the
-    // shear rate magnitude
+    // Calculates an approximation of the derivative of the viscosity with a
+    // slight change in the shear rate magnitude using finite difference
     const double non_newtonian_viscosity_plus =
-      rheological_model->get_viscosity(shear_rate_magnitude + 1e-6);
+      rheological_model->get_viscosity(shear_rate_magnitude + d_gamma_dot);
 
     double grad_viscosity_shear_rate =
-      (non_newtonian_viscosity_plus - non_newtonian_viscosity) / 1e-6;
+      (non_newtonian_viscosity_plus - non_newtonian_viscosity) / d_gamma_dot;
 
+    // Calculates an approximation of the shear rate magnitude gradient using
+    // the derived form, since it does not change with rheological models
     Tensor<1, dim> grad_shear_rate;
     for (unsigned int d = 0; d < dim; ++d)
       {
