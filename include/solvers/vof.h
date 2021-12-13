@@ -267,6 +267,11 @@ public:
   {
     if (this->simulation_parameters.multiphysics.interface_sharpening)
       {
+        // Limit the phase fractions between 0 and 1
+        update_solution_and_constraints(present_solution);
+        for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+          update_solution_and_constraints(previous_solutions[p]);
+
         // Interface sharpening is done at a constant frequency
         if (this->simulation_control->get_step_number() %
               this->simulation_parameters.interface_sharpening
@@ -276,11 +281,6 @@ public:
             this->pcout << "Sharpening interface at step "
                         << this->simulation_control->get_step_number()
                         << std::endl;
-
-            // Limit the phase fractions between 0 and 1
-            update_solution_and_constraints(present_solution);
-            for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-              update_solution_and_constraints(previous_solutions[p]);
 
 
 
@@ -295,12 +295,16 @@ public:
 
             // Sharpen the interface of all solutions:
             {
-              // Assemble matrix
-              assemble_L2_projection_interface_sharpening(scratch_data,
-                                                          present_solution);
-
-              // Solve the system for interface sharpening
+              // Assemble matrix and solve the system for interface sharpening
+              assemble_L2_projection_interface_sharpening(present_solution);
               solve_interface_sharpening(present_solution);
+
+              for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+                {
+                  assemble_L2_projection_interface_sharpening(
+                    previous_solutions[p]);
+                  solve_interface_sharpening(previous_solutions[p]);
+                }
             }
 
             // Re limit the phase fractions between 0 and 1 after interface
@@ -447,7 +451,6 @@ private:
    */
   void
   assemble_L2_projection_interface_sharpening(
-    VOFScratchData<dim> &          scratch_data,
     TrilinosWrappers::MPI::Vector &solution);
 
   /**
@@ -506,8 +509,8 @@ private:
 
 
   // Lower and upper bounds of phase fraction
-  const double l2_upper_bound = 1.0;
-  const double l2_lower_bound = 0.0;
+  const double vof_upper_bound = 1.0;
+  const double vof_lower_bound = 0.0;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>

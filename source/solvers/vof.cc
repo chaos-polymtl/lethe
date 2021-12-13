@@ -241,6 +241,7 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "phase");
+  data_out.add_data_vector(dof_handler, previous_solutions[0], "phase_p1");
 }
 
 template <int dim>
@@ -630,6 +631,7 @@ VolumeOfFluid<dim>::setup_dofs()
   complete_system_rhs_phase_fraction.reinit(locally_owned_dofs,
                                             mpi_communicator);
 
+  active_set.clear();
   active_set.set_size(dof_handler.n_dofs());
 
   system_matrix.reinit(locally_owned_dofs,
@@ -734,8 +736,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
   if (simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  VOF : " << std::endl
-                  << "  -Iterative solver took : " << solver_control.last_step()
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
     }
 
@@ -822,27 +823,27 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
                     nodal_phase_fraction_owned(dof_index);
                   if (lambda(dof_index) + penalty_parameter *
                                             mass_matrix(dof_index, dof_index) *
-                                            (solution_value - l2_upper_bound) >
+                                            (solution_value - vof_upper_bound) >
                       0)
                     {
                       active_set.add_index(dof_index);
                       nonzero_constraints.add_line(dof_index);
                       nonzero_constraints.set_inhomogeneity(dof_index,
-                                                            l2_upper_bound);
-                      nodal_phase_fraction_owned(dof_index) = l2_upper_bound;
+                                                            vof_upper_bound);
+                      nodal_phase_fraction_owned(dof_index) = vof_upper_bound;
                       lambda(dof_index)                     = 0;
                     }
                   else if (lambda(dof_index) +
                              penalty_parameter *
                                mass_matrix(dof_index, dof_index) *
-                               (solution_value - l2_lower_bound) <
+                               (solution_value - vof_lower_bound) <
                            0)
                     {
                       active_set.add_index(dof_index);
                       nonzero_constraints.add_line(dof_index);
                       nonzero_constraints.set_inhomogeneity(dof_index,
-                                                            l2_lower_bound);
-                      nodal_phase_fraction_owned(dof_index) = l2_lower_bound;
+                                                            vof_lower_bound);
+                      nodal_phase_fraction_owned(dof_index) = vof_lower_bound;
                       lambda(dof_index)                     = 0;
                     }
                 }
@@ -857,7 +858,6 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
-  VOFScratchData<dim> &          scratch_data,
   TrilinosWrappers::MPI::Vector &solution)
 {
   const double sharpening_threshold =
@@ -888,6 +888,8 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<double>                  phi_phase(dofs_per_cell);
 
+  std::vector<double> phase_values(n_q_points);
+
   system_rhs_phase_fraction    = 0;
   system_matrix_phase_fraction = 0;
 
@@ -895,20 +897,18 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
     {
       if (cell->is_locally_owned())
         {
-          scratch_data.reinit(cell,
-                              present_solution,
-                              this->previous_solutions,
-                              this->solution_stages);
-
           fe_values_phase_fraction.reinit(cell);
 
           local_matrix_phase_fraction = 0;
           local_rhs_phase_fraction    = 0;
 
+          fe_values_phase_fraction.get_function_values(solution, phase_values);
+
+
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              double phase_values = scratch_data.present_phase_values[q];
+              auto phase_value = phase_values[q];
 
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
@@ -924,21 +924,20 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                         fe_values_phase_fraction.JxW(q);
                     }
 
-                  if (phase_values >= 0.0 &&
-                      phase_values <= sharpening_threshold)
+                  if (phase_value >= 0.0 && phase_value <= sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
                       std::pow(sharpening_threshold,
                                (1 - interface_sharpness)) *
-                      std::pow(phase_values, interface_sharpness) *
+                      std::pow(phase_value, interface_sharpness) *
                       phi_phase[i] * fe_values_phase_fraction.JxW(q);
-                  else if (phase_values > sharpening_threshold &&
-                           phase_values <= 1.0)
+                  else if (phase_value > sharpening_threshold &&
+                           phase_value <= 1.0)
                     {
                       local_rhs_phase_fraction(i) +=
                         (1 -
                          std::pow((1 - sharpening_threshold),
                                   (1 - interface_sharpness)) *
-                           std::pow((1 - phase_values), interface_sharpness)) *
+                           std::pow((1 - phase_value), interface_sharpness)) *
                         phi_phase[i] * fe_values_phase_fraction.JxW(q);
                     }
                 }
@@ -972,11 +971,8 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
                   << linear_solver_tolerance << std::endl;
     }
 
-  const IndexSet locally_owned_dofs_voidfraction =
-    dof_handler.locally_owned_dofs();
-
   TrilinosWrappers::MPI::Vector completely_distributed_phase_fraction_solution(
-    locally_owned_dofs_voidfraction, triangulation->get_communicator());
+    this->locally_owned_dofs, triangulation->get_communicator());
 
 
   SolverControl solver_control(
