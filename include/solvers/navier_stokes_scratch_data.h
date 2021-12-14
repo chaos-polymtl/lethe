@@ -227,6 +227,9 @@ public:
       current_solution, this->velocity_gradients);
     this->fe_values[velocities].get_function_laplacians(
       current_solution, this->velocity_laplacians);
+    if (gather_hessian)
+      this->fe_values[velocities].get_function_hessians(
+        current_solution, this->velocity_hessians);
 
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
@@ -723,20 +726,6 @@ public:
 
   void
   enable_hessian();
-
-  /** @brief Reinitialize the content of the scratch for the hessian tensor
-   *
-   * @param current_solution The present value of the solution for velocity
-   */
-
-  template <typename VectorType>
-  void
-  reinit_hessian(const VectorType &current_solution)
-  {
-    // Gather hessian
-    this->fe_values[velocities].get_function_hessians(current_solution,
-                                                      this->velocity_hessians);
-  }
 
 
   // FEValues for the Navier-Stokes problem

@@ -532,11 +532,6 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
         std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
-  if (this->simulation_parameters.physical_properties.non_newtonian_flow)
-    {
-      scratch_data.reinit_hessian(this->present_solution);
-    }
-
   copy_data.reset();
 
 
@@ -671,11 +666,6 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
       scratch_data.reinit_heat_transfer(temperature_cell,
                                         *this->multiphysics->get_solution(
                                           PhysicsID::heat_transfer));
-    }
-
-  if (this->simulation_parameters.physical_properties.non_newtonian_flow)
-    {
-      scratch_data.reinit_hessian(this->present_solution);
     }
 
   copy_data.reset();
