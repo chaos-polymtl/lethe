@@ -35,11 +35,11 @@ using namespace dealii;
 #  define particle_particle_nonlinear_force_h
 
 /**
- * Calculation of the non-linear particle-particle contact force using the
- * information obtained from the fine search and physical properties of
- * particles
+ * Calculation of the Hertz-Mindlin particle-particle contact force with
+ * limiting the tangential overlap using the information obtained from
+ * the fine search and physical properties of particles
  *
- * @note
+ * @ref https://www.sciencedirect.com/science/article/pii/S0010465519304357
  *
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
@@ -137,11 +137,11 @@ private:
 };
 
 /**
- * Calculation of the non-linear particle-particle contact force using the
- * information obtained from the fine search and physical properties of
- * particles
+ * Calculation of the Hertz-Mindlin particle-particle contact force with
+ * limiting the tangential force using the information obtained from
+ * the fine search and physical properties of particles
  *
- * @note
+ * @ref https://www.sciencedirect.com/science/article/abs/pii/003259109288030L
  *
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
@@ -238,11 +238,13 @@ private:
 
 
 /**
- * Calculation of the non-linear particle-particle contact force using the
- * information obtained from the fine search and physical properties of
- * particles
+ * Calculation of the Hertz-Mindlin particle-particle contact force with
+ * limiting the tangential force using the information obtained from
+ * the fine search and physical properties of particles. In this model
+ * the tangential damping force is not considered
  *
- * @note
+ * @ref Hertz H. (1882). Über die Berührung fester elastischer Körper.
+ * Journal die reine und angewandte Mathematik, 92, 156-171.
  *
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */

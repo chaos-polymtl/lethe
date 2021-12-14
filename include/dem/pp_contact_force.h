@@ -32,7 +32,7 @@ using namespace dealii;
 
 /**
  * Base interface for classes that carry out the calculation of particle-paricle
- * contact force
+ * contact force including non-linear and linear contact models
  */
 template <int dim>
 class PPContactForce
@@ -227,7 +227,7 @@ protected:
    * @param particle_two_force Force acting on particle two
    */
   inline void
-  apply_force_and_torque_real(
+  apply_force_and_torque_on_local_particles(
     const Tensor<1, dim> &normal_force,
     const Tensor<1, dim> &tangential_force,
     const Tensor<1, dim> &particle_one_tangential_torque,
@@ -269,7 +269,7 @@ protected:
    * @param particle_one_force Force acting on particle one
    */
   inline void
-  apply_force_and_torque_ghost(
+  apply_force_and_torque_on_ghost_particles(
     const Tensor<1, dim> &normal_force,
     const Tensor<1, dim> &tangential_force,
     const Tensor<1, dim> &particle_one_tangential_torque,

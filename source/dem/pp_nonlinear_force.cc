@@ -212,7 +212,7 @@ PPHertzMindlinLimitOverlap<dim>::calculate_pp_contact_force(
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_real(
+                  this->apply_force_and_torque_on_local_particles(
                     normal_force,
                     tangential_force,
                     particle_one_tangential_torque,
@@ -311,7 +311,7 @@ PPHertzMindlinLimitOverlap<dim>::calculate_pp_contact_force(
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_ghost(
+                  this->apply_force_and_torque_on_ghost_particles(
                     normal_force,
                     tangential_force,
                     particle_one_tangential_torque,
@@ -656,7 +656,7 @@ PPHertzMindlinLimitForce<dim>::calculate_pp_contact_force(
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_real(
+                  this->apply_force_and_torque_on_local_particles(
                     normal_force,
                     tangential_force,
                     particle_one_tangential_torque,
@@ -754,7 +754,7 @@ PPHertzMindlinLimitForce<dim>::calculate_pp_contact_force(
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_ghost(
+                  this->apply_force_and_torque_on_ghost_particles(
                     normal_force,
                     tangential_force,
                     particle_one_tangential_torque,
@@ -1089,7 +1089,7 @@ PPHertz<dim>::calculate_pp_contact_force(
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_real(
+                  this->apply_force_and_torque_on_local_particles(
                     normal_force,
                     tangential_force,
                     particle_one_tangential_torque,
@@ -1186,7 +1186,7 @@ PPHertz<dim>::calculate_pp_contact_force(
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_ghost(
+                  this->apply_force_and_torque_on_ghost_particles(
                     normal_force,
                     tangential_force,
                     particle_one_tangential_torque,
