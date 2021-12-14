@@ -20,6 +20,7 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/pp_contact_force.h>
 #include <dem/pp_contact_info_struct.h>
+#include <dem/rolling_resistance_torque_base.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
@@ -47,15 +48,6 @@ using namespace dealii;
 template <int dim>
 class PPLinearForce : public PPContactForce<dim>
 {
-  using FuncPtrType =
-    Tensor<1, dim> (PPContactForce<dim>::*)(const double &,
-                                            const ArrayView<const double> &,
-                                            const ArrayView<const double> &,
-                                            const double &,
-                                            const double &,
-                                            const Tensor<1, dim> &);
-  FuncPtrType calculate_rolling_resistance_torque;
-
 public:
   PPLinearForce<dim>(const DEMSolverParameters<dim> &dem_parameters);
 
@@ -129,6 +121,9 @@ private:
   Tensor<1, dim> particle_two_tangential_torque;
   Tensor<1, dim> rolling_resistance_torque;
   double         normal_relative_velocity_value;
+
+  std::shared_ptr<RollingResistanceTorqueBase<dim>>
+    rolling_resistance_torque_object;
 };
 
 #endif

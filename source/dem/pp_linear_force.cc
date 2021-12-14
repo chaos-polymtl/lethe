@@ -1,4 +1,5 @@
 #include <dem/pp_linear_force.h>
+#include <dem/rolling_resistance_torque_models.h>
 
 using namespace DEM;
 
@@ -82,21 +83,22 @@ PPLinearForce<dim>::PPLinearForce(
       Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
         no_resistance)
     {
-      calculate_rolling_resistance_torque = &PPContactForce<dim>::no_resistance;
+      rolling_resistance_torque_object =
+        std::make_shared<NoRollingResistanceTorque<dim>>();
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
              constant_resistance)
     {
-      calculate_rolling_resistance_torque =
-        &PPContactForce<dim>::constant_resistance;
+      rolling_resistance_torque_object =
+        std::make_shared<ConstantRollingResistanceTorque<dim>>();
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
              viscous_resistance)
     {
-      calculate_rolling_resistance_torque =
-        &PPContactForce<dim>::viscous_resistance;
+      rolling_resistance_torque_object =
+        std::make_shared<ViscousRollingResistanceTorque<dim>>();
     }
 }
 
@@ -427,14 +429,15 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     }
 
   // Rolling resistance torque
-  rolling_resistance_torque = (this->*calculate_rolling_resistance_torque)(
-    this->effective_radius,
-    particle_one_properties,
-    particle_two_properties,
-    this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                   [particle_two_type],
-    normal_force.norm(),
-    normal_unit_vector);
+  rolling_resistance_torque =
+    rolling_resistance_torque_object->calculate_rolling_resistance_torque(
+      this->effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                     [particle_two_type],
+      normal_force.norm(),
+      normal_unit_vector);
 }
 
 template class PPLinearForce<2>;
