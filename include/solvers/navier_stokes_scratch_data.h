@@ -148,6 +148,7 @@ public:
       enable_heat_transfer(sd.fe_values_temperature->get_fe(),
                            sd.fe_values_temperature->get_quadrature(),
                            sd.fe_values_temperature->get_mapping());
+    gather_hessian = sd.gather_hessian;
   }
 
 
