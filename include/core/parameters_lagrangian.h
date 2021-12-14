@@ -200,14 +200,16 @@ namespace Parameters
       // particle diameter)
       double neighborhood_threshold;
 
-      // Choosing particle-particle contact force model
+      // Particle-particle contact force model
       enum class PPContactForceModel
       {
         pp_linear,
-        pp_nonlinear
+        pp_hertz_mindlin_limit_force,
+        pp_hertz_mindlin_limit_overlap,
+        pp_hertz
       } pp_contact_force_method;
 
-      // Choosing particle-wall contact force model
+      // Particle-wall contact force model
       enum class PWContactForceModel
       {
         pw_linear,

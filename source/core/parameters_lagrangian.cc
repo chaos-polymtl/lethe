@@ -445,10 +445,10 @@ namespace Parameters
           "Contact search zone diameter to particle diameter ratio");
 
         prm.declare_entry("particle particle contact force method",
-                          "pp_nonlinear",
-                          Patterns::Selection("pp_linear|pp_nonlinear"),
+                          "pp_hertz_mindlin_limit_overlap",
+                          Patterns::Selection("pp_linear|pp_hertz_mindlin_limit_force|pp_hertz_mindlin_limit_overlap|pp_hertz"),
                           "Choosing particle-particle contact force model"
-                          "Choices are <pp_linear|pp_nonlinear>.");
+                          "Choices are <pp_linear|pp_hertz_mindlin_limit_force|pp_hertz_mindlin_limit_overlap|pp_hertz>.");
 
         prm.declare_entry("particle wall contact force method",
                           "pw_nonlinear",
@@ -535,8 +535,12 @@ namespace Parameters
           prm.get("particle particle contact force method");
         if (ppcf == "pp_linear")
           pp_contact_force_method = PPContactForceModel::pp_linear;
-        else if (ppcf == "pp_nonlinear")
-          pp_contact_force_method = PPContactForceModel::pp_nonlinear;
+        else if (ppcf == "pp_hertz_mindlin_limit_force")
+          pp_contact_force_method = PPContactForceModel::pp_hertz_mindlin_limit_force;
+        else if (ppcf == "pp_hertz_mindlin_limit_overlap")
+          pp_contact_force_method = PPContactForceModel::pp_hertz_mindlin_limit_overlap;
+        else if (ppcf == "pp_hertz")
+          pp_contact_force_method = PPContactForceModel::pp_hertz;
         else
           {
             throw(std::runtime_error(
