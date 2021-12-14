@@ -139,6 +139,13 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
   temperature_values = std::vector<double>(this->n_q_points);
 }
 
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_hessian()
+{
+  gather_hessian = true;
+}
+
 
 template class NavierStokesScratchData<2>;
 template class NavierStokesScratchData<3>;

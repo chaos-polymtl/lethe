@@ -479,7 +479,8 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
                                        *this->cell_quadrature,
                                        *this->mapping);
     }
-
+  if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+    scratch_data.enable_hessian();
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -529,6 +530,11 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
         *this->multiphysics->get_solution(PhysicsID::free_surface),
         previous_solutions,
         std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+  if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+    {
+      scratch_data.reinit_hessian(this->present_solution);
     }
 
   copy_data.reset();
@@ -589,6 +595,9 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                                         *this->cell_quadrature,
                                         *this->mapping);
     }
+
+  if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+    scratch_data.enable_hessian();
 
 
   WorkStream::run(
@@ -662,6 +671,11 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
       scratch_data.reinit_heat_transfer(temperature_cell,
                                         *this->multiphysics->get_solution(
                                           PhysicsID::heat_transfer));
+    }
+
+  if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+    {
+      scratch_data.reinit_hessian(this->present_solution);
     }
 
   copy_data.reset();

@@ -296,7 +296,6 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
       const Tensor<3, dim> velocity_hessian = scratch_data.velocity_hessians[q];
-
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
 
@@ -1499,7 +1498,7 @@ PressureBoundaryCondition<dim>::assemble_matrix(
   // Scheme and physical properties
   const double viscosity = physical_properties.viscosity;
 
-  // Loop and quadrature informations
+  // Loop and quadrature informationshessian
   Tensor<2, dim> identity;
   for (unsigned int d = 0; d < dim; ++d)
     {
