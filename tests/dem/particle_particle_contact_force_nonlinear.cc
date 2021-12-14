@@ -201,7 +201,7 @@ test()
     neighborhood_threshold);
 
   // Calling linear force
-  PPNonLinearForce<dim> nonlinear_force_object(dem_parameters);
+  PPHertzMindlinLimitOverlap<dim> nonlinear_force_object(dem_parameters);
   nonlinear_force_object.calculate_pp_contact_force(
     local_adjacent_particles, ghost_adjacent_particles, dt, momentum, force);
 

@@ -293,10 +293,10 @@ test()
                                            ghost_neighbor_list);
 
   // Creating broad search, fine search and particle-particle force objects
-  PPBroadSearch<dim>            broad_search_object;
-  PPFineSearch<dim>             fine_search_object;
-  PPNonLinearForce<dim>         nonlinear_force_object(dem_parameters);
-  VelocityVerletIntegrator<dim> integrator_object;
+  PPBroadSearch<dim>              broad_search_object;
+  PPFineSearch<dim>               fine_search_object;
+  PPHertzMindlinLimitOverlap<dim> nonlinear_force_object(dem_parameters);
+  VelocityVerletIntegrator<dim>   integrator_object;
 
   MPI_Comm communicator     = triangulation.get_communicator();
   auto     this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
