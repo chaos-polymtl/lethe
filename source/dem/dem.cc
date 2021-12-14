@@ -633,11 +633,22 @@ DEMSolver<dim>::set_pp_contact_force(const DEMSolverParameters<dim> &parameters)
     }
   else if (parameters.model_parameters.pp_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PPContactForceModel::
-             pp_nonlinear)
+             pp_hertz_mindlin_limit_overlap)
     {
       pp_contact_force_object =
-        std::make_shared<PPNonLinearForce<dim>>(parameters);
+        std::make_shared<PPHertzMindlinLimitOverlap<dim>>(parameters);
     }
+  else if (parameters.model_parameters.pp_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::PPContactForceModel::
+             pp_hertz_mindlin_limit_force)
+    {
+      pp_contact_force_object =
+        std::make_shared<PPHertzMindlinLimitForce<dim>>(parameters);
+    }
+  else if (parameters.model_parameters.pp_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::PPContactForceModel::
+             pp_hertz)
+    pp_contact_force_object = std::make_shared<PPHertz<dim>>(parameters);
   else
     {
       throw "The chosen particle-particle contact force model is invalid";

@@ -1,6 +1,6 @@
 #include <dem/pp_linear_force.h>
 
-using namespace dealii;
+using namespace DEM;
 
 template <int dim>
 PPLinearForce<dim>::PPLinearForce(
@@ -77,25 +77,26 @@ PPLinearForce<dim>::PPLinearForce(
         }
     }
 
+  // Overriding rolling resistance torque model
   if (dem_parameters.model_parameters.rolling_resistance_method ==
       Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
         no_resistance)
     {
-      calculate_rolling_resistance_torque = &PPLinearForce<dim>::no_resistance;
+      calculate_rolling_resistance_torque = &PPContactForce<dim>::no_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
              constant_resistance)
     {
       calculate_rolling_resistance_torque =
-        &PPLinearForce<dim>::constant_resistance;
+        &PPContactForce<dim>::constant_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
              viscous_resistance)
     {
       calculate_rolling_resistance_torque =
-        &PPLinearForce<dim>::viscous_resistance;
+        &PPContactForce<dim>::viscous_resistance;
     }
 }
 

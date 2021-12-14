@@ -857,6 +857,7 @@ CFDDEMSolver<dim>::set_integrator_type()
 template <int dim>
 std::shared_ptr<PPContactForce<dim>>
 CFDDEMSolver<dim>::set_pp_contact_force()
+
 {
   if (dem_parameters.model_parameters.pp_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PPContactForceModel::pp_linear)
@@ -866,11 +867,24 @@ CFDDEMSolver<dim>::set_pp_contact_force()
     }
   else if (dem_parameters.model_parameters.pp_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PPContactForceModel::
-             pp_nonlinear)
+             pp_hertz_mindlin_limit_overlap)
     {
       pp_contact_force_object =
-        std::make_shared<PPNonLinearForce<dim>>(dem_parameters);
+        std::make_shared<PPHertzMindlinLimitOverlap<dim>>(dem_parameters);
     }
+  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
+             .pp_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::PPContactForceModel::
+             pp_hertz_mindlin_limit_force)
+    {
+      pp_contact_force_object =
+        std::make_shared<PPHertzMindlinLimitForce<dim>>(dem_parameters);
+    }
+  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
+             .pp_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::PPContactForceModel::
+             pp_hertz)
+    pp_contact_force_object = std::make_shared<PPHertz<dim>>(dem_parameters);
   else
     {
       throw "The chosen particle-particle contact force model is invalid";
