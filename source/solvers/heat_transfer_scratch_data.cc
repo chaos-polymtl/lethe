@@ -57,8 +57,12 @@ HeatTransferScratchData<dim>::allocate()
     n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
   this->laplacian_phi_T =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
-}
 
+  // Allocate memory for the physical properties
+  specific_heat        = std::vector<double>(n_q_points);
+  density              = std::vector<double>(n_q_points);
+  thermal_conductivity = std::vector<double>(n_q_points);
+}
 
 template <int dim>
 void

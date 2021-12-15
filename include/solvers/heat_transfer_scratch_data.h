@@ -25,8 +25,10 @@
 #ifndef lethe_heat_transfer_scratch_data_h
 #define lethe_heat_transfer_scratch_data_h
 
+#include <core/density_model.h>
 #include <core/multiphysics.h>
 #include <core/specific_heat_model.h>
+#include <core/thermal_conductivity_model.h>
 
 #include <solvers/multiphysics_interface.h>
 
@@ -367,11 +369,9 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
   std::vector<std::vector<double>>         stages_temperature_values;
 
-  // Physical properties models and values at the gauss points
-  std::vector<std::shared_ptr<SpecificHeatModel>> specific_heat_models;
-  std::vector<double>                             specific_heat;
-  std::vector<double>                             thermal_conductivity;
-  std::vector<double>                             density;
+  std::vector<double> specific_heat;
+  std::vector<double> thermal_conductivity;
+  std::vector<double> density;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;

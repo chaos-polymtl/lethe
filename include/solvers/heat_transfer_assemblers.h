@@ -26,7 +26,6 @@
 #define lethe_heat_transfer_assemblers_h
 
 #include <core/simulation_control.h>
-#include <core/specific_heat_model.h>
 
 #include <solvers/copy_data.h>
 #include <solvers/heat_transfer_scratch_data.h>

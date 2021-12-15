@@ -307,8 +307,7 @@ VOF<dim>::calculate_volume(int fluid_index)
                              update_values | update_gradients |
                                update_quadrature_points | update_JxW_values);
 
-  const unsigned int  dofs_per_cell = fe->dofs_per_cell;
-  const unsigned int  n_q_points    = this->error_quadrature->size();
+  const unsigned int  n_q_points = this->error_quadrature->size();
   std::vector<double> q_scalar_values(n_q_points);
 
   double volume = 0;
