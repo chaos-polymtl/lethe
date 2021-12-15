@@ -22,6 +22,13 @@
 #ifndef lethe_multiphysics_interface_h
 #define lethe_multiphysics_interface_h
 
+#include <core/multiphysics.h>
+#include <core/parameters_multiphysics.h>
+#include <core/simulation_control.h>
+
+#include <solvers/auxiliary_physics.h>
+#include <solvers/simulation_parameters.h>
+
 #include <deal.II/base/exceptions.h>
 
 #include <deal.II/distributed/tria_base.h>
@@ -30,12 +37,6 @@
 
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
-
-#include <core/multiphysics.h>
-#include <core/parameters_multiphysics.h>
-#include <core/simulation_control.h>
-#include <solvers/auxiliary_physics.h>
-#include <solvers/simulation_parameters.h>
 
 #include <map>
 #include <memory>
@@ -74,21 +75,15 @@ public:
   {
     if (physics_id == PhysicsID::heat_transfer)
       {
-        pcout << "--------------" << std::endl
-              << "Heat Transfer" << std::endl
-              << "--------------" << std::endl;
+        pcout << "Heat Transfer" << std::endl << "--------------" << std::endl;
       }
     else if (physics_id == PhysicsID::tracer)
       {
-        pcout << "-------" << std::endl
-              << "Tracer" << std::endl
-              << "-------" << std::endl;
+        pcout << "Tracer" << std::endl << "-------" << std::endl;
       }
     else if (physics_id == PhysicsID::free_surface)
       {
-        pcout << "-------------" << std::endl
-              << "Free Surface" << std::endl
-              << "-------------" << std::endl;
+        pcout << "Free Surface" << std::endl << "-------------" << std::endl;
       }
   }
 
@@ -118,6 +113,10 @@ public:
                   announce_physics(iphys.first);
 
                 solve_physics(iphys.first, time_stepping_method);
+
+                // Embellish the console output
+                if (verbosity != Parameters::Verbosity::quiet)
+                  pcout << "-----------------------" << std::endl;
               }
           }
         else
@@ -146,6 +145,10 @@ public:
                   announce_physics(iphys.first);
 
                 solve_block_physics(iphys.first, time_stepping_method);
+
+                // Embellish the console output
+                if (verbosity != Parameters::Verbosity::quiet)
+                  pcout << "-----------------------" << std::endl;
               }
           }
         else
@@ -185,7 +188,11 @@ public:
             // Announce physic solved (verbosity =
             // non_linear_solver.verbosity)
             if (verbosity != Parameters::Verbosity::quiet)
-              announce_physics(iphys.first);
+              {
+                // Embellish the console output
+                pcout << "-----------------------" << std::endl;
+                announce_physics(iphys.first);
+              }
 
             solve_physics(iphys.first, time_stepping_method);
           }
@@ -201,65 +208,16 @@ public:
             // Announce physic solved (verbosity =
             // non_linear_solver.verbosity)
             if (verbosity != Parameters::Verbosity::quiet)
-              announce_physics(iphys.first);
+              {
+                // Embellish the console output
+                pcout << "-----------------------" << std::endl;
+                announce_physics(iphys.first);
+              }
 
             solve_block_physics(iphys.first, time_stepping_method);
           }
       }
   }
-
-  /**
-   * @brief Call for the solution of all physics
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
-   */
-  void
-  solve(const Parameters::SimulationControl::TimeSteppingMethod
-          time_stepping_method)
-  {
-    // Loop through all the elements in the physics map. Consequently,
-    // iphys is an std::pair where iphys.first is the PhysicsID and
-    // iphys.second is the AuxiliaryPhysics pointer. This is how the map
-    // can be traversed sequentially.
-    for (auto &iphys : physics)
-      {
-        // Announce physic solved (verbosity =
-        // non_linear_solver.verbosity)
-        if (verbosity != Parameters::Verbosity::quiet)
-          announce_physics(iphys.first);
-
-
-        // Ensure that iphys.first is present in solve_pre_fluid map
-        if (solve_pre_fluid.count(iphys.first) != 0)
-          {
-            if (solve_pre_fluid[iphys.first])
-              std::cout << "Je commencerai par ça!" << std::endl;
-          }
-        else
-          {
-            pcout
-              << "Resolution order is not specified for this auxiliary physic :"
-              << std::endl
-              << "will be solved after the fluid dynamics by default."
-              << std::endl
-              << "For clarity, please specify a resolution order in the map solve_pre_fluid defined in multiphysics_interface.h"
-              << std::endl
-              << "-------------" << std::endl;
-          }
-
-        solve_physics(iphys.first, time_stepping_method);
-      }
-    for (auto &iphys : block_physics)
-      {
-        // Announce physic solved (verbosity =
-        // non_linear_solver.verbosity)
-        if (verbosity != Parameters::Verbosity::quiet)
-          announce_physics(iphys.first);
-
-        solve_block_physics(iphys.first, time_stepping_method);
-      }
-  }
-
 
   /**
    * @brief Call for the solution of a single physic
@@ -734,7 +692,7 @@ private:
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
                                             {heat_transfer, false},
                                             {tracer, false},
-                                            {free_surface, true}};
+                                            {free_surface, false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.
