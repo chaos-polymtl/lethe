@@ -17,20 +17,6 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include <core/bdf.h>
-#include <core/grids.h>
-#include <core/lethegridtools.h>
-#include <core/sdirk.h>
-#include <core/solutions_output.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/flow_control.h>
-#include <solvers/navier_stokes_base.h>
-#include <solvers/post_processors.h>
-#include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_velocities.h>
-
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 
@@ -48,6 +34,19 @@
 
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
+
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/lethegridtools.h>
+#include <core/sdirk.h>
+#include <core/solutions_output.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/flow_control.h>
+#include <solvers/navier_stokes_base.h>
+#include <solvers/post_processors.h>
+#include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
 
 
 /*
@@ -543,8 +542,17 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
     }
   else
     {
+      // sdirk schemes are not implemented for multiphysics simulations
+
+      // Solve the auxiliary physics that should be treated BEFORE the fluid
+      // dynamics
+      multiphysics->pre_solve(simulation_parameters.simulation_control.method);
+
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
-      multiphysics->solve(simulation_parameters.simulation_control.method);
+
+      // Solve the auxiliary physics that should be treated AFTER the fluid
+      // dynamics
+      multiphysics->post_solve(simulation_parameters.simulation_control.method);
     }
 }
 
