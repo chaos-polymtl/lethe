@@ -163,6 +163,125 @@ public:
   Parameters::VelocitySource velocity_sources;
 };
 
+/**
+ * @brief Class that assembles the core of the Navier-Stokes equation
+ * using a Rheological model to predict non Newtonian behaviors
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+
+template <int dim>
+class GLSNavierStokesAssemblerNonNewtonianCore
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSNavierStokesAssemblerNonNewtonianCore(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+  {
+    // if (physical_properties.non_newtonian_parameters.model ==
+    // Parameters::NonNewtonian::Model::Carreau)
+    //{
+    rheological_model = std::make_shared<Carreau<dim>>(
+      physical_properties.non_newtonian_parameters);
+    //}
+  }
+
+  /**
+   * @brief Calculates an approximation of the gradient of the viscosity
+   * @param velocity_gradient The velocity gradient tensor on the quadrature point
+     @param velocity_hessians The velocity hessian tensor on the quadrture point
+     @param non_newtonian_viscosity The viscosity at which the gradient is calculated
+     @param d_gamma_dot Th difference in the shear rate magnitude to approximate the
+     viscosity variation with a slight change in the shear_rate magnitude
+   */
+  Tensor<1, dim>
+  get_viscosity_gradient(const Tensor<2, dim> &velocity_gradient,
+                         const Tensor<3, dim> &velocity_hessians,
+                         const double &        shear_rate_magnitude,
+                         const double &        non_newtonian_viscosity,
+                         const double &        d_gamma_dot) const
+  {
+    // Calculates an approximation of the derivative of the viscosity with a
+    // slight change in the shear rate magnitude using finite difference
+    const double non_newtonian_viscosity_plus =
+      rheological_model->get_viscosity(shear_rate_magnitude + d_gamma_dot);
+
+    double grad_viscosity_shear_rate =
+      (non_newtonian_viscosity_plus - non_newtonian_viscosity) / d_gamma_dot;
+
+    // Calculates an approximation of the shear rate magnitude gradient using
+    // the derived form, since it does not change with rheological models
+    Tensor<1, dim> grad_shear_rate;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        if (dim == 2)
+          {
+            for (unsigned int k = 0; k < dim; ++k)
+              {
+                grad_shear_rate[d] +=
+                  2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /
+                  shear_rate_magnitude;
+              }
+            grad_shear_rate[d] +=
+              (velocity_gradient[0][1] + velocity_gradient[1][0]) *
+              (velocity_hessians[0][d][1] + velocity_hessians[1][d][0]) /
+              shear_rate_magnitude;
+          }
+        else
+          {
+            for (unsigned int k = 0; k < dim; ++k)
+              {
+                grad_shear_rate[d] +=
+                  2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /
+                    shear_rate_magnitude +
+                  (velocity_gradient[(k + 1) % dim][(k + 2) % dim] +
+                   velocity_gradient[(k + 2) % dim][(k + 1) % dim]) *
+                    (velocity_hessians[(k + 1) % dim][d][(k + 2) % dim] +
+                     velocity_hessians[(k + 2) % dim][d][(k + 1) % dim]) /
+                    shear_rate_magnitude;
+              }
+          }
+      }
+    return grad_shear_rate * grad_viscosity_shear_rate;
+  };
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * Enables SUPG stabilization for the Navier-Stokes formulation.
+   * We have not found any scenarios where it is relevant not to use SUPG
+   * stabilization yet.
+   */
+  const bool SUPG = true;
+
+  std::shared_ptr<SimulationControl>     simulation_control;
+  Parameters::PhysicalProperties         physical_properties;
+  std::shared_ptr<RheologicalModel<dim>> rheological_model;
+};
+
 
 /**
  * @brief Class that assembles the transient time arising from BDF time

@@ -103,6 +103,7 @@ public:
     gather_void_fraction         = false;
     gather_particles_information = false;
     gather_temperature           = false;
+    gather_hessian               = false;
   }
 
   /**
@@ -147,6 +148,7 @@ public:
       enable_heat_transfer(sd.fe_values_temperature->get_fe(),
                            sd.fe_values_temperature->get_quadrature(),
                            sd.fe_values_temperature->get_mapping());
+    gather_hessian = sd.gather_hessian;
   }
 
 
@@ -226,6 +228,10 @@ public:
       current_solution, this->velocity_gradients);
     this->fe_values[velocities].get_function_laplacians(
       current_solution, this->velocity_laplacians);
+    if (gather_hessian)
+      this->fe_values[velocities].get_function_hessians(
+        current_solution, this->velocity_hessians);
+
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
         this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
@@ -689,6 +695,7 @@ public:
                        const Quadrature<dim> &   quadrature,
                        const Mapping<dim> &      mapping);
 
+
   /** @brief Reinitialize the content of the scratch for the heat transfer
    *
    * @param cell The cell over which the assembly is being carried.
@@ -714,6 +721,13 @@ public:
                                                      this->temperature_values);
   }
 
+  /**
+   * @brief enable_hessian Enables the collection of the hesian tensor when it's a non Newtonian flow
+   */
+
+  void
+  enable_hessian();
+
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
@@ -737,6 +751,7 @@ public:
   std::vector<double>                      velocity_divergences;
   std::vector<Tensor<2, dim>>              velocity_gradients;
   std::vector<Tensor<1, dim>>              velocity_laplacians;
+  std::vector<Tensor<3, dim>>              velocity_hessians;
   std::vector<double>                      pressure_values;
   std::vector<Tensor<1, dim>>              pressure_gradients;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
@@ -806,6 +821,9 @@ public:
    * Is boundary cell indicator
    */
   bool is_boundary_cell;
+
+  // If a rheological model is being used for a non Newtonian flow
+  bool gather_hessian;
 
   FEFaceValues<dim> fe_face_values;
 
