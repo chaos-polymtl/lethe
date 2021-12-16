@@ -13,7 +13,9 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
+  subsection fluid 0
     set kinematic viscosity            = 1.000
+  end
 end
 #---------------------------------------------------
 # Timer

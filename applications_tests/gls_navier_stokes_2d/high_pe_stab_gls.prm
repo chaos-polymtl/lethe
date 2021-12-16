@@ -43,7 +43,9 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-  set thermal conductivity = 0.01
+  subsection fluid 0
+    set thermal conductivity = 0.01
+  end
 end
 
 #---------------------------------------------------

@@ -1088,11 +1088,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout
-            << "Pressure drop: "
-            << this->simulation_parameters.physical_properties.density *
-                 pressure_drop
-            << " Pa" << std::endl;
+          this->pcout << "Pressure drop: "
+                      << this->simulation_parameters.physical_properties
+                             .fluids[0]
+                             .density *
+                           pressure_drop
+                      << " Pa" << std::endl;
         }
 
       // Output pressure drop to a text file from processor 0

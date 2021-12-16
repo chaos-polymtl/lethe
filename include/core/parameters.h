@@ -272,20 +272,6 @@ namespace Parameters
     PhysicalProperties()
     {}
 
-    // Monophasic simulations parameters
-    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
-    double viscosity;
-    // volumetric mass density (rho) in units of kg/m^3
-    double density;
-    // specific heat capacity (cp) in J/K/kg
-    double specific_heat;
-    // thermal conductivity (k) in W/m/K
-    double thermal_conductivity;
-    // thermal expansion coefficient (alpha) in 1/K
-    double thermal_expansion;
-    // tracer diffusivity in L^2/s
-    double tracer_diffusivity;
-
     // Non Newtonian parameters
     bool         non_newtonian_flow;
     NonNewtonian non_newtonian_parameters;

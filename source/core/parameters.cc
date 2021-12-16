@@ -342,34 +342,10 @@ namespace Parameters
   PhysicalProperties::declare_parameters(ParameterHandler &prm)
   {
     fluids.resize(max_fluids);
-    number_fluids = 0;
+    number_fluids = 1;
 
     prm.enter_subsection("physical properties");
     {
-      // Single phase simulations parameters definition
-      prm.declare_entry("kinematic viscosity",
-                        "1",
-                        Patterns::Double(),
-                        "Kinematic viscosity");
-      prm.declare_entry("density", "1", Patterns::Double(), "Density");
-      prm.declare_entry("specific heat",
-                        "1",
-                        Patterns::Double(),
-                        "Specific heat");
-      prm.declare_entry("thermal conductivity",
-                        "1",
-                        Patterns::Double(),
-                        "Thermal conductivity");
-      prm.declare_entry("thermal expansion",
-                        "1",
-                        Patterns::Double(),
-                        "Thermal Expansion");
-
-      prm.declare_entry("tracer diffusivity",
-                        "0",
-                        Patterns::Double(),
-                        "Tracer diffusivity");
-
       prm.declare_entry("non newtonian flow",
                         "false",
                         Patterns::Bool(),
@@ -378,7 +354,7 @@ namespace Parameters
 
 
       prm.declare_entry("number of fluids",
-                        "0",
+                        "1",
                         Patterns::Integer(),
                         "Number of fluids");
 
@@ -403,13 +379,7 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-      // Monophasic simulations parameters definition
-      viscosity            = prm.get_double("kinematic viscosity");
-      density              = prm.get_double("density");
-      specific_heat        = prm.get_double("specific heat");
-      thermal_conductivity = prm.get_double("thermal conductivity");
-      tracer_diffusivity   = prm.get_double("tracer diffusivity");
-      thermal_expansion    = prm.get_double("thermal expansion");
+
 
       // Management of non_newtonian_flows
       non_newtonian_flow = prm.get_bool("non newtonian flow");
@@ -419,21 +389,11 @@ namespace Parameters
       enable_phase_change = prm.get_bool("enable phase change");
       phase_change_parameters.parse_parameters(prm);
 
-
-      // Multiphase simulations parameters definition
+      // Multiphasic simulations parameters definition
       number_fluids = prm.get_integer("number of fluids");
       for (unsigned int i_fluid = 0; i_fluid < number_fluids; ++i_fluid)
         {
           fluids[i_fluid].parse_parameters(prm, i_fluid);
-        }
-      // Compatibility from multiphase to single phase parameter definition
-      if (number_fluids == 1)
-        {
-          viscosity            = fluids[0].viscosity;
-          density              = fluids[0].density;
-          specific_heat        = fluids[0].specific_heat;
-          thermal_conductivity = fluids[0].thermal_conductivity;
-          tracer_diffusivity   = fluids[0].tracer_diffusivity;
         }
     }
     prm.leave_subsection();
