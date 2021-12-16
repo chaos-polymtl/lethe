@@ -1,4 +1,4 @@
-# Description
+# Description of the problem
 
 - Explain the previous issue (description of the issue or reference to the number of an issue)
 - Describe the added code
