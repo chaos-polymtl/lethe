@@ -3,6 +3,10 @@
 - Explain the previous issue (description of the issue or reference to the number of an issue)
 - Explain the need for a new feature or component
 - Describe the added code
+# Description of the solution
+
+- Explain the solution to the existing issue
+- Explain the content of the new feature
 
 # How Has This Been Tested?
 
