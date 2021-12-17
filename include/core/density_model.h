@@ -32,13 +32,13 @@ public:
    *
    * @param temperature Temperature
    */
-  virtual double inline get_density(const double temperature) = 0;
+  virtual inline double
+  get_density(const double temperature) = 0;
 };
 
 
 /**
- * @brief Constant specific heat. Returns a constant specific
- * heat for a fluid
+ * @brief Constant density. Returns a constant density for a fluid
  */
 class DensityConstant : public DensityModel
 {
@@ -51,13 +51,12 @@ public:
   {}
 
   /**
-   * @brief Returns the specific heat
+   * @brief Returns the denisty
    *
    * @param temperature Temperature at time t+dt
-   *
-   * @param previous_temperature Temperature at time t
    */
-  virtual double inline get_density(const double /*temperature*/) override
+  virtual inline double
+  get_density(const double /*temperature*/) override
   {
     return density;
   }

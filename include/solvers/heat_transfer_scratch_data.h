@@ -301,13 +301,13 @@ public:
 
 
   /**
-   * @brief enable_free_surface Enables the collection of the free surface data by the scratch
+   * @brief enable_vof Enables the collection of the VOF data by the scratch.
    *
-   * @param fe FiniteElement associated with the free surface.
+   * @param fe FiniteElement associated with the VOF.
    *
-   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly.
    *
-   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   * @param mapping Mapping used for the Navier-Stokes problem assembly.
    */
 
   void
@@ -315,10 +315,10 @@ public:
              const Quadrature<dim> &   quadrature,
              const Mapping<dim> &      mapping);
 
-  /** @brief Reinitialize the content of the scratch for the free surface
+  /** @brief Reinitialize the content of the scratch for VOF.
    *
    * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the free surface FE and not the
+   * This cell must be compatible with the VOF FE and not the
    * Navier-Stokes FE
    *
    * @param current_solution The present value of the solution for [alpha]
@@ -344,8 +344,8 @@ public:
     // Gather previous phase fraction values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_free_surface->get_function_values(
-          previous_solutions[p], previous_vof_values[p]);
+        this->fe_values_vof->get_function_values(previous_solutions[p],
+                                                 previous_vof_values[p]);
       }
   }
 

@@ -1,4 +1,15 @@
-#include "core/parameters.h"
+#include <core/parameters.h>
+
+#include <deal.II/base/exceptions.h>
+
+DeclException2(
+  PhaseChangeIntervalError,
+  double,
+  double,
+  << "Liquidus temperature : " << arg1
+  << "is not strictly superior to Solidus temperature: " << arg2
+  << "The liquidus temperature specific is below or equal to the solidus temperature."
+  << "The phase change specific heat model requires that T_liquidus>T_solidus.");
 
 namespace Parameters
 {
@@ -287,6 +298,10 @@ namespace Parameters
       cp_l            = prm.get_double("specific heat liquid");
       cp_s            = prm.get_double("specific heat solid");
     }
+
+    if (T_liquidus <= T_solidus)
+      PhaseChangeIntervalError(T_liquidus, T_solidus);
+
     prm.leave_subsection();
   }
 
@@ -301,11 +316,11 @@ namespace Parameters
                         Patterns::Double(),
                         "Temperature of the solidus");
       prm.declare_entry("liquidus temperature",
-                        "0",
+                        "1",
                         Patterns::Double(),
                         "Temperature of the liquidus");
       prm.declare_entry("latent enthalpy",
-                        "0",
+                        "1",
                         Patterns::Double(),
                         "Enthalpy of the phase change");
 

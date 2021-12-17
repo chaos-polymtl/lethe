@@ -1,5 +1,5 @@
 /**
- * @brief Check the read and write of simulationcontrol
+ * @brief Tests the constant specific heat model. This model should always return a constant.
  */
 
 // Lethe

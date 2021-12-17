@@ -74,7 +74,7 @@ HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
   fe_values_vof = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // Free surface
+  // VOF
   phase_values = std::vector<double>(this->n_q_points);
   previous_vof_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),

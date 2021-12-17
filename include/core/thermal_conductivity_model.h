@@ -28,7 +28,7 @@ class ThermalConductivityModel
 {
 public:
   /**
-   * @brief Returns the the thermal conductivity
+   * @brief Returns the the thermal conductivity.
    */
   inline virtual double
   get_thermal_conductivity(const double temperature) = 0;
@@ -36,8 +36,7 @@ public:
 
 
 /**
- * @brief Constant specific heat. Returns a constant specific
- * heat for a fluid
+ * @brief Constant thermal conductivity.
  */
 class ThermalConductivityConstant : public ThermalConductivityModel
 {
@@ -50,11 +49,10 @@ public:
   {}
 
   /**
-   * @brief Returns the specific heat
+   * @brief Returns the thermal conductivity
    *
    * @param temperature Temperature at time t+dt
    *
-   * @param previous_temperature Temperature at time t
    */
   inline virtual double
   get_thermal_conductivity(const double /*temperature*/) override

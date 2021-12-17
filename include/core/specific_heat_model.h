@@ -38,9 +38,9 @@ public:
    *
    * @param previous_temperature Temperature at time t
    */
-  virtual double inline get_specific_heat(
-    const double temperature,
-    const double previous_temperature) = 0;
+  virtual inline double
+  get_specific_heat(const double temperature,
+                    const double previous_temperature) = 0;
 };
 
 
@@ -65,9 +65,9 @@ public:
    *
    * @param previous_temperature Temperature at time t
    */
-  virtual double inline get_specific_heat(
-    const double /*temperature*/,
-    const double /*previous_temperature*/) override
+  virtual inline double
+  get_specific_heat(const double /*temperature*/,
+                    const double /*previous_temperature*/) override
   {
     return specific_heat;
   }
@@ -98,9 +98,9 @@ public:
    *
    * @param previous_temperature Temperature at time t
    */
-  virtual double inline get_specific_heat(
-    const double temperature,
-    const double previous_temperature) override
+  virtual inline double
+  get_specific_heat(const double temperature,
+                    const double previous_temperature) override
   {
     if (temperature > previous_temperature)
       {
@@ -122,7 +122,7 @@ public:
    *
    */
   inline double
-  solid_fraction(const double T)
+  liquid_fraction(const double T)
   {
     return std::min(std::max((T - param.T_solidus) /
                                (param.T_liquidus - param.T_solidus),
@@ -160,10 +160,10 @@ public:
               param.latent_enthalpy + (T - param.T_liquidus) * param.cp_l);
     else if (T > param.T_solidus)
       {
-        const double s_frac = solid_fraction(T);
+        const double l_frac = liquid_fraction(T);
         return (param.cp_s * param.T_solidus +
                 0.5 * (param.cp_l + param.cp_s) * (T - param.T_solidus) +
-                param.latent_enthalpy * s_frac);
+                param.latent_enthalpy * l_frac);
       }
     else
       return param.cp_s * T;

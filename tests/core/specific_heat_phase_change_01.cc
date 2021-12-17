@@ -1,5 +1,13 @@
 /**
- * @brief Check the read and write of simulationcontrol
+ * @brief Tests the specific_heat_phase_change model.
+ * The phase change model uses a "mushy" zone approach to model the phase change
+ * of a material. This is achieved by distributing the latent heat associated
+ * with a phase change over the phase change interval (mushy zone). This
+ * interval is defined by [T_solidus,T_liquidus]. This test verifies that the Cp
+ * is calculated correctly. For temperature T<T_solidus, the cp should be cp_s.
+ * For temperatures T>T_liquidus the Cp should be cp_l. For temperature
+ * in-between, T \in [T_solidus,T_liquidus] the Cp should be 0.5(cp_l+cp_s) +
+ * latent_enthalpy / (T_liquidus-T_solidus).
  */
 
 // Lethe
@@ -26,17 +34,17 @@ test()
 
   deallog << "Testing solid fraction xi" << std::endl;
 
-  deallog << " T = 0.5  , xi = " << specific_heat_model.solid_fraction(0.5)
+  deallog << " T = 0.5  , xi = " << specific_heat_model.liquid_fraction(0.5)
           << std::endl;
-  deallog << " T = 1    , xi = " << specific_heat_model.solid_fraction(1)
+  deallog << " T = 1    , xi = " << specific_heat_model.liquid_fraction(1)
           << std::endl;
-  deallog << " T = 1.5  , xi = " << specific_heat_model.solid_fraction(1.5)
+  deallog << " T = 1.5  , xi = " << specific_heat_model.liquid_fraction(1.5)
           << std::endl;
-  deallog << " T = 1.75 , xi = " << specific_heat_model.solid_fraction(1.75)
+  deallog << " T = 1.75 , xi = " << specific_heat_model.liquid_fraction(1.75)
           << std::endl;
-  deallog << " T = 2    , xi = " << specific_heat_model.solid_fraction(2)
+  deallog << " T = 2    , xi = " << specific_heat_model.liquid_fraction(2)
           << std::endl;
-  deallog << " T = 2.5  , xi = " << specific_heat_model.solid_fraction(2.5)
+  deallog << " T = 2.5  , xi = " << specific_heat_model.liquid_fraction(2.5)
           << std::endl;
 
 
