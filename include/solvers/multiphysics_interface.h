@@ -122,7 +122,7 @@ public:
         else
           {
             pcout
-              << "Resolution order is not specified for this auxiliary physic :"
+              << "Solution order is not specified for this auxiliary physic :"
               << std::endl
               << "will be solved after the fluid dynamics by default."
               << std::endl
