@@ -1,11 +1,12 @@
-#include <dem/pp_nonlinear_force.h>
+#include <dem/particle_particle_nonlinear_force.h>
 #include <dem/rolling_resistance_torque_models.h>
 
 using namespace DEM;
 
 template <int dim>
-PPHertzMindlinLimitOverlap<dim>::PPHertzMindlinLimitOverlap(
-  const DEMSolverParameters<dim> &dem_parameters)
+ParticleParticleHertzMindlinLimitOverlap<
+  dim>::ParticleParticleHertzMindlinLimitOverlap(const DEMSolverParameters<dim>
+                                                   &dem_parameters)
 {
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
@@ -99,18 +100,21 @@ PPHertzMindlinLimitOverlap<dim>::PPHertzMindlinLimitOverlap(
 
 template <int dim>
 void
-PPHertzMindlinLimitOverlap<dim>::calculate_pp_contact_force(
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
-    &local_adjacent_particles,
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
-    &                          ghost_adjacent_particles,
-  const double &               dt,
-  std::vector<Tensor<1, dim>> &momentum,
-  std::vector<Tensor<1, dim>> &force)
+ParticleParticleHertzMindlinLimitOverlap<dim>::
+  calculate_particle_particle_contact_force(
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
+      &local_adjacent_particles,
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
+      &                          ghost_adjacent_particles,
+    const double &               dt,
+    std::vector<Tensor<1, dim>> &momentum,
+    std::vector<Tensor<1, dim>> &force)
 {
   // Updating contact force of particles for local-local and local-ghost contact
   // pairs are differnet. Consequently, contact forces of local-local and
@@ -320,18 +324,19 @@ PPHertzMindlinLimitOverlap<dim>::calculate_pp_contact_force(
 // Calculates nonlinear contact force and torques
 template <int dim>
 void
-PPHertzMindlinLimitOverlap<dim>::calculate_nonlinear_contact_force_and_torque(
-  pp_contact_info_struct<dim> &  contact_info,
-  const double &                 normal_relative_velocity_value,
-  const Tensor<1, dim> &         normal_unit_vector,
-  const double &                 normal_overlap,
-  const ArrayView<const double> &particle_one_properties,
-  const ArrayView<const double> &particle_two_properties,
-  Tensor<1, dim> &               normal_force,
-  Tensor<1, dim> &               tangential_force,
-  Tensor<1, dim> &               particle_one_tangential_torque,
-  Tensor<1, dim> &               particle_two_tangential_torque,
-  Tensor<1, dim> &               rolling_resistance_torque)
+ParticleParticleHertzMindlinLimitOverlap<dim>::
+  calculate_nonlinear_contact_force_and_torque(
+    particle_particle_contact_info_struct<dim> &contact_info,
+    const double &                              normal_relative_velocity_value,
+    const Tensor<1, dim> &                      normal_unit_vector,
+    const double &                              normal_overlap,
+    const ArrayView<const double> &             particle_one_properties,
+    const ArrayView<const double> &             particle_two_properties,
+    Tensor<1, dim> &                            normal_force,
+    Tensor<1, dim> &                            tangential_force,
+    Tensor<1, dim> &                            particle_one_tangential_torque,
+    Tensor<1, dim> &                            particle_two_tangential_torque,
+    Tensor<1, dim> &                            rolling_resistance_torque)
 {
   // Calculation of effective radius and mass
   this->find_effective_radius_and_mass(particle_one_properties,
@@ -461,13 +466,14 @@ PPHertzMindlinLimitOverlap<dim>::calculate_nonlinear_contact_force_and_torque(
     }
 }
 
-template class PPHertzMindlinLimitOverlap<2>;
-template class PPHertzMindlinLimitOverlap<3>;
+template class ParticleParticleHertzMindlinLimitOverlap<2>;
+template class ParticleParticleHertzMindlinLimitOverlap<3>;
 
 
 template <int dim>
-PPHertzMindlinLimitForce<dim>::PPHertzMindlinLimitForce(
-  const DEMSolverParameters<dim> &dem_parameters)
+ParticleParticleHertzMindlinLimitForce<
+  dim>::ParticleParticleHertzMindlinLimitForce(const DEMSolverParameters<dim>
+                                                 &dem_parameters)
 {
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
@@ -561,18 +567,21 @@ PPHertzMindlinLimitForce<dim>::PPHertzMindlinLimitForce(
 
 template <int dim>
 void
-PPHertzMindlinLimitForce<dim>::calculate_pp_contact_force(
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
-    &local_adjacent_particles,
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
-    &                          ghost_adjacent_particles,
-  const double &               dt,
-  std::vector<Tensor<1, dim>> &momentum,
-  std::vector<Tensor<1, dim>> &force)
+ParticleParticleHertzMindlinLimitForce<dim>::
+  calculate_particle_particle_contact_force(
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
+      &local_adjacent_particles,
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
+      &                          ghost_adjacent_particles,
+    const double &               dt,
+    std::vector<Tensor<1, dim>> &momentum,
+    std::vector<Tensor<1, dim>> &force)
 {
   // Updating contact force of particles for local-local and local-ghost contact
   // pairs are differnet. Consequently, contact forces of local-local and
@@ -780,18 +789,19 @@ PPHertzMindlinLimitForce<dim>::calculate_pp_contact_force(
 // Calculates nonlinear contact force and torques
 template <int dim>
 void
-PPHertzMindlinLimitForce<dim>::calculate_hertz_mindlin_limit_force_contact(
-  pp_contact_info_struct<dim> &  contact_info,
-  const double &                 normal_relative_velocity_value,
-  const Tensor<1, dim> &         normal_unit_vector,
-  const double &                 normal_overlap,
-  const ArrayView<const double> &particle_one_properties,
-  const ArrayView<const double> &particle_two_properties,
-  Tensor<1, dim> &               normal_force,
-  Tensor<1, dim> &               tangential_force,
-  Tensor<1, dim> &               particle_one_tangential_torque,
-  Tensor<1, dim> &               particle_two_tangential_torque,
-  Tensor<1, dim> &               rolling_resistance_torque)
+ParticleParticleHertzMindlinLimitForce<dim>::
+  calculate_hertz_mindlin_limit_force_contact(
+    particle_particle_contact_info_struct<dim> &contact_info,
+    const double &                              normal_relative_velocity_value,
+    const Tensor<1, dim> &                      normal_unit_vector,
+    const double &                              normal_overlap,
+    const ArrayView<const double> &             particle_one_properties,
+    const ArrayView<const double> &             particle_two_properties,
+    Tensor<1, dim> &                            normal_force,
+    Tensor<1, dim> &                            tangential_force,
+    Tensor<1, dim> &                            particle_one_tangential_torque,
+    Tensor<1, dim> &                            particle_two_tangential_torque,
+    Tensor<1, dim> &                            rolling_resistance_torque)
 {
   // Calculation of effective radius and mass
   this->find_effective_radius_and_mass(particle_one_properties,
@@ -908,11 +918,12 @@ PPHertzMindlinLimitForce<dim>::calculate_hertz_mindlin_limit_force_contact(
       normal_unit_vector);
 }
 
-template class PPHertzMindlinLimitForce<2>;
-template class PPHertzMindlinLimitForce<3>;
+template class ParticleParticleHertzMindlinLimitForce<2>;
+template class ParticleParticleHertzMindlinLimitForce<3>;
 
 template <int dim>
-PPHertz<dim>::PPHertz(const DEMSolverParameters<dim> &dem_parameters)
+ParticleParticleHertz<dim>::ParticleParticleHertz(
+  const DEMSolverParameters<dim> &dem_parameters)
 {
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
@@ -1006,14 +1017,16 @@ PPHertz<dim>::PPHertz(const DEMSolverParameters<dim> &dem_parameters)
 
 template <int dim>
 void
-PPHertz<dim>::calculate_pp_contact_force(
+ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     &                          ghost_adjacent_particles,
   const double &               dt,
   std::vector<Tensor<1, dim>> &momentum,
@@ -1223,18 +1236,18 @@ PPHertz<dim>::calculate_pp_contact_force(
 // Calculates nonlinear contact force and torques
 template <int dim>
 void
-PPHertz<dim>::calculate_hertz_contact(
-  pp_contact_info_struct<dim> &  contact_info,
-  const double &                 normal_relative_velocity_value,
-  const Tensor<1, dim> &         normal_unit_vector,
-  const double &                 normal_overlap,
-  const ArrayView<const double> &particle_one_properties,
-  const ArrayView<const double> &particle_two_properties,
-  Tensor<1, dim> &               normal_force,
-  Tensor<1, dim> &               tangential_force,
-  Tensor<1, dim> &               particle_one_tangential_torque,
-  Tensor<1, dim> &               particle_two_tangential_torque,
-  Tensor<1, dim> &               rolling_resistance_torque)
+ParticleParticleHertz<dim>::calculate_hertz_contact(
+  particle_particle_contact_info_struct<dim> &contact_info,
+  const double &                              normal_relative_velocity_value,
+  const Tensor<1, dim> &                      normal_unit_vector,
+  const double &                              normal_overlap,
+  const ArrayView<const double> &             particle_one_properties,
+  const ArrayView<const double> &             particle_two_properties,
+  Tensor<1, dim> &                            normal_force,
+  Tensor<1, dim> &                            tangential_force,
+  Tensor<1, dim> &                            particle_one_tangential_torque,
+  Tensor<1, dim> &                            particle_two_tangential_torque,
+  Tensor<1, dim> &                            rolling_resistance_torque)
 {
   // Calculation of effective radius and mass
   this->find_effective_radius_and_mass(particle_one_properties,
@@ -1346,5 +1359,5 @@ PPHertz<dim>::calculate_hertz_contact(
       normal_unit_vector);
 }
 
-template class PPHertz<2>;
-template class PPHertz<3>;
+template class ParticleParticleHertz<2>;
+template class ParticleParticleHertz<3>;

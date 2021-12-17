@@ -18,7 +18,7 @@
  */
 
 #include <dem/dem_properties.h>
-#include <dem/pp_contact_info_struct.h>
+#include <dem/particle_particle_contact_info_struct.h>
 
 #include <deal.II/base/tensor.h>
 
@@ -47,10 +47,10 @@ using namespace dealii;
  */
 
 template <int dim>
-class PPFineSearch
+class ParticleParticleFineSearch
 {
 public:
-  PPFineSearch<dim>();
+  ParticleParticleFineSearch<dim>();
 
   /**
    * Iterates over a vector of maps (pairs_in_contact) to see if the particles
@@ -90,11 +90,13 @@ public:
       &ghost_contact_pair_candidates,
     std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
       &local_adjacent_particles,
     std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
       &ghost_adjacent_particles,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
       &          particle_container,

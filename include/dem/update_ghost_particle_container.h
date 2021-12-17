@@ -28,8 +28,8 @@ using namespace dealii;
  * (particle_container)
  *
  * @param particle_container A map of particles which is used to update
- * the iterators to particles in pp and pw fine search outputs after calling
- * sort particles into cells function
+ * the iterators to particles in particle-particle and particle-wall fine search
+ * outputs after calling sort particles into cells function
  * @param particle_handler Particle handler to access all the particles in the
  * system
  */

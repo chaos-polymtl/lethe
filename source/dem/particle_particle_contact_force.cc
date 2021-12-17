@@ -17,7 +17,7 @@
   * Author: Shahab Golshan, Polytechnique Montreal, 2019
   */
 
-#include <dem/pp_contact_force.h>
+#include <dem/particle_particle_contact_force.h>
 
 using namespace DEM;
 
@@ -25,15 +25,15 @@ using namespace DEM;
 // information of particles pair in the current time step
 template <int dim>
 void
-PPContactForce<dim>::update_contact_information(
-  pp_contact_info_struct<dim> &  contact_info,
-  double &                       normal_relative_velocity_value,
-  Tensor<1, dim> &               normal_unit_vector,
-  const ArrayView<const double> &particle_one_properties,
-  const ArrayView<const double> &particle_two_properties,
-  const Point<dim> &             particle_one_location,
-  const Point<dim> &             particle_two_location,
-  const double &                 dt)
+ParticleParticleContactForce<dim>::update_contact_information(
+  particle_particle_contact_info_struct<dim> &contact_info,
+  double &                                    normal_relative_velocity_value,
+  Tensor<1, dim> &                            normal_unit_vector,
+  const ArrayView<const double> &             particle_one_properties,
+  const ArrayView<const double> &             particle_two_properties,
+  const Point<dim> &                          particle_one_location,
+  const Point<dim> &                          particle_two_location,
+  const double &                              dt)
 {
   // Calculation of the contact vector (vector from particle one to particle two
   auto contact_vector = particle_two_location - particle_one_location;
@@ -109,7 +109,7 @@ PPContactForce<dim>::update_contact_information(
 
 template <int dim>
 inline void
-PPContactForce<dim>::find_effective_radius_and_mass(
+ParticleParticleContactForce<dim>::find_effective_radius_and_mass(
   const ArrayView<const double> &particle_one_properties,
   const ArrayView<const double> &particle_two_properties)
 {
@@ -123,5 +123,5 @@ PPContactForce<dim>::find_effective_radius_and_mass(
                            particle_two_properties[DEM::PropertiesIndex::dp]));
 }
 
-template class PPContactForce<2>;
-template class PPContactForce<3>;
+template class ParticleParticleContactForce<2>;
+template class ParticleParticleContactForce<3>;

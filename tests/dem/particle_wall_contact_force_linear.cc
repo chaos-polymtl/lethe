@@ -39,10 +39,10 @@
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
-#include <dem/pw_broad_search.h>
-#include <dem/pw_contact_force.h>
-#include <dem/pw_fine_search.h>
-#include <dem/pw_linear_force.h>
+#include <dem/particle_wall_broad_search.h>
+#include <dem/particle_wall_contact_force.h>
+#include <dem/particle_wall_fine_search.h>
+#include <dem/particle_wall_linear_force.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -155,7 +155,7 @@ test()
   boundary_cells_object.build(tr, outlet_boundaries, false, std::cout);
 
   // Calling broad search
-  PWBroadSearch<dim> broad_search_object;
+  ParticleWallBroadSearch<dim> broad_search_object;
   std::unordered_map<
     unsigned int,
     std::unordered_map<unsigned int,
@@ -164,31 +164,30 @@ test()
                                   Point<dim>,
                                   unsigned int,
                                   unsigned int>>>
-    pw_contact_list;
+    particle_wall_contact_list;
   broad_search_object.find_particle_wall_contact_pairs(
     boundary_cells_object.get_boundary_cells_information(),
     particle_handler,
-    pw_contact_list);
+    particle_wall_contact_list);
 
   // Calling fine search
-  PWFineSearch<dim> fine_search_object;
-  std::unordered_map<unsigned int,
-                     std::map<unsigned int, pw_contact_info_struct<dim>>>
-    pw_contact_information;
-  fine_search_object.particle_wall_fine_search(pw_contact_list,
-                                               pw_contact_information);
+  ParticleWallFineSearch<dim> fine_search_object;
+  std::unordered_map<
+    unsigned int,
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    particle_wall_contact_information;
+  fine_search_object.particle_wall_fine_search(
+    particle_wall_contact_list, particle_wall_contact_information);
 
   // Calling linear force
-  PWLinearForce<dim> force_object(
+  ParticleWallLinearForce<dim> force_object(
     dem_parameters.boundary_conditions.boundary_translational_velocity,
     dem_parameters.boundary_conditions.boundary_rotational_speed,
     dem_parameters.boundary_conditions.boundary_rotational_vector,
     grid_radius,
     dem_parameters);
-  force_object.calculate_pw_contact_force(pw_contact_information,
-                                          dt,
-                                          momentum,
-                                          force);
+  force_object.calculate_particle_wall_contact_force(
+    particle_wall_contact_information, dt, momentum, force);
 
   // Output
   auto particle = particle_handler.begin();

@@ -201,20 +201,20 @@ namespace Parameters
       double neighborhood_threshold;
 
       // Particle-particle contact force model
-      enum class PPContactForceModel
+      enum class ParticleParticleContactForceModel
       {
-        pp_linear,
-        pp_hertz_mindlin_limit_force,
-        pp_hertz_mindlin_limit_overlap,
-        pp_hertz
-      } pp_contact_force_method;
+        linear,
+        hertz_mindlin_limit_force,
+        hertz_mindlin_limit_overlap,
+        hertz
+      } particle_particle_contact_force_method;
 
       // Particle-wall contact force model
-      enum class PWContactForceModel
+      enum class ParticleWallContactForceModel
       {
-        pw_linear,
-        pw_nonlinear
-      } pw_contact_force_method;
+        linear,
+        nonlinear
+      } particle_wall_contact_force_method;
 
       // Rolling resistance torque method
       enum class RollingResistanceMethod

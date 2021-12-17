@@ -39,9 +39,9 @@
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/pp_broad_search.h>
-#include <dem/pp_fine_search.h>
-#include <dem/pp_nonlinear_force.h>
+#include <dem/particle_particle_broad_search.h>
+#include <dem/particle_particle_fine_search.h>
+#include <dem/particle_particle_nonlinear_force.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -99,8 +99,8 @@ test()
                                            ghost_neighbor_list);
 
   // Creating broad and fine particle-particle search objects
-  PPBroadSearch<dim> broad_search_object;
-  PPFineSearch<dim>  fine_search_object;
+  ParticleParticleBroadSearch<dim> broad_search_object;
+  ParticleParticleFineSearch<dim>  fine_search_object;
 
   // Inserting two particles in contact
   Point<3>                 position1 = {0.4, 0, 0};
@@ -185,11 +185,13 @@ test()
   // Calling fine search
   std::unordered_map<
     unsigned int,
-    std::unordered_map<unsigned int, pp_contact_info_struct<dim>>>
+    std::unordered_map<unsigned int,
+                       particle_particle_contact_info_struct<dim>>>
     local_adjacent_particles;
   std::unordered_map<
     unsigned int,
-    std::unordered_map<unsigned int, pp_contact_info_struct<dim>>>
+    std::unordered_map<unsigned int,
+                       particle_particle_contact_info_struct<dim>>>
     ghost_adjacent_particles;
 
   fine_search_object.particle_particle_fine_search(
@@ -201,8 +203,9 @@ test()
     neighborhood_threshold);
 
   // Calling linear force
-  PPHertzMindlinLimitOverlap<dim> nonlinear_force_object(dem_parameters);
-  nonlinear_force_object.calculate_pp_contact_force(
+  ParticleParticleHertzMindlinLimitOverlap<dim> nonlinear_force_object(
+    dem_parameters);
+  nonlinear_force_object.calculate_particle_particle_contact_force(
     local_adjacent_particles, ghost_adjacent_particles, dt, momentum, force);
 
   // Output

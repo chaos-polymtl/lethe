@@ -18,7 +18,7 @@
  */
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/pw_contact_info_struct.h>
+#include <dem/particle_wall_contact_info_struct.h>
 
 #include <boost/math/special_functions.hpp>
 #include <boost/range/adaptor/map.hpp>
@@ -38,13 +38,13 @@ using namespace dealii;
  */
 
 template <int dim>
-class PWContactForce
+class ParticleWallContactForce
 {
 public:
-  PWContactForce()
+  ParticleWallContactForce()
   {}
 
-  virtual ~PWContactForce()
+  virtual ~ParticleWallContactForce()
   {}
 
   /**
@@ -52,18 +52,18 @@ public:
    * contact pair information obtained from the particle-wall fine search and
    * physical properties of particles and walls
    *
-   * @param pw_pairs_in_contact Required information for the calculation of the
+   * @param particle_wall_pairs_in_contact Required information for the calculation of the
    * particle-wall contact force
    * @param dt DEM time step
    * @param momentum An unordered_map of momentum of particles
    * @param force Force acting on particles
    */
   virtual void
-  calculate_pw_contact_force(
+  calculate_particle_wall_contact_force(
     std::unordered_map<
       types::particle_index,
-      std::map<types::particle_index, pw_contact_info_struct<dim>>>
-      &                          pw_pairs_in_contact,
+      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      &                          particle_wall_pairs_in_contact,
     const double &               dt,
     std::vector<Tensor<1, dim>> &momentum,
     std::vector<Tensor<1, dim>> &force) = 0;
@@ -92,9 +92,9 @@ protected:
    */
   void
   update_contact_information(
-    pw_contact_info_struct<dim> &  contact_pair_information,
-    const ArrayView<const double> &particle_properties,
-    const double &                 dt);
+    particle_wall_contact_info_struct<dim> &contact_pair_information,
+    const ArrayView<const double> &         particle_properties,
+    const double &                          dt);
 
   /**
    * Carries out applying the calculated force and torque on the local-local

@@ -18,7 +18,7 @@
  */
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/pw_contact_info_struct.h>
+#include <dem/particle_wall_contact_info_struct.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -72,7 +72,7 @@ public:
    * Carries out updating the boundary points and normal vectors in the
    * particle-wall contact list.
    *
-   * @param pw_pairs_in_contact The particle-wall contact list container.
+   * @param particle_wall_pairs_in_contact The particle-wall contact list container.
    * We will update the positions of the boundary points and normal vectors
    * directly in this container.
    * @param updated_boundary_points_and_normal_vectors A map that contains
@@ -85,8 +85,8 @@ public:
   update_boundary_points_and_normal_vectors_in_contact_list(
     std::unordered_map<
       types::particle_index,
-      std::map<types::particle_index, pw_contact_info_struct<dim>>>
-      &pw_pairs_in_contact,
+      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      &particle_wall_pairs_in_contact,
     const std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
       &updated_boundary_points_and_normal_vectors);
 

@@ -5,11 +5,10 @@
 #include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
-#include <dem/post_processing.h>
-#include <dem/pp_linear_force.h>
-#include <dem/pp_nonlinear_force.h>
-#include <dem/pw_linear_force.h>
-#include <dem/pw_nonlinear_force.h>
+#include <dem/particle_particle_linear_force.h>
+#include <dem/particle_particle_nonlinear_force.h>
+#include <dem/particle_wall_linear_force.h>
+#include <dem/particle_wall_nonlinear_force.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
 
@@ -774,9 +773,10 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     this->pcout);
 
   // Setting chosen contact force, insertion and integration methods
-  integrator_object       = set_integrator_type();
-  pp_contact_force_object = set_pp_contact_force();
-  pw_contact_force_object = set_pw_contact_force();
+  integrator_object = set_integrator_type();
+  particle_particle_contact_force_object =
+    set_particle_particle_contact_force();
+  particle_wall_contact_force_object = set_particle_wall_contact_force();
 
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -855,78 +855,89 @@ CFDDEMSolver<dim>::set_integrator_type()
 }
 
 template <int dim>
-std::shared_ptr<PPContactForce<dim>>
-CFDDEMSolver<dim>::set_pp_contact_force()
+std::shared_ptr<ParticleParticleContactForce<dim>>
+CFDDEMSolver<dim>::set_particle_particle_contact_force()
 
 {
-  if (dem_parameters.model_parameters.pp_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::PPContactForceModel::pp_linear)
+
+  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
+        .particle_particle_contact_force_method ==
+      Parameters::Lagrangian::ModelParameters::
+        ParticleParticleContactForceModel::linear)
     {
-      pp_contact_force_object =
-        std::make_shared<PPLinearForce<dim>>(dem_parameters);
-    }
-  else if (dem_parameters.model_parameters.pp_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::PPContactForceModel::
-             pp_hertz_mindlin_limit_overlap)
-    {
-      pp_contact_force_object =
-        std::make_shared<PPHertzMindlinLimitOverlap<dim>>(dem_parameters);
+      particle_particle_contact_force_object =
+        std::make_shared<ParticleParticleLinearForce<dim>>(dem_parameters);
     }
   else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .pp_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::PPContactForceModel::
-             pp_hertz_mindlin_limit_force)
+             .particle_particle_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::
+             ParticleParticleContactForceModel::hertz_mindlin_limit_overlap)
     {
-      pp_contact_force_object =
-        std::make_shared<PPHertzMindlinLimitForce<dim>>(dem_parameters);
+      particle_particle_contact_force_object =
+        std::make_shared<ParticleParticleHertzMindlinLimitOverlap<dim>>(
+          dem_parameters);
     }
   else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .pp_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::PPContactForceModel::
-             pp_hertz)
-    pp_contact_force_object = std::make_shared<PPHertz<dim>>(dem_parameters);
+             .particle_particle_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::
+             ParticleParticleContactForceModel::hertz_mindlin_limit_force)
+    {
+      particle_particle_contact_force_object =
+        std::make_shared<ParticleParticleHertzMindlinLimitForce<dim>>(
+          dem_parameters);
+    }
+  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
+             .particle_particle_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::
+             ParticleParticleContactForceModel::hertz)
+    particle_particle_contact_force_object =
+      std::make_shared<ParticleParticleHertz<dim>>(dem_parameters);
   else
     {
       throw "The chosen particle-particle contact force model is invalid";
     }
-  return pp_contact_force_object;
+  return particle_particle_contact_force_object;
 }
 
 template <int dim>
-std::shared_ptr<PWContactForce<dim>>
-CFDDEMSolver<dim>::set_pw_contact_force()
+std::shared_ptr<ParticleWallContactForce<dim>>
+CFDDEMSolver<dim>::set_particle_wall_contact_force()
 {
   std::vector<types::boundary_id> boundary_index =
     this->triangulation->get_boundary_ids();
 
-  if (dem_parameters.model_parameters.pw_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
+  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
+        .particle_wall_contact_force_method ==
+      Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
+        linear)
     {
-      pw_contact_force_object = std::make_shared<PWLinearForce<dim>>(
-        dem_parameters.boundary_conditions.boundary_translational_velocity,
-        dem_parameters.boundary_conditions.boundary_rotational_speed,
-        dem_parameters.boundary_conditions.boundary_rotational_vector,
-        triangulation_cell_diameter,
-        dem_parameters,
-        boundary_index);
+      particle_wall_contact_force_object =
+        std::make_shared<ParticleWallLinearForce<dim>>(
+          dem_parameters.boundary_conditions.boundary_translational_velocity,
+          dem_parameters.boundary_conditions.boundary_rotational_speed,
+          dem_parameters.boundary_conditions.boundary_rotational_vector,
+          triangulation_cell_diameter,
+          dem_parameters,
+          boundary_index);
     }
-  else if (dem_parameters.model_parameters.pw_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::PWContactForceModel::
-             pw_nonlinear)
+  else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::
+             ParticleWallContactForceModel::nonlinear)
     {
-      pw_contact_force_object = std::make_shared<PWNonLinearForce<dim>>(
-        dem_parameters.boundary_conditions.boundary_translational_velocity,
-        dem_parameters.boundary_conditions.boundary_rotational_speed,
-        dem_parameters.boundary_conditions.boundary_rotational_vector,
-        triangulation_cell_diameter,
-        dem_parameters,
-        boundary_index);
+      particle_wall_contact_force_object =
+        std::make_shared<ParticleWallNonLinearForce<dim>>(
+          dem_parameters.boundary_conditions.boundary_translational_velocity,
+          dem_parameters.boundary_conditions.boundary_rotational_speed,
+          dem_parameters.boundary_conditions.boundary_rotational_vector,
+          triangulation_cell_diameter,
+          dem_parameters,
+          boundary_index);
     }
   else
     {
       throw "The chosen particle-wall contact force model is invalid";
     }
-  return pw_contact_force_object;
+  return particle_wall_contact_force_object;
 }
 
 template <int dim>
@@ -964,11 +975,12 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   dem_contact_build(counter);
 
   // Particle-particle contact force
-  pp_contact_force_object->calculate_pp_contact_force(local_adjacent_particles,
-                                                      ghost_adjacent_particles,
-                                                      dem_time_step,
-                                                      momentum,
-                                                      force);
+  particle_particle_contact_force_object
+    ->calculate_particle_particle_contact_force(local_adjacent_particles,
+                                                ghost_adjacent_particles,
+                                                dem_time_step,
+                                                momentum,
+                                                force);
 
   // Particles-walls contact force:
   particle_wall_contact_force();
@@ -1057,12 +1069,12 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
   if (load_balance_step || checkpoint_step || contact_detection_step ||
       (this->simulation_control->is_at_start() && counter == 0))
     {
-      pp_broad_search_object.find_particle_particle_contact_pairs(
-        this->particle_handler,
-        &cells_local_neighbor_list,
-        &cells_ghost_neighbor_list,
-        local_contact_pair_candidates,
-        ghost_contact_pair_candidates);
+      particle_particle_broad_search_object
+        .find_particle_particle_contact_pairs(this->particle_handler,
+                                              &cells_local_neighbor_list,
+                                              &cells_ghost_neighbor_list,
+                                              local_contact_pair_candidates,
+                                              ghost_contact_pair_candidates);
 
 
       // Particle-wall broad contact search
@@ -1070,11 +1082,11 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       localize_contacts<dim>(&local_adjacent_particles,
                              &ghost_adjacent_particles,
-                             &pw_pairs_in_contact,
+                             &particle_wall_pairs_in_contact,
                              &pfw_pairs_in_contact,
                              local_contact_pair_candidates,
                              ghost_contact_pair_candidates,
-                             pw_contact_candidates,
+                             particle_wall_contact_candidates,
                              pfw_contact_candidates);
 
 
@@ -1082,13 +1094,13 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                                            particle_container,
                                            ghost_adjacent_particles,
                                            local_adjacent_particles,
-                                           pw_pairs_in_contact,
+                                           particle_wall_pairs_in_contact,
                                            pfw_pairs_in_contact,
                                            particle_points_in_contact,
                                            particle_lines_in_contact);
 
       // Particle-particle fine search
-      pp_fine_search_object.particle_particle_fine_search(
+      particle_particle_fine_search_object.particle_particle_fine_search(
         local_contact_pair_candidates,
         ghost_contact_pair_candidates,
         local_adjacent_particles,
@@ -1145,20 +1157,21 @@ void
 CFDDEMSolver<dim>::particle_wall_broad_search()
 {
   // Particle - wall contact candidates
-  pw_broad_search_object.find_particle_wall_contact_pairs(
+  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
     boundary_cell_object.get_boundary_cells_information(),
     this->particle_handler,
-    pw_contact_candidates);
+    particle_wall_contact_candidates);
 
   // Particle - floating wall contact pairs
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
-      pw_broad_search_object.find_particle_floating_wall_contact_pairs(
-        boundary_cell_object.get_boundary_cells_with_floating_walls(),
-        this->particle_handler,
-        dem_parameters.floating_walls,
-        this->simulation_control->get_current_time(),
-        pfw_contact_candidates);
+      particle_wall_broad_search_object
+        .find_particle_floating_wall_contact_pairs(
+          boundary_cell_object.get_boundary_cells_with_floating_walls(),
+          this->particle_handler,
+          dem_parameters.floating_walls,
+          this->simulation_control->get_current_time(),
+          pfw_contact_candidates);
     }
 
   particle_point_contact_candidates =
@@ -1181,13 +1194,13 @@ void
 CFDDEMSolver<dim>::particle_wall_fine_search()
 {
   // Particle - wall fine search
-  pw_fine_search_object.particle_wall_fine_search(pw_contact_candidates,
-                                                  pw_pairs_in_contact);
+  particle_wall_fine_search_object.particle_wall_fine_search(
+    particle_wall_contact_candidates, particle_wall_pairs_in_contact);
 
   // Particle - floating wall fine search
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
-      pw_fine_search_object.particle_floating_wall_fine_search(
+      particle_wall_fine_search_object.particle_floating_wall_fine_search(
         pfw_contact_candidates,
         dem_parameters.floating_walls,
         this->simulation_control->get_current_time(),
@@ -1211,28 +1224,24 @@ void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
-  pw_contact_force_object->calculate_pw_contact_force(pw_pairs_in_contact,
-                                                      dem_time_step,
-                                                      momentum,
-                                                      force);
+  particle_wall_contact_force_object->calculate_particle_wall_contact_force(
+    particle_wall_pairs_in_contact, dem_time_step, momentum, force);
 
   if (this->cfd_dem_simulation_parameters.dem_parameters.forces_torques
         .calculate_force_torque)
     {
       forces_boundary_information[this->simulation_control->get_step_number()] =
-        pw_contact_force_object->get_force();
+        particle_wall_contact_force_object->get_force();
       torques_boundary_information[this->simulation_control
                                      ->get_step_number()] =
-        pw_contact_force_object->get_torque();
+        particle_wall_contact_force_object->get_torque();
     }
 
   // Particle-floating wall contact force
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
-      pw_contact_force_object->calculate_pw_contact_force(pfw_pairs_in_contact,
-                                                          dem_time_step,
-                                                          momentum,
-                                                          force);
+      particle_wall_contact_force_object->calculate_particle_wall_contact_force(
+        pfw_pairs_in_contact, dem_time_step, momentum, force);
     }
 
   particle_point_line_contact_force_object

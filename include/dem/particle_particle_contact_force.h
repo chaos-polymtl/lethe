@@ -19,7 +19,7 @@
 
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/pp_contact_info_struct.h>
+#include <dem/particle_particle_contact_info_struct.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -35,13 +35,13 @@ using namespace dealii;
  * contact force including non-linear and linear contact models
  */
 template <int dim>
-class PPContactForce
+class ParticleParticleContactForce
 {
 public:
-  PPContactForce<dim>()
+  ParticleParticleContactForce<dim>()
   {}
 
-  virtual ~PPContactForce()
+  virtual ~ParticleParticleContactForce()
   {}
 
   /**
@@ -60,14 +60,16 @@ public:
    * @param force Force acting on particles
    */
   virtual void
-  calculate_pp_contact_force(
+  calculate_particle_particle_contact_force(
     std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
       &local_adjacent_particles,
     std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
       &                          ghost_adjacent_particles,
     const double &               dt,
     std::vector<Tensor<1, dim>> &momentum,
@@ -88,14 +90,14 @@ protected:
    */
   void
   update_contact_information(
-    pp_contact_info_struct<dim> &  adjacent_pair_information,
-    double &                       normal_relative_velocity_value,
-    Tensor<1, dim> &               normal_unit_vector,
-    const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties,
-    const Point<dim> &             particle_one_location,
-    const Point<dim> &             particle_two_location,
-    const double &                 dt);
+    particle_particle_contact_info_struct<dim> &adjacent_pair_information,
+    double &                                    normal_relative_velocity_value,
+    Tensor<1, dim> &                            normal_unit_vector,
+    const ArrayView<const double> &             particle_one_properties,
+    const ArrayView<const double> &             particle_two_properties,
+    const Point<dim> &                          particle_one_location,
+    const Point<dim> &                          particle_two_location,
+    const double &                              dt);
 
   /**
    * @brief Carries out applying the calculated force and torque on the local-local

@@ -17,16 +17,16 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/pw_contact_force.h>
+#include <dem/particle_wall_contact_force.h>
 
 // Updates the contact information (contact_info) based on the new information
 // of particles pair in the current time step
 template <int dim>
 void
-PWContactForce<dim>::update_contact_information(
-  pw_contact_info_struct<dim> &  contact_info,
-  const ArrayView<const double> &particle_properties,
-  const double &                 dt)
+ParticleWallContactForce<dim>::update_contact_information(
+  particle_wall_contact_info_struct<dim> &contact_info,
+  const ArrayView<const double> &         particle_properties,
+  const double &                          dt)
 {
   auto               normal_vector = contact_info.normal_vector;
   const unsigned int boundary_id   = contact_info.boundary_id;
@@ -99,7 +99,7 @@ PWContactForce<dim>::update_contact_information(
 }
 template <int dim>
 void
-PWContactForce<dim>::calculate_force_and_torque_on_boundary(
+ParticleWallContactForce<dim>::calculate_force_and_torque_on_boundary(
   const unsigned int boundary_id,
   Tensor<1, dim>     add_force,
   const Point<dim>   point_contact)
@@ -125,7 +125,7 @@ PWContactForce<dim>::calculate_force_and_torque_on_boundary(
 
 template <int dim>
 std::map<unsigned int, Tensor<1, dim>>
-PWContactForce<dim>::initialize()
+ParticleWallContactForce<dim>::initialize()
 {
   std::map<unsigned int, Tensor<1, dim>> map;
   for (const auto &it : boundary_index)
@@ -137,7 +137,8 @@ PWContactForce<dim>::initialize()
 
 template <int dim>
 void
-PWContactForce<dim>::mpi_correction_over_calculation_of_forces_and_torques()
+ParticleWallContactForce<
+  dim>::mpi_correction_over_calculation_of_forces_and_torques()
 {
   for (const auto &it : boundary_index)
     {
@@ -149,5 +150,5 @@ PWContactForce<dim>::mpi_correction_over_calculation_of_forces_and_torques()
 }
 
 
-template class PWContactForce<2>;
-template class PWContactForce<3>;
+template class ParticleWallContactForce<2>;
+template class ParticleWallContactForce<3>;

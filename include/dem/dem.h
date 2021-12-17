@@ -32,16 +32,16 @@
 #include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/output_force_torque_calculation.h>
+#include <dem/particle_particle_broad_search.h>
+#include <dem/particle_particle_contact_force.h>
+#include <dem/particle_particle_fine_search.h>
 #include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
 #include <dem/particle_point_line_contact_info_struct.h>
 #include <dem/particle_point_line_fine_search.h>
-#include <dem/pp_broad_search.h>
-#include <dem/pp_contact_force.h>
-#include <dem/pp_fine_search.h>
-#include <dem/pw_broad_search.h>
-#include <dem/pw_contact_force.h>
-#include <dem/pw_fine_search.h>
+#include <dem/particle_wall_broad_search.h>
+#include <dem/particle_wall_contact_force.h>
+#include <dem/particle_wall_fine_search.h>
 #include <dem/visualization.h>
 
 #include <deal.II/base/tensor.h>
@@ -224,8 +224,9 @@ private:
    * @param dem_parameters DEM parameters
    * @return A pointer to the particle-particle contact force object
    */
-  std::shared_ptr<PPContactForce<dim>>
-  set_pp_contact_force(const DEMSolverParameters<dim> &dem_parameters);
+  std::shared_ptr<ParticleParticleContactForce<dim>>
+  set_particle_particle_contact_force(
+    const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Sets the chosen particle-wall contact force model in the parameter handler
@@ -234,8 +235,9 @@ private:
    * @param dem_parameters DEM parameters
    * @return A pointer to the particle-wall contact force object
    */
-  std::shared_ptr<PWContactForce<dim>>
-  set_pw_contact_force(const DEMSolverParameters<dim> &dem_parameters);
+  std::shared_ptr<ParticleWallContactForce<dim>>
+  set_particle_wall_contact_force(
+    const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Sets the background degree of freedom used for paralle grid output
@@ -297,19 +299,21 @@ private:
     pfw_contact_candidates;
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     local_adjacent_particles;
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     ghost_adjacent_particles;
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
-    pw_pairs_in_contact;
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    particle_wall_pairs_in_contact;
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     pfw_pairs_in_contact;
   std::unordered_map<
     types::particle_index,
@@ -319,7 +323,7 @@ private:
                                   Point<dim>,
                                   unsigned int,
                                   unsigned int>>>
-    pw_contact_candidates;
+    particle_wall_contact_candidates;
   std::unordered_map<types::particle_index,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
@@ -346,23 +350,25 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
-  std::shared_ptr<GridMotion<dim>>     grid_motion_object;
-  PPBroadSearch<dim>                   pp_broad_search_object;
-  PPFineSearch<dim>                    pp_fine_search_object;
-  PWBroadSearch<dim>                   pw_broad_search_object;
-  ParticlePointLineBroadSearch<dim>    particle_point_line_broad_search_object;
-  PWFineSearch<dim>                    pw_fine_search_object;
-  ParticlePointLineFineSearch<dim>     particle_point_line_fine_search_object;
-  ParticlePointLineForce<dim>          particle_point_line_contact_force_object;
-  std::shared_ptr<Integrator<dim>>     integrator_object;
-  std::shared_ptr<Insertion<dim>>      insertion_object;
-  std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
-  std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
-  Visualization<dim>                   visualization_object;
-  LagrangianPostProcessing<dim>        post_processing_object;
-  FindCellNeighbors<dim>               cell_neighbors_object;
-  PVDHandler                           particles_pvdhandler;
-  const double                         standard_deviation_multiplier;
+  std::shared_ptr<GridMotion<dim>>  grid_motion_object;
+  ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
+  ParticleParticleFineSearch<dim>   particle_particle_fine_search_object;
+  ParticleWallBroadSearch<dim>      particle_wall_broad_search_object;
+  ParticlePointLineBroadSearch<dim> particle_point_line_broad_search_object;
+  ParticleWallFineSearch<dim>       particle_wall_fine_search_object;
+  ParticlePointLineFineSearch<dim>  particle_point_line_fine_search_object;
+  ParticlePointLineForce<dim>       particle_point_line_contact_force_object;
+  std::shared_ptr<Integrator<dim>>  integrator_object;
+  std::shared_ptr<Insertion<dim>>   insertion_object;
+  std::shared_ptr<ParticleParticleContactForce<dim>>
+    particle_particle_contact_force_object;
+  std::shared_ptr<ParticleWallContactForce<dim>>
+                                particle_wall_contact_force_object;
+  Visualization<dim>            visualization_object;
+  LagrangianPostProcessing<dim> post_processing_object;
+  FindCellNeighbors<dim>        cell_neighbors_object;
+  PVDHandler                    particles_pvdhandler;
+  const double                  standard_deviation_multiplier;
 
   std::vector<Tensor<1, dim>> momentum;
   std::vector<Tensor<1, dim>> force;

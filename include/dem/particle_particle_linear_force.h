@@ -18,8 +18,8 @@
  */
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/pp_contact_force.h>
-#include <dem/pp_contact_info_struct.h>
+#include <dem/particle_particle_contact_force.h>
+#include <dem/particle_particle_contact_info_struct.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
@@ -45,10 +45,11 @@ using namespace dealii;
  */
 
 template <int dim>
-class PPLinearForce : public PPContactForce<dim>
+class ParticleParticleLinearForce : public ParticleParticleContactForce<dim>
 {
 public:
-  PPLinearForce<dim>(const DEMSolverParameters<dim> &dem_parameters);
+  ParticleParticleLinearForce<dim>(
+    const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Carries out the calculation of the particle-particle contact force
@@ -65,14 +66,16 @@ public:
    * @param force Force acting on particles
    */
   virtual void
-  calculate_pp_contact_force(
+  calculate_particle_particle_contact_force(
     std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
       &local_adjacent_particles,
     std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+      std::unordered_map<types::particle_index,
+                         particle_particle_contact_info_struct<dim>>>
       &                          ghost_adjacent_particles,
     const double &               dt,
     std::vector<Tensor<1, dim>> &momentum,
@@ -98,17 +101,17 @@ private:
    */
   void
   calculate_linear_contact_force_and_torque(
-    pp_contact_info_struct<dim> &  contact_info,
-    const double &                 normal_relative_velocity_value,
-    const Tensor<1, dim> &         normal_unit_vector,
-    const double &                 normal_overlap,
-    const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties,
-    Tensor<1, dim> &               normal_force,
-    Tensor<1, dim> &               tangential_force,
-    Tensor<1, dim> &               particle_one_tangential_torque,
-    Tensor<1, dim> &               particle_two_tangential_torque,
-    Tensor<1, dim> &               rolling_resistance_torque);
+    particle_particle_contact_info_struct<dim> &contact_info,
+    const double &                              normal_relative_velocity_value,
+    const Tensor<1, dim> &                      normal_unit_vector,
+    const double &                              normal_overlap,
+    const ArrayView<const double> &             particle_one_properties,
+    const ArrayView<const double> &             particle_two_properties,
+    Tensor<1, dim> &                            normal_force,
+    Tensor<1, dim> &                            tangential_force,
+    Tensor<1, dim> &                            particle_one_tangential_torque,
+    Tensor<1, dim> &                            particle_two_tangential_torque,
+    Tensor<1, dim> &                            rolling_resistance_torque);
 
   // Normal and tangential contact forces, tangential and rolling torques,
   // normal unit vector of the contact and contact relative velocity in the
