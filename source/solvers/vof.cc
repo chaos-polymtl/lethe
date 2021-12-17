@@ -639,7 +639,7 @@ VOF<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::free_surface, &dof_handler);
   multiphysics->set_solution(PhysicsID::free_surface, &present_solution);
-  // the fluid at present iteration is solved AFTER the free surface (see map
+  // the fluid at present iteration is solved BEFORE the free surface (see map
   // solve_pre_fluid defined in multiphysics_interface.h), and after percolate
   // is called for the previous iteration.
   // NB: for now, inertia in fluid dynamics is considered with a constant
