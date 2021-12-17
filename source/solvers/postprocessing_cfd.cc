@@ -25,6 +25,7 @@
 // Lethe includes
 #include <core/boundary_conditions.h>
 #include <core/parameters.h>
+#include <core/rheological_model.h>
 
 #include <solvers/postprocessing_cfd.h>
 
@@ -434,7 +435,22 @@ calculate_forces(
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
-  double viscosity = physical_properties.viscosity;
+  double viscosity;
+  if(!physical_properties.non_newtonian_flow)
+    viscosity = physical_properties.viscosity;
+
+  // Non newtonian properties
+  std::unique_ptr<RheologicalModel<dim>> rheological_model;
+  if(physical_properties.non_newtonian_flow)
+  {
+    // if (physical_properties.non_newtonian_parameters.model ==
+    // Parameters::NonNewtonian::Model::Carreau)
+    //{
+    rheological_model = std::make_unique<Carreau<dim>>(
+      physical_properties.non_newtonian_parameters);
+    //}
+  }
+  
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
@@ -442,6 +458,7 @@ calculate_forces(
   std::vector<double>              pressure_values(n_q_points);
   std::vector<Tensor<2, dim>>      velocity_gradients(n_q_points);
   Tensor<1, dim>                   normal_vector;
+  Tensor<2, dim>                   shear_rate;
   Tensor<2, dim>                   fluid_stress;
   Tensor<2, dim>                   fluid_pressure;
   Tensor<1, dim>                   force;
@@ -486,11 +503,15 @@ calculate_forces(
                                     {
                                       fluid_pressure[d][d] = pressure_values[q];
                                     }
+                                  shear_rate = velocity_gradients[q] +
+                                       transpose(velocity_gradients[q]);
+                                  if (physical_properties.non_newtonian_flow)
+                                  {
+                                    viscosity = rheological_model->get_viscosity(
+                                      rheological_model->get_shear_rate_magnitude(shear_rate));
+                                  }
                                   fluid_stress =
-                                    viscosity *
-                                      (velocity_gradients[q] +
-                                       transpose(velocity_gradients[q])) -
-                                    fluid_pressure;
+                                    viscosity * shear_rate - fluid_pressure;
                                   force += fluid_stress * normal_vector *
                                            fe_face_values.JxW(q);
                                 }
@@ -553,7 +574,21 @@ calculate_torques(
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
-  double viscosity = physical_properties.viscosity;
+  double viscosity;
+  if(!physical_properties.non_newtonian_flow)
+    viscosity = physical_properties.viscosity;
+
+  // Non newtonian properties
+  std::unique_ptr<RheologicalModel<dim>> rheological_model;
+  if(physical_properties.non_newtonian_flow)
+  {
+    // if (physical_properties.non_newtonian_parameters.model ==
+    // Parameters::NonNewtonian::Model::Carreau)
+    //{
+    rheological_model = std::make_unique<Carreau<dim>>(
+      physical_properties.non_newtonian_parameters);
+    //}
+  }
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
@@ -561,6 +596,7 @@ calculate_torques(
   std::vector<double>              pressure_values(n_q_points);
   std::vector<Tensor<2, dim>>      velocity_gradients(n_q_points);
   Tensor<1, dim>                   normal_vector;
+  Tensor<2, dim>                   shear_rate;
   Tensor<2, dim>                   fluid_stress;
   Tensor<2, dim>                   fluid_pressure;
   // torque tensor had to be considered in 3D at all time...
@@ -605,9 +641,16 @@ calculate_torques(
                                 {
                                   fluid_pressure[d][d] = pressure_values[q];
                                 }
+                              shear_rate = velocity_gradients[q] +
+                                             transpose(velocity_gradients[q]);
+                              if (physical_properties.non_newtonian_flow)
+                                  {
+                                    viscosity = rheological_model->get_viscosity(
+                                      rheological_model->get_shear_rate_magnitude(shear_rate));
+                                  }
+
                               fluid_stress =
-                                viscosity * (velocity_gradients[q] +
-                                             transpose(velocity_gradients[q])) -
+                                viscosity * shear_rate -
                                 fluid_pressure;
                               auto force = fluid_stress * normal_vector *
                                            fe_face_values.JxW(q);
