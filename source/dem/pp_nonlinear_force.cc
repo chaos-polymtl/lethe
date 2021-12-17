@@ -93,28 +93,8 @@ PPHertzMindlinLimitOverlap<dim>::PPHertzMindlinLimitOverlap(
         }
     }
 
-  // Overriding rolling resistance torque model
-  if (dem_parameters.model_parameters.rolling_resistance_method ==
-      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-        no_resistance)
-    {
-      rolling_resistance_torque_object =
-        std::make_shared<NoRollingResistanceTorque<dim>>();
-    }
-  else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             constant_resistance)
-    {
-      rolling_resistance_torque_object =
-        std::make_shared<ConstantRollingResistanceTorque<dim>>();
-    }
-  else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             viscous_resistance)
-    {
-      rolling_resistance_torque_object =
-        std::make_shared<ViscousRollingResistanceTorque<dim>>();
-    }
+  rolling_resistance_method =
+    dem_parameters.model_parameters.rolling_resistance_method;
 }
 
 template <int dim>
@@ -336,6 +316,7 @@ PPHertzMindlinLimitOverlap<dim>::calculate_pp_contact_force(
     }
 }
 
+
 // Calculates nonlinear contact force and torques
 template <int dim>
 void
@@ -432,21 +413,56 @@ PPHertzMindlinLimitOverlap<dim>::calculate_nonlinear_contact_force_and_torque(
         particle_one_properties[DEM::PropertiesIndex::dp];
     }
 
+
   // Rolling resistance torque
-  rolling_resistance_torque =
-    rolling_resistance_torque_object->calculate_rolling_resistance_torque(
-      this->effective_radius,
-      particle_one_properties,
-      particle_two_properties,
-      this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                     [particle_two_type],
-      normal_force.norm(),
-      normal_unit_vector);
+  if (rolling_resistance_method == Parameters::Lagrangian::ModelParameters::
+                                     RollingResistanceMethod::no_resistance)
+    {
+      rolling_resistance_torque = calculate_rolling_resistance_torque<
+        dim,
+        RollingResistanceTorqueModel::no_rolling_resistance>(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    }
+  else if (rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             constant_resistance)
+    {
+      rolling_resistance_torque = calculate_rolling_resistance_torque<
+        dim,
+        RollingResistanceTorqueModel::constant_rolling_resistance>(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    }
+  else if (rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             viscous_resistance)
+    {
+      rolling_resistance_torque = calculate_rolling_resistance_torque<
+        dim,
+        RollingResistanceTorqueModel::viscous_rolling_resistance>(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    }
 }
 
 template class PPHertzMindlinLimitOverlap<2>;
 template class PPHertzMindlinLimitOverlap<3>;
-
 
 
 template <int dim>
@@ -539,28 +555,8 @@ PPHertzMindlinLimitForce<dim>::PPHertzMindlinLimitForce(
         }
     }
 
-  // Overriding rolling resistance torque model
-  if (dem_parameters.model_parameters.rolling_resistance_method ==
-      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-        no_resistance)
-    {
-      rolling_resistance_torque_object =
-        std::make_shared<NoRollingResistanceTorque<dim>>();
-    }
-  else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             constant_resistance)
-    {
-      rolling_resistance_torque_object =
-        std::make_shared<ConstantRollingResistanceTorque<dim>>();
-    }
-  else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             viscous_resistance)
-    {
-      rolling_resistance_torque_object =
-        std::make_shared<ViscousRollingResistanceTorque<dim>>();
-    }
+  rolling_resistance_method =
+    dem_parameters.model_parameters.rolling_resistance_method;
 }
 
 template <int dim>
@@ -872,8 +868,37 @@ PPHertzMindlinLimitForce<dim>::calculate_hertz_mindlin_limit_force_contact(
     }
 
   // Rolling resistance torque
-  rolling_resistance_torque =
-    rolling_resistance_torque_object->calculate_rolling_resistance_torque(
+  if (rolling_resistance_method == Parameters::Lagrangian::ModelParameters::
+                                     RollingResistanceMethod::no_resistance)
+    rolling_resistance_torque = calculate_rolling_resistance_torque<
+      dim,
+      RollingResistanceTorqueModel::no_rolling_resistance>(
+      this->effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                     [particle_two_type],
+      normal_force.norm(),
+      normal_unit_vector);
+  else if (rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             constant_resistance)
+    rolling_resistance_torque = calculate_rolling_resistance_torque<
+      dim,
+      RollingResistanceTorqueModel::constant_rolling_resistance>(
+      this->effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                     [particle_two_type],
+      normal_force.norm(),
+      normal_unit_vector);
+  else if (rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             viscous_resistance)
+    rolling_resistance_torque = calculate_rolling_resistance_torque<
+      dim,
+      RollingResistanceTorqueModel::viscous_rolling_resistance>(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,
@@ -975,28 +1000,8 @@ PPHertz<dim>::PPHertz(const DEMSolverParameters<dim> &dem_parameters)
         }
     }
 
-  // Overriding rolling resistance torque model
-  if (dem_parameters.model_parameters.rolling_resistance_method ==
-      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-        no_resistance)
-    {
-      rolling_resistance_torque_object =
-        std::make_shared<NoRollingResistanceTorque<dim>>();
-    }
-  else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             constant_resistance)
-    {
-      rolling_resistance_torque_object =
-        std::make_shared<ConstantRollingResistanceTorque<dim>>();
-    }
-  else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             viscous_resistance)
-    {
-      rolling_resistance_torque_object =
-        std::make_shared<ViscousRollingResistanceTorque<dim>>();
-    }
+  rolling_resistance_method =
+    dem_parameters.model_parameters.rolling_resistance_method;
 }
 
 template <int dim>
@@ -1301,8 +1306,37 @@ PPHertz<dim>::calculate_hertz_contact(
     }
 
   // Rolling resistance torque
-  rolling_resistance_torque =
-    rolling_resistance_torque_object->calculate_rolling_resistance_torque(
+  if (rolling_resistance_method == Parameters::Lagrangian::ModelParameters::
+                                     RollingResistanceMethod::no_resistance)
+    rolling_resistance_torque = calculate_rolling_resistance_torque<
+      dim,
+      RollingResistanceTorqueModel::no_rolling_resistance>(
+      this->effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                     [particle_two_type],
+      normal_force.norm(),
+      normal_unit_vector);
+  else if (rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             constant_resistance)
+    rolling_resistance_torque = calculate_rolling_resistance_torque<
+      dim,
+      RollingResistanceTorqueModel::constant_rolling_resistance>(
+      this->effective_radius,
+      particle_one_properties,
+      particle_two_properties,
+      this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                     [particle_two_type],
+      normal_force.norm(),
+      normal_unit_vector);
+  else if (rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             viscous_resistance)
+    rolling_resistance_torque = calculate_rolling_resistance_torque<
+      dim,
+      RollingResistanceTorqueModel::viscous_rolling_resistance>(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,

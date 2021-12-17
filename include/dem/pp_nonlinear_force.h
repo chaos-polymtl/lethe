@@ -20,7 +20,6 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/pp_contact_force.h>
 #include <dem/pp_contact_info_struct.h>
-#include <dem/rolling_resistance_torque_base.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
@@ -126,9 +125,8 @@ private:
   Tensor<1, dim> particle_two_tangential_torque;
   Tensor<1, dim> rolling_resistance_torque;
   double         normal_relative_velocity_value;
-
-  std::shared_ptr<RollingResistanceTorqueBase<dim>>
-    rolling_resistance_torque_object;
+  Parameters::Lagrangian::ModelParameters::RollingResistanceMethod
+    rolling_resistance_method;
 };
 
 /**
@@ -220,9 +218,8 @@ private:
   Tensor<1, dim> particle_two_tangential_torque;
   Tensor<1, dim> rolling_resistance_torque;
   double         normal_relative_velocity_value;
-
-  std::shared_ptr<RollingResistanceTorqueBase<dim>>
-    rolling_resistance_torque_object;
+  Parameters::Lagrangian::ModelParameters::RollingResistanceMethod
+    rolling_resistance_method;
 };
 
 
@@ -317,8 +314,7 @@ private:
   Tensor<1, dim> particle_two_tangential_torque;
   Tensor<1, dim> rolling_resistance_torque;
   double         normal_relative_velocity_value;
-
-  std::shared_ptr<RollingResistanceTorqueBase<dim>>
-    rolling_resistance_torque_object;
+  Parameters::Lagrangian::ModelParameters::RollingResistanceMethod
+    rolling_resistance_method;
 };
 #endif

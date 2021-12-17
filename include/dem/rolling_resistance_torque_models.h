@@ -12,88 +12,104 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2019
  */
 
+#include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/rolling_resistance_torque_base.h>
 
+#include <deal.II/particles/particle_handler.h>
 
 #ifndef rolling_resistance_torque_models_h
 #  define rolling_resistance_torque_models_h
 
-template <int dim>
-class NoRollingResistanceTorque : public RollingResistanceTorqueBase<dim>
+enum class RollingResistanceTorqueModel
 {
-public:
-  /**
-   * @brief No rolling resistance torque model
-   *
-   * @param particle_one_properties Particle one properties
-   * @param particle_two_properties Particle two properties
-   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
-   * @param normal_force_norm Normal force norm
-   *
-   * @return rolling resistance torque
-   */
-  virtual Tensor<1, dim>
-  calculate_rolling_resistance_torque(
-    const double &                 effective_r,
-    const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties,
-    const double &                 effective_rolling_friction_coefficient,
-    const double &                 normal_force_norm,
-    const Tensor<1, dim> &         normal_contact_vector) override;
+  no_rolling_resistance,
+  constant_rolling_resistance,
+  viscous_rolling_resistance
 };
 
-template <int dim>
-class ConstantRollingResistanceTorque : public RollingResistanceTorqueBase<dim>
-{
-public:
-  /**
-   * @brief Carries out calculation of the rolling resistance torque using the constant model
-   *
-   * @param particle_one_properties Particle one properties
-   * @param particle_two_properties Particle two properties
-   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
-   * @param normal_force_norm Normal force norm
-   *
-   * @return rolling resistance torque
-   */
-  virtual Tensor<1, dim>
-  calculate_rolling_resistance_torque(
-    const double &                 effective_r,
-    const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties,
-    const double &                 effective_rolling_friction_coefficient,
-    const double &                 normal_force_norm,
-    const Tensor<1, dim> &         normal_contact_vector) override;
-};
+/**
+ * @brief
+ */
+template <int dim, RollingResistanceTorqueModel rolling_resistance_torque_model>
+inline Tensor<1, dim>
+calculate_rolling_resistance_torque(
+  const double &                 effective_r,
+  const ArrayView<const double> &particle_one_properties,
+  const ArrayView<const double> &particle_two_properties,
+  const double &                 effective_rolling_friction_coefficient,
+  const double &                 normal_force_norm,
+  const Tensor<1, dim> &         normal_contact_vector)
 
-template <int dim>
-class ViscousRollingResistanceTorque : public RollingResistanceTorqueBase<dim>
 {
-public:
-  /**
-   * @brief Carries out calculation of the rolling resistance torque using the viscous model
-   *
-   * @param particle_one_properties Particle one properties
-   * @param particle_two_properties Particle two properties
-   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
-   * @param normal_force_norm Normal force norm
-   *
-   * @return rolling resistance torque
-   */
-  virtual Tensor<1, dim>
-  calculate_rolling_resistance_torque(
-    const double &                 effective_r,
-    const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties,
-    const double &                 effective_rolling_friction_coefficient,
-    const double &                 normal_force_norm,
-    const Tensor<1, dim> &         normal_contact_vector) override;
-};
+  // No resistance model
+  if constexpr (rolling_resistance_torque_model ==
+                RollingResistanceTorqueModel::no_rolling_resistance)
+    {
+      Tensor<1, dim> rolling_resistance_torque;
+
+      for (int d = 0; d < dim; ++d)
+        rolling_resistance_torque[d] = 0;
+
+      return rolling_resistance_torque;
+    }
+
+  // Constant resistance model
+  if constexpr (rolling_resistance_torque_model ==
+                RollingResistanceTorqueModel::constant_rolling_resistance)
+    {
+      // For calculation of rolling resistance torque, we need to obtain
+      // omega_ij using rotational velocities of particles one and two
+      Tensor<1, dim> particle_one_angular_velocity,
+        particle_two_angular_velocity, omega_ij, omega_ij_direction;
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_one_angular_velocity[d] =
+            particle_one_properties[DEM::PropertiesIndex::omega_x + d];
+          particle_two_angular_velocity[d] =
+            particle_two_properties[DEM::PropertiesIndex::omega_x + d];
+        }
+
+      omega_ij = particle_one_angular_velocity - particle_two_angular_velocity;
+      omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
+
+      // Calculation of rolling resistance torque
+      return (-effective_rolling_friction_coefficient * effective_r *
+              normal_force_norm * omega_ij_direction);
+    }
+
+  // Viscous resistance model
+  if constexpr (rolling_resistance_torque_model ==
+                RollingResistanceTorqueModel::viscous_rolling_resistance)
+    {
+      // For calculation of rolling resistance torque, we need to obtain
+      // omega_ij using rotational velocities of particles one and two
+      Tensor<1, dim> particle_one_angular_velocity,
+        particle_two_angular_velocity, omega_ij, omega_ij_direction;
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_one_angular_velocity[d] =
+            particle_one_properties[DEM::PropertiesIndex::omega_x + d];
+          particle_two_angular_velocity[d] =
+            particle_two_properties[DEM::PropertiesIndex::omega_x + d];
+        }
+
+      omega_ij = particle_one_angular_velocity - particle_two_angular_velocity;
+      omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
+
+      Tensor<1, dim> v_omega =
+        cross_product_3d(particle_one_angular_velocity,
+                         particle_one_properties[DEM::PropertiesIndex::dp] *
+                           0.5 * normal_contact_vector) -
+        cross_product_3d(particle_two_angular_velocity,
+                         particle_two_properties[DEM::PropertiesIndex::dp] *
+                           0.5 * -normal_contact_vector);
+
+      // Calculation of rolling resistance torque
+      return (-effective_rolling_friction_coefficient * effective_r *
+              normal_force_norm * v_omega.norm() * omega_ij_direction);
+    }
+}
 
 #endif
