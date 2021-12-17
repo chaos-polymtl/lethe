@@ -43,7 +43,8 @@ calculate_rolling_resistance_torque(
   const Tensor<1, dim> &         normal_contact_vector)
 
 {
-  // No resistance model
+  // No rolling resistance torque model. When this model is use, the rolling
+  // friction is zero.
   if constexpr (rolling_resistance_torque_model ==
                 RollingResistanceTorqueModel::no_rolling_resistance)
     {
@@ -56,6 +57,8 @@ calculate_rolling_resistance_torque(
     }
 
   // Constant resistance model
+  // M_r = - mu_r * R_eff * |F_n| * omega_hat
+  // omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
   if constexpr (rolling_resistance_torque_model ==
                 RollingResistanceTorqueModel::constant_rolling_resistance)
     {
@@ -80,6 +83,9 @@ calculate_rolling_resistance_torque(
     }
 
   // Viscous resistance model
+  // M_r = - mu_r * R_eff * |F_n| * |V_omega| * omega_hat
+  // omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
+  // V_omega = omega_i × (R_i * n_ij) - omega_j × (R_j * n_ji)
   if constexpr (rolling_resistance_torque_model ==
                 RollingResistanceTorqueModel::viscous_rolling_resistance)
     {

@@ -40,7 +40,7 @@ namespace Parameters
       // Gravitational acceleration
       Tensor<1, dim> g;
 
-      // Choosing integration method
+      // Integration method
       enum class size_distribution_type
       {
         uniform,
@@ -123,7 +123,7 @@ namespace Parameters
 
     struct InsertionInfo
     {
-      // Choosing insertion method
+      // Insertion method
       enum class InsertionMethod
       {
         uniform,
@@ -224,7 +224,7 @@ namespace Parameters
         viscous_resistance
       } rolling_resistance_method;
 
-      // Choosing integration method
+      // Itegration method
       enum class IntegrationMethod
       {
         velocity_verlet,
@@ -249,7 +249,6 @@ namespace Parameters
       // Enable force post-processing
       bool calculate_force_torque;
 
-      // Choosing how the outputs is gonna be displayed
       Parameters::Verbosity force_torque_verbosity;
 
       // Output frequency
@@ -306,7 +305,7 @@ namespace Parameters
       // Number of DEM boundary conditions
       unsigned int DEM_BC_number;
 
-      // Choosing BC type
+      // Boundary condition type
       enum class BoundaryType
       {
         fixed_wall,
@@ -354,7 +353,7 @@ namespace Parameters
     class GridMotion
     {
     public:
-      // Choosing grid motion type
+      // Grid motion type
       enum class MotionType
       {
         translational,

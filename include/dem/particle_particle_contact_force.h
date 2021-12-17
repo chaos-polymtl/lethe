@@ -31,8 +31,9 @@ using namespace dealii;
 #  define particle_particle_contact_force_h
 
 /**
- * Base interface for classes that carry out the calculation of particle-paricle
- * contact force including non-linear and linear contact models
+ * Base interface for classes that carry out the calculation of
+ * particle-particle contact force including non-linear and linear contact
+ * models
  */
 template <int dim>
 class ParticleParticleContactForce
