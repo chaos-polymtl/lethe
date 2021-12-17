@@ -126,7 +126,7 @@ public:
               << std::endl
               << "will be solved after the fluid dynamics by default."
               << std::endl
-              << "For clarity, please specify a resolution order in the map solve_pre_fluid defined in multiphysics_interface.h"
+              << "For clarity, please specify a solution order in the map solve_pre_fluid defined in multiphysics_interface.h"
               << std::endl
               << "-------------" << std::endl;
           }
