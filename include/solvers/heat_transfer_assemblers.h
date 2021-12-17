@@ -43,6 +43,16 @@ template <int dim>
 class HeatTransferAssemblerBase
 {
 public:
+  HeatTransferAssemblerBase(
+    std::shared_ptr<SimulationControl>   p_simulation_control,
+    const Parameters::PhysicalProperties p_physical_properties,
+    const Parameters::Multiphysics &     p_multiphysics_parameters)
+    : simulation_control(p_simulation_control)
+    , physical_properties(p_physical_properties)
+    , multiphysics_parameters(p_multiphysics_parameters)
+  {}
+
+
   /**
    * @brief assemble_matrix Interface for the call to matrix assembly
    * @param scratch_data Scratch data containing the heat transfer information.
@@ -66,6 +76,13 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) = 0;
+
+protected:
+  std::shared_ptr<SimulationControl>   simulation_control;
+  const Parameters::PhysicalProperties physical_properties;
+  const Parameters::Multiphysics &     multiphysics_parameters;
+
+  std::vector<std::shared_ptr<SpecificHeatModel>> specific_heat_models;
 };
 
 /**
@@ -85,12 +102,12 @@ class HeatTransferAssemblerCore : public HeatTransferAssemblerBase<dim>
 {
 public:
   HeatTransferAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   p_multiphysics_parameters)
-    : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
-    , multiphysics_parameters(p_multiphysics_parameters)
+    std::shared_ptr<SimulationControl>   simulation_control,
+    const Parameters::PhysicalProperties physical_properties,
+    const Parameters::Multiphysics &     multiphysics_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control,
+                                     physical_properties,
+                                     multiphysics_parameters)
   {}
 
   /**
@@ -111,11 +128,6 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
-
-
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
-  const Parameters::Multiphysics &   multiphysics_parameters;
 };
 
 /**
@@ -133,11 +145,18 @@ public:
   HeatTransferAssemblerBDF(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   p_multiphysics_parameters)
-    : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
-    , multiphysics_parameters(p_multiphysics_parameters)
-  {}
+    const Parameters::Multiphysics &   multiphysics_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control,
+                                     physical_properties,
+                                     multiphysics_parameters)
+  {
+    // if (physical_properties.enable_phase_change)
+    //   specific_heat_model = std::make_shared<PhaseChangeSpecificHeat>(
+    //     physical_properties.phase_change_parameters);
+    // else
+    //   specific_heat_model = std::make_shared<ConstantSpecificHeat>(
+    //     physical_properties.specific_heat);
+  }
 
   /**
    * @brief assemble_matrix Assembles the matrix
@@ -158,12 +177,8 @@ public:
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
-  const Parameters::Multiphysics &   multiphysics_parameters;
-  const bool                         GGLS = true;
+  const bool GGLS = true;
 };
-
 
 /**
  * @brief Class that assembles the Robin boundary condition for the heat transfer solver.
@@ -179,12 +194,12 @@ public:
   HeatTransferAssemblerRobinBC(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   p_multiphysics_parameters,
+    const Parameters::Multiphysics &   multiphysics_parameters,
     const BoundaryConditions::HTBoundaryConditions<dim>
       &p_boundary_conditions_ht)
-    : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
-    , multiphysics_parameters(p_multiphysics_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control,
+                                     physical_properties,
+                                     multiphysics_parameters)
     , boundary_conditions_ht(p_boundary_conditions_ht)
   {}
 
@@ -207,9 +222,6 @@ public:
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
 
-  std::shared_ptr<SimulationControl>                   simulation_control;
-  Parameters::PhysicalProperties                       physical_properties;
-  const Parameters::Multiphysics &                     multiphysics_parameters;
   const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
 };
 
@@ -229,10 +241,10 @@ public:
   HeatTransferAssemblerViscousDissipation(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   p_multiphysics_parameters)
-    : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
-    , multiphysics_parameters(p_multiphysics_parameters)
+    const Parameters::Multiphysics &   multiphysics_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control,
+                                     physical_properties,
+                                     multiphysics_parameters)
   {}
 
   virtual void
@@ -247,10 +259,6 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
-
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
-  const Parameters::Multiphysics &   multiphysics_parameters;
 };
 
 
