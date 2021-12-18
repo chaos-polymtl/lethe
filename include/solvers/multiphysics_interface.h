@@ -154,11 +154,13 @@ public:
         else
           {
             pcout
-              << "Resolution order is not specified for this auxiliary physic :"
+              << "Solution order is not specified for this auxiliary physic "
               << std::endl
               << "will be solved after the fluid dynamics by default."
               << std::endl
-              << "For clarity, please specify a resolution order in the map solve_pre_fluid defined in multiphysics_interface.h"
+              << "For clarity, please specify a solution order for this physic "
+              << std::endl
+              << "in the map solve_pre_fluid, member of multiphysics_interface.h"
               << std::endl
               << "-------------" << std::endl;
           }
