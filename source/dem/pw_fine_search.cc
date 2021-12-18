@@ -1,5 +1,8 @@
 #include <dem/pw_fine_search.h>
 
+#include <boost/math/special_functions/sign.hpp>
+
+
 using namespace dealii;
 
 template <int dim>
