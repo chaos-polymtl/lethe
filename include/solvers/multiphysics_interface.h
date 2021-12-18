@@ -16,9 +16,7 @@
  * This class provides an interface for multiphysics simulations by enabling
  * the solution of multiple auxiliary physics on top of a computational
  * fluid dynamics simulation. The auxiliary physics are stored in a map
- * whose key are the Parameters::PhysicsID int enum.
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2021-
+ * whose keys are the Parameters::PhysicsID int enum.
  */
 
 #ifndef lethe_multiphysics_interface_h
@@ -77,32 +75,26 @@ public:
   {
     if (physics_id == PhysicsID::heat_transfer)
       {
-        pcout << "--------------" << std::endl
-              << "Heat Transfer" << std::endl
-              << "--------------" << std::endl;
+        pcout << "Heat Transfer" << std::endl << "--------------" << std::endl;
       }
     else if (physics_id == PhysicsID::tracer)
       {
-        pcout << "-------" << std::endl
-              << "Tracer" << std::endl
-              << "-------" << std::endl;
+        pcout << "Tracer" << std::endl << "-------" << std::endl;
       }
     else if (physics_id == PhysicsID::free_surface)
       {
-        pcout << "-------------" << std::endl
-              << "Free Surface" << std::endl
-              << "-------------" << std::endl;
+        pcout << "Free Surface" << std::endl << "-------------" << std::endl;
       }
   }
 
   /**
-   * @brief Call for the solution of all physics
+   * @brief Call for the solution of the physics that should be solved BEFORE the fluid dynamics (called "pre-solving")
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   void
-  solve(const Parameters::SimulationControl::TimeSteppingMethod
-          time_stepping_method)
+  pre_solve(const Parameters::SimulationControl::TimeSteppingMethod
+              time_stepping_method)
   {
     // Loop through all the elements in the physics map. Consequently, iphys is
     // an std::pair where iphys.first is the PhysicsID and iphys.second is the
@@ -110,22 +102,124 @@ public:
     // sequentially.
     for (auto &iphys : physics)
       {
-        // Announce physic solved (verbosity = non_linear_solver.verbosity)
-        if (verbosity != Parameters::Verbosity::quiet)
-          announce_physics(iphys.first);
+        // Ensure that iphys.first is present in solve_pre_fluid map
+        if (solve_pre_fluid.count(iphys.first) != 0)
+          {
+            if (solve_pre_fluid[iphys.first] == true)
+              {
+                // Announce physic solved (verbosity =
+                // non_linear_solver.verbosity)
+                if (verbosity != Parameters::Verbosity::quiet)
+                  announce_physics(iphys.first);
 
-        solve_physics(iphys.first, time_stepping_method);
+                solve_physics(iphys.first, time_stepping_method);
+
+                // Embellish the console output
+                if (verbosity != Parameters::Verbosity::quiet)
+                  pcout << "-----------------------" << std::endl;
+              }
+          }
+        else
+          {
+            pcout
+              << "Solution order is not specified for this auxiliary physic :"
+              << std::endl
+              << "will be solved after the fluid dynamics by default."
+              << std::endl
+              << "For clarity, please specify a solution order in the map solve_pre_fluid defined in multiphysics_interface.h"
+              << std::endl
+              << "-------------" << std::endl;
+          }
       }
+
     for (auto &iphys : block_physics)
       {
-        // Announce physic solved (verbosity = non_linear_solver.verbosity)
-        if (verbosity != Parameters::Verbosity::quiet)
-          announce_physics(iphys.first);
+        // Ensure that iphys.first is present in solve_pre_fluid map
+        if (solve_pre_fluid.count(iphys.first) != 0)
+          {
+            if (solve_pre_fluid[iphys.first] == true)
+              {
+                // Announce physic solved (verbosity =
+                // non_linear_solver.verbosity)
+                if (verbosity != Parameters::Verbosity::quiet)
+                  announce_physics(iphys.first);
 
-        solve_block_physics(iphys.first, time_stepping_method);
+                solve_block_physics(iphys.first, time_stepping_method);
+
+                // Embellish the console output
+                if (verbosity != Parameters::Verbosity::quiet)
+                  pcout << "-----------------------" << std::endl;
+              }
+          }
+        else
+          {
+            pcout
+              << "Solution order is not specified for this auxiliary physic "
+              << std::endl
+              << "will be solved after the fluid dynamics by default."
+              << std::endl
+              << "For clarity, please specify a solution order for this physic "
+              << std::endl
+              << "in the map solve_pre_fluid, member of multiphysics_interface.h"
+              << std::endl
+              << "-------------" << std::endl;
+          }
       }
   }
 
+  /**
+   * @brief Call for the solution of the physics that should be solved AFTER the fluid dynamics (called "post-solving")
+   *
+   * @param time_stepping_method Time-Stepping method with which the assembly is called
+   */
+  void
+  post_solve(const Parameters::SimulationControl::TimeSteppingMethod
+               time_stepping_method)
+  {
+    // Loop through all the elements in the physics map. Consequently, iphys is
+    // an std::pair where iphys.first is the PhysicsID and iphys.second is the
+    // AuxiliaryPhysics pointer. This is how the map can be traversed
+    // sequentially.
+    for (auto &iphys : physics)
+      {
+        // If iphys.first should be solved after fluid dynamics OR if is not
+        // present in solve_pre_fluid map
+        if (solve_pre_fluid[iphys.first] == false ||
+            solve_pre_fluid.count(iphys.first) == 0)
+          {
+            // Announce physic solved (verbosity =
+            // non_linear_solver.verbosity)
+            if (verbosity != Parameters::Verbosity::quiet)
+              {
+                // Embellish the console output
+                pcout << "-----------------------" << std::endl;
+                announce_physics(iphys.first);
+              }
+
+            solve_physics(iphys.first, time_stepping_method);
+          }
+      }
+
+    for (auto &iphys : block_physics)
+      {
+        // If iphys.first should be solved after fluid dynamics OR if is not
+        // present in solve_pre_fluid map
+        if (solve_pre_fluid[iphys.first] == false ||
+            solve_pre_fluid.count(iphys.first) == 0)
+          {
+            // Announce physic solved (verbosity =
+            // non_linear_solver.verbosity)
+            if (verbosity != Parameters::Verbosity::quiet)
+              {
+                // Embellish the console output
+                pcout << "-----------------------" << std::endl;
+                announce_physics(iphys.first);
+              }
+
+            solve_block_physics(iphys.first, time_stepping_method);
+          }
+      }
+  }
 
   /**
    * @brief Call for the solution of a single physic
@@ -239,9 +333,9 @@ public:
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
-   * the calculation of all derived quantities using the solution vector of
-   * the physics. It does not concern the output of the solution using the
-   * DataOutObject, which is accomplished through the
+   * the calculation of all derived quantities using the solution vector
+   * of the physics. It does not concern the output of the solution using
+   * the DataOutObject, which is accomplished through the
    * attach_solution_to_output function
    */
   void
@@ -312,8 +406,8 @@ public:
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
-   * only support imposing nodal values, but some physics additionnaly support
-   * the use of L2 projection or steady-state solutions.
+   * only support imposing nodal values, but some physics additionnaly
+   * support the use of L2 projection or steady-state solutions.
    */
   void
   set_initial_conditions()
@@ -595,6 +689,12 @@ private:
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;
+
+  // Map that states if the physics are solved before the fluid dynamics
+  std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
+                                            {heat_transfer, false},
+                                            {tracer, false},
+                                            {free_surface, false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.
