@@ -19,7 +19,7 @@
 
 /*
  * This file defines a small enum which is used to identify
- * the various physics solved within Lethe
+ * the various physics solved within Lethe.
  */
 
 

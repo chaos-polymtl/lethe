@@ -543,8 +543,17 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
     }
   else
     {
+      // sdirk schemes are not implemented for multiphysics simulations
+
+      // Solve the auxiliary physics that should be treated BEFORE the fluid
+      // dynamics
+      multiphysics->pre_solve(simulation_parameters.simulation_control.method);
+
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
-      multiphysics->solve(simulation_parameters.simulation_control.method);
+
+      // Solve the auxiliary physics that should be treated AFTER the fluid
+      // dynamics
+      multiphysics->post_solve(simulation_parameters.simulation_control.method);
     }
 }
 
