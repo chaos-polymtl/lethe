@@ -57,10 +57,10 @@ public:
    * non-linear (Hertzian) model
    *
    * @param adjacent_particles Required information for the calculation of the
-   * local-local particle-particle contact force. These information were
+   * local-local particle-particle contact force. This information was
    * obtained in the fine search
    * @param ghost_adjacent_particles Required information for the calculation of the
-   * local-ghost particle-particle contact force. These information were
+   * local-ghost particle-particle contact force. This information was
    * obtained in the fine search
    * @param dt DEM time-step
    * @param momentum An unordered_map of momentum of particles

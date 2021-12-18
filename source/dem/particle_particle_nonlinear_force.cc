@@ -130,7 +130,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
             {
-              // Getting information (location and propertis) of particle one
+              // Getting information (location and properties) of particle one
               // and two in contact
               auto             particle_one = contact_info.particle_one;
               auto             particle_two = contact_info.particle_two;
@@ -236,7 +236,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                adjacent_particles_list | boost::adaptors::map_values)
 
             {
-              // Getting information (location and propertis) of particle one
+              // Getting information (location and properties) of particle one
               // and two in contact
               auto             particle_one = contact_info.particle_one;
               auto             particle_two = contact_info.particle_two;
@@ -391,7 +391,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
-      // Gross sliding occurs and the tangential overlap and tangnetial
+      // Gross sliding occurs and the tangential overlap and tangential
       // force are limited to Coulumb's criterion
       contact_info.tangential_overlap =
         (coulomb_threshold *
@@ -597,7 +597,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
             {
-              // Getting information (location and propertis) of particle one
+              // Getting information (location and properties) of particle one
               // and two in contact
               auto             particle_one = contact_info.particle_one;
               auto             particle_two = contact_info.particle_two;
@@ -703,7 +703,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                adjacent_particles_list | boost::adaptors::map_values)
 
             {
-              // Getting information (location and propertis) of particle one
+              // Getting information (location and properties) of particle one
               // and two in contact
               auto             particle_one = contact_info.particle_one;
               auto             particle_two = contact_info.particle_two;
@@ -855,7 +855,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
-      // Gross sliding occurs and the tangential overlap and tangnetial
+      // Gross sliding occurs and the tangential overlap and tangential
       // force are limited to Coulumb's criterion
       tangential_force =
         coulomb_threshold *
@@ -1046,7 +1046,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
             {
-              // Getting information (location and propertis) of particle one
+              // Getting information (location and properties) of particle one
               // and two in contact
               auto             particle_one = contact_info.particle_one;
               auto             particle_two = contact_info.particle_two;
@@ -1151,7 +1151,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                adjacent_particles_list | boost::adaptors::map_values)
 
             {
-              // Getting information (location and propertis) of particle one
+              // Getting information (location and properties) of particle one
               // and two in contact
               auto             particle_one = contact_info.particle_one;
               auto             particle_two = contact_info.particle_two;
@@ -1296,7 +1296,7 @@ ParticleParticleHertz<dim>::calculate_hertz_contact(
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
-      // Gross sliding occurs and the tangential overlap and tangnetial
+      // Gross sliding occurs and the tangential overlap and tangential
       // force are limited to Coulumb's criterion
       tangential_force =
         coulomb_threshold *

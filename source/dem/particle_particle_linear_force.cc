@@ -113,7 +113,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
             {
-              // Getting information (location and propertis) of particle one
+              // Getting information (location and properties) of particle one
               // and two in contact
               auto       particle_one          = contact_info.particle_one;
               auto       particle_two          = contact_info.particle_two;
@@ -216,7 +216,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
             {
-              // Getting information (location and propertis) of particle one
+              // Getting information (location and properties) of particle one
               // and two in contact
               auto       particle_one          = contact_info.particle_one;
               auto       particle_two          = contact_info.particle_two;
@@ -383,7 +383,7 @@ ParticleParticleLinearForce<dim>::calculate_linear_contact_force_and_torque(
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
-      // Gross sliding occurs and the tangential overlap and tangnetial
+      // Gross sliding occurs and the tangential overlap and tangential
       // force are limited to Coulumb's criterion
       contact_info.tangential_overlap =
         (coulomb_threshold *

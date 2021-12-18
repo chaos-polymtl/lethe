@@ -39,8 +39,6 @@ using namespace dealii;
  * information obtained from the fine search and physical properties of
  * particles
  *
- * @note
- *
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
@@ -56,11 +54,11 @@ public:
    * using linear (Hookean) model
    *
    * @param local_adjacent_particles Required information for the calculation
-   * of the local-local particle-particle contact force. These information
-   * were obtained in the fine search
+   * of the local-local particle-particle contact force. This information
+   * was obtained in the fine search
    * @param ghost_adjacent_particles Required information for the calculation
-   * of the local-ghost particle-particle contact force. These information
-   * were obtained in the fine search
+   * of the local-ghost particle-particle contact force. This information
+   * was obtained in the fine search
    * @param dt DEM time-step
    * @param momentum An unordered_map of momentum of particles
    * @param force Force acting on particles
