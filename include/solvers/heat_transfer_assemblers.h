@@ -46,7 +46,7 @@ public:
   HeatTransferAssemblerBase(
     std::shared_ptr<SimulationControl>   p_simulation_control,
     const Parameters::PhysicalProperties p_physical_properties,
-    const Parameters::Multiphysics &     p_multiphysics_parameters)
+    const Parameters::Multiphysics      &p_multiphysics_parameters)
     : simulation_control(p_simulation_control)
     , physical_properties(p_physical_properties)
     , multiphysics_parameters(p_multiphysics_parameters)
@@ -63,7 +63,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) = 0;
+                  StabilizedMethodsCopyData    &copy_data) = 0;
 
   /**
    * @brief assemble_matrix Interface for the call to rhs
@@ -75,14 +75,12 @@ public:
 
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) = 0;
+               StabilizedMethodsCopyData    &copy_data) = 0;
 
 protected:
   std::shared_ptr<SimulationControl>   simulation_control;
   const Parameters::PhysicalProperties physical_properties;
-  const Parameters::Multiphysics &     multiphysics_parameters;
-
-  std::vector<std::shared_ptr<SpecificHeatModel>> specific_heat_models;
+  const Parameters::Multiphysics      &multiphysics_parameters;
 };
 
 /**
@@ -104,7 +102,7 @@ public:
   HeatTransferAssemblerCore(
     std::shared_ptr<SimulationControl>   simulation_control,
     const Parameters::PhysicalProperties physical_properties,
-    const Parameters::Multiphysics &     multiphysics_parameters)
+    const Parameters::Multiphysics      &multiphysics_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control,
                                      physical_properties,
                                      multiphysics_parameters)
@@ -117,7 +115,7 @@ public:
    */
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
 
   /**
@@ -127,7 +125,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 };
 
 /**
@@ -145,18 +143,11 @@ public:
   HeatTransferAssemblerBDF(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   multiphysics_parameters)
+    const Parameters::Multiphysics    &multiphysics_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control,
                                      physical_properties,
                                      multiphysics_parameters)
-  {
-    // if (physical_properties.enable_phase_change)
-    //   specific_heat_model = std::make_shared<PhaseChangeSpecificHeat>(
-    //     physical_properties.phase_change_parameters);
-    // else
-    //   specific_heat_model = std::make_shared<ConstantSpecificHeat>(
-    //     physical_properties.specific_heat);
-  }
+  {}
 
   /**
    * @brief assemble_matrix Assembles the matrix
@@ -166,7 +157,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -175,7 +166,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 
   const bool GGLS = true;
 };
@@ -194,7 +185,7 @@ public:
   HeatTransferAssemblerRobinBC(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   multiphysics_parameters,
+    const Parameters::Multiphysics    &multiphysics_parameters,
     const BoundaryConditions::HTBoundaryConditions<dim>
       &p_boundary_conditions_ht)
     : HeatTransferAssemblerBase<dim>(simulation_control,
@@ -211,7 +202,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -220,7 +211,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 
   const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
 };
@@ -241,7 +232,7 @@ public:
   HeatTransferAssemblerViscousDissipation(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   multiphysics_parameters)
+    const Parameters::Multiphysics    &multiphysics_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control,
                                      physical_properties,
                                      multiphysics_parameters)
@@ -249,7 +240,7 @@ public:
 
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData &   copy_data) override;
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -258,7 +249,7 @@ public:
    */
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData &   copy_data) override;
+               StabilizedMethodsCopyData    &copy_data) override;
 };
 
 
