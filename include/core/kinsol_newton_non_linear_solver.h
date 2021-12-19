@@ -41,7 +41,7 @@ public:
    * @param param Non-linear solver parameters
    *
    */
-  KinsolNewtonNonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
+  KinsolNewtonNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
                               const Parameters::NonLinearSolver &param);
 
 
@@ -56,14 +56,14 @@ public:
 
 template <typename VectorType>
 KinsolNewtonNonLinearSolver<VectorType>::KinsolNewtonNonLinearSolver(
-  PhysicsSolver<VectorType> *        physics_solver,
+  PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
   : NonLinearSolver<VectorType>(physics_solver, params)
 {}
 
 template <typename VectorType>
 void
-KinsolNewtonNonLinearSolver<VectorType>::solve(const bool /*is_initial_step*/)
+KinsolNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
 #ifdef DEAL_II_WITH_SUNDIALS
   bool first_step = is_initial_step;
@@ -107,7 +107,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(const bool /*is_initial_step*/)
   };
 
   nonlinear_solver.residual = [&](const VectorType &evaluation_point_for_kinsol,
-                                  VectorType &      residual) {
+                                  VectorType       &residual) {
     solver->pcout << "Computing residual vector..." << std::endl;
     evaluation_point = evaluation_point_for_kinsol;
     solver->apply_constraints();
