@@ -379,8 +379,6 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-
-
       // Management of non_newtonian_flows
       non_newtonian_flow = prm.get_bool("non newtonian flow");
       non_newtonian_parameters.parse_parameters(prm);

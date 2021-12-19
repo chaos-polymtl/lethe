@@ -10,7 +10,7 @@ template <int dim>
 void
 HeatTransferAssemblerCore<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  StabilizedMethodsCopyData &   copy_data)
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
@@ -22,7 +22,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   double alpha  = thermal_conductivity / rho_cp;
 
   // Loop and quadrature informations
-  const auto        &JxW_vec    = scratch_data.JxW;
+  const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const double       h          = scratch_data.cell_size;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -128,7 +128,7 @@ template <int dim>
 void
 HeatTransferAssemblerCore<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  StabilizedMethodsCopyData &   copy_data)
 {
   const auto         method = this->simulation_control->get_assembly_method();
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -241,10 +241,10 @@ template <int dim>
 void
 HeatTransferAssemblerBDF<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  StabilizedMethodsCopyData &   copy_data)
 {
   // Loop and quadrature informations
-  const auto        &JxW        = scratch_data.JxW;
+  const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -343,7 +343,7 @@ template <int dim>
 void
 HeatTransferAssemblerBDF<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  StabilizedMethodsCopyData &   copy_data)
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
@@ -353,7 +353,7 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
 
 
   // Loop and quadrature informations
-  const auto        &JxW        = scratch_data.JxW;
+  const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -443,7 +443,7 @@ template <int dim>
 void
 HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  StabilizedMethodsCopyData &   copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -490,7 +490,7 @@ template <int dim>
 void
 HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  StabilizedMethodsCopyData &   copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -549,7 +549,7 @@ template <int dim>
 void
 HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  StabilizedMethodsCopyData &   copy_data)
 {
   const unsigned int n_q_points = scratch_data.n_q_points;
 
