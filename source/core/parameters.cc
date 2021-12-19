@@ -7,9 +7,9 @@ DeclException2(
   double,
   double,
   << "Liquidus temperature : " << arg1
-  << "is not strictly superior to Solidus temperature: " << arg2
-  << "The liquidus temperature specific is below or equal to the solidus temperature."
-  << "The phase change specific heat model requires that T_liquidus>T_solidus.");
+  << " is not strictly superior to Solidus temperature: " << arg2
+  << " The liquidus temperature specific is below or equal to the solidus temperature."
+  << " The phase change specific heat model requires that T_liquidus>T_solidus.");
 
 DeclException1(NumberOfFluidsError,
                int,
@@ -304,7 +304,7 @@ namespace Parameters
       cp_s            = prm.get_double("specific heat solid");
     }
 
-    Assert(T_liquidus <= T_solidus,
+    Assert(T_liquidus > T_solidus,
            PhaseChangeIntervalError(T_liquidus, T_solidus));
 
     prm.leave_subsection();
