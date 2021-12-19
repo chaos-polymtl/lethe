@@ -9,6 +9,7 @@
 #include <dem/particle_particle_nonlinear_force.h>
 #include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
+#include <dem/post_processing.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
 
@@ -859,7 +860,6 @@ std::shared_ptr<ParticleParticleContactForce<dim>>
 CFDDEMSolver<dim>::set_particle_particle_contact_force()
 
 {
-
   if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
         .particle_particle_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::
