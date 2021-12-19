@@ -11,6 +11,11 @@ DeclException2(
   << "The liquidus temperature specific is below or equal to the solidus temperature."
   << "The phase change specific heat model requires that T_liquidus>T_solidus.");
 
+DeclException1(NumberOfFluidsError,
+               int,
+               << "Number of fluids: " << arg1
+               << " is not 1 (single phase simulation) or 2 (VOF simulation)");
+
 namespace Parameters
 {
   void
@@ -299,8 +304,8 @@ namespace Parameters
       cp_s            = prm.get_double("specific heat solid");
     }
 
-    if (T_liquidus <= T_solidus)
-      PhaseChangeIntervalError(T_liquidus, T_solidus);
+    Assert(T_liquidus <= T_solidus,
+           PhaseChangeIntervalError(T_liquidus, T_solidus));
 
     prm.leave_subsection();
   }
@@ -342,7 +347,7 @@ namespace Parameters
   PhysicalProperties::declare_parameters(ParameterHandler &prm)
   {
     fluids.resize(max_fluids);
-    number_fluids = 1;
+    number_of_fluids = 1;
 
     prm.enter_subsection("physical properties");
     {
@@ -388,8 +393,11 @@ namespace Parameters
       phase_change_parameters.parse_parameters(prm);
 
       // Multiphasic simulations parameters definition
-      number_fluids = prm.get_integer("number of fluids");
-      for (unsigned int i_fluid = 0; i_fluid < number_fluids; ++i_fluid)
+      number_of_fluids = prm.get_integer("number of fluids");
+      Assert(number_of_fluids == 1 || number_of_fluids == 2,
+             NumberOfFluidsError(number_of_fluids));
+
+      for (unsigned int i_fluid = 0; i_fluid < number_of_fluids; ++i_fluid)
         {
           fluids[i_fluid].parse_parameters(prm, i_fluid);
         }

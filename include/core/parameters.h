@@ -282,7 +282,7 @@ namespace Parameters
 
     // Fluid objects for multiphasic simulations
     std::vector<Fluid>        fluids;
-    unsigned int              number_fluids;
+    unsigned int              number_of_fluids;
     static const unsigned int max_fluids = 2;
 
     void
