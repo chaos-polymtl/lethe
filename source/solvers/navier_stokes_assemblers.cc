@@ -1026,7 +1026,7 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Calculate the shear rate magnitude
       const double shear_rate_magnitude =
         rheological_model->get_shear_rate_magnitude(shear_rate);
-
+        
       // Calculate de current non newtonian viscosity on each quadrature point
       const double non_newtonian_viscosity =
         rheological_model->get_viscosity(shear_rate_magnitude);

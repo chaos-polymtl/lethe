@@ -435,10 +435,9 @@ calculate_forces(
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
-<<<<<<< HEAD
   double viscosity;
   if (!physical_properties.non_newtonian_flow)
-    viscosity = physical_properties.viscosity;
+    viscosity = physical_properties.fluids[0].viscosity;
 
   // Non newtonian properties
   std::unique_ptr<RheologicalModel<dim>> rheological_model;
@@ -452,9 +451,6 @@ calculate_forces(
       //}
     }
 
-=======
-  double viscosity = physical_properties.fluids[0].viscosity;
->>>>>>> master
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
@@ -583,7 +579,7 @@ calculate_torques(
 
   double viscosity;
   if (!physical_properties.non_newtonian_flow)
-    viscosity = physical_properties.viscosity;
+    viscosity = physical_properties.fluids[0].viscosity;
 
   // Non newtonian properties
   std::unique_ptr<RheologicalModel<dim>> rheological_model;
