@@ -11,7 +11,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
                                           StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
-  const double diffusivity = physical_properties.tracer_diffusivity;
+  const double diffusivity = physical_properties.fluids[0].tracer_diffusivity;
   const auto   method      = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
@@ -129,7 +129,7 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
-  const double diffusivity = physical_properties.tracer_diffusivity;
+  const double diffusivity = physical_properties.fluids[0].tracer_diffusivity;
   const auto   method      = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations

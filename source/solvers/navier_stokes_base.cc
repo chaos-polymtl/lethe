@@ -543,8 +543,17 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
     }
   else
     {
+      // sdirk schemes are not implemented for multiphysics simulations
+
+      // Solve the auxiliary physics that should be treated BEFORE the fluid
+      // dynamics
+      multiphysics->pre_solve(simulation_parameters.simulation_control.method);
+
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
-      multiphysics->solve(simulation_parameters.simulation_control.method);
+
+      // Solve the auxiliary physics that should be treated AFTER the fluid
+      // dynamics
+      multiphysics->post_solve(simulation_parameters.simulation_control.method);
     }
 }
 
@@ -1079,11 +1088,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout
-            << "Pressure drop: "
-            << this->simulation_parameters.physical_properties.density *
-                 pressure_drop
-            << " Pa" << std::endl;
+          this->pcout << "Pressure drop: "
+                      << this->simulation_parameters.physical_properties
+                             .fluids[0]
+                             .density *
+                           pressure_drop
+                      << " Pa" << std::endl;
         }
 
       // Output pressure drop to a text file from processor 0

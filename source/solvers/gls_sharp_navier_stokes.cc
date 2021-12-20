@@ -223,8 +223,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
   int    order = this->simulation_parameters.particlesParameters->order;
-  double mu    = this->simulation_parameters.physical_properties.viscosity;
-  double rho   = this->simulation_parameters.particlesParameters->density;
+  double mu =
+    this->simulation_parameters.physical_properties.fluids[0].viscosity;
+  double rho = this->simulation_parameters.particlesParameters->density;
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
   IBStencil<dim>      stencil;

@@ -14,7 +14,10 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
     set kinematic viscosity            = 1.000
+  end
 end
 
 #---------------------------------------------------

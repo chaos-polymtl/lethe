@@ -1,4 +1,20 @@
-#include "core/parameters.h"
+#include <core/parameters.h>
+
+#include <deal.II/base/exceptions.h>
+
+DeclException2(
+  PhaseChangeIntervalError,
+  double,
+  double,
+  << "Liquidus temperature : " << arg1
+  << " is not strictly superior to Solidus temperature: " << arg2
+  << " The liquidus temperature specific is below or equal to the solidus temperature."
+  << " The phase change specific heat model requires that T_liquidus>T_solidus.");
+
+DeclException1(NumberOfFluidsError,
+               int,
+               << "Number of fluids: " << arg1
+               << " is not 1 (single phase simulation) or 2 (VOF simulation)");
 
 namespace Parameters
 {
@@ -275,48 +291,83 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+
+  void
+  PhaseChange::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("phase change");
+    {
+      T_solidus       = prm.get_double("solidus temperature");
+      T_liquidus      = prm.get_double("liquidus temperature");
+      latent_enthalpy = prm.get_double("latent enthalpy");
+      cp_l            = prm.get_double("specific heat liquid");
+      cp_s            = prm.get_double("specific heat solid");
+    }
+
+    Assert(T_liquidus > T_solidus,
+           PhaseChangeIntervalError(T_liquidus, T_solidus));
+
+    prm.leave_subsection();
+  }
+
+
+  void
+  PhaseChange::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("phase change");
+    {
+      prm.declare_entry("solidus temperature",
+                        "0",
+                        Patterns::Double(),
+                        "Temperature of the solidus");
+      prm.declare_entry("liquidus temperature",
+                        "1",
+                        Patterns::Double(),
+                        "Temperature of the liquidus");
+      prm.declare_entry("latent enthalpy",
+                        "1",
+                        Patterns::Double(),
+                        "Enthalpy of the phase change");
+
+      prm.declare_entry("specific heat liquid",
+                        "1",
+                        Patterns::Double(),
+                        "Specific heat of the liquid phase");
+
+      prm.declare_entry("specific heat solid",
+                        "1",
+                        Patterns::Double(),
+                        "Specific heat of the solid phase");
+    }
+    prm.leave_subsection();
+  }
+
+
   void
   PhysicalProperties::declare_parameters(ParameterHandler &prm)
   {
     fluids.resize(max_fluids);
-    number_fluids = 0;
+    number_of_fluids = 1;
 
     prm.enter_subsection("physical properties");
     {
-      // Monophasic simulations parameters definition
-      prm.declare_entry("kinematic viscosity",
-                        "1",
-                        Patterns::Double(),
-                        "Kinematic viscosity");
-      prm.declare_entry("density", "1", Patterns::Double(), "Density");
-      prm.declare_entry("specific heat",
-                        "1",
-                        Patterns::Double(),
-                        "Specific heat");
-      prm.declare_entry("thermal conductivity",
-                        "1",
-                        Patterns::Double(),
-                        "Thermal conductivity");
-      prm.declare_entry("thermal expansion",
-                        "1",
-                        Patterns::Double(),
-                        "Thermal Expansion");
-
-      prm.declare_entry("tracer diffusivity",
-                        "0",
-                        Patterns::Double(),
-                        "Tracer diffusivity");
-
       prm.declare_entry("non newtonian flow",
                         "false",
                         Patterns::Bool(),
                         "Non Newtonian flow");
+      non_newtonian_parameters.declare_parameters(prm);
+
 
       prm.declare_entry("number of fluids",
-                        "0",
+                        "1",
                         Patterns::Integer(),
                         "Number of fluids");
-      non_newtonian_parameters.declare_parameters(prm);
+
+      prm.declare_entry("enable phase change",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable melting/freezing of fluids");
+      phase_change_parameters.declare_parameters(prm);
 
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
@@ -333,33 +384,22 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-      // Monophasic simulations parameters definition
-      viscosity            = prm.get_double("kinematic viscosity");
-      density              = prm.get_double("density");
-      specific_heat        = prm.get_double("specific heat");
-      thermal_conductivity = prm.get_double("thermal conductivity");
-      tracer_diffusivity   = prm.get_double("tracer diffusivity");
-      non_newtonian_flow   = prm.get_bool("non newtonian flow");
+      // Management of non_newtonian_flows
+      non_newtonian_flow = prm.get_bool("non newtonian flow");
       non_newtonian_parameters.parse_parameters(prm);
 
-      thermal_expansion = prm.get_double("thermal expansion");
-
-
+      // Management of phase_change
+      enable_phase_change = prm.get_bool("enable phase change");
+      phase_change_parameters.parse_parameters(prm);
 
       // Multiphasic simulations parameters definition
-      number_fluids = prm.get_integer("number of fluids");
-      for (unsigned int i_fluid = 0; i_fluid < number_fluids; ++i_fluid)
+      number_of_fluids = prm.get_integer("number of fluids");
+      Assert(number_of_fluids == 1 || number_of_fluids == 2,
+             NumberOfFluidsError(number_of_fluids));
+
+      for (unsigned int i_fluid = 0; i_fluid < number_of_fluids; ++i_fluid)
         {
           fluids[i_fluid].parse_parameters(prm, i_fluid);
-        }
-      // Compatibility from multiphasic to monophasic parameter definition
-      if (number_fluids == 1)
-        {
-          viscosity            = fluids[0].viscosity;
-          density              = fluids[0].density;
-          specific_heat        = fluids[0].specific_heat;
-          thermal_conductivity = fluids[0].thermal_conductivity;
-          tracer_diffusivity   = fluids[0].tracer_diffusivity;
         }
     }
     prm.leave_subsection();

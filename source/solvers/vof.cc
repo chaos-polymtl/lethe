@@ -307,8 +307,7 @@ VOF<dim>::calculate_volume(int fluid_index)
                              update_values | update_gradients |
                                update_quadrature_points | update_JxW_values);
 
-  const unsigned int  dofs_per_cell = fe->dofs_per_cell;
-  const unsigned int  n_q_points    = this->error_quadrature->size();
+  const unsigned int  n_q_points = this->error_quadrature->size();
   std::vector<double> q_scalar_values(n_q_points);
 
   double volume = 0;
@@ -639,11 +638,11 @@ VOF<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::free_surface, &dof_handler);
   multiphysics->set_solution(PhysicsID::free_surface, &present_solution);
-  // the fluid at present iteration is solved before the free surface, and
-  // after percolate is called for the previous iteration, so at the time the
-  // getter is called solution_m2 = solution_m1
-  // TODO deactivated for now (inertia is considered with a constant density),
-  // see if needed / to be debugged
+  // the fluid at present iteration is solved BEFORE the free surface (see map
+  // solve_pre_fluid defined in multiphysics_interface.h), and after percolate
+  // is called for the previous iteration.
+  // NB: for now, inertia in fluid dynamics is considered with a constant
+  // density (see if needed / to be debugged)
   multiphysics->set_solution_m1(PhysicsID::free_surface,
                                 &previous_solutions[0]);
 }

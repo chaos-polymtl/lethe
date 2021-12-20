@@ -14,11 +14,12 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
-  double density              = physical_properties.density;
-  double specific_heat        = physical_properties.specific_heat;
-  double thermal_conductivity = physical_properties.thermal_conductivity;
-  double rho_cp               = density * specific_heat;
-  double alpha                = thermal_conductivity / rho_cp;
+  double density       = this->physical_properties.fluids[0].density;
+  double specific_heat = this->physical_properties.fluids[0].specific_heat;
+  double thermal_conductivity =
+    this->physical_properties.fluids[0].thermal_conductivity;
+  double rho_cp = density * specific_heat;
+  double alpha  = thermal_conductivity / rho_cp;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -33,7 +34,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   // 2 - n-1
   // 3 - n-2
   std::vector<double> time_steps_vector =
-    simulation_control->get_time_steps_vector();
+    this->simulation_control->get_time_steps_vector();
 
   // Time steps and inverse time steps which is used for numerous calculations
   const double dt  = time_steps_vector[0];
@@ -46,24 +47,24 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      if (multiphysics_parameters.free_surface)
+      if (this->multiphysics_parameters.free_surface)
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
-          density =
-            calculate_point_property(scratch_data.phase_values[q],
-                                     physical_properties.fluids[0].density,
-                                     physical_properties.fluids[1].density);
+          density = calculate_point_property(
+            scratch_data.phase_values[q],
+            this->physical_properties.fluids[0].density,
+            this->physical_properties.fluids[1].density);
 
           specific_heat = calculate_point_property(
             scratch_data.phase_values[q],
-            physical_properties.fluids[0].specific_heat,
-            physical_properties.fluids[1].specific_heat);
+            this->physical_properties.fluids[0].specific_heat,
+            this->physical_properties.fluids[1].specific_heat);
 
           thermal_conductivity = calculate_point_property(
             scratch_data.phase_values[q],
-            physical_properties.fluids[0].thermal_conductivity,
-            physical_properties.fluids[1].thermal_conductivity);
+            this->physical_properties.fluids[0].thermal_conductivity,
+            this->physical_properties.fluids[1].thermal_conductivity);
 
           // Useful definitions
           rho_cp = density * specific_heat;
@@ -155,9 +156,10 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
-      double density              = physical_properties.density;
-      double specific_heat        = physical_properties.specific_heat;
-      double thermal_conductivity = physical_properties.thermal_conductivity;
+      double density       = this->physical_properties.fluids[0].density;
+      double specific_heat = this->physical_properties.fluids[0].specific_heat;
+      double thermal_conductivity =
+        this->physical_properties.fluids[0].thermal_conductivity;
 
       double rho_cp = density * specific_heat;
       double alpha  = thermal_conductivity / rho_cp;
@@ -166,20 +168,20 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
-          density =
-            calculate_point_property(scratch_data.phase_values[q],
-                                     physical_properties.fluids[0].density,
-                                     physical_properties.fluids[1].density);
+          density = calculate_point_property(
+            scratch_data.phase_values[q],
+            this->physical_properties.fluids[0].density,
+            this->physical_properties.fluids[1].density);
 
           specific_heat = calculate_point_property(
             scratch_data.phase_values[q],
-            physical_properties.fluids[0].specific_heat,
-            physical_properties.fluids[1].specific_heat);
+            this->physical_properties.fluids[0].specific_heat,
+            this->physical_properties.fluids[1].specific_heat);
 
           thermal_conductivity = calculate_point_property(
             scratch_data.phase_values[q],
-            physical_properties.fluids[0].thermal_conductivity,
-            physical_properties.fluids[1].thermal_conductivity);
+            this->physical_properties.fluids[0].thermal_conductivity,
+            this->physical_properties.fluids[1].thermal_conductivity);
 
           // Useful definitions
           rho_cp = density * specific_heat;
@@ -254,12 +256,12 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
   // Time stepping information
   const auto          method = this->simulation_control->get_assembly_method();
   std::vector<double> time_steps_vector =
-    simulation_control->get_time_steps_vector();
+    this->simulation_control->get_time_steps_vector();
 
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
-  double density       = physical_properties.density;
-  double specific_heat = physical_properties.specific_heat;
+  double density       = this->physical_properties.fluids[0].density;
+  double specific_heat = this->physical_properties.fluids[0].specific_heat;
   double rho_cp        = density * specific_heat;
 
   const double h = scratch_data.cell_size;
@@ -277,15 +279,15 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
-          density =
-            calculate_point_property(scratch_data.phase_values[q],
-                                     physical_properties.fluids[0].density,
-                                     physical_properties.fluids[1].density);
+          density = calculate_point_property(
+            scratch_data.phase_values[q],
+            this->physical_properties.fluids[0].density,
+            this->physical_properties.fluids[1].density);
 
           specific_heat = calculate_point_property(
             scratch_data.phase_values[q],
-            physical_properties.fluids[0].specific_heat,
-            physical_properties.fluids[1].specific_heat);
+            this->physical_properties.fluids[0].specific_heat,
+            this->physical_properties.fluids[1].specific_heat);
 
           // Useful definitions
           rho_cp = density * specific_heat;
@@ -345,8 +347,8 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
-  double density       = physical_properties.density;
-  double specific_heat = physical_properties.specific_heat;
+  double density       = this->physical_properties.fluids[0].density;
+  double specific_heat = this->physical_properties.fluids[0].specific_heat;
   double rho_cp        = density * specific_heat;
 
 
@@ -363,7 +365,7 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
   // Time stepping information
   const auto          method = this->simulation_control->get_assembly_method();
   std::vector<double> time_steps_vector =
-    simulation_control->get_time_steps_vector();
+    this->simulation_control->get_time_steps_vector();
 
   // Vector for the BDF coefficients
   Vector<double>      bdf_coefs = bdf_coefficients(method, time_steps_vector);
@@ -382,15 +384,15 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
-          density =
-            calculate_point_property(scratch_data.phase_values[q],
-                                     physical_properties.fluids[0].density,
-                                     physical_properties.fluids[1].density);
+          density = calculate_point_property(
+            scratch_data.phase_values[q],
+            this->physical_properties.fluids[0].density,
+            this->physical_properties.fluids[1].density);
 
           specific_heat = calculate_point_property(
             scratch_data.phase_values[q],
-            physical_properties.fluids[0].specific_heat,
-            physical_properties.fluids[1].specific_heat);
+            this->physical_properties.fluids[0].specific_heat,
+            this->physical_properties.fluids[1].specific_heat);
 
           // Useful definitions
           rho_cp = density * specific_heat;
@@ -567,8 +569,8 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
     {
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
-      double density   = physical_properties.density;
-      double viscosity = physical_properties.viscosity;
+      double density   = this->physical_properties.fluids[0].density;
+      double viscosity = this->physical_properties.fluids[0].viscosity;
 
       double dynamic_viscosity = viscosity * density;
 
@@ -576,15 +578,15 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
-          density =
-            calculate_point_property(scratch_data.phase_values[q],
-                                     physical_properties.fluids[0].density,
-                                     physical_properties.fluids[1].density);
+          density = calculate_point_property(
+            scratch_data.phase_values[q],
+            this->physical_properties.fluids[0].density,
+            this->physical_properties.fluids[1].density);
 
-          viscosity =
-            calculate_point_property(scratch_data.phase_values[q],
-                                     physical_properties.fluids[0].viscosity,
-                                     physical_properties.fluids[1].viscosity);
+          viscosity = calculate_point_property(
+            scratch_data.phase_values[q],
+            this->physical_properties.fluids[0].viscosity,
+            this->physical_properties.fluids[1].viscosity);
 
           // Useful definitions
           dynamic_viscosity = viscosity * density;

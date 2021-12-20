@@ -13,7 +13,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -159,7 +159,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -1169,7 +1169,7 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -1246,7 +1246,7 @@ GDNavierStokesAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -1313,7 +1313,7 @@ LaplaceAssembly<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -1374,7 +1374,7 @@ LaplaceAssembly<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -1446,7 +1446,8 @@ BuoyancyAssembly<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double thermal_expansion = physical_properties.thermal_expansion;
+  const double thermal_expansion =
+    physical_properties.fluids[0].thermal_expansion;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -1496,7 +1497,7 @@ PressureBoundaryCondition<dim>::assemble_matrix(
     return;
 
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informationshessian
   Tensor<2, dim> identity;
@@ -1580,7 +1581,7 @@ PressureBoundaryCondition<dim>::assemble_rhs(
     return;
 
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informations
   Tensor<2, dim> identity;
@@ -1665,7 +1666,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
     return;
 
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informations
   Tensor<2, dim> identity;
@@ -1771,7 +1772,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
     return;
 
   // Scheme and physical properties
-  const double viscosity = physical_properties.viscosity;
+  const double viscosity = physical_properties.fluids[0].viscosity;
 
   // Loop and quadrature informations
   Tensor<2, dim> identity;
