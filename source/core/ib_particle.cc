@@ -72,6 +72,8 @@ IBParticle<dim>::initialise_all()
   friction_coefficient=1;
   poisson_ratio=0.3;
   rolling_friction_coefficient=0.1;
+  residual_velocity=DBL_MAX;
+  residual_omega=DBL_MAX;
 }
 
 template <int dim>

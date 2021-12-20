@@ -1536,7 +1536,7 @@ namespace Parameters
                       Patterns::Double(),
                       "uniform rotational moment of inertia");
     prm.declare_entry("youngs modulus",
-                      "10000000",
+                      "100000000",
                       Patterns::Double(),
                       "The youngs modulus of particle in case of contact");
     prm.declare_entry("poisson ratio",
@@ -1639,7 +1639,7 @@ namespace Parameters
                         "relaxation parameter");
 
       prm.declare_entry("wall youngs modulus",
-                        "10000000",
+                        "100000000",
                         Patterns::Double(),
                         "The wall youngs modulus if IB particles are in contact with it");
 

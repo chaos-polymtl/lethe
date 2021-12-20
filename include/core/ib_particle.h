@@ -100,6 +100,8 @@ public:
   // Store the last velocity of the fix point iteration.
   std::vector<Tensor<1, dim>> last_velocity;
   Tensor<1, dim> velocity_iter;
+  Tensor<1, dim> last_d_velocity;
+  Tensor<2,dim> last_jac_velocity;
   // Angular velocity
 
   // By default the angular position is always 0 on every axis.
@@ -111,6 +113,8 @@ public:
   Tensor<1, 3> omega;
   // Store the last angular velocity of the particle for integration.
   std::vector<Tensor<1, 3>> last_omega;
+  Tensor<1, 3> last_d_omega;
+  Tensor<2,3> last_jac_omega;
   // Store the last  angular velocity of the of the particle for the fix point
   // iteration.
   Tensor<1, 3> omega_iter;
@@ -131,7 +135,9 @@ public:
   // the integration process.
   double local_alpha_torque;
   double local_alpha_force;
-  double residual;
+  double residual_velocity;
+  double residual_omega;
+  double last_local_alpha;
 
   double radius;
 
