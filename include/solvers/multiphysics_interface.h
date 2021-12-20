@@ -83,8 +83,7 @@ public:
       }
     else if (physics_id == PhysicsID::VOF)
       {
-        pcout << "VOF" << std::endl
-              << "-------------" << std::endl;
+        pcout << "VOF" << std::endl << "-------------" << std::endl;
       }
   }
 
@@ -695,7 +694,7 @@ private:
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
                                             {heat_transfer, false},
                                             {tracer, false},
-                                            {free_surface, false}};
+                                            {VOF, false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.

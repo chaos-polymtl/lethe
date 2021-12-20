@@ -291,11 +291,7 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-
   void
-<<<<<<< HEAD
-  PhaseChange::parse_parameters(ParameterHandler &prm)
-=======
   InterfaceSharpening::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("interface sharpening");
@@ -353,8 +349,7 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::declare_parameters(ParameterHandler &prm)
->>>>>>> fab89a6 (Define interface sharpening parameters)
+  PhaseChange::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("phase change");
     {
@@ -402,7 +397,6 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
-
 
   void
   PhysicalProperties::declare_parameters(ParameterHandler &prm)

@@ -449,6 +449,62 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
 template <int dim>
 void
+VolumeOfFluid<dim>::modify_solution()
+{
+  if (this->simulation_parameters.multiphysics.interface_sharpening)
+    {
+      // Limit the phase fractions between 0 and 1
+      update_solution_and_constraints(present_solution);
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        update_solution_and_constraints(previous_solutions[p]);
+
+      // Interface sharpening is done at a constant frequency
+      if (this->simulation_control->get_step_number() %
+            this->simulation_parameters.interface_sharpening
+              .sharpening_frequency ==
+          0)
+        {
+          if (simulation_parameters.linear_solver.verbosity ==
+              Parameters::Verbosity::verbose)
+            {
+              this->pcout << "Sharpening interface at step "
+                          << this->simulation_control->get_step_number()
+                          << std::endl;
+            }
+
+          const DoFHandler<dim> *dof_handler_fluid =
+            multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+          auto scratch_data = VOFScratchData<dim>(*this->fe,
+                                                  *this->cell_quadrature,
+                                                  *this->fs_mapping,
+                                                  dof_handler_fluid->get_fe());
+
+          // Sharpen the interface of all solutions:
+          {
+            // Assemble matrix and solve the system for interface sharpening
+            assemble_L2_projection_interface_sharpening(present_solution);
+            solve_interface_sharpening(present_solution);
+
+            for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+              {
+                assemble_L2_projection_interface_sharpening(
+                  previous_solutions[p]);
+                solve_interface_sharpening(previous_solutions[p]);
+              }
+          }
+
+          // Re limit the phase fractions between 0 and 1 after interface
+          // sharpening
+          update_solution_and_constraints(present_solution);
+          for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+            update_solution_and_constraints(previous_solutions[p]);
+        }
+    }
+}
+
+template <int dim>
+void
 VolumeOfFluid<dim>::pre_mesh_adaptation()
 {
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
@@ -652,8 +708,7 @@ VolumeOfFluid<dim>::setup_dofs()
   // is called for the previous iteration.
   // NB: for now, inertia in fluid dynamics is considered with a constant
   // density (see if needed / to be debugged)
-  multiphysics->set_solution_m1(PhysicsID::VOF,
-                                &previous_solutions[0]);
+  multiphysics->set_solution_m1(PhysicsID::VOF, &previous_solutions[0]);
 
   mass_matrix.reinit(locally_owned_dofs,
                      locally_owned_dofs,
@@ -743,47 +798,6 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
   // Update constraints and newton vectors
   constraints_used.distribute(completely_distributed_solution);
   newton_update = completely_distributed_solution;
-}
-
-template <int dim>
-void
-VolumeOfFluid<dim>::modify_solution()
-{      
-  // Interface sharpening is done at a constant frequency
-  if (this->simulation_control->get_step_number() %
-        this->simulation_parameters.interface_sharpening.sharpening_frequency ==
-      0)
-    {
-      if (simulation_parameters.linear_solver.verbosity ==
-          Parameters::Verbosity::verbose)
-        {
-          this->pcout << "Sharpening interface at step "
-                      << this->simulation_control->get_step_number() << std::endl;
-      }   
-          // Limit the phase fractions between 0 and 1
-          update_solution_and_constraints();
-
-
-          const DoFHandler<dim> *dof_handler_fluid =
-            multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-
-          auto scratch_data = VOFScratchData<dim>(*this->fe,
-                                                  *this->cell_quadrature,
-                                                  *this->fs_mapping,
-                                                  dof_handler_fluid->get_fe());
-
-          // Assemble the system for interface sharpening
-          assemble_L2_projection_phase_fraction(scratch_data);
-
-          // Solve the system for interface sharpening
-          solve_L2_system_phase_fraction();
-
-     // Re limit the phase fractions between 0 and 1 after interface sharpening
-      update_solution_and_constraints();
-
-       // Handle wetting/peeling of the interface
-
-    }
 }
 
 template <int dim>

@@ -47,7 +47,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      if (multiphysics_parameters.VOF)
+      if (this->multiphysics_parameters.VOF)
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
