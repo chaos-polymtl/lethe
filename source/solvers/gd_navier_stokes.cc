@@ -768,15 +768,16 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
     {
       this->set_nodal_values();
       double viscosity =
-        this->simulation_parameters.physical_properties.viscosity;
-      this->simulation_parameters.physical_properties.viscosity =
+        this->simulation_parameters.physical_properties.fluids[0].viscosity;
+      this->simulation_parameters.physical_properties.fluids[0].viscosity =
         this->simulation_parameters.initial_condition->viscosity;
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<
         TrilinosWrappers::MPI::BlockVector>::solve_non_linear_system(false);
       this->finish_time_step_fd();
-      this->simulation_parameters.physical_properties.viscosity = viscosity;
+      this->simulation_parameters.physical_properties.fluids[0].viscosity =
+        viscosity;
     }
   else
     {
@@ -841,7 +842,7 @@ GDNavierStokesSolver<dim>::setup_ILU()
   system_ilu_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>(
     gamma,
-    this->simulation_parameters.physical_properties.viscosity,
+    this->simulation_parameters.physical_properties.fluids[0].viscosity,
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_ilu_preconditioner),
@@ -956,7 +957,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
   system_amg_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionAMG>>(
     gamma,
-    this->simulation_parameters.physical_properties.viscosity,
+    this->simulation_parameters.physical_properties.fluids[0].viscosity,
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_amg_preconditioner),

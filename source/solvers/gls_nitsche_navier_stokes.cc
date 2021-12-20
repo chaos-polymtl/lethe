@@ -200,7 +200,7 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
   Tensor<1, 3> force; // to be changed for a vector of tensors when
   // allowing multiple solids
   const double viscosity =
-    this->simulation_parameters.physical_properties.viscosity;
+    this->simulation_parameters.physical_properties.fluids[0].viscosity;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();

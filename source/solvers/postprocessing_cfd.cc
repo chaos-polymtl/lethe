@@ -434,7 +434,7 @@ calculate_forces(
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
-  double viscosity = physical_properties.viscosity;
+  double viscosity = physical_properties.fluids[0].viscosity;
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
@@ -553,7 +553,7 @@ calculate_torques(
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
-  double viscosity = physical_properties.viscosity;
+  double viscosity = physical_properties.fluids[0].viscosity;
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
