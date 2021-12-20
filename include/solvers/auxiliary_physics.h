@@ -107,7 +107,7 @@ public:
    * To be defined for some physics only (eg. free surface, see vof.h).
    */
   virtual void
-  modify_solution(){};
+  modify_solution() = 0;
 
   /**
    * @brief Provide the dof handler associated with an auxiliary physics
