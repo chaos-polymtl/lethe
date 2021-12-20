@@ -982,6 +982,7 @@ GLSVANSSolver<dim>::post_processing()
       this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
       this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
     this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties
+      .fluids[0]
       .density;
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;

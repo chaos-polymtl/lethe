@@ -16,7 +16,9 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
+  subsection fluid 0
     set kinematic viscosity        = 1.95E-05 # Re = 5600
+  end
 end
 
 #---------------------------------------------------

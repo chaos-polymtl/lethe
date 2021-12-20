@@ -14,11 +14,12 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
-  double density              = this->physical_properties.density;
-  double specific_heat        = this->physical_properties.specific_heat;
-  double thermal_conductivity = this->physical_properties.thermal_conductivity;
-  double rho_cp               = density * specific_heat;
-  double alpha                = thermal_conductivity / rho_cp;
+  double density       = this->physical_properties.fluids[0].density;
+  double specific_heat = this->physical_properties.fluids[0].specific_heat;
+  double thermal_conductivity =
+    this->physical_properties.fluids[0].thermal_conductivity;
+  double rho_cp = density * specific_heat;
+  double alpha  = thermal_conductivity / rho_cp;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -155,10 +156,10 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
-      double density       = this->physical_properties.density;
-      double specific_heat = this->physical_properties.specific_heat;
+      double density       = this->physical_properties.fluids[0].density;
+      double specific_heat = this->physical_properties.fluids[0].specific_heat;
       double thermal_conductivity =
-        this->physical_properties.thermal_conductivity;
+        this->physical_properties.fluids[0].thermal_conductivity;
 
       double rho_cp = density * specific_heat;
       double alpha  = thermal_conductivity / rho_cp;
@@ -259,8 +260,8 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
 
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
-  double density       = this->physical_properties.density;
-  double specific_heat = this->physical_properties.specific_heat;
+  double density       = this->physical_properties.fluids[0].density;
+  double specific_heat = this->physical_properties.fluids[0].specific_heat;
   double rho_cp        = density * specific_heat;
 
   const double h = scratch_data.cell_size;
@@ -346,8 +347,8 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
-  double density       = this->physical_properties.density;
-  double specific_heat = this->physical_properties.specific_heat;
+  double density       = this->physical_properties.fluids[0].density;
+  double specific_heat = this->physical_properties.fluids[0].specific_heat;
   double rho_cp        = density * specific_heat;
 
 
@@ -568,8 +569,8 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
     {
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
-      double density   = this->physical_properties.density;
-      double viscosity = this->physical_properties.viscosity;
+      double density   = this->physical_properties.fluids[0].density;
+      double viscosity = this->physical_properties.fluids[0].viscosity;
 
       double dynamic_viscosity = viscosity * density;
 

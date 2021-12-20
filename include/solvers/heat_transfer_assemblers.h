@@ -81,8 +81,6 @@ protected:
   std::shared_ptr<SimulationControl>   simulation_control;
   const Parameters::PhysicalProperties physical_properties;
   const Parameters::Multiphysics &     multiphysics_parameters;
-
-  std::vector<std::shared_ptr<SpecificHeatModel>> specific_heat_models;
 };
 
 /**
@@ -149,14 +147,7 @@ public:
     : HeatTransferAssemblerBase<dim>(simulation_control,
                                      physical_properties,
                                      multiphysics_parameters)
-  {
-    // if (physical_properties.enable_phase_change)
-    //   specific_heat_model = std::make_shared<PhaseChangeSpecificHeat>(
-    //     physical_properties.phase_change_parameters);
-    // else
-    //   specific_heat_model = std::make_shared<ConstantSpecificHeat>(
-    //     physical_properties.specific_heat);
-  }
+  {}
 
   /**
    * @brief assemble_matrix Assembles the matrix

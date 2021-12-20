@@ -730,15 +730,16 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
     {
       this->set_nodal_values();
       double viscosity =
-        this->simulation_parameters.physical_properties.viscosity;
-      this->simulation_parameters.physical_properties.viscosity =
+        this->simulation_parameters.physical_properties.fluids[0].viscosity;
+      this->simulation_parameters.physical_properties.fluids[0].viscosity =
         this->simulation_parameters.initial_condition->viscosity;
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         false);
       this->finish_time_step_fd();
-      this->simulation_parameters.physical_properties.viscosity = viscosity;
+      this->simulation_parameters.physical_properties.fluids[0].viscosity =
+        viscosity;
     }
   else
     {
