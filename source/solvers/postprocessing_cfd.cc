@@ -436,17 +436,11 @@ calculate_forces(
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
   // Rheological model for viscosity properties
-  std::unique_ptr<RheologicalModel<dim>> rheological_model;
-  double                                 viscosity;
-
-  if (!physical_properties.non_newtonian_flow)
-    rheological_model =
-      std::make_unique<Newtonian<dim>>(physical_properties.fluids[0].viscosity);
-  else if (physical_properties.non_newtonian_parameters.model ==
-           Parameters::NonNewtonian::Model::carreau)
-    rheological_model = std::make_unique<Carreau<dim>>(
-      physical_properties.non_newtonian_parameters);
-
+  double viscosity;
+  // Cast rheological model to either a Newtonian model or one of the
+  // non Newtonian models according to the physical properties
+  std::shared_ptr<RheologicalModel<dim>> rheological_model =
+    RheologicalModel<dim>::model_cast(physical_properties);
 
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
@@ -570,16 +564,11 @@ calculate_torques(
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
   // Rheological model for viscosity properties
-  std::unique_ptr<RheologicalModel<dim>> rheological_model;
-  double                                 viscosity;
-
-  if (!physical_properties.non_newtonian_flow)
-    rheological_model =
-      std::make_unique<Newtonian<dim>>(physical_properties.fluids[0].viscosity);
-  else if (physical_properties.non_newtonian_parameters.model ==
-           Parameters::NonNewtonian::Model::carreau)
-    rheological_model = std::make_unique<Carreau<dim>>(
-      physical_properties.non_newtonian_parameters);
+  double viscosity;
+  // Cast rheological model to either a Newtonian model or one of the
+  // non Newtonian models according to the physical properties
+  std::shared_ptr<RheologicalModel<dim>> rheological_model =
+    RheologicalModel<dim>::model_cast(physical_properties);
 
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
