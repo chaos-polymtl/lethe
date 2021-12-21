@@ -174,10 +174,21 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                               const auto comp_j =
                                 this->fe->system_to_component_index(j).first;
                               if (comp_i == comp_j)
-                                local_matrix(i, j) +=
-                                  penalty_parameter * beta *
-                                  this->fe->shape_value(i, ref_q) *
-                                  this->fe->shape_value(j, ref_q) * JxW;
+                                {
+                                  local_matrix(i, j) +=
+                                    penalty_parameter * beta *
+                                    this->fe->shape_value(i, ref_q) *
+                                    this->fe->shape_value(j, ref_q) * JxW;
+
+                                  // Partial jacobian of the strong residual
+                                  // term
+                                  local_matrix(i, j) +=
+                                    penalty_parameter * beta *
+                                    this->fe->shape_value(j, ref_q) *
+                                    (this->fe->shape_grad(i, ref_q) *
+                                     velocity) *
+                                    tau * JxW;
+                                }
                             }
                         }
                       // Regular residual
@@ -190,11 +201,15 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 
                       // Residual due to GLS stabilization
                       const double strong_residual =
-                        penalty_parameter * beta *
-                        (velocity[comp_i] -
-                         solid_velocity->value(real_q, comp_i));
+                        -penalty_parameter * beta *
+                        (solid_velocity->value(real_q, comp_i) -
+                         velocity[comp_i]);
 
-                      local_rhs(i) += -tau * (strong_residual)*JxW;
+                      auto test_function =
+                        this->fe->shape_grad(i, ref_q) * velocity;
+
+                      local_rhs(i) +=
+                        -tau * (strong_residual)*test_function * JxW;
                     }
                 }
             }
