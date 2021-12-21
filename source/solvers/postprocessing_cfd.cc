@@ -435,21 +435,18 @@ calculate_forces(
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
-  double viscosity;
-  if (!physical_properties.non_newtonian_flow)
-    viscosity = physical_properties.fluids[0].viscosity;
-
-  // Non newtonian properties
+  // Rheological model for viscosity properties
   std::unique_ptr<RheologicalModel<dim>> rheological_model;
-  if (physical_properties.non_newtonian_flow)
-    {
-      // if (physical_properties.non_newtonian_parameters.model ==
-      // Parameters::NonNewtonian::Model::Carreau)
-      //{
-      rheological_model = std::make_unique<Carreau<dim>>(
-        physical_properties.non_newtonian_parameters);
-      //}
-    }
+  double                                 viscosity;
+
+  if (!physical_properties.non_newtonian_flow)
+    rheological_model =
+      std::make_unique<Newtonian<dim>>(physical_properties.fluids[0].viscosity);
+  else if (physical_properties.non_newtonian_parameters.model ==
+           Parameters::NonNewtonian::Model::carreau)
+    rheological_model = std::make_unique<Carreau<dim>>(
+      physical_properties.non_newtonian_parameters);
+
 
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
@@ -505,14 +502,9 @@ calculate_forces(
                                     }
                                   shear_rate = velocity_gradients[q] +
                                                transpose(velocity_gradients[q]);
-                                  if (physical_properties.non_newtonian_flow)
-                                    {
-                                      viscosity =
-                                        rheological_model->get_viscosity(
-                                          rheological_model
-                                            ->get_shear_rate_magnitude(
-                                              shear_rate));
-                                    }
+                                  viscosity = rheological_model->get_viscosity(
+                                    rheological_model->get_shear_rate_magnitude(
+                                      shear_rate));
                                   fluid_stress =
                                     viscosity * shear_rate - fluid_pressure;
                                   force += fluid_stress * normal_vector *
@@ -577,21 +569,18 @@ calculate_torques(
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
-  double viscosity;
-  if (!physical_properties.non_newtonian_flow)
-    viscosity = physical_properties.fluids[0].viscosity;
-
-  // Non newtonian properties
+  // Rheological model for viscosity properties
   std::unique_ptr<RheologicalModel<dim>> rheological_model;
-  if (physical_properties.non_newtonian_flow)
-    {
-      // if (physical_properties.non_newtonian_parameters.model ==
-      // Parameters::NonNewtonian::Model::Carreau)
-      //{
-      rheological_model = std::make_unique<Carreau<dim>>(
-        physical_properties.non_newtonian_parameters);
-      //}
-    }
+  double                                 viscosity;
+
+  if (!physical_properties.non_newtonian_flow)
+    rheological_model =
+      std::make_unique<Newtonian<dim>>(physical_properties.fluids[0].viscosity);
+  else if (physical_properties.non_newtonian_parameters.model ==
+           Parameters::NonNewtonian::Model::carreau)
+    rheological_model = std::make_unique<Carreau<dim>>(
+      physical_properties.non_newtonian_parameters);
+
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
@@ -646,12 +635,9 @@ calculate_torques(
                                 }
                               shear_rate = velocity_gradients[q] +
                                            transpose(velocity_gradients[q]);
-                              if (physical_properties.non_newtonian_flow)
-                                {
-                                  viscosity = rheological_model->get_viscosity(
-                                    rheological_model->get_shear_rate_magnitude(
-                                      shear_rate));
-                                }
+                              viscosity = rheological_model->get_viscosity(
+                                rheological_model->get_shear_rate_magnitude(
+                                  shear_rate));
 
                               fluid_stress =
                                 viscosity * shear_rate - fluid_pressure;
