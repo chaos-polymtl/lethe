@@ -48,6 +48,17 @@ public:
   get_viscosity(const double &shear_rate_magnitude) = 0;
 
   /**
+   * @brief Instanciates the RheologicalModel object by casting in to
+   * the proper child class 
+   *
+   * @param physical_properties Parsed physical properties that will provide
+   * either the model rheological model being used or say it is a 
+   * Newtonian flow
+   */
+  void
+  model_cast(const Parameters::PhysicalProperties & physical_properties);
+
+  /**
    * @brief Returns the magnitude of the shear rate tensor given in parameter.
    *
    * @param shear_rate The shear rate tensor at the position of the
