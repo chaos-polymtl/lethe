@@ -216,13 +216,6 @@ public:
                       const bool renewed_matrix = true);
 
   /**
-   * @brief Modify the solution
-   */
-  void
-  modify_solution() override
-  {}
-
-  /**
    * @brief Getter methods to get the private attributes for the physic currently solved
    * NB : dof_handler and present_solution are passed to the multiphysics
    * interface at the end of the setup_dofs method

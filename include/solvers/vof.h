@@ -105,6 +105,8 @@ public:
     if (simulation_parameters.interface_sharpening.interface_sharpness < 1.0)
       this->pcout
         << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it."
+        << std::endl
+        << "The interface sharpness value should be set between 1 and 2"
         << std::endl;
   }
 
@@ -385,10 +387,11 @@ private:
   /**
    * @brief Assemble the system for interface sharpening
    *  * This function assembles the weak form of:
-   *  $$ \Phi = c ^ (1 - \alpha) * (\phi ^ \alpha)                    if 0 <=
+   *  $$ \Phi = c ^ (1 - \alpha) * (\phi ^ \alpha)  if 0 <=
    * \phi <= c $$
-   *  $$ \Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha      if c <
-   * \phi <= 1 $$ Reference for sharpening method
+   *  $$ \Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha  if c <
+   * \phi <= 1 $$
+   * Reference for sharpening method
    * https://www.sciencedirect.com/science/article/pii/S0045782500002000
    */
   void

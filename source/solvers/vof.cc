@@ -241,7 +241,6 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "phase");
-  data_out.add_data_vector(dof_handler, previous_solutions[0], "phase_p1");
 }
 
 template <int dim>
@@ -471,14 +470,6 @@ VolumeOfFluid<dim>::modify_solution()
                           << this->simulation_control->get_step_number()
                           << std::endl;
             }
-
-          const DoFHandler<dim> *dof_handler_fluid =
-            multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-
-          auto scratch_data = VOFScratchData<dim>(*this->fe,
-                                                  *this->cell_quadrature,
-                                                  *this->fs_mapping,
-                                                  dof_handler_fluid->get_fe());
 
           // Sharpen the interface of all solutions:
           {
