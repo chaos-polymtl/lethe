@@ -343,10 +343,10 @@ namespace Parameters
       interface_sharpness  = prm.get_double("interface sharpness");
       sharpening_frequency = prm.get_integer("sharpening frequency");
 
-      Assert(sharpening_threshold < 0.0 || sharpening_threshold > 1.0,
+      Assert(sharpening_threshold > 0.0 && sharpening_threshold < 1.0,
              SharpeningThresholdError(sharpening_threshold));
 
-      Assert(sharpening_frequency <= 0,
+      Assert(sharpening_frequency > 0,
              SharpeningFrequencyError(sharpening_frequency));
 
       const std::string op = prm.get("verbosity");
