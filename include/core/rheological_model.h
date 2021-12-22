@@ -48,6 +48,17 @@ public:
   get_viscosity(const double &shear_rate_magnitude) = 0;
 
   /**
+   * @brief Instanciates and returns a pointer to a RheologicalModel object by casting it to
+   * the proper child class
+   *
+   * @param physical_properties Parsed physical properties that will provide
+   * either the model rheological model being used or say it is a
+   * Newtonian flow
+   */
+  static std::shared_ptr<RheologicalModel<dim>>
+  model_cast(const Parameters::PhysicalProperties &physical_properties);
+
+  /**
    * @brief Returns the magnitude of the shear rate tensor given in parameter.
    *
    * @param shear_rate The shear rate tensor at the position of the
@@ -70,6 +81,37 @@ public:
 };
 
 template <int dim>
+class Newtonian : public RheologicalModel<dim>
+{
+public:
+  /**
+   * @brief Parameter constructor
+   *
+   * @param viscosity The constant newtonian viscosity
+   */
+  Newtonian(const double &p_viscosity)
+    : viscosity(p_viscosity)
+  {}
+
+  /**
+   * @brief Returns the viscosity.
+   *
+   * @param shear_rate_magnitude The magnitude of the shear rate tensor at
+   * the position of the considered quadratured point. The shear rate magnitude
+   * is not necessary to get the constant viscosity, it is only taken in
+   * parameter to fit the virtual method in RheologicalModel.
+   */
+  double
+  get_viscosity(const double &shear_rate_magnitude) override
+  {
+    return viscosity;
+  }
+
+private:
+  double viscosity;
+};
+
+template <int dim>
 class Carreau : public RheologicalModel<dim>
 {
 public:
@@ -89,8 +131,8 @@ public:
   /**
    * @brief Returns the non-newtonian viscosity.
    *
-   * @param shear_rate The shear rate tensor at the position of the
-   * considered quadratured point
+   * @param shear_rate_magnitude The magnitude of the shear rate tensor at
+   * the position of the considered quadratured point
    *
    * Source : Morrison, F. A. (2001). No Memory: Generalized Newtonian Fluids.
    * Understanding Rheology. Raymond F. Boyer Librabry Collection, Oxford
