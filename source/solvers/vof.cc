@@ -921,8 +921,10 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                         fe_values_phase_fraction.JxW(q);
                     }
 
-                  // $$ (if 0 <= \phi <= c)  {\Phi = c ^ (1 - \alpha) * (\phi ^ \alpha)}$$
-                  // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha}
+                  // $$ (if 0 <= \phi <= c)  {\Phi = c ^ (1 - \alpha) * (\phi ^
+                  // \alpha)}$$
+                  // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 - \alpha)
+                  // * (1 - \phi) ^ \alpha}
                   if (phase_value >= 0.0 && phase_value <= sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
                       std::pow(sharpening_threshold,
