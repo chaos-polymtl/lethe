@@ -127,9 +127,8 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
     std::vector<Tensor<1, dim>> &momentum,
     std::vector<Tensor<1, dim>> &force)
 {
-  // Updating contact force of particles for local-local and local-ghost contact
-  // pairs are differnet. Consequently, contact forces of local-local and
-  // local-ghost particle pairs are performed in separate loops
+  // Contact forces calculations of local-local and local-ghost particle
+  // pairs are performed in separate loops
 
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list
@@ -592,9 +591,8 @@ ParticleParticleHertzMindlinLimitForce<dim>::
     std::vector<Tensor<1, dim>> &momentum,
     std::vector<Tensor<1, dim>> &force)
 {
-  // Updating contact force of particles for local-local and local-ghost contact
-  // pairs are differnet. Consequently, contact forces of local-local and
-  // local-ghost particle pairs are performed in separate loops
+  // Contact forces calculations of local-local and local-ghost particle
+  // pairs are performed in separate loops
 
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list
@@ -1045,9 +1043,8 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
   std::vector<Tensor<1, dim>> &momentum,
   std::vector<Tensor<1, dim>> &force)
 {
-  // Updating contact force of particles for local-local and local-ghost contact
-  // pairs are differnet. Consequently, contact forces of local-local and
-  // local-ghost particle pairs are performed in separate loops
+  // Contact forces calculations of local-local and local-ghost particle
+  // pairs are performed in separate loops
 
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list

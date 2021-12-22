@@ -40,7 +40,7 @@ namespace Parameters
       // Gravitational acceleration
       Tensor<1, dim> g;
 
-      // Integration method
+      // Size distribution type
       enum class size_distribution_type
       {
         uniform,
