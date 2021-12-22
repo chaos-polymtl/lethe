@@ -20,6 +20,7 @@
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_particle_contact_info_struct.h>
+#include <dem/rolling_resistance_torque_models.h>
 
 #include <deal.II/particles/particle_handler.h>
 
