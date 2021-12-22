@@ -181,7 +181,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                                     this->fe->shape_value(j, ref_q) * JxW;
 
                                   // Partial jacobian of the strong residual
-                                  // term
+                                  // term so that Nitsche's IB is taken into
+                                  // account in the stabilization
                                   local_matrix(i, j) +=
                                     penalty_parameter * beta *
                                     this->fe->shape_value(j, ref_q) *
@@ -199,13 +200,14 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                                         solid_velocity->value(real_q, comp_i) *
                                         this->fe->shape_value(i, ref_q) * JxW;
 
-                      // Residual due to GLS stabilization
+                      // Residual due taking into account Nitsche IB in the
+                      // strong residual used for GLS stabilization
                       const double strong_residual =
                         -penalty_parameter * beta *
                         (solid_velocity->value(real_q, comp_i) -
                          velocity[comp_i]);
 
-                      auto test_function =
+                      const double test_function =
                         this->fe->shape_grad(i, ref_q) * velocity;
 
                       local_rhs(i) +=
