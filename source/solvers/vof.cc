@@ -661,6 +661,15 @@ VolumeOfFluid<dim>::setup_dofs()
                                              mpi_communicator,
                                              locally_relevant_dofs);
 
+  // Initialization of phase fraction matrices for interface sharpening.
+  // system_matrix_phase_fraction is used in
+  // assemble_L2_projection_interface_sharpening for assembling the system for
+  // sharpening the interface, while complete_system_matrix_phase_fraction is
+  // used in update_solution_and_constraints to limit the phase fraction values
+  // between 0 and 1. Accoring to step-41, we compute the Lagrange multiplier
+  // (to limit the phase fractions) as the residual of the original linear
+  // system (given via the variables complete_system_matrix_phase_fraction and
+  // complete_system_rhs_phase_fraction
   system_matrix_phase_fraction.reinit(locally_owned_dofs,
                                       locally_owned_dofs,
                                       dsp,
@@ -671,12 +680,17 @@ VolumeOfFluid<dim>::setup_dofs()
                                                dsp,
                                                mpi_communicator);
 
-  nodal_phase_fraction_owned.reinit(locally_owned_dofs, mpi_communicator);
-
-  system_rhs_phase_fraction.reinit(locally_owned_dofs, mpi_communicator);
-
   complete_system_rhs_phase_fraction.reinit(locally_owned_dofs,
                                             mpi_communicator);
+
+  // In update_solution_and_constraints (which limits the phase fraction
+  // between 0 and 1, nodal_phase_fraction_owned copies the solution, then
+  // limits it, and finally updates (rewrites) the solution.
+  nodal_phase_fraction_owned.reinit(locally_owned_dofs, mpi_communicator);
+
+  // Right hand side of the interface sharpening problem (used in
+  // assemble_L2_projection_interface_sharpening).
+  system_rhs_phase_fraction.reinit(locally_owned_dofs, mpi_communicator);
 
   active_set.clear();
   active_set.set_size(dof_handler.n_dofs());
@@ -791,11 +805,16 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
   newton_update = completely_distributed_solution;
 }
 
+// This function is explained in detail in step-41 of deal.II tutorials
 template <int dim>
 void
 VolumeOfFluid<dim>::update_solution_and_constraints(
   TrilinosWrappers::MPI::Vector &solution)
 {
+  // This is a penalty parameter for limiting the phase fraction
+  // in the range of [0,1]. According to step 41, this parameter depends
+  // on the problem itself and needs to be chosen large enough (for example
+  // there is no convergence using the penalty_parameter = 1)
   const double penalty_parameter = 100;
 
   TrilinosWrappers::MPI::Vector lambda(locally_owned_dofs);
@@ -931,8 +950,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                                (1 - interface_sharpness)) *
                       std::pow(phase_value, interface_sharpness) *
                       phi_phase[i] * fe_values_phase_fraction.JxW(q);
-                  else if (phase_value > sharpening_threshold &&
-                           phase_value <= 1.0)
+                  else
                     {
                       local_rhs_phase_fraction(i) +=
                         (1 -
@@ -1019,6 +1037,11 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
   solution = completely_distributed_phase_fraction_solution;
 }
 
+// This function is explained in detail in step-41 of deal.II tutorials:
+// We get the mass matrix to be diagonal by choosing the trapezoidal rule
+// for quadrature. Doing so we do not really need the triple loop over
+// quadrature points, indices i and indices j any more and can, instead, just
+// use a double loop.
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_mass_matrix_diagonal(

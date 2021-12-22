@@ -379,7 +379,9 @@ private:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
-   * @brief Limit the phase fractions between 0 and 1. This is necessary before interface sharpening
+   * @brief Limit the phase fractions between 0 and 1. This is necessary before interface sharpening.
+   * More information can be found in step_41 of deal.II tutorials:
+   * https://www.dealii.org/current/doxygen/deal.II/step_41.html
    */
   void
   update_solution_and_constraints(TrilinosWrappers::MPI::Vector &solution);
@@ -399,11 +401,24 @@ private:
     TrilinosWrappers::MPI::Vector &solution);
 
   /**
-   * @brief Solve the assembled system to sharpen the interface
+   * @brief Solves the assembled system to sharpen the interface. The linear_solver_tolerance
+   * is hardcoded = 1e-15, and an ILU Preconditioner is used. After solving the
+   * system, this function overwrites the solution with the sharpened solution
+   *
+   * @param solution VOF solution (phase fraction)
    */
   void
   solve_interface_sharpening(TrilinosWrappers::MPI::Vector &solution);
 
+  /**
+   * @brief Assembles a mass_matrix which is used in update_solution_and_constraints function
+   * to limit the phase fractions of cells in the range of [0,1] before
+   * sharpening the interface. More information can be found in step_41 of
+   * deal.II tutorials:
+   * https://www.dealii.org/current/doxygen/deal.II/step_41.html
+   *
+   * @param mass_matrix
+   */
   void
   assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
 
