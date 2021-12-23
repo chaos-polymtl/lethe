@@ -81,9 +81,9 @@ public:
       {
         pcout << "Tracer" << std::endl << "-------" << std::endl;
       }
-    else if (physics_id == PhysicsID::free_surface)
+    else if (physics_id == PhysicsID::VOF)
       {
-        pcout << "Free Surface" << std::endl << "-------------" << std::endl;
+        pcout << "VOF" << std::endl << "-------------" << std::endl;
       }
   }
 
@@ -632,7 +632,7 @@ public:
 
   /**
    * @brief Mesh refinement according to an auxiliary physic parameter
-   * NB : only implemented for free_surface for now
+   * NB : only implemented for VOF for now
    */
   virtual void
   compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
@@ -694,7 +694,7 @@ private:
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
                                             {heat_transfer, false},
                                             {tracer, false},
-                                            {free_surface, false}};
+                                            {VOF, false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.

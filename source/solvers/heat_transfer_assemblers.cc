@@ -47,7 +47,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      if (this->multiphysics_parameters.free_surface)
+      if (this->multiphysics_parameters.VOF)
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
@@ -164,7 +164,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       double rho_cp = density * specific_heat;
       double alpha  = thermal_conductivity / rho_cp;
 
-      if (this->multiphysics_parameters.free_surface)
+      if (this->multiphysics_parameters.VOF)
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
@@ -275,7 +275,7 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      if (this->multiphysics_parameters.free_surface)
+      if (this->multiphysics_parameters.VOF)
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
@@ -380,7 +380,7 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      if (this->multiphysics_parameters.free_surface)
+      if (this->multiphysics_parameters.VOF)
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
@@ -574,7 +574,7 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
 
       double dynamic_viscosity = viscosity * density;
 
-      if (this->multiphysics_parameters.free_surface)
+      if (this->multiphysics_parameters.VOF)
         {
           // Calculation of the equivalent physical properties at the
           // quadrature point
