@@ -38,24 +38,26 @@
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/error_estimator.h>
 
-
 template <int dim>
-class VOF : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class VolumeOfFluid
+  : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   /**
    * @brief VOF - Base constructor.
    */
-  VOF<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
-           const SimulationParameters<dim> &p_simulation_parameters,
-           std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                              p_triangulation,
-           std::shared_ptr<SimulationControl> p_simulation_control)
+  VolumeOfFluid<dim>(
+    MultiphysicsInterface<dim> *     multiphysics_interface,
+    const SimulationParameters<dim> &p_simulation_parameters,
+    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                       p_triangulation,
+    std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
@@ -98,13 +100,21 @@ public:
             SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>(
               this->dof_handler));
       }
+
+    // Check the value of interface sharpness
+    if (simulation_parameters.interface_sharpening.interface_sharpness < 1.0)
+      this->pcout
+        << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it."
+        << std::endl
+        << "The interface sharpness value should be set between 1 and 2"
+        << std::endl;
   }
 
   /**
    * @brief VOF - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  ~VOF()
+  ~VolumeOfFluid()
   {}
 
 
@@ -250,7 +260,6 @@ public:
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true);
 
-
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
    * NB : dof_handler and present_solution are passed to the multiphysics
@@ -369,9 +378,54 @@ private:
   virtual void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
+  /**
+   * @brief Limit the phase fractions between 0 and 1. This is necessary before interface sharpening.
+   * More information can be found in step_41 of deal.II tutorials:
+   * https://www.dealii.org/current/doxygen/deal.II/step_41.html
+   */
+  void
+  update_solution_and_constraints(TrilinosWrappers::MPI::Vector &solution);
+
+  /**
+   * @brief Assemble the system for interface sharpening
+   *  * This function assembles the weak form of:
+   *  $$ \Phi = c ^ (1 - \alpha) * (\phi ^ \alpha)  if 0 <=
+   * \phi <= c $$
+   *  $$ \Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha  if c <
+   * \phi <= 1 $$
+   * Reference for sharpening method
+   * https://www.sciencedirect.com/science/article/pii/S0045782500002000
+   */
+  void
+  assemble_L2_projection_interface_sharpening(
+    TrilinosWrappers::MPI::Vector &solution);
+
+  /**
+   * @brief Solves the assembled system to sharpen the interface. The linear_solver_tolerance
+   * is hardcoded = 1e-15, and an ILU Preconditioner is used. After solving the
+   * system, this function overwrites the solution with the sharpened solution
+   *
+   * @param solution VOF solution (phase fraction)
+   */
+  void
+  solve_interface_sharpening(TrilinosWrappers::MPI::Vector &solution);
+
+  /**
+   * @brief Assembles a mass_matrix which is used in update_solution_and_constraints function
+   * to limit the phase fractions of cells in the range of [0,1] before
+   * sharpening the interface. More information can be found in step_41 of
+   * deal.II tutorials:
+   * https://www.dealii.org/current/doxygen/deal.II/step_41.html
+   *
+   * @param mass_matrix
+   */
+  void
+  assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
+
+  TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
+
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
-
 
   // Core elements for the VOF simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
@@ -397,13 +451,27 @@ private:
   TrilinosWrappers::MPI::Vector  present_solution;
   TrilinosWrappers::MPI::Vector  system_rhs;
   AffineConstraints<double>      nonzero_constraints;
+  AffineConstraints<double>      bounding_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
 
 
   // Previous solutions vectors
+  TrilinosWrappers::SparseMatrix             system_matrix_phase_fraction;
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
   std::vector<TrilinosWrappers::MPI::Vector> solution_stages;
+  TrilinosWrappers::SparseMatrix complete_system_matrix_phase_fraction;
+  TrilinosWrappers::MPI::Vector  system_rhs_phase_fraction;
+  TrilinosWrappers::MPI::Vector  complete_system_rhs_phase_fraction;
+  IndexSet                       active_set;
+  TrilinosWrappers::SparseMatrix mass_matrix;
+
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+
+
+  // Lower and upper bounds of phase fraction
+  const double vof_upper_bound = 1.0;
+  const double vof_lower_bound = 0.0;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>

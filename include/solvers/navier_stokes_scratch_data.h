@@ -48,7 +48,7 @@ using namespace dealii;
  * (values, gradients, laplacians) at all the gauss points for all degrees
  * of freedom and stores it into arrays. Additionnaly, the use can request
  * that this class gathers additional fields for physics which are coupled
- * to the Navier-Stokes equation, such as the free surface. This class
+ * to the Navier-Stokes equation, such as the VOF. This class
  * serves as a seperation between the evaluation at the gauss point of the
  * variables of interest and their use in the assembly, which is carried out
  * by the assembler functions. For more information on this design, the reader
@@ -99,7 +99,7 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_free_surface          = false;
+    gather_VOF                   = false;
     gather_void_fraction         = false;
     gather_particles_information = false;
     gather_temperature           = false;
@@ -133,10 +133,10 @@ public:
                        update_normal_vectors)
   {
     allocate();
-    if (sd.gather_free_surface)
-      enable_free_surface(sd.fe_values_free_surface->get_fe(),
-                          sd.fe_values_free_surface->get_quadrature(),
-                          sd.fe_values_free_surface->get_mapping());
+    if (sd.gather_VOF)
+      enable_VOF(sd.fe_values_VOF->get_fe(),
+                 sd.fe_values_VOF->get_quadrature(),
+                 sd.fe_values_VOF->get_mapping());
 
     if (sd.gather_void_fraction)
       enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
@@ -419,9 +419,9 @@ public:
 
 
   /**
-   * @brief enable_free_surface Enables the collection of the free surface data by the scratch
+   * @brief enable_VOF Enables the collection of the VOF data by the scratch
    *
-   * @param fe FiniteElement associated with the free surface.
+   * @param fe FiniteElement associated with the VOF.
    *
    * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
    *
@@ -429,14 +429,14 @@ public:
    */
 
   void
-  enable_free_surface(const FiniteElement<dim> &fe,
-                      const Quadrature<dim> &   quadrature,
-                      const Mapping<dim> &      mapping);
+  enable_VOF(const FiniteElement<dim> &fe,
+             const Quadrature<dim> &   quadrature,
+             const Mapping<dim> &      mapping);
 
-  /** @brief Reinitialize the content of the scratch for the free surface
+  /** @brief Reinitialize the content of the scratch for the VOF
    *
    * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the free surface FE and not the
+   * This cell must be compatible with the VOF FE and not the
    * Navier-Stokes FE
    *
    * @param current_solution The present value of the solution for [alpha]
@@ -449,24 +449,23 @@ public:
 
   template <typename VectorType>
   void
-  reinit_free_surface(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
-    const std::vector<VectorType> & /*solution_stages*/)
+  reinit_VOF(const typename DoFHandler<dim>::active_cell_iterator &cell,
+             const VectorType &             current_solution,
+             const std::vector<VectorType> &previous_solutions,
+             const std::vector<VectorType> & /*solution_stages*/)
   {
-    this->fe_values_free_surface->reinit(cell);
+    this->fe_values_VOF->reinit(cell);
     // Gather phase fraction (values, gradient)
-    this->fe_values_free_surface->get_function_values(current_solution,
-                                                      this->phase_values);
-    this->fe_values_free_surface->get_function_gradients(
-      current_solution, this->phase_gradient_values);
+    this->fe_values_VOF->get_function_values(current_solution,
+                                             this->phase_values);
+    this->fe_values_VOF->get_function_gradients(current_solution,
+                                                this->phase_gradient_values);
 
     // Gather previous phase fraction values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_free_surface->get_function_values(
-          previous_solutions[p], previous_phase_values[p]);
+        this->fe_values_VOF->get_function_values(previous_solutions[p],
+                                                 previous_phase_values[p]);
       }
   }
 
@@ -769,15 +768,15 @@ public:
 
 
   /**
-   * Scratch component for the free surface auxiliary physics
+   * Scratch component for the VOF auxiliary physics
    */
-  bool                             gather_free_surface;
-  unsigned int                     n_dofs_free_surface;
+  bool                             gather_VOF;
+  unsigned int                     n_dofs_VOF;
   std::vector<double>              phase_values;
   std::vector<std::vector<double>> previous_phase_values;
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>> fe_values_free_surface;
+  std::shared_ptr<FEValues<dim>> fe_values_VOF;
 
 
   /**

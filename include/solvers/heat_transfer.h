@@ -228,7 +228,6 @@ public:
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true);
 
-
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
    * NB : dof_handler and present_solution are passed to the multiphysics

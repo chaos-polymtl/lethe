@@ -26,7 +26,7 @@
 
 template <int dim>
 void
-VOF<dim>::assemble_matrix_and_rhs()
+VolumeOfFluid<dim>::assemble_matrix_and_rhs()
 {
   assemble_system_matrix();
   assemble_system_rhs();
@@ -35,14 +35,14 @@ VOF<dim>::assemble_matrix_and_rhs()
 
 template <int dim>
 void
-VOF<dim>::assemble_rhs()
+VolumeOfFluid<dim>::assemble_rhs()
 {
   assemble_system_rhs();
 }
 
 template <int dim>
 void
-VOF<dim>::setup_assemblers()
+VolumeOfFluid<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
@@ -64,7 +64,7 @@ VOF<dim>::setup_assemblers()
 
 template <int dim>
 void
-VOF<dim>::assemble_system_matrix()
+VolumeOfFluid<dim>::assemble_system_matrix()
 {
   this->system_matrix = 0;
   setup_assemblers();
@@ -80,8 +80,8 @@ VOF<dim>::assemble_system_matrix()
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
                   *this,
-                  &VOF::assemble_local_system_matrix,
-                  &VOF::copy_local_matrix_to_global_matrix,
+                  &VolumeOfFluid::assemble_local_system_matrix,
+                  &VolumeOfFluid::copy_local_matrix_to_global_matrix,
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
@@ -91,7 +91,7 @@ VOF<dim>::assemble_system_matrix()
 
 template <int dim>
 void
-VOF<dim>::assemble_local_system_matrix(
+VolumeOfFluid<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   VOFScratchData<dim> &                                 scratch_data,
   StabilizedMethodsCopyData &                           copy_data)
@@ -135,7 +135,7 @@ VOF<dim>::assemble_local_system_matrix(
 
 template <int dim>
 void
-VOF<dim>::copy_local_matrix_to_global_matrix(
+VolumeOfFluid<dim>::copy_local_matrix_to_global_matrix(
   const StabilizedMethodsCopyData &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -150,7 +150,7 @@ VOF<dim>::copy_local_matrix_to_global_matrix(
 
 template <int dim>
 void
-VOF<dim>::assemble_system_rhs()
+VolumeOfFluid<dim>::assemble_system_rhs()
 {
   // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
   this->system_rhs = 0;
@@ -167,8 +167,8 @@ VOF<dim>::assemble_system_rhs()
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
                   *this,
-                  &VOF::assemble_local_system_rhs,
-                  &VOF::copy_local_rhs_to_global_rhs,
+                  &VolumeOfFluid::assemble_local_system_rhs,
+                  &VolumeOfFluid::copy_local_rhs_to_global_rhs,
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
@@ -178,7 +178,7 @@ VOF<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-VOF<dim>::assemble_local_system_rhs(
+VolumeOfFluid<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   VOFScratchData<dim> &                                 scratch_data,
   StabilizedMethodsCopyData &                           copy_data)
@@ -222,7 +222,7 @@ VOF<dim>::assemble_local_system_rhs(
 
 template <int dim>
 void
-VOF<dim>::copy_local_rhs_to_global_rhs(
+VolumeOfFluid<dim>::copy_local_rhs_to_global_rhs(
   const StabilizedMethodsCopyData &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -238,14 +238,14 @@ VOF<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 void
-VOF<dim>::attach_solution_to_output(DataOut<dim> &data_out)
+VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "phase");
 }
 
 template <int dim>
 double
-VOF<dim>::calculate_L2_error()
+VolumeOfFluid<dim>::calculate_L2_error()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -297,7 +297,7 @@ VOF<dim>::calculate_L2_error()
 
 template <int dim>
 double
-VOF<dim>::calculate_volume(int fluid_index)
+VolumeOfFluid<dim>::calculate_volume(int fluid_index)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -345,7 +345,7 @@ VOF<dim>::calculate_volume(int fluid_index)
 
 template <int dim>
 void
-VOF<dim>::finish_simulation()
+VolumeOfFluid<dim>::finish_simulation()
 {
   auto         mpi_communicator = triangulation->get_communicator();
   unsigned int this_mpi_process(
@@ -370,7 +370,7 @@ VOF<dim>::finish_simulation()
 
 template <int dim>
 void
-VOF<dim>::percolate_time_vectors()
+VolumeOfFluid<dim>::percolate_time_vectors()
 {
   for (unsigned int i = previous_solutions.size() - 1; i > 0; --i)
     {
@@ -381,29 +381,14 @@ VOF<dim>::percolate_time_vectors()
 
 template <int dim>
 void
-VOF<dim>::finish_time_step()
+VolumeOfFluid<dim>::finish_time_step()
 {
   percolate_time_vectors();
 }
 
 template <int dim>
 void
-VOF<dim>::modify_solution()
-{
-  if (simulation_parameters.linear_solver.verbosity ==
-      Parameters::Verbosity::verbose)
-    {
-      this->pcout << std::endl
-                  << "Modification of the VOF solution" << std::endl;
-    }
-  // Sharpen interface
-
-  // Handle wetting/peeling of the interface
-}
-
-template <int dim>
-void
-VOF<dim>::postprocess(bool first_iteration)
+VolumeOfFluid<dim>::postprocess(bool first_iteration)
 {
   if (simulation_parameters.analytical_solution->calculate_error() &&
       !first_iteration)
@@ -463,7 +448,55 @@ VOF<dim>::postprocess(bool first_iteration)
 
 template <int dim>
 void
-VOF<dim>::pre_mesh_adaptation()
+VolumeOfFluid<dim>::modify_solution()
+{
+  if (this->simulation_parameters.multiphysics.interface_sharpening)
+    {
+      // Limit the phase fractions between 0 and 1
+      update_solution_and_constraints(present_solution);
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        update_solution_and_constraints(previous_solutions[p]);
+
+      // Interface sharpening is done at a constant frequency
+      if (this->simulation_control->get_step_number() %
+            this->simulation_parameters.interface_sharpening
+              .sharpening_frequency ==
+          0)
+        {
+          if (simulation_parameters.linear_solver.verbosity ==
+              Parameters::Verbosity::verbose)
+            {
+              this->pcout << "Sharpening interface at step "
+                          << this->simulation_control->get_step_number()
+                          << std::endl;
+            }
+
+          // Sharpen the interface of all solutions:
+          {
+            // Assemble matrix and solve the system for interface sharpening
+            assemble_L2_projection_interface_sharpening(present_solution);
+            solve_interface_sharpening(present_solution);
+
+            for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+              {
+                assemble_L2_projection_interface_sharpening(
+                  previous_solutions[p]);
+                solve_interface_sharpening(previous_solutions[p]);
+              }
+          }
+
+          // Re limit the phase fractions between 0 and 1 after interface
+          // sharpening
+          update_solution_and_constraints(present_solution);
+          for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+            update_solution_and_constraints(previous_solutions[p]);
+        }
+    }
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::pre_mesh_adaptation()
 {
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
@@ -476,7 +509,7 @@ VOF<dim>::pre_mesh_adaptation()
 
 template <int dim>
 void
-VOF<dim>::post_mesh_adaptation()
+VolumeOfFluid<dim>::post_mesh_adaptation()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -505,7 +538,8 @@ VOF<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-VOF<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+VolumeOfFluid<dim>::compute_kelly(
+  dealii::Vector<float> &estimated_error_per_cell)
 {
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::phase)
@@ -525,7 +559,7 @@ VOF<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
 
 template <int dim>
 void
-VOF<dim>::write_checkpoint()
+VolumeOfFluid<dim>::write_checkpoint()
 {
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
 
@@ -539,10 +573,10 @@ VOF<dim>::write_checkpoint()
 
 template <int dim>
 void
-VOF<dim>::read_checkpoint()
+VolumeOfFluid<dim>::read_checkpoint()
 {
   auto mpi_communicator = triangulation->get_communicator();
-  this->pcout << "Reading free surface checkpoint" << std::endl;
+  this->pcout << "Reading VOF checkpoint" << std::endl;
 
   std::vector<TrilinosWrappers::MPI::Vector *> input_vectors(
     1 + previous_solutions.size());
@@ -572,7 +606,7 @@ VOF<dim>::read_checkpoint()
 
 template <int dim>
 void
-VOF<dim>::setup_dofs()
+VolumeOfFluid<dim>::setup_dofs()
 {
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
@@ -626,6 +660,41 @@ VOF<dim>::setup_dofs()
                                              locally_owned_dofs,
                                              mpi_communicator,
                                              locally_relevant_dofs);
+
+  // Initialization of phase fraction matrices for interface sharpening.
+  // system_matrix_phase_fraction is used in
+  // assemble_L2_projection_interface_sharpening for assembling the system for
+  // sharpening the interface, while complete_system_matrix_phase_fraction is
+  // used in update_solution_and_constraints to limit the phase fraction values
+  // between 0 and 1. Accoring to step-41, we compute the Lagrange multiplier
+  // (to limit the phase fractions) as the residual of the original linear
+  // system (given via the variables complete_system_matrix_phase_fraction and
+  // complete_system_rhs_phase_fraction
+  system_matrix_phase_fraction.reinit(locally_owned_dofs,
+                                      locally_owned_dofs,
+                                      dsp,
+                                      mpi_communicator);
+
+  complete_system_matrix_phase_fraction.reinit(locally_owned_dofs,
+                                               locally_owned_dofs,
+                                               dsp,
+                                               mpi_communicator);
+
+  complete_system_rhs_phase_fraction.reinit(locally_owned_dofs,
+                                            mpi_communicator);
+
+  // In update_solution_and_constraints (which limits the phase fraction
+  // between 0 and 1, nodal_phase_fraction_owned copies the solution, then
+  // limits it, and finally updates (rewrites) the solution.
+  nodal_phase_fraction_owned.reinit(locally_owned_dofs, mpi_communicator);
+
+  // Right hand side of the interface sharpening problem (used in
+  // assemble_L2_projection_interface_sharpening).
+  system_rhs_phase_fraction.reinit(locally_owned_dofs, mpi_communicator);
+
+  active_set.clear();
+  active_set.set_size(dof_handler.n_dofs());
+
   system_matrix.reinit(locally_owned_dofs,
                        locally_owned_dofs,
                        dsp,
@@ -634,28 +703,34 @@ VOF<dim>::setup_dofs()
   this->pcout << "   Number of VOF degrees of freedom: " << dof_handler.n_dofs()
               << std::endl;
 
-  // Provide the free surface dof_handler and solution pointers to the
+  // Provide the VOF dof_handler and solution pointers to the
   // multiphysics interface
-  multiphysics->set_dof_handler(PhysicsID::free_surface, &dof_handler);
-  multiphysics->set_solution(PhysicsID::free_surface, &present_solution);
-  // the fluid at present iteration is solved BEFORE the free surface (see map
+  multiphysics->set_dof_handler(PhysicsID::VOF, &dof_handler);
+  multiphysics->set_solution(PhysicsID::VOF, &present_solution);
+
+  // the fluid at present iteration is solved BEFORE the VOF (see map
   // solve_pre_fluid defined in multiphysics_interface.h), and after percolate
   // is called for the previous iteration.
   // NB: for now, inertia in fluid dynamics is considered with a constant
   // density (see if needed / to be debugged)
-  multiphysics->set_solution_m1(PhysicsID::free_surface,
-                                &previous_solutions[0]);
+  multiphysics->set_solution_m1(PhysicsID::VOF, &previous_solutions[0]);
+
+  mass_matrix.reinit(locally_owned_dofs,
+                     locally_owned_dofs,
+                     dsp,
+                     mpi_communicator);
+
+  assemble_mass_matrix_diagonal(mass_matrix);
 }
 
 template <int dim>
 void
-VOF<dim>::set_initial_conditions()
+VolumeOfFluid<dim>::set_initial_conditions()
 {
-  VectorTools::interpolate(
-    *this->fs_mapping,
-    dof_handler,
-    simulation_parameters.initial_condition->free_surface,
-    newton_update);
+  VectorTools::interpolate(*this->fs_mapping,
+                           dof_handler,
+                           simulation_parameters.initial_condition->VOF,
+                           newton_update);
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
 
@@ -664,8 +739,8 @@ VOF<dim>::set_initial_conditions()
 
 template <int dim>
 void
-VOF<dim>::solve_linear_system(const bool initial_step,
-                              const bool /*renewed_matrix*/)
+VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
+                                        const bool /*renewed_matrix*/)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -683,8 +758,7 @@ VOF<dim>::solve_linear_system(const bool initial_step,
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  VOF : " << std::endl
-                  << "  -Tolerance of iterative solver is : "
+      this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
 
@@ -722,8 +796,7 @@ VOF<dim>::solve_linear_system(const bool initial_step,
   if (simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  Free Surface : " << std::endl
-                  << "  -Iterative solver took : " << solver_control.last_step()
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
     }
 
@@ -732,7 +805,277 @@ VOF<dim>::solve_linear_system(const bool initial_step,
   newton_update = completely_distributed_solution;
 }
 
+// This function is explained in detail in step-41 of deal.II tutorials
+template <int dim>
+void
+VolumeOfFluid<dim>::update_solution_and_constraints(
+  TrilinosWrappers::MPI::Vector &solution)
+{
+  // This is a penalty parameter for limiting the phase fraction
+  // in the range of [0,1]. According to step 41, this parameter depends
+  // on the problem itself and needs to be chosen large enough (for example
+  // there is no convergence using the penalty_parameter = 1)
+  const double penalty_parameter = 100;
+
+  TrilinosWrappers::MPI::Vector lambda(locally_owned_dofs);
+
+  nodal_phase_fraction_owned = solution;
+
+  complete_system_matrix_phase_fraction.residual(lambda,
+                                                 nodal_phase_fraction_owned,
+                                                 system_rhs_phase_fraction);
+
+  bounding_constraints.clear();
+  active_set.clear();
+
+  std::vector<bool> dof_touched(dof_handler.n_dofs(), false);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell;
+               ++v)
+            {
+              Assert(dof_handler.get_fe().dofs_per_cell ==
+                       GeometryInfo<dim>::vertices_per_cell,
+                     ExcNotImplemented());
+              const unsigned int dof_index = cell->vertex_dof_index(v, 0);
+              if (locally_owned_dofs.is_element(dof_index))
+                {
+                  const double solution_value =
+                    nodal_phase_fraction_owned(dof_index);
+                  if (lambda(dof_index) + penalty_parameter *
+                                            mass_matrix(dof_index, dof_index) *
+                                            (solution_value - vof_upper_bound) >
+                      0)
+                    {
+                      active_set.add_index(dof_index);
+                      bounding_constraints.add_line(dof_index);
+                      bounding_constraints.set_inhomogeneity(dof_index,
+                                                             vof_upper_bound);
+                      nodal_phase_fraction_owned(dof_index) = vof_upper_bound;
+                      lambda(dof_index)                     = 0;
+                    }
+                  else if (lambda(dof_index) +
+                             penalty_parameter *
+                               mass_matrix(dof_index, dof_index) *
+                               (solution_value - vof_lower_bound) <
+                           0)
+                    {
+                      active_set.add_index(dof_index);
+                      bounding_constraints.add_line(dof_index);
+                      bounding_constraints.set_inhomogeneity(dof_index,
+                                                             vof_lower_bound);
+                      nodal_phase_fraction_owned(dof_index) = vof_lower_bound;
+                      lambda(dof_index)                     = 0;
+                    }
+                }
+            }
+        }
+    }
+  active_set.compress();
+  solution = nodal_phase_fraction_owned;
+  bounding_constraints.close();
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
+  TrilinosWrappers::MPI::Vector &solution)
+{
+  const double sharpening_threshold =
+    this->simulation_parameters.interface_sharpening.sharpening_threshold;
+  const double interface_sharpness =
+    this->simulation_parameters.interface_sharpening.interface_sharpness;
+
+  FEValues<dim> fe_values_phase_fraction(*this->fs_mapping,
+                                         *this->fe,
+                                         *this->cell_quadrature,
+                                         update_values |
+                                           update_quadrature_points |
+                                           update_JxW_values |
+                                           update_gradients);
 
 
-template class VOF<2>;
-template class VOF<3>;
+
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int n_q_points    = this->cell_quadrature->size();
+  FullMatrix<double> local_matrix_phase_fraction(dofs_per_cell, dofs_per_cell);
+  Vector<double>     local_rhs_phase_fraction(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<double>                  phi_phase(dofs_per_cell);
+
+  std::vector<double> phase_values(n_q_points);
+
+  system_rhs_phase_fraction    = 0;
+  system_matrix_phase_fraction = 0;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_phase_fraction.reinit(cell);
+
+          local_matrix_phase_fraction = 0;
+          local_rhs_phase_fraction    = 0;
+
+          fe_values_phase_fraction.get_function_values(solution, phase_values);
+
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              auto phase_value = phase_values[q];
+
+              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                {
+                  phi_phase[k] = fe_values_phase_fraction.shape_value(k, q);
+                }
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  // Matrix assembly
+                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                    {
+                      local_matrix_phase_fraction(i, j) +=
+                        (phi_phase[j] * phi_phase[i]) *
+                        fe_values_phase_fraction.JxW(q);
+                    }
+
+                  // $$ (if 0 <= \phi <= c)  {\Phi = c ^ (1 - \alpha) * (\phi ^
+                  // \alpha)}$$
+                  // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 - \alpha)
+                  // * (1 - \phi) ^ \alpha}
+                  if (phase_value >= 0.0 && phase_value <= sharpening_threshold)
+                    local_rhs_phase_fraction(i) +=
+                      std::pow(sharpening_threshold,
+                               (1 - interface_sharpness)) *
+                      std::pow(phase_value, interface_sharpness) *
+                      phi_phase[i] * fe_values_phase_fraction.JxW(q);
+                  else
+                    {
+                      local_rhs_phase_fraction(i) +=
+                        (1 -
+                         std::pow((1 - sharpening_threshold),
+                                  (1 - interface_sharpness)) *
+                           std::pow((1 - phase_value), interface_sharpness)) *
+                        phi_phase[i] * fe_values_phase_fraction.JxW(q);
+                    }
+                }
+            }
+          cell->get_dof_indices(local_dof_indices);
+          nonzero_constraints.distribute_local_to_global(
+            local_matrix_phase_fraction,
+            local_rhs_phase_fraction,
+            local_dof_indices,
+            system_matrix_phase_fraction,
+            system_rhs_phase_fraction);
+        }
+    }
+
+  system_matrix_phase_fraction.compress(VectorOperation::add);
+  system_rhs_phase_fraction.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::solve_interface_sharpening(
+  TrilinosWrappers::MPI::Vector &solution)
+{
+  // Solve the L2 projection system
+  const double linear_solver_tolerance = 1e-15;
+
+  if (this->simulation_parameters.interface_sharpening.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  TrilinosWrappers::MPI::Vector completely_distributed_phase_fraction_solution(
+    this->locally_owned_dofs, triangulation->get_communicator());
+
+
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
+
+  TrilinosWrappers::SolverCG solver(solver_control);
+
+  //**********************************************
+  // Trillinos Wrapper ILU Preconditioner
+  //*********************************************
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.ilu_precond_rtol;
+
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    ilu_fill, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(system_matrix_phase_fraction,
+                                 preconditionerOptions);
+
+  solver.solve(system_matrix_phase_fraction,
+               completely_distributed_phase_fraction_solution,
+               system_rhs_phase_fraction,
+               *ilu_preconditioner);
+
+  if (this->simulation_parameters.interface_sharpening.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+    }
+
+  nonzero_constraints.distribute(
+    completely_distributed_phase_fraction_solution);
+  solution = completely_distributed_phase_fraction_solution;
+}
+
+// This function is explained in detail in step-41 of deal.II tutorials:
+// We get the mass matrix to be diagonal by choosing the trapezoidal rule
+// for quadrature. Doing so we do not really need the triple loop over
+// quadrature points, indices i and indices j any more and can, instead, just
+// use a double loop.
+template <int dim>
+void
+VolumeOfFluid<dim>::assemble_mass_matrix_diagonal(
+  TrilinosWrappers::SparseMatrix &mass_matrix)
+{
+  QGauss<dim> quadrature_formula(this->cell_quadrature->size());
+
+  FEValues<dim> fe_values(*fe,
+                          quadrature_formula,
+                          update_values | update_JxW_values);
+
+
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int n_qpoints     = quadrature_formula.size();
+  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+          cell_matrix = 0;
+          for (unsigned int q = 0; q < n_qpoints; ++q)
+            for (unsigned int i = 0; i < dofs_per_cell; ++i)
+              cell_matrix(i, i) +=
+                (fe_values.shape_value(i, q) * fe_values.shape_value(i, q) *
+                 fe_values.JxW(q));
+          cell->get_dof_indices(local_dof_indices);
+          nonzero_constraints.distribute_local_to_global(cell_matrix,
+                                                         local_dof_indices,
+                                                         mass_matrix);
+        }
+    }
+}
+
+template class VolumeOfFluid<2>;
+template class VolumeOfFluid<3>;

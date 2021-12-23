@@ -8,7 +8,7 @@
 
 template <int dim>
 void
-GLSNavierStokesFreeSurfaceAssemblerCore<dim>::assemble_matrix(
+GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -200,7 +200,7 @@ GLSNavierStokesFreeSurfaceAssemblerCore<dim>::assemble_matrix(
 
 template <int dim>
 void
-GLSNavierStokesFreeSurfaceAssemblerCore<dim>::assemble_rhs(
+GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -352,12 +352,12 @@ GLSNavierStokesFreeSurfaceAssemblerCore<dim>::assemble_rhs(
 
 
 
-template class GLSNavierStokesFreeSurfaceAssemblerCore<2>;
-template class GLSNavierStokesFreeSurfaceAssemblerCore<3>;
+template class GLSNavierStokesVOFAssemblerCore<2>;
+template class GLSNavierStokesVOFAssemblerCore<3>;
 
 template <int dim>
 void
-GLSNavierStokesFreeSurfaceAssemblerBDF<dim>::assemble_matrix(
+GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -438,7 +438,7 @@ GLSNavierStokesFreeSurfaceAssemblerBDF<dim>::assemble_matrix(
 
 template <int dim>
 void
-GLSNavierStokesFreeSurfaceAssemblerBDF<dim>::assemble_rhs(
+GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -512,5 +512,5 @@ GLSNavierStokesFreeSurfaceAssemblerBDF<dim>::assemble_rhs(
     }
 }
 
-template class GLSNavierStokesFreeSurfaceAssemblerBDF<2>;
-template class GLSNavierStokesFreeSurfaceAssemblerBDF<3>;
+template class GLSNavierStokesVOFAssemblerBDF<2>;
+template class GLSNavierStokesVOFAssemblerBDF<3>;

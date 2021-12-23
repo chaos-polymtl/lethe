@@ -1188,6 +1188,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
               this->error_table.add_value(
                 "time", simulation_control->get_current_time());
               this->error_table.add_value("error_velocity", error_velocity);
+
               if (this->simulation_parameters.timer.write_time_in_error_table)
                 {
                   auto summary = computing_timer.get_summary_data(
@@ -1200,8 +1201,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                   this->error_table.add_value("total_time", total_time);
                 }
 
-              // Calculate error on pressure for free surface simulations
-              if (this->simulation_parameters.multiphysics.free_surface)
+              // Calculate error on pressure for VOF simulations
+              if (this->simulation_parameters.multiphysics.VOF)
                 this->error_table.add_value("error_pressure", error_pressure);
             }
           if (this->simulation_parameters.analytical_solution->verbosity ==

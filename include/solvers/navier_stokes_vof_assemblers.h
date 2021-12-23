@@ -36,11 +36,10 @@
  * @ingroup assemblers
  */
 template <int dim>
-class GLSNavierStokesFreeSurfaceAssemblerCore
-  : public NavierStokesAssemblerBase<dim>
+class GLSNavierStokesVOFAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSNavierStokesFreeSurfaceAssemblerCore(
+  GLSNavierStokesVOFAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties)
     : simulation_control(simulation_control)
@@ -84,11 +83,10 @@ public:
  */
 
 template <int dim>
-class GLSNavierStokesFreeSurfaceAssemblerBDF
-  : public NavierStokesAssemblerBase<dim>
+class GLSNavierStokesVOFAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSNavierStokesFreeSurfaceAssemblerBDF(
+  GLSNavierStokesVOFAssemblerBDF(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties)
     : simulation_control(simulation_control)

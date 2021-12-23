@@ -37,7 +37,8 @@ namespace Parameters
     bool fluid_dynamics;
     bool heat_transfer;
     bool tracer;
-    bool free_surface;
+    bool VOF;
+    bool interface_sharpening;
     bool buoyancy_force;
 
     // subparameter for heat_transfer

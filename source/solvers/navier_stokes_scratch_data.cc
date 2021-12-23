@@ -71,16 +71,15 @@ NavierStokesScratchData<dim>::allocate()
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_free_surface(
-  const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+NavierStokesScratchData<dim>::enable_VOF(const FiniteElement<dim> &fe,
+                                         const Quadrature<dim> &   quadrature,
+                                         const Mapping<dim> &      mapping)
 {
-  gather_free_surface    = true;
-  fe_values_free_surface = std::make_shared<FEValues<dim>>(
+  gather_VOF    = true;
+  fe_values_VOF = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // Free surface
+  // VOF
   phase_values = std::vector<double>(this->n_q_points);
   previous_phase_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
