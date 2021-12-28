@@ -19,7 +19,7 @@
 
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/pw_contact_info_struct.h>
+#include <dem/particle_wall_contact_info_struct.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
@@ -45,19 +45,19 @@ using namespace dealii;
  */
 
 template <int dim>
-class PWFineSearch
+class ParticleWallFineSearch
 {
 public:
-  PWFineSearch<dim>();
+  ParticleWallFineSearch<dim>();
 
   /**
    * Iterates over the contact candidates from particle-wall broad search
-   * (pw_contact_pair_candidates) to add new contact pairs to the
-   * pw_pairs_in_contact container
+   * (particle_wall_contact_pair_candidates) to add new contact pairs to the
+   * particle_wall_pairs_in_contact container
    *
-   * @param pw_contact_pair_candidates The output of particle-wall broad search
+   * @param particle_wall_contact_pair_candidates The output of particle-wall broad search
    * which shows contact pair candidates
-   * @param pw_pairs_in_contact An unordered_map of maps which stores
+   * @param particle_wall_pairs_in_contact An unordered_map of maps which stores
    * all the particle-wall pairs which are physically in contact, and the
    * contact information in a struct. Note that the size of this unordered map
    * is equal to the number of particles
@@ -71,11 +71,12 @@ public:
                                     Tensor<1, dim>,
                                     Point<dim>,
                                     types::boundary_id,
-                                    unsigned int>>> &pw_contact_pair_candidates,
+                                    unsigned int>>>
+      &particle_wall_contact_pair_candidates,
     std::unordered_map<
       types::particle_index,
-      std::map<types::particle_index, pw_contact_info_struct<dim>>>
-      &pw_pairs_in_contact);
+      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      &particle_wall_pairs_in_contact);
 
   /**
    * Iterates over the contact candidates from particle-floating wall broad
@@ -102,7 +103,7 @@ public:
     const double &                                    simulation_time,
     std::unordered_map<
       types::particle_index,
-      std::map<types::particle_index, pw_contact_info_struct<dim>>>
+      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
       &pfw_pairs_in_contact);
 };
 

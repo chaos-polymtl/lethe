@@ -16,7 +16,7 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <dem/pp_contact_info_struct.h>
+#include <dem/particle_particle_contact_info_struct.h>
 
 #include <deal.II/base/timer.h>
 
@@ -44,13 +44,13 @@ using namespace dealii;
  */
 
 template <int dim>
-class PPBroadSearch
+class ParticleParticleBroadSearch
 {
 private:
   // std::vector<int> particle_candidate_container;
 
 public:
-  PPBroadSearch<dim>();
+  ParticleParticleBroadSearch<dim>();
 
   /**
    * Finds a vector of pairs (particle pairs) which shows the candidate

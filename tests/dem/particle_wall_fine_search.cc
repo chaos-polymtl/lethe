@@ -38,9 +38,9 @@
 
 // Lethe
 #include <dem/find_boundary_cells_information.h>
-#include <dem/pw_broad_search.h>
-#include <dem/pw_contact_info_struct.h>
-#include <dem/pw_fine_search.h>
+#include <dem/particle_wall_broad_search.h>
+#include <dem/particle_wall_contact_info_struct.h>
+#include <dem/particle_wall_fine_search.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -93,7 +93,7 @@ test()
   boundary_cells_object.build(tr, outlet_boundaries, false, std::cout);
 
   // Calling particle-wall broad search
-  PWBroadSearch<dim> broad_search_object;
+  ParticleWallBroadSearch<dim> broad_search_object;
   std::unordered_map<
     unsigned int,
     std::unordered_map<unsigned int,
@@ -102,27 +102,32 @@ test()
                                   Point<dim>,
                                   unsigned int,
                                   unsigned int>>>
-    pw_contact_list;
+    particle_wall_contact_list;
   broad_search_object.find_particle_wall_contact_pairs(
     boundary_cells_object.get_boundary_cells_information(),
     particle_handler,
-    pw_contact_list);
+    particle_wall_contact_list);
 
   // Calling particle-wall fine search
-  PWFineSearch<dim> fine_search_object;
-  std::unordered_map<unsigned int,
-                     std::map<unsigned int, pw_contact_info_struct<dim>>>
-    pw_contact_information;
-  fine_search_object.particle_wall_fine_search(pw_contact_list,
-                                               pw_contact_information);
+  ParticleWallFineSearch<dim> fine_search_object;
+  std::unordered_map<
+    unsigned int,
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    particle_wall_contact_information;
+  fine_search_object.particle_wall_fine_search(
+    particle_wall_contact_list, particle_wall_contact_information);
 
   // Output
-  for (auto pw_contact_information_iterator = pw_contact_information.begin();
-       pw_contact_information_iterator != pw_contact_information.end();
-       ++pw_contact_information_iterator)
+  for (auto particle_wall_contact_information_iterator =
+         particle_wall_contact_information.begin();
+       particle_wall_contact_information_iterator !=
+       particle_wall_contact_information.end();
+       ++particle_wall_contact_information_iterator)
     {
-      auto info_iterator = pw_contact_information_iterator->second.begin();
-      while (info_iterator != pw_contact_information_iterator->second.end())
+      auto info_iterator =
+        particle_wall_contact_information_iterator->second.begin();
+      while (info_iterator !=
+             particle_wall_contact_information_iterator->second.end())
         {
           deallog << "Particle " << info_iterator->second.particle->get_id()
                   << " is in contact with face " << info_iterator->first

@@ -17,7 +17,7 @@
   * Author: Shahab Golshan, Polytechnique Montreal, 2019
   */
 
-#include <dem/pp_contact_force.h>
+#include <dem/particle_particle_contact_force.h>
 
 using namespace DEM;
 
@@ -25,15 +25,15 @@ using namespace DEM;
 // information of particles pair in the current time step
 template <int dim>
 void
-PPContactForce<dim>::update_contact_information(
-  pp_contact_info_struct<dim> &  contact_info,
-  double &                       normal_relative_velocity_value,
-  Tensor<1, dim> &               normal_unit_vector,
-  const ArrayView<const double> &particle_one_properties,
-  const ArrayView<const double> &particle_two_properties,
-  const Point<dim> &             particle_one_location,
-  const Point<dim> &             particle_two_location,
-  const double &                 dt)
+ParticleParticleContactForce<dim>::update_contact_information(
+  particle_particle_contact_info_struct<dim> &contact_info,
+  double &                                    normal_relative_velocity_value,
+  Tensor<1, dim> &                            normal_unit_vector,
+  const ArrayView<const double> &             particle_one_properties,
+  const ArrayView<const double> &             particle_two_properties,
+  const Point<dim> &                          particle_one_location,
+  const Point<dim> &                          particle_two_location,
+  const double &                              dt)
 {
   // Calculation of the contact vector (vector from particle one to particle two
   auto contact_vector = particle_two_location - particle_one_location;
@@ -89,12 +89,11 @@ PPContactForce<dim>::update_contact_information(
   // scalar and vector product
   normal_relative_velocity_value =
     contact_relative_velocity * normal_unit_vector;
-  Tensor<1, dim> normal_relative_velocity =
-    normal_relative_velocity_value * normal_unit_vector;
 
   // Calculation of tangential relative velocity
-  Tensor<1, dim> tangential_relative_velocity =
-    contact_relative_velocity - normal_relative_velocity;
+  contact_info.tangential_relative_velocity =
+    contact_relative_velocity -
+    (normal_relative_velocity_value * normal_unit_vector);
 
   // Calculation of new tangential_overlap, since this value is
   // history-dependent it needs the value at previous time-step
@@ -104,18 +103,13 @@ PPContactForce<dim>::update_contact_information(
   // which were already in contact (pairs_in_contact) needs to
   // modified using its history, while the tangential_overlaps of
   // new particles are equal to zero
-  Tensor<1, dim> modified_tangential_overlap =
-    contact_info.tangential_overlap +
+  contact_info.tangential_overlap +=
     contact_info.tangential_relative_velocity * dt;
-
-  // Updating the contact_info container based on the new calculated values
-  contact_info.tangential_overlap           = modified_tangential_overlap;
-  contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
 
 template <int dim>
 inline void
-PPContactForce<dim>::find_effective_radius_and_mass(
+ParticleParticleContactForce<dim>::find_effective_radius_and_mass(
   const ArrayView<const double> &particle_one_properties,
   const ArrayView<const double> &particle_two_properties)
 {
@@ -129,5 +123,5 @@ PPContactForce<dim>::find_effective_radius_and_mass(
                            particle_two_properties[DEM::PropertiesIndex::dp]));
 }
 
-template class PPContactForce<2>;
-template class PPContactForce<3>;
+template class ParticleParticleContactForce<2>;
+template class ParticleParticleContactForce<3>;

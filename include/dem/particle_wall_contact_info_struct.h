@@ -16,27 +16,33 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/particles/particle_iterator.h>
 
-#ifndef particle_particle_contact_info_struct_h
-#  define particle_particle_contact_info_struct_h
+#ifndef particle_wall_contact_info_struct_h
+#  define particle_wall_contact_info_struct_h
 
 /**
  * This struct handles the information related to the calculation of the
- * particle-particle contact force
+ * particle-wall contact force
  */
 
 using namespace dealii;
 
 template <int dim>
-struct pp_contact_info_struct
+struct particle_wall_contact_info_struct
 {
-  Tensor<1, dim>                   tangential_relative_velocity;
+  Particles::ParticleIterator<dim> particle;
+  Tensor<1, dim>                   normal_vector;
+  Point<dim>                       point_on_boundary;
+  double                           normal_overlap;
+  double                           normal_relative_velocity;
   Tensor<1, dim>                   tangential_overlap;
-  Particles::ParticleIterator<dim> particle_one;
-  Particles::ParticleIterator<dim> particle_two;
+  Tensor<1, dim>                   tangential_relative_velocity;
+  types::boundary_id               boundary_id;
+  int                              global_face_id;
 };
 
-#endif /* particle_particle_contact_info_struct_h */
+#endif /* particle_wall_contact_info_struct_h */

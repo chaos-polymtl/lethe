@@ -17,7 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/update_ghost_iterator_pp_contact_container.h>
+#include <dem/update_ghost_iterator_particle_particle_contact_container.h>
 #include <dem/update_ghost_particle_container.h>
 
 using namespace dealii;
@@ -49,7 +49,8 @@ locate_ghost_particles_in_cells(
     &ghost_particle_container,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     &ghost_adjacent_particles);
 
 #endif /* locate_ghost_particles_h */

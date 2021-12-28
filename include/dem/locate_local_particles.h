@@ -18,11 +18,11 @@
  */
 
 #include <dem/particle_point_line_contact_info_struct.h>
-#include <dem/update_ghost_pp_contact_container.h>
-#include <dem/update_local_pp_contact_container.h>
+#include <dem/update_ghost_particle_particle_contact_container.h>
+#include <dem/update_local_particle_particle_contact_container.h>
 #include <dem/update_particle_container.h>
 #include <dem/update_particle_point_line_contact_container.h>
-#include <dem/update_pw_contact_container.h>
+#include <dem/update_particle_wall_contact_container.h>
 
 using namespace dealii;
 
@@ -42,7 +42,7 @@ using namespace dealii;
  * information of adjacent local-ghost particles
  * @param local_adjacent_particles Container that contains all the contact
  * information of adjacent local-local particles
- * @param pw_pairs_in_contact Container that contains all the contact
+ * @param particle_wall_pairs_in_contact Container that contains all the contact
  * information of particle-wall contacts
  * @param pfw_pairs_in_contact Container that contains all the contact
  * information of particle-floating wall contacts
@@ -61,19 +61,21 @@ locate_local_particles_in_cells(
     &particle_container,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     &ghost_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
-    &pw_pairs_in_contact,
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>

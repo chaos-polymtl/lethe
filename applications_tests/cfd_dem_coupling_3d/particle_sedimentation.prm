@@ -156,8 +156,8 @@ subsection model parameters
   set contact detection method 		   		 = constant
   set contact detection frequency                 	 = 10
   set neighborhood threshold				 = 1.8
-  set particle particle contact force method             = pp_nonlinear
-  set particle wall contact force method                 = pw_nonlinear
+  set particle particle contact force method             = hertz_mindlin_limit_overlap
+  set particle wall contact force method                 = nonlinear
   set integration method				 = velocity_verlet
 end
 

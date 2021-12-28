@@ -1,4 +1,4 @@
-#include <dem/pw_fine_search.h>
+#include <dem/particle_wall_fine_search.h>
 
 #include <boost/math/special_functions/sign.hpp>
 
@@ -6,11 +6,11 @@
 using namespace dealii;
 
 template <int dim>
-PWFineSearch<dim>::PWFineSearch()
+ParticleWallFineSearch<dim>::ParticleWallFineSearch()
 {}
 
 template <int dim>
-void PWFineSearch<dim>::particle_wall_fine_search(
+void ParticleWallFineSearch<dim>::particle_wall_fine_search(
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
@@ -18,16 +18,17 @@ void PWFineSearch<dim>::particle_wall_fine_search(
                                   Tensor<1, dim>,
                                   Point<dim>,
                                   types::boundary_id,
-                                  unsigned int>>> &pw_contact_pair_candidates,
+                                  unsigned int>>>
+    &particle_wall_contact_pair_candidates,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
-    &pw_pairs_in_contact)
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    &particle_wall_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search and adding the pairs to
-  // the pw_pairs_in_contact
+  // the particle_wall_pairs_in_contact
   for (auto const &[particle_id, particle_pair_candidates] :
-       pw_contact_pair_candidates)
+       particle_wall_contact_pair_candidates)
     {
       for (auto const &[face_id, particle_pair_candidate_content] :
            particle_pair_candidates)
@@ -50,8 +51,9 @@ void PWFineSearch<dim>::particle_wall_fine_search(
               tangential_overlap[2] = 0.0;
             }
 
-          // Adding contact info to the sample to pw_contact_info_struct
-          pw_contact_info_struct<dim> contact_info;
+          // Adding contact info to the sample to
+          // particle_wall_contact_info_struct
+          particle_wall_contact_info_struct<dim> contact_info;
           contact_info.particle                 = particle;
           contact_info.normal_vector            = normal_vector;
           contact_info.normal_overlap           = .0;
@@ -64,14 +66,15 @@ void PWFineSearch<dim>::particle_wall_fine_search(
           contact_info.global_face_id =
             std::get<4>(particle_pair_candidate_content);
 
-          pw_pairs_in_contact[particle_id].insert({face_id, contact_info});
+          particle_wall_pairs_in_contact[particle_id].insert(
+            {face_id, contact_info});
         }
     }
 }
 
 template <int dim>
 void
-PWFineSearch<dim>::particle_floating_wall_fine_search(
+ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
@@ -80,7 +83,7 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
   const double &                                    simulation_time,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact)
 {
   // Reading floating wall properties
@@ -143,9 +146,9 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
                   tangential_overlap[2] = 0.0;
                 }
 
-              // Creating a sample from the pw_contact_info_struct and adding
-              // contact info to the sample
-              pw_contact_info_struct<dim> contact_info;
+              // Creating a sample from the particle_wall_contact_info_struct
+              // and adding contact info to the sample
+              particle_wall_contact_info_struct<dim> contact_info;
               contact_info.particle                 = particle;
               contact_info.normal_vector            = normal_vector;
               contact_info.normal_overlap           = .0;
@@ -166,5 +169,5 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
     }
 }
 
-template class PWFineSearch<2>;
-template class PWFineSearch<3>;
+template class ParticleWallFineSearch<2>;
+template class ParticleWallFineSearch<3>;

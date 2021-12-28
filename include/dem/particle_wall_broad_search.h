@@ -44,10 +44,10 @@ using namespace dealii;
  */
 
 template <int dim>
-class PWBroadSearch
+class ParticleWallBroadSearch
 {
 public:
-  PWBroadSearch<dim>();
+  ParticleWallBroadSearch<dim>();
 
   /**
    * Finds unordered map of tuples (tuple of particle located in
@@ -60,7 +60,7 @@ public:
    * faces. This is the output of the FindBoundaryCellsInformation class
    * @param particle_handler Particle handler of particles located in boundary
    * cells
-   * @param pw_contact_candidates A two-layered unordered map of tuples. Each
+   * @param particle_wall_contact_candidates A two-layered unordered map of tuples. Each
    * tuple contains a particle located near boundaries, the normal vector of
    * the corresponding face boundary, a point on the boundary and the boundary
    * cell. The contact pair is used in the fine search
@@ -78,7 +78,8 @@ public:
                                     Tensor<1, dim>,
                                     Point<dim>,
                                     types::boundary_id,
-                                    unsigned int>>> &pw_contact_candidates);
+                                    unsigned int>>>
+      &particle_wall_contact_candidates);
 
   /**
    * Finds a two-layered unordered map of particle iterators which shows the
