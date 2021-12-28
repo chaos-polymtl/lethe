@@ -16,29 +16,30 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <dem/pw_contact_info_struct.h>
+#include <dem/particle_particle_contact_info_struct.h>
 
 using namespace dealii;
 
-#ifndef update_particle_wall_contact_container_h
-#  define update_particle_wall_contact_container_h
+#ifndef update_ghost_iterator_particle_particle_contact_container_h
+#  define update_ghost_iterator_particle_particle_contact_container_h
 
 /**
- * Updates the iterators to particles in pw_contact_container (output of pw
- * fine search)
+ * Updates the iterators to particles in local_ghost adjacent_particles
+ * (output of particle-particle fine search)
  *
- * @param pw_pairs_in_contact Output of particle-wall fine search
+ * @param ghost_adjacent_particles Output of particle-particle fine search
  * @param particle_container Output of update_particle_container function
  */
 
 template <int dim>
 void
-update_pw_contact_container_iterators(
+update_ghost_iterator_particle_particle_contact_container(
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
-    &pw_pairs_in_contact,
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
+    &ghost_adjacent_particles,
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container);
+    &ghost_particle_container);
 
-#endif /* update_particle_wall_contact_container_h */
+#endif /* update_ghost_iterator_particle_particle_contact_container_h */

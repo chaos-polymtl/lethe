@@ -19,8 +19,8 @@
 
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/pw_contact_force.h>
-#include <dem/pw_contact_info_struct.h>
+#include <dem/particle_wall_contact_force.h>
+#include <dem/particle_wall_contact_info_struct.h>
 
 #include <deal.II/particles/particle.h>
 
@@ -31,11 +31,11 @@
 
 using namespace dealii;
 
-#ifndef particle_wall_nonlinear_force_h
-#  define particle_wall_nonlinear_force_h
+#ifndef particle_wall_linear_force_h
+#  define particle_wall_linear_force_h
 
 /**
- * Calculation of the non-linear particle-wall contact force using the
+ * Calculation of the linear particle-wall contact force using the
  * information obtained from the fine search and physical properties of
  * particles and walls
  *
@@ -45,17 +45,17 @@ using namespace dealii;
  */
 
 template <int dim>
-class PWNonLinearForce : public PWContactForce<dim>
+class ParticleWallLinearForce : public ParticleWallContactForce<dim>
 {
-  using FuncPtrType =
-    Tensor<1, dim> (PWNonLinearForce<dim>::*)(const ArrayView<const double> &,
-                                              const double &,
-                                              const double &,
-                                              const Tensor<1, dim> &);
+  using FuncPtrType = Tensor<1, dim> (ParticleWallLinearForce<dim>::*)(
+    const ArrayView<const double> &,
+    const double &,
+    const double &,
+    const Tensor<1, dim> &);
   FuncPtrType calculate_rolling_resistance_torque;
 
 public:
-  PWNonLinearForce<dim>(
+  ParticleWallLinearForce<dim>(
     const std::unordered_map<unsigned int, Tensor<1, dim>>
                                                    boundary_translational_velocity,
     const std::unordered_map<unsigned int, double> boundary_rotational_speed,
@@ -67,9 +67,9 @@ public:
 
   /**
    * Carries out the calculation of the particle-wall contact force using
-   * non-linear (Hertzian) model
+   * linear (Hookean) model
    *
-   * @param pw_pairs_in_contact Required information for the calculation of
+   * @param particle_wall_pairs_in_contact Required information for calculation of
    * the particle-wall contact force. These information were obtained in
    * the fine search
    * @param dt DEM time step
@@ -77,11 +77,11 @@ public:
    * @param force Force acting on particles
    */
   virtual void
-  calculate_pw_contact_force(
+  calculate_particle_wall_contact_force(
     std::unordered_map<
       types::particle_index,
-      std::map<types::particle_index, pw_contact_info_struct<dim>>>
-      &                          pw_pairs_in_contact,
+      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      &                          particle_wall_pairs_in_contact,
     const double &               dt,
     std::vector<Tensor<1, dim>> &momentum,
     std::vector<Tensor<1, dim>> &force) override;
@@ -136,23 +136,23 @@ private:
 
     // Calculation of particle-wall angular velocity (norm of the
     // particle angular velocity)
-    Tensor<1, dim> pw_angular_velocity;
+    Tensor<1, dim> particle_wall_angular_velocity;
     for (int d = 0; d < dim; ++d)
       {
-        pw_angular_velocity[d] = 0;
+        particle_wall_angular_velocity[d] = 0;
       }
 
     double omega_value = angular_velocity.norm();
     if (omega_value != 0)
       {
-        pw_angular_velocity = angular_velocity / omega_value;
+        particle_wall_angular_velocity = angular_velocity / omega_value;
       }
 
     // Calcualation of rolling resistance torque
     Tensor<1, dim> rolling_resistance_torque =
       -effective_rolling_friction_coefficient *
       (particle_properties[DEM::PropertiesIndex::dp] * 0.5) *
-      normal_force_norm * pw_angular_velocity;
+      normal_force_norm * particle_wall_angular_velocity;
 
     return rolling_resistance_torque;
   }
@@ -183,16 +183,16 @@ private:
 
     // Calculation of particle-wall angular velocity (norm of the
     // particle angular velocity)
-    Tensor<1, dim> pw_angular_velocity;
+    Tensor<1, dim> particle_wall_angular_velocity;
     for (int d = 0; d < dim; ++d)
       {
-        pw_angular_velocity[d] = 0;
+        particle_wall_angular_velocity[d] = 0;
       }
 
     double omega_value = angular_velocity.norm();
     if (omega_value != 0)
       {
-        pw_angular_velocity = angular_velocity / omega_value;
+        particle_wall_angular_velocity = angular_velocity / omega_value;
       }
 
     Tensor<1, dim> v_omega =
@@ -204,13 +204,13 @@ private:
     Tensor<1, dim> rolling_resistance_torque =
       -effective_rolling_friction_coefficient *
       particle_properties[DEM::PropertiesIndex::dp] * 0.5 * normal_force_norm *
-      v_omega.norm() * pw_angular_velocity;
+      v_omega.norm() * particle_wall_angular_velocity;
 
     return rolling_resistance_torque;
   }
 
   /**
-   * Carries out the calculation of the particle-particle non-linear contact
+   * Carries out the calculation of the particle-particle linear contact
    * force and torques based on the updated values in contact_info
    *
    * @param contact_info A container that contains the required information for
@@ -221,9 +221,9 @@ private:
    * a contact pair
    */
   std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
-  calculate_nonlinear_contact_force_and_torque(
-    pw_contact_info_struct<dim> &  contact_info,
-    const ArrayView<const double> &particle_properties);
+  calculate_linear_contact_force_and_torque(
+    particle_wall_contact_info_struct<dim> &contact_info,
+    const ArrayView<const double> &         particle_properties);
 };
 
 #endif

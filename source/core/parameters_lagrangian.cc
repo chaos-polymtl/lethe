@@ -444,17 +444,19 @@ namespace Parameters
           Patterns::Double(),
           "Contact search zone diameter to particle diameter ratio");
 
-        prm.declare_entry("particle particle contact force method",
-                          "pp_nonlinear",
-                          Patterns::Selection("pp_linear|pp_nonlinear"),
-                          "Choosing particle-particle contact force model"
-                          "Choices are <pp_linear|pp_nonlinear>.");
+        prm.declare_entry(
+          "particle particle contact force method",
+          "hertz_mindlin_limit_overlap",
+          Patterns::Selection(
+            "linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz"),
+          "Choosing particle-particle contact force model"
+          "Choices are <linear|hertz_mindlin_limit_force|hertz_mindlin_limit_overlap|hertz>.");
 
         prm.declare_entry("particle wall contact force method",
-                          "pw_nonlinear",
-                          Patterns::Selection("pw_linear|pw_nonlinear"),
+                          "nonlinear",
+                          Patterns::Selection("linear|nonlinear"),
                           "Choosing particle-wall contact force model"
-                          "Choices are <pw_linear|pw_nonlinear>.");
+                          "Choices are <linear|nonlinear>.");
 
         prm.declare_entry(
           "rolling resistance torque method",
@@ -533,10 +535,18 @@ namespace Parameters
 
         const std::string ppcf =
           prm.get("particle particle contact force method");
-        if (ppcf == "pp_linear")
-          pp_contact_force_method = PPContactForceModel::pp_linear;
-        else if (ppcf == "pp_nonlinear")
-          pp_contact_force_method = PPContactForceModel::pp_nonlinear;
+        if (ppcf == "linear")
+          particle_particle_contact_force_method =
+            ParticleParticleContactForceModel::linear;
+        else if (ppcf == "hertz_mindlin_limit_force")
+          particle_particle_contact_force_method =
+            ParticleParticleContactForceModel::hertz_mindlin_limit_force;
+        else if (ppcf == "hertz_mindlin_limit_overlap")
+          particle_particle_contact_force_method =
+            ParticleParticleContactForceModel::hertz_mindlin_limit_overlap;
+        else if (ppcf == "hertz")
+          particle_particle_contact_force_method =
+            ParticleParticleContactForceModel::hertz;
         else
           {
             throw(std::runtime_error(
@@ -544,10 +554,12 @@ namespace Parameters
           }
 
         const std::string pwcf = prm.get("particle wall contact force method");
-        if (pwcf == "pw_linear")
-          pw_contact_force_method = PWContactForceModel::pw_linear;
-        else if (pwcf == "pw_nonlinear")
-          pw_contact_force_method = PWContactForceModel::pw_nonlinear;
+        if (pwcf == "linear")
+          particle_wall_contact_force_method =
+            ParticleWallContactForceModel::linear;
+        else if (pwcf == "nonlinear")
+          particle_wall_contact_force_method =
+            ParticleWallContactForceModel::nonlinear;
         else
           {
             throw(

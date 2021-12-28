@@ -1,14 +1,14 @@
-#include <dem/pp_fine_search.h>
+#include <dem/particle_particle_fine_search.h>
 
 using namespace dealii;
 
 template <int dim>
-PPFineSearch<dim>::PPFineSearch()
+ParticleParticleFineSearch<dim>::ParticleParticleFineSearch()
 {}
 
 template <int dim>
 void
-PPFineSearch<dim>::particle_particle_fine_search(
+ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   const std::unordered_map<types::particle_index,
                            std::vector<types::particle_index>>
     &local_contact_pair_candidates,
@@ -17,11 +17,13 @@ PPFineSearch<dim>::particle_particle_fine_search(
     &ghost_contact_pair_candidates,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     &ghost_adjacent_particles,
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &          particle_container,
@@ -101,7 +103,7 @@ PPFineSearch<dim>::particle_particle_fine_search(
                 }
 
               // Adding the elements to contact info
-              pp_contact_info_struct<dim> contact_info;
+              particle_particle_contact_info_struct<dim> contact_info;
               contact_info.tangential_overlap = tangential_overlap;
               contact_info.particle_one       = particle_one;
               contact_info.particle_two       = particle_two;
@@ -186,7 +188,7 @@ PPFineSearch<dim>::particle_particle_fine_search(
                 }
 
               // Adding elements to contact info
-              pp_contact_info_struct<dim> contact_info;
+              particle_particle_contact_info_struct<dim> contact_info;
               contact_info.tangential_overlap = tangential_overlap;
               contact_info.particle_one       = particle_one;
               contact_info.particle_two       = particle_two;
@@ -198,5 +200,5 @@ PPFineSearch<dim>::particle_particle_fine_search(
     }
 }
 
-template class PPFineSearch<2>;
-template class PPFineSearch<3>;
+template class ParticleParticleFineSearch<2>;
+template class ParticleParticleFineSearch<3>;

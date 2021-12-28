@@ -56,12 +56,13 @@ void
 GridMotion<dim>::update_boundary_points_and_normal_vectors_in_contact_list(
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
-    &pw_pairs_in_contact,
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    &particle_wall_pairs_in_contact,
   const std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
     &updated_boundary_points_and_normal_vectors)
 {
-  for (auto &[particle_id, pairs_in_contact_content] : pw_pairs_in_contact)
+  for (auto &[particle_id, pairs_in_contact_content] :
+       particle_wall_pairs_in_contact)
     {
       // Prevent compiler warning
       (void)particle_id;
@@ -71,7 +72,7 @@ GridMotion<dim>::update_boundary_points_and_normal_vectors_in_contact_list(
           auto &contact_information = pairs_in_contact_iterator->second;
 
           // Since we used the negative keys for diamond-shaped cells, we check
-          // and remove these elements from the pw_pairs_in_contact
+          // and remove these elements from the particle_wall_pairs_in_contact
           if (contact_information.global_face_id >= 0)
             {
               contact_information.normal_vector =

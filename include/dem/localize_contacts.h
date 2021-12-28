@@ -17,8 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/pp_contact_info_struct.h>
-#include <dem/pw_contact_info_struct.h>
+#include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_wall_contact_info_struct.h>
 
 using namespace std;
 
@@ -37,13 +37,13 @@ using namespace std;
  *
  * @param local_adjacent_particles Local-local adjacent particle pairs
  * @param ghost_adjacent_particles Local-ghost adjacent particle pairs
- * @param pw_pairs_in_contact Particle-wall contact pairs
+ * @param particle_wall_pairs_in_contact Particle-wall contact pairs
  * @param pfw_pairs_in_contact Particle-floating wall contact pairs
  * @param local_contact_pair_candidates Outputs of local-local particle-particle
  * broad search
  * @param ghost_contact_pair_candidates Outputs of local-ghost particle-particle
  * broad search
- * @param pw_contact_candidates Outputs of particle-wall broad search
+ * @param particle_wall_contact_candidates Outputs of particle-wall broad search
  * @param pfw_contact_candidates Outputs of particle-floating wall broad search
  *
  */
@@ -53,19 +53,21 @@ void
 localize_contacts(
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     *local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     *ghost_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
-    *pw_pairs_in_contact,
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    *particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     *pfw_pairs_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
@@ -78,7 +80,8 @@ localize_contacts(
                                   Tensor<1, dim>,
                                   Point<dim>,
                                   unsigned int,
-                                  unsigned int>>> &pw_contact_candidates,
+                                  unsigned int>>>
+    &particle_wall_contact_candidates,
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>

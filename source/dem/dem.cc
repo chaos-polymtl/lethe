@@ -29,13 +29,13 @@
 #include <dem/locate_ghost_particles.h>
 #include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
-#include <dem/pp_contact_info_struct.h>
-#include <dem/pp_linear_force.h>
-#include <dem/pp_nonlinear_force.h>
+#include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_particle_linear_force.h>
+#include <dem/particle_particle_nonlinear_force.h>
+#include <dem/particle_wall_contact_info_struct.h>
+#include <dem/particle_wall_linear_force.h>
+#include <dem/particle_wall_nonlinear_force.h>
 #include <dem/print_initial_information.h>
-#include <dem/pw_contact_info_struct.h>
-#include <dem/pw_linear_force.h>
-#include <dem/pw_nonlinear_force.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
 #include <dem/uniform_insertion.h>
@@ -430,20 +430,21 @@ void
 DEMSolver<dim>::particle_wall_broad_search()
 {
   // Particle - wall contact candidates
-  pw_broad_search_object.find_particle_wall_contact_pairs(
+  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
     boundary_cell_object.get_boundary_cells_information(),
     particle_handler,
-    pw_contact_candidates);
+    particle_wall_contact_candidates);
 
   // Particle - floating wall contact pairs
   if (parameters.floating_walls.floating_walls_number > 0)
     {
-      pw_broad_search_object.find_particle_floating_wall_contact_pairs(
-        boundary_cell_object.get_boundary_cells_with_floating_walls(),
-        particle_handler,
-        parameters.floating_walls,
-        simulation_control->get_current_time(),
-        pfw_contact_candidates);
+      particle_wall_broad_search_object
+        .find_particle_floating_wall_contact_pairs(
+          boundary_cell_object.get_boundary_cells_with_floating_walls(),
+          particle_handler,
+          parameters.floating_walls,
+          simulation_control->get_current_time(),
+          pfw_contact_candidates);
     }
 
   particle_point_contact_candidates =
@@ -465,13 +466,13 @@ void
 DEMSolver<dim>::particle_wall_fine_search()
 {
   // Particle - wall fine search
-  pw_fine_search_object.particle_wall_fine_search(pw_contact_candidates,
-                                                  pw_pairs_in_contact);
+  particle_wall_fine_search_object.particle_wall_fine_search(
+    particle_wall_contact_candidates, particle_wall_pairs_in_contact);
 
   // Particle - floating wall fine search
   if (parameters.floating_walls.floating_walls_number > 0)
     {
-      pw_fine_search_object.particle_floating_wall_fine_search(
+      particle_wall_fine_search_object.particle_floating_wall_fine_search(
         pfw_contact_candidates,
         parameters.floating_walls,
         simulation_control->get_current_time(),
@@ -495,21 +496,24 @@ void
 DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
-  pw_contact_force_object->calculate_pw_contact_force(
-    pw_pairs_in_contact, simulation_control->get_time_step(), momentum, force);
+  particle_wall_contact_force_object->calculate_particle_wall_contact_force(
+    particle_wall_pairs_in_contact,
+    simulation_control->get_time_step(),
+    momentum,
+    force);
 
   if (parameters.forces_torques.calculate_force_torque)
     {
       forces_boundary_information[simulation_control->get_step_number()] =
-        pw_contact_force_object->get_force();
+        particle_wall_contact_force_object->get_force();
       torques_boundary_information[simulation_control->get_step_number()] =
-        pw_contact_force_object->get_torque();
+        particle_wall_contact_force_object->get_torque();
     }
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
-      pw_contact_force_object->calculate_pw_contact_force(
+      particle_wall_contact_force_object->calculate_particle_wall_contact_force(
         pfw_pairs_in_contact,
         simulation_control->get_time_step(),
         momentum,
@@ -622,63 +626,83 @@ DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
 }
 
 template <int dim>
-std::shared_ptr<PPContactForce<dim>>
-DEMSolver<dim>::set_pp_contact_force(const DEMSolverParameters<dim> &parameters)
+std::shared_ptr<ParticleParticleContactForce<dim>>
+DEMSolver<dim>::set_particle_particle_contact_force(
+  const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parameters.pp_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::PPContactForceModel::pp_linear)
+  if (parameters.model_parameters.particle_particle_contact_force_method ==
+      Parameters::Lagrangian::ModelParameters::
+        ParticleParticleContactForceModel::linear)
     {
-      pp_contact_force_object =
-        std::make_shared<PPLinearForce<dim>>(parameters);
+      particle_particle_contact_force_object =
+        std::make_shared<ParticleParticleLinearForce<dim>>(parameters);
     }
-  else if (parameters.model_parameters.pp_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::PPContactForceModel::
-             pp_nonlinear)
+  else if (parameters.model_parameters.particle_particle_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::
+             ParticleParticleContactForceModel::hertz_mindlin_limit_overlap)
     {
-      pp_contact_force_object =
-        std::make_shared<PPNonLinearForce<dim>>(parameters);
+      particle_particle_contact_force_object =
+        std::make_shared<ParticleParticleHertzMindlinLimitOverlap<dim>>(
+          parameters);
     }
+  else if (parameters.model_parameters.particle_particle_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::
+             ParticleParticleContactForceModel::hertz_mindlin_limit_force)
+    {
+      particle_particle_contact_force_object =
+        std::make_shared<ParticleParticleHertzMindlinLimitForce<dim>>(
+          parameters);
+    }
+  else if (parameters.model_parameters.particle_particle_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::
+             ParticleParticleContactForceModel::hertz)
+    particle_particle_contact_force_object =
+      std::make_shared<ParticleParticleHertz<dim>>(parameters);
   else
     {
       throw "The chosen particle-particle contact force model is invalid";
     }
-  return pp_contact_force_object;
+  return particle_particle_contact_force_object;
 }
 
 template <int dim>
-std::shared_ptr<PWContactForce<dim>>
-DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
+std::shared_ptr<ParticleWallContactForce<dim>>
+DEMSolver<dim>::set_particle_wall_contact_force(
+  const DEMSolverParameters<dim> &parameters)
 {
   std::vector<types::boundary_id> boundary_index =
     triangulation.get_boundary_ids();
-  if (parameters.model_parameters.pw_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
+  if (parameters.model_parameters.particle_wall_contact_force_method ==
+      Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
+        linear)
     {
-      pw_contact_force_object = std::make_shared<PWLinearForce<dim>>(
-        parameters.boundary_conditions.boundary_translational_velocity,
-        parameters.boundary_conditions.boundary_rotational_speed,
-        parameters.boundary_conditions.boundary_rotational_vector,
-        triangulation_cell_diameter,
-        parameters,
-        boundary_index);
+      particle_wall_contact_force_object =
+        std::make_shared<ParticleWallLinearForce<dim>>(
+          parameters.boundary_conditions.boundary_translational_velocity,
+          parameters.boundary_conditions.boundary_rotational_speed,
+          parameters.boundary_conditions.boundary_rotational_vector,
+          triangulation_cell_diameter,
+          parameters,
+          boundary_index);
     }
-  else if (parameters.model_parameters.pw_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::PWContactForceModel::
-             pw_nonlinear)
+  else if (parameters.model_parameters.particle_wall_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::
+             ParticleWallContactForceModel::nonlinear)
     {
-      pw_contact_force_object = std::make_shared<PWNonLinearForce<dim>>(
-        parameters.boundary_conditions.boundary_translational_velocity,
-        parameters.boundary_conditions.boundary_rotational_speed,
-        parameters.boundary_conditions.boundary_rotational_vector,
-        triangulation_cell_diameter,
-        parameters,
-        boundary_index);
+      particle_wall_contact_force_object =
+        std::make_shared<ParticleWallNonLinearForce<dim>>(
+          parameters.boundary_conditions.boundary_translational_velocity,
+          parameters.boundary_conditions.boundary_rotational_speed,
+          parameters.boundary_conditions.boundary_rotational_vector,
+          triangulation_cell_diameter,
+          parameters,
+          boundary_index);
     }
   else
     {
       throw "The chosen particle-wall contact force model is invalid";
     }
-  return pw_contact_force_object;
+  return particle_wall_contact_force_object;
 }
 
 template <int dim>
@@ -835,10 +859,12 @@ DEMSolver<dim>::solve()
                              pcout);
 
   // Setting chosen contact force, insertion and integration methods
-  insertion_object        = set_insertion_type(parameters);
-  integrator_object       = set_integrator_type(parameters);
-  pp_contact_force_object = set_pp_contact_force(parameters);
-  pw_contact_force_object = set_pw_contact_force(parameters);
+  insertion_object  = set_insertion_type(parameters);
+  integrator_object = set_integrator_type(parameters);
+  particle_particle_contact_force_object =
+    set_particle_particle_contact_force(parameters);
+  particle_wall_contact_force_object =
+    set_particle_wall_contact_force(parameters);
 
   // DEM engine iterator:
   while (simulation_control->integrate())
@@ -923,12 +949,13 @@ DEMSolver<dim>::solve()
           // Reset checkpoint step
           checkpoint_step = false;
 
-          pp_broad_search_object.find_particle_particle_contact_pairs(
-            particle_handler,
-            &cells_local_neighbor_list,
-            &cells_ghost_neighbor_list,
-            local_contact_pair_candidates,
-            ghost_contact_pair_candidates);
+          particle_particle_broad_search_object
+            .find_particle_particle_contact_pairs(
+              particle_handler,
+              &cells_local_neighbor_list,
+              &cells_ghost_neighbor_list,
+              local_contact_pair_candidates,
+              ghost_contact_pair_candidates);
 
           // Updating number of contact builds
           contact_build_number++;
@@ -938,11 +965,11 @@ DEMSolver<dim>::solve()
 
           localize_contacts<dim>(&local_adjacent_particles,
                                  &ghost_adjacent_particles,
-                                 &pw_pairs_in_contact,
+                                 &particle_wall_pairs_in_contact,
                                  &pfw_pairs_in_contact,
                                  local_contact_pair_candidates,
                                  ghost_contact_pair_candidates,
-                                 pw_contact_candidates,
+                                 particle_wall_contact_candidates,
                                  pfw_contact_candidates);
 
 
@@ -950,13 +977,13 @@ DEMSolver<dim>::solve()
                                                particle_container,
                                                ghost_adjacent_particles,
                                                local_adjacent_particles,
-                                               pw_pairs_in_contact,
+                                               particle_wall_pairs_in_contact,
                                                pfw_pairs_in_contact,
                                                particle_points_in_contact,
                                                particle_lines_in_contact);
 
           // Particle-particle fine search
-          pp_fine_search_object.particle_particle_fine_search(
+          particle_particle_fine_search_object.particle_particle_fine_search(
             local_contact_pair_candidates,
             ghost_contact_pair_candidates,
             local_adjacent_particles,
@@ -969,12 +996,13 @@ DEMSolver<dim>::solve()
         }
 
       // Particle-particle contact force
-      pp_contact_force_object->calculate_pp_contact_force(
-        local_adjacent_particles,
-        ghost_adjacent_particles,
-        simulation_control->get_time_step(),
-        momentum,
-        force);
+      particle_particle_contact_force_object
+        ->calculate_particle_particle_contact_force(
+          local_adjacent_particles,
+          ghost_adjacent_particles,
+          simulation_control->get_time_step(),
+          momentum,
+          force);
 
       // We have to update the positions of the points on boundary faces and
       // their normal vectors here. The localize_contact class deletes the
@@ -986,7 +1014,8 @@ DEMSolver<dim>::solve()
           Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
         grid_motion_object
           ->update_boundary_points_and_normal_vectors_in_contact_list(
-            pw_pairs_in_contact, updated_boundary_points_and_normal_vectors);
+            particle_wall_pairs_in_contact,
+            updated_boundary_points_and_normal_vectors);
 
       // Particles-walls contact force:
       particle_wall_contact_force();

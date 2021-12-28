@@ -1,14 +1,14 @@
-#include <dem/pw_broad_search.h>
+#include <dem/particle_wall_broad_search.h>
 
 using namespace dealii;
 
 template <int dim>
-PWBroadSearch<dim>::PWBroadSearch()
+ParticleWallBroadSearch<dim>::ParticleWallBroadSearch()
 {}
 
 template <int dim>
 void
-PWBroadSearch<dim>::find_particle_wall_contact_pairs(
+ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
   const std::map<int, boundary_cells_info_struct<dim>>
     &                                    boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
@@ -19,10 +19,11 @@ PWBroadSearch<dim>::find_particle_wall_contact_pairs(
                                   Tensor<1, dim>,
                                   Point<dim>,
                                   types::boundary_id,
-                                  unsigned int>>> &pw_contact_candidates)
+                                  unsigned int>>>
+    &particle_wall_contact_candidates)
 {
-  // Clearing pw_contact_candidates (output of this function)
-  pw_contact_candidates.clear();
+  // Clearing particle_wall_contact_candidates (output of this function)
+  particle_wall_contact_candidates.clear();
 
   // Iterating over the boundary_cells_information, which is the output of
   // the find_boundary_cells_information find_boundary_cells_information class.
@@ -53,8 +54,9 @@ PWBroadSearch<dim>::find_particle_wall_contact_pairs(
                particles_in_cell_iterator != particles_in_cell.end();
                ++particles_in_cell_iterator)
             {
-              // Making the tuple and adding it to the pw_contact_candidates
-              // vector. This vector is the output of this function
+              // Making the tuple and adding it to the
+              // particle_wall_contact_candidates vector. This vector is the
+              // output of this function
 
               std::tuple map_content =
                 std::make_tuple(particles_in_cell_iterator,
@@ -63,7 +65,8 @@ PWBroadSearch<dim>::find_particle_wall_contact_pairs(
                                 boundary_cells_content.boundary_id,
                                 boundary_cells_content.global_face_id);
 
-              pw_contact_candidates[particles_in_cell_iterator->get_id()]
+              particle_wall_contact_candidates[particles_in_cell_iterator
+                                                 ->get_id()]
                 .insert({boundary_cells_content.global_face_id, map_content});
             }
         }
@@ -72,7 +75,7 @@ PWBroadSearch<dim>::find_particle_wall_contact_pairs(
 
 template <int dim>
 void
-PWBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
+ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
   const std::unordered_map<
     types::particle_index,
     std::set<typename Triangulation<dim>::active_cell_iterator>>
@@ -142,5 +145,5 @@ PWBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
     }
 }
 
-template class PWBroadSearch<2>;
-template class PWBroadSearch<3>;
+template class ParticleWallBroadSearch<2>;
+template class ParticleWallBroadSearch<3>;

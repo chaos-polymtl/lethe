@@ -40,7 +40,7 @@ namespace Parameters
       // Gravitational acceleration
       Tensor<1, dim> g;
 
-      // Choosing integration method
+      // Size distribution type
       enum class size_distribution_type
       {
         uniform,
@@ -123,7 +123,7 @@ namespace Parameters
 
     struct InsertionInfo
     {
-      // Choosing insertion method
+      // Insertion method
       enum class InsertionMethod
       {
         uniform,
@@ -200,19 +200,21 @@ namespace Parameters
       // particle diameter)
       double neighborhood_threshold;
 
-      // Choosing particle-particle contact force model
-      enum class PPContactForceModel
+      // Particle-particle contact force model
+      enum class ParticleParticleContactForceModel
       {
-        pp_linear,
-        pp_nonlinear
-      } pp_contact_force_method;
+        linear,
+        hertz_mindlin_limit_force,
+        hertz_mindlin_limit_overlap,
+        hertz
+      } particle_particle_contact_force_method;
 
-      // Choosing particle-wall contact force model
-      enum class PWContactForceModel
+      // Particle-wall contact force model
+      enum class ParticleWallContactForceModel
       {
-        pw_linear,
-        pw_nonlinear
-      } pw_contact_force_method;
+        linear,
+        nonlinear
+      } particle_wall_contact_force_method;
 
       // Rolling resistance torque method
       enum class RollingResistanceMethod
@@ -222,7 +224,7 @@ namespace Parameters
         viscous_resistance
       } rolling_resistance_method;
 
-      // Choosing integration method
+      // Itegration method
       enum class IntegrationMethod
       {
         velocity_verlet,
@@ -247,7 +249,6 @@ namespace Parameters
       // Enable force post-processing
       bool calculate_force_torque;
 
-      // Choosing how the outputs is gonna be displayed
       Parameters::Verbosity force_torque_verbosity;
 
       // Output frequency
@@ -304,7 +305,7 @@ namespace Parameters
       // Number of DEM boundary conditions
       unsigned int DEM_BC_number;
 
-      // Choosing BC type
+      // Boundary condition type
       enum class BoundaryType
       {
         fixed_wall,
@@ -352,7 +353,7 @@ namespace Parameters
     class GridMotion
     {
     public:
-      // Choosing grid motion type
+      // Grid motion type
       enum class MotionType
       {
         translational,

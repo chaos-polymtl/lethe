@@ -40,10 +40,10 @@
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
-#include <dem/pw_broad_search.h>
-#include <dem/pw_contact_force.h>
-#include <dem/pw_fine_search.h>
-#include <dem/pw_nonlinear_force.h>
+#include <dem/particle_wall_broad_search.h>
+#include <dem/particle_wall_contact_force.h>
+#include <dem/particle_wall_fine_search.h>
+#include <dem/particle_wall_nonlinear_force.h>
 #include <dem/velocity_verlet_integrator.h>
 
 // Tests (with common definitions)
@@ -148,7 +148,7 @@ test()
   boundary_cells_object.build(tr, outlet_boundaries, false, std::cout);
 
   // P-W broad search
-  PWBroadSearch<dim> pw_broad_search_object;
+  ParticleWallBroadSearch<dim> particle_wall_broad_search_object;
   std::unordered_map<
     unsigned int,
     std::unordered_map<unsigned int,
@@ -157,18 +157,19 @@ test()
                                   Point<dim>,
                                   unsigned int,
                                   unsigned int>>>
-    pw_contact_list;
-  pw_broad_search_object.find_particle_wall_contact_pairs(
+    particle_wall_contact_list;
+  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
     boundary_cells_object.get_boundary_cells_information(),
     particle_handler,
-    pw_contact_list);
+    particle_wall_contact_list);
 
-  // P-W fine search
-  PWFineSearch<dim> pw_fine_search_object;
-  std::unordered_map<unsigned int,
-                     std::map<unsigned int, pw_contact_info_struct<dim>>>
-                        pw_contact_information;
-  PWNonLinearForce<dim> pw_force_object(
+  // Particle-Wall fine search
+  ParticleWallFineSearch<dim> particle_wall_fine_search_object;
+  std::unordered_map<
+    unsigned int,
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+                                  particle_wall_contact_information;
+  ParticleWallNonLinearForce<dim> particle_wall_force_object(
     dem_parameters.boundary_conditions.boundary_translational_velocity,
     dem_parameters.boundary_conditions.boundary_rotational_speed,
     dem_parameters.boundary_conditions.boundary_rotational_vector,
@@ -199,34 +200,34 @@ test()
       else
         {
           // If particle and wall are in contact
-          pw_fine_search_object.particle_wall_fine_search(
-            pw_contact_list, pw_contact_information);
-          auto pw_pairs_in_contact_iterator =
-            &pw_contact_information.begin()->second;
-          auto pw_contact_information_iterator =
-            pw_pairs_in_contact_iterator->begin();
+          particle_wall_fine_search_object.particle_wall_fine_search(
+            particle_wall_contact_list, particle_wall_contact_information);
+          auto particle_wall_pairs_in_contact_iterator =
+            &particle_wall_contact_information.begin()->second;
+          auto particle_wall_contact_information_iterator =
+            particle_wall_pairs_in_contact_iterator->begin();
 
-          pw_contact_information_iterator->second.tangential_overlap[0] = 0.0;
-          pw_contact_information_iterator->second.tangential_overlap[1] = 0.0;
+          particle_wall_contact_information_iterator->second
+            .tangential_overlap[0] = 0.0;
+          particle_wall_contact_information_iterator->second
+            .tangential_overlap[1] = 0.0;
           if (dim == 3)
             {
-              pw_contact_information_iterator->second.tangential_overlap[2] =
-                0.0;
+              particle_wall_contact_information_iterator->second
+                .tangential_overlap[2] = 0.0;
             }
-          pw_contact_information_iterator->second
+          particle_wall_contact_information_iterator->second
             .tangential_relative_velocity[0] = 0.0;
-          pw_contact_information_iterator->second
+          particle_wall_contact_information_iterator->second
             .tangential_relative_velocity[1] = 0.0;
           if (dim == 3)
             {
-              pw_contact_information_iterator->second
+              particle_wall_contact_information_iterator->second
                 .tangential_relative_velocity[2] = 0.0;
             }
 
-          pw_force_object.calculate_pw_contact_force(pw_contact_information,
-                                                     dt,
-                                                     momentum,
-                                                     force);
+          particle_wall_force_object.calculate_particle_wall_contact_force(
+            particle_wall_contact_information, dt, momentum, force);
 
           // Storing force before integration
           step_force = force[0][0];
@@ -236,9 +237,10 @@ test()
             particle_handler, g, dt, momentum, force, MOI);
 
 
-          deallog << " "
-                  << pw_contact_information_iterator->second.normal_overlap
-                  << " " << step_force << std::endl;
+          deallog
+            << " "
+            << particle_wall_contact_information_iterator->second.normal_overlap
+            << " " << step_force << std::endl;
         }
     }
 }
