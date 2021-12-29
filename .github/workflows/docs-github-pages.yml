@@ -3,14 +3,17 @@ name: Publish docs to GitHub Pages
 on: push
 
 jobs:
-  build:
+  docs:
+    name: Publish docs to GitHub Pages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Build HTML
-        uses: ammaraskar/sphinx-action@0.4
+        uses: sphinx-notes/pages@v2
+        with:
+          sphinx_version: 4.3.1
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
