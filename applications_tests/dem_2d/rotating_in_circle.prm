@@ -31,9 +31,9 @@ subsection model parameters
   set contact detection method 		   		 = constant
   set contact detection frequency                 	 = 20
   set neighborhood threshold				 = 1.5
-  set particle particle contact force method             = pp_nonlinear
-  set particle wall contact force method                 = pw_nonlinear
-  set rolling resistance torque method			 = constant_resistance
+  set particle particle contact force method             = hertz_mindlin_limit_overlap
+  set particle wall contact force method                 = nonlinear
+  set rolling resistance torque method			 = no_resistance
   set integration method				 = velocity_verlet
 end
 

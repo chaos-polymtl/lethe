@@ -309,12 +309,6 @@ protected:
   iterate();
 
 
-  /**
-   * @brief First iteration
-   * Do the first CFD iteration
-   */
-  virtual void
-  first_iteration();
 
   /**
    * @brief Allow the initial refinement of all cells of the principal mesh that are partially
@@ -357,6 +351,13 @@ protected:
    */
   void
   set_nodal_values();
+
+  /**
+   * @brief Check if a specifique boundary condition exist
+   * @param bc, the boundary type that we want to check if it exists
+   */
+  bool
+  check_existance_of_bc(BoundaryConditions::BoundaryType bc);
 
   /**
    * @brief write_checkpoint

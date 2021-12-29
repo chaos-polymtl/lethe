@@ -39,7 +39,9 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
+  subsection fluid 0 
     set kinematic viscosity            = 10
+  end
 end
 #---------------------------------------------------
 # Mesh

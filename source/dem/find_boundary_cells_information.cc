@@ -538,7 +538,7 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
                                             {
                                               pcout
                                                 << std::endl
-                                                << "Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells, or define check_diamond_cells = true in the parameter handler file. It should be mentioned that these cells are not detected if you have grid motion"
+                                                << "Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells. It should be mentioned that these cells are not detected if you have grid motion"
                                                 << std::endl;
                                               first_time_warning = false;
                                             }

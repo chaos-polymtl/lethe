@@ -100,10 +100,12 @@ RestartNavierStokes<dim>::run()
   this->setup_dofs_fd();
   this->exact_solution   = new ExactSolutionMMS<dim>;
   this->forcing_function = new MMSSineForcingFunction<dim>;
-  this->simulation_parameters.physical_properties.viscosity = 1.;
+  this->simulation_parameters.physical_properties.fluids.push_back(
+    Parameters::Fluid());
+  this->simulation_parameters.physical_properties.fluids[0].viscosity = 1.;
 
   this->simulation_control->print_progression(this->pcout);
-  this->first_iteration();
+  this->iterate();
   this->postprocess_fd(false);
   auto   errors_p1 = calculate_L2_error(this->dof_handler,
                                       this->present_solution,

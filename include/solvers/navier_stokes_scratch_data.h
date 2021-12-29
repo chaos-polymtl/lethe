@@ -48,7 +48,7 @@ using namespace dealii;
  * (values, gradients, laplacians) at all the gauss points for all degrees
  * of freedom and stores it into arrays. Additionnaly, the use can request
  * that this class gathers additional fields for physics which are coupled
- * to the Navier-Stokes equation, such as the free surface. This class
+ * to the Navier-Stokes equation, such as the VOF. This class
  * serves as a seperation between the evaluation at the gauss point of the
  * variables of interest and their use in the assembly, which is carried out
  * by the assembler functions. For more information on this design, the reader
@@ -79,22 +79,31 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  NavierStokesScratchData(const FESystem<dim> &  fe,
-                          const Quadrature<dim> &quadrature,
-                          const Mapping<dim> &   mapping)
+  NavierStokesScratchData(const FESystem<dim> &      fe,
+                          const Quadrature<dim> &    quadrature,
+                          const Mapping<dim> &       mapping,
+                          const Quadrature<dim - 1> &face_quadrature)
     : fe_values(mapping,
                 fe,
                 quadrature,
                 update_values | update_quadrature_points | update_JxW_values |
                   update_gradients | update_hessians)
+    , fe_face_values(mapping,
+                     fe,
+                     face_quadrature,
+                     update_values | update_quadrature_points |
+                       update_JxW_values | update_gradients | update_hessians |
+                       update_normal_vectors)
   {
     allocate();
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_free_surface          = false;
+    gather_VOF                   = false;
     gather_void_fraction         = false;
     gather_particles_information = false;
+    gather_temperature           = false;
+    gather_hessian               = false;
   }
 
   /**
@@ -116,12 +125,18 @@ public:
                 sd.fe_values.get_quadrature(),
                 update_values | update_quadrature_points | update_JxW_values |
                   update_gradients | update_hessians)
+    , fe_face_values(sd.fe_face_values.get_mapping(),
+                     sd.fe_face_values.get_fe(),
+                     sd.fe_face_values.get_quadrature(),
+                     update_values | update_quadrature_points |
+                       update_JxW_values | update_gradients | update_hessians |
+                       update_normal_vectors)
   {
     allocate();
-    if (sd.gather_free_surface)
-      enable_free_surface(sd.fe_values_free_surface->get_fe(),
-                          sd.fe_values_free_surface->get_quadrature(),
-                          sd.fe_values_free_surface->get_mapping());
+    if (sd.gather_VOF)
+      enable_VOF(sd.fe_values_VOF->get_fe(),
+                 sd.fe_values_VOF->get_quadrature(),
+                 sd.fe_values_VOF->get_mapping());
 
     if (sd.gather_void_fraction)
       enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
@@ -129,6 +144,11 @@ public:
                            sd.fe_values_void_fraction->get_mapping());
     if (sd.gather_particles_information)
       enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell);
+    if (sd.gather_temperature)
+      enable_heat_transfer(sd.fe_values_temperature->get_fe(),
+                           sd.fe_values_temperature->get_quadrature(),
+                           sd.fe_values_temperature->get_mapping());
+    gather_hessian = sd.gather_hessian;
   }
 
 
@@ -208,6 +228,10 @@ public:
       current_solution, this->velocity_gradients);
     this->fe_values[velocities].get_function_laplacians(
       current_solution, this->velocity_laplacians);
+    if (gather_hessian)
+      this->fe_values[velocities].get_function_hessians(
+        current_solution, this->velocity_hessians);
+
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
         this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
@@ -253,13 +277,151 @@ public:
             this->grad_phi_p[q][k] = this->fe_values[pressure].gradient(k, q);
           }
       }
+
+    is_boundary_cell = cell->at_boundary();
+    if (is_boundary_cell)
+      {
+        n_faces          = cell->n_faces();
+        is_boundary_face = std::vector<bool>(n_faces, false);
+        n_faces_q_points = fe_face_values.get_quadrature().size();
+        boundary_face_id = std::vector<unsigned int>(n_faces);
+
+        face_JxW = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+
+        // Velocity and pressure values
+        // First vector is face number, second quadrature point
+        this->face_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_velocity_divergences = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        this->face_velocity_gradients =
+          std::vector<std::vector<Tensor<2, dim>>>(
+            n_faces, std::vector<Tensor<2, dim>>(n_faces_q_points));
+
+        this->face_velocity_laplacians =
+          std::vector<std::vector<Tensor<1, dim>>>(
+            n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_pressure_values = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        this->face_pressure_gradients =
+          std::vector<std::vector<Tensor<1, dim>>>(
+            n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_quadrature_points = std::vector<std::vector<Point<dim>>>(
+          n_faces, std::vector<Point<dim>>(n_faces_q_points));
+
+        this->face_div_phi_u = std::vector<std::vector<std::vector<double>>>(
+          n_faces,
+          std::vector<std::vector<double>>(n_faces_q_points,
+                                           std::vector<double>(n_dofs)));
+
+        this->face_phi_u =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+
+        this->face_hess_phi_u =
+          std::vector<std::vector<std::vector<Tensor<3, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<3, dim>>>(
+              n_faces_q_points, std::vector<Tensor<3, dim>>(n_dofs)));
+
+        this->face_laplacian_phi_u =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+
+        this->face_grad_phi_u =
+          std::vector<std::vector<std::vector<Tensor<2, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<2, dim>>>(
+              n_faces_q_points, std::vector<Tensor<2, dim>>(n_dofs)));
+
+        this->face_phi_p = std::vector<std::vector<std::vector<double>>>(
+          n_faces,
+          std::vector<std::vector<double>>(n_faces_q_points,
+                                           std::vector<double>(n_dofs)));
+
+        this->face_grad_phi_p =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+        for (const auto face : cell->face_indices())
+          {
+            is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (is_boundary_face[face])
+              {
+                fe_face_values.reinit(cell, face);
+                n_dofs = fe_face_values.get_fe().n_dofs_per_cell();
+                boundary_face_id[face] = cell->face(face)->boundary_id();
+                // Shape functions
+                // First vector is face number, second quadrature point, third
+                // DOF
+
+                // Gather velocity (values, gradient and laplacian)
+                this->fe_face_values[velocities].get_function_values(
+                  current_solution, this->face_velocity_values[face]);
+                this->fe_face_values[velocities].get_function_gradients(
+                  current_solution, this->face_velocity_gradients[face]);
+                this->fe_face_values[velocities].get_function_laplacians(
+                  current_solution, this->face_velocity_laplacians[face]);
+
+                // Gather pressure (values, gradient)
+                this->fe_values[pressure].get_function_values(
+                  current_solution, this->face_pressure_values[face]);
+                this->fe_values[pressure].get_function_gradients(
+                  current_solution, this->face_pressure_gradients[face]);
+
+                for (unsigned int q = 0; q < n_faces_q_points; ++q)
+                  {
+                    this->face_JxW[face][q] = this->fe_face_values.JxW(q);
+                    this->face_normal[face][q] =
+                      this->fe_face_values.normal_vector(q);
+                    this->face_quadrature_points[face][q] =
+                      this->fe_face_values.quadrature_point(q);
+                    for (const unsigned int k : fe_face_values.dof_indices())
+                      {
+                        // Velocity
+                        this->face_phi_u[face][q][k] =
+                          this->fe_face_values[velocities].value(k, q);
+                        this->face_div_phi_u[face][q][k] =
+                          this->fe_face_values[velocities].divergence(k, q);
+                        this->face_grad_phi_u[face][q][k] =
+                          this->fe_face_values[velocities].gradient(k, q);
+                        this->face_hess_phi_u[face][q][k] =
+                          this->fe_face_values[velocities].hessian(k, q);
+                        for (int d = 0; d < dim; ++d)
+                          this->face_laplacian_phi_u[face][q][k][d] =
+                            trace(this->face_hess_phi_u[face][q][k][d]);
+                        // Pressure
+                        this->face_phi_p[face][q][k] =
+                          this->fe_face_values[pressure].value(k, q);
+                        this->face_grad_phi_p[face][q][k] =
+                          this->fe_face_values[pressure].gradient(k, q);
+                      }
+                  }
+              }
+          }
+      }
   }
 
 
   /**
-   * @brief enable_free_surface Enables the collection of the free surface data by the scratch
+   * @brief enable_VOF Enables the collection of the VOF data by the scratch
    *
-   * @param fe FiniteElement associated with the free surface.
+   * @param fe FiniteElement associated with the VOF.
    *
    * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
    *
@@ -267,14 +429,14 @@ public:
    */
 
   void
-  enable_free_surface(const FiniteElement<dim> &fe,
-                      const Quadrature<dim> &   quadrature,
-                      const Mapping<dim> &      mapping);
+  enable_VOF(const FiniteElement<dim> &fe,
+             const Quadrature<dim> &   quadrature,
+             const Mapping<dim> &      mapping);
 
-  /** @brief Reinitialize the content of the scratch for the free surface
+  /** @brief Reinitialize the content of the scratch for the VOF
    *
    * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the free surface FE and not the
+   * This cell must be compatible with the VOF FE and not the
    * Navier-Stokes FE
    *
    * @param current_solution The present value of the solution for [alpha]
@@ -287,24 +449,23 @@ public:
 
   template <typename VectorType>
   void
-  reinit_free_surface(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
-    const std::vector<VectorType> & /*solution_stages*/)
+  reinit_VOF(const typename DoFHandler<dim>::active_cell_iterator &cell,
+             const VectorType &             current_solution,
+             const std::vector<VectorType> &previous_solutions,
+             const std::vector<VectorType> & /*solution_stages*/)
   {
-    this->fe_values_free_surface->reinit(cell);
+    this->fe_values_VOF->reinit(cell);
     // Gather phase fraction (values, gradient)
-    this->fe_values_free_surface->get_function_values(current_solution,
-                                                      this->phase_values);
-    this->fe_values_free_surface->get_function_gradients(
-      current_solution, this->phase_gradient_values);
+    this->fe_values_VOF->get_function_values(current_solution,
+                                             this->phase_values);
+    this->fe_values_VOF->get_function_gradients(current_solution,
+                                                this->phase_gradient_values);
 
     // Gather previous phase fraction values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_free_surface->get_function_values(
-          previous_solutions[p], previous_phase_values[p]);
+        this->fe_values_VOF->get_function_values(previous_solutions[p],
+                                                 previous_phase_values[p]);
       }
   }
 
@@ -517,6 +678,56 @@ public:
       current_solution, fluid_pressure_gradients_at_particle_location);
   }
 
+
+  /**
+   * @brief enable_heat_transfer Enables the collection of the heat transfer data (Temperature field) by the scratch
+   *
+   * @param fe FiniteElement associated with the heat transfer.
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   */
+
+  void
+  enable_heat_transfer(const FiniteElement<dim> &fe,
+                       const Quadrature<dim> &   quadrature,
+                       const Mapping<dim> &      mapping);
+
+
+  /** @brief Reinitialize the content of the scratch for the heat transfer
+   *
+   * @param cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the heat transfer FE and not the
+   * Navier-Stokes FE
+   *
+   * @param current_solution The present value of the solution for temperature
+   *
+   * @param previous_solutions The solutions at the previous time steps for temperature
+   *
+   */
+
+  template <typename VectorType>
+  void
+  reinit_heat_transfer(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType &                                    current_solution)
+  {
+    this->fe_values_temperature->reinit(cell);
+
+    // Gather temperature
+    this->fe_values_temperature->get_function_values(current_solution,
+                                                     this->temperature_values);
+  }
+
+  /**
+   * @brief enable_hessian Enables the collection of the hesian tensor when it's a non Newtonian flow
+   */
+
+  void
+  enable_hessian();
+
+
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
   unsigned int               n_dofs;
@@ -539,6 +750,7 @@ public:
   std::vector<double>                      velocity_divergences;
   std::vector<Tensor<2, dim>>              velocity_gradients;
   std::vector<Tensor<1, dim>>              velocity_laplacians;
+  std::vector<Tensor<3, dim>>              velocity_hessians;
   std::vector<double>                      pressure_values;
   std::vector<Tensor<1, dim>>              pressure_gradients;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
@@ -556,15 +768,15 @@ public:
 
 
   /**
-   * Scratch component for the free surface auxiliary physics
+   * Scratch component for the VOF auxiliary physics
    */
-  bool                             gather_free_surface;
-  unsigned int                     n_dofs_free_surface;
+  bool                             gather_VOF;
+  unsigned int                     n_dofs_VOF;
   std::vector<double>              phase_values;
   std::vector<std::vector<double>> previous_phase_values;
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>> fe_values_free_surface;
+  std::shared_ptr<FEValues<dim>> fe_values_VOF;
 
 
   /**
@@ -594,6 +806,59 @@ public:
   double                                                            cell_volume;
   double                                                            beta_drag;
   Tensor<1, dim> undisturbed_flow_force;
+
+  /**
+   * Scratch component for the heat transfer
+   */
+  bool                gather_temperature;
+  unsigned int        n_dofs_heat_transfer;
+  std::vector<double> temperature_values;
+  // This is stored as a shared_ptr because it is only instantiated when needed
+  std::shared_ptr<FEValues<dim>> fe_values_temperature;
+
+  /**
+   * Is boundary cell indicator
+   */
+  bool is_boundary_cell;
+
+  // If a rheological model is being used for a non Newtonian flow
+  bool gather_hessian;
+
+  FEFaceValues<dim> fe_face_values;
+
+  unsigned int n_faces;
+  unsigned int n_faces_q_points;
+  unsigned int face_n_dofs;
+
+  // If boundary cell indicator
+  std::vector<bool>         is_boundary_face;
+  std::vector<unsigned int> boundary_face_id;
+
+
+  // Quadrature
+  std::vector<std::vector<double>>         face_JxW;
+  std::vector<std::vector<Point<dim>>>     face_quadrature_points;
+  std::vector<std::vector<Tensor<1, dim>>> face_normal;
+
+  // Velocity and pressure values
+  // First vector is face number, second quadrature point
+  std::vector<std::vector<Tensor<1, dim>>> face_velocity_values;
+  std::vector<std::vector<double>>         face_velocity_divergences;
+  std::vector<std::vector<Tensor<2, dim>>> face_velocity_gradients;
+  std::vector<std::vector<Tensor<1, dim>>> face_velocity_laplacians;
+  std::vector<std::vector<double>>         face_pressure_values;
+  std::vector<std::vector<Tensor<1, dim>>> face_pressure_gradients;
+
+
+  // Shape functions
+  // First vector is face number, second quadrature point, third DOF
+  std::vector<std::vector<std::vector<double>>>         face_div_phi_u;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_phi_u;
+  std::vector<std::vector<std::vector<Tensor<3, dim>>>> face_hess_phi_u;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_laplacian_phi_u;
+  std::vector<std::vector<std::vector<Tensor<2, dim>>>> face_grad_phi_u;
+  std::vector<std::vector<std::vector<double>>>         face_phi_p;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
 };
 
 #endif

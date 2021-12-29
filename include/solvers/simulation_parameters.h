@@ -61,6 +61,8 @@ public:
   Parameters::VelocitySource                        velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
+  Parameters::NonNewtonian                          non_newtonian;
+  Parameters::InterfaceSharpening                   interface_sharpening;
   Parameters::Multiphysics                          multiphysics;
 
   void
@@ -95,6 +97,8 @@ public:
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
+    non_newtonian.declare_parameters(prm);
+    interface_sharpening.declare_parameters(prm);
 
     analytical_solution = new AnalyticalSolutions::AnalyticalSolution<dim>;
     analytical_solution->declare_parameters(prm);
@@ -124,6 +128,8 @@ public:
     forces_parameters.parse_parameters(prm);
     post_processing.parse_parameters(prm);
     flow_control.parse_parameters(prm);
+    non_newtonian.parse_parameters(prm);
+    interface_sharpening.parse_parameters(prm);
     restart_parameters.parse_parameters(prm);
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);
@@ -139,10 +145,10 @@ public:
     multiphysics.parse_parameters(prm);
 
     // Check consistency of parameters parsed in different subsections
-    if (multiphysics.free_surface && physical_properties.number_fluids != 2)
+    if (multiphysics.VOF && physical_properties.number_of_fluids != 2)
       {
         throw std::logic_error(
-          "Inconsistency in .prm!\n with free surface = true\n use: number of fluids = 2");
+          "Inconsistency in .prm!\n with VOF = true\n use: number of fluids = 2");
       }
   }
 };

@@ -90,11 +90,13 @@ HeatTransfer<dim>::assemble_system_matrix()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  auto scratch_data = HeatTransferScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->temperature_mapping,
-                                                   dof_handler_fluid->get_fe(),
-                                                   *this->face_quadrature);
+  auto scratch_data = HeatTransferScratchData<dim>(
+    this->simulation_parameters.physical_properties,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->temperature_mapping,
+    dof_handler_fluid->get_fe(),
+    *this->face_quadrature);
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -182,11 +184,13 @@ HeatTransfer<dim>::assemble_system_rhs()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  auto scratch_data = HeatTransferScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->temperature_mapping,
-                                                   dof_handler_fluid->get_fe(),
-                                                   *this->face_quadrature);
+  auto scratch_data = HeatTransferScratchData<dim>(
+    this->simulation_parameters.physical_properties,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->temperature_mapping,
+    dof_handler_fluid->get_fe(),
+    *this->face_quadrature);
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),

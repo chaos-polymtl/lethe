@@ -1,0 +1,18 @@
+name: Pull requests
+
+on:
+  pull_request_target:
+
+
+jobs:
+  first-interaction:
+    name: First interaction
+    runs-on: ubuntu-latest
+
+    steps:
+      # Only on PR
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: 'Hello, thanks for opening your first issue. Welcome you to Lethe community!'
+          pr-message: 'Hello, thanks for opening your first Pull Request and taking the time to improve Lethe.'

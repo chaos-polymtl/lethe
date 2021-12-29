@@ -11,7 +11,8 @@ subsection simulation control
   set output frequency        = 1
   set output boundaries       = true
   set subdivision             = 0
-  set number mesh adapt       = 4      # If steady, nb mesh adaptation
+  set number mesh adapt       = 0      # If steady, nb mesh adaptation
+  set output path = ./
 end
 
 #---------------------------------------------------
@@ -27,7 +28,9 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set kinematic viscosity            = 0.0200
+  subsection fluid 0
+    set kinematic viscosity            = 1.0000
+  end
 end
 
 subsection timer
@@ -37,8 +40,8 @@ end
 # Velocity Source
 #--------------------------------------------------
 subsection velocity source
-    set type=srf
-    set omega_z=-6.28318
+    set type = srf
+    set omega_z = -6.28318
 end
 
 #---------------------------------------------------
@@ -59,23 +62,16 @@ end
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
-  set type                    = kelly
-  set variable                = velocity
-  set fraction type           = number
-  set max number elements     = 600000
-  set max refinement level    = 2
-  set min refinement level    = 0
-  set frequency               = 1
-  set fraction refinement     = 0.15
-  set fraction coarsening     = 0.00
+  set type                    = none
 end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 subsection mesh
     set type                 = gmsh
-    set file name            = quarter_ribbon.msh
+    set file name            = ribbon.msh
     set initial refinement   = 0
+    set simplex = true
 end
 
 # --------------------------------------------------
@@ -119,27 +115,7 @@ end
 # Manifolds
 #---------------------------------------------------
 subsection manifolds
-  set number                  = 4
-  subsection manifold 0
-      set type = iges
-      set id  = 2
-      set cad file              = quarter_ribbon_1.iges
-  end
-    subsection manifold 1
-        set type = iges
-        set id  = 3
-      set cad file              = quarter_ribbon_2.iges
-    end
-    subsection manifold 2
-        set type = iges
-        set id  = 4
-        set cad file              = shaft.iges
-    end
-    subsection manifold 3
-        set type = iges
-        set id  = 0
-        set cad file              = tank.iges
-    end
+  set number                  = 0
 end
 
 

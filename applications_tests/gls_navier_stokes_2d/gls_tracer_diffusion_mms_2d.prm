@@ -43,7 +43,10 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-  set tracer diffusivity = 1
+  set number of fluids = 1
+  subsection fluid 0
+    set tracer diffusivity = 1
+  end
 end
 
 #---------------------------------------------------

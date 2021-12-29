@@ -9,6 +9,10 @@
 // Numerics
 #include <deal.II/numerics/data_postprocessor.h>
 
+// Rheological models
+#include <core/rheological_model.h>
+
+
 // standard library includes includes
 #include <vector>
 
@@ -164,6 +168,59 @@ private:
   double omega_x;
   double omega_y;
   double omega_z;
+};
+
+/**
+ * @brief Calculates de viscosity on each quadrature point for a non Newtonian flow.
+ * The equation of the viscosity depends on the used rheological model.
+ */
+template <int dim>
+class NonNewtonianViscosityPostprocessor : public DataPostprocessorScalar<dim>
+{
+public:
+  NonNewtonianViscosityPostprocessor(
+    Parameters::NonNewtonian p_non_newtonian_parameters)
+    : DataPostprocessorScalar<dim>("viscosity", update_gradients)
+  {
+    if (p_non_newtonian_parameters.model ==
+        Parameters::NonNewtonian::Model::carreau)
+      {
+        rheological_model =
+          std::make_shared<Carreau<dim>>(p_non_newtonian_parameters);
+      }
+  }
+  virtual void
+  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
+                        std::vector<Vector<double>> &computed_quantities) const
+  {
+    const unsigned int n_quadrature_points = inputs.solution_gradients.size();
+
+    for (unsigned int q = 0; q < n_quadrature_points; ++q)
+      {
+        const double shear_rate_magnitude =
+          calculate_shear_rate_magnitude(inputs.solution_gradients[q]);
+        computed_quantities[q] =
+          rheological_model->get_viscosity(shear_rate_magnitude);
+      }
+  }
+
+  double
+  calculate_shear_rate_magnitude(
+    const std::vector<Tensor<1, dim>> &gradients) const
+  {
+    Tensor<2, dim> shear_rate;
+    for (int i = 0; i < dim; ++i)
+      {
+        for (int j = 0; j < dim; ++j)
+          {
+            shear_rate[i][j] += gradients[i][j] + gradients[j][i];
+          }
+      }
+    return rheological_model->get_shear_rate_magnitude(shear_rate);
+  }
+
+private:
+  std::shared_ptr<RheologicalModel<dim>> rheological_model;
 };
 
 #endif

@@ -43,6 +43,7 @@ class CFDDEMSolver : public GLSVANSSolver<dim>
 {
   using FuncPtrType = bool (CFDDEMSolver<dim>::*)(const unsigned int &counter);
   FuncPtrType check_contact_search_step;
+  FuncPtrType check_load_balance_step;
 
 public:
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
@@ -51,6 +52,39 @@ public:
 
   virtual void
   solve() override;
+
+  /**
+   * The cell_weight() function indicates to the triangulation how much
+   * computational work is expected to happen on this cell, and consequently
+   * how the domain needs to be partitioned so that every MPI rank receives a
+   * roughly equal amount of work (potentially not an equal number of cells).
+   * While the function is called from the outside, it is connected to the
+   * corresponding signal from inside this class, therefore it can be private.
+   * This function is the key component that allow us to dynamically balance the
+   * computational load. The function attributes a weight to
+   * every cell that represents the computational work on this cell. Here the
+   * majority of work is expected to happen on the particles, therefore the
+   * return value of this function (representing "work for this cell") is
+   * calculated based on the number of particles in the current cell.
+   * The function is connected to the cell_weight() signal inside the
+   * triangulation, and will be called once per cell, whenever the triangulation
+   * repartitions the domain between ranks (the connection is created inside the
+   * particles_generation() function of this class).
+   */
+  unsigned int
+  cell_weight(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+      &                                                                  cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
+
+  /**
+   * @brief Manages the call to the load balancing. Returns true if
+   * load balancing is performed
+   *
+   */
+  void
+  load_balance();
 
 protected:
 private:
@@ -102,20 +136,6 @@ private:
   particle_wall_contact_force();
 
   /**
-   * Finds contact search steps for constant contact search method
-   */
-  bool
-  check_contact_search_step_constant(const unsigned int &counter);
-
-
-  /**
-   * Finds contact search steps for dynamic contact search method
-   */
-  bool
-  check_contact_search_step_dynamic(const unsigned int & /*counter*/);
-
-
-  /**
    * @brief Updates moment of inertia container after sorting particles
    * into subdomains
    *
@@ -146,8 +166,8 @@ private:
    *
    * @return A pointer to the particle-particle contact force object
    */
-  std::shared_ptr<PPContactForce<dim>>
-  set_pp_contact_force();
+  std::shared_ptr<ParticleParticleContactForce<dim>>
+  set_particle_particle_contact_force();
 
   /**
    * Sets the chosen particle-wall contact force model in the parameter handler
@@ -155,8 +175,8 @@ private:
    *
    * @return A pointer to the particle-wall contact force object
    */
-  std::shared_ptr<PWContactForce<dim>>
-  set_pw_contact_force();
+  std::shared_ptr<ParticleWallContactForce<dim>>
+  set_particle_wall_contact_force();
 
   void
   read_dem();
@@ -166,6 +186,16 @@ private:
 
   void
   read_checkpoint() override;
+
+  void
+  print_particles_summary();
+
+  /**
+   * @brief postprocess
+   * Post-process fluid dynamics after an iteration
+   */
+  void
+  postprocess_fd(bool first_iteration) override;
 
 
   unsigned int                coupling_frequency;
@@ -179,7 +209,6 @@ private:
   double                      neighborhood_threshold_squared;
   double                      maximum_particle_diameter;
   double                      standard_deviation_multiplier;
-  unsigned int                contact_detection_frequency;
   double                      smallest_contact_search_criterion;
   double                      triangulation_cell_diameter;
 
@@ -193,19 +222,21 @@ private:
     ghost_contact_pair_candidates;
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     local_adjacent_particles;
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       particle_particle_contact_info_struct<dim>>>
     ghost_adjacent_particles;
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
-    pw_pairs_in_contact;
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    particle_wall_pairs_in_contact;
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, pw_contact_info_struct<dim>>>
+    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     pfw_pairs_in_contact;
   std::unordered_map<
     types::particle_index,
@@ -215,7 +246,7 @@ private:
                                   Point<dim>,
                                   unsigned int,
                                   unsigned int>>>
-    pw_contact_candidates;
+    particle_wall_contact_candidates;
   std::unordered_map<types::particle_index,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
@@ -240,20 +271,22 @@ private:
     torques_boundary_information;
 
 
-  PPBroadSearch<dim>                   pp_broad_search_object;
-  PPFineSearch<dim>                    pp_fine_search_object;
-  PWBroadSearch<dim>                   pw_broad_search_object;
-  ParticlePointLineBroadSearch<dim>    particle_point_line_broad_search_object;
-  PWFineSearch<dim>                    pw_fine_search_object;
-  ParticlePointLineFineSearch<dim>     particle_point_line_fine_search_object;
-  ParticlePointLineForce<dim>          particle_point_line_contact_force_object;
-  std::shared_ptr<Integrator<dim>>     integrator_object;
-  std::shared_ptr<Insertion<dim>>      insertion_object;
-  std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
-  std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
-  Visualization<dim>                   visualization_object;
-  BoundaryCellsInformation<dim>        boundary_cell_object;
-  FindCellNeighbors<dim>               cell_neighbors_object;
+  ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
+  ParticleParticleFineSearch<dim>   particle_particle_fine_search_object;
+  ParticleWallBroadSearch<dim>      particle_wall_broad_search_object;
+  ParticlePointLineBroadSearch<dim> particle_point_line_broad_search_object;
+  ParticleWallFineSearch<dim>       particle_wall_fine_search_object;
+  ParticlePointLineFineSearch<dim>  particle_point_line_fine_search_object;
+  ParticlePointLineForce<dim>       particle_point_line_contact_force_object;
+  std::shared_ptr<Integrator<dim>>  integrator_object;
+  std::shared_ptr<Insertion<dim>>   insertion_object;
+  std::shared_ptr<ParticleParticleContactForce<dim>>
+    particle_particle_contact_force_object;
+  std::shared_ptr<ParticleWallContactForce<dim>>
+                                particle_wall_contact_force_object;
+  Visualization<dim>            visualization_object;
+  BoundaryCellsInformation<dim> boundary_cell_object;
+  FindCellNeighbors<dim>        cell_neighbors_object;
 
   DEM::DEMProperties<dim> properties_class;
 
@@ -264,10 +297,8 @@ private:
 
   DEMSolverParameters<dim> dem_parameters;
   double                   dem_time_step;
-  const unsigned int       this_mpi_process =
-    Utilities::MPI::this_mpi_process(this->mpi_communicator);
-  const unsigned int n_mpi_processes =
-    Utilities::MPI::n_mpi_processes(this->mpi_communicator);
+  const unsigned int       this_mpi_process;
+  const unsigned int       n_mpi_processes;
 
   Triangulation<dim> tria;
 };

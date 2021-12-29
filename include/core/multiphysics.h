@@ -19,7 +19,7 @@
 
 /*
  * This file defines a small enum which is used to identify
- * the various physics solved within Lethe
+ * the various physics solved within Lethe.
  */
 
 
@@ -31,7 +31,7 @@ enum PhysicsID : unsigned int
   fluid_dynamics = 0,
   heat_transfer  = 1,
   tracer         = 2,
-  free_surface   = 3
+  VOF            = 3
 };
 
 #endif

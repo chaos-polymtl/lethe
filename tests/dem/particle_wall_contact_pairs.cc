@@ -37,7 +37,7 @@
 
 // Lethe
 #include <dem/find_boundary_cells_information.h>
-#include <dem/pw_broad_search.h>
+#include <dem/particle_wall_broad_search.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -97,7 +97,7 @@ test()
   boundary_cells_object.build(tr, outlet_boundaries, false, std::cout);
 
   // Calling particle-wall broad search
-  PWBroadSearch<dim> broad_search_object;
+  ParticleWallBroadSearch<dim> broad_search_object;
   std::unordered_map<
     unsigned int,
     std::unordered_map<unsigned int,
@@ -106,23 +106,28 @@ test()
                                   Point<dim>,
                                   unsigned int,
                                   unsigned int>>>
-    pw_contact_list;
+    particle_wall_contact_list;
   broad_search_object.find_particle_wall_contact_pairs(
     boundary_cells_object.get_boundary_cells_information(),
     particle_handler,
-    pw_contact_list);
+    particle_wall_contact_list);
 
   // Output
-  for (auto pw_contact_list_iterator = pw_contact_list.begin();
-       pw_contact_list_iterator != pw_contact_list.end();
-       ++pw_contact_list_iterator)
+  for (auto particle_wall_contact_list_iterator =
+         particle_wall_contact_list.begin();
+       particle_wall_contact_list_iterator != particle_wall_contact_list.end();
+       ++particle_wall_contact_list_iterator)
     {
-      auto pw_candidate_content = &pw_contact_list_iterator->second;
-      for (auto pw_candidate_content_iterator = pw_candidate_content->begin();
-           pw_candidate_content_iterator != pw_candidate_content->end();
-           ++pw_candidate_content_iterator)
+      auto particle_wall_candidate_content =
+        &particle_wall_contact_list_iterator->second;
+      for (auto particle_wall_candidate_content_iterator =
+             particle_wall_candidate_content->begin();
+           particle_wall_candidate_content_iterator !=
+           particle_wall_candidate_content->end();
+           ++particle_wall_candidate_content_iterator)
         {
-          auto contact_information  = pw_candidate_content_iterator->second;
+          auto contact_information =
+            particle_wall_candidate_content_iterator->second;
           auto particle_information = std::get<0>(contact_information);
           deallog << "Particle " << particle_information->get_id()
                   << " is located in a boundary cell" << std::endl;

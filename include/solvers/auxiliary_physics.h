@@ -29,12 +29,12 @@
 
 /**
  * Au auxiliary physics is defined as a physics that is solved on top of
- * a core physics, the latter being the Navier-Stokes
- * equations. Auxiliary physics are simpler physics around which the entire
- * simulation process does not need to be tailored. Examples of auxiliary
- * physics are temperature and concentration. Generally, the auxiliary physics
- * does not affect the core physics. For example, temperature is advected by the
- * fluid flow, but buoyancy effects are not taken into account.
+ * a core physics, the latter being the Navier-Stokes equations.
+ * Auxiliary physics are simpler physics around which the entire simulation
+ * process does not need to be tailored. Examples of auxiliary physics are
+ * temperature and concentration. Generally, the auxiliary physics does not
+ * affect the core physics. For example, temperature is advected by the fluid
+ * flow, but buoyancy effects are not taken into account.
  *
  * The auxiliary physics are managed by the multiphysics interface of Lethe.
  *
@@ -103,6 +103,13 @@ public:
   percolate_time_vectors() = 0;
 
   /**
+   * @brief Carry out modifications on the auxiliary physic solution.
+   * To be defined for some physics only (eg. free surface, see vof.h).
+   */
+  virtual void
+  modify_solution(){};
+
+  /**
    * @brief Provide the dof handler associated with an auxiliary physics
    * TODO : delete as the auxiliary physics are supposed to pass their
    * dof_handler to the multiphysics_interface directly
@@ -140,12 +147,17 @@ public:
   virtual void
   write_checkpoint() = 0;
 
-
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
    */
   virtual void
   read_checkpoint() = 0;
+
+  /**
+   * @brief Compute the Kelly error estimator used to refine mesh on a auxiliary physic parameter.
+   */
+  virtual void
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell) = 0;
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.

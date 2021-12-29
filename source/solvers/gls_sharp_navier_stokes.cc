@@ -27,6 +27,7 @@
 
 #include <solvers/gls_sharp_navier_stokes.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
+#include <solvers/postprocessing_cfd.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -222,8 +223,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
   int    order = this->simulation_parameters.particlesParameters->order;
-  double mu    = this->simulation_parameters.physical_properties.viscosity;
-  double rho   = this->simulation_parameters.particlesParameters->density;
+  double mu =
+    this->simulation_parameters.physical_properties.fluids[0].viscosity;
+  double rho = this->simulation_parameters.particlesParameters->density;
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
   IBStencil<dim>      stencil;
@@ -634,6 +636,12 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
       this->write_output_results(this->present_solution);
     }
 
+  bool enable =
+    this->simulation_parameters.analytical_solution->calculate_error();
+  this->simulation_parameters.analytical_solution->set_enable(false);
+  NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+    postprocess_fd(firstIter);
+  this->simulation_parameters.analytical_solution->set_enable(enable);
   // Calculate the error with respect to the analytical solution
   if (!firstIter &&
       this->simulation_parameters.analytical_solution->calculate_error())
@@ -667,6 +675,18 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
             "time", this->simulation_control->get_current_time());
           this->error_table.add_value("error_velocity", error.first);
           this->error_table.add_value("error_pressure", error.second);
+
+          if (this->simulation_parameters.timer.write_time_in_error_table)
+            {
+              auto summary = this->computing_timer.get_summary_data(
+                this->computing_timer.total_wall_time);
+              double total_time = 0;
+              for (auto it = summary.begin(); it != summary.end(); ++it)
+                {
+                  total_time += summary[it->first];
+                }
+              this->error_table.add_value("total_time", total_time);
+            }
         }
       if (this->simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
@@ -677,18 +697,24 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
     }
 }
 
+
 template <int dim>
 std::pair<double, double>
 GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
-
-  QGauss<dim>   quadrature_formula(this->number_quadrature_points + 1);
-  FEValues<dim> fe_values(*this->mapping,
+  QGauss<dim>        quadrature_formula(this->number_quadrature_points + 1);
+  FEValues<dim>      fe_values(*this->mapping,
                           *this->fe,
                           quadrature_formula,
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
+  FEFaceValues<dim>  fe_face_values(*this->mapping,
+                                   *this->fe,
+                                   *this->face_quadrature,
+                                   update_values | update_gradients |
+                                     update_quadrature_points |
+                                     update_JxW_values);
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -698,11 +724,13 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   std::vector<types::global_dof_index> local_dof_indices(
     dofs_per_cell); //  Local connectivity
 
-  const unsigned int n_q_points = quadrature_formula.size();
+  const unsigned int n_q_points      = quadrature_formula.size();
+  const unsigned int n_q_points_face = this->face_quadrature->size();
 
   std::vector<Vector<double>> q_exactSol(n_q_points, Vector<double>(dim + 1));
 
   std::vector<Tensor<1, dim>> local_velocity_values(n_q_points);
+  std::vector<Tensor<1, dim>> local_face_velocity_values(n_q_points_face);
   std::vector<double>         local_pressure_values(n_q_points);
   std::vector<double>         div_phi_u(dofs_per_cell);
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
@@ -716,6 +744,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                                        support_points);
 
   double l2errorU                  = 0.;
+  double l2errorU_boundary         = 0.;
   double l2errorP                  = 0.;
   double total_velocity_divergence = 0.;
   double pressure_integral         = 0;
@@ -772,9 +801,11 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
     Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
   volume = Utilities::MPI::sum(volume, this->mpi_communicator);
 
+
   double average_pressure       = pressure_integral / volume;
   double average_exact_pressure = exact_pressure_integral / volume;
   cell = this->dof_handler.begin_active(), endc = this->dof_handler.end();
+
   for (; cell != endc; ++cell)
     {
       if (cell->is_locally_owned())
@@ -788,6 +819,82 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+          if (cell->at_boundary() &&
+              this->check_existance_of_bc(
+                BoundaryConditions::BoundaryType::function_weak))
+            {
+              for (unsigned int i_bc = 0;
+                   i_bc < this->simulation_parameters.boundary_conditions.size;
+                   ++i_bc)
+                {
+                  if (this->simulation_parameters.boundary_conditions
+                        .type[i_bc] ==
+                      BoundaryConditions::BoundaryType::function_weak)
+                    {
+                      for (const auto face : cell->face_indices())
+                        {
+                          if (cell->face(face)->at_boundary())
+                            {
+                              unsigned int boundary_id =
+                                cell->face(face)->boundary_id();
+                              if (boundary_id ==
+                                  this->simulation_parameters
+                                    .boundary_conditions.id[i_bc])
+                                {
+                                  NavierStokesFunctionDefined<dim> function_v(
+                                    &this->simulation_parameters
+                                       .boundary_conditions
+                                       .bcFunctions[boundary_id]
+                                       .u,
+                                    &this->simulation_parameters
+                                       .boundary_conditions
+                                       .bcFunctions[boundary_id]
+                                       .v,
+                                    &this->simulation_parameters
+                                       .boundary_conditions
+                                       .bcFunctions[boundary_id]
+                                       .w);
+
+                                  fe_face_values.reinit(cell, face);
+                                  fe_face_values[velocities]
+                                    .get_function_values(
+                                      this->present_solution,
+                                      local_face_velocity_values);
+                                  for (unsigned int q = 0; q < n_q_points_face;
+                                       q++)
+                                    {
+                                      double u_x =
+                                        local_face_velocity_values[q][0];
+                                      double u_y =
+                                        local_face_velocity_values[q][1];
+
+                                      double u_x_a = function_v.value(
+                                        fe_face_values.quadrature_point(q), 0);
+                                      double u_y_a = function_v.value(
+                                        fe_face_values.quadrature_point(q), 1);
+
+                                      l2errorU_boundary +=
+                                        ((u_x - u_x_a) * (u_x - u_x_a) +
+                                         (u_y - u_y_a) * (u_y - u_y_a)) *
+                                        fe_face_values.JxW(q);
+                                      if (dim == 3)
+                                        {
+                                          double u_z =
+                                            local_face_velocity_values[q][2];
+                                          double u_z_a = function_v.value(
+                                            fe_face_values.quadrature_point(q),
+                                            2);
+                                          l2errorU_boundary +=
+                                            (u_z - u_z_a) * (u_z - u_z_a) *
+                                            fe_face_values.JxW(q);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
           if (cell_is_cut == false)
             {
@@ -801,6 +908,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
               fe_values[velocities].get_function_gradients(
                 evaluation_point, present_velocity_gradients);
 
+
               // Retrieve the effective "connectivity matrix" for this element
               cell->get_dof_indices(local_dof_indices);
 
@@ -811,8 +919,11 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                 {
                   double present_velocity_divergence =
                     trace(present_velocity_gradients[q]);
-                  total_velocity_divergence +=
-                    present_velocity_divergence * fe_values.JxW(q);
+                  double mass_source =
+                    this->simulation_parameters.source_term
+                      ->navier_stokes_source.value(
+                        fe_values.get_quadrature_points()[q], dim);
+
 
                   // Find the values of x and u_h (the finite element solution)
                   // at the quadrature points
@@ -835,6 +946,9 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                     }
                   if (cell_is_inside == false)
                     {
+                      total_velocity_divergence +=
+                        (present_velocity_divergence - mass_source) *
+                        fe_values.JxW(q);
                       double p_sim =
                         local_pressure_values[q] - average_pressure;
                       double p_exact =
@@ -847,11 +961,19 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
         }
     }
   l2errorU = Utilities::MPI::sum(l2errorU, this->mpi_communicator);
+  l2errorU_boundary =
+    Utilities::MPI::sum(l2errorU_boundary, this->mpi_communicator);
   l2errorP = Utilities::MPI::sum(l2errorP, this->mpi_communicator);
   total_velocity_divergence =
     Utilities::MPI::sum(total_velocity_divergence, this->mpi_communicator);
 
   this->pcout << "div u : " << total_velocity_divergence << std::endl;
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::function_weak))
+    {
+      this->pcout << "error at the weak BC : " << std::sqrt(l2errorU_boundary)
+                  << std::endl;
+    }
 
   return std::make_pair(std::sqrt(l2errorU), std::sqrt(l2errorP));
 }
@@ -1593,11 +1715,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           double sum_line = 0;
           fe_values.reinit(cell);
 
+          double volume = 0;
           // Define the order of magnitude for the stencil.
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
-            sum_line += fe_values.JxW(qf);
+            volume += fe_values.JxW(qf);
 
-          sum_line = sum_line / dt;
+          sum_line = volume / dt;
 
 
           cell->get_dof_indices(local_dof_indices);
@@ -1949,6 +2072,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
         }
     }
 
+
+
   this->system_matrix.compress(VectorOperation::insert);
   this->system_rhs.compress(VectorOperation::insert);
 }
@@ -1960,19 +2085,37 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
 {
   this->assemblers.clear();
   assemblers_inside_ib.clear();
-  if (this->simulation_parameters.multiphysics.free_surface)
+
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::function_weak))
+    {
+      this->assemblers.push_back(
+        std::make_shared<WeakDirichletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties,
+          this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+    {
+      this->assemblers.push_back(
+        std::make_shared<PressureBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties,
+          this->simulation_parameters.boundary_conditions));
+    }
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesFreeSurfaceAssemblerBDF<dim>>(
+            std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control,
               this->simulation_parameters.physical_properties));
         }
       // Core assembler
       this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
+        std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
           this->simulation_control,
           this->simulation_parameters.physical_properties));
     }
@@ -2045,10 +2188,10 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->solution_stages,
                       this->forcing_function,
                       this->beta);
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
@@ -2057,13 +2200,12 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
-      scratch_data.reinit_free_surface(
-        phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::free_surface),
-        previous_solutions,
-        std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_VOF(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   copy_data.reset();
@@ -2138,10 +2280,10 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
                       this->forcing_function,
                       this->beta);
 
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
@@ -2150,14 +2292,13 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
 
-      scratch_data.reinit_free_surface(
-        phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::free_surface),
-        previous_solutions,
-        std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_VOF(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   copy_data.reset();
@@ -2430,6 +2571,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
+      this->simulation_control->print_progression(this->pcout);
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
       if ((this->simulation_control->get_step_number() %
@@ -2448,12 +2590,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
         integrate_particles();
 
 
-      this->simulation_control->print_progression(this->pcout);
+
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
           generate_cut_cells_map();
-          this->first_iteration();
+          this->iterate();
         }
       else
         {
@@ -2466,9 +2608,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
         }
 
       this->postprocess_fd(false);
-
       this->finish_time_step();
-
       if (this->simulation_parameters.particlesParameters->calculate_force_ib)
         force_on_ib();
       finish_time_step_particles();

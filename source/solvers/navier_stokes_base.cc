@@ -146,8 +146,19 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   previous_solutions.resize(maximum_number_of_previous_solutions());
 
   // Pre-allocate memory for intermediary stages if there are any
-  solution_stages.resize(number_of_intermediary_stages(
-    simulation_parameters.simulation_control.method));
+  if (this->simulation_parameters.simulation_control.bdf_startup_method ==
+        Parameters::SimulationControl::BDFStartupMethods::sdirk_step &&
+      this->simulation_parameters.simulation_control.method ==
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    solution_stages.resize(1);
+  else if (this->simulation_parameters.simulation_control.bdf_startup_method ==
+             Parameters::SimulationControl::BDFStartupMethods::sdirk_step &&
+           this->simulation_parameters.simulation_control.method ==
+             Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    solution_stages.resize(2);
+  else
+    solution_stages.resize(number_of_intermediary_stages(
+      simulation_parameters.simulation_control.method));
 
 
   // Change the behavior of the timer for situations when you don't want
@@ -226,6 +237,23 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
 
       this->beta = flow_control.get_beta();
     }
+}
+
+template <int dim, typename VectorType, typename DofsType>
+bool
+NavierStokesBase<dim, VectorType, DofsType>::check_existance_of_bc(
+  BoundaryConditions::BoundaryType bc)
+{
+  bool bc_exist = false;
+  // Loop over the boundary to check if they need assembler on their face.
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] == bc)
+        bc_exist = true;
+    }
+  return bc_exist;
 }
 
 
@@ -401,8 +429,6 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
         {
           error_table.set_scientific("error_pressure", true);
           error_table.omit_column_from_convergence_rate_evaluation("cells");
-          error_table.omit_column_from_convergence_rate_evaluation(
-            "total_time");
           error_table.evaluate_all_convergence_rates(
             ConvergenceTable::reduction_rate_log2);
         }
@@ -484,7 +510,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
-  if (simulation_parameters.simulation_control.method ==
+  if (simulation_control->get_assembly_method() ==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       this->simulation_control->set_assembly_method(
@@ -496,8 +522,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2);
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
     }
-
-  else if (simulation_parameters.simulation_control.method ==
+  else if (simulation_control->get_assembly_method() ==
            Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
       this->simulation_control->set_assembly_method(
@@ -518,117 +543,20 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
     }
   else
     {
-      this->simulation_control->set_assembly_method(
-        simulation_parameters.simulation_control.method);
+      // sdirk schemes are not implemented for multiphysics simulations
+
+      // Solve the auxiliary physics that should be treated BEFORE the fluid
+      // dynamics
+      multiphysics->pre_solve(simulation_parameters.simulation_control.method);
+
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
-      multiphysics->solve(simulation_parameters.simulation_control.method);
+
+      // Solve the auxiliary physics that should be treated AFTER the fluid
+      // dynamics
+      multiphysics->post_solve(simulation_parameters.simulation_control.method);
     }
 }
 
-// Do an iteration with the NavierStokes Solver
-// Handles the fact that we may or may not be at a first
-// iteration with the solver and sets the initial condition
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
-{
-  // First step if the method is not a multi-step method
-  if (!is_bdf_high_order(simulation_parameters.simulation_control.method))
-    {
-      iterate();
-    }
-
-  // Taking care of the multi-step methods
-  else if (simulation_parameters.simulation_control.method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    {
-      Parameters::SimulationControl timeParameters =
-        simulation_parameters.simulation_control;
-
-      // Start the BDF2 with a single Euler time step with a lower time step
-      double time_step =
-        timeParameters.dt * timeParameters.startup_timestep_scaling;
-      simulation_control->set_current_time_step(time_step);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-      multiphysics->solve(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-
-      percolate_time_vectors();
-
-      // Reset the time step and do a bdf 2 newton iteration using the two
-      // steps to complete the full step
-
-      time_step =
-        timeParameters.dt * (1. - timeParameters.startup_timestep_scaling);
-
-      simulation_control->set_current_time_step(time_step);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-      multiphysics->solve(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-
-      simulation_control->set_suggested_time_step(timeParameters.dt);
-    }
-
-  else if (simulation_parameters.simulation_control.method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    {
-      Parameters::SimulationControl timeParameters =
-        simulation_parameters.simulation_control;
-
-      // Start the BDF3 with a single Euler time step with a lower time step
-      double time_step =
-        timeParameters.dt * timeParameters.startup_timestep_scaling;
-
-      simulation_control->set_current_time_step(time_step);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-      multiphysics->solve(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-
-      percolate_time_vectors();
-
-      // Reset the time step and do a bdf 2 newton iteration using the two
-      // steps
-
-      simulation_control->set_current_time_step(time_step);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-
-      multiphysics->solve(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-
-      percolate_time_vectors();
-
-      // Reset the time step and do a bdf 3 newton iteration using the two
-      // steps to complete the full step
-      time_step =
-        timeParameters.dt * (1. - 2. * timeParameters.startup_timestep_scaling);
-      simulation_control->set_current_time_step(time_step);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf3);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-      multiphysics->solve(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf3);
-
-      simulation_control->set_suggested_time_step(timeParameters.dt);
-    }
-}
 
 template <int dim, typename VectorType, typename DofsType>
 void
@@ -867,6 +795,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
   auto &                           present_solution = this->present_solution;
+
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::pressure)
     {
@@ -890,6 +819,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         present_solution,
         estimated_error_per_cell,
         this->fe->component_mask(velocity));
+    }
+  else
+    {
+      // refine_mesh on an auxiliary physic parameter
+      multiphysics->compute_kelly(estimated_error_per_cell);
     }
 
   if (this->simulation_parameters.mesh_adaptation.fractionType ==
@@ -1154,7 +1088,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "Pressure drop : " << pressure_drop << std::endl;
+          this->pcout << "Pressure drop: "
+                      << this->simulation_parameters.physical_properties
+                             .fluids[0]
+                             .density *
+                           pressure_drop
+                      << " Pa" << std::endl;
         }
 
       // Output pressure drop to a text file from processor 0
@@ -1249,8 +1188,21 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
               this->error_table.add_value(
                 "time", simulation_control->get_current_time());
               this->error_table.add_value("error_velocity", error_velocity);
-              // Calculate error on pressure for free surface simulations
-              if (this->simulation_parameters.multiphysics.free_surface)
+
+              if (this->simulation_parameters.timer.write_time_in_error_table)
+                {
+                  auto summary = computing_timer.get_summary_data(
+                    computing_timer.total_wall_time);
+                  double total_time = 0;
+                  for (auto it = summary.begin(); it != summary.end(); ++it)
+                    {
+                      total_time += summary[it->first];
+                    }
+                  this->error_table.add_value("total_time", total_time);
+                }
+
+              // Calculate error on pressure for VOF simulations
+              if (this->simulation_parameters.multiphysics.VOF)
                 this->error_table.add_value("error_pressure", error_pressure);
             }
           if (this->simulation_parameters.analytical_solution->verbosity ==
@@ -1287,6 +1239,32 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
                            this->fe->component_mask(pressure));
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
+  if (this->simulation_parameters.simulation_control.bdf_startup_method ==
+      Parameters::SimulationControl::BDFStartupMethods::initial_solution)
+    {
+      for (unsigned int i = 1; i < this->previous_solutions.size(); ++i)
+        {
+          double previous_solution_time =
+            -this->simulation_parameters.simulation_control.dt * i;
+          this->simulation_parameters.initial_condition->uvwp.set_time(
+            previous_solution_time);
+          const FEValuesExtractors::Vector velocities(0);
+          const FEValuesExtractors::Scalar pressure(dim);
+          VectorTools::interpolate(
+            *this->mapping,
+            this->dof_handler,
+            this->simulation_parameters.initial_condition->uvwp,
+            this->newton_update,
+            this->fe->component_mask(velocities));
+          VectorTools::interpolate(
+            *this->mapping,
+            this->dof_handler,
+            this->simulation_parameters.initial_condition->uvwp,
+            this->newton_update,
+            this->fe->component_mask(pressure));
+          this->previous_solutions[i - 1] = this->newton_update;
+        }
+    }
 }
 
 
@@ -1502,6 +1480,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   if (simulation_parameters.velocity_sources.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     data_out.add_data_vector(solution, srf);
+
+  NonNewtonianViscosityPostprocessor<dim> non_newtonian_viscosity(
+    simulation_parameters.physical_properties.non_newtonian_parameters);
+  if (simulation_parameters.physical_properties.non_newtonian_flow)
+    data_out.add_data_vector(solution, non_newtonian_viscosity);
+
 
   output_field_hook(data_out);
 

@@ -1,7 +1,7 @@
-#include <solvers/free_surface.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/tracer.h>
+#include <solvers/vof.h>
 
 
 template <int dim>
@@ -30,10 +30,10 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
       physics[PhysicsID::tracer] = std::make_shared<Tracer<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
-  if (multiphysics_parameters.free_surface)
+  if (multiphysics_parameters.VOF)
     {
-      active_physics.push_back(PhysicsID::free_surface);
-      physics[PhysicsID::free_surface] = std::make_shared<FreeSurface<dim>>(
+      active_physics.push_back(PhysicsID::VOF);
+      physics[PhysicsID::VOF] = std::make_shared<VolumeOfFluid<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
 }

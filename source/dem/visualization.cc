@@ -90,6 +90,7 @@ Visualization<dim>::print_xyz(
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
   pcout << "id, type, dp, x, y, z " << std::endl;
+  sleep(1);
   for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
        ++processor_number)
     {

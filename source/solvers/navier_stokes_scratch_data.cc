@@ -26,11 +26,13 @@ NavierStokesScratchData<dim>::allocate()
   // Initialize arrays related to velocity and pressure
   this->velocities.first_vector_component = 0;
   this->pressure.component                = dim;
+
   // Velocity
   this->velocity_values      = std::vector<Tensor<1, dim>>(n_q_points);
   this->velocity_divergences = std::vector<double>(n_q_points);
   this->velocity_gradients   = std::vector<Tensor<2, dim>>(n_q_points);
   this->velocity_laplacians  = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_hessians    = std::vector<Tensor<3, dim>>(n_q_points);
 
   // Velocity for BDF schemes
   this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
@@ -69,16 +71,15 @@ NavierStokesScratchData<dim>::allocate()
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_free_surface(
-  const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+NavierStokesScratchData<dim>::enable_VOF(const FiniteElement<dim> &fe,
+                                         const Quadrature<dim> &   quadrature,
+                                         const Mapping<dim> &      mapping)
 {
-  gather_free_surface    = true;
-  fe_values_free_surface = std::make_shared<FEValues<dim>>(
+  gather_VOF    = true;
+  fe_values_VOF = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // Free surface
+  // VOF
   phase_values = std::vector<double>(this->n_q_points);
   previous_phase_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
@@ -121,6 +122,27 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
   fluid_velocity_at_particle_location =
     std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
   cell_void_fraction = std::vector<double>(n_global_max_particles_per_cell);
+}
+
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_heat_transfer(
+  const FiniteElement<dim> &fe,
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
+{
+  gather_temperature = true;
+  fe_values_temperature =
+    std::make_shared<FEValues<dim>>(mapping, fe, quadrature, update_values);
+
+  temperature_values = std::vector<double>(this->n_q_points);
+}
+
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_hessian()
+{
+  gather_hessian = true;
 }
 
 

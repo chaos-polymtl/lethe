@@ -78,9 +78,6 @@ private:
   update_solution_and_constraints();
 
   void
-  initialize_void_fraction();
-
-  void
   assemble_L2_projection_void_fraction();
 
   void
@@ -108,8 +105,8 @@ protected:
   virtual void
   iterate() override;
 
-  virtual void
-  first_iteration() override;
+  void
+  initialize_void_fraction();
 
   void
   calculate_void_fraction(const double time);
@@ -244,6 +241,7 @@ protected:
   const bool   PSPG        = true;
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
+  double       pressure_drop;
 
 protected:
   Particles::ParticleHandler<dim, dim> particle_handler;

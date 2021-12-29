@@ -34,7 +34,7 @@
 
 // Lethe
 #include <dem/find_cell_neighbors.h>
-#include <dem/pp_broad_search.h>
+#include <dem/particle_particle_broad_search.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -56,8 +56,8 @@ test()
   triangulation.refine_global(refinement_number);
 
 
-  MappingQ1<dim>     mapping;
-  PPBroadSearch<dim> broad_search_object;
+  MappingQ1<dim>                   mapping;
+  ParticleParticleBroadSearch<dim> broad_search_object;
 
   Particles::ParticleHandler<dim> particle_handler(triangulation, mapping);
 

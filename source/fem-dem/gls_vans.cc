@@ -495,117 +495,6 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 }
 
 
-// Do an iteration with the NavierStokes Solver
-// Handles the fact that we may or may not be at a first
-// iteration with the solver and sets the initial conditions
-template <int dim>
-void
-GLSVANSSolver<dim>::first_iteration()
-{
-  // First step if the method is not a multi-step method
-  if (!is_bdf_high_order(this->cfd_dem_simulation_parameters.cfd_parameters
-                           .simulation_control.method))
-    {
-      iterate();
-    }
-
-  // Taking care of the multi-step methods
-  else if (this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
-             .method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    {
-      Parameters::SimulationControl timeParameters =
-        this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control;
-
-      // Start the BDF2 with a single Euler time step with a lower time step
-      double time_step =
-        timeParameters.dt * timeParameters.startup_timestep_scaling;
-      this->simulation_control->set_current_time_step(time_step);
-
-      double intermediate_time =
-        this->simulation_control->get_current_time() + time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-      this->percolate_time_vectors_fd();
-      percolate_void_fraction();
-
-      // Reset the time step and do a bdf 2 newton iteration using the two
-      // steps to complete the full step
-
-      time_step =
-        timeParameters.dt * (1. - timeParameters.startup_timestep_scaling);
-
-      this->simulation_control->set_current_time_step(time_step);
-      intermediate_time += time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-
-      this->simulation_control->set_suggested_time_step(timeParameters.dt);
-    }
-
-  else if (this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control
-             .method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    {
-      Parameters::SimulationControl timeParameters =
-        this->cfd_dem_simulation_parameters.cfd_parameters.simulation_control;
-
-      // Start the BDF3 with a single Euler time step with a lower time step
-      double time_step =
-        timeParameters.dt * timeParameters.startup_timestep_scaling;
-
-      this->simulation_control->set_current_time_step(time_step);
-
-      double intermediate_time = time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-      this->percolate_time_vectors_fd();
-      percolate_void_fraction();
-
-      // Reset the time step and do a bdf 2 newton iteration using the two
-      // steps
-
-      this->simulation_control->set_current_time_step(time_step);
-      intermediate_time += time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-      this->percolate_time_vectors_fd();
-      percolate_void_fraction();
-
-      // Reset the time step and do a bdf 3 newton iteration using the two
-      // steps to complete the full step
-      time_step =
-        timeParameters.dt * (1. - 2. * timeParameters.startup_timestep_scaling);
-      this->simulation_control->set_current_time_step(time_step);
-      intermediate_time += time_step;
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf3);
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        false);
-      this->simulation_control->set_suggested_time_step(timeParameters.dt);
-    }
-}
 
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
@@ -614,7 +503,6 @@ template <int dim>
 void
 GLSVANSSolver<dim>::iterate()
 {
-  calculate_void_fraction(this->simulation_control->get_current_time());
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
 
@@ -631,42 +519,61 @@ GLSVANSSolver<dim>::setup_assemblers()
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
 
-  // Particle_Fluid Interactions Assembler
-  if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
-      Parameters::DragModel::difelice)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.drag_force == true)
     {
-      // DiFelice Model drag Assembler
-      particle_fluid_assemblers.push_back(
-        std::make_shared<GLSVansAssemblerDiFelice<dim>>(
-          this->cfd_dem_simulation_parameters.cfd_parameters
-            .physical_properties));
+      // Particle_Fluid Interactions Assembler
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::difelice)
+        {
+          // DiFelice Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerDiFelice<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_parameters
+                .physical_properties));
+        }
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::rong)
+        {
+          // Rong Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerRong<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_parameters
+                .physical_properties));
+        }
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::dallavalle)
+        {
+          // Dallavalle Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerDallavalle<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_parameters
+                .physical_properties));
+        }
     }
 
-  if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
-      Parameters::DragModel::rong)
-    {
-      // Rong Model drag Assembler
-      particle_fluid_assemblers.push_back(
-        std::make_shared<GLSVansAssemblerRong<dim>>(
-          this->cfd_dem_simulation_parameters.cfd_parameters
-            .physical_properties));
-    }
+  if (this->cfd_dem_simulation_parameters.cfd_dem.buoyancy_force == true)
+    // Buoyancy Force Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties));
 
-  // Buoyancy Force Assembler
-  particle_fluid_assemblers.push_back(
-    std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
-      this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-      this->cfd_dem_simulation_parameters.dem_parameters
-        .lagrangian_physical_properties));
+  if (this->cfd_dem_simulation_parameters.cfd_dem.pressure_force == true)
+    // Pressure Force
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerPressureForce<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_parameters
+          .physical_properties));
 
-  // Pressure Force
-  particle_fluid_assemblers.push_back(
-    std::make_shared<GLSVansAssemblerPressureForce<dim>>());
-
-  // Shear Force
-  particle_fluid_assemblers.push_back(
-    std::make_shared<GLSVansAssemblerShearForce<dim>>(
-      this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties));
+  if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
+    // Shear Force
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerShearForce<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_parameters
+          .physical_properties));
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
@@ -698,7 +605,8 @@ GLSVANSSolver<dim>::assemble_system_matrix()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
   scratch_data.enable_void_fraction(fe_void_fraction,
                                     *this->cell_quadrature,
@@ -801,7 +709,8 @@ GLSVANSSolver<dim>::assemble_system_rhs()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
 
   scratch_data.enable_void_fraction(fe_void_fraction,
@@ -941,13 +850,11 @@ GLSVANSSolver<dim>::post_processing()
   std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
 
-  //  std::vector<double> present_pressure_values(n_q_points);
-
   double mass_source           = 0;
   double fluid_volume          = 0;
   double bed_volume            = 0;
   double average_void_fraction = 0;
-  double pressure_drop         = 0;
+  pressure_drop                = 0;
 
   Vector<double>      bdf_coefs;
   std::vector<double> time_steps_vector =
@@ -1065,19 +972,22 @@ GLSVANSSolver<dim>::post_processing()
 
   QGauss<dim>     cell_quadrature_formula(this->number_quadrature_points);
   QGauss<dim - 1> face_quadrature_formula(this->number_quadrature_points);
-  pressure_drop = calculate_pressure_drop(
-    this->dof_handler,
-    this->mapping,
-    this->evaluation_point,
-    cell_quadrature_formula,
-    face_quadrature_formula,
-    this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
-    this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id);
+  pressure_drop =
+    calculate_pressure_drop(
+      this->dof_handler,
+      this->mapping,
+      this->evaluation_point,
+      cell_quadrature_formula,
+      face_quadrature_formula,
+      this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
+      this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
+    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties
+      .fluids[0]
+      .density;
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
   this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
               << std::endl;
-  this->pcout << "Pressure Drop: " << pressure_drop << " m^2.s^-2" << std::endl;
 }
 
 template <int dim>
@@ -1103,7 +1013,6 @@ GLSVANSSolver<dim>::solve()
     read_dem();
 
   setup_dofs();
-  calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1114,12 +1023,14 @@ GLSVANSSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
         {
-          this->first_iteration();
+          initialize_void_fraction();
+          this->iterate();
         }
       else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();
         }
 

@@ -21,3 +21,6 @@ file(COPY two-bar-mixer-restart/restart_solid_triangulation_01.pvdhandler DESTIN
 
 DEAL_II_PICKUP_TESTS()
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
+       	set_tests_properties(gls_nitsche_navier_stokes_22/noslip_22.debug PROPERTIES TIMEOUT 1200)
+ENDIF()

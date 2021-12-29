@@ -46,7 +46,8 @@ namespace Parameters
   enum class Verbosity
   {
     quiet,
-    verbose
+    verbose,
+    extra_verbose
   };
 
   /**
@@ -117,6 +118,14 @@ namespace Parameters
       time
     } output_control;
 
+    enum class BDFStartupMethods
+    {
+      initial_solution,
+      sdirk_step,
+      multiple_step_bdf,
+    } bdf_startup_method;
+
+
     // Frequency of the output
     unsigned int output_frequency;
 
@@ -166,8 +175,116 @@ namespace Parameters
     double specific_heat;
     // thermal conductivity (k) in W/m/K
     double thermal_conductivity;
+    // thermal expansion coefficient (alpha) in 1/K
+    double thermal_expansion;
     // tracer diffusivity) in L^2/s
     double tracer_diffusivity;
+  };
+
+  /**
+   * @brief Carreau rheological model to solve for non Newtonian
+   * flows.
+   */
+  struct CarreauParameters
+  {
+    // Viscosity of the flow when the shear rate tends to 0
+    double viscosity_0;
+    // Hypothetical viscosity of the flow when the shear rate is very high
+    double viscosity_inf;
+    // Relaxation time
+    double lambda;
+    // Carreau parameter
+    double a;
+    // Power parameter
+    double n;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Non Newtonian - Defines the parameters for
+   * non newtonian flows according to the chosen
+   * rheological model.
+   */
+
+  struct NonNewtonian
+  {
+    // Non Newtonian model
+    enum class Model
+    {
+      carreau
+    } model;
+
+    CarreauParameters carreau_parameters;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+
+  /**
+   * @brief Phase change model for melting/freezing liquids
+   * The model assumes that the phase change occurs between
+   * a solidus and liquidus temperature. This defines a solidification
+   * interval which is used to smooth the non-linearity of the melting problem
+   * or to fit the real thermodynamics of the melting process.
+   *
+   */
+  struct PhaseChange
+  {
+    // Solidus temperature - Units in K
+    double T_solidus;
+
+    // Liquidus temperature - Units in K
+    double T_liquidus;
+
+    // Latent enthalpy for the phase change - Units in J/kg
+    double latent_enthalpy;
+
+    // Specific heat liquid - Units in J/(kg*K)
+    double cp_l;
+
+    // Specific heat solid - Units in J/(kg*K)
+    double cp_s;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief InterfaceSharpening - Defines the parameters for
+   * interface sharpening in the VOF solver.
+   */
+  struct InterfaceSharpening
+  {
+    // Interface sharpening parameters. The sharpening method and parameters are
+    // explained in the dam break VOF example:
+    // https://github.com/lethe-cfd/lethe/wiki/Dam-break-VOF
+    // sharpening_threshold is the phase fraction threshold for sharpening. It
+    // should be chosen in the range of (0,1), but generally it is equal to 0.5
+    // interface_sharpness is a parameter which defines the sharpness of the
+    // interface. It should be chosen in the range of (1,2] sharpening_frequency
+    // (integer) is the frequency at which the interface sharpneing is called.
+    // Users may set this variable to 1 to call interface sharpening at every
+    // step, but it could be chosen in the range of [1-20]
+
+    double sharpening_threshold;
+    double interface_sharpness;
+    int    sharpening_frequency;
+    // Type of verbosity for the interface sharpening calculation
+    Verbosity verbosity;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
   };
 
   /**
@@ -183,21 +300,17 @@ namespace Parameters
     PhysicalProperties()
     {}
 
-    // Monophasic simulations parameters
-    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
-    double viscosity;
-    // volumetric mass density (rho) in units of kg/m^3
-    double density;
-    // specific heat capacity (cp) in J/K/kg
-    double specific_heat;
-    // thermal conductivity (k) in W/m/K
-    double thermal_conductivity;
-    // tracer diffusivity in L^2/s
-    double tracer_diffusivity;
+    // Non Newtonian parameters
+    bool         non_newtonian_flow;
+    NonNewtonian non_newtonian_parameters;
+
+    // Phase change parameters
+    bool        enable_phase_change;
+    PhaseChange phase_change_parameters;
 
     // Fluid objects for multiphasic simulations
     std::vector<Fluid>        fluids;
-    unsigned int              number_fluids;
+    unsigned int              number_of_fluids;
     static const unsigned int max_fluids = 2;
 
     void
@@ -224,6 +337,9 @@ namespace Parameters
     };
 
     Type type;
+
+    bool write_time_in_error_table;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -348,8 +464,8 @@ namespace Parameters
     // Interpolation order tracer
     unsigned int tracer_order;
 
-    // Interpolation order free surface vof model
-    unsigned int free_surface_order;
+    // Interpolation order vof model
+    unsigned int VOF_order;
 
     // Apply high order mapping everywhere
     bool qmapping_all;
@@ -491,6 +607,9 @@ namespace Parameters
     // AMG Smoother overalp
     unsigned int amg_smoother_overlap;
 
+    // Block linear solver to throw error.
+    bool force_linear_solver_continuation;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -570,7 +689,8 @@ namespace Parameters
     enum class Variable
     {
       velocity,
-      pressure
+      pressure,
+      phase
     } variable;
 
     // Decision factor for Kelly refinement (number or fraction)
@@ -670,6 +790,7 @@ namespace Parameters
     double             omega_x;
     double             omega_y;
     double             omega_z;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -737,7 +858,6 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-
 
 } // namespace Parameters
 #endif

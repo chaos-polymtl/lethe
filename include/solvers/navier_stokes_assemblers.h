@@ -14,6 +14,8 @@
  * ---------------------------------------------------------------------*/
 
 
+#include <core/boundary_conditions.h>
+#include <core/rheological_model.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
@@ -161,6 +163,125 @@ public:
   Parameters::VelocitySource velocity_sources;
 };
 
+/**
+ * @brief Class that assembles the core of the Navier-Stokes equation
+ * using a Rheological model to predict non Newtonian behaviors
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+
+template <int dim>
+class GLSNavierStokesAssemblerNonNewtonianCore
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSNavierStokesAssemblerNonNewtonianCore(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+  {
+    // if (physical_properties.non_newtonian_parameters.model ==
+    // Parameters::NonNewtonian::Model::Carreau)
+    //{
+    rheological_model = std::make_shared<Carreau<dim>>(
+      physical_properties.non_newtonian_parameters);
+    //}
+  }
+
+  /**
+   * @brief Calculates an approximation of the gradient of the viscosity
+   * @param velocity_gradient The velocity gradient tensor on the quadrature point
+     @param velocity_hessians The velocity hessian tensor on the quadrture point
+     @param non_newtonian_viscosity The viscosity at which the gradient is calculated
+     @param d_gamma_dot Th difference in the shear rate magnitude to approximate the
+     viscosity variation with a slight change in the shear_rate magnitude
+   */
+  Tensor<1, dim>
+  get_viscosity_gradient(const Tensor<2, dim> &velocity_gradient,
+                         const Tensor<3, dim> &velocity_hessians,
+                         const double &        shear_rate_magnitude,
+                         const double &        non_newtonian_viscosity,
+                         const double &        d_gamma_dot) const
+  {
+    // Calculates an approximation of the derivative of the viscosity with a
+    // slight change in the shear rate magnitude using finite difference
+    const double non_newtonian_viscosity_plus =
+      rheological_model->get_viscosity(shear_rate_magnitude + d_gamma_dot);
+
+    double grad_viscosity_shear_rate =
+      (non_newtonian_viscosity_plus - non_newtonian_viscosity) / d_gamma_dot;
+
+    // Calculates an approximation of the shear rate magnitude gradient using
+    // the derived form, since it does not change with rheological models
+    Tensor<1, dim> grad_shear_rate;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        if (dim == 2)
+          {
+            for (unsigned int k = 0; k < dim; ++k)
+              {
+                grad_shear_rate[d] +=
+                  2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /
+                  shear_rate_magnitude;
+              }
+            grad_shear_rate[d] +=
+              (velocity_gradient[0][1] + velocity_gradient[1][0]) *
+              (velocity_hessians[0][d][1] + velocity_hessians[1][d][0]) /
+              shear_rate_magnitude;
+          }
+        else
+          {
+            for (unsigned int k = 0; k < dim; ++k)
+              {
+                grad_shear_rate[d] +=
+                  2 * (velocity_gradient[k][k] * velocity_hessians[k][d][k]) /
+                    shear_rate_magnitude +
+                  (velocity_gradient[(k + 1) % dim][(k + 2) % dim] +
+                   velocity_gradient[(k + 2) % dim][(k + 1) % dim]) *
+                    (velocity_hessians[(k + 1) % dim][d][(k + 2) % dim] +
+                     velocity_hessians[(k + 2) % dim][d][(k + 1) % dim]) /
+                    shear_rate_magnitude;
+              }
+          }
+      }
+    return grad_shear_rate * grad_viscosity_shear_rate;
+  };
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * Enables SUPG stabilization for the Navier-Stokes formulation.
+   * We have not found any scenarios where it is relevant not to use SUPG
+   * stabilization yet.
+   */
+  const bool SUPG = true;
+
+  std::shared_ptr<SimulationControl>     simulation_control;
+  Parameters::PhysicalProperties         physical_properties;
+  std::shared_ptr<RheologicalModel<dim>> rheological_model;
+};
+
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
@@ -293,9 +414,56 @@ public:
   double                             gamma;
 };
 
+template <int dim>
+class GDNavierStokesAssemblerNonNewtonianCore
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GDNavierStokesAssemblerNonNewtonianCore(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const double                       gamma)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , gamma(gamma)
+  {
+    // if (physical_properties.non_newtonian_parameters.model ==
+    // Parameters::NonNewtonian::Model::Carreau)
+    //{
+    rheological_model = std::make_shared<Carreau<dim>>(
+      physical_properties.non_newtonian_parameters);
+    //}
+  }
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl>     simulation_control;
+  Parameters::PhysicalProperties         physical_properties;
+  double                                 gamma;
+  std::shared_ptr<RheologicalModel<dim>> rheological_model;
+};
+
 
 /**
- * @brief Class that assembles a Poisson problem for all velocity components and pressure variables .
+ * @brief Class that assembles a Poisson problem for all velocity components and pressure variables.
  * This class assembles the weak form of: d^2 U/dx^2=0 and  d^2 P/dx^2=0
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -325,6 +493,149 @@ public:
 
   /**
    * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+};
+
+/**
+ * @brief Class that assembles a Neumann boundary condition.
+ * This class assembles the weak form of: (p-mu*grad_u)*n at the boundary
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @param pressure_boundary_condition The boundary condition objects use to store the function.
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class PressureBoundaryCondition : public NavierStokesAssemblerBase<dim>
+{
+public:
+  PressureBoundaryCondition(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const BoundaryConditions::NSBoundaryConditions<dim>
+      &pressure_boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , pressure_boundary_conditions(pressure_boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  const BoundaryConditions::NSBoundaryConditions<dim>
+    &pressure_boundary_conditions;
+};
+
+/**
+ * @brief Class that assembles the weak formulation of a Dirichlet boundary condition using the Nitsche method.
+ * This class assembles the weak form of: (u_ib-u)-(u,grad v)
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @param boundary_condition The boundary condition objects us to store the function.
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class WeakDirichletBoundaryCondition : public NavierStokesAssemblerBase<dim>
+{
+public:
+  WeakDirichletBoundaryCondition(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const BoundaryConditions::NSBoundaryConditions<dim>
+      &boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , boundary_conditions(boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl>                   simulation_control;
+  Parameters::PhysicalProperties                       physical_properties;
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+};
+
+
+
+/**
+ * @brief Class that assembles a buoyancy forcing term using the Boussinesq
+ * approximation. For more information, read Chapter 10 of Transport phenomena
+ * by Bird et al., or "Boussinesq approximation (buoyancy)" page on Wikipedia.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class BuoyancyAssembly : public NavierStokesAssemblerBase<dim>
+{
+public:
+  BuoyancyAssembly(std::shared_ptr<SimulationControl> simulation_control,
+                   Parameters::PhysicalProperties     physical_properties)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the weak form of: $$-\mathbf{g} \times \alpha \times (T - T_0)$$
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */

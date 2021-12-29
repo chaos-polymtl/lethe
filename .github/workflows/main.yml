@@ -11,13 +11,12 @@ env:
 
 jobs:
   build:
-    name: Build (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
+    name: Build (deal.ii:${{ matrix.dealii_version }})
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        build_type: ["Release", "Debug"]
         dealii_version: ["master", "v9.3.0"]
     
     # Run steps in container of dealii's master branch
@@ -36,56 +35,64 @@ jobs:
           sudo apt-get install -y --no-install-recommends nodejs
 
           echo "Github actions is sane!"
-          echo "Running ${{ matrix.build_type }} build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
-
-      # Only on PR
-      - uses: actions/first-interaction@v1
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          issue-message: 'Hello, thanks for opening your first issue. Welcome you to Lethe community!'
-          pr-message: 'Hello, thanks for opening your first Pull Request and taking the time to improve Lethe.'
+          echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
 
       # Checks-out Lethe with branch of triggering commit
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Compile Lethe (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
+      #
+      # Release
+      #
+      - name: Compile Lethe (Release-deal.ii:${{ matrix.dealii_version }})
         run: |
-          mkdir build
-          cd build
-          cmake ../ -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          mkdir build-release
+          cd build-release
+          cmake ../ -DCMAKE_BUILD_TYPE=Release
           make -j${{ env.COMPILE_JOBS }}
 
       # These tests require a single core each so we will run them in parallel
-      - name: Run Lethe tests (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
+      - name: Run Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
         run: |
-          cd build
+          cd build-release
           # Print the tests to be executed
           ctest -N --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
           # Run in parallel
           ctest -V -j${{ env.COMPILE_JOBS }} --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
       
       # These tests require two cores each so we will run them sequencially
-      - name: Run multi-core Lethe tests (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
+      - name: Run multi-core Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
         run: |
-          cd build
+          cd build-release
           # Print the tests to be executed
           ctest -N --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
           # Run sequencially
           ctest -V --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
-          
-  #formatting:
-    #runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    #    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      # - uses: actions/checkout@v2
-      #        with: clangFormatVersion: 5
-      # Runs a set of commands using the runners shell
-      #      - name: formatting
-      # if: github.event_name != 'pull_request'
-      # run: |
-      #   git clone https://github.com/lethe-cfd/lethe && cd lethe && git checkout "${GITHUB_REF#refs/heads/}"
-      #   python contrib/utilities/run-clang-format.py -r source include;
 
+      #
+      # Debug
+      #
+      - name: Compile Lethe (Debug-deal.ii:${{ matrix.dealii_version }})
+        run: |
+          mkdir build-debug
+          cd build-debug
+          cmake ../ -DCMAKE_BUILD_TYPE=Debug
+          make -j${{ env.COMPILE_JOBS }}
+
+      # These tests require a single core each so we will run them in parallel
+      - name: Run Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
+        run: |
+          cd build-debug
+          # Print the tests to be executed
+          ctest -N --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
+          # Run in parallel
+          ctest -V -j${{ env.COMPILE_JOBS }} --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
+
+      # These tests require two cores each so we will run them sequencially
+      - name: Run multi-core Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
+        run: |
+          cd build-debug
+          # Print the tests to be executed
+          ctest -N --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
+          # Run sequencially
+          ctest -V --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}

@@ -60,19 +60,20 @@ GDNavierStokesSolver<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesFreeSurfaceAssemblerBDF<dim>>(
+            std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control,
               this->simulation_parameters.physical_properties));
         }
+
       // Core assembler
       this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
+        std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
           this->simulation_control,
           this->simulation_parameters.physical_properties));
     }
@@ -101,13 +102,32 @@ GDNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_parameters.velocity_sources));
         }
 
+      // Buoyant force
+      if (this->simulation_parameters.multiphysics.buoyancy_force)
+        {
+          this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties));
+        }
 
-      // Core assembler
-      this->assemblers.push_back(
-        std::make_shared<GDNavierStokesAssemblerCore<dim>>(
-          this->simulation_control,
-          this->simulation_parameters.physical_properties,
-          gamma));
+      if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+        {
+          // Core assembler with Non newtonian viscosity
+          this->assemblers.push_back(
+            std::make_shared<GDNavierStokesAssemblerNonNewtonianCore<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties,
+              gamma));
+        }
+      else
+        {
+          // Core assembler
+          this->assemblers.push_back(
+            std::make_shared<GDNavierStokesAssemblerCore<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties,
+              gamma));
+        }
     }
 }
 
@@ -123,15 +143,16 @@ GDNavierStokesSolver<dim>::assemble_system_matrix()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
-      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
-                                       *this->cell_quadrature,
-                                       *this->mapping);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      scratch_data.enable_VOF(dof_handler_fs->get_fe(),
+                              *this->cell_quadrature,
+                              *this->mapping);
     }
 
 
@@ -180,10 +201,10 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->solution_stages,
                       this->forcing_function,
                       this->beta);
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
@@ -192,13 +213,12 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
-      scratch_data.reinit_free_surface(
-        phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::free_surface),
-        previous_solutions,
-        std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_VOF(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   copy_data.reset();
@@ -240,15 +260,25 @@ GDNavierStokesSolver<dim>::assemble_system_rhs()
 
   auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
                                                    *this->cell_quadrature,
-                                                   *this->mapping);
+                                                   *this->mapping,
+                                                   *this->face_quadrature);
 
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
-      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
-                                       *this->cell_quadrature,
-                                       *this->mapping);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      scratch_data.enable_VOF(dof_handler_fs->get_fe(),
+                              *this->cell_quadrature,
+                              *this->mapping);
+    }
+
+  if (this->simulation_parameters.multiphysics.buoyancy_force)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
     }
 
 
@@ -287,10 +317,10 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
                       this->forcing_function,
                       this->beta);
 
-  if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
@@ -299,19 +329,32 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
 
-      scratch_data.reinit_free_surface(
-        phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::free_surface),
-        previous_solutions,
-        std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_VOF(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+  if (this->simulation_parameters.multiphysics.buoyancy_force)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+      typename DoFHandler<dim>::active_cell_iterator temperature_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_ht);
+
+      scratch_data.reinit_heat_transfer(temperature_cell,
+                                        *this->multiphysics->get_solution(
+                                          PhysicsID::heat_transfer));
     }
 
   copy_data.reset();
-
-
   for (auto &assembler : this->assemblers)
     {
       assembler->assemble_rhs(scratch_data, copy_data);
@@ -591,7 +634,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
-  // Initialize previous solutions
+  // Initialize vector of previous solutions
   for (auto &solution : this->previous_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
@@ -723,15 +766,16 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
     {
       this->set_nodal_values();
       double viscosity =
-        this->simulation_parameters.physical_properties.viscosity;
-      this->simulation_parameters.physical_properties.viscosity =
+        this->simulation_parameters.physical_properties.fluids[0].viscosity;
+      this->simulation_parameters.physical_properties.fluids[0].viscosity =
         this->simulation_parameters.initial_condition->viscosity;
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<
         TrilinosWrappers::MPI::BlockVector>::solve_non_linear_system(false);
       this->finish_time_step_fd();
-      this->simulation_parameters.physical_properties.viscosity = viscosity;
+      this->simulation_parameters.physical_properties.fluids[0].viscosity =
+        viscosity;
     }
   else
     {
@@ -796,7 +840,7 @@ GDNavierStokesSolver<dim>::setup_ILU()
   system_ilu_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>(
     gamma,
-    this->simulation_parameters.physical_properties.viscosity,
+    this->simulation_parameters.physical_properties.fluids[0].viscosity,
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_ilu_preconditioner),
@@ -911,7 +955,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
   system_amg_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionAMG>>(
     gamma,
-    this->simulation_parameters.physical_properties.viscosity,
+    this->simulation_parameters.physical_properties.fluids[0].viscosity,
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_amg_preconditioner),
@@ -1126,7 +1170,7 @@ GDNavierStokesSolver<dim>::solve()
       this->dynamic_flow_control();
 
       if (this->simulation_control->is_at_start())
-        this->first_iteration();
+        this->iterate();
       else
         {
           NavierStokesBase<dim,

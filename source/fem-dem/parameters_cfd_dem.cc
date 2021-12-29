@@ -76,9 +76,29 @@ namespace Parameters
                       "false",
                       Patterns::Bool(),
                       "Choose whether or not to apply grad_div stabilization");
+    prm.declare_entry("void fraction time derivative",
+                      "true",
+                      Patterns::Bool(),
+                      "Choose whether or not to implement d(epsilon)/dt ");
+    prm.declare_entry("drag force",
+                      "true",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply drag force");
+    prm.declare_entry("buoyancy force",
+                      "true",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply buoyancy force");
+    prm.declare_entry("shear force",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply shear force");
+    prm.declare_entry("pressure force",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply pressure force");
     prm.declare_entry("drag model",
                       "difelice",
-                      Patterns::Selection("difelice|rong"),
+                      Patterns::Selection("difelice|rong|dallavalle"),
                       "The drag model used to determine the drag coefficient");
     prm.declare_entry("post processing",
                       "false",
@@ -104,7 +124,13 @@ namespace Parameters
   CFDDEM::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("cfd-dem");
-    grad_div             = prm.get_bool("grad div");
+    grad_div = prm.get_bool("grad div");
+    void_fraction_time_derivative =
+      prm.get_bool("void fraction time derivative");
+    drag_force           = prm.get_bool("drag force");
+    buoyancy_force       = prm.get_bool("buoyancy force");
+    shear_force          = prm.get_bool("shear force");
+    pressure_force       = prm.get_bool("pressure force");
     post_processing      = prm.get_bool("post processing");
     inlet_boundary_id    = prm.get_integer("inlet boundary id");
     outlet_boundary_id   = prm.get_integer("outlet boundary id");
@@ -114,6 +140,8 @@ namespace Parameters
       drag_model = Parameters::DragModel::difelice;
     else if (op == "rong")
       drag_model = Parameters::DragModel::rong;
+    else if (op == "dallavalle")
+      drag_model = Parameters::DragModel::dallavalle;
     else
       throw(std::runtime_error("Invalid drag model"));
     prm.leave_subsection();

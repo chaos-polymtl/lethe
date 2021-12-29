@@ -1,4 +1,5 @@
 Running on 1 MPI rank(s)...
+DEM time-step is 3.283542846% of Rayleigh time step
 Reading DEM checkpoint 
 Finished reading DEM checkpoint 
 10 particles are in the simulation 
@@ -12,6 +13,7 @@ DEM time-step is 1e-05 s
 Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0       
 *****************************************************************
 Starting DEM iterations at step 1
+DEM contact search at dem step 0
 Finished 100 DEM iterations 
 
 *****************************************************************
@@ -27,605 +29,605 @@ Starting DEM iterations at step 3
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 1.632347364e-08
+Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 1.632252764e-08
 *****************************************************************
 Starting DEM iterations at step 4
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 3.609409591e-08
+Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 3.6091038e-08
 *****************************************************************
 Starting DEM iterations at step 5
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 6        Time : 0.006    Time step : 0.001    CFL : 6.465490127e-08
+Transient iteration : 6        Time : 0.006    Time step : 0.001    CFL : 6.46510893e-08
 *****************************************************************
 Starting DEM iterations at step 6
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 7        Time : 0.007    Time step : 0.001    CFL : 1.038554047e-07
+Transient iteration : 7        Time : 0.007    Time step : 0.001    CFL : 1.038475472e-07
 *****************************************************************
 Starting DEM iterations at step 7
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 8        Time : 0.008    Time step : 0.001    CFL : 1.542842386e-07
+Transient iteration : 8        Time : 0.008    Time step : 0.001    CFL : 1.542706401e-07
 *****************************************************************
 Starting DEM iterations at step 8
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 9        Time : 0.009    Time step : 0.001    CFL : 2.158707859e-07
+Transient iteration : 9        Time : 0.009    Time step : 0.001    CFL : 2.158540243e-07
 *****************************************************************
 Starting DEM iterations at step 9
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 10       Time : 0.01     Time step : 0.001    CFL : 2.901696851e-07
+Transient iteration : 10       Time : 0.01     Time step : 0.001    CFL : 2.901454464e-07
 *****************************************************************
 Starting DEM iterations at step 10
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 11       Time : 0.011    Time step : 0.001    CFL : 3.769280893e-07
+Transient iteration : 11       Time : 0.011    Time step : 0.001    CFL : 3.768967678e-07
 *****************************************************************
 Starting DEM iterations at step 11
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 12       Time : 0.012    Time step : 0.001    CFL : 4.770046186e-07
+Transient iteration : 12       Time : 0.012    Time step : 0.001    CFL : 4.769637438e-07
 *****************************************************************
 Starting DEM iterations at step 12
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 13       Time : 0.013    Time step : 0.001    CFL : 5.905923541e-07
+Transient iteration : 13       Time : 0.013    Time step : 0.001    CFL : 5.905410192e-07
 *****************************************************************
 Starting DEM iterations at step 13
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 14       Time : 0.014    Time step : 0.001    CFL : 7.17938938e-07
+Transient iteration : 14       Time : 0.014    Time step : 0.001    CFL : 7.178758394e-07
 *****************************************************************
 Starting DEM iterations at step 14
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 15       Time : 0.015    Time step : 0.001    CFL : 8.592288677e-07
+Transient iteration : 15       Time : 0.015    Time step : 0.001    CFL : 8.591526177e-07
 *****************************************************************
 Starting DEM iterations at step 15
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 16       Time : 0.016    Time step : 0.001    CFL : 1.014593828e-06
+Transient iteration : 16       Time : 0.016    Time step : 0.001    CFL : 1.014503006e-06
 *****************************************************************
 Starting DEM iterations at step 16
-DEM contact search at dem step 94
+DEM contact search at dem step 95
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 17       Time : 0.017    Time step : 0.001    CFL : 1.184105852e-06
+Transient iteration : 17       Time : 0.017    Time step : 0.001    CFL : 1.183999051e-06
 *****************************************************************
 Starting DEM iterations at step 17
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 18       Time : 0.018    Time step : 0.001    CFL : 0.0004275359286
+Transient iteration : 18       Time : 0.018    Time step : 0.001    CFL : 0.0004275450747
 *****************************************************************
 Starting DEM iterations at step 18
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 19       Time : 0.019    Time step : 0.001    CFL : 8.187251164e-05
+Transient iteration : 19       Time : 0.019    Time step : 0.001    CFL : 8.184205359e-05
 *****************************************************************
 Starting DEM iterations at step 19
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 20       Time : 0.02     Time step : 0.001    CFL : 3.555224897e-05
+Transient iteration : 20       Time : 0.02     Time step : 0.001    CFL : 3.55206787e-05
 *****************************************************************
 Starting DEM iterations at step 20
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 21       Time : 0.021    Time step : 0.001    CFL : 2.850964465e-05
+Transient iteration : 21       Time : 0.021    Time step : 0.001    CFL : 2.847660544e-05
 *****************************************************************
 Starting DEM iterations at step 21
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 22       Time : 0.022    Time step : 0.001    CFL : 2.279548941e-05
+Transient iteration : 22       Time : 0.022    Time step : 0.001    CFL : 2.276227418e-05
 *****************************************************************
 Starting DEM iterations at step 22
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 23       Time : 0.023    Time step : 0.001    CFL : 1.866519602e-05
+Transient iteration : 23       Time : 0.023    Time step : 0.001    CFL : 1.863234824e-05
 *****************************************************************
 Starting DEM iterations at step 23
-DEM contact search at dem step 92
+DEM contact search at dem step 93
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 24       Time : 0.024    Time step : 0.001    CFL : 1.564833263e-05
+Transient iteration : 24       Time : 0.024    Time step : 0.001    CFL : 1.561571211e-05
 *****************************************************************
 Starting DEM iterations at step 24
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 25       Time : 0.025    Time step : 0.001    CFL : 1.336337643e-05
+Transient iteration : 25       Time : 0.025    Time step : 0.001    CFL : 1.333106597e-05
 *****************************************************************
 Starting DEM iterations at step 25
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 26       Time : 0.026    Time step : 0.001    CFL : 1.156208341e-05
+Transient iteration : 26       Time : 0.026    Time step : 0.001    CFL : 1.152997947e-05
 *****************************************************************
 Starting DEM iterations at step 26
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 27       Time : 0.027    Time step : 0.001    CFL : 1.008777507e-05
+Transient iteration : 27       Time : 0.027    Time step : 0.001    CFL : 1.00557961e-05
 *****************************************************************
 Starting DEM iterations at step 27
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 28       Time : 0.028    Time step : 0.001    CFL : 8.841094678e-06
+Transient iteration : 28       Time : 0.028    Time step : 0.001    CFL : 8.809202672e-06
 *****************************************************************
 Starting DEM iterations at step 28
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 29       Time : 0.029    Time step : 0.001    CFL : 7.758099131e-06
+Transient iteration : 29       Time : 0.029    Time step : 0.001    CFL : 7.726257627e-06
 *****************************************************************
 Starting DEM iterations at step 29
-DEM contact search at dem step 50
+DEM contact search at dem step 51
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 30       Time : 0.03     Time step : 0.001    CFL : 6.796977367e-06
+Transient iteration : 30       Time : 0.03     Time step : 0.001    CFL : 6.780405777e-06
 *****************************************************************
 Starting DEM iterations at step 30
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 31       Time : 0.031    Time step : 0.001    CFL : 6.134133379e-06
+Transient iteration : 31       Time : 0.031    Time step : 0.001    CFL : 6.132795184e-06
 *****************************************************************
 Starting DEM iterations at step 31
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 32       Time : 0.032    Time step : 0.001    CFL : 5.570890249e-06
+Transient iteration : 32       Time : 0.032    Time step : 0.001    CFL : 5.570182127e-06
 *****************************************************************
 Starting DEM iterations at step 32
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 33       Time : 0.033    Time step : 0.001    CFL : 5.079740552e-06
+Transient iteration : 33       Time : 0.033    Time step : 0.001    CFL : 5.07965978e-06
 *****************************************************************
 Starting DEM iterations at step 33
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 34       Time : 0.034    Time step : 0.001    CFL : 4.650412938e-06
+Transient iteration : 34       Time : 0.034    Time step : 0.001    CFL : 4.650952055e-06
 *****************************************************************
 Starting DEM iterations at step 34
-DEM contact search at dem step 39
+DEM contact search at dem step 40
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 35       Time : 0.035    Time step : 0.001    CFL : 4.274643738e-06
+Transient iteration : 35       Time : 0.035    Time step : 0.001    CFL : 4.275791835e-06
 *****************************************************************
 Starting DEM iterations at step 35
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 36       Time : 0.036    Time step : 0.001    CFL : 0.0004290579491
+Transient iteration : 36       Time : 0.036    Time step : 0.001    CFL : 0.0004290507423
 *****************************************************************
 Starting DEM iterations at step 36
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 37       Time : 0.037    Time step : 0.001    CFL : 8.297907747e-05
+Transient iteration : 37       Time : 0.037    Time step : 0.001    CFL : 8.287481253e-05
 *****************************************************************
 Starting DEM iterations at step 37
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 38       Time : 0.038    Time step : 0.001    CFL : 3.548099255e-05
+Transient iteration : 38       Time : 0.038    Time step : 0.001    CFL : 3.538636884e-05
 *****************************************************************
 Starting DEM iterations at step 38
-DEM contact search at dem step 85
+DEM contact search at dem step 86
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 39       Time : 0.039    Time step : 0.001    CFL : 2.804032036e-05
+Transient iteration : 39       Time : 0.039    Time step : 0.001    CFL : 2.798326162e-05
 *****************************************************************
 Starting DEM iterations at step 39
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 40       Time : 0.04     Time step : 0.001    CFL : 0.0004479464415
+Transient iteration : 40       Time : 0.04     Time step : 0.001    CFL : 0.0004478611745
 *****************************************************************
 Starting DEM iterations at step 40
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 41       Time : 0.041    Time step : 0.001    CFL : 9.785916956e-05
+Transient iteration : 41       Time : 0.041    Time step : 0.001    CFL : 9.770933522e-05
 *****************************************************************
 Starting DEM iterations at step 41
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 42       Time : 0.042    Time step : 0.001    CFL : 4.588286331e-05
+Transient iteration : 42       Time : 0.042    Time step : 0.001    CFL : 4.571145627e-05
 *****************************************************************
 Starting DEM iterations at step 42
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 43       Time : 0.043    Time step : 0.001    CFL : 3.753791941e-05
+Transient iteration : 43       Time : 0.043    Time step : 0.001    CFL : 3.737232115e-05
 *****************************************************************
 Starting DEM iterations at step 43
-DEM contact search at dem step 3
+DEM contact search at dem step 4
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 44       Time : 0.044    Time step : 0.001    CFL : 3.08075375e-05
+Transient iteration : 44       Time : 0.044    Time step : 0.001    CFL : 3.064784596e-05
 *****************************************************************
 Starting DEM iterations at step 44
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 45       Time : 0.045    Time step : 0.001    CFL : 2.573547087e-05
+Transient iteration : 45       Time : 0.045    Time step : 0.001    CFL : 2.558024909e-05
 *****************************************************************
 Starting DEM iterations at step 45
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 46       Time : 0.046    Time step : 0.001    CFL : 2.182027201e-05
+Transient iteration : 46       Time : 0.046    Time step : 0.001    CFL : 2.166959592e-05
 *****************************************************************
 Starting DEM iterations at step 46
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 47       Time : 0.047    Time step : 0.001    CFL : 1.867608876e-05
+Transient iteration : 47       Time : 0.047    Time step : 0.001    CFL : 1.852944934e-05
 *****************************************************************
 Starting DEM iterations at step 47
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 48       Time : 0.048    Time step : 0.001    CFL : 1.667437582e-05
+Transient iteration : 48       Time : 0.048    Time step : 0.001    CFL : 1.666934771e-05
 *****************************************************************
 Starting DEM iterations at step 48
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 49       Time : 0.049    Time step : 0.001    CFL : 1.525789569e-05
+Transient iteration : 49       Time : 0.049    Time step : 0.001    CFL : 1.5253439e-05
 *****************************************************************
 Starting DEM iterations at step 49
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 50       Time : 0.05     Time step : 0.001    CFL : 1.401964169e-05
+Transient iteration : 50       Time : 0.05     Time step : 0.001    CFL : 1.401584018e-05
 *****************************************************************
 Starting DEM iterations at step 50
-DEM contact search at dem step 82
+DEM contact search at dem step 83
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 51       Time : 0.051    Time step : 0.001    CFL : 1.292815526e-05
+Transient iteration : 51       Time : 0.051    Time step : 0.001    CFL : 1.292507526e-05
 *****************************************************************
 Starting DEM iterations at step 51
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 52       Time : 0.052    Time step : 0.001    CFL : 0.0004364722432
+Transient iteration : 52       Time : 0.052    Time step : 0.001    CFL : 0.000436367043
 *****************************************************************
 Starting DEM iterations at step 52
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 53       Time : 0.053    Time step : 0.001    CFL : 8.934607603e-05
+Transient iteration : 53       Time : 0.053    Time step : 0.001    CFL : 8.916252239e-05
 *****************************************************************
 Starting DEM iterations at step 53
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 54       Time : 0.054    Time step : 0.001    CFL : 4.104717959e-05
+Transient iteration : 54       Time : 0.054    Time step : 0.001    CFL : 4.089142431e-05
 *****************************************************************
 Starting DEM iterations at step 54
-DEM contact search at dem step 51
+DEM contact search at dem step 52
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 55       Time : 0.055    Time step : 0.001    CFL : 3.301706168e-05
+Transient iteration : 55       Time : 0.055    Time step : 0.001    CFL : 3.286711595e-05
 *****************************************************************
 Starting DEM iterations at step 55
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 56       Time : 0.056    Time step : 0.001    CFL : 2.640588595e-05
+Transient iteration : 56       Time : 0.056    Time step : 0.001    CFL : 2.625802155e-05
 *****************************************************************
 Starting DEM iterations at step 56
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 57       Time : 0.057    Time step : 0.001    CFL : 2.142287212e-05
+Transient iteration : 57       Time : 0.057    Time step : 0.001    CFL : 2.127932614e-05
 *****************************************************************
 Starting DEM iterations at step 57
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 58       Time : 0.058    Time step : 0.001    CFL : 1.816195606e-05
+Transient iteration : 58       Time : 0.058    Time step : 0.001    CFL : 1.819018478e-05
 *****************************************************************
 Starting DEM iterations at step 58
-DEM contact search at dem step 11
+DEM contact search at dem step 12
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 59       Time : 0.059    Time step : 0.001    CFL : 1.6262559e-05
+Transient iteration : 59       Time : 0.059    Time step : 0.001    CFL : 1.629175764e-05
 *****************************************************************
 Starting DEM iterations at step 59
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 60       Time : 0.06     Time step : 0.001    CFL : 0.0004390573336
+Transient iteration : 60       Time : 0.06     Time step : 0.001    CFL : 0.0004389188213
 *****************************************************************
 Starting DEM iterations at step 60
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 61       Time : 0.061    Time step : 0.001    CFL : 9.112332654e-05
+Transient iteration : 61       Time : 0.061    Time step : 0.001    CFL : 9.090102923e-05
 *****************************************************************
 Starting DEM iterations at step 61
-DEM contact search at dem step 63
+DEM contact search at dem step 64
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 62       Time : 0.062    Time step : 0.001    CFL : 4.254985091e-05
+Transient iteration : 62       Time : 0.062    Time step : 0.001    CFL : 4.230847907e-05
 *****************************************************************
 Starting DEM iterations at step 62
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 63       Time : 0.063    Time step : 0.001    CFL : 3.480295789e-05
+Transient iteration : 63       Time : 0.063    Time step : 0.001    CFL : 3.481586179e-05
 *****************************************************************
 Starting DEM iterations at step 63
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 64       Time : 0.064    Time step : 0.001    CFL : 2.988085743e-05
+Transient iteration : 64       Time : 0.064    Time step : 0.001    CFL : 2.989364335e-05
 *****************************************************************
 Starting DEM iterations at step 64
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 65       Time : 0.065    Time step : 0.001    CFL : 2.586005605e-05
+Transient iteration : 65       Time : 0.065    Time step : 0.001    CFL : 2.587330667e-05
 *****************************************************************
 Starting DEM iterations at step 65
-DEM contact search at dem step 9
+DEM contact search at dem step 10
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 66       Time : 0.066    Time step : 0.001    CFL : 2.293004666e-05
+Transient iteration : 66       Time : 0.066    Time step : 0.001    CFL : 2.293612344e-05
 *****************************************************************
 Starting DEM iterations at step 66
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 67       Time : 0.067    Time step : 0.001    CFL : 0.000442391939
+Transient iteration : 67       Time : 0.067    Time step : 0.001    CFL : 0.0004421954361
 *****************************************************************
 Starting DEM iterations at step 67
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 68       Time : 0.068    Time step : 0.001    CFL : 9.382680975e-05
+Transient iteration : 68       Time : 0.068    Time step : 0.001    CFL : 9.357110336e-05
 *****************************************************************
 Starting DEM iterations at step 68
-DEM contact search at dem step 50
+DEM contact search at dem step 51
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 69       Time : 0.069    Time step : 0.001    CFL : 4.440968108e-05
+Transient iteration : 69       Time : 0.069    Time step : 0.001    CFL : 4.419424752e-05
 *****************************************************************
 Starting DEM iterations at step 69
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 70       Time : 0.07     Time step : 0.001    CFL : 3.595556155e-05
+Transient iteration : 70       Time : 0.07     Time step : 0.001    CFL : 3.574655193e-05
 *****************************************************************
 Starting DEM iterations at step 70
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 71       Time : 0.071    Time step : 0.001    CFL : 2.898891335e-05
+Transient iteration : 71       Time : 0.071    Time step : 0.001    CFL : 2.878213316e-05
 *****************************************************************
 Starting DEM iterations at step 71
-DEM contact search at dem step 86
+DEM contact search at dem step 87
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 72       Time : 0.072    Time step : 0.001    CFL : 2.399536838e-05
+Transient iteration : 72       Time : 0.072    Time step : 0.001    CFL : 2.397824764e-05
 *****************************************************************
 Starting DEM iterations at step 72
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 73       Time : 0.073    Time step : 0.001    CFL : 0.0004463429841
+Transient iteration : 73       Time : 0.073    Time step : 0.001    CFL : 0.0004461200543
 *****************************************************************
 Starting DEM iterations at step 73
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 74       Time : 0.074    Time step : 0.001    CFL : 9.724715728e-05
+Transient iteration : 74       Time : 0.074    Time step : 0.001    CFL : 9.699722641e-05
 *****************************************************************
 Starting DEM iterations at step 74
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 75       Time : 0.075    Time step : 0.001    CFL : 4.673771416e-05
+Transient iteration : 75       Time : 0.075    Time step : 0.001    CFL : 4.643579517e-05
 *****************************************************************
 Starting DEM iterations at step 75
-DEM contact search at dem step 19
+DEM contact search at dem step 20
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 76       Time : 0.076    Time step : 0.001    CFL : 3.959298673e-05
+Transient iteration : 76       Time : 0.076    Time step : 0.001    CFL : 3.961052361e-05
 *****************************************************************
 Starting DEM iterations at step 76
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 77       Time : 0.077    Time step : 0.001    CFL : 3.43303104e-05
+Transient iteration : 77       Time : 0.077    Time step : 0.001    CFL : 3.434804421e-05
 *****************************************************************
 Starting DEM iterations at step 77
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 78       Time : 0.078    Time step : 0.001    CFL : 2.998803104e-05
+Transient iteration : 78       Time : 0.078    Time step : 0.001    CFL : 3.000513847e-05
 *****************************************************************
 Starting DEM iterations at step 78
-DEM contact search at dem step 49
+DEM contact search at dem step 50
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 79       Time : 0.079    Time step : 0.001    CFL : 2.69008409e-05
+Transient iteration : 79       Time : 0.079    Time step : 0.001    CFL : 2.690774324e-05
 *****************************************************************
 Starting DEM iterations at step 79
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 80       Time : 0.08     Time step : 0.001    CFL : 0.0004445693012
+Transient iteration : 80       Time : 0.08     Time step : 0.001    CFL : 0.0004443092504
 *****************************************************************
 Starting DEM iterations at step 80
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 81       Time : 0.081    Time step : 0.001    CFL : 9.54558736e-05
+Transient iteration : 81       Time : 0.081    Time step : 0.001    CFL : 9.524196924e-05
 *****************************************************************
 Starting DEM iterations at step 81
-DEM contact search at dem step 76
+DEM contact search at dem step 77
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 82       Time : 0.082    Time step : 0.001    CFL : 4.665682569e-05
+Transient iteration : 82       Time : 0.082    Time step : 0.001    CFL : 4.650558171e-05
 *****************************************************************
 Starting DEM iterations at step 82
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 83       Time : 0.083    Time step : 0.001    CFL : 3.795317649e-05
+Transient iteration : 83       Time : 0.083    Time step : 0.001    CFL : 3.780512158e-05
 *****************************************************************
 Starting DEM iterations at step 83
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 84       Time : 0.084    Time step : 0.001    CFL : 3.132640679e-05
+Transient iteration : 84       Time : 0.084    Time step : 0.001    CFL : 3.116930949e-05
 *****************************************************************
 Starting DEM iterations at step 84
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 85       Time : 0.085    Time step : 0.001    CFL : 2.738491477e-05
+Transient iteration : 85       Time : 0.085    Time step : 0.001    CFL : 2.72290278e-05
 *****************************************************************
 Starting DEM iterations at step 85
-DEM contact search at dem step 1
+DEM contact search at dem step 2
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 86       Time : 0.086    Time step : 0.001    CFL : 2.44774763e-05
+Transient iteration : 86       Time : 0.086    Time step : 0.001    CFL : 2.432102537e-05
 *****************************************************************
 Starting DEM iterations at step 86
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 87       Time : 0.087    Time step : 0.001    CFL : 2.225365085e-05
+Transient iteration : 87       Time : 0.087    Time step : 0.001    CFL : 2.209817771e-05
 *****************************************************************
 Starting DEM iterations at step 87
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 88       Time : 0.088    Time step : 0.001    CFL : 2.05009334e-05
+Transient iteration : 88       Time : 0.088    Time step : 0.001    CFL : 2.034771688e-05
 *****************************************************************
 Starting DEM iterations at step 88
-DEM contact search at dem step 24
+DEM contact search at dem step 25
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 89       Time : 0.089    Time step : 0.001    CFL : 1.908795445e-05
+Transient iteration : 89       Time : 0.089    Time step : 0.001    CFL : 1.893679663e-05
 *****************************************************************
 Starting DEM iterations at step 89
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 90       Time : 0.09     Time step : 0.001    CFL : 1.792843997e-05
+Transient iteration : 90       Time : 0.09     Time step : 0.001    CFL : 1.777898552e-05
 *****************************************************************
 Starting DEM iterations at step 90
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 91       Time : 0.091    Time step : 0.001    CFL : 1.696338376e-05
+Transient iteration : 91       Time : 0.091    Time step : 0.001    CFL : 1.681545719e-05
 *****************************************************************
 Starting DEM iterations at step 91
-DEM contact search at dem step 46
+DEM contact search at dem step 47
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 92       Time : 0.092    Time step : 0.001    CFL : 1.615083523e-05
+Transient iteration : 92       Time : 0.092    Time step : 0.001    CFL : 1.600440292e-05
 *****************************************************************
 Starting DEM iterations at step 92
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 93       Time : 0.093    Time step : 0.001    CFL : 1.545994273e-05
+Transient iteration : 93       Time : 0.093    Time step : 0.001    CFL : 1.531500951e-05
 *****************************************************************
 Starting DEM iterations at step 93
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 94       Time : 0.094    Time step : 0.001    CFL : 1.486739186e-05
+Transient iteration : 94       Time : 0.094    Time step : 0.001    CFL : 1.472394899e-05
 *****************************************************************
 Starting DEM iterations at step 94
-DEM contact search at dem step 66
+DEM contact search at dem step 67
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 95       Time : 0.095    Time step : 0.001    CFL : 1.435517192e-05
+Transient iteration : 95       Time : 0.095    Time step : 0.001    CFL : 1.42131942e-05
 *****************************************************************
 Starting DEM iterations at step 95
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 96       Time : 0.096    Time step : 0.001    CFL : 0.0004253860568
+Transient iteration : 96       Time : 0.096    Time step : 0.001    CFL : 0.0004252026558
 *****************************************************************
 Starting DEM iterations at step 96
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 97       Time : 0.097    Time step : 0.001    CFL : 7.843878487e-05
+Transient iteration : 97       Time : 0.097    Time step : 0.001    CFL : 7.831010634e-05
 *****************************************************************
 Starting DEM iterations at step 97
-DEM contact search at dem step 85
+DEM contact search at dem step 86
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 98       Time : 0.098    Time step : 0.001    CFL : 4.111897932e-05
+Transient iteration : 98       Time : 0.098    Time step : 0.001    CFL : 4.092888035e-05
 *****************************************************************
 Starting DEM iterations at step 98
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 99       Time : 0.099    Time step : 0.001    CFL : 3.430613796e-05
+Transient iteration : 99       Time : 0.099    Time step : 0.001    CFL : 3.411811594e-05
 *****************************************************************
 Starting DEM iterations at step 99
 Finished 100 DEM iterations 
 
 *****************************************************************
-Transient iteration : 100      Time : 0.1      Time step : 0.001    CFL : 2.928204001e-05
+Transient iteration : 100      Time : 0.1      Time step : 0.001    CFL : 2.909792431e-05
 *****************************************************************
 Starting DEM iterations at step 100
-Finished 100 DEM iterations
+Finished 100 DEM iterations 

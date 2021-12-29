@@ -25,7 +25,10 @@
 #ifndef lethe_heat_transfer_scratch_data_h
 #define lethe_heat_transfer_scratch_data_h
 
+#include <core/density_model.h>
 #include <core/multiphysics.h>
+#include <core/specific_heat_model.h>
+#include <core/thermal_conductivity_model.h>
 
 #include <solvers/multiphysics_interface.h>
 
@@ -47,15 +50,15 @@ using namespace dealii;
  * @brief HeatTransferScratchData class
  * stores the information required by the assembly procedure
  * for a heat transfer advection-diffusion equation. Consequently, this class
- *calculates the heat transfer (values, gradients, laplacians) and the shape
- *function (values, gradients, laplacians) at all the gauss points for all
- *degrees of freedom and stores it into arrays. Additionnaly, the use can
- *request that this class gathers additional fields for physics which are
- *coupled to the heat transfer equation, such as the velocity which is required.
- *This class serves as a seperation between the evaluation at the gauss point of
- *the variables of interest and their use in the assembly, which is carried out
- * by the assembler functions. For more information on this design, the reader
- * can consult deal.II step-9
+ * calculates the heat transfer (values, gradients, laplacians) and the shape
+ * function (values, gradients, laplacians) at all the gauss points for all
+ * degrees of freedom and stores it into arrays. Additionnaly, the user can
+ * request that this class gathers additional fields for physics which are
+ * coupled to the heat transfer equation, such as the velocity which is
+ *required. This class serves as a seperation between the evaluation at the
+ *gauss point of the variables of interest and their use in the assembly, which
+ *is carried out by the assembler functions. For more information on this
+ *design, the reader can consult deal.II step-9
  * "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter
  * example, the scratch is a struct instead of a templated class because of the
  * simplicity of step-9.
@@ -82,12 +85,15 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  HeatTransferScratchData(const FiniteElement<dim> & fe_ht,
-                          const Quadrature<dim> &    quadrature,
-                          const Mapping<dim> &       mapping,
-                          const FiniteElement<dim> & fe_navier_stokes,
-                          const Quadrature<dim - 1> &face_quadrature)
-    : fe_values_T(mapping,
+  HeatTransferScratchData(
+    const Parameters::PhysicalProperties physical_properties,
+    const FiniteElement<dim> &           fe_ht,
+    const Quadrature<dim> &              quadrature,
+    const Mapping<dim> &                 mapping,
+    const FiniteElement<dim> &           fe_navier_stokes,
+    const Quadrature<dim - 1> &          face_quadrature)
+    : physical_properties(physical_properties)
+    , fe_values_T(mapping,
                   fe_ht,
                   quadrature,
                   update_values | update_quadrature_points | update_JxW_values |
@@ -102,6 +108,7 @@ public:
                         update_values | update_quadrature_points |
                           update_JxW_values)
   {
+    gather_vof = false;
     allocate();
   }
 
@@ -119,7 +126,8 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    */
   HeatTransferScratchData(const HeatTransferScratchData<dim> &sd)
-    : fe_values_T(sd.fe_values_T.get_mapping(),
+    : physical_properties(sd.physical_properties)
+    , fe_values_T(sd.fe_values_T.get_mapping(),
                   sd.fe_values_T.get_fe(),
                   sd.fe_values_T.get_quadrature(),
                   update_values | update_quadrature_points | update_JxW_values |
@@ -134,6 +142,7 @@ public:
                         update_values | update_quadrature_points |
                           update_JxW_values)
   {
+    gather_vof = sd.gather_vof;
     allocate();
   }
 
@@ -290,11 +299,62 @@ public:
       current_solution, velocity_gradient_values);
   }
 
+
+  /**
+   * @brief enable_vof Enables the collection of the VOF data by the scratch.
+   *
+   * @param fe FiniteElement associated with the VOF.
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly.
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly.
+   */
+
+  void
+  enable_vof(const FiniteElement<dim> &fe,
+             const Quadrature<dim> &   quadrature,
+             const Mapping<dim> &      mapping);
+
+  /** @brief Reinitialize the content of the scratch for VOF.
+   *
+   * @param cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the VOF FE and not the
+   * Navier-Stokes FE
+   *
+   * @param current_solution The present value of the solution for [alpha]
+   *
+   * @param previous_solutions The solutions at the previous time steps for [alpha]
+   *
+   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [alpha]
+   *
+   */
+
+  template <typename VectorType>
+  void
+  reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
+             const VectorType &             current_solution,
+             const std::vector<VectorType> &previous_solutions,
+             const std::vector<VectorType> & /*solution_stages*/)
+  {
+    this->fe_values_vof->reinit(cell);
+    // Gather phase fraction (values, gradient)
+    this->fe_values_vof->get_function_values(current_solution,
+                                             this->vof_values);
+
+    // Gather previous phase fraction values
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        this->fe_values_vof->get_function_values(previous_solutions[p],
+                                                 previous_vof_values[p]);
+      }
+  }
+
   // FEValues for the HT problem
-  FEValues<dim> fe_values_T;
-  unsigned int  n_dofs;
-  unsigned int  n_q_points;
-  double        cell_size;
+  const Parameters::PhysicalProperties physical_properties;
+  FEValues<dim>                        fe_values_T;
+  unsigned int                         n_dofs;
+  unsigned int                         n_q_points;
+  double                               cell_size;
 
   // Quadrature
   std::vector<double>     JxW;
@@ -309,6 +369,10 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
   std::vector<std::vector<double>>         stages_temperature_values;
 
+  std::vector<double> specific_heat;
+  std::vector<double> thermal_conductivity;
+  std::vector<double> density;
+
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi_T;
@@ -318,7 +382,16 @@ public:
   // Source term
   std::vector<double> source;
 
-  std::vector<double> phase_values;
+  /**
+   * Scratch component for the VOF auxiliary physics
+   */
+  bool                             gather_vof;
+  unsigned int                     n_dofs_vof;
+  std::vector<double>              vof_values;
+  std::vector<std::vector<double>> previous_vof_values;
+  // This is stored as a shared_ptr because it is only instantiated when needed
+  std::shared_ptr<FEValues<dim>> fe_values_vof;
+  std::vector<double>            phase_values;
 
   /**
    * Scratch component for the Navier-Stokes component

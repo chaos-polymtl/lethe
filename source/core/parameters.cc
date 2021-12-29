@@ -1,4 +1,32 @@
-#include "core/parameters.h"
+#include <core/parameters.h>
+
+#include <deal.II/base/exceptions.h>
+
+DeclException1(
+  SharpeningThresholdError,
+  double,
+  << "Sharpening threshold : " << arg1 << " is smaller than 0 or larger than 1."
+  << " Interface sharpening model requires a sharpening threshold between 0 and 1.");
+
+DeclException1(
+  SharpeningFrequencyError,
+  int,
+  << "Sharpening frequency : " << arg1 << " is equal or smaller than 0."
+  << " Interface sharpening model requires an integer sharpening frequency larger than 0.");
+
+DeclException2(
+  PhaseChangeIntervalError,
+  double,
+  double,
+  << "Liquidus temperature : " << arg1
+  << " is not strictly superior to Solidus temperature: " << arg2
+  << " The liquidus temperature specific is below or equal to the solidus temperature."
+  << " The phase change specific heat model requires that T_liquidus>T_solidus.");
+
+DeclException1(NumberOfFluidsError,
+               int,
+               << "Number of fluids: " << arg1
+               << " is not 1 (single phase simulation) or 2 (VOF simulation)");
 
 namespace Parameters
 {
@@ -13,6 +41,14 @@ namespace Parameters
         Patterns::Selection("steady|steady_bdf|bdf1|bdf2|bdf3|sdirk2|sdirk3"),
         "The kind of solver for the linear system. "
         "Choices are <steady|steady_bdf|bdf1|bdf2|bdf3|sdirk2|sdirk3>.");
+
+      prm.declare_entry(
+        "bdf startup method",
+        "multiple step bdf",
+        Patterns::Selection("multiple step bdf|sdirk step|initial solution"),
+        "The kind of method used to startup high order bdf methods "
+        "Choices are <multiple step bdf|sdirk step|initial solution>.");
+
       prm.declare_entry("time step",
                         "1.",
                         Patterns::Double(),
@@ -123,6 +159,17 @@ namespace Parameters
         {
           std::runtime_error("Invalid time stepping scheme");
         }
+      const std::string bdf_startup_string = prm.get("bdf startup method");
+      if (bdf_startup_string == "multiple step bdf")
+        bdf_startup_method = BDFStartupMethods::multiple_step_bdf;
+      else if (bdf_startup_string == "sdirk step")
+        bdf_startup_method = BDFStartupMethods::sdirk_step;
+      else if (bdf_startup_string == "initial solution")
+        bdf_startup_method = BDFStartupMethods::initial_solution;
+      else
+        {
+          std::runtime_error("Invalid bdf startup scheme");
+        }
 
       const std::string osv = prm.get("output control");
       if (osv == "iteration")
@@ -166,6 +213,11 @@ namespace Parameters
                         Patterns::Selection("none|iteration|end"),
                         "Clock monitoring methods "
                         "Choices are <none|iteration|end>.");
+      prm.declare_entry(
+        "write time in error table",
+        "false",
+        Patterns::Bool(),
+        "Boolean to define if the time is written in the error table");
     }
     prm.leave_subsection();
   }
@@ -182,6 +234,178 @@ namespace Parameters
         type = Type::iteration;
       else if (cl == "end")
         type = Type::end;
+      write_time_in_error_table = prm.get_bool("write time in error table");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  CarreauParameters::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("carreau");
+    {
+      prm.declare_entry("viscosity_0",
+                        "1.0",
+                        Patterns::Double(),
+                        "Viscosity at rest");
+      prm.declare_entry("viscosity_inf",
+                        "1.0",
+                        Patterns::Double(),
+                        "Viscosity for an infinite shear rate");
+      prm.declare_entry("lambda", "1.0", Patterns::Double(), "Relaxation time");
+      prm.declare_entry("a", "2.0", Patterns::Double(), "Carreau parameter");
+      prm.declare_entry("n", "0.5", Patterns::Double(), "Power parameter");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  CarreauParameters::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("carreau");
+    {
+      viscosity_0   = prm.get_double("viscosity_0");
+      viscosity_inf = prm.get_double("viscosity_inf");
+      lambda        = prm.get_double("lambda");
+      a             = prm.get_double("a");
+      n             = prm.get_double("n");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  NonNewtonian::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("non newtonian");
+    {
+      prm.declare_entry("model",
+                        "carreau",
+                        Patterns::Selection("carreau"),
+                        "Non newtonian model "
+                        "Choices are <carreau>.");
+      carreau_parameters.declare_parameters(prm);
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  NonNewtonian::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("non newtonian");
+    {
+      const std::string op = prm.get("model");
+      if (op == "carreau")
+        {
+          model = Model::carreau;
+          carreau_parameters.parse_parameters(prm);
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  InterfaceSharpening::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("interface sharpening");
+    {
+      prm.declare_entry(
+        "sharpening threshold",
+        "0.5",
+        Patterns::Double(),
+        "VOF interface sharpening threshold that represents the mass conservation level");
+      // This parameter must be larger than 1 for interface sharpening. Choosing
+      // values less than 1 leads to interface smoothing instead of sharpening.
+      prm.declare_entry(
+        "interface sharpness",
+        "2",
+        Patterns::Double(),
+        "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
+      prm.declare_entry("sharpening frequency",
+                        "10",
+                        Patterns::Integer(),
+                        "VOF interface sharpening frequency");
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the interface sharpening calculations should be printed "
+        "Choices are <quiet|verbose>.");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  InterfaceSharpening::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("interface sharpening");
+    {
+      sharpening_threshold = prm.get_double("sharpening threshold");
+      interface_sharpness  = prm.get_double("interface sharpness");
+      sharpening_frequency = prm.get_integer("sharpening frequency");
+
+      Assert(sharpening_threshold > 0.0 && sharpening_threshold < 1.0,
+             SharpeningThresholdError(sharpening_threshold));
+
+      Assert(sharpening_frequency > 0,
+             SharpeningFrequencyError(sharpening_frequency));
+
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Parameters::Verbosity::verbose;
+      else if (op == "quiet")
+        verbosity = Parameters::Verbosity::quiet;
+      else
+        throw(std::runtime_error("Invalid verbosity level"));
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  PhaseChange::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("phase change");
+    {
+      T_solidus       = prm.get_double("solidus temperature");
+      T_liquidus      = prm.get_double("liquidus temperature");
+      latent_enthalpy = prm.get_double("latent enthalpy");
+      cp_l            = prm.get_double("specific heat liquid");
+      cp_s            = prm.get_double("specific heat solid");
+    }
+
+    Assert(T_liquidus > T_solidus,
+           PhaseChangeIntervalError(T_liquidus, T_solidus));
+
+    prm.leave_subsection();
+  }
+
+
+  void
+  PhaseChange::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("phase change");
+    {
+      prm.declare_entry("solidus temperature",
+                        "0",
+                        Patterns::Double(),
+                        "Temperature of the solidus");
+      prm.declare_entry("liquidus temperature",
+                        "1",
+                        Patterns::Double(),
+                        "Temperature of the liquidus");
+      prm.declare_entry("latent enthalpy",
+                        "1",
+                        Patterns::Double(),
+                        "Enthalpy of the phase change");
+
+      prm.declare_entry("specific heat liquid",
+                        "1",
+                        Patterns::Double(),
+                        "Specific heat of the liquid phase");
+
+      prm.declare_entry("specific heat solid",
+                        "1",
+                        Patterns::Double(),
+                        "Specific heat of the solid phase");
     }
     prm.leave_subsection();
   }
@@ -190,36 +414,27 @@ namespace Parameters
   PhysicalProperties::declare_parameters(ParameterHandler &prm)
   {
     fluids.resize(max_fluids);
-    number_fluids = 0;
+    number_of_fluids = 1;
 
     prm.enter_subsection("physical properties");
     {
-      // Monophasic simulations parameters definition
-      prm.declare_entry("kinematic viscosity",
-                        "1",
-                        Patterns::Double(),
-                        "Kinematic viscosity");
-      prm.declare_entry("density", "1", Patterns::Double(), "Density");
-      prm.declare_entry("specific heat",
-                        "1",
-                        Patterns::Double(),
-                        "Specific heat");
-      prm.declare_entry("thermal conductivity",
-                        "1",
-                        Patterns::Double(),
-                        "Thermal conductivity");
-
-      prm.declare_entry("tracer diffusivity",
-                        "0",
-                        Patterns::Double(),
-                        "Tracer diffusivity");
-
+      prm.declare_entry("non newtonian flow",
+                        "false",
+                        Patterns::Bool(),
+                        "Non Newtonian flow");
+      non_newtonian_parameters.declare_parameters(prm);
 
 
       prm.declare_entry("number of fluids",
-                        "0",
+                        "1",
                         Patterns::Integer(),
                         "Number of fluids");
+
+      prm.declare_entry("enable phase change",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable melting/freezing of fluids");
+      phase_change_parameters.declare_parameters(prm);
 
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
@@ -236,29 +451,22 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-      // Monophasic simulations parameters definition
-      viscosity            = prm.get_double("kinematic viscosity");
-      density              = prm.get_double("density");
-      specific_heat        = prm.get_double("specific heat");
-      thermal_conductivity = prm.get_double("thermal conductivity");
-      tracer_diffusivity   = prm.get_double("tracer diffusivity");
+      // Management of non_newtonian_flows
+      non_newtonian_flow = prm.get_bool("non newtonian flow");
+      non_newtonian_parameters.parse_parameters(prm);
 
-
+      // Management of phase_change
+      enable_phase_change = prm.get_bool("enable phase change");
+      phase_change_parameters.parse_parameters(prm);
 
       // Multiphasic simulations parameters definition
-      number_fluids = prm.get_integer("number of fluids");
-      for (unsigned int i_fluid = 0; i_fluid < number_fluids; ++i_fluid)
+      number_of_fluids = prm.get_integer("number of fluids");
+      Assert(number_of_fluids == 1 || number_of_fluids == 2,
+             NumberOfFluidsError(number_of_fluids));
+
+      for (unsigned int i_fluid = 0; i_fluid < number_of_fluids; ++i_fluid)
         {
           fluids[i_fluid].parse_parameters(prm, i_fluid);
-        }
-      // Compatibility from multiphasic to monophasic parameter definition
-      if (number_fluids == 1)
-        {
-          viscosity            = fluids[0].viscosity;
-          density              = fluids[0].density;
-          specific_heat        = fluids[0].specific_heat;
-          thermal_conductivity = fluids[0].thermal_conductivity;
-          tracer_diffusivity   = fluids[0].tracer_diffusivity;
         }
     }
     prm.leave_subsection();
@@ -293,6 +501,12 @@ namespace Parameters
         "Thermal conductivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
+        "thermal expansion",
+        "1",
+        Patterns::Double(),
+        "Thermal expansion coefficient for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+      prm.declare_entry(
         "tracer diffusivity",
         "0",
         Patterns::Double(),
@@ -311,6 +525,7 @@ namespace Parameters
       viscosity            = prm.get_double("kinematic viscosity");
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
+      thermal_expansion    = prm.get_double("thermal expansion");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
     }
     prm.leave_subsection();
@@ -341,7 +556,7 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
-      prm.declare_entry("free surface order",
+      prm.declare_entry("VOF order",
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
@@ -363,7 +578,7 @@ namespace Parameters
       void_fraction_order = prm.get_integer("void fraction order");
       temperature_order   = prm.get_integer("temperature order");
       tracer_order        = prm.get_integer("tracer order");
-      free_surface_order  = prm.get_integer("free surface order");
+      VOF_order           = prm.get_integer("VOF order");
       qmapping_all        = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();
@@ -858,9 +1073,9 @@ namespace Parameters
       prm.declare_entry(
         "verbosity",
         "verbose",
-        Patterns::Selection("quiet|verbose"),
+        Patterns::Selection("quiet|verbose|extra verbose"),
         "State whether output from solver runs should be printed. "
-        "Choices are <quiet|verbose>.");
+        "Choices are <quiet|verbose|extra verbose>.");
       prm.declare_entry(
         "method",
         "gmres",
@@ -947,6 +1162,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "amg smoother overlap");
+      prm.declare_entry(
+        "force linear solver continuation",
+        "false",
+        Patterns::Bool(),
+        "A boolean that will force the linear solver to continue even if it fails");
     }
     prm.leave_subsection();
   }
@@ -960,6 +1180,8 @@ namespace Parameters
         verbosity = Parameters::Verbosity::verbose;
       else if (op == "quiet")
         verbosity = Parameters::Verbosity::quiet;
+      else if (op == "extra verbose")
+        verbosity = Parameters::Verbosity::extra_verbose;
       else
         throw(
           std::runtime_error("Unknown verbosity mode for the linear solver"));
@@ -997,6 +1219,8 @@ namespace Parameters
       amg_w_cycles              = prm.get_bool("amg w cycles");
       amg_smoother_sweeps       = prm.get_integer("amg smoother sweeps");
       amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
+      force_linear_solver_continuation =
+        prm.get_bool("force linear solver continuation");
     }
     prm.leave_subsection();
   }
@@ -1013,9 +1237,9 @@ namespace Parameters
 
       prm.declare_entry("variable",
                         "velocity",
-                        Patterns::Selection("velocity|pressure"),
+                        Patterns::Selection("velocity|pressure|phase"),
                         "Variable for kelly estimation"
-                        "Choices are <velocity|pressure>.");
+                        "Choices are <velocity|pressure|phase>.");
       prm.declare_entry(
         "fraction type",
         "number",
@@ -1068,6 +1292,8 @@ namespace Parameters
         variable = Variable::velocity;
       if (vop == "pressure")
         variable = Variable::pressure;
+      if (vop == "phase")
+        variable = Variable::phase;
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")

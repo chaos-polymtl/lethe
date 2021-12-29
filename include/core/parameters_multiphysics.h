@@ -37,10 +37,16 @@ namespace Parameters
     bool fluid_dynamics;
     bool heat_transfer;
     bool tracer;
-    bool free_surface;
+    bool VOF;
+    bool interface_sharpening;
+    bool buoyancy_force;
 
     // subparameter for heat_transfer
     bool viscous_dissipation;
+
+    // subparameter for free_surface
+    bool conservation_monitoring;
+    int  fluid_index;
 
     static void
     declare_parameters(ParameterHandler &prm);
