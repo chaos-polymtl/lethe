@@ -1,0 +1,26 @@
+name: Publish docs to GitHub Pages
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build HTML
+        uses: ammaraskar/sphinx-action@0.4
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: html-docs
+          path: docs/build/html/
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.7
+        if: github.ref == 'refs/heads/main'
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: docs/build/html # The folder the action should deploy.
