@@ -35,7 +35,8 @@ Equations
 
 Sphinx can render equations using the MathJax backend.
 
-Examples:
+Examples
+^^^^^^^^
 
 .. code-block:: RST
 
@@ -87,7 +88,8 @@ C++ syntax highlight:
     .. code-block:: cpp
         your code
 
-Examples:
+Examples
+^^^^^^^^
 
 .. code-block:: RST
 
@@ -137,6 +139,7 @@ Gives:
 
 .. list-table::
    :header-rows: 1
+   :align: center
 
    * - My
      - Beautiful

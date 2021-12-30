@@ -4,9 +4,7 @@ Lethe
 
 .. image:: ../../logo/logo_black.png
   :alt: Lethe
-
-
-
+  :align: center
 
 **Lethe** (pronounced /'li:θi:/) is open-source computational fluid dynamics
 (CFD) software which uses high-order continuous Galerkin formulations to
@@ -46,6 +44,7 @@ Contents
    :maxdepth: 2
 
    installation
+   examples/examples
    contributing
 
 Installation
