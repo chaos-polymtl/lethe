@@ -1,4 +1,4 @@
-name: Publish docs to GitHub Pages
+name: Publish doc to GitHub Pages
 
 on: push
 
@@ -6,8 +6,8 @@ env:
   SPHINX_VERSION: 4.3.1
 
 jobs:
-  docs:
-    name: Publish docs to GitHub Pages
+  doc:
+    name: Publish doc to GitHub Pages
     runs-on: ubuntu-latest
 
     steps:
@@ -21,22 +21,22 @@ jobs:
       - name: Setup Sphinx
         run: |
           pip install sphinx==${{ env.SPHINX_VERSION }}
-          pip install -r docs/requirements.txt
+          pip install -r doc/requirements.txt
 
       - name: Build HTML
         run: |
-          cd docs
+          cd doc
           make html
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: html-docs
-          path: docs/build/html/
+          name: html-doc
+          path: doc/build/html/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.7
         if: github.ref == 'refs/heads/main'
         with:
           branch: gh-pages
-          folder: docs/build/html
+          folder: doc/build/html

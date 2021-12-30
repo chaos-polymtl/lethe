@@ -4,7 +4,7 @@ on:
   # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
   push:
     paths-ignore:
-      - 'docs/**'
+      - 'doc/**'
   pull_request_target:
 
 env:
