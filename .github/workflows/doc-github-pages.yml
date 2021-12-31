@@ -1,0 +1,42 @@
+name: Publish doc to GitHub Pages
+
+on: push
+
+env:
+  SPHINX_VERSION: 4.3.1
+
+jobs:
+  doc:
+    name: Publish doc to GitHub Pages
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Sphinx
+        run: |
+          pip install sphinx==${{ env.SPHINX_VERSION }}
+          pip install -r doc/requirements.txt
+
+      - name: Build HTML
+        run: |
+          cd doc
+          make html
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: html-doc
+          path: doc/build/html/
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.7
+        if: github.ref == 'refs/heads/main'
+        with:
+          branch: gh-pages
+          folder: doc/build/html
