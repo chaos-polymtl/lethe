@@ -8,8 +8,8 @@ RheologicalModel<dim>::model_cast(
   if (!physical_properties.non_newtonian_flow)
     return std::make_shared<Newtonian<dim>>(
       physical_properties.fluids[0].viscosity);
-  else if (physical_properties.non_newtonian_parameters.model ==
-           Parameters::NonNewtonian::Model::carreau)
+  else //  (physical_properties.non_newtonian_parameters.model ==
+       // Parameters::NonNewtonian::Model::carreau)
     return std::make_shared<Carreau<dim>>(
       physical_properties.non_newtonian_parameters);
 }
