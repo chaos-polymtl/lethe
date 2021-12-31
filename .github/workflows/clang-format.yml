@@ -1,7 +1,10 @@
 # Independent workflow to allow greater flexibility in triggers and schedules
 name: clang-format
 
-on: push
+on:
+  push:
+    paths-ignore:
+      - 'doc/**'
 
 env:
   # Supports version 5 up to version 12

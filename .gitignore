@@ -61,3 +61,6 @@ cmake-build-release/*
 
 # Ignore clion recommandation file
 .idea/*
+
+# Doc
+doc/build/*
