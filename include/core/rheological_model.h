@@ -102,7 +102,7 @@ public:
    * parameter to fit the virtual method in RheologicalModel.
    */
   double
-  get_viscosity(const double &shear_rate_magnitude) override
+  get_viscosity(const double & /*shear_rate_magnitude*/) override
   {
     return viscosity;
   }
