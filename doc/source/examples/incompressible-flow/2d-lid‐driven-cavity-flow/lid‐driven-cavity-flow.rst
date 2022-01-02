@@ -241,7 +241,7 @@ It can be used by modifying the ``simulation control`` subsection:
     set time step = 0.001
   end
 
-The ``adapt`` parameter allows dynamic time-step adaptation. This feature is also used in transient simulations to carry simulations at a constant CFL number. The ``max cfl`` controls the maximum value of the CFL reached during the simulation. Remember that Lethe is an implicit solver and, as such, can theoretically manage absurdly large values of the CFL. The ``stop-tolerance`` controls the initial tolerance of a time-step below which steady-state will be considered reached.  The ``time step``controls the initial value of the time step and, finally, the ``adaptative time step scaling`` controls the rate of increase of the time step. The increase of the time step follows:
+The ``adapt`` parameter allows dynamic time-step adaptation. This feature is also used in transient simulations to carry simulations at a constant CFL number. The ``max cfl`` controls the maximum value of the CFL reached during the simulation. Remember that Lethe is an implicit solver and, as such, can theoretically manage absurdly large values of the CFL. The ``stop-tolerance`` controls the initial tolerance of a time-step below which steady-state will be considered reached.  The ``time step`` controls the initial value of the time step and, finally, the ``adaptative time step scaling`` controls the rate of increase of the time step. The increase of the time step follows:
 
 .. math::
 
@@ -273,7 +273,7 @@ We first carry out the simulations with an initial refinement 7. Using Paraview,
 
 We see that new recirculation regions occur in the flow.
 
- Using a similar python script, we can compare the results obtained with those from the literature. We note that there is quite a good agreement with the results from the literature, even in the top region where the velocity field changes abruptly.
+Using a similar python script, we can compare the results obtained with those from the literature. We note that there is quite a good agreement with the results from the literature, even in the top region where the velocity field changes abruptly.
 
 .. image:: images/re_7500_mesh_7/lethe_ghia_re_7500_comparison.png
     :alt: re_7500_comparison_mesh_7
