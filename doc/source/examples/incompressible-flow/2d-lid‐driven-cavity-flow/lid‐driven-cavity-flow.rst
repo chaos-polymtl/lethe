@@ -14,8 +14,8 @@ Features used in this example
 
 Location of the examples
 ------------------------
-- Base case (:math:`R_e=400`) : ``/examples/incompressible_flows/cavity.prm``
-- Re=7500 : ``/examples/incompressible_flows/Reynolds_7500/cavity.prm``
+- Base case (:math:`Re=400`) : ``/examples/incompressible_flows/cavity.prm``
+- :math:`Re=7500` : ``/examples/incompressible_flows/Reynolds_7500/cavity.prm``
 
 
 Description of the case
