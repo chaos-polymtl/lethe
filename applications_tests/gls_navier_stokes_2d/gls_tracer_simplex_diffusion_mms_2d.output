@@ -8,8 +8,8 @@ Running on 1 MPI rank(s)...
 Steady iteration :        1/1
 *****************************************************************
 L2 error velocity : 0
-L2 error tracer : 2.15027e-05
+L2 error tracer : 2.20927e-05
 cells error_velocity error_pressure 
-  512 0.0000e+00   - 0.0000e+00   - 
-cells error_tracer 
-  512 2.1503e-05 - 
+  512 0.000000e+00 - 0.000000e+00 - 
+cells  error_tracer  
+  512 2.209270e-05 - 

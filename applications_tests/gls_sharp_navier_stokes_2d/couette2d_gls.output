@@ -15,8 +15,8 @@ Steady iteration :        2/3
    Number of active cells:       4096
    Number of degrees of freedom: 12675
    Volume of triangulation:      4
-div u : 1.43756e-08
-L2 error velocity : 0.0011934 L2 error pressure: 5.16118e-08
+div u : 1.32058e-08
+L2 error velocity : 0.0011934 L2 error pressure: 4.01671e-08
 
 *****************************************************************
 Steady iteration :        3/3
@@ -24,9 +24,9 @@ Steady iteration :        3/3
    Number of active cells:       16384
    Number of degrees of freedom: 49923
    Volume of triangulation:      4
-div u : 1.17532e-08
-L2 error velocity : 0.000303581 L2 error pressure: 2.48117e-08
+div u : 4.49643e-09
+L2 error velocity : 0.00030358 L2 error pressure: 3.80696e-08
 cells  error_velocity    error_pressure   
  1024 4.526187e-03    - 0.000000e+00    - 
- 4096 1.193398e-03 1.92 5.161179e-08 -inf 
-16384 3.035815e-04 1.97 2.481168e-08 1.06 
+ 4096 1.193397e-03 1.92 4.016706e-08 -inf 
+16384 3.035804e-04 1.97 3.806957e-08 0.08 
