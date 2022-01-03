@@ -300,7 +300,7 @@ Possibilities for extension
 - **Validate at higher Reynolds number:** The Erturk 2005 data within the example investigates this case up to a Reynolds number of 20000. Using the adjoint time-stepping ``steady_bdf`` scheme, it is an interesting exercise to simulate these more complex cases.
 - **High-order methods:** Lethe supports higher order interpolation. This can yield to much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds number. 
 
-- **Dynamic mesh adaptation:** Lethe supports dynamic mesh adaptation. Running this case with dynamic mesh adaptation could potentially yield better results.s
+- **Dynamic mesh adaptation:** Lethe supports dynamic mesh adaptation. Running this case with dynamic mesh adaptation could potentially yield better results.
 
 
 
