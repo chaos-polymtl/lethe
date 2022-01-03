@@ -140,7 +140,7 @@ We specify the interpolation order for both pressure and velocity using the ``FE
     end
 
 .. warning:: 
-    An alternative would be to use the ``gd_navier_stokes_2d`` solver for `LBB <https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition>`_ stable elements must be used (e.g. Qn-Q(n-1)). Only the stabilized solver supports the use of equal order elements. 
+    An alternative would be to use the ``gd_navier_stokes_2d`` solver; for `LBB <https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition>`_ stable elements must be used (e.g. Qn-Q(n-1)). Only the stabilized solver supports the use of equal order elements. 
 
 Non-linear solver parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
