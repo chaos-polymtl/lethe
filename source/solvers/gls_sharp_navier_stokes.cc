@@ -486,10 +486,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                             ->get_shear_rate_magnitude(
                                               shear_rate));
                                       fluid_stress =
-                                        viscosity *
-                                          (velocity_gradients[k] +
-                                           transpose(velocity_gradients[k])) -
-                                        fluid_pressure;
+                                        viscosity * shear_rate - fluid_pressure;
 
                                       fluid_stress_at_ib +=
                                         fluid_stress * ib_coef[k];
