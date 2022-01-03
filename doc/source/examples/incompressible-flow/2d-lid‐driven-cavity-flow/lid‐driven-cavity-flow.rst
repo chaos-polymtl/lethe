@@ -8,7 +8,6 @@ Features
 ----------------------------------
 - Solvers: ``gls_navier_stokes_2d`` (with Q1-Q1) or  ``gd_navier_stokes_2d`` (with Q2-Q1)
 - Steady-state problem
-- Illustrates how to set initial conditions
 - Displays the use of adjoint time-stepping for steady-state problems
 
 
@@ -106,7 +105,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
         end
     end
 
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The left (``0``), right (``1``) and bottom (``2``) walls are static and, consequently, a ``noslip`` boundary condition can be used. This boundary condition imposes :math:`\mathbf{u} = [0,0]^T`. For the top wall, we use the ``function`` boundary type. This type of boundary condition allows us to define the value of the velocity components using ``Function expression``. We set :math:`u=1` and :math:`v=0`. Note that the ``Function expression`` supports writing complex mathematical expression which may depend on the spatial coordinates (:math:`x,y,z`) and on time.
+First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The left (``0``), right (``1``) and bottom (``2``) walls are static and, consequently, a ``noslip`` boundary condition can be used. This boundary condition imposes :math:`\mathbf{u} = [0,0]^T`. For the top wall, we use the ``function`` boundary type. This type of boundary condition allows us to define the value of the velocity components using ``Function expression``. We set :math:`u=1` and :math:`v=0`. Note that the ``Function expression`` supports writing complex mathematical expressions which may depend on the spatial coordinates (:math:`x,y,z`) and on time.
 
 
 Physical properties
@@ -196,7 +195,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
 Base case results (Re=400)
-----------------------
+---------------------------
 
 Using Paraview, the steady-state velocity profile and the streamlines can be visualized:
 
@@ -218,7 +217,7 @@ We note that the agreement is perfect. This is not surprising, especially consid
 
 
 Higher-Reynolds case results (Re=7500)
----------------
+---------------------------------------
 
 We now consider the case at a Reynolds number of 7500. At this value of the Reynolds number, the ``steady`` solver will generally not converge as the problem is too non-linear (or too stiff). A workaround for this issue is to use an adjoint time-stepping strategy. This strategy consists in transforming the steady-state problem into a transient problem and to use an increasingly large time-step to reach a steady-state solution. This method is called ``steady_bdf`` in Lethe.
 
@@ -250,17 +249,6 @@ The ``adapt`` parameter allows dynamic time-step adaptation. This feature is als
 
 where :math:`\alpha` is the ``adaptative time step scaling`` .
 
-A complimentary strategy is to also start the problem from a closer initial condition. This is achieved with the ``initial conditions`` subsection:
-
-.. code-block:: text
-
-  subsection initial conditions
-    set type      = viscous
-    # viscosity for viscous initial conditions
-    set viscosity = 0.1
-  end
-
-Here we use ``viscous`` initial condition in which an auxiliary steady-state problem at a higher viscosity is used to generate a more realistic initial condition to the problem at hand.
 
 Results
 ~~~~~~~~~

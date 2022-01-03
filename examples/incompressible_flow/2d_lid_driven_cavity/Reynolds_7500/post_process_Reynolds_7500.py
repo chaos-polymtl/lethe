@@ -40,7 +40,7 @@ y_erturk=raw_erturk[:,0]
 u_erturk=raw_erturk[:,4]
 
 # Load VTU file
-vtu_file="out.0287.0000.vtu"
+vtu_file="out.0320.0000.vtu"
 sim = pv.read(vtu_file)
 sim.set_active_vectors("velocity")
 

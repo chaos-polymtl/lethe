@@ -19,17 +19,6 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# Initial conditions
-#---------------------------------------------------
-subsection initial conditions
-  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
-  set type      = viscous
-  # viscosity for viscous initial conditions
-  set viscosity = 0.1
-end
-
-
-#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
