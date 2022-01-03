@@ -29,11 +29,11 @@ Steady iteration :        3/3
    Number of thermal degrees of freedom: 1089
 L2 error velocity : 0.000528216
 L2 error temperature : 2.32365e-09
-cells error_velocity  error_pressure  
-   64 8.1031e-03    - 5.3968e-02    - 
-  256 2.0870e-03 1.96 1.6959e-02 1.67 
- 1024 5.2822e-04 1.98 5.3279e-03 1.67 
+cells  error_velocity    error_pressure   
+   64 8.103056e-03    - 5.396812e-02    - 
+  256 2.086963e-03 1.96 1.695858e-02 1.67 
+ 1024 5.282164e-04 1.98 5.327909e-03 1.67 
 cells error_temperature 
-   64 6.8754e-07      - 
-  256 3.8681e-08   4.15 
- 1024 2.3236e-09   4.06
+   64 6.875361e-07    - 
+  256 3.868103e-08 4.15 
+ 1024 2.323649e-09 4.06 
