@@ -222,14 +222,20 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
-  int    order = this->simulation_parameters.particlesParameters->order;
-  double mu =
-    this->simulation_parameters.physical_properties.fluids[0].viscosity;
-  double rho = this->simulation_parameters.particlesParameters->density;
+  int    order   = this->simulation_parameters.particlesParameters->order;
+  double density = this->simulation_parameters.particlesParameters->density;
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
   IBStencil<dim>      stencil;
   std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
+
+  // Rheological model for viscosity properties
+  double viscosity;
+  // Cast rheological model to either a Newtonian model or one of the
+  // non Newtonian models according to the physical properties
+  std::shared_ptr<RheologicalModel<dim>> rheological_model =
+    RheologicalModel<dim>::model_cast(
+      this->simulation_parameters.physical_properties);
 
   const unsigned int vertices_per_face = GeometryInfo<dim>::vertices_per_face;
   const unsigned int n_q_points_face   = this->face_quadrature->size();
@@ -243,7 +249,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     velocity_gradients_component[i].resize(ib_coef.size());
   Tensor<2, dim>              fluid_stress;
   Tensor<2, dim>              fluid_pressure;
-  Tensor<2, dim>              fluide_stress_at_ib;
+  Tensor<2, dim>              fluid_stress_at_ib;
+  Tensor<2, dim>              shear_rate;
   DoFHandler<dim - 1, dim>    local_face_dof_handler;
   Triangulation<dim - 1, dim> local_face_projection_triangulation;
 
@@ -287,7 +294,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           unsigned int p;
           bool         cell_is_cut;
           std::tie(cell_is_cut, p) = cut_cells_map[cell];
-          // If the cell is cute
+          // If the cell is cut
           if (cell_is_cut)
             {
               // Loop over all the face of the cell that is cut.
@@ -437,7 +444,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                             interpolation_points[j - 1]);
                                     }
 
-                                  fluide_stress_at_ib = 0;
+                                  fluid_stress_at_ib = 0;
 
                                   // Create a quadrature that is based on the IB
                                   // stencil
@@ -470,13 +477,18 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                           fluid_pressure[d][d] =
                                             pressure_values[k];
                                         }
+                                      shear_rate =
+                                        velocity_gradients[k] +
+                                        transpose(velocity_gradients[k]);
+                                      viscosity =
+                                        rheological_model->get_viscosity(
+                                          rheological_model
+                                            ->get_shear_rate_magnitude(
+                                              shear_rate));
                                       fluid_stress =
-                                        mu *
-                                          (velocity_gradients[k] +
-                                           transpose(velocity_gradients[k])) -
-                                        fluid_pressure;
+                                        viscosity * shear_rate - fluid_pressure;
 
-                                      fluide_stress_at_ib +=
+                                      fluid_stress_at_ib +=
                                         fluid_stress * ib_coef[k];
                                     }
                                   // Store the stress tensor that results from
@@ -484,9 +496,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   // vector of the IB surface cell and in a map
                                   // that is used if the same extrapolation is
                                   // needed in another face.
-                                  local_face_tensor[i] = fluide_stress_at_ib;
+                                  local_face_tensor[i] = fluid_stress_at_ib;
                                   force_eval_done[local_face_dof_indices[i]] =
-                                    std::make_pair(true, fluide_stress_at_ib);
+                                    std::make_pair(true, fluid_stress_at_ib);
                                 }
                             }
                           else
@@ -500,7 +512,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   .second;
                             }
                         }
-                      // Use the extrapolation of fluide stress tensor at the
+                      // Use the extrapolation of fluid stress tensor at the
                       // dof location of the IB surface cell to integrate the
                       // stress tensor on the surface of the IB
                       for (const auto &projection_cell_face :
@@ -595,9 +607,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   for (unsigned int i = 0; i < particles.size(); ++i)
     {
       particles[i].forces =
-        Utilities::MPI::sum(particles[i].forces, this->mpi_communicator) * rho;
+        Utilities::MPI::sum(particles[i].forces, this->mpi_communicator) *
+        density;
       particles[i].torques =
-        Utilities::MPI::sum(particles[i].torques, this->mpi_communicator) * rho;
+        Utilities::MPI::sum(particles[i].torques, this->mpi_communicator) *
+        density;
     }
   // total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
   // std::cout << "total area " << total_area << std::endl;
@@ -996,7 +1010,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   double alpha = this->simulation_parameters.particlesParameters->alpha;
   this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
 
-  double rho        = this->simulation_parameters.particlesParameters->density;
+  double density    = this->simulation_parameters.particlesParameters->density;
   particle_residual = 0;
   if (this->simulation_parameters.particlesParameters->integrate_motion)
     {
@@ -1007,7 +1021,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           Tensor<1, dim> g;
           // Translation
           // Define the gravity force applied on the particle based on his masse
-          // and the density of fluide applied on it.
+          // and the density of fluid applied on it.
 
           if (dim == 2)
             {
@@ -1017,7 +1031,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                        ->value(particles[p].position, 1);
               gravity =
                 g * (particles[p].mass -
-                     particles[p].radius * particles[p].radius * PI * rho);
+                     particles[p].radius * particles[p].radius * PI * density);
             }
           if (dim == 3)
             {
@@ -1030,7 +1044,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               gravity =
                 g * (particles[p].mass - 4.0 / 3.0 * particles[p].radius *
                                            particles[p].radius *
-                                           particles[p].radius * PI * rho);
+                                           particles[p].radius * PI * density);
             }
           // Evaluate the velocity of the particle
 
