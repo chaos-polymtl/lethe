@@ -217,7 +217,7 @@ We note that the agreement is perfect. This is not surprising, especially consid
 
 
 
-Case at Re=7500
+Higher-Reynolds case results (Re=7500)
 ---------------
 
 We now consider the case at a Reynolds number of 7500. At this value of the Reynolds number, the ``steady`` solver will generally not converge as the problem is too non-linear (or too stiff). A workaround for this issue is to use an adjoint time-stepping strategy. This strategy consists in transforming the steady-state problem into a transient problem and to use an increasingly large time-step to reach a steady-state solution. This method is called ``steady_bdf`` in Lethe.
