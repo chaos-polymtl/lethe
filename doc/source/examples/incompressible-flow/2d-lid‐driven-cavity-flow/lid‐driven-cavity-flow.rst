@@ -199,7 +199,7 @@ Base case results (Re=400)
 
 Using Paraview, the steady-state velocity profile and the streamlines can be visualized:
 
-.. image:: images/result.png
+.. image:: images/result_re_400.png
     :alt: velocity distribution
     :align: center
 
