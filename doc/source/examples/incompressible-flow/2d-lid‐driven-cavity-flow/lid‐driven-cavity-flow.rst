@@ -21,7 +21,7 @@ Location of the examples
 Description of the case
 -----------------------
 
-The lid-driven cavity is a classical fluid dynamics problem . It consists in the flow in an enclosed cavity, where one of the wall (in this example, the top wall) is put in motion at a constant tangential velocity. This case is often used to benchmark the capacity of CFD software because of the simplicity of it's geometry and the availabily of multiple reference results over a large range of Reynolds number. In this example, we investigate this problem in 2D, but simulating this case in 3D would require only a few changes. The geometry and boundary conditions are illustrated in the following figure:
+The lid-driven cavity is a classical fluid dynamics problem . It consists in the flow in an enclosed cavity, where one of the walls (in this example, the top wall) is put in motion at a constant tangential velocity. This case is often used to benchmark the capacity of CFD software because of the simplicity of its geometry and the availability of multiple reference results over a large range of Reynolds numbers. In this example, we investigate this problem in 2D, but simulating this case in 3D would require only a few changes. The geometry and boundary conditions are illustrated in the following figure:
 
 .. image:: images/geo.png
     :alt: The geometry and boundary conditions
