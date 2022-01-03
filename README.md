@@ -42,7 +42,7 @@ Follow the instructions in the
 ## Documentation
 
 Documentation, tutorials, and more can be found 
-[here][https://lethe-cfd.github.io/lethe/]
+[here](https://lethe-cfd.github.io/lethe/).
 
 ## Authors
 
