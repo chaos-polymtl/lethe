@@ -76,7 +76,7 @@ The last parameter specifies the ``initial refinement`` of the grid. Most deal.i
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The ``boundary conditions`` subsection establishes the boundary condition:
+The ``boundary conditions`` subsection establishes the constraints on different parts of the domain:
 
 .. code-block:: text
 
