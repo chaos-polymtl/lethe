@@ -223,13 +223,19 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
   int    order = this->simulation_parameters.particlesParameters->order;
-  double mu =
-    this->simulation_parameters.physical_properties.fluids[0].viscosity;
-  double rho = this->simulation_parameters.particlesParameters->density;
+  double rho   = this->simulation_parameters.particlesParameters->density;
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
   IBStencil<dim>      stencil;
   std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
+
+  // Rheological model for viscosity properties
+  double viscosity;
+  // Cast rheological model to either a Newtonian model or one of the
+  // non Newtonian models according to the physical properties
+  std::shared_ptr<RheologicalModel<dim>> rheological_model =
+    RheologicalModel<dim>::model_cast(
+      this->simulation_parameters.physical_properties);
 
   const unsigned int vertices_per_face = GeometryInfo<dim>::vertices_per_face;
   const unsigned int n_q_points_face   = this->face_quadrature->size();
@@ -244,6 +250,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   Tensor<2, dim>              fluid_stress;
   Tensor<2, dim>              fluid_pressure;
   Tensor<2, dim>              fluide_stress_at_ib;
+  Tensor<2, dim>              shear_rate;
   DoFHandler<dim - 1, dim>    local_face_dof_handler;
   Triangulation<dim - 1, dim> local_face_projection_triangulation;
 
@@ -287,7 +294,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           unsigned int p;
           bool         cell_is_cut;
           std::tie(cell_is_cut, p) = cut_cells_map[cell];
-          // If the cell is cute
+          // If the cell is cut
           if (cell_is_cut)
             {
               // Loop over all the face of the cell that is cut.
@@ -470,8 +477,16 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                           fluid_pressure[d][d] =
                                             pressure_values[k];
                                         }
+                                      shear_rate =
+                                        velocity_gradients[k] +
+                                        transpose(velocity_gradients[k]);
+                                      viscosity =
+                                        rheological_model->get_viscosity(
+                                          rheological_model
+                                            ->get_shear_rate_magnitude(
+                                              shear_rate));
                                       fluid_stress =
-                                        mu *
+                                        viscosity *
                                           (velocity_gradients[k] +
                                            transpose(velocity_gradients[k])) -
                                         fluid_pressure;
