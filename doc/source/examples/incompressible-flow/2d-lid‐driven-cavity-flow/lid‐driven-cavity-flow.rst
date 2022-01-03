@@ -195,7 +195,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
-Results at Re=400
+Base case results (Re=400)
 ----------------------
 
 Using Paraview, the steady-state velocity profile and the streamlines can be visualized:
