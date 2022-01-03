@@ -106,7 +106,7 @@ The ``boundary conditions`` subsection establishes the boundary condition:
         end
     end
 
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The left (``0``), right (``1``) and bottom (``2``) walls are static and, consequently, a ``noslip`` boundary condition can be used. This boundary condition imposes :math:`\mathbf{u} = [0,0]^T`. For the top wall, we use the `function` boundary type. This type of boundary condition allows us to define the value of the velocity components using `Function expression`. We set :math:`u=1` and :math:`v=0`. Note that the `Function expression` supports writing complex mathematical expression which may depend on the spatial coordinates (:math:`x,y,z`) and on time.
+First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The left (``0``), right (``1``) and bottom (``2``) walls are static and, consequently, a ``noslip`` boundary condition can be used. This boundary condition imposes :math:`\mathbf{u} = [0,0]^T`. For the top wall, we use the ``function`` boundary type. This type of boundary condition allows us to define the value of the velocity components using ``Function expression``. We set :math:`u=1` and :math:`v=0`. Note that the ``Function expression`` supports writing complex mathematical expression which may depend on the spatial coordinates (:math:`x,y,z`) and on time.
 
 
 Physical properties
