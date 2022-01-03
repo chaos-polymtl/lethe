@@ -30,7 +30,7 @@ The lid-driven cavity is a classical fluid dynamics problem . It consists in the
 
 Only the upper wall boundary moves in the x direction with a constant velocity (:math:`u = 1` m/s) while the other boundaries are static. We will discuss later in this example the meaning of the ID of the boundary conditions used in this figure.
 
-We first investigate this case at a Reynolds number of 400 for which a steady-state solution can be easily obtained. Later, we will increase this Reynolds number to 7500 and leverage some of the advanced functionnalities of Lethe to reach a steady-state solution. 
+We first investigate this case at a Reynolds number of 400 for which a steady-state solution can be easily obtained. Later, we will increase this Reynolds number to 7500 and leverage some of the advanced functionalities of Lethe to reach a steady-state solution. 
 
 
 
