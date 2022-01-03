@@ -39,7 +39,7 @@ Parameter file
 
 Lethe simulations are controlled by *parameter files* which possess the extension ``.prm``. This is the default text format of the ParameterHandler class of the deal.ii library from which Lethe derives. For more information on this class, we refer to the `deal.II documentation <https://www.dealii.org/current/doxygen/deal.II/classParameterHandler.html>`_. 
 
-Parameter files are made of subsections which describe a portion of the simulation (e.g. mesh generation, physical properties, simulation control). In parameter files, line starting with ``#`` are comments. Parameters are set using the following syntax:
+Parameter files are made of subsections which describe a portion of the simulation (e.g. mesh generation, physical properties, simulation control). In parameter files, lines starting with ``#`` are comments. Parameters are set using the following syntax:
 
 .. code-block:: text
 
