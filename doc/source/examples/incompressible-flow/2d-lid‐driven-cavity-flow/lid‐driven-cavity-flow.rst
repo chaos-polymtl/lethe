@@ -162,7 +162,7 @@ Linear solver parameters
 Each non-linear solver step requires the solution of a linear system of equations. Lethe has multiple options to parametrize its linear solvers, but here, we only enable its verbosity to monitor the number of iteration per time step and use the default parameters for the rest. 
 
 .. note:: 
-    A good thing to remember is that, generally, linear solver parameter control the robustness of the simulation.
+    A good thing to remember is that, generally, linear solver parameters control the robustness of the simulation.
 
 
 
