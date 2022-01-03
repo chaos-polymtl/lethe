@@ -184,12 +184,7 @@ public:
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
   {
-    // if (physical_properties.non_newtonian_parameters.model ==
-    // Parameters::NonNewtonian::Model::Carreau)
-    //{
-    rheological_model = std::make_shared<Carreau<dim>>(
-      physical_properties.non_newtonian_parameters);
-    //}
+    rheological_model = RheologicalModel<dim>::model_cast(physical_properties);
   }
 
   /**
@@ -427,12 +422,7 @@ public:
     , physical_properties(physical_properties)
     , gamma(gamma)
   {
-    // if (physical_properties.non_newtonian_parameters.model ==
-    // Parameters::NonNewtonian::Model::Carreau)
-    //{
-    rheological_model = std::make_shared<Carreau<dim>>(
-      physical_properties.non_newtonian_parameters);
-    //}
+    rheological_model = RheologicalModel<dim>::model_cast(physical_properties);
   }
 
   /**
