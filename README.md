@@ -39,6 +39,11 @@ dedicated solvers like Lethe could not exist.
 Follow the instructions in the
 [wiki](https://github.com/lethe-cfd/lethe/wiki/Installation).
 
+## Documentation
+
+Documentation, tutorials, and more can be found 
+[here][https://lethe-cfd.github.io/lethe/]
+
 ## Authors
 
 Main developer:
