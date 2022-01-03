@@ -4,12 +4,12 @@
 
 This is the first Lethe example. It showcases a classical fluid mechanics problem, the lid-driven cavity. This example also introduces the concept of parameter files to parametrize Lethe simulations.
 
-Features used in this example
+Features
 ----------------------------------
-- Solver : ``gls_navier_stokes_2d``, ``gd_navier_stokes_2d`` (with Q2-Q1)
+- Solvers: ``gls_navier_stokes_2d`` (with Q1-Q1) or  ``gd_navier_stokes_2d`` (with Q2-Q1)
 - Steady-state problem
-- Setting initial conditions
-- Adjoint time-stepping for steady-state problems
+- Illustrates how to set initial conditions
+- Displays the use of adjoint time-stepping for steady-state problems
 
 
 Location of the examples
