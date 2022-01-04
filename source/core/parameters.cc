@@ -240,6 +240,28 @@ namespace Parameters
   }
 
   void
+  PowerLawParameters::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("power-law");
+    {
+      prm.declare_entry("K", "1.0", Patterns::Double(), "Viscosity at rest");
+      prm.declare_entry("n", "0.5", Patterns::Double(), "Power parameter");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  PowerLawParameters::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("power-law");
+    {
+      K = prm.get_double("K");
+      n = prm.get_double("n");
+    }
+    prm.leave_subsection();
+  }
+
+  void
   CarreauParameters::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("carreau");
@@ -280,9 +302,10 @@ namespace Parameters
     {
       prm.declare_entry("model",
                         "carreau",
-                        Patterns::Selection("carreau"),
+                        Patterns::Selection("power-law|carreau"),
                         "Non newtonian model "
-                        "Choices are <carreau>.");
+                        "Choices are <power-law|carreau>.");
+      powerlaw_parameters.declare_parameters(prm);
       carreau_parameters.declare_parameters(prm);
     }
     prm.leave_subsection();
@@ -294,7 +317,12 @@ namespace Parameters
     prm.enter_subsection("non newtonian");
     {
       const std::string op = prm.get("model");
-      if (op == "carreau")
+      if (op == "power-law")
+        {
+          model = Model::powerlaw;
+          powerlaw_parameters.parse_parameters(prm);
+        }
+      else if (op == "carreau")
         {
           model = Model::carreau;
           carreau_parameters.parse_parameters(prm);

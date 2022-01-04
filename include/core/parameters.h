@@ -182,6 +182,23 @@ namespace Parameters
   };
 
   /**
+   * @brief Power-law rheological model to solve for non Newtonian
+   * flows.
+   */
+  struct PowerLawParameters
+  {
+    // Viscosity of the flow when the shear rate tends to 0
+    double K;
+    // Power parameter
+    double n;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Carreau rheological model to solve for non Newtonian
    * flows.
    */
@@ -215,10 +232,12 @@ namespace Parameters
     // Non Newtonian model
     enum class Model
     {
+      powerlaw,
       carreau
     } model;
 
-    CarreauParameters carreau_parameters;
+    CarreauParameters  carreau_parameters;
+    PowerLawParameters powerlaw_parameters;
 
     void
     declare_parameters(ParameterHandler &prm);
