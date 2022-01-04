@@ -191,6 +191,9 @@ namespace Parameters
     double K;
     // Power parameter
     double n;
+    // Minimal shear rate magnitude for which we calculate viscosity, since
+    // power-law does not allow for minimal visocsity
+    double shear_rate_min;
 
     static void
     declare_parameters(ParameterHandler &prm);

@@ -246,6 +246,10 @@ namespace Parameters
     {
       prm.declare_entry("K", "1.0", Patterns::Double(), "Viscosity at rest");
       prm.declare_entry("n", "0.5", Patterns::Double(), "Power parameter");
+      prm.declare_entry("shear rate min",
+                        "0.001",
+                        Patterns::Double(),
+                        "Minimal shear rate magnitude");
     }
     prm.leave_subsection();
   }
@@ -255,8 +259,9 @@ namespace Parameters
   {
     prm.enter_subsection("power-law");
     {
-      K = prm.get_double("K");
-      n = prm.get_double("n");
+      K              = prm.get_double("K");
+      n              = prm.get_double("n");
+      shear_rate_min = prm.get_double("shear rate min");
     }
     prm.leave_subsection();
   }
