@@ -16,6 +16,8 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/rpt_fem_reconstruction.h>
 
+#include <fstream>
+
 using namespace dealii;
 
 template <int dim>
@@ -64,14 +66,15 @@ RPTFEMReconstruction<dim>::assemble_system(unsigned detector_no)
   system_rhs    = 0;
   system_matrix = 0;
 
-  const QGauss<dim>  quadrature_formula(fe.degree + 1);
-  FEValues<dim>      fe_values(fe,
+  const QGaussSimplex<dim> quadrature_formula(fe.degree + 1);
+  FEValues<dim>            fe_values(mapping,
+                          fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values);
-  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>     cell_rhs(dofs_per_cell);
+  const unsigned int       dofs_per_cell = fe.n_dofs_per_cell();
+  FullMatrix<double>       cell_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>           cell_rhs(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   unsigned int                         cell_calculated = 0;
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -172,8 +175,7 @@ RPTFEMReconstruction<dim>::output_raw_results_per_level()
 
       for (const auto &cell : dof_handler.cell_iterators_on_level(level))
         {
-          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell;
-               ++v)
+          for (unsigned int v = 0; v < cell->n_vertices(); ++v)
             {
               auto dof_index       = cell->vertex_dof_index(v, 0);
               auto vertex_location = cell->vertex(v);
@@ -230,8 +232,19 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "Number of detectors identified : " << detectors.size()
             << std::endl;
 
-  GridGenerator::cylinder(triangulation, 0.1, 0.2);
-  triangulation.refine_global(3);
+  // flatten the triangulation
+  Triangulation<dim> temp_triangulation;
+  Triangulation<dim> flat_temp_triangulation;
+  GridGenerator::cylinder(temp_triangulation, 0.1, 0.2);
+  temp_triangulation.refine_global(3);
+
+  GridGenerator::flatten_triangulation(temp_triangulation,
+                                       flat_temp_triangulation);
+
+  GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
+                                                   triangulation);
+
+  triangulation.set_all_manifold_ids(0);
 
 
   GridOut grid_out;
@@ -256,36 +269,36 @@ RPTFEMReconstruction<dim>::L2_project()
       assemble_system(d);
       std::cout << "Solving system" << std::endl;
       solve_linear_system(d);
+      std::cout << "System solved" << std::endl;
     }
-  //output_results();
-  //output_raw_results_per_level();
-  test();
 
-
+  std::cout << "Outputting results" << std::endl;
+  output_results();
+  output_raw_results_per_level();
+  // test();
 }
 
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::test(){
-
-
-    std::vector<std::vector<double>> vertex_count({{424.852,473.017,423.58,472.146,423.705,472.074,421.562,471.108},
-                                                   {110.331,117.785,101.808,109.015,112.288,120.573,103.947,111.384},
-                                                   {45.7901,44.532,50.0397,48.7909,47.2334,46.2382,51.9948,50.6357}});
-    Tensor<1, dim>experimental_count({494.726,121.157,44.064});
-    solve(vertex_count,experimental_count);
-
-
+RPTFEMReconstruction<dim>::test()
+{
+  std::vector<std::vector<double>> vertex_count(
+    {{424.852, 473.017, 423.58, 472.146, 423.705, 472.074, 421.562, 471.108},
+     {110.331, 117.785, 101.808, 109.015, 112.288, 120.573, 103.947, 111.384},
+     {45.7901, 44.532, 50.0397, 48.7909, 47.2334, 46.2382, 51.9948, 50.6357}});
+  Tensor<1, dim> experimental_count({494.726, 121.157, 44.064});
+  solve(vertex_count, experimental_count);
 }
 
 
 
 template <int dim>
 std::vector<double>
-RPTFEMReconstruction<dim>::solve(std::vector<std::vector<double>> vertex_count,Tensor<1, dim>experimental_count)
+RPTFEMReconstruction<dim>::solve(std::vector<std::vector<double>> vertex_count,
+                                 Tensor<1, dim> experimental_count)
 {
-    Tensor<1, dim> natural_coordinate;
+  Tensor<1, dim> natural_coordinate;
   // First guess for the Newton method
   natural_coordinate[0] = 0.1;
   natural_coordinate[1] = 0.1;
@@ -295,478 +308,653 @@ RPTFEMReconstruction<dim>::solve(std::vector<std::vector<double>> vertex_count,T
   double norm_dx = 1;
   while (norm_dx > tol)
     {
-      Tensor<2, 3, double> inverse_jacobian = invert(assemble_jacobian_for_Newton_method(vertex_count,experimental_count,natural_coordinate));
-      Tensor<1, 3, double> dx               = -inverse_jacobian * assemble_rhs(vertex_count,experimental_count,natural_coordinate);
-      norm_dx                               = dx.norm();
+      Tensor<2, 3, double> inverse_jacobian =
+        invert(assemble_jacobian_for_Newton_method(vertex_count,
+                                                   experimental_count,
+                                                   natural_coordinate));
+      Tensor<1, 3, double> dx =
+        -inverse_jacobian *
+        assemble_rhs(vertex_count, experimental_count, natural_coordinate);
+      norm_dx = dx.norm();
       natural_coordinate += dx;
     }
-   std::cout<<natural_coordinate<<std::endl;
-
+  std::cout << natural_coordinate << std::endl;
 }
 
 
 
 template <int dim>
 Tensor<2, dim>
-RPTFEMReconstruction<dim>::assemble_jacobian_for_Newton_method(std::vector<std::vector<double>> vertex_count,Tensor<1, dim>experimental_count,Tensor<1, dim> natural_coordinate)
+RPTFEMReconstruction<dim>::assemble_jacobian_for_Newton_method(
+  std::vector<std::vector<double>> vertex_count,
+  Tensor<1, dim>                   experimental_count,
+  Tensor<1, dim>                   natural_coordinate)
 {
-    Tensor<2, dim>jacobian_matrix;
-     double sigma = 0;
-     for (unsigned int i = 0; i < detectors.size(); i++)
-       {
-         sigma += (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) -
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
-                   0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) -
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
-                   0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) -
-                   0.125 * vertex_count[i][6] * (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1)) *
-                  (vertex_count[i][0] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[2] - 0.125) +
-                   vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) * (1 - natural_coordinate[1]) +
-                   vertex_count[i][2] * (1 - natural_coordinate[2]) * (-0.125 * natural_coordinate[1] - 0.125) +
-                   vertex_count[i][3] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[1] + 0.125) +
-                   vertex_count[i][4] * (1 - natural_coordinate[1]) * (-0.125 * natural_coordinate[2] - 0.125) +
-                   vertex_count[i][5] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[2] + 0.125) -
-                   vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) * (natural_coordinate[1] + 1) +
-                   vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125) * (natural_coordinate[1] + 1));
+  Tensor<2, dim> jacobian_matrix;
+  double         sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[2]) *
+                  (1 - natural_coordinate[1]) +
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (1 - natural_coordinate[1]) -
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[1] + 1) -
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[2] + 1) -
+                0.125 * vertex_count[i][6] * (natural_coordinate[2] + 1) *
+                  (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[2] + 1) *
+                  (natural_coordinate[1] + 1)) *
+               (vertex_count[i][0] * (1 - natural_coordinate[1]) *
+                  (0.125 * natural_coordinate[2] - 0.125) +
+                vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) *
+                  (1 - natural_coordinate[1]) +
+                vertex_count[i][2] * (1 - natural_coordinate[2]) *
+                  (-0.125 * natural_coordinate[1] - 0.125) +
+                vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[1] + 0.125) +
+                vertex_count[i][4] * (1 - natural_coordinate[1]) *
+                  (-0.125 * natural_coordinate[2] - 0.125) +
+                vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (0.125 * natural_coordinate[2] + 0.125) -
+                vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) *
+                  (natural_coordinate[1] + 1) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125) *
+                  (natural_coordinate[1] + 1));
+    }
+  jacobian_matrix[0][0] = sigma;
 
-       }
-     jacobian_matrix[0][0] = sigma;
 
+  sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (-vertex_count[i][0] * (0.125 * natural_coordinate[2] - 0.125) -
+                vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) -
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) -
+                vertex_count[i][4] * (-0.125 * natural_coordinate[2] - 0.125) -
+                vertex_count[i][5] * (0.125 * natural_coordinate[2] + 0.125) -
+                vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125)) *
+                 (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
+                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
+                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) -
+                  experimental_count[i]) +
+               (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) -
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[0] + 1) +
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[0] + 1) -
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[2] + 1) -
+                0.125 * vertex_count[i][5] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[2] + 1)) *
+                 (vertex_count[i][0] * (1 - natural_coordinate[1]) *
+                    (0.125 * natural_coordinate[2] - 0.125) +
+                  vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) +
+                  vertex_count[i][2] * (1 - natural_coordinate[2]) *
+                    (-0.125 * natural_coordinate[1] - 0.125) +
+                  vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                    (0.125 * natural_coordinate[1] + 0.125) +
+                  vertex_count[i][4] * (1 - natural_coordinate[1]) *
+                    (-0.125 * natural_coordinate[2] - 0.125) +
+                  vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (0.125 * natural_coordinate[2] + 0.125) -
+                  vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) *
+                    (natural_coordinate[1] + 1) +
+                  vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125) *
+                    (natural_coordinate[1] + 1));
+    }
 
-     sigma = 0;
-     for (unsigned int i = 0; i < detectors.size(); i++)
-       {
-         sigma += (-vertex_count[i][0] * (0.125 * natural_coordinate[2] - 0.125) -
-                   vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) -
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) +
-                   0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) -
-                   vertex_count[i][4] * (-0.125 * natural_coordinate[2] - 0.125) -
-                   vertex_count[i][5] * (0.125 * natural_coordinate[2] + 0.125) -
-                   vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) +
-                   vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125)) *
-                    (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (1 - natural_coordinate[1]) +
-                     0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[0] + 1) +
-                     0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) -
-                     experimental_count[i]) +
-                  (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) -
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) +
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) +
-                   0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) -
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) -
-                   0.125 * vertex_count[i][5] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
-                   0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1)) *
-                    (vertex_count[i][0] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[2] - 0.125) +
-                     vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) * (1 - natural_coordinate[1]) +
-                     vertex_count[i][2] * (1 - natural_coordinate[2]) * (-0.125 * natural_coordinate[1] - 0.125) +
-                     vertex_count[i][3] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[1] + 0.125) +
-                     vertex_count[i][4] * (1 - natural_coordinate[1]) * (-0.125 * natural_coordinate[2] - 0.125) +
-                     vertex_count[i][5] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[2] + 0.125) -
-                     vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) * (natural_coordinate[1] + 1) +
-                     vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125) * (natural_coordinate[1] + 1));
-       }
+  jacobian_matrix[0][1] = sigma;
 
-     jacobian_matrix[0][1] = sigma;
+  sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (0.125 * vertex_count[i][0] * (1 - natural_coordinate[1]) -
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) -
+                vertex_count[i][2] * (-0.125 * natural_coordinate[1] - 0.125) -
+                vertex_count[i][3] * (0.125 * natural_coordinate[1] + 0.125) -
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) +
+                0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) -
+                0.125 * vertex_count[i][6] * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[1] + 1)) *
+                 (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
+                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
+                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) -
+                  experimental_count[i]) +
+               (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[1]) -
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[0] + 1) -
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[1] + 1) -
+                0.125 * vertex_count[i][3] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[1]) +
+                0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[0] + 1) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[1] + 1)) *
+                 (vertex_count[i][0] * (1 - natural_coordinate[1]) *
+                    (0.125 * natural_coordinate[2] - 0.125) +
+                  vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) +
+                  vertex_count[i][2] * (1 - natural_coordinate[2]) *
+                    (-0.125 * natural_coordinate[1] - 0.125) +
+                  vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                    (0.125 * natural_coordinate[1] + 0.125) +
+                  vertex_count[i][4] * (1 - natural_coordinate[1]) *
+                    (-0.125 * natural_coordinate[2] - 0.125) +
+                  vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (0.125 * natural_coordinate[2] + 0.125) -
+                  vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) *
+                    (natural_coordinate[1] + 1) +
+                  vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125) *
+                    (natural_coordinate[1] + 1));
+    }
+  jacobian_matrix[0][2] = sigma;
 
-     sigma = 0;
-     for (unsigned int i = 0; i < detectors.size(); i++)
-       {
-         sigma += (0.125 * vertex_count[i][0] * (1 - natural_coordinate[1]) -
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) -
-                   vertex_count[i][2] * (-0.125 * natural_coordinate[1] - 0.125) -
-                   vertex_count[i][3] * (0.125 * natural_coordinate[1] + 0.125) -
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) +
-                   0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) -
-                   0.125 * vertex_count[i][6] * (natural_coordinate[1] + 1) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[1] + 1)) *
-                    (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (1 - natural_coordinate[1]) +
-                     0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[0] + 1) +
-                     0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) -
-                     experimental_count[i]) +
-                  (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) -
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) -
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (natural_coordinate[1] + 1) -
-                   0.125 * vertex_count[i][3] * (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) +
-                   0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
-                   0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[1] + 1) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1)) *
-                    (vertex_count[i][0] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[2] - 0.125) +
-                     vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) * (1 - natural_coordinate[1]) +
-                     vertex_count[i][2] * (1 - natural_coordinate[2]) * (-0.125 * natural_coordinate[1] - 0.125) +
-                     vertex_count[i][3] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[1] + 0.125) +
-                     vertex_count[i][4] * (1 - natural_coordinate[1]) * (-0.125 * natural_coordinate[2] - 0.125) +
-                     vertex_count[i][5] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[2] + 0.125) -
-                     vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) * (natural_coordinate[1] + 1) +
-                     vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125) * (natural_coordinate[1] + 1));
-       }
-     jacobian_matrix[0][2] = sigma;
+  sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (0.125 * vertex_count[i][0] * (1 - natural_coordinate[2]) -
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) -
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) +
+                vertex_count[i][4] * (0.125 * natural_coordinate[2] + 0.125) -
+                0.125 * vertex_count[i][5] * (natural_coordinate[2] + 1) -
+                vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[2] + 1)) *
+                 (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
+                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
+                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) -
+                  experimental_count[i]) +
+               (-vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) -
+                vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[0] + 0.125) +
+                vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) +
+                vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[0] + 0.125) -
+                vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[2] + 0.125) -
+                vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[2] + 1) +
+                vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[2] + 0.125) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[2] + 1)) *
+                 (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) +
+                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) -
+                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) *
+                    (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                    (natural_coordinate[1] + 1) -
+                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[2] + 1) -
+                  0.125 * vertex_count[i][6] * (natural_coordinate[2] + 1) *
+                    (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][7] * (natural_coordinate[2] + 1) *
+                    (natural_coordinate[1] + 1));
+    }
+  jacobian_matrix[1][0] = sigma;
 
-     sigma=0;
-     for (unsigned int i = 0; i < detectors.size(); i++)
-       {
-         sigma += (0.125 * vertex_count[i][0] * (1 - natural_coordinate[2]) -
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) -
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) +
-                   0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) +
-                   vertex_count[i][4] * (0.125 * natural_coordinate[2] + 0.125) -
-                   0.125 * vertex_count[i][5] * (natural_coordinate[2] + 1) -
-                   vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[2] + 1)) *
-                    (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (1 - natural_coordinate[1]) +
-                     0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[0] + 1) +
-                     0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) -
-                     experimental_count[i]) +
-                  (-vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[2]) -
-                   vertex_count[i][1] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[0] + 0.125) +
-                   vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[2]) +
-                   vertex_count[i][3] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[0] + 0.125) -
-                   vertex_count[i][4] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[2] + 0.125) -
-                   vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[2] + 1) +
-                   vertex_count[i][6] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[2] + 0.125) +
-                   vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[2] + 1)) *
-                    (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
-                     0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) -
-                     0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) -
-                     0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) -
-                     0.125 * vertex_count[i][6] * (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][7] * (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1));
-       }
-     jacobian_matrix[1][0] = sigma;
+  sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (-vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) -
+                vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[0] + 0.125) +
+                vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) +
+                vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[0] + 0.125) -
+                vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[2] + 0.125) -
+                vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[2] + 1) +
+                vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[2] + 0.125) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[2] + 1)) *
+               (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) -
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[0] + 1) +
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[0] + 1) -
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[2] + 1) -
+                0.125 * vertex_count[i][5] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[2] + 1));
+    }
+  jacobian_matrix[1][1] = sigma;
 
-     sigma=0;
-     for (unsigned int i = 0; i < detectors.size(); i++)
-       {
-         sigma += (-vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[2]) -
-                   vertex_count[i][1] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[0] + 0.125) +
-                   vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[2]) +
-                   vertex_count[i][3] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[0] + 0.125) -
-                   vertex_count[i][4] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[2] + 0.125) -
-                   vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[2] + 1) +
-                   vertex_count[i][6] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[2] + 0.125) +
-                   vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[2] + 1)) *
-                  (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) -
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) +
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) +
-                   0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) -
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) -
-                   0.125 * vertex_count[i][5] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
-                   0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1));
-       }
-     jacobian_matrix[1][1] = sigma;
+  sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) +
+                vertex_count[i][1] * (0.125 * natural_coordinate[0] + 0.125) -
+                vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) -
+                vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) -
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) -
+                vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125)) *
+                 (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
+                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
+                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) -
+                  experimental_count[i]) +
+               (-vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) -
+                vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[0] + 0.125) +
+                vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) +
+                vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[0] + 0.125) -
+                vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[2] + 0.125) -
+                vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[2] + 1) +
+                vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[2] + 0.125) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[2] + 1)) *
+                 (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) -
+                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[0] + 1) -
+                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                    (natural_coordinate[1] + 1) -
+                  0.125 * vertex_count[i][3] * (natural_coordinate[0] + 1) *
+                    (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) +
+                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[0] + 1) +
+                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                    (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                    (natural_coordinate[1] + 1));
+    }
+  jacobian_matrix[1][2] = sigma;
 
-     sigma=0;
-     for (unsigned int i = 0; i < detectors.size(); i++)
-       {
-         sigma += (vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) +
-                   vertex_count[i][1] * (0.125 * natural_coordinate[0] + 0.125) -
-                   vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) -
-                   vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) -
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) -
-                   vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) +
-                   0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) +
-                   vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125)) *
-                    (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (1 - natural_coordinate[1]) +
-                     0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[0] + 1) +
-                     0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) -
-                     experimental_count[i]) +
-                  (-vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[2]) -
-                   vertex_count[i][1] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[0] + 0.125) +
-                   vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[2]) +
-                   vertex_count[i][3] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[0] + 0.125) -
-                   vertex_count[i][4] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[2] + 0.125) -
-                   vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[2] + 1) +
-                   vertex_count[i][6] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[2] + 0.125) +
-                   vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[2] + 1)) *
-                    (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) -
-                     0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) -
-                     0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (natural_coordinate[1] + 1) -
-                     0.125 * vertex_count[i][3] * (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) +
-                     0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
-                     0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1));
-       }
-     jacobian_matrix[1][2] = sigma;
+  sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (0.125 * vertex_count[i][0] * (1 - natural_coordinate[1]) -
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) +
+                vertex_count[i][2] * (0.125 * natural_coordinate[1] + 0.125) -
+                0.125 * vertex_count[i][3] * (natural_coordinate[1] + 1) -
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) +
+                0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) -
+                vertex_count[i][6] * (0.125 * natural_coordinate[1] + 0.125) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[1] + 1)) *
+                 (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
+                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
+                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) -
+                  experimental_count[i]) +
+               (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[2]) *
+                  (1 - natural_coordinate[1]) +
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (1 - natural_coordinate[1]) -
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[1] + 1) -
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[2] + 1) -
+                0.125 * vertex_count[i][6] * (natural_coordinate[2] + 1) *
+                  (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[2] + 1) *
+                  (natural_coordinate[1] + 1)) *
+                 (vertex_count[i][0] * (1 - natural_coordinate[1]) *
+                    (0.125 * natural_coordinate[0] - 0.125) +
+                  vertex_count[i][1] * (1 - natural_coordinate[1]) *
+                    (-0.125 * natural_coordinate[0] - 0.125) -
+                  vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                    (0.125 * natural_coordinate[1] + 0.125) -
+                  vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) *
+                    (natural_coordinate[1] + 1) +
+                  vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) +
+                  vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (0.125 * natural_coordinate[0] + 0.125) +
+                  vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                    (0.125 * natural_coordinate[1] + 0.125) +
+                  vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) *
+                    (natural_coordinate[1] + 1));
+    }
+  jacobian_matrix[2][0] = sigma;
 
-     sigma=0;
-     for (unsigned int i = 0; i < detectors.size(); i++)
-       {
-         sigma += (0.125 * vertex_count[i][0] * (1 - natural_coordinate[1]) -
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) +
-                   vertex_count[i][2] * (0.125 * natural_coordinate[1] + 0.125) -
-                   0.125 * vertex_count[i][3] * (natural_coordinate[1] + 1) -
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) +
-                   0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) -
-                   vertex_count[i][6] * (0.125 * natural_coordinate[1] + 0.125) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[1] + 1)) *
-                    (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (1 - natural_coordinate[1]) +
-                     0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[0] + 1) +
-                     0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) -
-                     experimental_count[i]) +
-                  (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) -
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
-                   0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) -
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
-                   0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) -
-                   0.125 * vertex_count[i][6] * (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1)) *
-                    (vertex_count[i][0] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[0] - 0.125) +
-                     vertex_count[i][1] * (1 - natural_coordinate[1]) * (-0.125 * natural_coordinate[0] - 0.125) -
-                     vertex_count[i][2] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[1] + 0.125) -
-                     vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[1] + 1) +
-                     vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[1]) +
-                     vertex_count[i][5] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[0] + 0.125) +
-                     vertex_count[i][6] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[1] + 0.125) +
-                     vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[1] + 1));
-       }
-     jacobian_matrix[2][0] = sigma;
+  sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (-vertex_count[i][0] * (0.125 * natural_coordinate[0] - 0.125) -
+                vertex_count[i][1] * (-0.125 * natural_coordinate[0] - 0.125) -
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) -
+                vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) -
+                vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) -
+                vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125)) *
+                 (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
+                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
+                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
+                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
+                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                    (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) -
+                  experimental_count[i]) +
+               (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) -
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[0] + 1) +
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[0] + 1) -
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[2] + 1) -
+                0.125 * vertex_count[i][5] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[2] + 1)) *
+                 (vertex_count[i][0] * (1 - natural_coordinate[1]) *
+                    (0.125 * natural_coordinate[0] - 0.125) +
+                  vertex_count[i][1] * (1 - natural_coordinate[1]) *
+                    (-0.125 * natural_coordinate[0] - 0.125) -
+                  vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                    (0.125 * natural_coordinate[1] + 0.125) -
+                  vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) *
+                    (natural_coordinate[1] + 1) +
+                  vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) *
+                    (1 - natural_coordinate[1]) +
+                  vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                    (0.125 * natural_coordinate[0] + 0.125) +
+                  vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                    (0.125 * natural_coordinate[1] + 0.125) +
+                  vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) *
+                    (natural_coordinate[1] + 1));
+    }
+  jacobian_matrix[2][1] = sigma;
 
-     sigma=0;
-     for (unsigned int i = 0; i < detectors.size(); i++)
-       {
-         sigma += (-vertex_count[i][0] * (0.125 * natural_coordinate[0] - 0.125) -
-                   vertex_count[i][1] * (-0.125 * natural_coordinate[0] - 0.125) -
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) -
-                   vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) -
-                   vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) -
-                   vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) +
-                   0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) +
-                   vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125)) *
-                    (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (1 - natural_coordinate[1]) +
-                     0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[0] + 1) +
-                     0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) *
-                       (natural_coordinate[2] + 1) +
-                     0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) +
-                     0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) *
-                       (natural_coordinate[1] + 1) -
-                     experimental_count[i]) +
-                  (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) -
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) +
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) +
-                   0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) -
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) -
-                   0.125 * vertex_count[i][5] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
-                   0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1)) *
-                    (vertex_count[i][0] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[0] - 0.125) +
-                     vertex_count[i][1] * (1 - natural_coordinate[1]) * (-0.125 * natural_coordinate[0] - 0.125) -
-                     vertex_count[i][2] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[1] + 0.125) -
-                     vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[1] + 1) +
-                     vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[1]) +
-                     vertex_count[i][5] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[0] + 0.125) +
-                     vertex_count[i][6] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[1] + 0.125) +
-                     vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[1] + 1));
-       }
-     jacobian_matrix[2][1] = sigma;
+  sigma = 0;
 
-     sigma=0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[1]) -
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[0] + 1) -
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[1] + 1) -
+                0.125 * vertex_count[i][3] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[1]) +
+                0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[0] + 1) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[1] + 1)) *
+               (vertex_count[i][0] * (1 - natural_coordinate[1]) *
+                  (0.125 * natural_coordinate[0] - 0.125) +
+                vertex_count[i][1] * (1 - natural_coordinate[1]) *
+                  (-0.125 * natural_coordinate[0] - 0.125) -
+                vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[1] + 0.125) -
+                vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[1] + 1) +
+                vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[1]) +
+                vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (0.125 * natural_coordinate[0] + 0.125) +
+                vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[1] + 0.125) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[1] + 1));
+    }
+  jacobian_matrix[2][2] = sigma;
 
-     for (unsigned int i = 0; i < detectors.size(); i++)
-       {
-         sigma += (-0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) -
-                   0.125 * vertex_count[i][1] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) -
-                   0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (natural_coordinate[1] + 1) -
-                   0.125 * vertex_count[i][3] * (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
-                   0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) +
-                   0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
-                   0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[1] + 1) +
-                   0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1)) *
-                  (vertex_count[i][0] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[0] - 0.125) +
-                   vertex_count[i][1] * (1 - natural_coordinate[1]) * (-0.125 * natural_coordinate[0] - 0.125) -
-                   vertex_count[i][2] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[1] + 0.125) -
-                   vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[1] + 1) +
-                   vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[1]) +
-                   vertex_count[i][5] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[0] + 0.125) +
-                   vertex_count[i][6] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[1] + 0.125) +
-                   vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[1] + 1));
-       }
-     jacobian_matrix[2][2] = sigma;
-
-     return jacobian_matrix;
+  return jacobian_matrix;
 }
 
 
 template <int dim>
 Tensor<1, dim>
-RPTFEMReconstruction<dim>::assemble_rhs(std::vector<std::vector<double>> vertex_count, Tensor<1, dim>experimental_count, Tensor<1, dim> natural_coordinate){
+RPTFEMReconstruction<dim>::assemble_rhs(
+  std::vector<std::vector<double>> vertex_count,
+  Tensor<1, dim>                   experimental_count,
+  Tensor<1, dim>                   natural_coordinate)
+{
+  Tensor<1, dim> rhs_matrix;
+  double         sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (vertex_count[i][0] * (1 - natural_coordinate[1]) *
+                  (0.125 * natural_coordinate[2] - 0.125) +
+                vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) *
+                  (1 - natural_coordinate[1]) +
+                vertex_count[i][2] * (1 - natural_coordinate[2]) *
+                  (-0.125 * natural_coordinate[1] - 0.125) +
+                vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[1] + 0.125) +
+                vertex_count[i][4] * (1 - natural_coordinate[1]) *
+                  (-0.125 * natural_coordinate[2] - 0.125) +
+                vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (0.125 * natural_coordinate[2] + 0.125) -
+                vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) *
+                  (natural_coordinate[1] + 1) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125) *
+                  (natural_coordinate[1] + 1)) *
+               (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) -
+                experimental_count[i]);
+    }
+  rhs_matrix[0] = sigma;
 
-    Tensor<1, dim>rhs_matrix;
-    double sigma=0;
-    for (unsigned int i = 0; i < detectors.size(); i++)
-      {
-        sigma += (vertex_count[i][0] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[2] - 0.125) +
-                  vertex_count[i][1] * (0.125 - 0.125 * natural_coordinate[2]) * (1 - natural_coordinate[1]) +
-                  vertex_count[i][2] * (1 - natural_coordinate[2]) * (-0.125 * natural_coordinate[1] - 0.125) +
-                  vertex_count[i][3] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[1] + 0.125) +
-                  vertex_count[i][4] * (1 - natural_coordinate[1]) * (-0.125 * natural_coordinate[2] - 0.125) +
-                  vertex_count[i][5] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[2] + 0.125) -
-                  vertex_count[i][6] * (0.125 * natural_coordinate[2] + 0.125) * (natural_coordinate[1] + 1) +
-                  vertex_count[i][7] * (0.125 * natural_coordinate[2] + 0.125) * (natural_coordinate[1] + 1)) *
-                 (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                    (1 - natural_coordinate[1]) +
-                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) *
-                    (natural_coordinate[0] + 1) +
-                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                    (natural_coordinate[1] + 1) +
-                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) *
-                    (natural_coordinate[1] + 1) +
-                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) *
-                    (natural_coordinate[2] + 1) +
-                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) *
-                    (natural_coordinate[2] + 1) +
-                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) *
-                    (natural_coordinate[1] + 1) +
-                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) *
-                    (natural_coordinate[1] + 1) -
-                  experimental_count[i]);
-      }
-    rhs_matrix[0] = sigma;
+  sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (-vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) -
+                vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[0] + 0.125) +
+                vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) +
+                vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (0.125 * natural_coordinate[0] + 0.125) -
+                vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[2] + 0.125) -
+                vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[2] + 1) +
+                vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[2] + 0.125) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[2] + 1)) *
+               (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) -
+                experimental_count[i]);
+    }
+  rhs_matrix[1] = sigma;
 
-    sigma=0;
-    for (unsigned int i = 0; i < detectors.size(); i++)
-      {
-        sigma += (-vertex_count[i][0] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[2]) -
-                  vertex_count[i][1] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[0] + 0.125) +
-                  vertex_count[i][2] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[2]) +
-                  vertex_count[i][3] * (1 - natural_coordinate[2]) * (0.125 * natural_coordinate[0] + 0.125) -
-                  vertex_count[i][4] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[2] + 0.125) -
-                  vertex_count[i][5] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[2] + 1) +
-                  vertex_count[i][6] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[2] + 0.125) +
-                  vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[2] + 1)) *
-                 (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                    (1 - natural_coordinate[1]) +
-                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) *
-                    (natural_coordinate[0] + 1) +
-                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                    (natural_coordinate[1] + 1) +
-                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) *
-                    (natural_coordinate[1] + 1) +
-                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) *
-                    (natural_coordinate[2] + 1) +
-                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) *
-                    (natural_coordinate[2] + 1) +
-                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) *
-                    (natural_coordinate[1] + 1) +
-                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) *
-                    (natural_coordinate[1] + 1) -
-                  experimental_count[i]);
-
-      }
-    rhs_matrix[1] = sigma;
-
-    sigma=0;
-    for (unsigned int i = 0; i < detectors.size(); i++)
-      {
-        sigma += (vertex_count[i][0] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[0] - 0.125) +
-                  vertex_count[i][1] * (1 - natural_coordinate[1]) * (-0.125 * natural_coordinate[0] - 0.125) -
-                  vertex_count[i][2] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[1] + 0.125) -
-                  vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[1] + 1) +
-                  vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) * (1 - natural_coordinate[1]) +
-                  vertex_count[i][5] * (1 - natural_coordinate[1]) * (0.125 * natural_coordinate[0] + 0.125) +
-                  vertex_count[i][6] * (1 - natural_coordinate[0]) * (0.125 * natural_coordinate[1] + 0.125) +
-                  vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) * (natural_coordinate[1] + 1)) *
-                 (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                    (1 - natural_coordinate[1]) +
-                  0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) *
-                    (natural_coordinate[0] + 1) +
-                  0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[2]) *
-                    (natural_coordinate[1] + 1) +
-                  0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) * (natural_coordinate[0] + 1) *
-                    (natural_coordinate[1] + 1) +
-                  0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) * (1 - natural_coordinate[1]) *
-                    (natural_coordinate[2] + 1) +
-                  0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) *
-                    (natural_coordinate[2] + 1) +
-                  0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) * (natural_coordinate[2] + 1) *
-                    (natural_coordinate[1] + 1) +
-                  0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) *
-                    (natural_coordinate[1] + 1) -
-                  experimental_count[i]);
-      }
-    rhs_matrix[2] = sigma;
-    return rhs_matrix;
-
+  sigma = 0;
+  for (unsigned int i = 0; i < detectors.size(); i++)
+    {
+      sigma += (vertex_count[i][0] * (1 - natural_coordinate[1]) *
+                  (0.125 * natural_coordinate[0] - 0.125) +
+                vertex_count[i][1] * (1 - natural_coordinate[1]) *
+                  (-0.125 * natural_coordinate[0] - 0.125) -
+                vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[1] + 0.125) -
+                vertex_count[i][3] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[1] + 1) +
+                vertex_count[i][4] * (0.125 - 0.125 * natural_coordinate[0]) *
+                  (1 - natural_coordinate[1]) +
+                vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (0.125 * natural_coordinate[0] + 0.125) +
+                vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (0.125 * natural_coordinate[1] + 0.125) +
+                vertex_count[i][7] * (0.125 * natural_coordinate[0] + 0.125) *
+                  (natural_coordinate[1] + 1)) *
+               (0.125 * vertex_count[i][0] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) * (1 - natural_coordinate[1]) +
+                0.125 * vertex_count[i][1] * (1 - natural_coordinate[2]) *
+                  (1 - natural_coordinate[1]) * (natural_coordinate[0] + 1) +
+                0.125 * vertex_count[i][2] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[2]) * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][3] * (1 - natural_coordinate[2]) *
+                  (natural_coordinate[0] + 1) * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][4] * (1 - natural_coordinate[0]) *
+                  (1 - natural_coordinate[1]) * (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][5] * (1 - natural_coordinate[1]) *
+                  (natural_coordinate[0] + 1) * (natural_coordinate[2] + 1) +
+                0.125 * vertex_count[i][6] * (1 - natural_coordinate[0]) *
+                  (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) +
+                0.125 * vertex_count[i][7] * (natural_coordinate[0] + 1) *
+                  (natural_coordinate[2] + 1) * (natural_coordinate[1] + 1) -
+                experimental_count[i]);
+    }
+  rhs_matrix[2] = sigma;
+  return rhs_matrix;
 }
 
 template class RPTFEMReconstruction<3>;
