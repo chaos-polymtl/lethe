@@ -65,7 +65,7 @@ The ``/prototypes`` folder houses temporary applications in Lethe. These applica
 The prototypes folder contains a template folder which contains a virgin prototype. Each prototype should be implemented within their own folder. When implementing a new prototype, the following should be done:
 
 * Copy the template folder to a new folder within the prototypes folder that bears the name of what you want to develop
-* Within the new folder, modify the ``CMakeLists.txt`` file to ensure that the name of the application has the name you want it to have. This is achieved my modifying the ``SET(TARGET "protype_template")`` line to ``SET(TARGET "my_project_name")``
+* Within the new folder, modify the ``CMakeLists.txt`` file to ensure that the name of the application has the name you want it to have. This is achieved by modifying the ``SET(TARGET "protype_template")`` line to ``SET(TARGET "my_project_name")``
 * Modify the name of the .cc files so that it corresponds to the name of your prototype. All .cc and .h files will be detected automatically by the ``CMakeLists.txt`` GLOB instructions
 * Add the new folder to the list of prototypes to be taken into account by modifying the ``prototypes/CMakeLists.txt`` and adding a ``ADD_SUBDIRECTORY(my_prototype)``
 
@@ -83,7 +83,7 @@ The ``\doc`` folder contains the source files of this documentation page of Leth
 The examples folder
 --------------------
 
-The ``\examples`` folder includes the parameter file and the post-processing scripts of examples using different applications in Lethe. It is subdividedinto additional sub-directories, namely:
+The ``\examples`` folder includes the parameter file and the post-processing scripts of examples using different applications in Lethe. It is subdivided into additional sub-directories, namely:
 
 * ``\cfd_dem``
 * ``\dem``
@@ -98,8 +98,3 @@ The logo folder
 
 The ``/logo`` folder is the simplest one, it houses the logo of Lethe in various formats :)!
 
-
-
-
-
-The ``/logo`` folder is the simplest one, it houses the logo of Lethe in various formats :)!
