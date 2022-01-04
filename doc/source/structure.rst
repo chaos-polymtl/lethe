@@ -78,7 +78,7 @@ The ``/contrib`` folder houses various scripts that help for the maintenance of 
 The doc folder
 --------------
 
-The ``\doc`` folder contains the source files of this documentation page of Lethe. To contribute or compile the documentation on your own machine follow the instructions of the *contributing* tab.
+The ``\doc`` folder contains the source files of this documentation page of Lethe. To contribute or compile the documentation on your own machine follow the instructions of the :doc:`contributing` tab.
 
 The examples folder
 --------------------
@@ -91,7 +91,7 @@ The ``\examples`` folder includes the parameter file and the post-processing scr
 * ``\multiphysics``
 * ``\rpt``
 
-Detailed descriptions of most of these examples can be found on the *Examples* tab of this page.
+Detailed descriptions of most of these examples can be found on the :doc:`examples/examples` tab of this page.
 
 The logo folder
 ----------------
