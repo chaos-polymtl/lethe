@@ -43,10 +43,10 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-
    installation/installation
    structure
    first_simulation
+   parameters/parameters
    examples/examples
    contributing
 

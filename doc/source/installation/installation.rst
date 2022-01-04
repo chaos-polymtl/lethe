@@ -2,8 +2,7 @@
 Installation
 ############
 
-.. todo::
-    Migrate installation guide from Markdown wiki
+To use Lethe, you must install it. This can be done either through a regular installation on the operating system of your choice, or by using a docker image.
 
 
 .. toctree::
@@ -11,4 +10,6 @@ Installation
     :glob:
     :titlesonly:
 
+    regular_installation
     docker
+
