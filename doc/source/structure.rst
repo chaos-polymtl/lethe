@@ -1,13 +1,13 @@
-############################################
-Explanation of the folder structure
-############################################
+##########################
+Folder structure of Lethe
+##########################
 
-The folder structure of Lethe is relatively complex. Once you have cloned and compiled Lethe, it is normal that you might be confused as to the meaning of the various folders in the cloned directory (which we will refer to as the lethe folder). This section of the documentation aims at demystifying these elements.
+The folder structure of Lethe is relatively complex. Once you have cloned and compiled Lethe, it is normal that you might be confused as to the meaning of the various folders in the cloned directory (which we will refer to as the lethe folder) or in the build folder. This section of the documentation aims at demystifying these elements.
 
 ================
-The Lethe folder
+The lethe folder
 ================
-In the Lethe folder, the following structure is present:
+In this folder, the following structure is present:
 
 * ``/applications``
 * ``/applications_tests``
@@ -97,4 +97,12 @@ The logo folder
 ----------------
 
 The ``/logo`` folder is the simplest one, it houses the logo of Lethe in various formats :)!
+
+================
+The build folder
+================
+
+This folder is obtained after compiling Lethe and it contains all the relevant executables for all applications and tests available. 
+
+
 
