@@ -45,6 +45,7 @@ Contents
    
    installation
    structure
+   first_simulation
    examples/examples
    contributing
 
