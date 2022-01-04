@@ -42,8 +42,9 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   
-   installation
+
+
+   installation/installation
    structure
    examples/examples
    contributing
@@ -51,7 +52,7 @@ Contents
 Installation
 ------------
 
-Follow the instructions in the :doc:`installation` section.
+Follow the instructions in the :doc:`installation/installation` section.
 
 Authors
 -------
