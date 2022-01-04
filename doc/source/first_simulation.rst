@@ -4,7 +4,7 @@ Launching your first simulation
 
 The objective of this section is to highlight the steps that are necessary to launch your first simulation after you have cloned and compiled Lethe.
 
-Launching an application requires an executable of the required solver, and a parameters file (with extension .prm if it uses the parameter file format, or .json if it uses the JSON file format). After building Lethe, the solver executable files can be found in : ``$BUILD_FOLDER/applications`` directory.
+Launching an application requires an executable of the required solver, and a parameters file (with extension .prm). After building Lethe, the solver executable files can be found in : ``$BUILD_FOLDER/applications`` directory.
 
 For instance, ``gd_navier_stokes_2d`` executable is located in the ``$BUILD_FOLDER/applications/gd_navier_stokes_2d`` directory.
 
