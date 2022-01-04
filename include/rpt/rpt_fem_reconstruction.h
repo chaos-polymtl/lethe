@@ -29,7 +29,8 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_simplex_p.h>
+#include <deal.II/fe/mapping_fe.h>
 
 #include <deal.II/grid/tria.h>
 
@@ -61,6 +62,7 @@ public:
     : fe(1)
     , dof_handler(triangulation)
     , rpt_parameters(RPTparameters)
+    , mapping(FE_SimplexP<dim>(1))
   {}
 
 
@@ -71,7 +73,6 @@ public:
 
 
 private:
-
   void
   setup_system();
   void
@@ -92,25 +93,31 @@ private:
     std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
 
   std::vector<double>
-  solve(std::vector<std::vector<double> > vertex_count, Tensor<1, dim> experimental_count);
+  solve(std::vector<std::vector<double>> vertex_count,
+        Tensor<1, dim>                   experimental_count);
 
   Tensor<2, dim>
-  assemble_jacobian_for_Newton_method(std::vector<std::vector<double>> vertex_count, Tensor<1, dim>experimental_count, Tensor<1, dim> natural_coordinate);
+  assemble_jacobian_for_Newton_method(
+    std::vector<std::vector<double>> vertex_count,
+    Tensor<1, dim>                   experimental_count,
+    Tensor<1, dim>                   natural_coordinate);
 
   Tensor<1, dim>
-  assemble_rhs(std::vector<std::vector<double>> vertex_count, Tensor<1, dim>experimental_count, Tensor<1, dim> natural_coordinate);
+  assemble_rhs(std::vector<std::vector<double>> vertex_count,
+               Tensor<1, dim>                   experimental_count,
+               Tensor<1, dim>                   natural_coordinate);
 
-  //Tensor<2, dim>                   jacobian_matrix;
-  //Tensor<1, dim>                   rhs_matrix;
-  //Tensor<1, dim>                   vertex_count;
-  //Tensor<1, dim>                   experimental_count;
-  //std::vector<std::vector<double>> c;
-
+  // Tensor<2, dim>                   jacobian_matrix;
+  // Tensor<1, dim>                   rhs_matrix;
+  // Tensor<1, dim>                   vertex_count;
+  // Tensor<1, dim>                   experimental_count;
+  // std::vector<std::vector<double>> c;
 
 
 
   Triangulation<dim> triangulation;
-  FE_Q<dim>          fe;
+  MappingFE<dim>     mapping;
+  FE_SimplexP<dim>   fe;
   DoFHandler<dim>    dof_handler;
 
   AffineConstraints<double> constraints;
