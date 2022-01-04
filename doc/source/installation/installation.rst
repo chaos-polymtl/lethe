@@ -15,7 +15,7 @@ Lethe can be installed on Linux, Mac OS and under the Windows Subsystem for Linu
 The installation of Lethe consists in three major steps:
 1. Installation of deal.II dependencies (mpi, numdiff, p4est, trilinos and METIS)
 2. Installation of the deal.II library
-3. Installation of lethe
+3. Installation of Lethe
 
 There are two methods to install the dependencies. They can be either installed manually or through ``candi``. The candi.sh shell script can download, configure, build, and install all the dependencies along with deal.II. **This is the easiest way**, since it requires much less manual intervention. Even if you do not want to use candi to install deal.II, you can use it for the dependencies. This is by far the easiest way to proceed. On a single core computer with 8GB of RAM, count up to 8 hours for a first installation, and 3 hours for a deal.II update. On a machine with 16 cores and 32GB of RAM, this process will take less than an hour or so. The installation of deal.II and its dependencies (especially Trilinos), can be extremely RAM consuming. Installation on a machine with less than 8GB of RAM is difficult at best, impossible at worst.
 
@@ -35,13 +35,13 @@ From the candi folder, the installation of candi can be launched using:
   ./candi.sh -j $num_proc --prefix=$path
 
 
-where ``$num_proc`` is the number of threads you want to use to compile deal.II and ``$path$`` the installation prefix that is desired (e.g. ``/home/username/software/candi``). 
+where ``$num_proc`` is the number of threads you want to use to compile deal.II and ``$path`` the installation prefix that is desired (e.g. ``/home/username/software/candi``). 
 
 .. warning:: 
   For a computer with 8Gb of RAM, 1 thread (``num_proc=1``) should be used. For 16 Gb, 4 threads is reasonable. For 32 Gb, 16 threads or more can be used.
 
 
-After installation, you should have a ``deal.ii-candi`` folder the installation prefix directory, with the dealii folder of the desired version (see section :ref:`update-dealii`), as well as the required dependencies (p4est, trilinos, etc.).
+After installation, you should have a ``deal.ii-candi`` folder in the installation prefix directory, with the dealii folder of the desired version (see section :ref:`update-dealii`), as well as the required dependencies (p4est, trilinos, etc.).
 
 After installation, add an environment variable to your ``.bashrc`` either manually or through the following command:
 
@@ -141,7 +141,7 @@ Create an environment variable for the deal.II directory
  
   export DEAL_II_DIR=/path/to/dealii/installation
 
-It is generally recommended to add variable to your bashrc so it is always loaded:
+It is generally recommended to add the variable to your bashrc so it is always loaded:
 
 .. code-block:: text
 
@@ -154,11 +154,16 @@ Installation of lethe (Step #2)
 
 Clone lethe from the `official repository <https://github.com/lethe-cfd/lethe>`
 
+.. code-block:: text
+
+  git clone https://github.com/lethe-cfd/lethe 
+
 Create a build folder at the same level as the lethe folder
 
 .. code-block:: text
 
   mkdir build
+  cd build
 
 Compile Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
 
@@ -213,13 +218,8 @@ In the candi folder (for instance, ``/home/username/software/candi``), modify th
   STABLE_BUILD=true
   #STABLE_BUILD=false
 
-<<<<<<< HEAD:doc/source/installation/installation.rst
-You can now run the ctest (see [Testing your installation](https://github.com/lethe-cfd/lethe/wiki/Installation#testing-your-installation)) to check your new installation.
->>>>>>> 285fe47 (First draft of installation instructions):doc/source/installation.rst
-=======
 Run the command ``./candi.sh`` to install the new version of dealii.
 
 In your ``/home/deal.ii-candi`` folder, you should have a new folder with the dealii updated version (specified in ``DEAL_II_VERSION``, or ``deal.II-master`` in the case of development version)
 
-You might need to delete the build folder of lethe and redo the installation process from scratch, but this is rarely the case.
->>>>>>> 60856b5 (Migrate installation instruction):doc/source/installation.rst
+You might need to delete the build folder of Lethe and redo the installation process from scratch, but this is rarely the case.

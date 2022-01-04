@@ -6,7 +6,7 @@ Computational Fluid Dynamics and Multiphysics
 Simulation Control 
 ------------------
 
-This subsection contains the general information of the simulation, including the time integration method and the general output names. It is the most commonly modified section for a simulation. A standard convention in Lethe is to keep this section at the top of the parameter file, since it is generally the most commonly accessed one.
+This subsection contains the general information of the simulation, including the time integration method and the general output names. It is the most commonly modified section for a simulation. A standard convention in Lethe is to keep this section at the top of the parameter file, since it is generally the most accessed one.
 
 .. code-block:: text
 
@@ -16,7 +16,7 @@ This subsection contains the general information of the simulation, including th
     # Adaptative time step scaling
     set adaptative time step scaling = 1.1
   
-    # The kind of method use to startup high order bdf methods. Choices are
+    # The kind of method used to startup high order bdf methods. Choices are
     # <multiple step bdf|sdirk step|initial solution>.
     set bdf startup method           = multiple step bdf
   
@@ -131,7 +131,7 @@ Physical Properties
      end
   end
 
-* The ``kinematic viscosity`` parameter is the kinematic viscosity of the fluid in units of :math:`Length^{2} * Time^{1}`. In SI this is :math:`m^{2} \cdot s^{-1}`.
+* The ``kinematic viscosity`` parameter is the kinematic viscosity of the fluid in units of :math:`Length^{2} \cdot Time^{-1}`. In SI this is :math:`m^{2} \cdot s^{-1}`.
 
 * The ``density`` parameter is the density of the fluid in units of :math:`Mass \cdot Length^{-3}`
 
@@ -139,7 +139,7 @@ Physical Properties
 
 * The ``thermal expansion`` parameter is the thermal expansion coefficient of the fluid with dimension of :math:`Temperature^{-1}`.
 
-* The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`Length^{2} \cdot Time^{1}` . In SI this is :math:`m^{2} \cdot s^{-1}` .
+* The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`Length^{2} \cdot Time^{-1}` . In SI this is :math:`m^{2} \cdot s^{-1}` .
 
 Two phase simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
