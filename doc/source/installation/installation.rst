@@ -10,16 +10,16 @@ Installation
     docker
 
 
-Lethe can be installed on Linux, Mac OS and under the Windows Subsystem for Linux (WSL). Lethe has been tested on numerous distributions, including Ubuntu 18.04 LTS, Ubuntu 20.04 LTS, Centos 7 and Manjaro. Lethe requires a modern version of the deal.II library. At the time of this writing, ''deal.II 9.3'' and ''deal.II 10.0pre'' (the master branch version) are supported. The compatibility with these two branches is ensured by Continuous Integration (CI) using Github Actions. A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by the Lethe organization. This fork does not include any modification to the library, but is the latest deal.II version against which Lethe was tested. We work hard to ensure compatibility with the latest deal.II version and we do not modify the library except through pull request on the official deal.II repository.
+Lethe can be installed on Linux, Mac OS and under the Windows Subsystem for Linux (WSL). Lethe has been tested on numerous distributions, including Ubuntu 18.04 LTS, Ubuntu 20.04 LTS, Centos 7 and Manjaro. Lethe requires a modern version of the deal.II library. At the time of this writing, ''deal.II 9.3'' and ''deal.II 10.0pre'' (the master branch version) are supported. The compatibility with these two branches is ensured by Continuous Integration (CI) using Github Actions. A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by the Lethe organization. This fork does not include any modification to the library, but is the latest deal.II version against which Lethe was tested. We work hard to ensure compatibility with the latest deal.II version and we do not modify the library except through pull requests on the official deal.II repository.
 
 The installation of Lethe consists in three major steps:
-1. Installation of dealii dependency (mpi, numdiff, p4est, trilinos and METIS)
-2. Installation of the dealii library
+1. Installation of deal.II dependencies (mpi, numdiff, p4est, trilinos and METIS)
+2. Installation of the deal.II library
 3. Installation of lethe
 
-There are two methods to install the dependencies. They can be either installed manually or through ``candi``. The candi.sh shell script can download, configure, build, and install all the dependencies along with dealii. **This is the easiest way**, since it requires much less manual intervention. Even if you do not want to use candi to install deal.II, you can also use it the dependencies. This is by far the easiest way to proceed. On a single core computer with 8Gb of ram, count up to 8 hours for a first installation, and 3 hours for a dealii update. On a machine with 16 cores and 32 Gb or ram, this process will take less than an hour or so. The installation of deal.II and its dependencies (especially Trilinos), can be extremely ram consuming. Installation on a machine with less than 8Gb of ram is difficult at best, impossible at worst.
+There are two methods to install the dependencies. They can be either installed manually or through ``candi``. The candi.sh shell script can download, configure, build, and install all the dependencies along with deal.II. **This is the easiest way**, since it requires much less manual intervention. Even if you do not want to use candi to install deal.II, you can use it for the dependencies. This is by far the easiest way to proceed. On a single core computer with 8GB of RAM, count up to 8 hours for a first installation, and 3 hours for a deal.II update. On a machine with 16 cores and 32GB of RAM, this process will take less than an hour or so. The installation of deal.II and its dependencies (especially Trilinos), can be extremely RAM consuming. Installation on a machine with less than 8GB of RAM is difficult at best, impossible at worst.
 
-Lethe cannot be installed if deal.II has not been configured with p4est, Trilinos and METIS. Although Lethe can be run in serial and parallel (through mpi) mode, it uses p4est, METIS and Trilinos for mesh decomposition and the linear solvers respectively. 
+Lethe cannot be installed if deal.II has not been configured with p4est, Trilinos and METIS. Although Lethe can be run in serial and parallel mode (through mpi), it uses p4est, METIS and Trilinos for mesh decomposition and the linear solvers respectively. 
 
 Installing deal.II using candi (Step #1)
 -----------------------------------------
@@ -49,7 +49,7 @@ After installation, add an environment variable to your ``.bashrc`` either manua
 
    echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.bashrc`
 
-Installing Deal.II manually (Step #1)
+Installing deal.II manually (Step #1)
 --------------------------------------
 .. note:: 
   If you have installed deal.II through candi, you can skip right away to :ref:`install-lethe`
@@ -89,14 +89,14 @@ Regrettably, numdiff is not available in the pacman package manager. It can be d
 P4est
 ~~~~~~~
 
-To install p4est, the usual `installation procedure <https://www.dealii.org/current/external-libs/p4est.html>`_ of dealii can be followed.
+To install p4est, the usual `installation procedure <https://www.dealii.org/current/external-libs/p4est.html>`_ of deal.II can be followed.
 
 
 
 Trilinos
 ~~~~~~~~~
 
-The installation of Trilinos should be done using the `installation procedure <https://www.dealii.org/current/external-libs/trilinos.html>`_ of dealii:
+The installation of Trilinos should be done using the `installation procedure <https://www.dealii.org/current/external-libs/trilinos.html>`_ of deal.II.
 
 
 
@@ -107,7 +107,7 @@ METIS is used for mesh partitioning for parallel computing purposes, specificall
 
 
 
-Installation of dealii
+Installation of deal.II
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Clone deal.II from the `official repository <https://github.com/dealii/dealii>`_
@@ -129,13 +129,13 @@ Depending on how you have installed p4est, Trilinos and METIS, you may need to s
 
   cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
 
-Compile dealii
+Compile deal.II
 
 .. code-block:: text
 
   make -j<nprocessor> install
 
-Create an environment variable for the DEALII directory. 
+Create an environment variable for the deal.II directory
 
 .. code-block:: text
  
@@ -160,7 +160,7 @@ Create a build folder at the same level as the lethe folder
 
   mkdir build
 
-Compile Lethe choosing the compilation option (Debug or Release). You can also optionnaly specify and installation direction. We recommend that you do so, since this makes using Lethe much more comfortable.
+Compile Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
 
 .. code-block:: text
 
@@ -196,7 +196,7 @@ Updating deal.II
 
 Through the git repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The deal.II version supported by Lethe is updated and tested every week or so, see the repository `here <https://github.com/lethe-cfd/dealii>`_. If Lethe was installed with this forked version of deal.II, updating your deal.II installation is as simple as pulling the repository and recompiling the deal.ii library. If your deal.II was installed manually using the deal.II master repository, the same process can be used.
+The deal.II version supported by Lethe is updated and tested every week or so, see the repository `here <https://github.com/lethe-cfd/dealii>`_. If Lethe was installed with this forked version of deal.II, updating your deal.II installation is as simple as pulling the repository and recompiling the deal.II library. If your deal.II was installed manually using the deal.II master repository, the same process can be used.
 
 With candi
 ~~~~~~~~~~~~~

@@ -16,7 +16,7 @@ This subsection contains the general information of the simulation, including th
     # Adaptative time step scaling
     set adaptative time step scaling = 1.1
   
-    # The kind of method use to startup high order bdf methods Choices are
+    # The kind of method use to startup high order bdf methods. Choices are
     # <multiple step bdf|sdirk step|initial solution>.
     set bdf startup method           = multiple step bdf
   
@@ -42,7 +42,7 @@ This subsection contains the general information of the simulation, including th
     # Output the boundaries of the domain along with their ID
     set output boundaries            = false
   
-    # The control for the output of the simulation resultsResults can be either
+    # The control for the output of the simulation results. Results can be either
     # outputted at constant iteration frequency or at constant time
     set output control               = iteration
   
@@ -52,7 +52,7 @@ This subsection contains the general information of the simulation, including th
     # File output prefix
     set output name                  = out
   
-    # File output prefix
+    # File output path
     set output path                  = ./
   
     # Output time
@@ -68,16 +68,16 @@ This subsection contains the general information of the simulation, including th
     # Subdivision of mesh cell in postprocessing
     set subdivision                  = 1
   
-    # Time step value
+    # End time value of the simulation
     set time end                     = 1
   
     # Time step value
     set time step                    = 1.
   end
 
-  * The ``group files`` parameter controls the number of vtu files generated in a parallel simulation. This parameters allows to reduce the number of files generated when the simulation is ran with a large number of processors. Setting group files to 1 ensures that there is a single vtu file generated. In this case, the file is written using MPI IO functionalities. The value for this parameter should always be a compromise between keeping a low number of files but preventing excessive MPI communications. We have found that the default value of 1 does not have a significant impact on performance on Compute Canada clusters.
+* The ``group files`` parameter controls the number of vtu files generated in a parallel simulation. This parameter allows to reduce the number of files generated when the simulation is run with a large number of processors. Setting group files to 1 ensures that there is a single vtu file generated. In this case, the file is written using MPI IO functionalities. The value for this parameter should always be a compromise between keeping a low number of files but preventing excessive MPI communications. We have found that the default value of 1 does not have a significant impact on performance on Compute Canada clusters.
 
-* The ``method`` parameter controls the time-stepping method use. The available options are: 
+* The ``method`` parameter controls the time-stepping method used. The available options are: 
     * ``steady`` (steady-state simulation)
     * ``steady-bdf`` (steady-state simulation using adjoint time stepping with a bdf1 scheme)
     * ``bdf1`` (1st order backward differentiation)
@@ -86,7 +86,7 @@ This subsection contains the general information of the simulation, including th
     * ``sdirk2`` (2nd order singly diagonally implicit Runge Kutta)
     * ``sdirk3`` (3rd order singly diagonally implicit Runge Kutta)
 
-* The ``bdf startup method`` parameter controls the scheme use to start high order bdf scheme.
+* The ``bdf startup method`` parameter controls the scheme used to start a high order bdf scheme.
 
 * The ``output frequency`` controls after which number of iterations the ``.pvd`` / ``.vtu`` results are written. If ``output frequency = 0``, no ``.pvd`` / ``.vtu`` file will be written.
 
@@ -110,13 +110,13 @@ This subsection contains the general information of the simulation, including th
 
 * The ``log frequency`` parameter controls the frequency at which information is written to the log (the terminal).
 
-* The ``log precision`` parameter controls the number of significant digit used when writing to the log (the terminal).
+* The ``log precision`` parameter controls the number of significant digits used when writing to the log (the terminal).
 
 
 Physical Properties
 ---------------------
 .. note:: 
-    Lethe supports both single phase and two phase (through VOF) simulations. The same subsection is used to manage both type of simulation using the fluid subsections.
+    Lethe supports both single phase and two phase (through VOF) simulations. The same subsection is used to manage both types of simulation using the fluid subsections.
 
 .. code-block:: text
 
@@ -146,7 +146,7 @@ Two phase simulations
 .. note:: 
   Two phase simulations require that ``set VOF = true`` in the Multiphysics subsection. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
 
-For two phase, the properties are defined for each fluid. Default values are:
+For two phases, the properties are defined for each fluid. Default values are:
 
 .. code-block:: text
 
@@ -168,5 +168,5 @@ For two phase, the properties are defined for each fluid. Default values are:
       end
   end
 
-* ``number of fluids = 2`` is required for a free surface simulations, otherwise an error will be thrown in the terminal.
+* ``number of fluids = 2`` is required for a free surface simulation, otherwise an error will be thrown in the terminal.
 * ``subsection fluid 0`` indicates the properties of fluid where the phase indicator = 0 (Volume of Fluid method), as defined when initializing the free surface (see the initial conditions subsection), and correspondingly ``fluid 1`` is located where the phase indicator = 1.
