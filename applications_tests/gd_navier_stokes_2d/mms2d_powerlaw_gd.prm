@@ -29,13 +29,6 @@ end
 #---------------------------------------------------
 subsection forces
     set verbosity             = quiet
-    set calculate forces      = true
-    set calculate torques     = false
-    set force name            = force
-    set torque name           = torque
-    set output precision      = 10
-    set calculation frequency = 1
-    set output frequency      = 1
 end
 
 #---------------------------------------------------
