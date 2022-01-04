@@ -42,8 +42,9 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-
+   
    installation
+   structure
    examples/examples
    contributing
 
