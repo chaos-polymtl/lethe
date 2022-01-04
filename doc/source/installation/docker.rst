@@ -7,12 +7,14 @@ Thankfully, the deal.II dev heroes also maintain some `Docker Hub <https://hub.d
 
 Below are some instructions for getting pre-configured deal.II environments, reducing the time needed to install lethe's dependencies from hours to minutes. There are 3 main parts in this tutorial:
 
-- If you have experience with Docker, the **0. TL;DR** section should be enough.
+- If you have experience with Docker, the :ref:`tl-dr` section should be enough.
 - The next two sections have a brief introduction to Docker with enough information to get you started with deal.II containers.
-- The final **3. Saving Docker Commands in a Bash Script** section has a shell script you can run directly to start and manage deal.II containers.
+- The final :ref:`saving-docker` section has a shell script you can run directly to start and manage deal.II containers.
 
 Sometimes it's easier to effectively set up a completely new OS than compile millions of lines of C++...
 
+
+.. _tl-dr:
 
 0. TL;DR
 --------
@@ -103,6 +105,8 @@ For example, on your local machine:
 
 That's all the Docker-specific tutorial! Launch your container running a deal.II image, go to :code:`/home/docker-host` to save your changes locally too, download lethe, compile it, and run your simulations there.
 
+
+.. _saving-docker:
 
 3. Saving Docker Commands in a Bash Script
 ------------------------------------------
