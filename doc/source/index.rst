@@ -43,14 +43,14 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   installation
+   installation/installation
    examples/examples
    contributing
 
 Installation
 ------------
 
-Follow the instructions in the :doc:`installation` section.
+Follow the instructions in the :doc:`installation/installation` section.
 
 Authors
 -------
