@@ -78,18 +78,18 @@ The ``/contrib`` folder houses various scripts that help for the maintenance of 
 The doc folder
 --------------
 
-The ``\doc`` folder contains the source files of this documentation page of Lethe. To contribute or compile the documentation on your own machine follow the instructions of the :doc:`contributing` tab.
+The ``/doc`` folder contains the source files of this documentation page of Lethe. To contribute or compile the documentation on your own machine follow the instructions of the :doc:`contributing` tab.
 
 The examples folder
 --------------------
 
-The ``\examples`` folder includes the parameter file and the post-processing scripts of examples using different applications in Lethe. It is subdivided into additional sub-directories, namely:
+The ``/examples`` folder includes the parameter file and the post-processing scripts of examples using different applications in Lethe. It is subdivided into additional sub-directories, namely:
 
-* ``\cfd_dem``
-* ``\dem``
-* ``\incompressible_flow``
-* ``\multiphysics``
-* ``\rpt``
+* ``/cfd_dem``
+* ``/dem``
+* ``/incompressible_flow``
+* ``/multiphysics``
+* ``/rpt``
 
 Detailed descriptions of most of these examples can be found on the :doc:`examples/examples` tab of this page.
 
