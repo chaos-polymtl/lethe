@@ -424,6 +424,104 @@ calculate_kinetic_energy<3, TrilinosWrappers::MPI::BlockVector>(
 
 
 template <int dim, typename VectorType>
+double
+calculate_apparent_viscosity(
+  const DoFHandler<dim> &               dof_handler,
+  const VectorType &                    evaluation_point,
+  const Quadrature<dim> &               quadrature_formula,
+  const Mapping<dim> &                  mapping,
+  const Parameters::PhysicalProperties &physical_properties)
+{
+  double integral_viscosity_x_shear_rate = 0;
+  double integral_shear_rate             = 0;
+  double shear_rate_magnitude;
+  double viscosity;
+  // Cast rheological model to either a Newtonian model or one of the
+  // non Newtonian models according to the physical properties
+  std::shared_ptr<RheologicalModel<dim>> rheological_model =
+    RheologicalModel<dim>::model_cast(physical_properties);
+
+  const FESystem<dim, dim> fe = dof_handler.get_fe();
+  FEValues<dim>            fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
+
+  const FEValuesExtractors::Vector velocities(0);
+
+  const unsigned int n_q_points = quadrature_formula.size();
+
+  std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
+  double                      domain_volume =
+    GridTools::volume(dof_handler.get_triangulation(), mapping);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+
+          fe_values[velocities].get_function_gradients(
+            evaluation_point, present_velocity_gradients);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              shear_rate_magnitude =
+                rheological_model->get_shear_rate_magnitude(
+                  present_velocity_gradients[q] +
+                  transpose(present_velocity_gradients[q]));
+
+              viscosity =
+                rheological_model->get_viscosity(shear_rate_magnitude);
+
+              integral_viscosity_x_shear_rate +=
+                viscosity * shear_rate_magnitude * fe_values.JxW(q);
+              integral_shear_rate += shear_rate_magnitude * fe_values.JxW(q);
+            }
+        }
+    }
+  double apparent_viscosity =
+    integral_viscosity_x_shear_rate / integral_shear_rate;
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  apparent_viscosity =
+    Utilities::MPI::sum(viscosity / domain_volume, mpi_communicator);
+  return apparent_viscosity;
+}
+
+template double
+calculate_apparent_viscosity<2, TrilinosWrappers::MPI::Vector>(
+  const DoFHandler<2> &                 dof_handler,
+  const TrilinosWrappers::MPI::Vector & evaluation_point,
+  const Quadrature<2> &                 quadrature_formula,
+  const Mapping<2> &                    mapping,
+  const Parameters::PhysicalProperties &physical_properties);
+
+template double
+calculate_apparent_viscosity<3, TrilinosWrappers::MPI::Vector>(
+  const DoFHandler<3> &                 dof_handler,
+  const TrilinosWrappers::MPI::Vector & evaluation_point,
+  const Quadrature<3> &                 quadrature_formula,
+  const Mapping<3> &                    mapping,
+  const Parameters::PhysicalProperties &physical_properties);
+
+template double
+calculate_apparent_viscosity<2, TrilinosWrappers::MPI::BlockVector>(
+  const DoFHandler<2> &                     dof_handler,
+  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
+  const Quadrature<2> &                     quadrature_formula,
+  const Mapping<2> &                        mapping,
+  const Parameters::PhysicalProperties &    physical_properties);
+
+template double
+calculate_apparent_viscosity<3, TrilinosWrappers::MPI::BlockVector>(
+  const DoFHandler<3> &                     dof_handler,
+  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
+  const Quadrature<3> &                     quadrature_formula,
+  const Mapping<3> &                        mapping,
+  const Parameters::PhysicalProperties &    physical_properties);
+
+template <int dim, typename VectorType>
 std::vector<Tensor<1, dim>>
 calculate_forces(
   const DoFHandler<dim> &                              dof_handler,
