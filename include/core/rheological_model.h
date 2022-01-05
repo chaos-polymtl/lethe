@@ -146,9 +146,9 @@ public:
   }
 
 private:
-const  double K;
-const  double n;
-const  double shear_rate_min;
+  const double K;
+  const double n;
+  const double shear_rate_min;
 };
 
 template <int dim>
