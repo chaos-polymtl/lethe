@@ -55,7 +55,7 @@ Then, we can clone and compile ``dealii``. Although Lethe always supports the ma
 
  git clone https://github.com/lethe-cfd/dealii.git
 
-We can compile ``dealii`` in the ``$HOME/dealii/build folder``, by defining path to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``:
+We can compile ``dealii`` in the ``$HOME/dealii/build folder``, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``:
 
 .. code-block:: text
 
@@ -92,7 +92,7 @@ Then, we can clone and compile ``dealii``. Although Lethe always supports the ma
 
  git clone https://github.com/lethe-cfd/dealii.git
 
-We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining path to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``:
+We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``:
 
 .. code-block:: text
 
@@ -216,7 +216,7 @@ and use it in your ``.sh`` script (see Launching simulations below).
 Launching simulations
 ================================
 
-Simulations are sent to the scheduler via batch scripts, visit Compute Canada wiki page more information about the `scheduler <https://docs.computecanada.ca/wiki/What_is_a_scheduler%3F>`_ and `running jobs <https://docs.computecanada.ca/wiki/Running_jobs>`_. For your convenience, an example of ``job.sh`` used on Beluga is given below:
+Simulations are sent to the scheduler via batch scripts. Visit the Compute Canada wiki page for more information about the `scheduler <https://docs.computecanada.ca/wiki/What_is_a_scheduler%3F>`_ and `running jobs <https://docs.computecanada.ca/wiki/Running_jobs>`_. For your convenience, an example of ``job.sh`` used on Beluga is given below:
 
 .. code-block:: text
 
