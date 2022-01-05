@@ -65,19 +65,7 @@ public:
    * considered quadrature point
    */
   double
-  get_shear_rate_magnitude(const Tensor<2, dim> shear_rate)
-  {
-    double shear_rate_magnitude = 0;
-    for (unsigned int i = 0; i < dim; ++i)
-      {
-        for (unsigned int j = 0; j < dim; ++j)
-          {
-            shear_rate_magnitude += (shear_rate[i][j] * shear_rate[j][i]);
-          }
-      }
-    shear_rate_magnitude = sqrt(0.5 * shear_rate_magnitude);
-    return shear_rate_magnitude;
-  }
+  get_shear_rate_magnitude(const Tensor<2, dim> shear_rate);
 };
 
 template <int dim>
@@ -102,10 +90,7 @@ public:
    * parameter to fit the virtual method in RheologicalModel.
    */
   double
-  get_viscosity(const double & /*shear_rate_magnitude*/) override
-  {
-    return viscosity;
-  }
+  get_viscosity(const double & /*shear_rate_magnitude*/) override;
 
 private:
   double viscosity;
@@ -138,12 +123,7 @@ public:
    * University Press.
    */
   double
-  get_viscosity(const double &shear_rate_magnitude) override
-  {
-    return shear_rate_magnitude > shear_rate_min ?
-             K * std::pow(shear_rate_magnitude, n - 1) :
-             K * std::pow(shear_rate_min, n - 1);
-  }
+  get_viscosity(const double &shear_rate_magnitude) override;
 
 private:
   const double K;
@@ -179,13 +159,7 @@ public:
    * University Press.
    */
   double
-  get_viscosity(const double &shear_rate_magnitude) override
-  {
-    return viscosity_inf +
-           (viscosity_0 - viscosity_inf) *
-             std::pow(1.0 + std::pow(shear_rate_magnitude * lambda, a),
-                      (n - 1) / a);
-  }
+  get_viscosity(const double &shear_rate_magnitude) override;
 
 private:
   double viscosity_0;

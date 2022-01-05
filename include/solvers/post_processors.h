@@ -204,6 +204,9 @@ public:
   calculate_shear_rate_magnitude(
     const std::vector<Tensor<1, dim>> &gradients) const
   {
+    // Calculates the shear rate tensor by manually transposing grad u. This has
+    // to be done manually since inputs.solution_gradients[q] also includes
+    // pressure values.
     Tensor<2, dim> shear_rate;
     for (int i = 0; i < dim; ++i)
       {
