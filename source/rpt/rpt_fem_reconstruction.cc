@@ -8,6 +8,7 @@
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/lapack_full_matrix.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 
@@ -281,107 +282,146 @@ RPTFEMReconstruction<dim>::L2_project()
 template class RPTFEMReconstruction<3>;
 
 
-//This new function takes two arguments, a matrix of nodal counts from all the detectors
-//and a vector of tracer counts from all the detectors
-//This function assemble system_matrix and system_rhs
-template <int dim>
+// This new function takes two arguments, a matrix of nodal counts from all the
+// detectors and a vector of tracer counts from all the detectors This function
+// assemble system_matrix and system_rhs
 void
-assemble_matrix_and_rhs(std::vector<std::vector<double>> vertex_count, std::vector<double> experimental_count,int detector_size)
+assemble_matrix_and_rhs(std::vector<std::vector<double>> &vertex_count,
+                        std::vector<double>              &experimental_count,
+                        Vector<double>                   &reference_location)
 {
+  // Assembling system_matrix
 
-    //Assembling system_matrix
+
+  LAPACKFullMatrix<double> system_matrix;
+  system_matrix.reinit(3);
+
+  unsigned int detector_size = vertex_count.size();
+  std::cout << "Detector size is " << detector_size << std::endl;
 
 
-    std::vector<std::vector<double>>system_matrix;
-
-    double sigma=0;
-    for ( int i=0; i<detector_size;i++){
-        sigma+=(-vertex_count[i][0]+vertex_count[i][1])*(-vertex_count[i][0]+vertex_count[i][1]);
+  // TODO, this could be refactored to just three loops...
+  double sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][1]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
     }
-    system_matrix[0][0]=sigma;
+  system_matrix.set(0, 0, sigma);
 
 
-    sigma=0;
-    for (int i=0; i<detector_size;i++){
-        sigma+=(-vertex_count[i][0]+vertex_count[i][2])*(-vertex_count[i][0]+vertex_count[i][1]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
     }
-    system_matrix[0][1]=sigma;
+  system_matrix.set(0, 1, sigma);
 
 
 
-    sigma=0;
-    for (int i=0; i<detector_size;i++){
-        sigma+=(-vertex_count[i][0]+vertex_count[i][3])*(-vertex_count[i][0]+vertex_count[i][1]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
     }
-    system_matrix[0][2]=sigma;
+  system_matrix.set(0, 2, sigma);
 
 
-    sigma=0;
-    for (int i=0; i<detector_size;i++){
-        sigma+=(-vertex_count[i][0]+vertex_count[i][2])*(-vertex_count[i][0]+vertex_count[i][1]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
     }
-    system_matrix[1][0]=sigma;
+  system_matrix.set(1, 0, sigma);
 
-    sigma=0;
-    for (int i=0; i<detector_size;i++){
-        sigma+=(-vertex_count[i][0]+vertex_count[i][2])*(-vertex_count[i][0]+vertex_count[i][2]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
+               (-vertex_count[i][0] + vertex_count[i][2]);
     }
 
-    system_matrix[1][1]=sigma;
+  system_matrix.set(1, 1, sigma);
 
 
-    sigma=0;
-    for(int i=0; i<detector_size;i++){
-        sigma+=(-vertex_count[i][0]+vertex_count[i][3])*(-vertex_count[i][0]+vertex_count[i][2]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][2]);
     }
-    system_matrix[1][2]=sigma;
+  system_matrix.set(1, 2, sigma);
 
-    sigma=0;
-    for(int i=0;i<detector_size;i++){
-        sigma+=(-vertex_count[i][0]+vertex_count[i][3])*(-vertex_count[i][0]+vertex_count[i][1]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
     }
-    system_matrix[2][0]=sigma;
+  system_matrix.set(2, 0, sigma);
 
-    sigma=0;
-    for(int i=0; i<detector_size;i++){
-        sigma+=(-vertex_count[i][0]+vertex_count[i][3])*(-vertex_count[i][0]+vertex_count[i][2]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][2]);
     }
-    system_matrix[2][1]=sigma;
+  system_matrix.set(2, 1, sigma);
 
-    sigma=0;
-    for (int i=0;i<detector_size;i++){
-        sigma+=(-vertex_count[i][0]+vertex_count[i][3])*(-vertex_count[i][0]+vertex_count[i][3]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][3]);
     }
-    system_matrix[2][2]=sigma;
+  system_matrix.set(2, 2, sigma);
+
+  std::cout << "Printing matrix " << std::endl;
+  system_matrix.print_formatted(std::cout);
 
 
-    //Assembling system_rhs
-    Vector<double> system_rhs;
+  // Assembling system_rhs
+  Vector<double> system_rhs;
+  system_rhs.reinit(3);
 
-    sigma=0;
-    for (int i=0; i<detector_size;i++){
-        sigma+=(vertex_count[i][0]-experimental_count[i])*(-vertex_count[i][0]+vertex_count[i][1]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (vertex_count[i][0] - experimental_count[i]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
     }
-    system_rhs[0]=sigma;
+  system_rhs[0] = -sigma;
 
-    sigma=0;
-    for (int i=0; i<detector_size;i++){
-        sigma+=(vertex_count[i][0]-experimental_count[i])*(-vertex_count[i][0]+vertex_count[i][2]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (vertex_count[i][0] - experimental_count[i]) *
+               (-vertex_count[i][0] + vertex_count[i][2]);
     }
-    system_rhs[1]=sigma;
+  system_rhs[1] = -sigma;
 
-    sigma=0;
-    for (int i=0; i<detector_size;i++){
-        sigma+=(vertex_count[i][0]-experimental_count[i])*(-vertex_count[i][0]+vertex_count[i][3]);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (vertex_count[i][0] - experimental_count[i]) *
+               (-vertex_count[i][0] + vertex_count[i][3]);
     }
-    system_rhs[2]=sigma;
-    //SOLVE
+  system_rhs[2] = -sigma;
 
-    Vector<double> solution;
-    SolverControl solver_control(1000, 1e-12);
-    SolverCG<Vector<double>> solver(solver_control);
-    solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
+  std::cout << "Printing RHS " << std::endl;
+  system_rhs.print(std::cout);
+  // SOLVE
 
+  system_matrix.set_property(LAPACKSupport::general);
+  system_matrix.compute_lu_factorization();
+  system_matrix.solve(system_rhs);
+
+  std::cout << "Printing solution " << std::endl;
+  system_rhs.print(std::cout);
+
+
+  reference_location = system_rhs;
 }
-
-
