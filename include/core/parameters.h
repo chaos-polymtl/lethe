@@ -187,9 +187,9 @@ namespace Parameters
    */
   struct PowerLawParameters
   {
-    // Viscosity of the flow when the shear rate tends to 0
+    // Fluid consistency index
     double K;
-    // Power parameter
+    // Flow behavior index"
     double n;
     // Minimal shear rate magnitude for which we calculate viscosity, since
     // power-law does not allow for minimal visocsity
