@@ -34,15 +34,15 @@ authors.
 The authors of Lethe would like to emphasize that without deal.II,
 dedicated solvers like Lethe could not exist.
 
-## Installation
-
-Follow the instructions in the
-[wiki](https://github.com/lethe-cfd/lethe/wiki/Installation).
-
 ## Documentation
 
 Documentation, tutorials, and more can be found 
 [here](https://lethe-cfd.github.io/lethe/).
+
+## Installation
+
+Follow the instructions in the
+[documentation](https://lethe-cfd.github.io/lethe/installation/installation.html).
 
 ## Authors
 
