@@ -100,15 +100,18 @@ private:
   FE_SimplexP<dim>   fe;
   DoFHandler<dim>    dof_handler;
 
-  AffineConstraints<double> constraints;
-  SparseMatrix<double>      system_matrix;
-  SparsityPattern           sparsity_pattern;
-  Vector<double>            system_rhs;
+  AffineConstraints<double>   constraints;
+  SparseMatrix<double>        system_matrix;
+  SparsityPattern             sparsity_pattern;
+  Vector<double>              system_rhs;
   std::vector<Vector<double>> nodal_counts;
-  RPTCalculatingParameters   rpt_parameters;
-  std::vector<Detector<dim>> detectors;
+  RPTCalculatingParameters    rpt_parameters;
+  std::vector<Detector<dim>>  detectors;
 };
 
-
+void
+assemble_matrix_and_rhs(std::vector<std::vector<double>> &vertex_count,
+                        std::vector<double>              &experimental_count,
+                        Vector<double>                   &reference_location);
 
 #endif
