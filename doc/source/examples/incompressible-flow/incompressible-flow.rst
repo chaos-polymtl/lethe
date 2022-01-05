@@ -1,5 +1,5 @@
 ****************************
-Incompressible Flow Examples
+Incompressible Flow
 ****************************
 
 .. toctree::

@@ -41,7 +41,7 @@ Steady iteration :        3/3
 Boundary ID  T_x   T_y   T_z   
           0 0.000 0.000 -0.832 
           1 0.000 0.000  0.837 
-cells error_velocity  error_pressure  
-   64 6.5629e-04    - 8.8511e-04    - 
-  256 9.6227e-05 2.77 2.5960e-04 1.77 
- 1024 1.2709e-05 2.92 6.6971e-05 1.95 
+cells error_velocity error_pressure 
+   64 6.563e-04    - 8.851e-04    - 
+  256 9.623e-05 2.77 2.596e-04 1.77 
+ 1024 1.271e-05 2.92 6.697e-05 1.95 

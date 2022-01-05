@@ -1132,7 +1132,7 @@ namespace Parameters
                         Patterns::Double(),
                         "Linear solver residual");
       prm.declare_entry("minimum residual",
-                        "1e-8",
+                        "1e-12",
                         Patterns::Double(),
                         "Linear solver minimum residual");
       prm.declare_entry("max iters",
@@ -1141,7 +1141,7 @@ namespace Parameters
                         "Maximum solver iterations");
 
       prm.declare_entry("max krylov vectors",
-                        "30",
+                        "100",
                         Patterns::Integer(),
                         "Maximum number of krylov vectors for GMRES");
 
@@ -1151,7 +1151,7 @@ namespace Parameters
                         "Ilu preconditioner fill");
 
       prm.declare_entry("ilu preconditioner absolute tolerance",
-                        "1e-8",
+                        "1e-12",
                         Patterns::Double(),
                         "Ilu preconditioner tolerance");
 
