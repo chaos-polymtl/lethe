@@ -19,7 +19,7 @@ RheologicalModel<dim>::model_cast(
 }
 
 template <int dim>
-double 
+double
 RheologicalModel<dim>::get_shear_rate_magnitude(const Tensor<2, dim> shear_rate)
 {
   double shear_rate_magnitude = 0;
@@ -46,8 +46,8 @@ double
 PowerLaw<dim>::get_viscosity(const double &shear_rate_magnitude)
 {
   return shear_rate_magnitude > shear_rate_min ?
-            K * std::pow(shear_rate_magnitude, n - 1) :
-            K * std::pow(shear_rate_min, n - 1);
+           K * std::pow(shear_rate_magnitude, n - 1) :
+           K * std::pow(shear_rate_min, n - 1);
 }
 
 template <int dim>
@@ -55,8 +55,8 @@ double
 Carreau<dim>::get_viscosity(const double &shear_rate_magnitude)
 {
   return viscosity_inf +
-          (viscosity_0 - viscosity_inf) *
-            std::pow(1.0 + std::pow(shear_rate_magnitude * lambda, a),
+         (viscosity_0 - viscosity_inf) *
+           std::pow(1.0 + std::pow(shear_rate_magnitude * lambda, a),
                     (n - 1) / a);
 }
 
