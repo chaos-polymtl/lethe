@@ -244,8 +244,11 @@ namespace Parameters
   {
     prm.enter_subsection("power-law");
     {
-      prm.declare_entry("K", "1.0", Patterns::Double(), "Viscosity at rest");
-      prm.declare_entry("n", "0.5", Patterns::Double(), "Power parameter");
+      prm.declare_entry("K",
+                        "1.0",
+                        Patterns::Double(),
+                        "Fluid consistency index");
+      prm.declare_entry("n", "0.5", Patterns::Double(), "Flow behavior index");
       prm.declare_entry("shear rate min",
                         "0.001",
                         Patterns::Double(),
