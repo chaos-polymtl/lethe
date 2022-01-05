@@ -35,7 +35,7 @@ Lethe can also run simulations using the Nitsche immersed boundary method.
 * ``calculate forces on solid`` enables forces calculation on the immersed geometry, written in the output file named ``solid force name``. 
 * ``calculate torques on solid`` enables torques calculation, written in the file in the output file named ``solid torque name``. 
 * ``number of solids`` specifies the number of Nitsche solids in the simulation. Each solid will then correspond to a ``subsection nitsche solid``.
-* ``subsection nitsche solid 0`` define a solid object on which Nitsche immersed boundary is applied. Multiple solids can be added in the same fashion (add ``subsection nitsche solid 1`` etc.).
+* ``subsection nitsche solid 0`` defines a solid object on which the Nitsche immersed boundary is applied. Multiple solids can be added in the same fashion (add ``subsection nitsche solid 1`` etc.).
 * ``subsection mesh`` defines the solid mesh used to apply Nitsche immersed boundary. The syntax is the same as that of the mesh subsection, see :doc:`mesh` for more details.
 
 .. note::
@@ -43,6 +43,6 @@ Lethe can also run simulations using the Nitsche immersed boundary method.
 
 * ``subsection solid velocity`` defines the velocity of the solid mesh. This velocity is defined by a ``Function  expression`` and can depend on both space and time.
 * ``enable particles motion`` must be set to ``true`` if the immersed boundary moves. If the boundary is static, for example a rotating cylinder, the shape does not have to move within the fluid and this option can be set to ``false``. This saves significant computational time.
-* ``particles sub iterations`` splits the particle time-stepping into ``n`` sub time steps. This enables the particles to move less per iteration and makes the sort_particles_into_cells_and_subdomain() routine, which is used to locate the cells in which the particles reside, significantly faster. Counter intuitively, it can be much faster to move the particles using ``10`` steps than ``1``, because location in which cells the particles reside becomes significantly faster.
+* ``particles sub iterations`` splits the particle time-stepping into ``n`` sub time steps. This enables the particles to move less per iteration and makes the ``sort_particles_into_cells_and_subdomain()`` routine, which is used to locate the cells in which the particles reside, significantly faster. Counter intuitively, it can be much faster to move the particles using ``10`` steps than ``1``, because location in which cells the particles reside becomes significantly faster.
 * ``stop if particles lost`` enables stopping the simulation if Nitsche particles have been lost. If ``false``, the simulation will continue. To prevent particle loss, try increasing the ``particles sub iterations``.
-* ``subsection test`` print the positions of the particles in the terminal at the end of the simulation. This is mostly used for testing purposes.
+* ``subsection test`` prints the positions of the particles in the terminal at the end of the simulation. This is mostly used for testing purposes.

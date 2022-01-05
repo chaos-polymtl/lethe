@@ -29,7 +29,7 @@ Physical Properties
 Two phase simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. note:: 
-  Two phase simulations require that ``set VOF = true`` in the Multiphysics subsection. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
+  Two phase simulations require that ``set VOF = true`` in the :doc:`multiphysics` subsection. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
 
 For two phases, the properties are defined for each fluid. Default values are:
 
@@ -54,4 +54,4 @@ For two phases, the properties are defined for each fluid. Default values are:
   end
 
 * ``number of fluids = 2`` is required for a free surface simulation, otherwise an error will be thrown in the terminal.
-* ``subsection fluid 0`` indicates the properties of fluid where the phase indicator = 0 (Volume of Fluid method), as defined when initializing the free surface (see the initial conditions subsection), and correspondingly ``fluid 1`` is located where the phase indicator = 1.
+* ``subsection fluid 0`` indicates the properties of fluid where the phase indicator = 0 (Volume of Fluid method), as defined when initializing the free surface (see the :doc:`initial_conditions` subsection), and correspondingly ``fluid 1`` is located where the phase indicator = 1.

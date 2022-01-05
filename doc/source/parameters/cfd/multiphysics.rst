@@ -20,6 +20,6 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
 * The ``tracer`` parameter adds a passive tracer auxiliary physics. This is an advection-diffusion equation.
 
-* The ``VOF`` parameter enable defining a multiphasic simulation, with 2 fluids separated by a free surface. Volume-of-Fluid method is used, with the phase parameter following an advection equation. See :doc:`initial_conditions` for the definition of the VOF conditions and :doc:`physical_properties` for the definition of the physical properties of both fluids. At the moment, a maximum of two fluids is supported.
+* The ``VOF`` parameter enables defining a multiphasic simulation, with 2 fluids separated by a free surface. Volume-of-Fluid method is used, with the phase parameter following an advection equation. See :doc:`initial_conditions` for the definition of the VOF conditions and :doc:`physical_properties` for the definition of the physical properties of both fluids. At the moment, a maximum of two fluids is supported.
 
 * The ``interface sharpening`` parameter activates the interface sharpening method in VOF simulations.
