@@ -1,0 +1,28 @@
+Mesh
+------
+This subsection provides information of the simulation geometry and meshing. The simulation geometry shape and size, number of refinements and other required information can be provided here. It should be mentioned that meshes from gmsh can also be defined in this section by setting the type = gmsh.
+
+.. code-block:: text
+
+  subsection mesh
+   GMSH file name
+    set file name          = none
+    set grid arguments     = -1 : 1 : false
+    set grid type          = hyper_cube
+  
+    # Initial refinement of the mesh
+    set initial refinement = 0
+  
+    # Type of mesh Choices are gmsh or dealii
+    set type               = dealii
+  
+    # Indicates that the mesh is a simplex mesh
+    set simplex     = false
+
+* The following choices for the mesh type are available:
+    * ``gmsh``. If the gmsh type is chosen, a ``.msh`` file generated from GMSH can be used. In this case, the grid file name must be specified in the ``file name`` variable.
+    * ``dealii``. If the deal.II type is chosen, the dealii grid generator class can be used. For additional documentation on these grids, you can consult the deal.II documentation for the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . The type of grid is specific by the ``grid type`` paramter and the arguments for the grid generation are put in the ``grid arguments`` parameter. 
+
+* The initial refinement number determines the number of refinement that the grid will undergo in the simulation before the simulation is ran. This allows one to automatically refine a coarse grid. By default, most deal.II grid will be as coarse a possible and will then need to be refined. This is a desirable behavior for parallel simulations, since for quad/hex meshes, the coarsest level of the grid is shared amongst all cores. Consequently, using a coarse grid with too many cell will lead to a prohibitively memory consumption.
+
+* `simplex`. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of ``type = deal.II`` it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of ``type = gsmh``, it will be read from a file as along as it is only made of simplices.
