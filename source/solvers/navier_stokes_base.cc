@@ -1070,6 +1070,47 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
 
+  // Calculte apparent viscosity
+  if (this->simulation_parameters.post_processing.calculate_apparent_viscosity)
+    {
+      TimerOutput::Scope t(this->computing_timer,
+                           "apparent_viscosity_calculation");
+      double             apparent_viscosity = calculate_apparent_viscosity(
+        this->dof_handler,
+        this->present_solution,
+        *this->cell_quadrature,
+        *this->mapping,
+        this->simulation_parameters.physical_properties);
+
+      this->apparent_viscosity_table.add_value(
+        "time", simulation_control->get_current_time());
+      this->apparent_viscosity_table.add_value("apparent_viscosity",
+                                               apparent_viscosity);
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Apparent viscosity: " << apparent_viscosity << " Pa.s"
+                      << std::endl;
+        }
+
+      // Output apparent viscosity to a text file from processor 0
+      if (simulation_control->get_step_number() %
+              this->simulation_parameters.post_processing.output_frequency ==
+            0 &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing
+              .apparent_viscosity_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          enstrophy_table.set_precision("time", 12);
+          enstrophy_table.set_precision("apparent viscosity", 12);
+          this->enstrophy_table.write_text(output);
+        }
+    }
+
   // Calculate pressure drop between two boundaries
   if (this->simulation_parameters.post_processing.calculate_pressure_drop)
     {
