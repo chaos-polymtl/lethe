@@ -239,8 +239,6 @@ namespace Parameters
       carreau
     } model;
 
-    bool calculate_apparent_viscosity;
-
     CarreauParameters  carreau_parameters;
     PowerLawParameters powerlaw_parameters;
 
@@ -422,6 +420,9 @@ namespace Parameters
 
     // Enable total enstrophy post-processing
     bool calculate_enstrophy;
+
+    // Enable calculating apparent viscosity
+    bool calculate_apparent_viscosity;
 
     // Enable velocity post-processing
     bool calculate_average_velocities;

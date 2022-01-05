@@ -313,10 +313,6 @@ namespace Parameters
                         Patterns::Selection("power-law|carreau"),
                         "Non newtonian model "
                         "Choices are <power-law|carreau>.");
-      prm.declare_entry("calculate apparent viscosity",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of apparent viscosity");
       powerlaw_parameters.declare_parameters(prm);
       carreau_parameters.declare_parameters(prm);
     }
@@ -713,6 +709,11 @@ namespace Parameters
         Patterns::Bool(),
         "Enable calculation of total enstrophy. The total enstrophy "
         "is calculated from the volumetric integral of the enstrophy over the domain.");
+
+      prm.declare_entry("calculate apparent viscosity",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of apparent viscosity");
 
       prm.declare_entry("calculate average velocities",
                         "false",
