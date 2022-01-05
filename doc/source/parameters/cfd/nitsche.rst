@@ -31,7 +31,7 @@ Lethe can also run simulations using the Nitsche immersed boundary method.
     end
 
 * ``beta`` is a parameter needed to apply the immersed boundary conditions on the fluid domain, its value is normally between 1 and 1000. ``beta = 0`` (the solid has no influence on the flow) can be used for debugging purposes. A classical value is ``beta = 10``.
-* ``verbosity`` enables printing Nitsche intermediary results to the terminal
+* ``verbosity`` enables printing Nitsche intermediate results to the terminal.
 * ``calculate forces on solid`` enables forces calculation on the immersed geometry, written in the output file named ``solid force name``. 
 * ``calculate torques on solid`` enables torques calculation, written in the file in the output file named ``solid torque name``. 
 * ``number of solids`` specifies the number of Nitsche solids in the simulation. Each solid will then correspond to a ``subsection nitsche solid``.

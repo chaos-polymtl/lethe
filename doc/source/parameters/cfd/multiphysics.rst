@@ -16,7 +16,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
 * The ``heat transfer`` parameter adds the heat transfer auxiliary physics. This is an advection-diffusion equation. If  ``viscous dissipation`` is set to true, viscous dissipation is taken into account in the heat transfer equation.
 
-* The `buoyancy force` parameter adds the buoyancy force in the Navier-Stokes equations. The buoyancy force is calculated using the Boussinesq approximation. Note that `heat transfer` is a prerequisite for `buoyancy force`, and it must be set to true when we set `buoyancy force` to true.
+* The ``buoyancy force`` parameter adds the buoyancy force in the Navier-Stokes equations. The buoyancy force is calculated using the Boussinesq approximation. Note that ``heat transfer`` is a prerequisite for ``buoyancy force``, and it must be set to true when we set ``buoyancy force`` to true.
 
 * The ``tracer`` parameter adds a passive tracer auxiliary physics. This is an advection-diffusion equation.
 

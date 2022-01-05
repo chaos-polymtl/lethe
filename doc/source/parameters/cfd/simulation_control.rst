@@ -18,7 +18,7 @@ This subsection contains the general information of the simulation, including th
     # Maximal number of vtu output files
     set group files                  = 1
   
-    # log frequency
+    # Log frequency
     set log frequency                = 1
   
     # Display precision when writing to log
