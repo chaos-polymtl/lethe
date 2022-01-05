@@ -239,6 +239,8 @@ namespace Parameters
       carreau
     } model;
 
+    bool calculate_apparent_viscosity;
+
     CarreauParameters  carreau_parameters;
     PowerLawParameters powerlaw_parameters;
 

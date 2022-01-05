@@ -313,6 +313,10 @@ namespace Parameters
                         Patterns::Selection("power-law|carreau"),
                         "Non newtonian model "
                         "Choices are <power-law|carreau>.");
+      prm.declare_entry("calculate apparent viscosity",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of apparent viscosity");
       powerlaw_parameters.declare_parameters(prm);
       carreau_parameters.declare_parameters(prm);
     }
