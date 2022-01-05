@@ -288,7 +288,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // Loop over all the cell
   for (const auto &cell : cell_iterator)
     {
-      if (cell->is_locally_owned() || cell->is_ghost())
+      if (cell->is_locally_owned())
         {
           // Particle id that cut the cell.
           unsigned int p;
@@ -381,9 +381,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // extrapolate the fluid stress tensor on the IB
                           // surface.
                           if (force_eval_done[local_face_dof_indices[i]]
-                                  .first == false &&
-                              this->locally_owned_dofs.is_element(
-                                local_face_dof_indices[i]))
+                                .first == false)
                             {
                               // Only need one extrapolation by dof location;
                               if (component_i == 0)
@@ -515,6 +513,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // Use the extrapolation of fluid stress tensor at the
                       // dof location of the IB surface cell to integrate the
                       // stress tensor on the surface of the IB
+                      auto local_face_tensor_old = local_face_tensor;
+                      local_face_tensor.clear();
+                      local_face_tensor.resize(local_face_dof_indices.size());
                       for (const auto &projection_cell_face :
                            local_face_dof_handler.active_cell_iterators())
                         {
@@ -522,10 +523,78 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             projection_cell_face);
                           std::vector<Point<dim>> q_points =
                             fe_face_projection_values.get_quadrature_points();
+                          if (this->simulation_parameters.fem_parameters
+                                .velocity_order > 1)
+                            {
+                              FullMatrix<double> interpolation_matrix(
+                                local_face_dof_indices.size(),
+                                local_face_dof_indices.size());
+                              FullMatrix<double> inv_interpolation_matrix(
+                                local_face_dof_indices.size(),
+                                local_face_dof_indices.size());
+
+                              // Define the interpolation matrix of the surface
+                              // cell
+                              for (unsigned int i = 0;
+                                   i < local_face_dof_indices.size();
+                                   ++i)
+                                {
+                                  Point<dim> point_projection =
+                                    particles[p].position +
+                                    particles[p].radius *
+                                      (support_points
+                                         [local_face_dof_indices[i]] -
+                                       particles[p].position) /
+                                      (support_points
+                                         [local_face_dof_indices[i]] -
+                                       particles[p].position)
+                                        .norm();
+
+                                  auto projected_point_unit =
+                                    local_face_map.transform_real_to_unit_cell(
+                                      projection_cell_face, point_projection);
+                                  for (unsigned int j = 0;
+                                       j < local_face_dof_indices.size();
+                                       ++j)
+                                    {
+                                      interpolation_matrix[i][j] = 0;
+                                      if (this->fe
+                                            ->face_system_to_component_index(j)
+                                            .first ==
+                                          this->fe
+                                            ->face_system_to_component_index(i)
+                                            .first)
+                                        interpolation_matrix[i][j] +=
+                                          local_face_fe.shape_value(
+                                            j, projected_point_unit);
+                                    }
+                                }
+                              inv_interpolation_matrix.invert(
+                                interpolation_matrix);
+                              // Define the value of the fluid stress tensor on
+                              // the surface cell at the DOF support points
+                              // location.
+                              for (unsigned int i = 0;
+                                   i < local_face_dof_indices.size();
+                                   ++i)
+                                {
+                                  for (unsigned int j = 0;
+                                       j < local_face_dof_indices.size();
+                                       ++j)
+                                    {
+                                      local_face_tensor[i] +=
+                                        inv_interpolation_matrix[i][j] *
+                                        local_face_tensor_old[j];
+                                    }
+                                }
+                            }
+                          else
+                            {
+                              local_face_tensor = local_face_tensor_old;
+                            }
                           for (unsigned int q = 0; q < n_q_points_face; q++)
                             {
                               // Evaluate the total surface
-
                               // Redefined the normal at the quadrature point
                               // since we dont control the orientation of the
                               // cell.
@@ -540,11 +609,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                    ++i)
                                 {
                                   const unsigned int component_i =
-                                    this->fe->system_to_component_index(i)
+                                    local_face_fe.system_to_component_index(i)
                                       .first;
-                                  if (component_i == 0 &&
-                                      this->locally_owned_dofs.is_element(
-                                        local_face_dof_indices[i]))
+                                  if (component_i == 0)
                                     {
                                       fluid_stress +=
                                         fe_face_projection_values.shape_value(
