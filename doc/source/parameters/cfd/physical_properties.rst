@@ -16,15 +16,15 @@ Physical Properties
      end
   end
 
-* The ``kinematic viscosity`` parameter is the kinematic viscosity of the fluid in units of :math:`Length^{2} \cdot Time^{-1}`. In SI this is :math:`m^{2} \cdot s^{-1}`.
+* The ``kinematic viscosity`` parameter is the kinematic viscosity of the fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
 
-* The ``density`` parameter is the density of the fluid in units of :math:`Mass \cdot Length^{-3}`
+* The ``density`` parameter is the density of the fluid in units of :math:`\text{Mass} \cdot \text{Length}^{-3}`
 
-* The ``specific heat`` parameter is the specific heat of the fluid in units of :math:`Energy \cdot Temperature^{-1} \cdot Mass^{-1}` .
+* The ``specific heat`` parameter is the specific heat of the fluid in units of :math:`\text{Energy} \cdot \text{Temperature}^{-1} \cdot \text{Mass}^{-1}` .
 
-* The ``thermal expansion`` parameter is the thermal expansion coefficient of the fluid with dimension of :math:`Temperature^{-1}`.
+* The ``thermal expansion`` parameter is the thermal expansion coefficient of the fluid with dimension of :math:`\text{Temperature}^{-1}`.
 
-* The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`Length^{2} \cdot Time^{-1}` . In SI this is :math:`m^{2} \cdot s^{-1}` .
+* The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}` .
 
 Two phase simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,32 +72,60 @@ Default values for a non Newtonian fluid are
     set non newtonian flow	= false
         subsection non newtonian
         set model 		= carreau
-            subsection carreau
-            set viscosity_0	= 1.0
-            set viscosity_inf = 1.0
-            set a = 2.0
-            set lambda = 1.0
-            set n = 0.5
-            end
         end
     end
     
-* The ``non newtonian flow`` parameter has to be set to :math:`true` to use a rheological model.
+* The ``non newtonian flow`` parameter has to be set to ``true`` to use a rheological model.
 
 * The ``model`` parameter sets which rheological model you are using. The available options are:
-    * :math:`carreau` 
-    * :math:`power-law` 
+    * ``carreau``
+    * ``power-law`` 
+
+The Carreau model is in reality the five parameter Carreau model :
+
+.. math::
+
+  \eta(\dot{\gamma}) =\eta_{\infty} + (\eta_0 - \eta_{\infty}) \left[ 1 + (\dot{\gamma}\lambda)^a\right]^{\frac{n-1}{a}}
+ 
+where :math:`\eta` is the **kinematic viscosity** and :math:`\dot{\gamma}` is the shear rate.
+
+The parameters for the Carreau model are defined by the ``carreau`` subsection. The default values are:
+
+.. code-block:: text
+
+  subsection physical properties
+    set non newtonian flow	= true
+      subsection non newtonian
+        set model 		= carreau
+        subsection carreau
+          set viscosity_0	= 1.0
+          set viscosity_inf = 1.0
+          set a = 2.0
+          set lambda = 1.0
+          set n = 0.5
+        end
+    end
+  end
 
 * The ``viscosity_0`` parameter represents the viscosity when the shear rate on the fluid tends to 0.
 
-* The ``viscosity_inf`` parameter represents the viscosity when the shear rate on the fluid becomes big.
+* The ``viscosity_inf`` parameter represents the viscosity when the shear rate on the fluid becomes large.
 
 * The ``a`` is the Carreau parameter, generally set to 2.
 
 * The ``lambda`` is the relaxation time associated to the fluid.
 
-* The ``n`` is a power parameter. It sets the slope in the log-log :math:`viscosity = f(shear rate)` graph.
+* The ``n`` is a power parameter. It sets the slope in the log-log :math:`\eta = f(\dot{\gamma})` graph.
 
+
+The power-law model is a simple rheological model:
+
+.. math::
+
+  \eta(\dot{\gamma}) = K \dot{\gamma}^n
+
+
+where :math:`\eta` is the **kinematic viscosity** and :math:`\dot{\gamma}` is the shear rate.
 When using the Power-Law model, the default values are:
 
 .. code-block:: text
@@ -107,17 +135,17 @@ When using the Power-Law model, the default values are:
         subsection non newtonian
         set model 		= power-law
             subsection power-law
-            set K = 1.0
-            set n = 0.5
-            set shear rate min = 1e-3
+              set K = 1.0
+              set n = 0.5
+              set shear rate min = 1e-3
             end
         end
     end
 
 * The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity is it were Newtonian.
 
-* The ``n`` parametera flow behavior index. low  It sets the slope in the log-log :math:`viscosity = f(shear rate)` graph.
+* The ``n`` parameter is the flow behavior index. low  It sets the slope in the log-log ::math:`\eta = f(\dot{\gamma})` graph.
 
-* The ``shear rate min`` parameter yields the magnitude of the shear rate tensor for which the viscosity is calculated. Since the model uses a power operation, a nul shear rate magnitude leads to an error. 
+* The ``shear rate min`` parameter yields the magnitude of the shear rate tensor for which the viscosity is calculated. Since the model uses a power operation, a nul shear rate magnitude leads to an invalid viscosity. To ensure numerical stability, the shear rate cannot go below this threshold when the viscosity  calculated.
 
 
