@@ -45,6 +45,7 @@
 #include <rpt/rpt_calculating_parameters.h>
 
 
+
 using namespace dealii;
 
 template <int dim>
@@ -92,27 +93,6 @@ private:
     unsigned int                                   level,
     std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
 
-  std::vector<double>
-  solve(std::vector<std::vector<double>> vertex_count,
-        Tensor<1, dim>                   experimental_count);
-
-  Tensor<2, dim>
-  assemble_jacobian_for_Newton_method(
-    std::vector<std::vector<double>> vertex_count,
-    Tensor<1, dim>                   experimental_count,
-    Tensor<1, dim>                   natural_coordinate);
-
-  Tensor<1, dim>
-  assemble_rhs(std::vector<std::vector<double>> vertex_count,
-               Tensor<1, dim>                   experimental_count,
-               Tensor<1, dim>                   natural_coordinate);
-
-  // Tensor<2, dim>                   jacobian_matrix;
-  // Tensor<1, dim>                   rhs_matrix;
-  // Tensor<1, dim>                   vertex_count;
-  // Tensor<1, dim>                   experimental_count;
-  // std::vector<std::vector<double>> c;
-
 
 
   Triangulation<dim> triangulation;
@@ -124,9 +104,7 @@ private:
   SparseMatrix<double>      system_matrix;
   SparsityPattern           sparsity_pattern;
   Vector<double>            system_rhs;
-
   std::vector<Vector<double>> nodal_counts;
-
   RPTCalculatingParameters   rpt_parameters;
   std::vector<Detector<dim>> detectors;
 };
