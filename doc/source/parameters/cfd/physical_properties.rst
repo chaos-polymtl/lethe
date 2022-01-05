@@ -55,3 +55,69 @@ For two phases, the properties are defined for each fluid. Default values are:
 
 * ``number of fluids = 2`` is required for a free surface simulation, otherwise an error will be thrown in the terminal.
 * ``subsection fluid 0`` indicates the properties of fluid where the phase indicator = 0 (Volume of Fluid method), as defined when initializing the free surface (see the :doc:`initial_conditions` subsection), and correspondingly ``fluid 1`` is located where the phase indicator = 1.
+
+Rheological models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Generalized non Newtonian rheologies (for shear thinning and shear thickening flows) are supported in Lethe. 
+
+.. note:: 
+  Currently, non Newtonian flow simulations are only supported using one single fluid. A possibility for multiple Newtonian/non Newtonian fluids is upcoming!
+  
+Default values for a non Newtonian fluid are
+
+.. code-block:: text
+
+    subsection physical properties
+    set non newtonian flow	= false
+        subsection non newtonian
+        set model 		= carreau
+            subsection carreau
+            set viscosity_0	= 1.0
+            set viscosity_inf = 1.0
+            set a = 2.0
+            set lambda = 1.0
+            set n = 0.5
+            end
+        end
+    end
+    
+* The ``non newtonian flow`` parameter has to be set to :math:`true` to use a rheological model.
+
+* The ``model`` parameter sets which rheological model you are using. The available options are:
+    * :math:`carreau` 
+    * :math:`power-law` 
+
+* The ``viscosity_0`` parameter represents the viscosity when the shear rate on the fluid tends to 0.
+
+* The ``viscosity_inf`` parameter represents the viscosity when the shear rate on the fluid becomes big.
+
+* The ``a`` is the Carreau parameter, generally set to 2.
+
+* The ``lambda`` is the relaxation time associated to the fluid.
+
+* The ``n`` is a power parameter. It sets the slope in the log-log :math:`viscosity = f(shear rate)` graph.
+
+When using the Power-Law model, the default values are:
+
+.. code-block:: text
+
+    subsection physical properties
+    set non newtonian flow	= true
+        subsection non newtonian
+        set model 		= power-law
+            subsection power-law
+            set K = 1.0
+            set n = 0.5
+            set shear rate min = 1e-3
+            end
+        end
+    end
+
+* The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity is it were Newtonian.
+
+* The ``n`` parametera flow behavior index. low  It sets the slope in the log-log :math:`viscosity = f(shear rate)` graph.
+
+* The ``shear rate min`` parameter yields the magnitude of the shear rate tensor for which the viscosity is calculated. Since the model uses a power operation, a nul shear rate magnitude leads to an error. 
+
+
