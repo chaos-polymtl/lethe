@@ -1482,7 +1482,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     data_out.add_data_vector(solution, srf);
 
   NonNewtonianViscosityPostprocessor<dim> non_newtonian_viscosity(
-    simulation_parameters.physical_properties.non_newtonian_parameters);
+    simulation_parameters.physical_properties);
   if (simulation_parameters.physical_properties.non_newtonian_flow)
     data_out.add_data_vector(solution, non_newtonian_viscosity);
 

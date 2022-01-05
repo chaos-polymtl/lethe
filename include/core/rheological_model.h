@@ -112,6 +112,46 @@ private:
 };
 
 template <int dim>
+class PowerLaw : public RheologicalModel<dim>
+{
+public:
+  /**
+   * @brief Parameter constructor
+   *
+   * @param non_newtonian_parameters The non newtonian parameters
+   */
+  PowerLaw(Parameters::NonNewtonian non_newtonian_parameters)
+    : K(non_newtonian_parameters.powerlaw_parameters.K)
+    , n(non_newtonian_parameters.powerlaw_parameters.n)
+    , shear_rate_min(
+        non_newtonian_parameters.powerlaw_parameters.shear_rate_min)
+  {}
+
+  /**
+   * @brief Returns the non-newtonian viscosity.
+   *
+   * @param shear_rate_magnitude The magnitude of the shear rate tensor at
+   * the position of the considered quadratured point
+   *
+   * Source : Morrison, F. A. (2001). No Memory: Generalized Newtonian Fluids.
+   * Understanding Rheology. Raymond F. Boyer Librabry Collection, Oxford
+   * University Press.
+   */
+  double
+  get_viscosity(const double &shear_rate_magnitude) override
+  {
+    return shear_rate_magnitude > shear_rate_min ?
+             K * std::pow(shear_rate_magnitude, n - 1) :
+             K * std::pow(shear_rate_min, n - 1);
+  }
+
+private:
+  const double K;
+  const double n;
+  const double shear_rate_min;
+};
+
+template <int dim>
 class Carreau : public RheologicalModel<dim>
 {
 public:
