@@ -798,7 +798,8 @@ namespace Parameters
 
       calculate_kinetic_energy = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy      = prm.get_bool("calculate enstrophy");
-      calculate_apparent_viscosity = prm.get_bool("calculate apparent viscosity");
+      calculate_apparent_viscosity =
+        prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
       calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
