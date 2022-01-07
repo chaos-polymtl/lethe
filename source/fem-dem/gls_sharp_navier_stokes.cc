@@ -1371,7 +1371,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
         {
           this->pcout << "L_inf particle residual : "
                       << particle_residual<<"particle id : "<<  worst_residual_particle_id<<std::endl;
-          this->pcout << "L2 particle residual L2"
+          this->pcout << "L2 particle residual L2 "
                       << particles_residual_vect.l2_norm()<<std::endl;
         }
 
