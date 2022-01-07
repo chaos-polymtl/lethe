@@ -1,7 +1,14 @@
 Boundary conditions - CFD
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This subsection defines the boundary conditions associated with fluid dynamics physics. Lethe supports slip, no-slip, periodic, and dirichlet boundary conditions which are set from arbitrary functions. These functions can be used to define all sort of steady-state and transient velocity boundary conditions such as rotating walls.
+This subsection defines the boundary conditions associated with fluid dynamics physics. Lethe supports the following boundary conditions:
+
+* ``noslip`` boundary conditions strongly imposes the velocity on a boundary to be :math:`\mathbf{u}=[0,0]^T` and :math:`\mathbf{u}=[0,0,0]^T` in 2D and 3D respectively.
+* ``slip`` boundary conditoins impose :math:`\mathbf{u} \cdot \mathbf{n}=0`, with :math:`\mathbf{n}` the normal vector of the boundary. Imposing slip boundary conditions strongly is not trivial in FEM. We refer the reader to the deal.II `documentation <https://www.dealii.org/current/doxygen/deal.II/group__constraints.html>`_ for explanations on how this is achieved.
+* ``periodic`` boundary conditions, in which fluid exiting the domain will reinter on the opposite side. 
+* ``function`` where a Dirichlet boundary condition is set from an arbitrary function. These functions can be used to define all sort of steady-state and transient velocity boundary conditions such as rotating walls.
+* Finally, Lethe also supports not imposing a boundary condition on an ID. Not imposing a boundary condition is equivalent to the *do nothing* boundary condition, which results in a zero net traction on a boundary. This, in fact, imposes :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0` where :math:`p` is the pressure, :math:`\mathcal{I}` is the identity tensor, :math:`\mathbf{\tau}` is the deviatoric stress tensor  and :math:`\Gamma` is the boundary. 
+
 
 .. code-block:: text
 
@@ -27,6 +34,8 @@ This subsection defines the boundary conditions associated with fluid dynamics p
               set y = 0
               set z = 0
            end
+        set periodic_id         = 1
+        set periodic_direction  = 0
      end
      subsection bc 1
            set type              = noslip
@@ -38,7 +47,7 @@ This subsection defines the boundary conditions associated with fluid dynamics p
 .. warning::
     The number of boundary conditions must be specified explicitely as the ParameterHandler is not able to deduce the number of boundary conditions from the number of ``bc`` subsections. This is often a source of error.
 
-* ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false```). This parameter is only there to improve the computational efficient for transient cases in which the boundary conditions do not change.
+* ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false```). By default, this parameter is set to ``false``. This is there to improve the computational efficient for transient cases in which the boundary conditions do not change.
 
 * Each fluid dynamics boundary condition is stored in a ``bc no`` subsection :
     * ``type`` is the type of the boundary condition. Onlyslip, no-slip, periodic and function are enabled.
@@ -46,3 +55,4 @@ This subsection defines the boundary conditions associated with fluid dynamics p
     * The subsections ``u``, ``v`` and ``w`` are used to specify the individual components of the velocity at the boundary using function expressions. These function can depend on position (:math:`x,y,z`) and on time (:math:`t`).
 
     * The ``center of rotation`` subsection is only necessary when calculating the torque applied on a boundary. See  See :doc:`force_and_torque` for more information.
+    * ``periodic id`` and ``periodic_direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``ìd=0``, ``periodic_id=1`` and ``periodic_direction=0``.
