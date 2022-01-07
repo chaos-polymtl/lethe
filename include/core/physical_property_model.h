@@ -54,7 +54,7 @@ public:
    */
   virtual void
   vector_value(std::map<field, std::vector<double>> &field_vectors,
-               std::vector<double>                  &property_vector) = 0;
+               std::vector<double> &                 property_vector) = 0;
 
   /**
    * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
@@ -78,7 +78,7 @@ public:
   virtual void
   vector_jacobian(std::map<field, std::vector<double>> &field_vectors,
                   field                                 id,
-                  std::vector<double>                  &jacobian_vector) = 0;
+                  std::vector<double> &                 jacobian_vector) = 0;
 
 protected:
   /**
