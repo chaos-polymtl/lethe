@@ -17,12 +17,14 @@ test()
 
   deallog << "Testing thermal conductivity - k" << std::endl;
 
+  // field values can remain empty since the constant thermal conductivity does
+  // not depend  on any fields
+  std::map<field, double> field_values;
+
   deallog << " T = 1    , k = "
-          << thermal_conductivity_model.get_thermal_conductivity(1)
-          << std::endl;
+          << thermal_conductivity_model.value(field_values) << std::endl;
   deallog << " T = 2    , k = "
-          << thermal_conductivity_model.get_thermal_conductivity(2)
-          << std::endl;
+          << thermal_conductivity_model.value(field_values) << std::endl;
 
   deallog << "OK" << std::endl;
 }
