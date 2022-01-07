@@ -1,5 +1,5 @@
 ***********************************************
-Computational Fluid Dynamics and Multiphysics
+General, CFD and Multiphysics
 ***********************************************
 
 
@@ -10,6 +10,10 @@ Computational Fluid Dynamics and Multiphysics
    physical_properties
    initial_conditions
    mesh
+   fem
+   boundary_conditions_cfd
+   force_and_torque
+   timer
    multiphysics
    nitsche
 
