@@ -11,7 +11,7 @@ The timer section controls the frequency at which the timing of the simulation i
    end
 
 
-The timer output in Lethe is an important mechanism to monitor the relatively cost of the different functions. At every time step, the timing functions will report the time spent in each functions.
+The timer output in Lethe is an important mechanism to monitor the relatively cost of the different functions. At every time step, the timing functions will report the time spent in each function.
 
 The following table shows an example of the output of the timer:
 
@@ -42,4 +42,5 @@ For every block of functions, Lethe reports the number of calls, the wall time s
 * ``solve_linear_system`` refers to the time spent solving the linear system of equations, without the time required to assemble the preconditioner.
 
 
-Depending on the type of simulation, there may be other category that appear in the timer. This is useful to monitor what is actually making up most of your simulation cost in your simulation.
+Depending on the type of simulation, there may be other category that appear in the timer. This is useful to monitor 
+the functions responsible for taking up most of the simulation time. 

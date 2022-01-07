@@ -1,7 +1,7 @@
 Finite element interpolation (FEM)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This subsection specifies the characteristics of the finite element method used in the simulations. The interpolation orders of velocity, pressure and other physics are specified. An additional option is also present to enable to use of high-order mapping throughout the entire mesh. At the moments, all variables are interpolated using Lagrange elements. On quad/hex meshes, `FE_Q <https://www.dealii.org/current/doxygen/deal.II/classFE__Q.html>`_ elements are used whereas on simplex meshes (triangles, tetrahedron), `FE_P <https://www.dealii.org/current/doxygen/deal.II/classFE__SimplexP.html>`_ elements are used.
+This subsection specifies the characteristics of the finite element method used in the simulations. The interpolation orders of velocity, pressure and other physics are specified. An additional option is also present to enable to use of high-order mapping throughout the entire mesh. At the moment, all variables are interpolated using Lagrange elements. On quad/hex meshes, `FE_Q <https://www.dealii.org/current/doxygen/deal.II/classFE__Q.html>`_ elements are used whereas on simplex meshes (triangles, tetrahedron), `FE_P <https://www.dealii.org/current/doxygen/deal.II/classFE__SimplexP.html>`_ elements are used.
 
 
 .. code-block:: text

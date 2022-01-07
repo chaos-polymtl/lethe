@@ -37,7 +37,7 @@ This subsection controls the post-processing of the forces and the torque on the
 
 * ``calculation frequency`` is an integer that specifies the frequency of the calculation of the force. Setting ``calculation frequency=10`` means that forces and torques will be calculated every 10 iterations. Calculating the forces and the torques on the boundaries is a very cheap operation and, consequently, there is not much to optimize by using a larger frequency.
 
-* ``output frequency`` specifies at which frequency the force and torque files are written to the disk. There files are small .dat file, but writing them every iteration can significantly slow down the simulation depending on the file system. On clusters, such as the one provided by Compute Canada, it is preferable to write these files every 10-100 iterations to prevent slowing down the file system.
+* ``output frequency`` specifies at which frequency the force and torque files are written to the disk. There files are small .dat file, but writing them every iteration can significantly slow down the simulation depending on the file system. On clusters, such as the one provided by Compute Canada, it is preferable to write these files every 10-100 iteration to prevent slowing down the file system.
 
 * ``output precision`` specifies the number of significant digits in the output files. There is little to gain in reducing the default value here.
 

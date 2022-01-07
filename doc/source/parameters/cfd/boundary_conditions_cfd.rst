@@ -1,7 +1,7 @@
 Boundary conditions - CFD
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This subsection's defines the boundary conditions associated with fluid dynamics physics. Lethe supports slip, no-slip, periodic, and dirichlet boundary conditions which are set from arbitrary functions. These functions can be used to define all sort of steady-state and transient velocity boundary conditions such as rotating walls.
+This subsection defines the boundary conditions associated with fluid dynamics physics. Lethe supports slip, no-slip, periodic, and dirichlet boundary conditions which are set from arbitrary functions. These functions can be used to define all sort of steady-state and transient velocity boundary conditions such as rotating walls.
 
 .. code-block:: text
 
