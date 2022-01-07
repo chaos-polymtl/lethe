@@ -1199,36 +1199,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           try
             {
               auto dv = invert(jac_velocity) * residual_velocity;
-
-              /*if ((particles[p].velocity - particles[p].velocity_iter).norm() >
-                  0)
-                local_alpha =
-                  sqrt(particles[p].last_d_velocity.norm()*particles[p].last_local_alpha / dv.norm());*/
-              /*if ((particles[p].velocity - particles[p].velocity_iter).norm() >
-                  0)
-                local_alpha =
-                  abs(scalar_product(particles[p].velocity -
-                                       particles[p].velocity_iter,
-                                     dv - particles[p].last_d_velocity)) /
-                  (dv - particles[p].last_d_velocity).norm_square();*/
               if ((particles[p].velocity - particles[p].velocity_iter).norm() >
-                  0)
-                {
-                  double matrix_alpha = 0;
-                  double rhs_alpha    = 0;
-                  for (unsigned int d = 0; d < dim; ++d)
-                    {
-                      double c1 = 2 * (dv[d] - particles[p].last_d_velocity[d]*particles[p].last_local_alpha);
-                      matrix_alpha +=
-                        -particles[p].last_d_velocity[d]*particles[p].last_local_alpha * c1 + dv[d] * c1;
-                      rhs_alpha+= -particles[p].last_d_velocity[d]*particles[p].last_local_alpha * c1;
-                    }
-                  if(matrix_alpha!=0)
-                    local_alpha=rhs_alpha/matrix_alpha;
-                  else
-                    local_alpha=1;
-                }
-              /*if ((particles[p].velocity - particles[p].velocity_iter).norm() >
                   0)
                 {
                   double matrix_alpha = 0;
@@ -1239,13 +1210,21 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                       rhs_alpha+= particles[p].last_d_velocity[d]*particles[p].last_d_velocity[d]*particles[p].last_local_alpha*particles[p].last_local_alpha ;
                     }
                   if(matrix_alpha!=0)
-                    local_alpha=abs(rhs_alpha/(matrix_alpha));
+                    {
+                      local_alpha = abs(rhs_alpha / (matrix_alpha));
+                      local_alpha =
+                        (local_alpha - 1) *
+                        particles[p].last_d_velocity.norm() *
+                        particles[p].last_local_alpha *
+                        particles[p].last_d_velocity.norm() *
+                        particles[p].last_local_alpha /
+                        scalar_product(dv,
+                                       particles[p].last_d_velocity *
+                                         particles[p].last_local_alpha);
+                    }
                   else
                     local_alpha=1;
-                }*/
-
-              /*local_alpha=std::max(sqrt(particles[p].last_d_velocity.norm()*particles[p].last_local_alpha / dv.norm()), local_alpha);
-              local_alpha=sqrt(particles[p].last_d_velocity.norm()*particles[p].last_local_alpha / dv.norm());*/
+                }
 
               this->pcout << "particle " << p
                           << " local alpha : " << local_alpha << " residual "
@@ -1388,7 +1367,7 @@ this->pcout << "particle " << p << " residual "
                           << " particle impulsion " << particles[p].impulsion
                           << std::endl;*/
             }
-          particles[p].residual_velocity =(particles[p].velocity- particles[p].velocity_iter).norm();
+          particles[p].residual_velocity =residual_velocity.norm();
           particles[p].residual_omega =(particles[p].omega- particles[p].omega_iter).norm();
           particles_residual_vect[p]=this_particle_residual;
           if (this_particle_residual > particle_residual)
