@@ -1118,6 +1118,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
       ib_dem.particles_dem(dt);
+      unsigned int worst_residual_particle_id;
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
           Tensor<1, dim> g;
@@ -1226,18 +1227,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                     local_alpha=1;
                 }
 
-              this->pcout << "particle " << p
-                          << " local alpha : " << local_alpha << " residual "
-                          << residual_velocity.norm() * dt << std::endl;
               if (local_alpha > 1)
                 local_alpha = 1;
               if (local_alpha < 0)
                 local_alpha = 0;
-
-
-              this->pcout << "particle " << p
-                          << " local alpha : " << local_alpha << " residual "
-                          << residual_velocity.norm() * dt << std::endl;
 
               particles[p].velocity_iter = particles[p].velocity;
               particles[p].velocity =
@@ -1321,63 +1314,66 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             }
           auto d_omega=invert(jac_omega) * residual_omega;
           local_alpha=1;
-          if(d_omega.norm()>particles[p].residual_omega)
-            local_alpha=particles[p].residual_omega/d_omega.norm();
-
           if((particles[p].omega-particles[p].omega_iter).norm()>0)
-            local_alpha= abs(scalar_product(particles[p].omega-particles[p].omega_iter,d_omega-particles[p].last_d_omega))/(d_omega-particles[p].last_d_omega).norm_square();
+            {
+              double matrix_alpha = 0;
+              double rhs_alpha    = 0;
+              for (unsigned int d = 0; d <3; ++d)
+                {
+                  matrix_alpha +=(-d_omega[d]*particles[p].last_d_omega[d]+particles[p].last_d_omega[d]*particles[p].last_d_omega[d]);
+                  rhs_alpha+= particles[p].last_d_omega[d]*particles[p].last_d_omega[d];
+                }
+              if(matrix_alpha!=0)
+                {
+                  local_alpha = abs(rhs_alpha / (matrix_alpha));
+                  local_alpha =
+                    (local_alpha - 1) *
+                    particles[p].last_d_omega.norm() *
+                    particles[p].last_d_omega.norm() /
+                    scalar_product(d_omega,
+                                   particles[p].last_d_omega);
+                }
+              else
+                local_alpha=1;
+            }
 
-          std::max(particles[p].residual_omega/d_omega.norm(),local_alpha);
-
-          if(local_alpha>1)
-            local_alpha=1;
-
+          if (local_alpha > 1)
+            local_alpha = 1;
+          if (local_alpha < 0)
+            local_alpha = 0;
 
           particles[p].omega_iter = particles[p].omega;
           particles[p].omega      = particles[p].omega_iter -
                                invert(jac_omega) * residual_omega * alpha*local_alpha;
           particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
-          particles[p].last_d_omega=d_omega;
-
-
+          particles[p].last_d_omega=d_omega*local_alpha;
 
 
           if(save_particle_state_is_used)
             particles[p]=save_particle_state;
 
-
           double this_particle_residual =
-            sqrt( std::pow((particles[p].omega- particles[p].omega_iter).norm(),2)+std::pow((particles[p].velocity- particles[p].velocity_iter).norm(),2));
-          this_particle_residual =
             sqrt( std::pow(residual_velocity.norm(),2)+std::pow(residual_omega.norm(),2))*dt;
 
-          if (this->simulation_parameters.non_linear_solver.verbosity !=
-              Parameters::Verbosity::quiet)
-            {
-              /*this->pcout << " contact_impulsion "
-                          << particles[p].contact_impulsion << std::endl;
-this->pcout << "particle " << p << " residual "
-                          << this_particle_residual << " particle velocity "
-                          << particles[p].velocity << " residual "
-                          << (particles[p].position -
-                              ib_dem.dem_particles[p].position)
-                               .norm()
-                          << " particle position " << particles[p].position
-                          << " particle force" << particles[p].forces
-                          << " particle impulsion " << particles[p].impulsion
-                          << std::endl;*/
-            }
+
           particles[p].residual_velocity =residual_velocity.norm();
           particles[p].residual_omega =(particles[p].omega- particles[p].omega_iter).norm();
           particles_residual_vect[p]=this_particle_residual;
           if (this_particle_residual > particle_residual)
-            particle_residual = this_particle_residual;
+            {
+              particle_residual = this_particle_residual;
+              worst_residual_particle_id=p;
+            }
         }
 
-      this->pcout << "particle residual "
-                  << particle_residual<<std::endl;
-      this->pcout << "particle residual L2 "
-                  << particles_residual_vect.l2_norm()<<std::endl;
+      if (this->simulation_parameters.non_linear_solver.verbosity !=
+          Parameters::Verbosity::quiet)
+        {
+          this->pcout << "L_inf particle residual : "
+                      << particle_residual<<"particle id : "<<  worst_residual_particle_id<<std::endl;
+          this->pcout << "L2 particle residual L2"
+                      << particles_residual_vect.l2_norm()<<std::endl;
+        }
 
       table_residual.add_value("matrix_residual", this->system_rhs.l2_norm());
       table_residual.set_precision("matrix_residual", 12);
