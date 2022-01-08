@@ -29,7 +29,7 @@ Particle insertion information is defined in this section. This information incl
   set insertion box maximum y                   = 0.05
   set insertion box maximum z                   = 0.07
 
-  # This value controls the distance between the center of inserted particles (the distance is: [distance threshold] * [diameter of particles]). The distance is modified by a random number if non_uniform insertion is chosen
+  # insertion distance threshold controls the distance between the center of inserted particles (the distance is: [distance threshold] * [diameter of particles]). The distance is modified by a random number if non_uniform insertion is chosen
   set insertion distance threshold              = 2
 
   # Random number range and seed for non_uniform insertion
