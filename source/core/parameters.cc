@@ -757,7 +757,7 @@ namespace Parameters
                         "File output enstrophy");
 
       prm.declare_entry("apparent viscosity name",
-                        "apparent viscosity",
+                        "apparent_viscosity",
                         Patterns::FileName(),
                         "File output apparent viscosity");
 
