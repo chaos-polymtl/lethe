@@ -21,10 +21,19 @@
 
 using namespace dealii;
 
+
+DeclException2(SizeOfFields,
+               unsigned int,
+               unsigned int,
+               << "The number of values for a field : " << arg1
+               << " is not equal to the number of vlaues for another field "
+               << arg2);
+
 enum field : int
 {
   shear_rate,
-  temperature
+  temperature,
+  previous_temperature
 };
 
 /**
@@ -41,20 +50,31 @@ class PhysicalPropertyModel
 {
 public:
   /**
+   * @brief PhysicalPropertyModel Default constructor. Set the model_depends_on to false for all variable.
+   */
+  PhysicalPropertyModel()
+  {
+    model_depends_on[shear_rate]           = false;
+    model_depends_on[temperature]          = false;
+    model_depends_on[previous_temperature] = false;
+  }
+
+
+  /**
    * @brief value Calculates the value of a physical property.
    * @param fields_value Value of the various field on which the property may depend.
    * @return value of the physical property calculated with the fields_value
    */
   virtual double
-  value(std::map<field, double> fields_value) = 0;
+  value(const std::map<field, double> fields_value) = 0;
 
   /**
    * @brief vector_value Calculates the values of a physical property for
    * @param field_vectors
    */
   virtual void
-  vector_value(std::map<field, std::vector<double>> &field_vectors,
-               std::vector<double> &                 property_vector) = 0;
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
+               std::vector<double>                        &property_vector) = 0;
 
   /**
    * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
@@ -66,7 +86,7 @@ public:
    */
 
   virtual double
-  jacobian(std::map<field, double> field_values, field id) = 0;
+  jacobian(const std::map<field, double> field_values, const field id) = 0;
 
   /**
    * @brief vector_jacobian Calculate the derivative of the property with respect to a field
@@ -76,22 +96,22 @@ public:
    */
 
   virtual void
-  vector_jacobian(std::map<field, std::vector<double>> &field_vectors,
-                  field                                 id,
-                  std::vector<double> &                 jacobian_vector) = 0;
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) = 0;
 
 protected:
   /**
    * @brief numerical_jacobian Calculate the jacobian through a finite difference approximation.
    * This approach, although not preferable, is meant as a fall-back when
-   * calculated the jacobian manually is too difficult.
-   * @param field_vectors
-   * @param field_id
-   * @param jacobian_vector
+   * calculating the jacobian manually is too difficult.
+   * @param fields_values The values of the various fields
+   * @param id Field id of the field with respect to which the jacobian should be calculated
    * @return
    */
   inline double
-  numerical_jacobian(std::map<field, double> &field_values, field id)
+  numerical_jacobian(const std::map<field, double> &field_values,
+                     const field                    id)
   {
     double f_x   = this->value(field_values);
     auto   x_dx  = field_values;
@@ -99,6 +119,49 @@ protected:
     x_dx[id]     = x_dx[id] + dx;
     double f_xdx = this->value(x_dx);
     return (f_xdx - f_x) / dx;
+  }
+
+  /**
+   * @brief vector_numerical_jacobian Calculate the vector of jacobian through a finite difference approximation.
+   * This approach, although not preferable, is meant as a fall-back when
+   * calculating the jacobian manually is too difficult.
+   * @param field_vectors
+   * @param field_id
+   * @param jacobian_vector
+   * @return
+   */
+  inline void
+  vector_numerical_jacobian(
+    const std::map<field, std::vector<double>> &field_vectors,
+    const field                                 id,
+    std::vector<double>                        &jacobian_vector)
+  {
+    const unsigned int n_pts = jacobian_vector.size();
+
+    // Evaluate the properties using the values of the field vector
+    std::vector<double> f_x(n_pts);
+    vector_value(field_vectors, f_x);
+
+    // Make a copy of the field vector for the field we wil perturbate
+    std::map<field, std::vector<double>> perturbed_field_vectors =
+      field_vectors;
+    std::vector<double> &x = perturbed_field_vectors.at(id);
+    std::vector<double>  dx(n_pts);
+
+    // Perturb the field by dx
+    for (unsigned int i = 0; i < n_pts; ++i)
+      {
+        dx[i] = std::max(1e-6 * x[i], 1e-8);
+        x[i] += dx[i];
+      }
+
+    // Evaluate the properties using the perturbed value of the field vector
+    std::vector<double> f_xdx(n_pts);
+    vector_value(perturbed_field_vectors, f_xdx);
+
+    // Fill jacobian
+    for (unsigned int i = 0; i < n_pts; ++i)
+      jacobian_vector[i] = (f_xdx[i] - f_x[i]) / dx[i];
   }
 
   // Map to indicate on which variables the model depends on

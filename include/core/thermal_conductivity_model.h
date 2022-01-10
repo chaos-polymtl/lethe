@@ -50,7 +50,7 @@ public:
    * @return value of the physical property calculated with the fields_value
    */
   virtual double
-  value(std::map<field, double> /*fields_value*/)
+  value(const std::map<field, double> /*fields_value*/)
   {
     return thermal_conductivity;
   };
@@ -60,7 +60,7 @@ public:
    * @param field_vectors
    */
   virtual void
-  vector_value(std::map<field, std::vector<double>> & /*field_vectors*/,
+  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector)
   {
     property_vector.assign(property_vector.size(), thermal_conductivity);
@@ -76,7 +76,7 @@ public:
    */
 
   virtual double
-  jacobian(std::map<field, double> /*field_values*/, field /*id*/)
+  jacobian(const std::map<field, double> /*field_values*/, field /*id*/)
   {
     return 0;
   };
@@ -89,9 +89,10 @@ public:
    */
 
   virtual void
-  vector_jacobian(std::map<field, std::vector<double>> & /*field_vectors*/,
-                  field /*id*/,
-                  std::vector<double> &jacobian_vector)
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field /*id*/,
+    std::vector<double> &jacobian_vector)
   {
     jacobian_vector.assign(jacobian_vector.size(), 0);
   };

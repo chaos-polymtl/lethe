@@ -13,15 +13,16 @@ void
 test()
 {
   deallog << "Beggining" << std::endl;
+  std::map<field, double> field_values;
 
 
   SpecificHeatConstant specific_heat_model(5);
 
   deallog << "Testing specific heat" << std::endl;
 
-  deallog << " T = 1    , Cp = " << specific_heat_model.get_specific_heat(1, 1)
+  deallog << " T = 1    , Cp = " << specific_heat_model.value(field_values)
           << std::endl;
-  deallog << " T = 2    , Cp = " << specific_heat_model.get_specific_heat(2, 2)
+  deallog << " T = 2    , Cp = " << specific_heat_model.value(field_values)
           << std::endl;
 
   deallog << "OK" << std::endl;
