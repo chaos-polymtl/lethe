@@ -481,12 +481,12 @@ calculate_apparent_viscosity(
             }
         }
     }
-  double apparent_viscosity =
-    integral_viscosity_x_shear_rate / integral_shear_rate;
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-  apparent_viscosity =
-    Utilities::MPI::sum(apparent_viscosity / domain_volume, mpi_communicator);
-  return apparent_viscosity;
+  integral_viscosity_x_shear_rate =
+    Utilities::MPI::sum(integral_viscosity_x_shear_rate / domain_volume, mpi_communicator);
+  integral_shear_rate =
+    Utilities::MPI::sum(integral_shear_rate / domain_volume, mpi_communicator);
+  return integral_viscosity_x_shear_rate / integral_shear_rate;
 }
 
 template double
