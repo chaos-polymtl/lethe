@@ -454,7 +454,7 @@ namespace Parameters
     // Prefix for the enstrophy output
     std::string enstrophy_output_name;
 
-    // Prefix for the enstrophy output
+    // Prefix for the apparent viscosity output
     std::string apparent_viscosity_output_name;
 
     // Enable tracer statistics

@@ -453,8 +453,6 @@ calculate_apparent_viscosity(
   const unsigned int n_q_points = quadrature_formula.size();
 
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
-  double                      domain_volume =
-    GridTools::volume(dof_handler.get_triangulation(), mapping);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -483,10 +481,9 @@ calculate_apparent_viscosity(
     }
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   integral_viscosity_x_shear_rate =
-    Utilities::MPI::sum(integral_viscosity_x_shear_rate / domain_volume,
-                        mpi_communicator);
+    Utilities::MPI::sum(integral_viscosity_x_shear_rate, mpi_communicator);
   integral_shear_rate =
-    Utilities::MPI::sum(integral_shear_rate / domain_volume, mpi_communicator);
+    Utilities::MPI::sum(integral_shear_rate, mpi_communicator);
   return integral_viscosity_x_shear_rate / integral_shear_rate;
 }
 
