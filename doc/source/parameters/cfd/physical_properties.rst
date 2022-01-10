@@ -122,7 +122,7 @@ The power-law model is a simple rheological model:
 
 .. math::
 
-  \eta(\dot{\gamma}) = K \dot{\gamma}^n
+  \eta(\dot{\gamma}) = K \dot{\gamma}^{n-1}
 
 
 where :math:`\eta` is the **kinematic viscosity** and :math:`\dot{\gamma}` is the shear rate.
@@ -144,7 +144,7 @@ When using the Power-Law model, the default values are:
 
 * The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity is it were Newtonian.
 
-* The ``n`` parameter is the flow behavior index. low  It sets the slope in the log-log ::math:`\eta = f(\dot{\gamma})` graph.
+* The ``n`` parameter is the flow behavior index. low  It sets the slope in the log-log :math:`\eta = f(\dot{\gamma})` graph.
 
 * The ``shear rate min`` parameter yields the magnitude of the shear rate tensor for which the viscosity is calculated. Since the model uses a power operation, a nul shear rate magnitude leads to an invalid viscosity. To ensure numerical stability, the shear rate cannot go below this threshold when the viscosity  calculated.
 
