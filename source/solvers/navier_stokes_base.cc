@@ -1089,8 +1089,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "Apparent viscosity: " << apparent_viscosity << " m^2/s"
-                      << std::endl;
+          this->pcout << "Apparent viscosity: " << apparent_viscosity
+                      << " m^2/s" << std::endl;
         }
 
       // Output apparent viscosity to a text file from processor 0
