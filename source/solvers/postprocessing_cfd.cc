@@ -483,7 +483,8 @@ calculate_apparent_viscosity(
     }
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
   integral_viscosity_x_shear_rate =
-    Utilities::MPI::sum(integral_viscosity_x_shear_rate / domain_volume, mpi_communicator);
+    Utilities::MPI::sum(integral_viscosity_x_shear_rate / domain_volume,
+                        mpi_communicator);
   integral_shear_rate =
     Utilities::MPI::sum(integral_shear_rate / domain_volume, mpi_communicator);
   return integral_viscosity_x_shear_rate / integral_shear_rate;
