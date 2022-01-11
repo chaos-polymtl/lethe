@@ -76,7 +76,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particle separatly.
 
-* The subsection ``position`` defines the initial value of the particle position if the parameter ``integrate motion`` is set to true. Otherwise, it defines the particle's position at all points in time. This position is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of coordinate X, Y, and Z. 
+* The subsection ``position`` defines the initial value of the particle position if the parameter ``integrate motion=true``. Otherwise, it defines the particle's position at all points in time. This position is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of coordinate X, Y, and Z. 
 
 * The subsection ``velocity`` defines the initial value of the particle velocity if the parameter ``integrate motion`` is set to true. Otherwise, it defines the particle's velocity at all points in time. This velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z direction.
 
