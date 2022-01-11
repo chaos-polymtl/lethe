@@ -60,7 +60,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``refine mesh inside radius factor`` parameter defines the inside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. 
 
-* The ``refine mesh outside radius factor`` parameter defined the outside radius of the hyper shell that forms the refinement zone around the particle. The radius used is the product between this factor and the particle's radius. 
+* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. 
 
 * The ``integrate motion`` parameter control if the dynamics equations of the particles are calculated. If this parameter is set to false, the dynamics of the particle will not be calculated. The particle's position and velocity will only be defined by the particles' position and velocity function.
 
