@@ -45,9 +45,9 @@ public:
   {}
 
   /**
-   * @brief value Calculates the value of a physical property.
-   * @param fields_value Value of the various field on which the property may depend.
-   * @return value of the physical property calculated with the fields_value
+   * @brief value Calculates the value the thermal conductivity
+   * @param fields_value Value of the various field on which the thermal conductivity depends.
+   * @return value of the thermal conductivity calculated with the fields_value.
    */
   virtual double
   value(const std::map<field, double> & /*fields_value*/) override
@@ -56,8 +56,9 @@ public:
   };
 
   /**
-   * @brief vector_value Calculates the values of a physical property for
-   * @param field_vectors
+   * @brief vector_value Calculates the vector value of thermal conductivities
+   * @param field_vectors Vector of properties on which the thermal conductivities depend
+   * @param property_vector Values of the thermal conductivities
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
@@ -67,12 +68,11 @@ public:
   }
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
-   * property with respect to a field
+   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the thermal conductivity with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
-   * @return value of the partial derivative of the property with respect to the field.
+   * @return value of the partial derivative of the thermal conductivity with respect to the field.
    */
 
   virtual double
@@ -83,10 +83,10 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the property with respect to a field
+   * @brief vector_jacobian Calculate the derivative of the thermal conductivity with respect to a field
    * @param field_vectors Vector for the values of the fields used to evaluated the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the property with respect to the field id
+   * @param jacobian Vector of the value of the derivative of the thermal conductivity with respect to the field id
    */
 
   virtual void
@@ -95,7 +95,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    jacobian_vector.assign(jacobian_vector.size(), 0);
+    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
   };
 
 private:
@@ -120,9 +120,9 @@ public:
   }
 
   /**
-   * @brief value Calculates the value of a physical property.
-   * @param fields_value Value of the various field on which the property may depend.
-   * @return value of the physical property calculated with the fields_value
+   * @brief value Calculates the value the thermal conductivity
+   * @param fields_value Value of the various field on which the thermal conductivity depends.
+   * @return value of the thermal conductivity calculated with the fields_value.
    */
   virtual double
   value(const std::map<field, double> &fields_value) override
@@ -131,8 +131,9 @@ public:
   };
 
   /**
-   * @brief vector_value Calculates the values of a physical property for
-   * @param field_vectors
+   * @brief vector_value Calculates the vector value of thermal conductivities
+   * @param field_vectors Vector of properties on which the thermal conductivities depend
+   * @param property_vector Values of the thermal conductivities
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -144,12 +145,11 @@ public:
   }
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
-   * property with respect to a field
+   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the thermal conductivity with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
-   * @return value of the partial derivative of the property with respect to the field.
+   * @return value of the partial derivative of the thermal conductivity with respect to the field.
    */
 
   virtual double
@@ -160,10 +160,10 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the property with respect to a field
+   * @brief vector_jacobian Calculate the derivative of the thermal conductivity with respect to a field
    * @param field_vectors Vector for the values of the fields used to evaluated the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the property with respect to the field id
+   * @param jacobian Vector of the value of the derivative of the thermal conductivity with respect to the field id
    */
 
   virtual void
@@ -172,7 +172,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    jacobian_vector.assign(jacobian_vector.size(), B);
+    std::fill(jacobian_vector.begin(), jacobian_vector.end(), B);
   };
 
 private:

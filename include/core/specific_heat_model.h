@@ -50,9 +50,9 @@ public:
   {}
 
   /**
-   * @brief value Calculates the value of a physical property.
-   * @param fields_value Value of the various field on which the property may depend.
-   * @return value of the physical property calculated with the fields_value
+   * @brief value Calculates the value of the specific heat.
+   * @param fields_value Value of the various field on which the specific heat depends.
+   * @return value of the specific heat.
    */
   virtual double
   value(const std::map<field, double> & /*fields_value*/) override
@@ -61,25 +61,24 @@ public:
   };
 
   /**
-   * @brief vector_value Calculates the values of a physical property for
-   * @param field_vectors
+   * @brief vector_value Calculates the vector of specific heat.
+   * @param field_vectors Vector of fields on which the specific heat may depend.
+   * @param property_vector Vector of specific_heat values.
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override
   {
-    property_vector.assign(property_vector.size(), specific_heat);
+    std::fill(property_vector.begin(), property_vector.end(), specific_heat);
   }
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
-   * property with respect to a field
-   * @param field_values Value of the various fields on which the property may depend.
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the specific heat with respect to a field
+   * @param field_values Value of the various fields on which the specific heat may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
-   * @return value of the partial derivative of the property with respect to the field.
+   * @return value of the partial derivative of the specific heat with respect to the field.
    */
-
   virtual double
   jacobian(const std::map<field, double> & /*field_values*/,
            field /*id*/) override
@@ -88,19 +87,18 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the property with respect to a field
+   * @brief vector_jacobian Calculate the derivative of the specific heat with respect to a field
    * @param field_vectors Vector for the values of the fields used to evaluated the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the property with respect to the field id
+   * @param jacobian Vector of the value of the derivative of the specific heat with respect to the field id
    */
-
   virtual void
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    jacobian_vector.assign(jacobian_vector.size(), 0);
+    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
   };
 
 private:
@@ -125,8 +123,9 @@ public:
   {}
 
   /**
-   * @brief Returns the phase change specific heat
-   */
+   * @brief value Calculates the value of the phase change specific heat.
+   * @param fields_value Value of the various field on which the specific heat depends.
+   * @return value of the specific heat.   */
   virtual double
   value(const std::map<field, double> &fields_value) override
   {
@@ -147,8 +146,9 @@ public:
 
 
   /**
-   * @brief vector_value Calculates the values of a physical property for
-   * @param field_vectors
+   * @brief vector_value Calculates the vector of specific heat.
+   * @param field_vectors Vector of fields on which the specific heat may depend.
+   * @param property_vector Vector of specific_heat values.
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -188,14 +188,12 @@ public:
   }
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
-   * property with respect to a field
-   * @param field_values Value of the various fields on which the property may depend.
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the specific heat with respect to a field
+   * @param field_values Value of the various fields on which the specific heat may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
-   * @return value of the partial derivative of the property with respect to the field.
+   * @return value of the partial derivative of the specific heat with respect to the field.
    */
-
   virtual double
   jacobian(const std::map<field, double> &field_values, field id) override
   {
@@ -206,12 +204,11 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the property with respect to a field
+   * @brief vector_jacobian Calculate the derivative of the specific heat with respect to a field
    * @param field_vectors Vector for the values of the fields used to evaluated the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the property with respect to the field id
+   * @param jacobian Vector of the value of the derivative of the specific heat with respect to the field id
    */
-
   virtual void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
                   const field                                 id,
@@ -225,6 +222,7 @@ public:
    * a temperature T
    *
    * @param T temperature at which to calculate the solid fraction
+   * @return value of the liquid_fraction
    *
    */
   inline double
@@ -241,15 +239,18 @@ public:
    * @brief enthalpy Calculates the enthalpy of a phase change material for a temperature T
    * The enthalpy is defined as :
    *
-   * !! Pure liquid !!
+   * Pure liquid
+   * ------------
    * if (T>T_liquidus) : H = cp_solid * T_solidus + 0.5*(cp_solid+cp_liquid) *
    * (T_liquidus-T_solidus) + latent_enthalpy + cp_liquid * (T-T_liquidus)
    *
-   * !! Liquid-solid mix !!
+   * Liquid-solid mix
+   * -----------------
    * else if (T>T_solidus) : cp_solid * T_solidus + 0.5*(cp_solid+cp_liquid) *
    * (T-T_solidus) + liquid_fraction * latent_enthalpy
    *
-   * !! Pure solid !!
+   * Pure solide
+   * ------------
    * else : cp_solid * T
    *
    * @param T temperature at which to calculate the enthalpy

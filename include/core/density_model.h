@@ -41,7 +41,7 @@ public:
   {}
 
   /**
-   * @brief value Calculates the value of a physical property.
+   * @brief value Calculates the density
    * @param fields_value Value of the various field on which the property may depend.
    * @return value of the physical property calculated with the fields_value
    */
@@ -52,23 +52,23 @@ public:
   };
 
   /**
-   * @brief vector_value Calculates the values of a physical property for
-   * @param field_vectors
+   * @brief vector_value Calculates the vector of density.
+   * @param field_vectors Vectors of the fields on which the density may depend.
+   * @param property_vector Vectors of the density values
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override
   {
-    property_vector.assign(property_vector.size(), density);
+    std::fill(property_vector.begin(), property_vector.end(), density);
   }
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
-   * property with respect to a field
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the density with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
-   * should be calculated
-   * @return value of the partial derivative of the property with respect to the field.
+   * should be calculated.
+   * @return value of the partial derivative of the density with respect to the field.
    */
 
   virtual double
@@ -79,10 +79,10 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the property with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluated the property
-   * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the property with respect to the field id
+   * @brief vector_jacobian Calculate the derivative of the density with respect to a field.
+   * @param field_vectors Vector for the values of the fields used to evaluated the property.
+   * @param id Identifier of the field with respect to which a derivative should be calculated.
+   * @param jacobian Vector of the value of the derivative of the density with respect to the field id.
    */
 
   virtual void
@@ -91,7 +91,7 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override
   {
-    jacobian_vector.assign(jacobian_vector.size(), 0);
+    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
   };
 
 private:

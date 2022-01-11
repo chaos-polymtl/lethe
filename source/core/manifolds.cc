@@ -266,7 +266,13 @@ attach_manifolds_to_triangulation(
       if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::spherical)
         {
           Point<spacedim> circleCenter;
-          circleCenter = Point<spacedim>(manifolds.arg1[i], manifolds.arg2[i]);
+          if (spacedim == 2)
+            circleCenter =
+              Point<spacedim>(manifolds.arg1[i], manifolds.arg2[i]);
+          else
+            circleCenter = Point<spacedim>(manifolds.arg1[i],
+                                           manifolds.arg2[i],
+                                           manifolds.arg3[i]);
           static const SphericalManifold<dim, spacedim> manifold_description(
             circleCenter);
           triangulation->set_manifold(manifolds.id[i], manifold_description);
@@ -286,7 +292,8 @@ attach_manifolds_to_triangulation(
     }
 }
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>>,
   std::string,
   unsigned int)
@@ -294,7 +301,8 @@ void attach_cad_to_manifold(
   throw std::runtime_error("IGES manifolds are not supported in 2D");
 }
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>>,
   std::string,
   unsigned int)
@@ -302,7 +310,8 @@ void attach_cad_to_manifold(
   throw std::runtime_error("IGES manifolds are not supported in 2D/3D");
 }
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   std::string                                                cad_name,
   unsigned int                                               manifold_id)
@@ -340,14 +349,17 @@ void attach_cad_to_manifold(
 }
 
 
-template void attach_manifolds_to_triangulation(
+template void
+attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   Parameters::Manifolds                                      manifolds);
 
-template void attach_manifolds_to_triangulation(
+template void
+attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   Parameters::Manifolds                                      manifolds);
 
-template void attach_manifolds_to_triangulation(
+template void
+attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
   Parameters::Manifolds                                         manifolds);
