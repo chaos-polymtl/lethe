@@ -43,7 +43,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		end
 	end
 	
-* The ``number of particles`` Number of particles  simulated by the sharp-edge IB.
+* The ``number of particles`` is the number of particles simulated by the sharp-edge IB.
 
 * The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be equal or higher then the order of the underlying FEM scheme.
 
