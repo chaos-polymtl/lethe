@@ -1548,11 +1548,11 @@ namespace Parameters
                       Patterns::Double(),
                       "The restitution coefficient of particle in case of contact");
     prm.declare_entry("friction coefficient",
-                      "1",
+                      "0",
                       Patterns::Double(),
                       "The friction coefficient of particle in case of contact");
     prm.declare_entry("rolling friction coefficient",
-                      "1",
+                      "0",
                       Patterns::Double(),
                       "The rolling friction coefficient of particle in case of contact");
 
@@ -1649,12 +1649,12 @@ namespace Parameters
                           "The wall poisson ratio if IB particles are in contact with it");
 
       prm.declare_entry("wall rolling friction coefficient",
-                          "1",
+                          "0",
                           Patterns::Double(),
                           "The wall rolling friction coefficient if IB particles are in contact with it");
 
       prm.declare_entry("wall friction coefficient",
-                        "1",
+                        "0",
                         Patterns::Double(),
                         "The wall friction coefficient if IB particles are in contact with it");
 
