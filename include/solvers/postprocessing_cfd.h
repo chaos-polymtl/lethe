@@ -133,6 +133,30 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
                          const Mapping<dim> &   mapping);
 
 /**
+ * @brief Calculates the apparent viscosity of the fluid for non Newtonian flows.
+ * @return the apparent viscosity
+ * Post-processing frunction
+ *
+ * @param dof_handler The dof_handler used for the calculation
+ *
+ * @param evaluation_point The solution at which the force is calculated
+ *
+ * @param quadrature_formula The quadrature formula for the calculation
+ *
+ * @param mapping The mapping of the simulation
+ *
+ * @param physical_properties The parameters containing the required physical properties
+ */
+template <int dim, typename VectorType>
+double
+calculate_apparent_viscosity(
+  const DoFHandler<dim> &               dof_handler,
+  const VectorType &                    evaluation_point,
+  const Quadrature<dim> &               quadrature_formula,
+  const Mapping<dim> &                  mapping,
+  const Parameters::PhysicalProperties &physical_properties);
+
+/**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
  * @return std::vector of forces on each boundary condition
  * Post-processing function

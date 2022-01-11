@@ -710,6 +710,11 @@ namespace Parameters
         "Enable calculation of total enstrophy. The total enstrophy "
         "is calculated from the volumetric integral of the enstrophy over the domain.");
 
+      prm.declare_entry("calculate apparent viscosity",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of apparent viscosity");
+
       prm.declare_entry("calculate average velocities",
                         "false",
                         Patterns::Bool(),
@@ -751,6 +756,11 @@ namespace Parameters
                         Patterns::FileName(),
                         "File output enstrophy");
 
+      prm.declare_entry("apparent viscosity name",
+                        "apparent_viscosity",
+                        Patterns::FileName(),
+                        "File output apparent viscosity");
+
       prm.declare_entry("calculation frequency",
                         "1",
                         Patterns::Integer(),
@@ -788,17 +798,20 @@ namespace Parameters
 
       calculate_kinetic_energy = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy      = prm.get_bool("calculate enstrophy");
+      calculate_apparent_viscosity =
+        prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      calculate_pressure_drop     = prm.get_bool("calculate pressure drop");
-      inlet_boundary_id           = prm.get_integer("inlet boundary id");
-      outlet_boundary_id          = prm.get_integer("outlet boundary id");
-      initial_time                = prm.get_double("initial time");
-      kinetic_energy_output_name  = prm.get("kinetic energy name");
-      pressure_drop_output_name   = prm.get("pressure drop name");
-      enstrophy_output_name       = prm.get("enstrophy name");
-      calculation_frequency       = prm.get_integer("calculation frequency");
-      output_frequency            = prm.get_integer("output frequency");
+      calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
+      inlet_boundary_id              = prm.get_integer("inlet boundary id");
+      outlet_boundary_id             = prm.get_integer("outlet boundary id");
+      initial_time                   = prm.get_double("initial time");
+      kinetic_energy_output_name     = prm.get("kinetic energy name");
+      pressure_drop_output_name      = prm.get("pressure drop name");
+      enstrophy_output_name          = prm.get("enstrophy name");
+      apparent_viscosity_output_name = prm.get("apparent viscosity name");
+      calculation_frequency          = prm.get_integer("calculation frequency");
+      output_frequency               = prm.get_integer("output frequency");
       calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");
       tracer_output_name          = prm.get("tracer statistics name");
     }
