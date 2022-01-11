@@ -71,7 +71,7 @@ The ``length ratio`` parameter controls the length of the zone used to define th
 
 * The ``fluid density`` parameter is the fluid density used in the force calculation of the resolved CFD-DEM. This parameter is redundant with others in the solver and will be removed in the upcoming code modification.
 
-* The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolved in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
+* The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 
 * The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id 0. For each particle with the index ``n``, a new subsection name ``particle info n`` should be defined with relevant information.
 
