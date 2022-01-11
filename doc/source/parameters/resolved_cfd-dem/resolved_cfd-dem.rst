@@ -62,7 +62,7 @@ The ``length ratio`` parameter controls the length of the zone used to define th
 
 * The ``refine mesh outside radius factor`` parameter defines the outside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. 
 
-* The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the dynamics of the particle will not be calculated. The particle's position and velocity will only be defined by the particles' position and velocity function.
+* The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles remain static.  If ``ìntegrate motion=true`` the position and the velocity will be defined by the particles' position and velocity function.
 
 * The ``particle nonlinear tolerance`` parameter controls particle dynamics' nonlinear tolerance. The nonlinear solver won't have converged until the residual on the dynamics equations of all the particles is smaller than this threshold.
 
