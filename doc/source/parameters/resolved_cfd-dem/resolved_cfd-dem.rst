@@ -54,7 +54,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``ib force output file`` parameter is the file name where the variables associated with each particle is stored. One file will be created for each particle in the simulation.
 
-* The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the derivated values calculated for each of the particles. This file is compatible with Paraview 
+* The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview 
 
 * The ``initial refinement`` parameter control how many time the refinement zone around each of the particle is applied before the simulation start. Each application of the refinement zone reduce the size of the element by a factor of two.
 
