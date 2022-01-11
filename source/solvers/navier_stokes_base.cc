@@ -1106,7 +1106,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
             ".dat";
           std::ofstream output(filename.c_str());
           apparent_viscosity_table.set_precision("time", 12);
-          apparent_viscosity_table.set_precision("apparent viscosity", 12);
+          apparent_viscosity_table.set_precision("apparent_viscosity", 12);
           this->apparent_viscosity_table.write_text(output);
         }
     }
