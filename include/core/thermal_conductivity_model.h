@@ -135,7 +135,7 @@ public:
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
-               std::vector<double>                        &property_vector)
+               std::vector<double> &                       property_vector)
   {
     const std::vector<double> &T = field_vectors.at(field::temperature);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
