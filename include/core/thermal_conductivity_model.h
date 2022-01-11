@@ -50,7 +50,7 @@ public:
    * @return value of the physical property calculated with the fields_value
    */
   virtual double
-  value(const std::map<field, double> /*fields_value*/)
+  value(const std::map<field, double> & /*fields_value*/) override
   {
     return thermal_conductivity;
   };
@@ -61,7 +61,7 @@ public:
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
-               std::vector<double> &property_vector)
+               std::vector<double> &property_vector) override
   {
     property_vector.assign(property_vector.size(), thermal_conductivity);
   }
@@ -76,7 +76,8 @@ public:
    */
 
   virtual double
-  jacobian(const std::map<field, double> /*field_values*/, field /*id*/)
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override
   {
     return 0;
   };
@@ -92,7 +93,7 @@ public:
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
-    std::vector<double> &jacobian_vector)
+    std::vector<double> &jacobian_vector) override
   {
     jacobian_vector.assign(jacobian_vector.size(), 0);
   };
@@ -124,7 +125,7 @@ public:
    * @return value of the physical property calculated with the fields_value
    */
   virtual double
-  value(const std::map<field, double> fields_value)
+  value(const std::map<field, double> &fields_value) override
   {
     return A + B * fields_value.at(field::temperature);
   };
@@ -135,7 +136,7 @@ public:
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
-               std::vector<double> &                       property_vector)
+               std::vector<double> &property_vector) override
   {
     const std::vector<double> &T = field_vectors.at(field::temperature);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
@@ -152,7 +153,8 @@ public:
    */
 
   virtual double
-  jacobian(const std::map<field, double> /*field_values*/, field /*id*/)
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override
   {
     return B;
   };
@@ -168,7 +170,7 @@ public:
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
-    std::vector<double> &jacobian_vector)
+    std::vector<double> &jacobian_vector) override
   {
     jacobian_vector.assign(jacobian_vector.size(), B);
   };

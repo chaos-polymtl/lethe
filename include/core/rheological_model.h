@@ -18,6 +18,7 @@
 #define lethe_rheological_model_h
 
 #include <core/parameters.h>
+#include <core/physical_property_model.h>
 
 using namespace dealii;
 
@@ -29,7 +30,7 @@ using namespace dealii;
  * being used.
  */
 template <int dim>
-class RheologicalModel
+class RheologicalModel : public PhysicalPropertyModel
 {
 public:
   /**
@@ -37,15 +38,6 @@ public:
    */
   RheologicalModel()
   {}
-
-  /**
-   * @brief Returns the non-newtonian viscosity.
-   *
-   * @param shear_rate The shear rate tensor at the position of the
-   * considered quadrature point
-   */
-  virtual double
-  get_viscosity(const double &shear_rate_magnitude) = 0;
 
   /**
    * @brief Instanciates and returns a pointer to a RheologicalModel object by casting it to
@@ -84,13 +76,54 @@ public:
   /**
    * @brief Returns the viscosity.
    *
-   * @param shear_rate_magnitude The magnitude of the shear rate tensor at
-   * the position of the considered quadratured point. The shear rate magnitude
-   * is not necessary to get the constant viscosity, it is only taken in
-   * parameter to fit the virtual method in RheologicalModel.
+   * @param field_values Values of the field on which the viscosity may depend on.
+   * For the constant viscosity, the viscosity does not depend on anything.
    */
   double
-  get_viscosity(const double & /*shear_rate_magnitude*/) override;
+  value(const std::map<field, double> & /*field_values*/) override;
+
+  /**
+   * @brief vector_value Calculates the vector values of the viscosity.
+   * @param field_vectors
+   */
+  virtual void
+  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+               std::vector<double> &property_vector) override
+  {
+    property_vector.assign(property_vector.size(), viscosity);
+  }
+
+  /**
+   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
+   * property with respect to a field
+   * @param field_values Value of the various fields on which the property may depend.
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated
+   * @return value of the partial derivative of the property with respect to the field.
+   */
+
+  virtual double
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override
+  {
+    return 0;
+  };
+
+  /**
+   * @brief vector_jacobian Calculate the derivative of the property with respect to a field
+   * @param field_vectors Vector for the values of the fields used to evaluated the property
+   * @param id Identifier of the field with respect to which a derivative should be calculated
+   * @param jacobian Vector of the value of the derivative of the property with respect to the field id
+   */
+
+  virtual void
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field /*id*/,
+    std::vector<double> &jacobian_vector) override
+  {
+    jacobian_vector.assign(jacobian_vector.size(), 0);
+  };
 
 private:
   double viscosity;
@@ -115,7 +148,7 @@ public:
   /**
    * @brief Returns the non-newtonian viscosity.
    *
-   * @param shear_rate_magnitude The magnitude of the shear rate tensor at
+   * @param shear_rate_magnitude Values of the field on which the viscosity may depend on. For this model, it only depends on the magnitude of the shear rate tensor at
    * the position of the considered quadratured point
    *
    * Source : Morrison, F. A. (2001). No Memory: Generalized Newtonian Fluids.
@@ -123,7 +156,46 @@ public:
    * University Press.
    */
   double
-  get_viscosity(const double &shear_rate_magnitude) override;
+  value(const std::map<field, double> & /*field_values*/) override;
+
+  /**
+   * @brief vector_value Calculates the vector values of the viscosity.
+   * @param field_vectors
+   */
+  virtual void
+  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+               std::vector<double> &property_vector) override
+  {}
+
+  /**
+   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
+   * property with respect to a field
+   * @param field_values Value of the various fields on which the property may depend.
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated
+   * @return value of the partial derivative of the property with respect to the field.
+   */
+
+  virtual double
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override
+  {
+    return 0;
+  };
+
+  /**
+   * @brief vector_jacobian Calculate the derivative of the property with respect to a field
+   * @param field_vectors Vector for the values of the fields used to evaluated the property
+   * @param id Identifier of the field with respect to which a derivative should be calculated
+   * @param jacobian Vector of the value of the derivative of the property with respect to the field id
+   */
+
+  virtual void
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field /*id*/,
+    std::vector<double> &jacobian_vector) override
+  {}
 
 private:
   const double K;
@@ -151,7 +223,7 @@ public:
   /**
    * @brief Returns the non-newtonian viscosity.
    *
-   * @param shear_rate_magnitude The magnitude of the shear rate tensor at
+   * @param shear_rate_magnitude Values of the field on which the viscosity may depend on. For this model, it only depends on the magnitude of the shear rate tensor at
    * the position of the considered quadratured point
    *
    * Source : Morrison, F. A. (2001). No Memory: Generalized Newtonian Fluids.
@@ -159,7 +231,45 @@ public:
    * University Press.
    */
   double
-  get_viscosity(const double &shear_rate_magnitude) override;
+  value(const std::map<field, double> & /*field_values*/) override;
+
+  /**
+   * @brief vector_value Calculates the vector values of the viscosity.
+   * @param field_vectors
+   */
+  virtual void
+  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+               std::vector<double> &property_vector) override
+  {}
+
+  /**
+   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
+   * property with respect to a field
+   * @param field_values Value of the various fields on which the property may depend.
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated
+   * @return value of the partial derivative of the property with respect to the field.
+   */
+
+  virtual double
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override
+  {
+    return 0;
+  };
+
+  /**
+   * @brief vector_jacobian Calculate the derivative of the property with respect to a field
+   * @param field_vectors Vector for the values of the fields used to evaluated the property
+   * @param id Identifier of the field with respect to which a derivative should be calculated
+   * @param jacobian Vector of the value of the derivative of the property with respect to the field id
+   */
+
+  virtual void
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field /*id*/,
+    std::vector<double> &jacobian_vector) override{};
 
 private:
   double viscosity_0;

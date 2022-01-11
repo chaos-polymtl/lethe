@@ -66,7 +66,7 @@ public:
    * @return value of the physical property calculated with the fields_value
    */
   virtual double
-  value(const std::map<field, double> fields_value) = 0;
+  value(const std::map<field, double> &fields_value) = 0;
 
   /**
    * @brief vector_value Calculates the values of a physical property for
@@ -86,7 +86,7 @@ public:
    */
 
   virtual double
-  jacobian(const std::map<field, double> field_values, const field id) = 0;
+  jacobian(const std::map<field, double> &field_values, const field id) = 0;
 
   /**
    * @brief vector_jacobian Calculate the derivative of the property with respect to a field

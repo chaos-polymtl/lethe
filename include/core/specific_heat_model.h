@@ -55,7 +55,7 @@ public:
    * @return value of the physical property calculated with the fields_value
    */
   virtual double
-  value(const std::map<field, double> /*fields_value*/)
+  value(const std::map<field, double> & /*fields_value*/) override
   {
     return specific_heat;
   };
@@ -66,7 +66,7 @@ public:
    */
   virtual void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
-               std::vector<double> &property_vector)
+               std::vector<double> &property_vector) override
   {
     property_vector.assign(property_vector.size(), specific_heat);
   }
@@ -81,7 +81,8 @@ public:
    */
 
   virtual double
-  jacobian(const std::map<field, double> /*field_values*/, field /*id*/)
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override
   {
     return 0;
   };
@@ -97,7 +98,7 @@ public:
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
-    std::vector<double> &jacobian_vector)
+    std::vector<double> &jacobian_vector) override
   {
     jacobian_vector.assign(jacobian_vector.size(), 0);
   };
@@ -127,7 +128,7 @@ public:
    * @brief Returns the phase change specific heat
    */
   virtual double
-  value(const std::map<field, double> fields_value) override
+  value(const std::map<field, double> &fields_value) override
   {
     const double temperature = fields_value.at(field::temperature);
     const double previous_temperature =
@@ -196,7 +197,7 @@ public:
    */
 
   virtual double
-  jacobian(const std::map<field, double> field_values, field id) override
+  jacobian(const std::map<field, double> &field_values, field id) override
   {
     if (id == field::temperature)
       return numerical_jacobian(field_values, field::temperature);
