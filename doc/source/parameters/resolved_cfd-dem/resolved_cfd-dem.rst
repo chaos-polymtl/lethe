@@ -72,7 +72,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolved in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 
-* The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id 0. For each particle with the index n, a new subsection name ``particle info n`` should be defined with relevant information.
+* The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id 0. For each particle with the index ``n``, a new subsection name ``particle info n`` should be defined with relevant information.
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particle separatly.
 
