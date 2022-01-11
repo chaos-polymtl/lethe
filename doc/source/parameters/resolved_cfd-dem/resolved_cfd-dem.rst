@@ -44,25 +44,25 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 	
 * The ``number of particles`` Number of particles  simulated by the sharp-edge IB.
 
-* The ``stencil order`` parameter control the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be equal or higher then the order of the underlying FEM scheme.
+* The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be equal or higher then the order of the underlying FEM scheme.
 
 The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial. The length ratio should be kept as small as possible and above 1. A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme. For example, for Q1 elements with an average aspect ratio of one, the length ratio should be set to 2.
 
 * The ``assemble Navier-Stokes inside particles`` parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier Stokes equation is not solved ( the parameter is false ), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure. 
 
-* The ``calculate force`` parameter control if the force is evaluated on each particle. 
+* The ``calculate force`` parameter controls if the force is evaluated on each particle. 
 
 * The ``ib force output file`` parameter is the file name where the variables associated with each particle is stored. One file will be created for each particle in the simulation.
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview 
 
-* The ``initial refinement`` parameter control how many time the refinement zone around each of the particle is applied before the simulation starts. Each application of the refinement zone reduce the size of the element by a factor two.
+* The ``initial refinement`` parameter controls how many time the refinement zone around each of the particle is applied before the simulation starts. Each application of the refinement zone reduce the size of the element by a factor two.
 
 * The ``refine mesh inside radius factor`` parameter defines the inside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. 
 
 * The ``refine mesh outside radius factor`` parameter defines the outside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. 
 
-* The ``integrate motion`` parameter control if the dynamics equations of the particles are calculated. If this parameter is set to false, the dynamics of the particle will not be calculated. The particle's position and velocity will only be defined by the particles' position and velocity function.
+* The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the dynamics of the particle will not be calculated. The particle's position and velocity will only be defined by the particles' position and velocity function.
 
 * The ``particle nonlinear tolerance`` parameter controls particle dynamics' nonlinear tolerance. The nonlinear solver won't have converged until the residual on the dynamics equations of all the particles is smaller than this threshold.
 
