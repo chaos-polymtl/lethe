@@ -101,4 +101,81 @@ private:
   const double thermal_conductivity;
 };
 
+
+/**
+ * @brief ThermalConductivityLinear Implements a linear temperature-dependant thermal conductivity of the form k = A + BT
+ */
+class ThermalConductivityLinear : public ThermalConductivityModel
+{
+public:
+  /**
+   * @brief Default constructor
+   */
+  ThermalConductivityLinear(const double A, const double B)
+    : A(A)
+    , B(B)
+  {
+    this->model_depends_on[field::temperature] = true;
+  }
+
+  /**
+   * @brief value Calculates the value of a physical property.
+   * @param fields_value Value of the various field on which the property may depend.
+   * @return value of the physical property calculated with the fields_value
+   */
+  virtual double
+  value(const std::map<field, double> fields_value)
+  {
+    return A + B * fields_value.at(field::temperature);
+  };
+
+  /**
+   * @brief vector_value Calculates the values of a physical property for
+   * @param field_vectors
+   */
+  virtual void
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
+               std::vector<double>                        &property_vector)
+  {
+    const std::vector<double> &T = field_vectors.at(field::temperature);
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      property_vector[i] = A + B * T[i];
+  }
+
+  /**
+   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the physical
+   * property with respect to a field
+   * @param field_values Value of the various fields on which the property may depend.
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated
+   * @return value of the partial derivative of the property with respect to the field.
+   */
+
+  virtual double
+  jacobian(const std::map<field, double> /*field_values*/, field /*id*/)
+  {
+    return B;
+  };
+
+  /**
+   * @brief vector_jacobian Calculate the derivative of the property with respect to a field
+   * @param field_vectors Vector for the values of the fields used to evaluated the property
+   * @param id Identifier of the field with respect to which a derivative should be calculated
+   * @param jacobian Vector of the value of the derivative of the property with respect to the field id
+   */
+
+  virtual void
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field /*id*/,
+    std::vector<double> &jacobian_vector)
+  {
+    jacobian_vector.assign(jacobian_vector.size(), B);
+  };
+
+private:
+  const double A;
+  const double B;
+};
+
 #endif

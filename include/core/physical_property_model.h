@@ -100,7 +100,7 @@ public:
                   const field                                 id,
                   std::vector<double> &jacobian_vector) = 0;
 
-protected:
+
   /**
    * @brief numerical_jacobian Calculate the jacobian through a finite difference approximation.
    * This approach, although not preferable, is meant as a fall-back when
@@ -164,6 +164,7 @@ protected:
       jacobian_vector[i] = (f_xdx[i] - f_x[i]) / dx[i];
   }
 
+protected:
   // Map to indicate on which variables the model depends on
   std::map<field, bool> model_depends_on;
 };
