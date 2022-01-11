@@ -48,7 +48,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial. The length ratio should be kept as small as possible and above 1. A good starting value is two times the average aspect ratio of the elements in the mesh multiplied by the order of the FEM scheme.
 
-* The ``assemble Navier-Stokes inside particles`` parameter determined if the Navier-Stokes equations are solved inside the particle or not. If the Navier Stokes equation is not solved ( the parameter is false ), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure. 
+* The ``assemble Navier-Stokes inside particles`` parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier Stokes equation is not solved ( the parameter is false ), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure. 
 
 * The ``calculate force`` parameter control if the force is evaluated on each particle. 
 
