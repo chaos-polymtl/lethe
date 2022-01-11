@@ -45,7 +45,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 	
 * The ``number of particles`` is the number of particles simulated by the sharp-edge IB.
 
-* The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be equal or higher then the order of the underlying FEM scheme.
+* The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of the underlying FEM scheme.
 
 The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial. The length ratio should be kept as small as possible and above 1. A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme. For example, for Q1 elements with an average aspect ratio of one, the length ratio should be set to 2.
 
