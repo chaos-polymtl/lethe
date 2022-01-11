@@ -52,7 +52,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``calculate force`` parameter control if the force is evaluated on each particle. 
 
-* The ``ib force output file`` parameter is the file's name where the derivated value associated with each particle is stored. One file will be created for each particle in the simulation.
+* The ``ib force output file`` parameter is the file name where the variables associated with each particle is stored. One file will be created for each particle in the simulation.
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the derivated values calculated for each of the particles. This file is compatible with Paraview 
 
