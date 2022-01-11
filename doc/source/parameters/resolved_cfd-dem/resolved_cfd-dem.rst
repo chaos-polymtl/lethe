@@ -2,7 +2,7 @@
 Resolved CFD-DEM
 ***********************************************
 
-This subsection contains the parameters related to the resolved CFD-DEM around particles using a sharp interface immersed boundary method. This part of the parameter file is used will using the ``gls_sharp_navier_stokes_2d`` or ``gls_sharp_navier_stokes_3d`` . These solvers can also be used to simulate the flow around static particles. In that case, using this solver eliminates the need to define a conformal mesh for the fluid between the particles.
+This subsection contains the parameters related to the resolved CFD-DEM around particles using a sharp interface immersed boundary method. This part of the parameter file concerns the usage of ``gls_sharp_navier_stokes_2d`` or ``gls_sharp_navier_stokes_3d``. These solvers can also be used to simulate the flow around static particles. In that case, using this solver eliminates the need to define a conformal mesh for the fluid between the particles.
 
 .. code-block:: text
 
