@@ -75,7 +75,7 @@ The ``length ratio`` parameter controls the length of the zone used to define th
 
 * The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id 0. For each particle with the index ``n``, a new subsection name ``particle info n`` should be defined with relevant information.
 
-The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particle separatly.
+The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
 
 * The subsection ``position`` defines the initial value of the particle position if the parameter ``integrate motion=true``. Otherwise, it defines the particle's position at all points in time. This position is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of coordinate X, Y, and Z. 
 
