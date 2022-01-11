@@ -56,7 +56,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview 
 
-* The ``initial refinement`` parameter control how many time the refinement zone around each of the particle is applied before the simulation start. Each application of the refinement zone reduce the size of the element by a factor of two.
+* The ``initial refinement`` parameter control how many time the refinement zone around each of the particle is applied before the simulation starts. Each application of the refinement zone reduce the size of the element by a factor two.
 
 * The ``refine mesh inside radius factor`` parameter defined the inside radius of the hyper shell that forms the refinement zone around the particle. The radius used is the product between this factor and the particle's radius. 
 
