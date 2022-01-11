@@ -57,7 +57,7 @@ The ``length ratio`` parameter controls the length of the zone used to define th
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
 
-* The ``initial refinement`` parameter controls how many time the refinement zone around each of the particle is applied before the simulation starts. Each application of the refinement zone reduce the size of the element by a factor two.
+* The ``initial refinement`` parameter controls how many time the refinement zone around each of the particle is applied before the simulation starts. Each application of the refinement zone reduces the size of the elements by a factor two.
 
 * The ``refine mesh inside radius factor`` parameter defines the inside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. 
 
