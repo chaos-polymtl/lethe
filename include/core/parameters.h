@@ -421,6 +421,9 @@ namespace Parameters
     // Enable total enstrophy post-processing
     bool calculate_enstrophy;
 
+    // Enable calculating apparent viscosity
+    bool calculate_apparent_viscosity;
+
     // Enable velocity post-processing
     bool calculate_average_velocities;
 
@@ -450,6 +453,9 @@ namespace Parameters
 
     // Prefix for the enstrophy output
     std::string enstrophy_output_name;
+
+    // Prefix for the apparent viscosity output
+    std::string apparent_viscosity_output_name;
 
     // Enable tracer statistics
     bool calculate_tracer_statistics;
