@@ -1,0 +1,6 @@
+
+DEAL::Beggining
+DEAL::Testing power law viscosity - nu
+DEAL:: gamma = 1 , nu = 5.00000 , dnu/dgamma analytical = -2.50000 , dnu/dgamma numerical = -2.50000
+DEAL:: gamma = 2 , nu = 3.53553 , dnu/dgamma analytical = -0.883883 , dnu/dgamma numerical = -0.883883
+DEAL::OK
