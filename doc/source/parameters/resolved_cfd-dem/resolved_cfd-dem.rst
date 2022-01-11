@@ -47,7 +47,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of the underlying FEM scheme.
 
-The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial. The length ratio should be kept as small as possible and above 1. A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme. For example, for Q1 elements with an average aspect ratio of one, the length ratio should be set to 2.
+* The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial. The length ratio should be kept as small as possible and above 1. A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme. For example, for Q1 elements with an average aspect ratio of one, the length ratio should be set to 2.
 
 * The ``assemble Navier-Stokes inside particles`` parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier-Stokes equations are not solved (the parameter is false), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure. 
 
