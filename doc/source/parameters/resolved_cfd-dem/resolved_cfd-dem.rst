@@ -40,6 +40,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		    	set pressure y = 0
 		    	set pressure z = 0
 		    	set radius     = 0.2
+		end
 	end
 	
 * The ``number of particles`` Number of particles  simulated by the sharp-edge IB.
