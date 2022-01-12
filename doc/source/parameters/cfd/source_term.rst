@@ -20,7 +20,7 @@ If the problem being simulated has a source, it can be added in this section. Th
     end
    end
 
-* The ``enable`` parameters sets if the problem has a source term and enables it's calculation.
+* The ``enable`` parameter sets if the problem has a source term and enables it's calculation.
 
 If there is an Navier-Stokes source term, enter the ``xyz`` subsection.
 
@@ -28,11 +28,11 @@ If there is an Navier-Stokes source term, enter the ``xyz`` subsection.
 
 If there is a heat source term, enter the ``heat transfer`` subsection.
 
-* The ``Function expression`` parameters sets the expression for the heat transfer.
+* The ``Function expression`` parameter sets the expression for the heat transfer.
 
 If there is an source term for a tracer, enter the ``tracer`` subsection.
 
-* The ``Function expression`` parameters sets the expression for the tracer term.
+* The ``Function expression`` parameter sets the expression for the tracer term.
 
 .. note:: 
     The variables *x*, *y*, *z* (3D) and *t* (time-dependant) can be used in the function expressions.
