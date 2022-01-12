@@ -1,0 +1,329 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = bdf2
+  set time step               = 0.125
+  set number mesh adapt       = 2       # If steady, nb mesh adaptation
+  set time end                = 0.125 # End time of simulation
+  set output path             =  # Path to where the output results are made
+  set output name             = out # Prefix for VTU outputs
+  set output frequency        = 1       # Frequency of simulation output
+  set subdivision             = 1       # Mesh subdivision when outputend
+    set log precision         = 12
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity            =1
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+    set type    = none
+end
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order        = 1
+    set pressure order        = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = dealii
+    set grid type            = subdivided_hyper_rectangle
+    set grid arguments       =2,1,1: -2,-1,-1 : 2 , 1 ,1 : true
+    set initial refinement   =3
+end
+
+subsection box refinement
+set initial refinement =1
+	subsection mesh
+	    set type                 = dealii
+	    set grid type            = subdivided_hyper_rectangle
+	    set grid arguments       = 1,1,1: -1.6,-0.6,-0.6 : 1.6 , 0.6 ,0.6 : true
+	    set initial refinement   = 0
+	end
+end
+
+
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+set number                  = 6
+set time dependent =true
+set beta=10
+    subsection bc 0
+	set id = 0
+        set type              = function
+        subsection u
+            set Function expression = ((x - cos(t))^2*(-0.75*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2)*(0.375*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + z^2 + (x - cos(t))^2) - (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^3
+        end
+        subsection v
+            set Function expression = y*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+        subsection w
+            set Function expression = z*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+    end
+    subsection bc 1
+	set id = 1
+        set type              = function weak
+        subsection u
+            set Function expression = ((x - cos(t))^2*(-0.75*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2)*(0.375*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + z^2 + (x - cos(t))^2) - (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^3
+        end
+        subsection v
+            set Function expression = y*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+        subsection w
+            set Function expression = z*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+    end
+
+    subsection bc 2
+	set id = 2
+        set type              = function
+        subsection u
+            set Function expression = ((x - cos(t))^2*(-0.75*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2)*(0.375*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + z^2 + (x - cos(t))^2) - (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^3
+        end
+        subsection v
+            set Function expression = y*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+        subsection w
+            set Function expression = z*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+    end
+    subsection bc 3
+	set id = 3
+        set type              = function
+        subsection u
+            set Function expression = ((x - cos(t))^2*(-0.75*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2)*(0.375*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + z^2 + (x - cos(t))^2) - (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^3
+        end
+        subsection v
+            set Function expression = y*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+        subsection w
+            set Function expression = z*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+    end
+    subsection bc 4
+	set id = 4
+        set type              = function
+        subsection u
+            set Function expression = ((x - cos(t))^2*(-0.75*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2)*(0.375*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + z^2 + (x - cos(t))^2) - (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^3
+        end
+        subsection v
+            set Function expression = y*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+        subsection w
+            set Function expression = z*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+    end
+    subsection bc 5
+	set id = 5
+        set type              = function
+        subsection u
+            set Function expression = ((x - cos(t))^2*(-0.75*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2)*(0.375*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + z^2 + (x - cos(t))^2) - (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^3
+        end
+        subsection v
+            set Function expression = y*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+        subsection w
+            set Function expression = z*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2)
+        end
+    end
+
+end
+
+# --------------------------------------------------
+# IB particules
+#---------------------------------------------------
+subsection particles
+	set number of particles = 1
+	set stencil order =2
+	set refine mesh inside radius factor = 111
+	set refine mesh outside radius factor = 111
+	set initial refinement = 1
+	set fluid density =1
+	set integrate motion = true
+	set alpha=1
+	set assemble Navier-Stokes inside particles = false
+	set length ratio = 2
+	
+    subsection gravity
+    	set  Function expression=-cos(t)*2-sin(t)*18;0;0
+    end
+
+    subsection particle info 0 
+            subsection position
+            	set Function expression =cos(t);0;0
+            end
+            subsection velocity
+            	set Function expression =-sin(t);0;0
+            end
+	    set pressure x =-0.00001
+	    set pressure y =0.00001
+	    set pressure z =0.00001
+	    set radius = 0.5
+	    set density = 2
+    end
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+subsection analytical solution
+  set enable                 = true
+  set verbosity 	     = verbose
+    subsection uvwp
+
+            set Function constants = ri=0.5
+	    set Function expression =  if(sqrt((x - cos(t))*(x - cos(t))+y*y+z*z)>ri,((x - cos(t))^2*(-0.75*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2)*(0.375*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + z^2 + (x - cos(t))^2) - (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^3, -sin(t)); if(sqrt((x - cos(t))*(x - cos(t))+y*y+z*z)>ri,y*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2), 0); if(sqrt((x - cos(t))*(x - cos(t))+y*y+z*z)>ri,z*(x - cos(t))*(-0.375*y^2 - 0.375*z^2 - 0.375*(x - cos(t))^2 + 0.09375)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2), 0);if(sqrt((x - cos(t))*(x - cos(t))+y*y+z*z)>ri,-0.75*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(3/2), 0)
+
+
+
+
+	end
+end
+
+# --------------------------------------------------
+# Source term
+#---------------------------------------------------
+subsection source term
+  set enable                 = true
+    subsection xyz
+            set Function expression =y*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))*(-2*y*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 - 2*y*(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*y*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))^2*(0.75*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(0.375*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) + z*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))*(-2*z*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 - 2*z*(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*z*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))^2*(0.75*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(0.375*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) - 0.75*(-3*x + 3*cos(t))*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 2*(x - cos(t))^3*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2)^2 + (x - cos(t))^2*(0.75*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*cos(t)/(y^2 + z^2 + (x - cos(t))^2) - 2*(x - cos(t))*(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(0.375*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*cos(t)/(y^2 + z^2 + (x - cos(t))^2) + ((x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - sin(t))*((-2*x + 2*cos(t))*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + (-2*x + 2*cos(t))*(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + (x - cos(t))^2*(0.0625*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.75*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (2*x - 2*cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(-0.03125*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.375*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)) + ((x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - sin(t))*(-y^2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + y*(-2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + y*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - y*(x - cos(t))*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) - z^2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + z*(-2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + z*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - z*(x - cos(t))*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) + (-2*x + 2*cos(t))*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + (-2*x + 2*cos(t))*(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + (x - cos(t))^2*(0.0625*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.75*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (2*x - 2*cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(-0.03125*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.375*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + 2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2)) - (-4*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*(x - cos(t))^2*(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) - 4*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*(x - cos(t))^4/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 4*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 8*(x - cos(t))^4*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 8*(x - cos(t))^2*(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 10*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (x - cos(t))^2*(2.25*(x- cos(t))^2/(y^2 + z^2 + (x - cos(t))^2) - 0.9375*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.75 + 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (y^2 + z^2)*(1.125*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2) + 0.46875*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.375 - 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2))*sin(t) - (-4*y^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 4*y^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 4*y^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 8*y^2*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 8*y^2*(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 + 8*y^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - 2*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (x - cos(t))^2*(2.25*y^2/(y^2 + z^2 + (x - cos(t))^2) - 0.9375*y^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.75 + 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (y^2 + z^2)*(1.125*y^2/(y^2 + z^2 + (x - cos(t))^2) + 0.46875*y^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.375 - 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2))*sin(t) - (-4*z^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 4*z^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 4*z^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 8*z^2*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 8*z^2*(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 + 8*z^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - 2*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (x - cos(t))^2*(2.25*z^2/(y^2 + z^2 + (x - cos(t))^2) - 0.9375*z^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.75 + 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (y^2 + z^2)*(1.125*z^2/(y^2 + z^2 + (x - cos(t))^2) + 0.46875*z^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.375 - 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2))*sin(t) - cos(t) - 0.75*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(3/2);-y*(x - cos(t))*(2*z^2*((0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/(y^2 + z^2)^(3/2) + (3*z^2/(y^2 + z^2) - 1)*(-0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.09375/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (-4*z^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 2*z^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^(5/2)) + 4*z^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) - 2*z^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^(5/2)) - 8*z^2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 8*z^2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 + 4*z^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^2) + 4*z^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^2) + z^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)^(3/2)*(y^2 + z^2 + (x - cos(t))^2)) + z^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)^(3/2)*(y^2 + z^2 + (x - cos(t))^2)) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - sqrt(y^2 + z^2)*(1.125*z^2/(y^2 + z^2 + (x - cos(t))^2) + 0.46875*z^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.375 - 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + sqrt(y^2 + z^2)*(2.25*z^2/(y^2 + z^2 + (x - cos(t))^2) - 0.9375*z^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.75 + 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/sqrt(y^2 + z^2))*sin(t) - y*(x - cos(t))*(2*y^2*((0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/(y^2 + z^2)^(3/2) + (3*y^2/(y^2 + z^2) - 1)*(-0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.09375/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - 2*(-0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.09375/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - 2*((0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/sqrt(y^2 + z^2) - (-4*y^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 2*y^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^(5/2)) + 4*y^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) - 2*y^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^(5/2)) - 8*y^2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 8*y^2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 + 4*y^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^2) + 4*y^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^2) + y^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)^(3/2)*(y^2 + z^2 + (x - cos(t))^2)) + y^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)^(3/2)*(y^2 + z^2 + (x - cos(t))^2)) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - sqrt(y^2 + z^2)*(1.125*y^2/(y^2 + z^2 + (x - cos(t))^2) + 0.46875*y^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.375 - 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + sqrt(y^2 + z^2)*(2.25*y^2/(y^2 + z^2 + (x - cos(t))^2) - 0.9375*y^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.75 + 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/sqrt(y^2 + z^2))*sin(t) - y*(x - cos(t))*(4*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^(7/2) - 2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 4*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 8*(x - cos(t))^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 + 8*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 6*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - 6*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + (1.125*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2) + 0.46875*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.375 - 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (2.25*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2) - 0.9375*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.75 + 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t) + 2.25*y*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + y*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))*(-y^2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2+ z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + y*(-2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + y*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - y*(x - cos(t))*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) + ((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2))/sqrt(y^2 + z^2) + y*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))*(-y^2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + y*(-2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + y*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - y*(x - cos(t))*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) - z^2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + z*(-2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + z*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - z*(x - cos(t))*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) + (-2*x + 2*cos(t))*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + (-2*x + 2*cos(t))*(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + (x - cos(t))^2*(0.0625*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.75*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (2*x - 2*cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(-0.03125*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.375*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + 2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2))/sqrt(y^2 + z^2) + y*((x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - sin(t))*((-2*x + 2*cos(t))*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 - (-2*x + 2*cos(t))*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 - (x - cos(t))*sqrt(y^2 + z^2)*(-0.03125*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.375*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.0625*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.75*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) + y*(-2*(x - cos(t))^2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*(x - cos(t))^2*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2)^2 - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*cos(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*cos(t)/(y^2 + z^2 + (x - cos(t))^2) + sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2) - sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) + z*(-y*z*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + y*(-2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + z*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - z*(x - cos(t))*(1- 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2))*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2);y*(-y*z*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + z*(-2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + y*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - y*(x - cos(t))*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2))*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) - z*(x - cos(t))*(2*y^2*((0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/(y^2 + z^2)^(3/2) + (3*y^2/(y^2 + z^2) - 1)*(-0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.09375/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (-4*y^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 2*y^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^(5/2)) + 4*y^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) - 2*y^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^(5/2)) - 8*y^2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 8*y^2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 + 4*y^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^2) + 4*y^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^2) + y^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)^(3/2)*(y^2 + z^2 + (x - cos(t))^2)) + y^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)^(3/2)*(y^2 + z^2 + (x - cos(t))^2)) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - sqrt(y^2 + z^2)*(1.125*y^2/(y^2 + z^2 + (x - cos(t))^2) + 0.46875*y^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.375 - 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + sqrt(y^2 + z^2)*(2.25*y^2/(y^2 + z^2 + (x - cos(t))^2) - 0.9375*y^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.75 + 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/sqrt(y^2 + z^2))*sin(t) - z*(x - cos(t))*(2*z^2*((0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/(y^2 + z^2)^(3/2) + (3*z^2/(y^2 + z^2) - 1)*(-0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.09375/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - 2*(-0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.09375/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - 2*((0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/sqrt(y^2 + z^2) - (-4*z^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 2*z^2*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^(5/2)) + 4*z^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*sqrt(y^2 + z^2)/(y^2 + z^2 + (x - cos(t))^2)^(7/2) - 2*z^2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^(5/2)) - 8*z^2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 8*z^2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 + 4*z^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^2) + 4*z^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)^2) + z^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)^(3/2)*(y^2 + z^2 + (x - cos(t))^2)) + z^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/((y^2 + z^2)^(3/2)*(y^2 + z^2 + (x - cos(t))^2)) + 2*sqrt(y^2 + z^2)*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - sqrt(y^2 + z^2)*(1.125*z^2/(y^2 + z^2 + (x - cos(t))^2) + 0.46875*z^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.375 - 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + sqrt(y^2 + z^2)*(2.25*z^2/(y^2 + z^2 + (x - cos(t))^2) - 0.9375*z^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.75 + 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)))/sqrt(y^2 + z^2))*sin(t) - z*(x - cos(t))*(4*(0.375 + 0.09375/(y^2 + z^2 + (x - cos(t))^2))*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^(7/2) - 2*(0.375+ 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 4*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^(7/2) + 2*(0.75 - 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + 8*(x - cos(t))^2*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 + 8*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^3 - 6*(-1 + 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 - 6*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))/(y^2 + z^2 + (x - cos(t))^2)^2 + (1.125*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2) + 0.46875*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.375 - 0.09375/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - (2.25*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2) - 0.9375*(x - cos(t))^2/(y^2 + z^2 + (x - cos(t))^2)^2 - 0.75 + 0.1875/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t) + 2.25*z*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2) + z*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))*(-z^2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + z*(-2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + z*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - z*(x - cos(t))*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) + ((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2))/sqrt(y^2 + z^2) + z*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))*(-y^2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + y*(-2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*y*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + y*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - y*(x - cos(t))*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*y/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*y/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) - z^2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/(y^2 + z^2)^(3/2) + z*(-2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*z*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + z*(x - cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - z*(x - cos(t))*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(sqrt(y^2 + z^2)*(y^2 + z^2 + (x - cos(t))^2)) - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.75*z/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*z/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) + (-2*x + 2*cos(t))*(x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + (-2*x + 2*cos(t))*(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 + (x - cos(t))^2*(0.0625*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.75*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (2*x - 2*cos(t))*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(-0.03125*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.375*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + 2*((x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2))/sqrt(y^2 + z^2) + z*((x - cos(t))^2*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - sin(t))*((-2*x + 2*cos(t))*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 - (-2*x + 2*cos(t))*(x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^2 - (x - cos(t))*sqrt(y^2 + z^2)*(-0.03125*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.375*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(0.0625*(-3*x + 3*cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(5/2) - 0.75*(-x + cos(t))/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) - sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2) + z*(-2*(x - cos(t))^2*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2)^2 + 2*(x - cos(t))^2*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2)^2 - (x - cos(t))*sqrt(y^2 + z^2)*(0.375*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.09375*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)+ (x - cos(t))*sqrt(y^2 + z^2)*(0.75*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(3/2) - 0.1875*(x - cos(t))*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^(5/2))*sin(t)/(y^2 + z^2 + (x - cos(t))^2) + (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*cos(t)/(y^2 + z^2 + (x - cos(t))^2) - (x - cos(t))*sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*cos(t)/(y^2 + z^2 + (x - cos(t))^2) + sqrt(y^2 + z^2)*(1 - 0.75/sqrt(y^2 + z^2 + (x - cos(t))^2) + 0.0625/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2) - sqrt(y^2 + z^2)*(1 - 0.375/sqrt(y^2 + z^2 + (x - cos(t))^2) - 0.03125/(y^2 + z^2 + (x - cos(t))^2)^(3/2))*sin(t)^2/(y^2 + z^2 + (x - cos(t))^2))/sqrt(y^2 + z^2);0
+            
+end
+end
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+   # Fraction of coarsened elements
+  set fraction coarsening  = 00
+  
+  # Fraction of refined elements
+  set fraction refinement  = 00
+
+  # How the fraction of refinement/coarsening are interepretedChoices are
+  # <number|fraction>.
+  set fraction type        = number
+
+  # Frequency of the mesh refinement
+  set frequency            = 1
+
+  # Maximum number of elements
+  set max number elements  = 7500000
+
+  # Maximum refinement level
+  set max refinement level = 8
+ # minimum refinement level
+  set min refinement level =0
+
+  # Type of mesh adaptationChoices are <none|uniform|kelly>.
+  set type                 =none
+
+  # Variable for kelly estimationChoices are <velocity|pressure>.
+  set variable             = velocity
+end
+
+# --------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
+  set type      = nodal
+  subsection uvwp
+		set Function expression = 0; 0; 0; 0
+  end
+
+  # viscosity for viscous initial conditions
+  set viscosity = 0.05
+
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set tolerance               = 1e-10
+  set max iterations          = 30
+  set residual precision      = 5
+  set verbosity               = quiet
+  set force rhs calculation   = true
+end
+
+# --------------------------------------------------
+# Forces
+#---------------------------------------------------
+subsection forces
+
+  set verbosity               = verbose
+
+
+end
+
+# --------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+	set type = none
+	set write time in error table=false
+end
+# --------------------------------------------------
+# Restart
+#---------------------------------------------------
+subsection restart
+  # Enable checkpointing. Checkpointing creates a restartpoint from which the
+  # simulation can be restarted from.
+  set checkpoint = false
+  # Prefix for the filename of checkpoints
+  set filename   = restart
+
+  # Frequency for checkpointing
+  set frequency  = 2
+
+  # Frequency for checkpointing
+  set restart    = false	
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set method                                 = gmres
+  set max iters                              = 1000
+  set relative residual                      = 1e-5
+  set minimum residual                       = 1e-12
+  set ilu preconditioner fill                = 0
+  set ilu preconditioner absolute tolerance  = 1e-20
+  set ilu preconditioner relative tolerance  = 1.00
+  set amg aggregation threshold                 = 1e-20
+  set amg n cycles                              = 1
+  set amg preconditioner ilu absolute tolerance = 1e-20
+  set amg preconditioner ilu fill               = 0
+  set amg preconditioner ilu relative tolerance = 1.00
+  set amg smoother overlap                      = 1
+  set amg smoother sweeps                       = 2
+  set amg w cycles                              = false
+  set verbosity               =quiet
+  set force linear solver continuation=true
+  set max krylov vectors = 1000
+end
