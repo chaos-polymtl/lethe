@@ -1,0 +1,14 @@
+
+DEAL::Beggining
+DEAL::Testing linear temperature dependent thermal conductivity - k
+DEAL:: T = 1    , k = 15.0000
+DEAL:: T = 2    , k = 25.0000
+DEAL:: Analytical jacobian 10.0000
+DEAL:: Numerical jacobian 10.0000
+DEAL:: Vector values 
+DEAL::15.0000 25.0000 35.0000 45.0000 55.0000 
+DEAL:: Analytical jacobians 
+DEAL::10.0000 10.0000 10.0000 10.0000 10.0000 
+DEAL:: Numerical jacobians 
+DEAL::10.0000 10.0000 10.0000 10.0000 10.0000 
+DEAL::OK

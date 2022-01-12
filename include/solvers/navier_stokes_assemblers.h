@@ -202,10 +202,14 @@ public:
                          const double &        non_newtonian_viscosity,
                          const double &        d_gamma_dot) const
   {
+    std::map<field, double> field_values_plus;
+
     // Calculates an approximation of the derivative of the viscosity with a
     // slight change in the shear rate magnitude using finite difference
+    field_values_plus[field::shear_rate] = shear_rate_magnitude + d_gamma_dot;
+
     const double non_newtonian_viscosity_plus =
-      rheological_model->get_viscosity(shear_rate_magnitude + d_gamma_dot);
+      rheological_model->value(field_values_plus);
 
     double grad_viscosity_shear_rate =
       (non_newtonian_viscosity_plus - non_newtonian_viscosity) / d_gamma_dot;

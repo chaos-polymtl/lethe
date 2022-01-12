@@ -312,8 +312,10 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
 
       // Calculate de current non newtonian viscosity on each quadrature point
+      std::map<field, double> field_values;
+      field_values[field::shear_rate] = shear_rate_magnitude;
       const double non_newtonian_viscosity =
-        rheological_model->get_viscosity(shear_rate_magnitude);
+        rheological_model->value(field_values);
 
       // Calculate viscosity gradient
       const Tensor<1, dim> viscosity_gradient =
@@ -487,8 +489,11 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
         shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
 
       // Calculate de current non newtonian viscosity on each quadrature point
+      std::map<field, double> field_values;
+      field_values[field::shear_rate] = shear_rate_magnitude;
+
       const double non_newtonian_viscosity =
-        rheological_model->get_viscosity(shear_rate_magnitude);
+        rheological_model->value(field_values);
 
       // Calculate viscosity gradient
       const Tensor<1, dim> viscosity_gradient =
@@ -1028,8 +1033,11 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         rheological_model->get_shear_rate_magnitude(shear_rate);
 
       // Calculate de current non newtonian viscosity on each quadrature point
+      std::map<field, double> field_values;
+      field_values[field::shear_rate] = shear_rate_magnitude;
       const double non_newtonian_viscosity =
-        rheological_model->get_viscosity(shear_rate_magnitude);
+        rheological_model->value(field_values);
+
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -1119,8 +1127,12 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
         rheological_model->get_shear_rate_magnitude(shear_rate);
 
       // Calculate de current non newtonian viscosity on each quadrature point
+      std::map<field, double> field_values;
+      field_values[field::shear_rate] = shear_rate_magnitude;
+
       const double non_newtonian_viscosity =
-        rheological_model->get_viscosity(shear_rate_magnitude);
+        rheological_model->value(field_values);
+
 
       // Pressure
       const double pressure = scratch_data.pressure_values[q];

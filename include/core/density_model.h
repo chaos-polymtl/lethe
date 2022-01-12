@@ -17,28 +17,18 @@
 #ifndef lethe_density_model_h
 #define lethe_density_model_h
 
+#include <core/physical_property_model.h>
+
 /**
  * @brief DensityModel. Abstract class that allows to calculate the
- * density on each quadrature point using the temperature of the fluid.
- * DensityModel::get_density() is a pure virtual method,
- * since it can only be calculated knowing the model for the density has been
- * specified
+ * density.
  */
-class DensityModel
-{
-public:
-  /**
-   * @brief Returns the density
-   *
-   * @param temperature Temperature
-   */
-  virtual inline double
-  get_density(const double temperature) = 0;
-};
+class DensityModel : public PhysicalPropertyModel
+{};
 
 
 /**
- * @brief Constant density. Returns a constant density for a fluid
+ * @brief Constant density.
  */
 class DensityConstant : public DensityModel
 {
@@ -51,15 +41,58 @@ public:
   {}
 
   /**
-   * @brief Returns the denisty
-   *
-   * @param temperature Temperature at time t+dt
+   * @brief value Calculates the density
+   * @param fields_value Value of the various field on which the property may depend.
+   * @return value of the physical property calculated with the fields_value
    */
-  virtual inline double
-  get_density(const double /*temperature*/) override
+  double
+  value(const std::map<field, double> & /*fields_value*/) override
   {
     return density;
+  };
+
+  /**
+   * @brief vector_value Calculates the vector of density.
+   * @param field_vectors Vectors of the fields on which the density may depend.
+   * @param property_vector Vectors of the density values
+   */
+  void
+  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+               std::vector<double> &property_vector) override
+  {
+    std::fill(property_vector.begin(), property_vector.end(), density);
   }
+
+  /**
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the density with respect to a field
+   * @param field_values Value of the various fields on which the property may depend.
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated.
+   * @return value of the partial derivative of the density with respect to the field.
+   */
+
+  double
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override
+  {
+    return 0;
+  };
+
+  /**
+   * @brief vector_jacobian Calculates the derivative of the density with respect to a field.
+   * @param field_vectors Vector for the values of the fields used to evaluate the property.
+   * @param id Identifier of the field with respect to which a derivative should be calculated.
+   * @param jacobian vector of the value of the derivative of the density with respect to the field id.
+   */
+
+  void
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field /*id*/,
+    std::vector<double> &jacobian_vector) override
+  {
+    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+  };
 
 private:
   const double density;

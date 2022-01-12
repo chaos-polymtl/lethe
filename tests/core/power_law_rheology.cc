@@ -1,10 +1,9 @@
 /**
- * @brief Tests the constant specific heat model. This model should always return a constant.
+ * @brief Tests the Power law rheology model. This model should always return a constant.
  */
 
 // Lethe
-#include <core/parameters.h>
-#include <core/specific_heat_model.h>
+#include <core/rheological_model.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -13,16 +12,29 @@ void
 test()
 {
   deallog << "Beggining" << std::endl;
+
+  PowerLaw<2> rheology_model(5, 0.5, 1e-3);
+
+
+  // field values can remain empty since the constant thermal conductivity does
+  // not depend  on any fields
   std::map<field, double> field_values;
 
-
-  SpecificHeatConstant specific_heat_model(5);
-
-  deallog << "Testing specific heat" << std::endl;
-
-  deallog << " T = 1    , Cp = " << specific_heat_model.value(field_values)
+  deallog << "Testing power law viscosity - nu" << std::endl;
+  field_values[field::shear_rate] = 1;
+  deallog << " gamma = 1 , nu = " << rheology_model.value(field_values)
+          << " , dnu/dgamma analytical = "
+          << rheology_model.jacobian(field_values, field::shear_rate)
+          << " , dnu/dgamma numerical = "
+          << rheology_model.numerical_jacobian(field_values, field::shear_rate)
           << std::endl;
-  deallog << " T = 2    , Cp = " << specific_heat_model.value(field_values)
+  field_values[field::shear_rate] = 2;
+  deallog << " gamma = 2 , nu = " << rheology_model.value(field_values)
+          << " , dnu/dgamma analytical = "
+          << rheology_model.jacobian(field_values, field::shear_rate)
+          << " , dnu/dgamma numerical = "
+          << rheology_model.numerical_jacobian(field_values, field::shear_rate)
+
           << std::endl;
 
   deallog << "OK" << std::endl;
