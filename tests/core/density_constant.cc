@@ -19,7 +19,7 @@ test()
   deallog << "Testing density" << std::endl;
 
   // field values can remain empty since the constant density does
-  // not depend  on any fields
+  // not depend on any fields
   std::map<field, double> field_values;
 
   deallog << " T = 1    , density = " << density_model.value(field_values)

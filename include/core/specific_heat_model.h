@@ -88,7 +88,7 @@ public:
 
   /**
    * @brief vector_jacobian Calculate the derivative of the specific heat with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluated the property
+   * @param field_vectors Vector for the values of the fields used to evaluate the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
    * @param jacobian Vector of the value of the derivative of the specific heat with respect to the field id
    */
@@ -205,7 +205,7 @@ public:
 
   /**
    * @brief vector_jacobian Calculate the derivative of the specific heat with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluated the property
+   * @param field_vectors Vector for the values of the fields used to evaluate the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
    * @param jacobian Vector of the value of the derivative of the specific heat with respect to the field id
    */
@@ -244,12 +244,12 @@ public:
    * if (T>T_liquidus) : H = cp_solid * T_solidus + 0.5*(cp_solid+cp_liquid) *
    * (T_liquidus-T_solidus) + latent_enthalpy + cp_liquid * (T-T_liquidus)
    *
-   * Liquid-solid mix
+   * Liquid-solid mixture
    * -----------------
    * else if (T>T_solidus) : cp_solid * T_solidus + 0.5*(cp_solid+cp_liquid) *
    * (T-T_solidus) + liquid_fraction * latent_enthalpy
    *
-   * Pure solide
+   * Pure solid
    * ------------
    * else : cp_solid * T
    *

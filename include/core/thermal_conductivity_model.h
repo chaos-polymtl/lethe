@@ -84,7 +84,7 @@ public:
 
   /**
    * @brief vector_jacobian Calculate the derivative of the thermal conductivity with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluated the property
+   * @param field_vectors Vector for the values of the fields used to evaluate the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
    * @param jacobian Vector of the value of the derivative of the thermal conductivity with respect to the field id
    */
@@ -161,7 +161,7 @@ public:
 
   /**
    * @brief vector_jacobian Calculate the derivative of the thermal conductivity with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluated the property
+   * @param field_vectors Vector for the values of the fields used to evaluate the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
    * @param jacobian Vector of the value of the derivative of the thermal conductivity with respect to the field id
    */

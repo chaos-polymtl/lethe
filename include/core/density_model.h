@@ -28,7 +28,7 @@ class DensityModel : public PhysicalPropertyModel
 
 
 /**
- * @brief Constant thermal conductivity.
+ * @brief Constant density.
  */
 class DensityConstant : public DensityModel
 {
@@ -79,10 +79,10 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the density with respect to a field.
-   * @param field_vectors Vector for the values of the fields used to evaluated the property.
+   * @brief vector_jacobian Calculates the derivative of the density with respect to a field.
+   * @param field_vectors Vector for the values of the fields used to evaluate the property.
    * @param id Identifier of the field with respect to which a derivative should be calculated.
-   * @param jacobian Vector of the value of the derivative of the density with respect to the field id.
+   * @param jacobian vector of the value of the derivative of the density with respect to the field id.
    */
 
   virtual void

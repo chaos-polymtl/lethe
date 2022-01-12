@@ -26,7 +26,7 @@ DeclException2(SizeOfFields,
                unsigned int,
                unsigned int,
                << "The number of values for a field : " << arg1
-               << " is not equal to the number of vlaues for another field "
+               << " is not equal to the number of values for another field "
                << arg2);
 
 enum field : int
@@ -38,19 +38,19 @@ enum field : int
 
 /**
  * @brief PhysicalPropertyModel. Abstract class that defines the interface for a physical property model
- * Physical property model provide an abstract interface to calculate the value
+ * Physical property model provides an abstract interface to calculate the value
  * of a physical property or a vector of physical property value for given field
  * value. By default, the interface does not require that all (or any) fields be
  * specified. This is why a map is used to pass the dependent variable. To allow
  * for the calculation of the appropriate jacobian matrix (when that is
  * necessary) the interface also provides a jacobian function, which must
- * provide the derivative with respect to the field specified as argument.
+ * provide the derivative with respect to the field specified as an argument.
  */
 class PhysicalPropertyModel
 {
 public:
   /**
-   * @brief PhysicalPropertyModel Default constructor. Set the model_depends_on to false for all variable.
+   * @brief PhysicalPropertyModel Default constructor. Set the model_depends_on to false for all variables.
    */
   PhysicalPropertyModel()
   {
@@ -90,7 +90,7 @@ public:
 
   /**
    * @brief vector_jacobian Calculate the derivative of the property with respect to a field
-   * @param field_vectors Vector for the values of the fields used to evaluated the property
+   * @param field_vectors Vector for the values of the fields used to evaluate the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
    * @param jacobian Vector of the value of the derivative of the property with respect to the field id
    */
@@ -102,7 +102,7 @@ public:
 
 
   /**
-   * @brief numerical_jacobian Calculate the jacobian through a finite difference approximation.
+   * @brief numerical_jacobian Calculates the jacobian through a finite difference approximation.
    * This approach, although not preferable, is meant as a fall-back when
    * calculating the jacobian manually is too difficult.
    * @param fields_values The values of the various fields
@@ -122,7 +122,7 @@ public:
   }
 
   /**
-   * @brief vector_numerical_jacobian Calculate the vector of jacobian through a finite difference approximation.
+   * @brief vector_numerical_jacobian Calculates the vector of jacobian through a finite difference approximation.
    * This approach, although not preferable, is meant as a fall-back when
    * calculating the jacobian manually is too difficult.
    * @param field_vectors
