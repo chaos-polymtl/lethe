@@ -140,7 +140,9 @@ public:
     : K(K)
     , n(n)
     , shear_rate_min(shear_rate_min)
-  {}
+  {
+    this->model_depends_on[shear_rate] = false;
+  }
 
   /**
    * @brief Returns the non-newtonian viscosity.
@@ -230,7 +232,9 @@ public:
     , lambda(lambda)
     , a(a)
     , n(n)
-  {}
+  {
+    this->model_depends_on[shear_rate] = false;
+  }
 
   /**
    * @brief Returns the non-newtonian viscosity.

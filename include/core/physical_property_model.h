@@ -102,7 +102,7 @@ public:
 
 
   /**
-   * @brief numerical_jacobian Calculates the jacobian through a finite difference approximation.
+   * @brief numerical_jacobian Calculates the jacobian through a forward finite difference (Euler) approximation.
    * This approach, although not preferable, is meant as a fall-back when
    * calculating the jacobian manually is too difficult.
    * @param fields_values The values of the various fields
@@ -122,7 +122,7 @@ public:
   }
 
   /**
-   * @brief vector_numerical_jacobian Calculates the vector of jacobian through a finite difference approximation.
+   * @brief vector_numerical_jacobian Calculates the vector of jacobian through forward finite difference (Euler) approximation.
    * This approach, although not preferable, is meant as a fall-back when
    * calculating the jacobian manually is too difficult.
    * @param field_vectors
