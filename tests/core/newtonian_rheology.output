@@ -1,0 +1,6 @@
+
+DEAL::Beggining
+DEAL::Testing constant viscosity - nu
+DEAL:: gamma = 1 , nu = 5.00000
+DEAL:: gamma = 2 , nu = 5.00000
+DEAL::OK

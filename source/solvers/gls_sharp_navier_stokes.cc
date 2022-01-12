@@ -478,11 +478,20 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       shear_rate =
                                         velocity_gradients[k] +
                                         transpose(velocity_gradients[k]);
+
+
+                                      const double shear_rate_magnitude =
+                                        rheological_model
+                                          ->get_shear_rate_magnitude(
+                                            shear_rate);
+
+                                      std::map<field, double> field_values;
+                                      field_values[field::shear_rate] =
+                                        shear_rate_magnitude;
+
                                       viscosity =
-                                        rheological_model->get_viscosity(
-                                          rheological_model
-                                            ->get_shear_rate_magnitude(
-                                              shear_rate));
+                                        rheological_model->value(field_values);
+
                                       fluid_stress =
                                         viscosity * shear_rate - fluid_pressure;
 

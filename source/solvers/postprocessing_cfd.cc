@@ -470,8 +470,10 @@ calculate_apparent_viscosity(
                   present_velocity_gradients[q] +
                   transpose(present_velocity_gradients[q]));
 
-              viscosity =
-                rheological_model->get_viscosity(shear_rate_magnitude);
+              std::map<field, double> field_values;
+              field_values[field::shear_rate] = shear_rate_magnitude;
+
+              viscosity = rheological_model->value(field_values);
 
               integral_viscosity_x_shear_rate +=
                 viscosity * shear_rate_magnitude * fe_values.JxW(q);
@@ -592,9 +594,17 @@ calculate_forces(
                                     }
                                   shear_rate = velocity_gradients[q] +
                                                transpose(velocity_gradients[q]);
-                                  viscosity = rheological_model->get_viscosity(
+
+                                  const double shear_rate_magnitude =
                                     rheological_model->get_shear_rate_magnitude(
-                                      shear_rate));
+                                      shear_rate);
+
+                                  std::map<field, double> field_values;
+                                  field_values[field::shear_rate] =
+                                    shear_rate_magnitude;
+
+                                  viscosity =
+                                    rheological_model->value(field_values);
                                   fluid_stress =
                                     viscosity * shear_rate - fluid_pressure;
                                   force += fluid_stress * normal_vector *
@@ -720,9 +730,16 @@ calculate_torques(
                                 }
                               shear_rate = velocity_gradients[q] +
                                            transpose(velocity_gradients[q]);
-                              viscosity = rheological_model->get_viscosity(
+                              const double shear_rate_magnitude =
                                 rheological_model->get_shear_rate_magnitude(
-                                  shear_rate));
+                                  shear_rate);
+
+                              std::map<field, double> field_values;
+                              field_values[field::shear_rate] =
+                                shear_rate_magnitude;
+
+                              viscosity =
+                                rheological_model->value(field_values);
 
                               fluid_stress =
                                 viscosity * shear_rate - fluid_pressure;

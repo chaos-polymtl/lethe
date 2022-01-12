@@ -32,6 +32,7 @@ test()
 
   PhaseChangeSpecificHeat specific_heat_model(phase_change_param);
 
+
   deallog << "Testing solid fraction xi" << std::endl;
 
   deallog << " T = 0.5  , xi = " << specific_heat_model.liquid_fraction(0.5)
@@ -66,8 +67,12 @@ test()
   double T_1 = T_0 + dT;
   for (int i = 0; i < 20; ++i)
     {
+      std::map<field, double> field_values;
+      field_values[field::temperature]          = T_1;
+      field_values[field::previous_temperature] = T_0;
+
       deallog << " T_0 = " << T_0 << " T_1 = " << T_1
-              << " Cp = " << specific_heat_model.get_specific_heat(T_0, T_1)
+              << " Cp = " << specific_heat_model.value(field_values)
               << std::endl;
       T_0 += dT;
       T_1 += dT;

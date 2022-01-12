@@ -195,8 +195,11 @@ public:
       {
         const double shear_rate_magnitude =
           calculate_shear_rate_magnitude(inputs.solution_gradients[q]);
-        computed_quantities[q] =
-          rheological_model->get_viscosity(shear_rate_magnitude);
+
+        std::map<field, double> field_values;
+        field_values[field::shear_rate] = shear_rate_magnitude;
+
+        computed_quantities[q] = rheological_model->value(field_values);
       }
   }
 
