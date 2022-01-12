@@ -266,7 +266,7 @@ attach_manifolds_to_triangulation(
       if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::spherical)
         {
           Point<spacedim> circleCenter;
-          if (spacedim == 2)
+          if constexpr (spacedim == 2)
             circleCenter =
               Point<spacedim>(manifolds.arg1[i], manifolds.arg2[i]);
           else
