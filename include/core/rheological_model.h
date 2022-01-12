@@ -84,7 +84,7 @@ public:
    * @brief vector_value Calculates the vector values of the viscosity.
    * @param field_vectors Values of the field on which the viscosity may depend on. These are not used for the constant viscosity
    */
-  virtual void
+  void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override
   {
@@ -100,7 +100,7 @@ public:
    * @return value of the partial derivative of the viscosity with respect to the field.
    */
 
-  virtual double
+  double
   jacobian(const std::map<field, double> & /*field_values*/,
            field /*id*/) override
   {
@@ -114,7 +114,7 @@ public:
    * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
    */
 
-  virtual void
+  void
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
@@ -158,7 +158,7 @@ public:
    * @brief vector_value Calculates the vector values of the viscosity.
    * @param field_vectors Values of the field on which the viscosity may depend on. The power-law viscosity depends on the shear rate.
    */
-  virtual void
+  void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override;
 
@@ -171,7 +171,7 @@ public:
    * @return value of the partial derivative of the viscosity with respect to the field.
    */
 
-  virtual double
+  double
   jacobian(const std::map<field, double> & /*field_values*/,
            field /*id*/) override;
 
@@ -182,7 +182,7 @@ public:
    * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
    */
 
-  virtual void
+  void
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
@@ -248,7 +248,7 @@ public:
    * @brief vector_value Calculates the vector values of the viscosity.
    * @param field_vectors Values of the field on which the viscosity may depend on. The power-law viscosity depends on the shear rate.
    */
-  virtual void
+  void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override;
 
@@ -260,7 +260,7 @@ public:
    * should be calculated
    * @return value of the partial derivative of the viscosity with respect to the field.
    */
-  virtual double
+  double
   jacobian(const std::map<field, double> & /*field_values*/,
            field /*id*/) override;
 
@@ -271,7 +271,7 @@ public:
    * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
    */
 
-  virtual void
+  void
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
