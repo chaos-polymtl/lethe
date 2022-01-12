@@ -40,7 +40,7 @@ public:
    * @param param Non-linear solver parameters
    *
    */
-  NewtonNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
+  NewtonNonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
                         const Parameters::NonLinearSolver &param);
 
 
@@ -56,7 +56,7 @@ public:
 
 template <typename VectorType>
 NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
-  PhysicsSolver<VectorType>         *physics_solver,
+  PhysicsSolver<VectorType> *        physics_solver,
   const Parameters::NonLinearSolver &params)
   : NonLinearSolver<VectorType>(physics_solver, params)
 {}

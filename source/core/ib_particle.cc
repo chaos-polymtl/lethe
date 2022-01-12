@@ -44,36 +44,36 @@ IBParticle<dim>::initialise_all()
       position[2] = 0;
     }
 
-  last_forces           = forces;
-  last_torques          = torques;
-  velocity_iter         = velocity;
+  last_forces   = forces;
+  last_torques  = torques;
+  velocity_iter = velocity;
 
-  omega_iter            = omega;
-  omega_impulsion       = 0;
-  omega_impulsion_iter  = 0;
-  impulsion             = 0;
-  impulsion_iter        = 0;
-  contact_impulsion     = 0;
+  omega_iter           = omega;
+  omega_impulsion      = 0;
+  omega_impulsion_iter = 0;
+  impulsion            = 0;
+  impulsion_iter       = 0;
+  contact_impulsion    = 0;
 
   last_position.resize(3);
   last_velocity.resize(3);
   last_angular_position.resize(3);
   last_omega.resize(3);
 
-  for(unsigned int i=0;i<3;++i )
+  for (unsigned int i = 0; i < 3; ++i)
     {
       last_position[i]         = position;
       last_velocity[i]         = velocity;
-      last_angular_position[i]  = angular_position;
-      last_omega[i]             = omega;
+      last_angular_position[i] = angular_position;
+      last_omega[i]            = omega;
     }
-  youngs_modulus=10000000;
-  restitution_coefficient=1;
-  friction_coefficient=1;
-  poisson_ratio=0.3;
-  rolling_friction_coefficient=0.1;
-  residual_velocity=DBL_MAX;
-  residual_omega=DBL_MAX;
+  youngs_modulus               = 10000000;
+  restitution_coefficient      = 1;
+  friction_coefficient         = 1;
+  poisson_ratio                = 0.3;
+  rolling_friction_coefficient = 0.1;
+  residual_velocity            = DBL_MAX;
+  residual_omega               = DBL_MAX;
 }
 
 template <int dim>
@@ -81,18 +81,18 @@ void
 IBParticle<dim>::initialise_last()
 {
   // initilise all the variables associated to an immersed boundary particle
-  last_forces           = forces;
-  velocity_iter         = velocity;
-  impulsion_iter        = impulsion;
-  omega_iter            = omega;
-  omega_impulsion_iter  = omega_impulsion;
+  last_forces          = forces;
+  velocity_iter        = velocity;
+  impulsion_iter       = impulsion;
+  omega_iter           = omega;
+  omega_impulsion_iter = omega_impulsion;
 
-  for(unsigned int i=0;i<3;++i )
+  for (unsigned int i = 0; i < 3; ++i)
     {
       last_position[i]         = position;
       last_velocity[i]         = velocity;
-      last_angular_position[i]  = angular_position;
-      last_omega[i]             = omega;
+      last_angular_position[i] = angular_position;
+      last_omega[i]            = omega;
     }
 }
 

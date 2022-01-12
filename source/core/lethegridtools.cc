@@ -88,7 +88,6 @@ LetheGridTools::find_cell_around_point_with_tree(
       unsigned int max_childs = GeometryInfo<dim>::max_children_per_cell;
       while (best_cell_iter->is_active() == false)
         {
-
           bool         cell_found = false;
           double       best_dist  = DBL_MAX;
           unsigned int best_index = 0;
@@ -127,8 +126,6 @@ LetheGridTools::find_cell_around_point_with_tree(
           lvl += 1;
           best_dist_last = best_dist;
         }
-
-
     }
 
   if (best_dist_last >= 1e-9 && cell_on_level_0_found == false)
@@ -147,7 +144,7 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
 {
   MappingQ1<dim> mapping;
   const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
-  unsigned int max_childs = GeometryInfo<dim>::max_children_per_cell;
+  unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
 
 
   bool cell_on_level_0_found = false;
@@ -164,7 +161,8 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
           for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell;
                ++i)
             {
-              if ((cell->vertex(i) - center).norm() <= radius|| cell->point_inside(center ))
+              if ((cell->vertex(i) - center).norm() <= radius ||
+                  cell->point_inside(center))
                 boundary_cells_candidates.insert(cell);
               break;
             }
@@ -187,7 +185,8 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
                        i < GeometryInfo<dim>::vertices_per_cell;
                        ++i)
                     {
-                      if ((cell->vertex(i) - center).norm() <= radius|| cell->point_inside(center ))
+                      if ((cell->vertex(i) - center).norm() <= radius ||
+                          cell->point_inside(center))
                         {
                           if (cell->is_active())
                             {
@@ -195,11 +194,11 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
                             }
                           else
                             {
-
                               all_cell_are_active = false;
                               for (unsigned int j = 0; j < max_childs; ++j)
                                 {
-                                  boundary_cells_candidates.insert(cell->child(j));
+                                  boundary_cells_candidates.insert(
+                                    cell->child(j));
                                 }
                             }
                           break;
@@ -972,13 +971,11 @@ LetheGridTools::cell_pierced_by_edge<3>(
   Point<3>                                            point_1,
   Point<3>                                            point_2);
 
-template
-std::vector<typename DoFHandler<2>::active_cell_iterator>
+template std::vector<typename DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<2> &dof_handler,
                                              const Point<2> &     center,
-                                             double                 radius);
-template
-  std::vector<typename DoFHandler<3>::active_cell_iterator>
-  LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<3> &dof_handler,
-                                               const Point<3> &     center,
-                                               double                 radius);
+                                             double               radius);
+template std::vector<typename DoFHandler<3>::active_cell_iterator>
+LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<3> &dof_handler,
+                                             const Point<3> &     center,
+                                             double               radius);

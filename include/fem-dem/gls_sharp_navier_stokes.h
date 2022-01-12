@@ -24,6 +24,7 @@
 #include <core/ib_stencil.h>
 
 #include <solvers/gls_navier_stokes.h>
+
 #include <fem-dem/ib_particles_dem.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -168,7 +169,7 @@ private:
         integrate_particles();
         generate_cut_cells_map();
       }
-    //this->simulation_control->set_assembly_method(this->time_stepping_method);
+    // this->simulation_control->set_assembly_method(this->time_stepping_method);
     {
       this->GLSNavierStokesSolver<
         dim>::assemble_system_matrix_without_preconditioner();
@@ -194,9 +195,7 @@ private:
   virtual void
   assemble_rhs()
   {
-
     this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
-
   }
 
   /**
@@ -396,9 +395,6 @@ Return a bool that describes  if a cell contains a specific point
 
 
 
-
-
-
   /**
    * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
    */
@@ -469,14 +465,11 @@ Return a bool that describes  if a cell contains a specific point
 
 
 
-
   /**
    * Members
    */
 
 private:
-
-
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
@@ -519,7 +512,6 @@ private:
   TableHandler table_residual;
 
   IBParticlesDEM<dim> ib_dem;
-
 };
 
 
