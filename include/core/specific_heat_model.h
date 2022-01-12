@@ -54,7 +54,7 @@ public:
    * @param fields_value Value of the various field on which the specific heat depends.
    * @return value of the specific heat.
    */
-  virtual double
+  double
   value(const std::map<field, double> & /*fields_value*/) override
   {
     return specific_heat;
@@ -65,7 +65,7 @@ public:
    * @param field_vectors Vector of fields on which the specific heat may depend.
    * @param property_vector Vector of specific_heat values.
    */
-  virtual void
+  void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override
   {
@@ -79,7 +79,7 @@ public:
    * should be calculated
    * @return value of the partial derivative of the specific heat with respect to the field.
    */
-  virtual double
+  double
   jacobian(const std::map<field, double> & /*field_values*/,
            field /*id*/) override
   {
@@ -92,7 +92,7 @@ public:
    * @param id Identifier of the field with respect to which a derivative should be calculated
    * @param jacobian Vector of the value of the derivative of the specific heat with respect to the field id
    */
-  virtual void
+  void
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
@@ -126,7 +126,7 @@ public:
    * @brief value Calculates the value of the phase change specific heat.
    * @param fields_value Value of the various field on which the specific heat depends.
    * @return value of the specific heat.   */
-  virtual double
+  double
   value(const std::map<field, double> &fields_value) override
   {
     const double temperature = fields_value.at(field::temperature);
@@ -150,7 +150,7 @@ public:
    * @param field_vectors Vector of fields on which the specific heat may depend.
    * @param property_vector Vector of specific_heat values.
    */
-  virtual void
+  void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
@@ -194,7 +194,7 @@ public:
    * should be calculated
    * @return value of the partial derivative of the specific heat with respect to the field.
    */
-  virtual double
+  double
   jacobian(const std::map<field, double> &field_values, field id) override
   {
     if (id == field::temperature)
@@ -209,7 +209,7 @@ public:
    * @param id Identifier of the field with respect to which a derivative should be calculated
    * @param jacobian Vector of the value of the derivative of the specific heat with respect to the field id
    */
-  virtual void
+  void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
                   const field                                 id,
                   std::vector<double> &jacobian_vector) override

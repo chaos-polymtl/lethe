@@ -45,7 +45,7 @@ public:
    * @param fields_value Value of the various field on which the property may depend.
    * @return value of the physical property calculated with the fields_value
    */
-  virtual double
+  double
   value(const std::map<field, double> & /*fields_value*/) override
   {
     return density;
@@ -56,7 +56,7 @@ public:
    * @param field_vectors Vectors of the fields on which the density may depend.
    * @param property_vector Vectors of the density values
    */
-  virtual void
+  void
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override
   {
@@ -71,7 +71,7 @@ public:
    * @return value of the partial derivative of the density with respect to the field.
    */
 
-  virtual double
+  double
   jacobian(const std::map<field, double> & /*field_values*/,
            field /*id*/) override
   {
@@ -85,7 +85,7 @@ public:
    * @param jacobian vector of the value of the derivative of the density with respect to the field id.
    */
 
-  virtual void
+  void
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
