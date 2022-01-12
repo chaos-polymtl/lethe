@@ -48,4 +48,42 @@ If there is an analytical solution for the fluid's phasee, enter the ``phase`` s
 
 * The ``Function expression`` parameters sets the expression of the phase.
 
+.. note:: 
+    The variables *x*, *y*, *z* (3D) and *t* (time-dependant) can be used in the function expressions.
+
 In all four last subsections, you can add a ``Function constant`` parameter that will act as a constant in the ``Function expression``.
+
+You can add a ``Function constants`` parameter that will act as a constant in the ``Function expression``. 
+
+Ex.
+
+.. code-block:: text
+
+   subsection analytical solution
+    set enable                = true
+    set verbosity             = true
+    set filename              = L2Error
+    subsection uvwp
+      set Function constants = A=2.0
+      set Function expression = A*y; -A*x; 0
+    end
+   end
+   
+.. note:: 
+    A :math:`\pi` variable is already defined as both ``pi`` and ``Pi``
+
+Your function expression can also contain common functions such as :math:`\sin`, :math:`\cos` as well as ``if`` statements.
+
+Ex.
+
+.. code-block:: text
+
+   subsection analytical solution
+    set enable                = true
+    set verbosity             = true
+    set filename              = L2Error
+    subsection phase
+      set Function expression = if(sin(x) > pi, 1, 0)
+    end
+   end
+
