@@ -26,7 +26,7 @@ If the problem being simulated has a known analytical solution, or an exact solu
     end
    end
 
-* The ``enable`` parameters sets if the problem has an analytical solution and enables the calculation of the analytical solution and the norm of the L2 error.
+* The ``enable`` parameter sets if the problem has an analytical solution and enables the calculation of the analytical solution and the norm of the L2 error.
 
 * The ``verbosity`` parameter enables printing the L2 error after each mesh refinement if set to ``verbose``, if ``enable`` is ``true``.
 
@@ -34,24 +34,24 @@ If the problem being simulated has a known analytical solution, or an exact solu
 
 If there is an analytical solution for velocity and pressure, enter the ``uvwp`` subsection.
 
-* The ``Function expression`` parameters sets the expression for the analytical solution in regards to u, v and p for a 2D simulation and to u, v, w and p for a 3D simulation.
+* The ``Function expression`` parameter sets the expression for the analytical solution in regards to *u*, *v* and *p* for a 2D simulation and to *u*, *v*, *w* and *p* for a 3D simulation.
 
 If there is an analytical solution for the fluid's temperature, enter the ``temperature`` subsection.
 
-* The ``Function expression`` parameters sets the expression of the temperature.
+* The ``Function expression`` parameter sets the expression of the temperature.
 
 If there is an analytical solution for a tracer, enter the ``tracer`` subsection.
 
-* The ``Function expression`` parameters sets the expression of the tracer.
+* The ``Function expression`` parameter sets the expression of the tracer.
 
-If there is an analytical solution for the fluid's phasee, enter the ``phase`` subsection.
+If there is an analytical solution for the fluid's phase, enter the ``phase`` subsection.
 
-* The ``Function expression`` parameters sets the expression of the phase.
+* The ``Function expression`` parameter sets the expression of the phase.
 
 .. note:: 
     The variables *x*, *y*, *z* (3D) and *t* (time-dependant) can be used in the function expressions.
 
-In all four last subsections, you can add a ``Function constant`` parameter that will act as a constant in the ``Function expression``.
+In all four last subsections, you can add a ``Function constants`` parameter that will act as a constant in the ``Function expression``.
 
 You can add a ``Function constants`` parameter that will act as a constant in the ``Function expression``. 
 
