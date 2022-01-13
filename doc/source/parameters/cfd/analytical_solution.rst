@@ -26,7 +26,7 @@ If the problem being simulated has a known analytical solution, or an exact solu
     end
    end
 
-* The ``enable`` parameter sets if the problem has an analytical solution and enables the calculation of the analytical solution and the :math:`L^2` norm of the error.
+* The ``enable`` parameter is set to true if the problem has an analytical solution. This enables the calculation of the analytical solution and the :math:`L^2` norm of the error.
 
 The :math:`L^2` norm of the error is calculated as
 
