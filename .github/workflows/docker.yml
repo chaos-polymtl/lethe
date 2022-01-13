@@ -11,7 +11,7 @@ on:
       - published
 
 env:
-  IMAGE_TAG: lethe-cfg/lethe
+  IMAGE_TAG: lethe-cfd/lethe
 
 jobs:
   docker:
