@@ -13,7 +13,7 @@ test()
 {
   deallog << "Beggining" << std::endl;
 
-  Newtonian<2> rheology_model(5);
+  Newtonian rheology_model(5);
 
   deallog << "Testing constant viscosity - nu" << std::endl;
 

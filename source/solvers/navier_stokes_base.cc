@@ -1524,8 +1524,13 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   NonNewtonianViscosityPostprocessor<dim> non_newtonian_viscosity(
     simulation_parameters.physical_properties);
+  ShearRatePostprocessor<dim> shear_rate_processor;
+
   if (simulation_parameters.physical_properties.non_newtonian_flow)
-    data_out.add_data_vector(solution, non_newtonian_viscosity);
+    {
+      data_out.add_data_vector(solution, non_newtonian_viscosity);
+      data_out.add_data_vector(solution, shear_rate_processor);
+    }
 
 
   output_field_hook(data_out);

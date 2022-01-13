@@ -13,7 +13,7 @@ test()
 {
   deallog << "Beggining" << std::endl;
 
-  Carreau<2> rheology_model(5, 0, 1, 2, 0.5);
+  Carreau rheology_model(5, 0, 1, 2, 0.5);
 
 
   // field values can remain empty since the constant thermal conductivity does

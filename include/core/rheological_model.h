@@ -27,7 +27,6 @@ using namespace dealii;
  * non-newtonian viscosity on each quadrature point and the shear rate
  * magnitude.
  */
-template <int dim>
 class RheologicalModel : public PhysicalPropertyModel
 {
 public:
@@ -45,21 +44,11 @@ public:
    * either the model rheological model being used or say it is a
    * Newtonian flow
    */
-  static std::shared_ptr<RheologicalModel<dim>>
+  static std::shared_ptr<RheologicalModel>
   model_cast(const Parameters::PhysicalProperties &physical_properties);
-
-  /**
-   * @brief Returns the magnitude of the shear rate tensor given in parameter.
-   *
-   * @param shear_rate The shear rate tensor at the position of the
-   * considered quadrature point
-   */
-  double
-  get_shear_rate_magnitude(const Tensor<2, dim> shear_rate);
 };
 
-template <int dim>
-class Newtonian : public RheologicalModel<dim>
+class Newtonian : public RheologicalModel
 {
 public:
   /**
@@ -127,8 +116,7 @@ private:
   double viscosity;
 };
 
-template <int dim>
-class PowerLaw : public RheologicalModel<dim>
+class PowerLaw : public RheologicalModel
 {
 public:
   /**
@@ -213,8 +201,7 @@ private:
   const double shear_rate_min;
 };
 
-template <int dim>
-class Carreau : public RheologicalModel<dim>
+class Carreau : public RheologicalModel
 {
 public:
   /**
@@ -297,6 +284,27 @@ private:
   double a;
   double n;
 };
+
+/**
+ * @brief Calculates the magnitude of the shear rate tensor given as input
+ *
+ * @param shear_rate A shear rate tensor
+ */
+template <int dim>
+inline double
+calculate_shear_rate_magnitude(const Tensor<2, dim> shear_rate)
+{
+  double shear_rate_magnitude = 0;
+  for (unsigned int i = 0; i < dim; ++i)
+    {
+      for (unsigned int j = 0; j < dim; ++j)
+        {
+          shear_rate_magnitude += (shear_rate[i][j] * shear_rate[j][i]);
+        }
+    }
+  shear_rate_magnitude = sqrt(0.5 * shear_rate_magnitude);
+  return shear_rate_magnitude;
+}
 
 
 #endif
