@@ -3,8 +3,8 @@ name: Docker Image Build & Push
 on:
   # Runs on every push on master branch.
   push:
-#    branches:
-#      - master
+    branches:
+      - master
   # Runs when a release is published
   release:
     types:
@@ -32,6 +32,6 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v2.7.0
         with:
-#          push: true
+          push: true
           # Either the name of the branch or the tag used by the release
           tags: ${{ env.IMAGE_TAG }}:latest,${{ env.IMAGE_TAG }}:${{ github.ref_name }}
