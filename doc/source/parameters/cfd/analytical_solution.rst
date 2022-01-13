@@ -43,7 +43,7 @@ where :math:`u` is the numerical solution and  :math:`u_a` is the analytical sol
 
 If there is an analytical solution for velocity and pressure, enter the ``uvwp`` subsection.
 
-* The ``Function expression`` parameter sets the expression for the analytical solution in regards to *u*, *v* and *p* for a 2D simulation and to *u*, *v*, *w* and *p* for a 3D simulation.
+* The ``Function expression`` parameter sets the expression for the analytical solution in regards to :math:`u`, :math:`v` and :math:`p` for a 2D simulation and to :math:`u`, :math:`v`, :math:`w` and :math:`p` for a 3D simulation.
 
 If there is an analytical solution for the fluid's temperature, enter the ``temperature`` subsection.
 
