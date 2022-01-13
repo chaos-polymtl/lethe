@@ -37,7 +37,7 @@ where :math:`u` is the numerical solution and  :math:`u_a` is the analytical sol
 
 
 
-* The ``verbosity`` parameter enables printing the L2 error after each mesh refinement if set to ``verbose``, if ``enable`` is ``true``.
+* The ``verbosity`` parameter enables printing the L2 error after each mesh refinement if it is set to ``verbose`` and if ``enable`` is ``true``.
 
 * The ``filename`` parameter sets the file name to output the L2 error norm if ``enable`` is ``true``.
 
