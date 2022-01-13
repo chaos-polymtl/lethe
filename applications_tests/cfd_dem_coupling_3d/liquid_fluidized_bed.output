@@ -18,6 +18,7 @@ DEM contact search at dem step 0
 Finished 200 DEM iterations 
 Pressure drop: 98.66601128 Pa
 Mass Source: -5.684840931e-10 s^-1
+Max Local Mass Source: 8.80796722e-11 s^-1
 Average Void Fraction in Bed: 0.439127128
 Total particles kinetic energy: 1.565417907e-07
 
@@ -28,6 +29,7 @@ Starting DEM iterations at step 2
 Finished 200 DEM iterations 
 Pressure drop: 4.364191575 Pa
 Mass Source: -1.058695055e-09 s^-1
+Max Local Mass Source: 8.166642341e-11 s^-1
 Average Void Fraction in Bed: 0.439127128
 Total particles kinetic energy: 5.765161922e-07
 
@@ -38,5 +40,6 @@ Starting DEM iterations at step 3
 Finished 200 DEM iterations 
 Pressure drop: -2.329710841 Pa
 Mass Source: 6.442006722e-10 s^-1
+Max Local Mass Source: 2.139759188e-10 s^-1
 Average Void Fraction in Bed: 0.439127128
 Total particles kinetic energy: 4.040650906e-07
