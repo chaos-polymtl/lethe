@@ -63,7 +63,7 @@ If there is an analytical solution for the fluid's phase, enter the ``phase`` su
 In all four last subsections, you can add a ``Function constants`` parameter that will act as a constant in the ``Function expression``.
 
 
-Ex.
+Ex:
 
 .. code-block:: text
 
