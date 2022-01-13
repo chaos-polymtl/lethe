@@ -22,7 +22,7 @@ If the problem being simulated has a source, it can be added in this section. Th
 
 * The ``enable`` parameter is set to true if the problem has a source term and enables it's calculation.
 
-If there is an Navier-Stokes source term, enter the ``xyz`` subsection.
+If there is a Navier-Stokes source term, enter the ``xyz`` subsection.
 
 * The ``Function expression`` parameters sets the expression for the source term. In 2D, the first two terms are the source terms for  the *x*, *y* component of the momentum equation. The third term is the mass source term. In 3D, the first three terms are for the *x*, *y* and *z* component of the momentum equation and the fourth term is for the mass source term.
 
