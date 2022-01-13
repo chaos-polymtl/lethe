@@ -12,7 +12,6 @@ on:
 
 env:
   IMAGE_TAG: lethe-cfg/lethe
-  MULTI_CORE_TESTS_REGEX: "mpirun=2"
 
 jobs:
   docker:
