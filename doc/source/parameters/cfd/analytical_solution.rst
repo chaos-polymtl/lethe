@@ -26,7 +26,16 @@ If the problem being simulated has a known analytical solution, or an exact solu
     end
    end
 
-* The ``enable`` parameter sets if the problem has an analytical solution and enables the calculation of the analytical solution and the norm of the L2 error.
+* The ``enable`` parameter sets if the problem has an analytical solution and enables the calculation of the analytical solution and the :math:`L^2` norm of the error.
+
+The :math:`L^2` norm of the error is calculated as
+
+.. math::
+L^2 = \int_\Omega (u-u_a)^2 \mathrm{d} \Omega
+
+where :math:`u` is the numerical solution and  :math:`u_a` is the analytical solution.
+
+
 
 * The ``verbosity`` parameter enables printing the L2 error after each mesh refinement if set to ``verbose``, if ``enable`` is ``true``.
 
