@@ -184,7 +184,7 @@ public:
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
   {
-    rheological_model = RheologicalModel<dim>::model_cast(physical_properties);
+    rheological_model = RheologicalModel::model_cast(physical_properties);
   }
 
   /**
@@ -276,9 +276,9 @@ public:
    */
   const bool SUPG = true;
 
-  std::shared_ptr<SimulationControl>     simulation_control;
-  Parameters::PhysicalProperties         physical_properties;
-  std::shared_ptr<RheologicalModel<dim>> rheological_model;
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  std::shared_ptr<RheologicalModel>  rheological_model;
 };
 
 
@@ -426,7 +426,7 @@ public:
     , physical_properties(physical_properties)
     , gamma(gamma)
   {
-    rheological_model = RheologicalModel<dim>::model_cast(physical_properties);
+    rheological_model = RheologicalModel::model_cast(physical_properties);
   }
 
   /**
@@ -449,10 +449,10 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
-  std::shared_ptr<SimulationControl>     simulation_control;
-  Parameters::PhysicalProperties         physical_properties;
-  double                                 gamma;
-  std::shared_ptr<RheologicalModel<dim>> rheological_model;
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  double                             gamma;
+  std::shared_ptr<RheologicalModel>  rheological_model;
 };
 
 

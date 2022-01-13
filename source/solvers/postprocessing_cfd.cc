@@ -438,8 +438,8 @@ calculate_apparent_viscosity(
   double viscosity;
   // Cast rheological model to either a Newtonian model or one of the
   // non Newtonian models according to the physical properties
-  std::shared_ptr<RheologicalModel<dim>> rheological_model =
-    RheologicalModel<dim>::model_cast(physical_properties);
+  std::shared_ptr<RheologicalModel> rheological_model =
+    RheologicalModel::model_cast(physical_properties);
 
   const FESystem<dim, dim> fe = dof_handler.get_fe();
   FEValues<dim>            fe_values(mapping,
@@ -465,10 +465,9 @@ calculate_apparent_viscosity(
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              shear_rate_magnitude =
-                rheological_model->get_shear_rate_magnitude(
-                  present_velocity_gradients[q] +
-                  transpose(present_velocity_gradients[q]));
+              shear_rate_magnitude = calculate_shear_rate_magnitude(
+                present_velocity_gradients[q] +
+                transpose(present_velocity_gradients[q]));
 
               std::map<field, double> field_values;
               field_values[field::shear_rate] = shear_rate_magnitude;
@@ -537,8 +536,8 @@ calculate_forces(
   double viscosity;
   // Cast rheological model to either a Newtonian model or one of the
   // non Newtonian models according to the physical properties
-  std::shared_ptr<RheologicalModel<dim>> rheological_model =
-    RheologicalModel<dim>::model_cast(physical_properties);
+  std::shared_ptr<RheologicalModel> rheological_model =
+    RheologicalModel::model_cast(physical_properties);
 
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
@@ -596,8 +595,7 @@ calculate_forces(
                                                transpose(velocity_gradients[q]);
 
                                   const double shear_rate_magnitude =
-                                    rheological_model->get_shear_rate_magnitude(
-                                      shear_rate);
+                                    calculate_shear_rate_magnitude(shear_rate);
 
                                   std::map<field, double> field_values;
                                   field_values[field::shear_rate] =
@@ -673,8 +671,8 @@ calculate_torques(
   double viscosity;
   // Cast rheological model to either a Newtonian model or one of the
   // non Newtonian models according to the physical properties
-  std::shared_ptr<RheologicalModel<dim>> rheological_model =
-    RheologicalModel<dim>::model_cast(physical_properties);
+  std::shared_ptr<RheologicalModel> rheological_model =
+    RheologicalModel::model_cast(physical_properties);
 
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
@@ -731,8 +729,7 @@ calculate_torques(
                               shear_rate = velocity_gradients[q] +
                                            transpose(velocity_gradients[q]);
                               const double shear_rate_magnitude =
-                                rheological_model->get_shear_rate_magnitude(
-                                  shear_rate);
+                                calculate_shear_rate_magnitude(shear_rate);
 
                               std::map<field, double> field_values;
                               field_values[field::shear_rate] =
