@@ -13,7 +13,7 @@ If the problem being simulated has a known analytical solution, or an exact solu
     subsection uvwp
       set Function expression = 0; 0; 0  # In 2D : u;v;p
         or
-      set Function expression = 0; 0; 0; 0
+      set Function expression = 0; 0; 0; 0  #in 3D u;v;w;p
     end
     subsection temperature
       set Function expression = 0
