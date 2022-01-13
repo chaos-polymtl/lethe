@@ -13,7 +13,7 @@ test()
 {
   deallog << "Beggining" << std::endl;
 
-  PowerLaw<2> rheology_model(5, 0.5, 1e-3);
+  PowerLaw rheology_model(5, 0.5, 1e-3);
 
 
   // field values can remain empty since the constant thermal conductivity does

@@ -233,8 +233,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   double viscosity;
   // Cast rheological model to either a Newtonian model or one of the
   // non Newtonian models according to the physical properties
-  std::shared_ptr<RheologicalModel<dim>> rheological_model =
-    RheologicalModel<dim>::model_cast(
+  std::shared_ptr<RheologicalModel> rheological_model =
+    RheologicalModel::model_cast(
       this->simulation_parameters.physical_properties);
 
   const unsigned int vertices_per_face = GeometryInfo<dim>::vertices_per_face;
@@ -481,9 +481,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
                                       const double shear_rate_magnitude =
-                                        rheological_model
-                                          ->get_shear_rate_magnitude(
-                                            shear_rate);
+                                        calculate_shear_rate_magnitude(
+                                          shear_rate);
 
                                       std::map<field, double> field_values;
                                       field_values[field::shear_rate] =

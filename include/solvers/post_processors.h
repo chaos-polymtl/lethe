@@ -182,8 +182,7 @@ public:
     Parameters::PhysicalProperties p_physical_properties)
     : DataPostprocessorScalar<dim>("viscosity", update_gradients)
   {
-    rheological_model =
-      RheologicalModel<dim>::model_cast(p_physical_properties);
+    rheological_model = RheologicalModel::model_cast(p_physical_properties);
   }
   virtual void
   evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
@@ -193,8 +192,17 @@ public:
 
     for (unsigned int q = 0; q < n_quadrature_points; ++q)
       {
+        const auto     gradient = inputs.solution_gradients[q];
+        Tensor<2, dim> shear_rate;
+        for (int i = 0; i < dim; ++i)
+          {
+            for (int j = 0; j < dim; ++j)
+              {
+                shear_rate[i][j] += gradient[i][j] + gradient[j][i];
+              }
+          }
         const double shear_rate_magnitude =
-          calculate_shear_rate_magnitude(inputs.solution_gradients[q]);
+          calculate_shear_rate_magnitude(shear_rate);
 
         std::map<field, double> field_values;
         field_values[field::shear_rate] = shear_rate_magnitude;
@@ -203,26 +211,42 @@ public:
       }
   }
 
-  double
-  calculate_shear_rate_magnitude(
-    const std::vector<Tensor<1, dim>> &gradients) const
-  {
-    // Calculates the shear rate tensor by manually transposing grad u. This has
-    // to be done manually since inputs.solution_gradients[q] also includes
-    // pressure values.
-    Tensor<2, dim> shear_rate;
-    for (int i = 0; i < dim; ++i)
-      {
-        for (int j = 0; j < dim; ++j)
-          {
-            shear_rate[i][j] += gradients[i][j] + gradients[j][i];
-          }
-      }
-    return rheological_model->get_shear_rate_magnitude(shear_rate);
-  }
-
 private:
-  std::shared_ptr<RheologicalModel<dim>> rheological_model;
+  std::shared_ptr<RheologicalModel> rheological_model;
 };
+
+
+/**
+ * @brief Calculates the shear rate on post-processing points
+ */
+template <int dim>
+class ShearRatePostprocessor : public DataPostprocessorScalar<dim>
+{
+public:
+  ShearRatePostprocessor()
+    : DataPostprocessorScalar<dim>("shear_rate", update_gradients)
+  {}
+  virtual void
+  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
+                        std::vector<Vector<double>> &computed_quantities) const
+  {
+    const unsigned int n_quadrature_points = inputs.solution_gradients.size();
+
+    for (unsigned int q = 0; q < n_quadrature_points; ++q)
+      {
+        const auto     gradient = inputs.solution_gradients[q];
+        Tensor<2, dim> shear_rate;
+        for (int i = 0; i < dim; ++i)
+          {
+            for (int j = 0; j < dim; ++j)
+              {
+                shear_rate[i][j] += gradient[i][j] + gradient[j][i];
+              }
+          }
+        computed_quantities[q] = calculate_shear_rate_magnitude(shear_rate);
+      }
+  }
+};
+
 
 #endif

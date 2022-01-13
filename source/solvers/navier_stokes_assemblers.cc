@@ -304,8 +304,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         velocity_gradient + transpose(velocity_gradient);
 
       // Calculate the shear rate magnitude
-      double shear_rate_magnitude =
-        rheological_model->get_shear_rate_magnitude(shear_rate);
+      double shear_rate_magnitude = calculate_shear_rate_magnitude(shear_rate);
       // Set the shear rate magnitude to 1e-12 if it is too close to zero,
       // since the viscosity gradient is undefined for shear_rate_magnitude = 0
       shear_rate_magnitude =
@@ -482,8 +481,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
         velocity_gradient + transpose(velocity_gradient);
 
       // Calculate the shear rate magnitude
-      double shear_rate_magnitude =
-        rheological_model->get_shear_rate_magnitude(shear_rate);
+      double shear_rate_magnitude = calculate_shear_rate_magnitude(shear_rate);
 
       shear_rate_magnitude =
         shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
@@ -1030,7 +1028,7 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
       // Calculate the shear rate magnitude
       const double shear_rate_magnitude =
-        rheological_model->get_shear_rate_magnitude(shear_rate);
+        calculate_shear_rate_magnitude(shear_rate);
 
       // Calculate de current non newtonian viscosity on each quadrature point
       std::map<field, double> field_values;
@@ -1124,7 +1122,7 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
       // Calculate the shear rate magnitude
       const double shear_rate_magnitude =
-        rheological_model->get_shear_rate_magnitude(shear_rate);
+        calculate_shear_rate_magnitude(shear_rate);
 
       // Calculate de current non newtonian viscosity on each quadrature point
       std::map<field, double> field_values;
