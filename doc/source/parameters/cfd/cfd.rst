@@ -12,7 +12,10 @@ General, CFD and Multiphysics
    mesh
    fem
    boundary_conditions_cfd
+   source_term
+   analytical_solution
    force_and_torque
+   post_processing
    timer
    multiphysics
    nitsche
