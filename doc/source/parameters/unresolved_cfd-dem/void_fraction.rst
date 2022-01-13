@@ -23,7 +23,8 @@ In this subsection, all parameters required for the calculation of the void frac
    set Function expression = 0.5 + 0.25*sin(pi*x)*sin(pi*y)
    end
      
-If the ``mode`` chosen is ``dem``, then the void fraction is calculated using the Particle Centered Method. In this method, the remaining parameters are required.
+If the ``mode`` chosen is ``dem``, then the void fraction is calculated using the Particle Centered Method. In this method, the remaining parameters are required:
+
 * The ``read dem`` allows us to read an already existing dem simulation result which can be obtained from checkpointing the Lethe-DEM simulation. This is important as the gls_vans solver requires reading an initial dem triangulation and particle information to simulate flows in the presence of particles. 
 * The ``dem_file_name`` parameter specifies the prefix of the dem files that must be read.
 * The ``l2 smoothing factor`` is a smoothing length used for smoothing the L2 projection of the void fraction to avoid sharp discontinuities which can lead to instabilities in the simulation.

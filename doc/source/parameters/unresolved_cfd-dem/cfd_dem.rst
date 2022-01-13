@@ -19,6 +19,7 @@ This subsection includes parameters related to multiphase flow simulations using
       set outlet boundary id = 3
    end
 
+
 * The ``grad div`` parameter allows the enabling of the grad div stabilization for the Volume Averaged Navier Stokes equations [1]. This allows for a much better mass conservation of the system.
 * The ``void fraction time derivative`` parameters allows us to choose whether or not we want to account for the time derivative of the void fraction or take it equal to zero.
 * The ``drag force``, ``buoyancy force``, ``shear force``, and ``pressure force`` parameters allow us to enable or disable the respective forces in a cfd-dem simulation.
