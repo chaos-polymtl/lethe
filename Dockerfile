@@ -9,11 +9,11 @@ USER root
 
 # Copy required files and directories for compilation
 COPY CMakeLists.txt lethe/
-COPY source lethe/source
-COPY include lethe/include
-COPY applications lethe/applications
 COPY applications_tests lethe/applications_tests
 COPY tests lethe/tests
+COPY applications lethe/applications
+COPY include lethe/include
+COPY source lethe/source
 
 # Build
 RUN mkdir lethe/build && cd lethe/build && \
