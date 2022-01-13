@@ -11,7 +11,7 @@ If the problem being simulated has a known analytical solution, or an exact solu
     set verbosity             = quiet
     set filename              = L2Error
     subsection uvwp
-      set Function expression = 0; 0; 0
+      set Function expression = 0; 0; 0  # In 2D : u;v;p
         or
       set Function expression = 0; 0; 0; 0
     end
