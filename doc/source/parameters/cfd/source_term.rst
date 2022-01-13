@@ -67,3 +67,5 @@ Ex.
     end
    end
 
+.. note:: 
+   The first parameter in the ``if()`` function is the statement. If this statement is *true*, then the function expression takes the second parameter as value. If this statement is *false*, the function expression takes the third parameter as value. In this example, the heat source term will vary within the calculation domain.
