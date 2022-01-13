@@ -24,7 +24,7 @@ If the problem being simulated has a source, it can be added in this section. Th
 
 If there is an Navier-Stokes source term, enter the ``xyz`` subsection.
 
-* The ``Function expression`` parameters sets the expression for the source term in regards to *x*, *y* and *p* for a 2D simulation and to *x*, *y*, *z* and *p* for a 3D simulation.
+* The ``Function expression`` parameters sets the expression for the source term. In 2D, the first two terms are the source term for  the *x*, *y* component of the momentum equation. The third term is the mass source term. In 3D, the first three terms are for the *x*, *y* and *z* component of the momentum equation and the fourth term is for the mass source term.
 
 If there is a heat source term, enter the ``heat transfer`` subsection.
 
