@@ -13,7 +13,7 @@ If the problem being simulated has a known analytical solution, or an exact solu
     subsection uvwp
       set Function expression = 0; 0; 0  # In 2D : u;v;p
         or
-      set Function expression = 0; 0; 0; 0  #in 3D u;v;w;p
+      set Function expression = 0; 0; 0; 0  #In 3D u;v;w;p
     end
     subsection temperature
       set Function expression = 0
@@ -94,4 +94,7 @@ Ex.
       set Function expression = if(sin(x) > pi, 1, 0)
     end
    end
+
+.. note:: 
+   The first parameter in the ``if()`` function is the statement. If this statement is *true*, then the function expression takes the second parameter as value. If this statement is *false*, the function expression takes the third parameter as value. In this example, the analytical phase will vary within the calculation domain.
 
