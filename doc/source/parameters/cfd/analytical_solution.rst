@@ -31,7 +31,7 @@ If the problem being simulated has a known analytical solution, or an exact solu
 The :math:`L^2` norm of the error is calculated as
 
 .. math::
-L^2 = \int_\Omega (u-u_a)^2 \mathrm{d} \Omega
+ L^2 = \int_\Omega (u-u_a)^2 \mathrm{d} \Omega
 
 where :math:`u` is the numerical solution and  :math:`u_a` is the analytical solution.
 

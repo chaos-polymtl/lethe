@@ -15,7 +15,7 @@ In this subsection, all parameters required for the calculation of the void frac
       set bound void fraction = false
    end
 
-* The "mode" parameter allows the user to choose the method for void fraction calculation. Currently, there are two methods implemented. The first one is to calculate the void fraction from `function`. In this case, an additional subsection is required to insert the function such as:
+* The ``mode`` parameter allows the user to choose the method for void fraction calculation. Currently, there are two methods implemented. The first one is to calculate the void fraction from `function`. In this case, an additional subsection is required to insert the function such as:
 
 .. code-block:: text
 
@@ -29,4 +29,4 @@ If the ``mode`` chosen is ``dem``, then the void fraction is calculated using th
 * The ``dem_file_name`` parameter specifies the prefix of the dem files that must be read.
 * The ``l2 smoothing factor`` is a smoothing length used for smoothing the L2 projection of the void fraction to avoid sharp discontinuities which can lead to instabilities in the simulation.
 * The ``l2 lower bound`` and `l2 upper bound` are the minimum and maximum values around which the void fraction is bounded. This is important especially for upper bounds as the void fraction can sometimes slightly exceed a value of 1 when projected.
-* The ``bound void fraction`` parameters determines whether or not to bound the void fraction between the lower and upper bounds specified in the previous two parameters. As the void fraction is calculated and then projected using L2 projection, it can sometimes exceeds the maximum value of 1. In order to prevent this, we use an active set method to bound the void fraction.
+* The ``bound void fraction`` parameter determines whether or not to bound the void fraction between the lower and upper bounds specified in the previous two parameters. As the void fraction is calculated and then projected using L2 projection, it can sometimes exceeds the maximum value of 1. In order to prevent this, we use an active set method to bound the void fraction.
