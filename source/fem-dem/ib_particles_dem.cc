@@ -342,8 +342,11 @@ template <int dim>
 void
 IBParticlesDEM<dim>::update_particles_boundary_contact(
   std::vector<IBParticle<dim>> &particles,
-  DoFHandler<dim> &             dof_handler)
+  DoFHandler<dim> &             dof_handler,
+  const Quadrature<dim - 1> &                          face_quadrature_formula,
+  const Mapping<dim> &                                 mapping)
 {
+  const FESystem<dim, dim> fe = dof_handler.get_fe();
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       boundary_cells[p_i].clear();
@@ -351,12 +354,12 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
         dof_handler, particles[p_i].position, particles[p_i].radius * 1.5);
       // Initialize a simple quadrature for on the system. This will be used to
       // obtain a single sample point on the boundary faces
-      const FE_Q<dim> fe(1);
+
       for (unsigned int i = 0; i < cells_at_boundary.size(); ++i)
         {
-          QGauss<dim - 1>   face_quadrature_formula(1);
           unsigned int      n_face_q_points = face_quadrature_formula.size();
-          FEFaceValues<dim> fe_face_values(fe,
+          FEFaceValues<dim> fe_face_values(mapping,
+                                           fe,
                                            face_quadrature_formula,
                                            update_values |
                                              update_quadrature_points |

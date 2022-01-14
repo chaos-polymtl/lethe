@@ -1918,7 +1918,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           // cell. this is the new reference pressure inside a
           // particle
 
-          this->system_matrix.set(inside_index, inside_index, sum_line);
+          this->system_matrix.add(inside_index, inside_index, sum_line);
           this->system_rhs(inside_index) =
             0 - this->evaluation_point(inside_index) * sum_line;
         }
@@ -2053,7 +2053,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // with pressure shock when the DOF passe from part of
                           // the boundary to the fluid.
 
-                          this->system_matrix.set(global_index_overwrite,
+                          this->system_matrix.add(global_index_overwrite,
                                                   global_index_overwrite,
                                                   sum_line);
                           skip_stencil = true;
@@ -2133,10 +2133,18 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                           local_dof_indices_2[j]);
                                     }
                                   // update the matrix.
-                                  this->system_matrix.set(
-                                    global_index_overwrite,
-                                    local_dof_indices_2[j],
-                                    local_matrix_entry * sum_line);
+                                  try
+                                    {
+
+                                      this->system_matrix.add(
+                                        global_index_overwrite,
+                                        local_dof_indices_2[j],
+                                        local_matrix_entry * sum_line);
+                                     // std::cout<<"not suppose to appear"<<std::endl;
+                                    }
+                                  catch(...){
+                                      //std::cout<<"bs error"<<std::endl;
+                                    }
                                 }
                             }
                         }
@@ -2200,11 +2208,17 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                           interpolation +=
                             this->evaluation_point(col) * entries;
-                          this->system_matrix.set(local_dof_indices[i],
-                                                  col,
-                                                  entries * sum_line);
+                          try
+                            {
+                              this->system_matrix.add(local_dof_indices[i],
+                                                      col,
+                                                      entries * sum_line);
+                            }
+                          catch(...){
+
+                            }
                         }
-                      this->system_matrix.set(local_dof_indices[i],
+                      this->system_matrix.add(local_dof_indices[i],
                                               local_dof_indices[i],
                                               sum_line);
                       // Write the RHS
@@ -2276,7 +2290,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           if (dummy_dof)
                             {
                               // The DOF is dummy
-                              this->system_matrix.set(global_index_overwrite,
+                              this->system_matrix.add(global_index_overwrite,
                                                       global_index_overwrite,
                                                       sum_line);
                               auto &system_rhs = this->system_rhs;
@@ -2290,7 +2304,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
     }
 
   this->system_rhs.compress(VectorOperation::insert);
-  this->system_matrix.compress(VectorOperation::insert);
+  this->system_matrix.compress(VectorOperation::add);
 }
 
 
@@ -2831,7 +2845,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
           vertices_cell_mapping();
           generate_cut_cells_map();
           ib_dem.update_particles_boundary_contact(this->particles,
-                                                   this->dof_handler);
+                                                   this->dof_handler,
+                                                   *this->face_quadrature,
+                                                   *this->mapping);
           this->iterate();
         }
       else
@@ -2843,7 +2859,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
           vertices_cell_mapping();
           generate_cut_cells_map();
           ib_dem.update_particles_boundary_contact(this->particles,
-                                                   this->dof_handler);
+                                                   this->dof_handler,
+                                                   *this->face_quadrature,
+                                                   *this->mapping);
           // add initialization
           this->iterate();
         }
