@@ -81,7 +81,7 @@ Regrettably, numdiff is not available in the pacman package manager. It can be d
 P4est
 ~~~~~~~
 
-To install p4est, the usual `installation procedure <https://www.dealii.org/current/external-libs/p4est.html>`_ of deal.II can be followed.
+To install p4est, the usual `installation <https://www.dealii.org/current/external-libs/p4est.html>`_ of deal.II can be followed.
 
 
 
@@ -95,7 +95,7 @@ The installation of Trilinos should be done using the `installation procedure <h
 METIS
 ~~~~~~~
 
-METIS is used for mesh partitioning for parallel computing purposes, specifically in cases with simplex grids. It can be downloaded `here <http://glaros.dtc.umn.edu/gkhome/metis/metis/download>`_ or through candi.
+METIS is used for mesh partitioning for parallel computing purposes, specifically in cases with simplex grids. It can be downloaded in this `link <http://glaros.dtc.umn.edu/gkhome/metis/metis/download>`_ or through candi.
 
 
 

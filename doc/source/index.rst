@@ -46,7 +46,6 @@ Contents
    installation/installation
    structure
    first_simulation
-   compute_canada
    parameters/parameters
    examples/examples
    contributing

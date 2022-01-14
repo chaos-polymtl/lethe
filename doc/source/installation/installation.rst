@@ -12,4 +12,5 @@ To use Lethe, you must install it. This can be done either through a regular ins
 
     regular_installation
     docker
+    compute_canada
 
