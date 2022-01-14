@@ -343,8 +343,8 @@ void
 IBParticlesDEM<dim>::update_particles_boundary_contact(
   std::vector<IBParticle<dim>> &particles,
   DoFHandler<dim> &             dof_handler,
-  const Quadrature<dim - 1> &                          face_quadrature_formula,
-  const Mapping<dim> &                                 mapping)
+  const Quadrature<dim - 1> &   face_quadrature_formula,
+  const Mapping<dim> &          mapping)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)

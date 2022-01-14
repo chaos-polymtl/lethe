@@ -115,8 +115,8 @@ public:
   update_particles_boundary_contact(
     std::vector<IBParticle<dim>> &particles,
     DoFHandler<dim> &             dof_handler,
-    const Quadrature<dim - 1> &                          face_quadrature_formula,
-    const Mapping<dim> &                                 mapping);
+    const Quadrature<dim - 1> &   face_quadrature_formula,
+    const Mapping<dim> &          mapping);
 
 
   std::vector<IBParticle<dim>> dem_particles;

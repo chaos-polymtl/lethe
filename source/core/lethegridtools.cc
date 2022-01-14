@@ -146,10 +146,9 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
   const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
   unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
 
+  std::set<typename DoFHandler<dim>::cell_iterator> boundary_cells_candidates;
   std::set<typename DoFHandler<dim>::cell_iterator>
-    boundary_cells_candidates;
-  std::set<typename DoFHandler<dim>::cell_iterator>
-                                                           last_boundary_cells_candidates;
+                                                    last_boundary_cells_candidates;
   std::set<typename DoFHandler<dim>::cell_iterator> cells_at_boundary;
   // Loop on the cells on level 0 of the mesh
   for (const auto &cell : cell_iterator)

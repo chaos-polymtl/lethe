@@ -2135,15 +2135,20 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   // update the matrix.
                                   try
                                     {
-
                                       this->system_matrix.add(
                                         global_index_overwrite,
                                         local_dof_indices_2[j],
                                         local_matrix_entry * sum_line);
-                                     // std::cout<<"not suppose to appear"<<std::endl;
                                     }
-                                  catch(...){
-                                      //std::cout<<"bs error"<<std::endl;
+                                  catch (...)
+                                    {
+                                      //  If we are here, an error happens when
+                                      //  trying to fill the line in the matrix.
+                                      // For example, this can occur if a
+                                      // particle is close to a wall and we are
+                                      // trying to impose the equation on a DOF
+                                      // that as a boundary condition applied to
+                                      // it. As such, we discard these errors.
                                     }
                                 }
                             }
@@ -2214,8 +2219,15 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                       col,
                                                       entries * sum_line);
                             }
-                          catch(...){
-
+                          catch (...)
+                            {
+                              //  If we are here, an error happens when trying
+                              //  to fill the line in the matrix.
+                              // For example, this can occur if a particle is
+                              // close to a wall and we are trying to impose the
+                              // equation on a DOF that as a boundary condition
+                              // applied to it. As such, we discard these
+                              // errors.
                             }
                         }
                       this->system_matrix.add(local_dof_indices[i],
