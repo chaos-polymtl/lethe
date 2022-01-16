@@ -26,6 +26,10 @@ RUN mkdir lethe/build && cd lethe/build && \
 
 FROM dealii/dealii:${DEALII_IMAGE_VERSION}-focal as runner
 
+LABEL org.opencontainers.image.title="lethe" \
+      org.opencontainers.image.authors="lethe-cfd" \
+      org.opencontainers.image.source="https://github.com/lethe-cfd/lethe"
+
 ARG LETHE_INSTALL_DIR=/opt/lethe
 
 # Set env vars
