@@ -2,7 +2,7 @@
 Packing in Ball
 ==================================
 
-This is the second example of Lethe-DEM. This example is the three-dimensional version of the ``packing_in_circle`` example. It is recommended to visit `DEM parameters <https://lethe-cfd.github.io/lethe/parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
+This is the second example of Lethe-DEM. This example is the three-dimensional version of the ``packing_in_circle`` example. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
 Features
 ----------------------------------
@@ -22,7 +22,7 @@ Description of the case
 Packing in ball example is the three-dimensional version of the packing in circle example.
 
 .. warning::
-	Two-dimensional DEM solver (dem_2d) is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. dem_2d solver may only be used for simple basic analyses before performing three-dimensional simulations with dem_3d solver.
+	Two-dimensional DEM solver (dem_2d) is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. dem_2d solver may only be used for simple basic analyses before performing three-dimensional simulations with dem_3d solver becomes necessary.
 
 
 Parameter file
@@ -141,7 +141,7 @@ We can also launch this simulation in parallel mode. For example, to launch the 
   mpirun -np 8 dem_3d packing_in_ball.prm
 
 .. note::
-	The parallel simulations are generally faster than simulations on a single process. However, to leverage the full performance of a parallel simulation, it should be performed with a load-balancing strategy throughout the simulation. Load-balancing is explained in the next example.
+	The parallel simulations are generally faster than simulations on a single process. However, to leverage the full performance of a parallel simulation, it should be performed with a load-balancing strategy throughout the simulation. Load-balancing is explained in the `next example <../rotating-drum/rotating-drum.html>`_.
 
 Results
 ---------

@@ -2,7 +2,7 @@
 Packing in Circle
 ==================================
 
-This is the first example of Lethe-DEM. This example introduces the concept of parameter files to parametrize Lethe simulations. It is strongly recommended to visit `DEM parameters <https://lethe-cfd.github.io/lethe/parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
+This is the first example of Lethe-DEM. This example introduces the concept of parameter files to parametrize Lethe simulations. It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters in Lethe-DEM.
 
 Features
 ----------------------------------
@@ -19,7 +19,7 @@ Location of the examples
 Description of the case
 -----------------------
 
-Packing in circle is the most basic example in Lethe-DEM. In this example, 50 two-dimensional particles are inserted in a circle. Due to their mass and gravity force, they start moving in the defined direction for the gravity. Upon reaching the triangulation boundary wall (outer periphery of the circle), the particle-wall contact stops the particles from leaving the triangulation. Finaly a balance forms between the particle-particle and particle-wall contact force and the gravity force. Particles lose kinetic energy (and velocity) and get packed on the triangulation boundary.
+Packing in circle is the most basic example in Lethe-DEM. In this example, 50 two-dimensional particles are inserted in a circle. Due to the action of gravity, they accelerate in the defined direction of the gravity. Upon reaching the outer periphery of the circle (triangulation boundary wall), the particle-wall contact stops the particles from leaving the triangulation. Finally a balance forms between the particle-particle and particle-wall contact force and the gravity force. Particles lose kinetic energy (and velocity), and get packed on the triangulation boundary and remain at rest.
 
 
 Parameter file
@@ -54,7 +54,7 @@ The ``mesh`` subsection specifies the computational grid:
 
 The ``type`` specifies the mesh format used. At the moment, Lethe supports two mesh formats: ``dealii`` and ``gmsh``. ``dealii`` meshes are in-situ generated meshes for simple geometries. The type of grid generated is specified by the ``grid type`` parameters and this grid is parametrized by its ``grid arguments``. We refer to the documentation of the deal.ii `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ for a detailed explanation of the available grids.
 
-Since the packing-in-circle problem domain is a circle, we use the *hyper_ball* ``grid_type``. The arguments of this grid type are the position of the center, the radius of the ball (circle), and the option to colorize the boundaries in order to give each of them a unique ID. The IDs will be used to set the boundary conditions on specific parts of the boundary of the domain. The ID given to each face was given in the graphical description of the case. If the ``colorize`` option was set to false, all boundaries would have been given the ID ``0``.
+Since the packing-in-circle problem domain is a circle, we use the *hyper_ball* ``grid_type``. The arguments of this grid type are the position of the center, the radius of the ball (circle), and the option to colorize the boundaries in order to give each of them a unique ID. The IDs will be used to set the boundary conditions on specific parts of the boundary of the domain. The ``colorize`` option is set to false and all boundaries would have been given the ID ``0``. This will constitute the walls of the domain.
 
 
 .. note:: 
@@ -88,7 +88,10 @@ The ``insertion info`` subsection manages the insertion of particles.
         set insertion random number seed					= 19
     end
 
-First, the ``insertion method`` is selected. There are two insertion methods (``uniform`` and ``non_uniform``) in Lethe-DEM. In ``uniform`` insertion the particles are inserted uniformly (without randomness in initial location), while in ``non_uniform``, particles are inserted randomly in the insertion box. ``inserted number of particles at each time step`` specifies the desired number of particles to be inserted at each insertion step.
+First, the ``insertion method`` is selected. There are two insertion methods (``uniform`` and ``non_uniform``) in Lethe-DEM. In ``uniform`` insertion, the particles are inserted uniformly (without randomness in their initial location), while in ``non_uniform``, particles are inserted randomly in the insertion box. ``inserted number of particles at each time step`` specifies the desired number of particles to be inserted at each insertion step.
+
+.. note ::
+	The meaning of randomness in the initial location of particles in a non-uniform insertion is structured randomness (Using pseudo-random number generator algorithms).
 
 .. note::
     If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
@@ -152,13 +155,26 @@ In the ``model parameters`` subsection, DEM simulation parameters are defined.
       set integration method				 		= velocity_verlet
     end
 
-These parameters include ``contact detection method`` and its subsequent information (``dynamic contact search size coefficient`` **or** ``contact detection frequency`` for ``dynamic`` **or** ``constant`` contact detection method), ``neighborhood threshold`` (which defines the contact neighbor list size: ``neighborhood threshold`` * particle diameter), ``particle particle contact force method``, ``particle wall contact force method`` and ``integration method``. All the concepts, models and choices are explained in `DEM parameters <https://lethe-cfd.github.io/lethe/parameters/dem/dem.html>`_.
+These parameters include ``contact detection method`` and its subsequent information (``dynamic contact search size coefficient`` **or** ``contact detection frequency`` for ``dynamic`` **or** ``constant`` contact detection method), ``neighborhood threshold`` (which defines the contact neighbor list size: ``neighborhood threshold`` * particle diameter), ``particle particle contact force method``, ``particle wall contact force method`` and ``integration method``. All the concepts, models and choices are explained in `DEM parameters <../../../parameters/dem/dem.html>`_.
+
+By setting ``contact detection method = constant``. contact search will be carried out at constant frequency (every ``contact detection frequency`` iterations). Normally, the ``contact detection frequency`` should be a value between 5 and 50. The contact frequency should be chosen such that the particles do not travel more than half a cell between two contact detection. Small values of ``contact detection frequency`` lead to long simulation times, while large values of ``contact detection frequency`` may lead to late detection of collisions. Late detection of collisions can result in very large particles velocities (popcorn jump of particles in a simulation) or particles leaving the simulation domain.
+
+By setting ``contact detection method = dynamic``, Lethe-DEM rebuilds the contact lists automatically. In this mode, Lethe-DEM stores the displacements of each particle in the simulation since the last contact detection. If the maximum displacement of a particle exceeds the smallest contact search criterion (explained in the following), then the iteration is a contact search iteration and the contact list is rebuilt.
+
+The smallest contact search criterion is the minimum of the smallest cell size in the triangulation or the radius of the spherical region in fine search (explained in the following), and it is defined as:
+ 
+.. math::
+    \phi=\min({d_c^{min}-r_p^{max},\epsilon(\alpha-1)r_p^{max}})
+
+where :math:`{\phi}`, :math:`{d_c^{min}}`, :math:`{r_p^{max}}`, :math:`{\epsilon}`, and :math:`{\alpha}` denote smallest contact search criterion, minimum cell size (in the triangulation), maximum particle radius (in polydisperse simulations), ``dynamic contact search size coefficient``, and ``neighborhood threshold``.
+
+``dynamic contact search size coefficient``, as illustrated in the equation above, is a safety factor to ensure the late detection of particles will not happen in the simulations with ``dynamic`` contact search; and its value should be defined generally in the range of 0.5-1. 0.5 is a rather conservative value for ``dynamic contact search size coefficient``.
 
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The last subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection.
+The last subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation.
 
 .. code-block:: text
 

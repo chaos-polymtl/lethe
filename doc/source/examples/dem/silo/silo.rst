@@ -2,7 +2,7 @@
 Silo
 ==================================
 
-This is the sixth example of Lethe-DEM. This example simulates the filling and discharge of particles in a wedge-shaped silo. We set up this simulation according to the experiments of Golshan et al. [1]. It is recommended to visit `DEM parameters <https://lethe-cfd.github.io/lethe/parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
+This is the sixth example of Lethe-DEM. This example simulates the filling and discharge of particles in a wedge-shaped silo. We set up this simulation according to the experiments of Golshan et al. [1]. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
 Features
 ----------------------------------
@@ -29,7 +29,7 @@ Parameter file
 Mesh
 ~~~~~
 
-Despite previous examples, in this example, we use a mesh generated using Gmsh. The Gmsh (with an extension of .msh) file is located inside the example folder.
+Contrary to previous examples, in this example, we use a mesh generated using Gmsh. The Gmsh (with an extension of .msh) file is located inside the example folder.
 
 .. code-block:: text
 
@@ -175,6 +175,8 @@ This simulation can be launched by (in parallel mode on 32 processes):
 
   mpirun -np 32 dem_3d silo_Golshan.prm
 
+.. warning::
+	This example takes approximately 48 hours on 32 cores. This high computational cost is because of the long time of the simulation (40 s).
 
 Results
 ---------

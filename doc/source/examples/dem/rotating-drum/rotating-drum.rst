@@ -2,7 +2,7 @@
 Rotating Drum
 ==================================
 
-This is the third example of Lethe-DEM. This example simulates a rotating drum. We setup this simulation according to the experiments of Alizadeh et al [1]. It is recommended to visit `DEM parameters <https://lethe-cfd.github.io/lethe/parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
+This is the third example of Lethe-DEM. This example simulates a rotating drum. We setup this simulation according to the experiments of Alizadeh et al [1]. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
 Features
 ----------------------------------
@@ -99,7 +99,7 @@ Model parameters
 
 Load-balancing updates the distribution of the subdomains between the processes in parallel simulation to achieve better computational performance (less simulation time). Three load-balancing methods are available in Lethe-DEM: ``once``, ``frequent``, or ``dynamic``. Read `this article <https://www.mdpi.com/2227-9717/10/1/79>`_ for more information about different load-balancing methods and their performances in various types of DEM simulations.
 
-Selecting ``repartition method = once``, requires defining the step at which the code calls load balancing (``load balance step``). ``Dynamic`` ``repartition method`` requires defining ``load balance frequency``, and in ``dynamic`` ``repartition method``, we should define ``load balance threshold`` and ``dynamic load balance check frequency``. In ``dynamic`` load balancing, the code checks the distribution of particles among the processors, every ``dynamic load balance check frequency`` steps, and if
+Selecting ``repartition method = once``, requires defining the step at which the code calls load balancing (``load balance step``). ``Frequent`` ``repartition method`` requires defining ``load balance frequency``, and in ``dynamic`` ``repartition method``, we should define ``load balance threshold`` and ``dynamic load balance check frequency``. In ``dynamic`` load balancing, the code checks the distribution of particles among the processors, every ``dynamic load balance check frequency`` steps, and if
 
 .. math::
     L_{max}-L_{min}>{\beta}\bar{L}
@@ -127,7 +127,7 @@ Boundary Condition
 
 In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the ``number of boundary conditions`` is specified. Then for each boundary condition, its information is defined. There are four boundary types: ``fixed_wall``, ``outlet``, ``rotational`` (around the center), and ``translational``. For ``rotational`` motion, ``rotational speed`` and ``rotational vector`` are required, while for ``translational`` motion, the ``speed`` should be defined in each direction.
 
-``fixed_wall`` is a static wall, and particles collide with these static walls upon reaching the wall. The only way to move these walls is to move the entire triangulation. If the ``outlet`` condition is chosen for a boundary, particles can leave the simulation domain via this outlet. Using ``rotational`` and ``translational`` boundary conditions, exerts imaginary rotational and translational velocities to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls receive a rotational or translational velocity from the wall. This feature is used in the rotating drum example. The boundary id of the ``cylinder`` side wall, defined with deal.ii grid generator is 4. We set the ``rotational speed`` equal to 11.6 rad/s, and the cylinder should rotate around its axis (`x` direction).
+``fixed_wall`` is a static wall, and particles collide with these static walls upon reaching them. The only way to move these walls is to move the entire triangulation. If the ``outlet`` condition is chosen for a boundary, particles can leave the simulation domain via this outlet. Using ``rotational`` or ``translational`` boundary conditions exerts imaginary rotational and translational velocities to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls feel a rotational or translational velocity from the wall. This feature is used in the rotating drum example. The boundary id of the ``cylinder`` side wall, defined with deal.ii grid generator is 4. We set the ``rotational speed`` equal to 11.6 rad/s, and the cylinder should rotate around its axis (`x` direction).
 
 .. code-block:: text
 
@@ -163,6 +163,10 @@ This simulation can be launched (in parallel mode on 64 processes) by:
 .. code-block:: text
 
   mpirun -np 64 dem_3d rotating_drum.prm
+
+
+.. warning::
+	This example needs a simulation time of approximately 48 hours 64 cores. This high computational cost is because of the large number of particles.
 
 
 Results

@@ -2,12 +2,12 @@
 Rotation of Box
 ==================================
 
-This is the fifth example of Lethe-DEM. This example simulates a triangulation (box) rotation. It is recommended to visit `DEM parameters <https://lethe-cfd.github.io/lethe/parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
+This is the fifth example of Lethe-DEM. This example simulates a triangulation (box) rotation. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
 Features
 ----------------------------------
 - Solvers: ``dem_3d``
-- Rotational triangulation
+- Rotating a triangulation
 
 
 Location of the examples
