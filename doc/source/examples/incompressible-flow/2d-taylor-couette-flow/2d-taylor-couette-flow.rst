@@ -20,7 +20,7 @@ Location of the example
 Description of the case
 -----------------------
 
-The Taylor-Couette flow is the name of a fluid flow in the gap between two long concentric cylinders with different rotational velocities. One or both of these cylinders may rotate along the axis, however generally it is assumed that outer cylinder is fixed, and the inner cylinder rotates with a constant angular velocity. For the Taylor-Couette flow, an analytical solution of the Navier-Stokes equations can be found, although this solution is not stable for all ranges of operating conditions and becomes unstable at high Reynolds number.
+The Taylor-Couette flow is the name of a fluid flow in the gap between two long concentric cylinders with different rotational velocities. One or both of these cylinders may rotate along the axis, however generally it is assumed that the outer cylinder is fixed, and the inner cylinder rotates with a constant angular velocity. For the Taylor-Couette flow, an analytical solution of the Navier-Stokes equations can be found, although this solution is not stable for all ranges of operating conditions and becomes unstable at high Reynolds number.
 
 We assume that the inner cylinder rotates at a constant angular velocity :math:`\omega` in the anti-clockwise direction , while the outer cylinder is fixed. The following figure shows the geometry of this problem and the corresponding boundary conditions:
 
@@ -35,7 +35,7 @@ The analytical solution of this problem can be found relatively easily in cylind
 
   u_{\theta} = \omega R \kappa \frac{\left ( \frac{R}{r} - \frac{r}{R} \right )} {\left( \frac{1}{\kappa} - \kappa \right)}
 
-where :math:`u_{\theta}` is the angular velocity, :math:`R` is the radius of the outer cylinder, :math:`\kappa` takes a value between 0 and 1.0 and represents the ratio between the radius of the inner cylinder and the radius of the outer cylinder (:math:`\kappa=R_{i}/ R`) and :math:`r` is the radial position. Since the simulation in Lethe is in Cartesian coordinate, this analytical solution will have to be converted to Cartesian coordinates to be usable. As we shall see, this is not as hard as it seems. Interestingly, this flow also possesses an analytical solution for the torque :math:`T_z` acting on the inner cylinder:
+where :math:`u_{\theta}` is the angular velocity, :math:`R` is the radius of the outer cylinder, :math:`\kappa` takes a value between 0 and 1.0 and represents the ratio between the radius of the inner cylinder and the radius of the outer cylinder (:math:`\kappa=R_{i}/ R`) and :math:`r` is the radial position. Since the simulation in Lethe is in Cartesian coordinates, this analytical solution will have to be converted to Cartesian coordinates to be usable. As we shall see, this is not as hard as it seems. Interestingly, this flow also possesses an analytical solution for the torque :math:`T_z` acting on the inner cylinder:
 
 .. math::
   T_z = 4 \pi \mu \omega  R^2 L \frac{\kappa^2}{1-\kappa^2}
@@ -61,7 +61,7 @@ The ``mesh`` subsection specifies the computational grid:
       set initial refinement   = 3
   end
 
-The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh generated from the dea.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . This GridGenerator generates the mesh of the interstice between two co-centric cylinder. The arguments of this grid type are the position of center of the cylinders (``0, 0``), the inner cylinder radius (`0.25`), the outer cylinder radius (`1`) and the number of subdivision in the azimuthal direction (`4`). All arguments are separated by ``:``. We set ``colorize=true`` and this sets the boundary ID of the inner cylinder to ``0`` and of the outer cylinder to ``1``.
+The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . This GridGenerator generates the mesh of the interstice between two cocentric cylinder. The arguments of this grid type are the position of center of the cylinders (``0, 0``), the inner cylinder radius (`0.25`), the outer cylinder radius (`1`) and the number of subdivision in the azimuthal direction (`4`). All arguments are separated by ``:``. We set ``colorize=true`` and this sets the boundary ID of the inner cylinder to ``0`` and of the outer cylinder to ``1``.
 
 
 The last parameter specifies the ``initial refinement`` of the grid. Most deal.II grid generators contain a minimal number of cells. The *hyper_shell* mesh is made of four cells. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of 256 cells.

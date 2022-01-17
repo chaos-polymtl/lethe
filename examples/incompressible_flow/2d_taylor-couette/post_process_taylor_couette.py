@@ -2,8 +2,6 @@
 Postprocessing code for the 2D taylor-couette example
 This code extracts the data from the vtu file and plots it against the analytical solution
 
-This comparison is similar to what is done in the step-57 of deal.II
-
 Author : Bruno Blais
 """
 
@@ -11,14 +9,7 @@ Author : Bruno Blais
 #-------------------------------------------
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.tri as tri
-from matplotlib import cm
 import pyvista as pv
-
-import glob
-
-import os
-import sys
 
 #--------------------------------------------
 # Main
