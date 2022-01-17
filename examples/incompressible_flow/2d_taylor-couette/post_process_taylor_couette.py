@@ -1,7 +1,6 @@
 """
-Postprocessing code for 2D lid-driven cavity
-This code extracts the u velocity along the y axis at x=0.5 and compares
-it to the results of Ghia et al.
+Postprocessing code for the 2D taylor-couette example
+This code extracts the data from the vtu file and plots it against the analytical solution
 
 This comparison is similar to what is done in the step-57 of deal.II
 
