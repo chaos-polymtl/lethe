@@ -1335,6 +1335,17 @@ CFDDEMSolver<dim>::solve()
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
+      if ((this->simulation_control->get_step_number() %
+               this->simulation_parameters.mesh_adaptation.frequency !=
+             0 ||
+           this->simulation_parameters.mesh_adaptation.type ==
+             Parameters::MeshAdaptation::Type::none ||
+           this->simulation_control->is_at_start()) &&
+          this->simulation_parameters.boundary_conditions.time_dependent)
+        {
+          this->update_boundary_conditions();
+        }
+
       if (this->simulation_control->is_at_start())
         {
           this->initialize_void_fraction();
