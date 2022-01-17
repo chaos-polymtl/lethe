@@ -33,9 +33,9 @@ Note that the outer cylinder does not rotate, while the inner cylinder rotates a
 
 .. math::
 
-  u_{\theta} = \omega R \frac{\left ( \frac{R}{r} - \frac{r}{R} \right )} {\left( \frac{1}{\kappa} - \kappa \right)}
+  u_{\theta} = \omega R \kappa \frac{\left ( \frac{R}{r} - \frac{r}{R} \right )} {\left( \frac{1}{\kappa} - \kappa \right)}
 
-where :math:`u_{\theta}` is the angular velocity, :math:`R` is the radius of the outer cylinder, :math:`\kappa` is the radius of the inner cylinder divided by the radius of the outer cylinder and :math:`r` is the radial position. Since the simulation in Lethe is in Cartesian coordinate, this analytical solution will have to be converted to Cartesian coordinates to be usable. As we shall see, this is not as hard as it seems. Interestingly, this flow also possesses an analytical solution for the torque :math:`T_z` acting on the inner cylinder:
+where :math:`u_{\theta}` is the angular velocity, :math:`R` is the radius of the outer cylinder, :math:`\kappa` is the radius of the inner cylinder and the radius of the outer cylinder (:math:`\kappa=R_{i}/ R`) and :math:`r` is the radial position. Since the simulation in Lethe is in Cartesian coordinate, this analytical solution will have to be converted to Cartesian coordinates to be usable. As we shall see, this is not as hard as it seems. Interestingly, this flow also possesses an analytical solution for the torque :math:`T_z` acting on the inner cylinder:
 
 .. math::
   T_z = 4 \pi \mu \omega  R^2 L \frac{\kappa^2}{1-\kappa^2}
@@ -154,14 +154,14 @@ To monitor the error in a simulation, we must set ``enable=true``. We must conve
 Simulation control 
 --------------------
 
-The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. By setting ``number mesh adapt=2`` we configure to simulation to carry out to solve the fluid dynamics on the mesh and on two subsequenty refined mesh. This approach is very interesting, because the solution on the coarse mesh also serves as the initial guest for the solution on the finer mesh. We set ``subdivision=1`` to allow the rendering of high-order elements in Paraview. This will be explained later in the example.
+The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. By setting ``number mesh adapt=2`` we configure to simulation to carry out to solve the fluid dynamics on the mesh and on two subsequenty refined mesh. This approach is very interesting, because the solution on the coarse mesh also serves as the initial guest for the solution on the finer mesh. We set ``subdivision=2`` to allow the rendering of high-order elements in Paraview. This will be explained later in the example.
 
 .. code-block:: text
 
   subsection simulation control
     set method                  = steady
     set output name             = couette
-    set subdivision             = 1
+    set subdivision             = 2
     set number mesh adapt       = 2      # If steady, nb mesh adaptation
   end
 
@@ -204,7 +204,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-  gls_navier_stokes_2d cavity.prm
+  gls_navier_stokes_2d taylor-couette.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -213,11 +213,18 @@ Results
 
 Using Paraview, the steady-state velocity profile can be visualized:
 
-.. image:: images/flow_pattern.png
+.. image:: images/flow_patterns.png
     :alt: velocity distribution
     :align: center
 
-It is also very interesting to compare the results with those obtained in the literature. A python script provided in the example folder allows to compare the velocity profile along the radius with the analytical solution. Using this script, the following resuts are obtained for the initial mesh.
+As can be seen, each cell is curved because a Q2 isoparametric mapping was used (by setting ``qmapping=true`` in the FEM subsection). To visualize these high-order cells, we need to subdivide the regular cell to store additional information onto them. A good practice is to use as many subdivision as the interpolation order of the scheme. Hence, we used ``subdivision=2`` in the simulation control subsection. Finally, by default, paraview does not render high-order elements. To enable the rendering of high-order elements, the Nonlinear subdivision level slider must be increased above one. For more information this topic, please consult the deal.II wiki page on `rendering high-order elements <https://github.com/dealii/dealii/wiki/Notes-on-visualizing-high-order-output>`.
+
+
+A python script provided in the example folder allows to compare the velocity profile along the radius with the analytical solution. Using this script, the following resuts are obtained for the initial mesh:
+
+.. image:: images/lethe_analytical_taylor_couette_comparison.png
+    :alt: Azimuthal velocity compared with the analytical solution
+    :align: center
 
 
 The end of the simulation log provides the following information about the convergence of the error:
