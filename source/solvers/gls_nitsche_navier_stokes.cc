@@ -18,13 +18,6 @@
  Montreal, 2020-
  */
 
-#include <deal.II/numerics/fe_field_function.h>
-
-#include <deal.II/particles/data_out.h>
-
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
@@ -32,7 +25,15 @@
 #include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
+
 #include <solvers/gls_nitsche_navier_stokes.h>
+
+#include <deal.II/numerics/fe_field_function.h>
+
+#include <deal.II/particles/data_out.h>
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 // Constructor for class GLSNitscheNavierStokesSolver
 template <int dim, int spacedim>
@@ -953,6 +954,19 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
       pvdhandler_solid_triangulation[i_solid].read(
         prefix + "_solid_triangulation_" +
         Utilities::int_to_string(i_solid, 2));
+
+      // Refill force and torque table from checkpoint
+      std::string filename_force =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.nitsche->force_output_name + "_" +
+        Utilities::int_to_string(i_solid, 2) + ".dat";
+      fill_table_from_file(solid_forces_table[i_solid], filename_force);
+
+      std::string filename_torque =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.nitsche->torque_output_name + "_" +
+        Utilities::int_to_string(i_solid, 2) + ".dat";
+      fill_table_from_file(solid_torques_table[i_solid], filename_torque);
     }
 }
 
