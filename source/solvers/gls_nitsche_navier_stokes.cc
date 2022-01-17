@@ -18,6 +18,13 @@
  Montreal, 2020-
  */
 
+#include <deal.II/numerics/fe_field_function.h>
+
+#include <deal.II/particles/data_out.h>
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
@@ -25,15 +32,7 @@
 #include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-
 #include <solvers/gls_nitsche_navier_stokes.h>
-
-#include <deal.II/numerics/fe_field_function.h>
-
-#include <deal.II/particles/data_out.h>
-
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
 
 // Constructor for class GLSNitscheNavierStokesSolver
 template <int dim, int spacedim>
@@ -594,13 +593,14 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques()
   TimerOutput::Scope t(this->computing_timer, "calculate_torque_on_solid");
 
   std::vector<Tensor<1, 3>> torque;
+
   std::vector<unsigned int> solid_indices;
 
   for (unsigned int i_solid = 0;
        i_solid < this->simulation_parameters.nitsche->number_solids;
        ++i_solid)
     {
-      torque.push_back(calculate_torque_on_solid(i_solid));
+      torque.push_back(this->calculate_torque_on_solid(i_solid));
       solid_indices.push_back(i_solid);
     }
 
@@ -661,7 +661,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques()
 
       std::string filename_torque =
         this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.nitsche->torque_output_name + ".dat";
+        this->simulation_parameters.nitsche->torque_output_name + "_" +
+        Utilities::int_to_string(i_solid, 2) + ".dat";
       std::ofstream output_torque(filename_torque.c_str());
 
       solid_torques_table[i_solid].write_text(output_torque);
