@@ -11,17 +11,8 @@ Author : Bruno Blais
 # Modules
 #-------------------------------------------
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.tri as tri
-from matplotlib import cm
 import pyvista as pv
-
-import glob
-
-import os
-import sys
-from pyvista.plotting.renderer import CameraPosition
 
 #--------------------------------------------
 # Main

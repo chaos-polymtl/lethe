@@ -8,9 +8,8 @@
 subsection simulation control
   set method                  = steady
   set output name             = couette
-  set output frequency        = 1
-  set subdivision             = 1
-  set number mesh adapt       = 2      # If steady, nb mesh adaptation
+  set subdivision             = 2
+  set number mesh adapt       = 3      # If steady, no mesh adaptation
 end
 
 #---------------------------------------------------
@@ -37,10 +36,10 @@ end
 subsection analytical solution
   set enable                 = true
     subsection uvwp
-            # A= -(eta_ * eta_) / (1. - eta_ * eta_);
-            # B= ri_ * ri_ / (1. - eta_ * eta_);
-            set Function constants = eta=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666666667
-            set Function expression = -sin(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)); cos(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)) ; A*A*(x^2+y^2)/2 + 2 *A*B *ln(sqrt(x^2+y^2)) - 0.5*B*B/(x^2+y^2)
+            # A= -(kappa * kappa) / (1. - kappa * kappa);
+            # B= ri * ri / (1. - kappa * kappa);
+            set Function constants = kappa=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666666667
+            set Function expression = -sin(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)); cos(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)) ; A*A*(x^2+y^2)/2 + 2 *A*B *ln(sqrt(x^2+y^2)) - 0.5*B*B/(x^2+y^2)
     end
 end
 
@@ -49,13 +48,7 @@ end
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate forces      = false     # Enable force calculation
     set calculate torques     = true     # Enable torque calculation
-    set force name            = force     # Name prefix of force files
-    set torque name           = torque    # Name prefix of torque files
-    set output precision      = 10        # Output precision
-    set calculation frequency = 1         # Frequency of the force calculation
-    set output frequency      = 1         # Frequency of file update
 end
 #---------------------------------------------------
 # Mesh
