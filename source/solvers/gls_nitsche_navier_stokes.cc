@@ -956,17 +956,22 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
         Utilities::int_to_string(i_solid, 2));
 
       // Refill force and torque table from checkpoint
-      std::string filename_force =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.nitsche->force_output_name + "_" +
-        Utilities::int_to_string(i_solid, 2) + ".dat";
-      fill_table_from_file(solid_forces_table[i_solid], filename_force);
-
-      std::string filename_torque =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.nitsche->torque_output_name + "_" +
-        Utilities::int_to_string(i_solid, 2) + ".dat";
-      fill_table_from_file(solid_torques_table[i_solid], filename_torque);
+      if (this->simulation_parameters.nitsche->calculate_force_on_solid)
+        {
+          std::string filename_force =
+            this->simulation_parameters.simulation_control.output_folder +
+            this->simulation_parameters.nitsche->force_output_name + "_" +
+            Utilities::int_to_string(i_solid, 2) + ".dat";
+          fill_table_from_file(solid_forces_table[i_solid], filename_force);
+        }
+      if (this->simulation_parameters.nitsche->calculate_torque_on_solid)
+        {
+          std::string filename_torque =
+            this->simulation_parameters.simulation_control.output_folder +
+            this->simulation_parameters.nitsche->torque_output_name + "_" +
+            Utilities::int_to_string(i_solid, 2) + ".dat";
+          fill_table_from_file(solid_torques_table[i_solid], filename_torque);
+        }
     }
 }
 
