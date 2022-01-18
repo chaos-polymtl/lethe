@@ -16,7 +16,7 @@ The default parameters are:
 
 * The ``checkpoint`` option enables checkpointing simulation informations when it is set to ``true``. You may want to enable it when launching a time-dependant simulation if you fear you might either run out of memory/simulation time during the simulation.
 
-* The ``restart`` option controls if the simulation will be restarted from a previous checkpoint. Turn this parameter to ``false`` for the first checkpoint creation. The simulation will start from the last checkpoint and will finish at the provided time end (see `Simulation Control <https://lethe-cfd.github.io/lethe/parameters/cfd/simulation_control.html>`).
+* The ``restart`` option controls if the simulation will be restarted from a previous checkpoint. Turn this parameter to ``false`` for the first checkpoint creation. The simulation will start from the last checkpoint when the parameter is set to ``true`` and will finish at the provided time end (see `Simulation Control <https://lethe-cfd.github.io/lethe/parameters/cfd/simulation_control.html>`).
 
 * The ``filename`` parameter fixes the prefix of all the checkpointing files. 
 
