@@ -69,7 +69,7 @@ Geometry parameters can be adapted in the "Parameters" section of the ``.geo`` f
     xmax = 2500/unit;
     ymax = 1000/unit;
 
-The initial mesh is built with `Gmsh <https://gmsh.info/#Download>`_. It is defined as transfinite at the body boundary layer and between the body and the road, and free for the rest of the domain. The mesh is dynamically refined throughout the simulation.
+The initial mesh is built with `Gmsh <https://gmsh.info/#Download>`_. It is defined as transfinite at the body boundary layer and between the body and the road, and free for the rest of the domain. The mesh is dynamically refined throughout the simulation. This will be explained later in this example.
 
 Initial an boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,15 +122,20 @@ Time integration is defined by a 1st order backward differentiation (``bdf1``), 
     end
 
 
-Ahmed body are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied through the kinematic viscosity ``ν``:
+.. Warning::
+   To successfully launch the simualtion, the output path where the results are saved must already exist. Otherwise, the simulation will hang because it will be unable to save the results.
+
+Ahmed body are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied  by changing the kinematic viscosity :math:`nu`:
 
 .. code-block:: text 
 
     subsection physical properties
-        set kinematic viscosity         = 4e-4
+       subsection fluid 0
+           set kinematic viscosity         = 4e-4
+        end
     end
 
-The input mesh ``Ahmed_Body_20_2D.msh`` is in the same folder as the ``.prm`` file and is called with:
+The input mesh ``Ahmed_Body_20_2D.msh`` is in the same folder as the ``.prm`` file. The mesh subsection is set to use this file.
 
 .. code-block:: text
 
