@@ -2,6 +2,22 @@
 2D Transient flow around an Ahmed body
 ======================================
 
+Features
+---------
+
+- Solver: ``gls_navier_stokes_2d`` (with Q1-Q1) 
+- Transient problem
+- Displays how to import and easily adapt a gmsh file
+
+Location of the examples
+-------------------------
+
+- Parameter file: ``/examples/incompressible_flow/2d_ahmed_body/ahmed.prm``
+- Geometry file: ``/examples/incompressible_flow/2d_ahmed_body/Ahmed_Body_20_2D.geo``
+- Mesh file: ``/examples/incompressible_flow/2d_ahmed_body/Ahmed_Body_20_2D.geo``
+
+Description of the case
+--------------------------
 In this example, a flow is passing across a fixed Ahmed body (simplified version of a car, classical benchmark for aerodynamic simulation tools). The velocity profile of the flow is simulated. The parameter file used is ``ahmed.prm``.
 
 The following schematic describes the simulation.
