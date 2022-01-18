@@ -126,7 +126,7 @@ Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^
 
 
 Analytical solution
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 To monitor the convergence of the CFD solver, we can provide Lethe with an expression for the analytical expression of the velocity field. Using this expression and the velocity field obtained from the solver, Lethe will calculate the :math:`\mathcal{L}^2` norm of the error. The :math:`L^2` norm of the error is calculated as:
 
@@ -152,7 +152,7 @@ To monitor the error in a simulation, we must set ``enable=true``. We must conve
 
 
 Simulation control 
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. By setting ``number mesh adapt=2`` we configure to simulation to carry out to solve the fluid dynamics on the mesh and on two subsequently refined mesh. This approach is very interesting, because the solution on the coarse mesh also serves as the initial guest for the solution on the finer mesh. We set ``subdivision=2`` to allow the rendering of high-order elements in Paraview. This will be explained later in the example.
 
@@ -167,7 +167,7 @@ The ``simulation control`` subsection controls the flow of the simulation. Two a
 
 
 Mesh adaptation
-----------------
+~~~~~~~~~~~~~~~~~~
 
 Mesh adaptation is quite complex in Lethe. The mesh can be dynamically adapted using Kelly error estimates on the velocity, pressure or variables arising from other physics. Lethe also supports uniform mesh refinement. Since we wish to measure the convergence of the error with respect to an analytical solution, we specify a uniform mesh refinement by setting ``type=uniform``
 
@@ -179,7 +179,7 @@ Mesh adaptation is quite complex in Lethe. The mesh can be dynamically adapted u
 
 
 Forces
--------
+~~~~~~~
 
 The ``forces`` subsection controls the postprocessing of the torque and the forces acting on the boundaries of the domain.
 
@@ -194,7 +194,7 @@ By setting ``calculate torques=true``, the calculation of the torque resulting f
 
 
 Rest of the subsections
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The non-linear and linear solvers subsections do not contain any new information in this example.
 
