@@ -19,6 +19,7 @@ General, CFD and Multiphysics
    timer
    multiphysics
    nitsche
+   interface_sharpening
 
 
 
