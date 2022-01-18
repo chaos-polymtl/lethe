@@ -161,7 +161,7 @@ namespace Parameters
     // Nitsche solid objects
     std::vector<std::shared_ptr<NitscheSolid<dim>>> nitsche_solids;
     unsigned int                                    number_solids;
-    static const unsigned int                       max_nitsche_solids = 2;
+    static const unsigned int                       max_nitsche_solids = 10;
   };
 
   template <int dim>

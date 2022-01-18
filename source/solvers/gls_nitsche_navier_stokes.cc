@@ -594,13 +594,14 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques()
   TimerOutput::Scope t(this->computing_timer, "calculate_torque_on_solid");
 
   std::vector<Tensor<1, 3>> torque;
+
   std::vector<unsigned int> solid_indices;
 
   for (unsigned int i_solid = 0;
        i_solid < this->simulation_parameters.nitsche->number_solids;
        ++i_solid)
     {
-      torque.push_back(calculate_torque_on_solid(i_solid));
+      torque.push_back(this->calculate_torque_on_solid(i_solid));
       solid_indices.push_back(i_solid);
     }
 
@@ -661,7 +662,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques()
 
       std::string filename_torque =
         this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.nitsche->torque_output_name + ".dat";
+        this->simulation_parameters.nitsche->torque_output_name + "_" +
+        Utilities::int_to_string(i_solid, 2) + ".dat";
       std::ofstream output_torque(filename_torque.c_str());
 
       solid_torques_table[i_solid].write_text(output_torque);
@@ -952,6 +954,24 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
       pvdhandler_solid_triangulation[i_solid].read(
         prefix + "_solid_triangulation_" +
         Utilities::int_to_string(i_solid, 2));
+
+      // Refill force and torque table from checkpoint
+      if (this->simulation_parameters.nitsche->calculate_force_on_solid)
+        {
+          std::string filename_force =
+            this->simulation_parameters.simulation_control.output_folder +
+            this->simulation_parameters.nitsche->force_output_name + "_" +
+            Utilities::int_to_string(i_solid, 2) + ".dat";
+          fill_table_from_file(solid_forces_table[i_solid], filename_force);
+        }
+      if (this->simulation_parameters.nitsche->calculate_torque_on_solid)
+        {
+          std::string filename_torque =
+            this->simulation_parameters.simulation_control.output_folder +
+            this->simulation_parameters.nitsche->torque_output_name + "_" +
+            Utilities::int_to_string(i_solid, 2) + ".dat";
+          fill_table_from_file(solid_torques_table[i_solid], filename_torque);
+        }
     }
 }
 
