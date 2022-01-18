@@ -35,7 +35,8 @@ This subsection controls the mesh adaptation method, with default values given b
 	  set max number elements  = 100000000
 	end
 
-* Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``kelly`` uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decides which cell are refined, by estimating the error per cell for a given variable. The variable for kelly estimation should be specified with ``set variable``, and can be:
+* Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``kelly`` uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decide which cell are refined, by estimating the error per cell for a given variable. 
+* The variable for kelly estimation should be specified with ``set variable``, and can be:
 	* velocity
 	* pressure
 	* phase (for multiphase flows)
