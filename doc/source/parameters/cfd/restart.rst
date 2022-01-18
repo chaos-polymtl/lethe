@@ -2,7 +2,7 @@ Finite element interpolation (FEM)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This subsection controls the restart and checkpointing of the simulation. 
-This feature is used to restart a time-dependant simulation using the data written on the last checkpoint before the simulation stopped or crashed.
+This feature is used to restart a time-dependent simulation using the data written on the last checkpoint before the simulation stopped or crashed.
 The default parameters are:
 
 .. code-block:: text
