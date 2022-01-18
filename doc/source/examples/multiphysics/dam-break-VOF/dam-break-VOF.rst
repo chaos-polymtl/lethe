@@ -56,8 +56,9 @@ time step of :math:`0.01` seconds.
         set subdivision                    = 1      
     end
 
+.. warning::
 Make sure to create a directory named `Output` in the same directory 
-you are calling the solver from.   
+you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will hang.
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
 and off `(false)`` the physics of interest. Here ``VOF`` and 
