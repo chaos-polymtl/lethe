@@ -10,6 +10,7 @@ General, CFD and Multiphysics
    physical_properties
    initial_conditions
    mesh
+   mesh_adaptation_control
    fem
    boundary_conditions_cfd
    source_term
