@@ -9,7 +9,7 @@ subsection simulation control
   set time end                = 10
   set output name             = vessels
   set output path             = ./output/
-  set output frequency        = 10
+  set output frequency        = 1000
 end
 
 #---------------------------------------------------
@@ -34,12 +34,8 @@ end
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity            = 1
-    set tracer diffusivity             = 0.001
+    set tracer diffusivity             = 0.1
   end
-end
-
-subsection timer
-    set type = iteration
 end
 
 #---------------------------------------------------
@@ -115,7 +111,7 @@ subsection non-linear solver
   set max iterations          = 10
   set residual precision      = 5
   set verbosity               = verbose
-  end
+end
 
 # --------------------------------------------------
 # Linear Solver Control
@@ -124,8 +120,6 @@ subsection linear solver
   set method                    = gmres
   set max iters                 = 5000
   set relative residual         = 1e-3
-  set minimum residual          = 1e-11
+  set minimum residual          = 1e-8
   set verbosity               = verbose
-  set ilu preconditioner fill = 0
-  set ilu preconditioner absolute tolerance = 1e-10
 end
