@@ -108,7 +108,7 @@ The simulation is launched in the same folder as the ``.prm`` and ``.msh`` file,
 
       mpirun -np 6 ../../exe/bin/gls_navier_stokes_2d ahmed.prm
 
-where here 6 is the number of cpu used.
+where here 6 is the number of cpu used. The estimated execution time is 6 minutes and 53 seconds.
 
 Results
 -------
