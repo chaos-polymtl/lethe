@@ -33,7 +33,7 @@ time step of :math:`0.01` seconds.
 
 .. note::   
     This example uses an adaptive time-stepping method in which the 
-    time-steps are modified during the simulation to keep the max CFD 
+    time-steps are modified during the simulation to keep the maximum value of the CFL condition
     below a given threshold.
 
 .. code-block:: text
