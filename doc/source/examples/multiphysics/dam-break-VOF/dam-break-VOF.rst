@@ -205,7 +205,7 @@ level`` are 4 and 5, respectively.
 
 *Call the gls_navier_stokes_2d by invoking:*  
 
-``mpirun -np 2 ./{path-to-lethe-build-dir}/applications/gls_navier_stokes_2d/gls_navier_stokes_2d gls_VOF_dam-break_Martin_and_Moyce.prm``
+``mpirun -np 2 gls_navier_stokes_2d gls_VOF_dam-break_Martin_and_Moyce.prm``
 
 *to run the simulation using two CPU cores.* (Feel free to use more)
 
