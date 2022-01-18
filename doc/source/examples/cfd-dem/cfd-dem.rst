@@ -9,4 +9,7 @@ This section includes examples related to multiphase fluid-solid flows. We organ
     :glob:
     :numbered:
 
+
+    cylindrical-packed-bed/cylindrical-packed-bed
     square-fluidized-bed/square-fluidized-bed
+    
