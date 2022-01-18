@@ -1028,8 +1028,10 @@ DEMSolver<dim>::solve()
           integrator_object->integrate_half_step_location(
             particle_handler,
             parameters.lagrangian_physical_properties.g,
+            simulation_control->get_time_step(),
+            momentum,
             force,
-            simulation_control->get_time_step());
+            MOI);
         }
       else
         {

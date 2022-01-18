@@ -255,10 +255,8 @@ test()
       force[particle_iterator->get_id()][dim - 1] = -x0;
 #endif
 
-      velocity_verlet_object.integrate_half_step_location(particle_handler,
-                                                          g,
-                                                          force,
-                                                          dt1);
+      velocity_verlet_object.integrate_half_step_location(
+        particle_handler, g, dt1, momentum, force, MOI);
       t += dt1;
 
       while (t < t_final)
@@ -321,10 +319,8 @@ test()
 #else
       force[particle_iterator->get_id()][dim - 1] = -x0;
 #endif
-      velocity_verlet_object.integrate_half_step_location(particle_handler,
-                                                          g,
-                                                          force,
-                                                          dt2);
+      velocity_verlet_object.integrate_half_step_location(
+        particle_handler, g, dt2, momentum, force, MOI);
       t += dt2;
 
       while (t < t_final)
