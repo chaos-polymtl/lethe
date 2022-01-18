@@ -109,10 +109,10 @@ This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_
 
 .. _Aliabadi and Tezduyar (2000):  https://www.sciencedirect.com/science/article/pii/S0045782500002000
 
-`Sharpening frequency` is an integer parameter that defines the 
-frequency of interface sharpening; sharpening threshold defines 
+``Sharpening frequency`` is an integer parameter that defines the 
+frequency of the interface sharpening; ``sharpening threshold`` defines 
 a phase fraction threshold for interface sharpening (generally :math:`0.5`);
-and interface sharpness is a model parameter which is generally in
+and ``interface sharpness`` is a model parameter which is generally in
 the range of :math:`(1-2]`.
 
 
