@@ -44,5 +44,5 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 .. hint::
 	The ``tolerance`` parameter is directly linked to the numerical convergence of the simulation, but also to the computational cost (number of Newton iteration).
 
-	For simple simulations, the step tolerance can be quite low, for instance ``set tolerance = 1e-12``. However, such a tolerance can be impossible to attain for more complex simulations : the step tolerance of the non-linear solver can be increased, for instance ``set tolerance = 1e-4``
+	For simple simulations, the tolerance can be set quite low, for instance ``set tolerance = 1e-12``. However, such a tolerance can be impossible to attain for more complex simulations : the step tolerance of the non-linear solver can be increased, for instance ``set tolerance = 1e-4``
 * The ``max iterations`` parameter sets a hard limit to the number of Newton iterations, even if the ``tolerance`` is not reached.
