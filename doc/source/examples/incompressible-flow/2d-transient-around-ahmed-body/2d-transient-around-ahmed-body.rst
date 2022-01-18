@@ -32,16 +32,19 @@ The following schematic describes the simulation.
 * bc = 1 (u = 1; flow in the x-direction)
 * bc = 2 (Slip boundary condition)
 
-
-Geometry and mesh
------------------
-The basic geometry for the Ahmed body is given below, as defined in Ahmed and al., 1984, with all measures in mm.
+The basic geometry for the Ahmed body is given below, as defined in Ahmed et al. [1], with all measures in mm.
 
 .. image:: images/ahmed_geometry.png
     :alt: Geometry detailed description
     :align: center
     :name: geometry_detailed
 
+Parameter file
+--------------
+First, we import the mesh like in the `Example 3 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
+
+Mesh
+~~~~~
 Geometry parameters can be adapted in the "Parameters" section of the ``.geo`` file, as shown below. Namely the step parameter ``phi`` can be easily adapted.
 
 .. code-block:: text
@@ -68,22 +71,56 @@ Geometry parameters can be adapted in the "Parameters" section of the ``.geo`` f
 
 The initial mesh is built with `Gmsh <https://gmsh.info/#Download>`_. It is defined as transfinite at the body boundary layer and between the body and the road, and free for the rest of the domain. The mesh is dynamically refined throughout the simulation.
 
-Parameter file
---------------
+Initial an boundary conditions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The initial condition and boundary conditions are defined as in `Example 3 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
+.. code-block:: text
+
+    subsection initial conditions
+        set type = nodal
+        subsection uvwp
+            set Function expression = 1; 0; 0
+        end
+    end
+
+    subsection boundary conditions
+        set number                  = 3
+        subsection bc 0
+            set type              = noslip
+        end
+        subsection bc 1
+            set type              = function
+        subsection u
+            set Function expression = 1
+        end
+        subsection v
+            set Function expression = 0
+        end
+        subsection w
+            set Function expression = 0
+        end
+    end
+        subsection bc 2
+            set type              = slip
+        end
+    end
+
+Simulation control
+~~~~~~~~~~~~~~~~~~
 Time integration is defined by a 1st order backward differentiation (``bdf1``), for a 4 seconds simulation (``time end``) with a 0.01 second ``time step``. The ``output path`` is defined to save obtained results in a sub-directory, as stated in Simulation Control:
 
 .. code-block:: text
 
     subsection simulation control
-      set method                  = bdf1
-      set output frequency        = 1
-      set output name             = ahmed-output
-      set output path             = ./Re720/
-      set time end                = 4
-      set time step		      = 0.01
+        set method                  = bdf1
+        set output frequency        = 1
+        set output name             = ahmed-output
+        set output path             = ./Re720/
+        set time end                = 4
+        set time step		      = 0.01
     end
+
 
 Ahmed body are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied through the kinematic viscosity ``ν``:
 
@@ -104,11 +141,21 @@ The input mesh ``Ahmed_Body_20_2D.msh`` is in the same folder as the ``.prm`` fi
 
 The simulation is launched in the same folder as the ``.prm`` and ``.msh`` file, using the ``gls_navier_stokes_2d`` solver. To decrease simulation time, it is advised to run on multiple cpu, using ``mpirun``:
 
+To do so, copy and paste the ``gls_navier_stokes_2d`` exacutable to the same folder as your ``.prm`` file and launch it running the following line:
+
 .. code-block:: text
 
-      mpirun -np 6 ../../exe/bin/gls_navier_stokes_2d ahmed.prm
+      mpirun -np 6 gls_navier_stokes_2d ahmed.prm
 
-where here 6 is the number of cpu used. The estimated execution time is 6 minutes and 53 seconds.
+where here 6 is the number of cpu used. The estimated execution time for a 4 seconds simulation is 6 minutes and 53 seconds.
+
+Alternatively, specify the path to the ``gls_navier_stokes_2d`` in your ``build/applications`` folder, as follows:
+
+.. code-block:: text
+
+      mpirun -np 6 ../build/applications/gls_navier_stokes_2d/gls_navier_stokes_2d ahmed.prm
+
+Guidelines for parameters other than the previous mentioned are found at the `Parameters guide <https://lethe-cfd.github.io/lethe/parameters/parameters.html>`_.
 
 Results
 -------
@@ -144,3 +191,15 @@ The mesh and processors load is adapted dynamically throughout the simulation, a
 +-------------+----------------------------------------+
 | t = 4 s     | .. image:: images/Re720_mesh_t4.png    |
 +-------------+----------------------------------------+
+
+Possibilities for extension
+----------------------------
+
+* Change the ``phi`` value to see the effect of the angle in the streamline.
+* Vary the Reynolds number, or the initial and boundary conditions.
+* Make a tridimentional mesh, or even add other features to it, such as sharpen the edges.
+* Test higher order elements (e.g., Q2-Q1).
+
+References
+----------
+[1] Ahmed, S. R., Ramm, G., & Faltin, G. (1984). Some salient features of the time-averaged ground vehicle wake. SAE Transactions, 473-503.

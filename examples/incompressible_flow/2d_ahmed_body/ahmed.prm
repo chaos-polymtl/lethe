@@ -9,7 +9,7 @@ subsection simulation control
   set method                  = bdf1
   set output frequency        = 1
   set output name             = ahmed-output
-  set output path             = ./
+  set output path             = ./Re720/
   set time end                = 4
   set time step		      = 0.01
 end
@@ -39,9 +39,9 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-  subsection fluid 0
-    set kinematic viscosity         = 1e-3
-  end
+    subsection fluid 0
+        set kinematic viscosity         = 4e-4
+    end
 end
 #---------------------------------------------------
 # Mesh
