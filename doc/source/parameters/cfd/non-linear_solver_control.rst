@@ -22,7 +22,7 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 	  set max iterations     = 10
 	end
 
-* The ``solver`` parameter enables to choose the nonlinear solver used. Currently, the only solver implemented is ``newton``, a Newton-Raphson solver which recalculates the jacobian matrix at every iteration (see the Theory Documentation).
+* The ``solver`` parameter enables to choose the nonlinear solver used. Currently, Lethe supports two non-linear solver. The ``newton`` solver is a Newton-Raphson solver which recalculates the jacobian matrix at every iteration (see the Theory Documentation). The ``inexact_newton`` solver is a Newton-Raphson solver where the Jacobian matrix is reused between iterations. If the residual at iteration n+1 (:math:`R_{n+1}`) newton iteration is  lower than ``matrix_tolerance`` times the residual at iteration n, the Newton iteration will keep using the same jacobian matrix. Setting ``reuse matrix= true`` enables the usage of the same jacobian matrix for the following non-linear problem. This approach can be worthwhile in transient simulations with a small time-step. The goal is to seek a compromise between the cost of assembling the matrix and the preconditioner versus the cost of solving the linear system of equations.
 * The ``verbosity`` options enables to display the residual at each non-linear iteration, to monitor how the non-linear iterations are progressing.
 .. note::
 	The residual should decrease rapidly between Newton iterations.
