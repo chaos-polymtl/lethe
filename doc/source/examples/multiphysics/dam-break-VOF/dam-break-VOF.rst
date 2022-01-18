@@ -2,8 +2,13 @@
 Dam break VOF
 ==========================
 
-VOF simulation of dam break: A liquid is fixed at an 
-initial rectangular domain. At :math:`t = 0` :math:`s`, the dam is removed, and 
+This example simulates the dam break experiments of `Martin and Moyce (1952)`_. 
+
+.. _Martin and Moyce (1952): https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1952.0006
+
+A liquid is fixed behind a dam at the left most corner of
+a rectangular domain as shown in the figure below.
+At :math:`t = 0` seconds, the dam is removed, and 
 the liquid is released into the total simulation domain. 
 The corresponding parameter file is 
 ``gls_VOF_dam-break_Martin_and_Moyce.prm``.
@@ -15,25 +20,21 @@ The following schematic describes the simulation:
     :align: center
 
 .. note:: 
-    All the four boundary conditions are slip and an external 
+    All the four boundary conditions are slip, and an external 
     gravity field of :math:`-1`` is applied in the y direction.
-
-
-This example simulates the dam break experiments of `Martin and Moyce (1952)`_. 
-
-.. _Martin and Moyce (1952): https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1952.0006
 
 --------------
 Parameter file
 --------------
 
-Time integration is defined by a 1st order backward differentiation 
-`(bdf1)`, for a :math:`4.1` seconds simulation (time end) with an initial 
+Time integration is handled by a 1st order backward differentiation scheme 
+`(bdf1)`, for a :math:`4.1` seconds simulation time with an initial 
 time step of :math:`0.01` seconds.
 
 .. note::   
-    This example uses an adaptative time-stepping methodin which the 
-    time-steps are modified during the simulation to keep the max cfl constant.
+    This example uses an adaptive time-stepping method in which the 
+    time-steps are modified during the simulation to keep the max CFD 
+    below a given threshold.
 
 .. code-block:: text
 
@@ -54,6 +55,9 @@ time step of :math:`0.01` seconds.
         set output path                    = ./Output/
         set subdivision                    = 1      
     end
+
+Make sure to create a directory named `Output` in the same directory 
+you are calling the solver from.   
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
 and off `(false)`` the physics of interest. Here ``VOF`` and 
@@ -77,19 +81,19 @@ and off `(false)`` the physics of interest. Here ``VOF`` and
 
 In the ``interface sharpening`` subsection, the parameters required for 
 sharpening the interface are defined. The current interface 
-sharpening method consists of two steps. In the following, 
-these steps and the implemented equations are explained: 
+sharpening method consists of two steps. These steps are explained as
+follows: 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Phase fraction limiter (limits the phase fractions between 0 and 1 before interface sharpening:
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""
+1- Phase fraction limiter
+""""""""""""""""""""""""""
 
 .. math:: 
     \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
 
-""""""""""""""""""""
-Interface sharpener 
-""""""""""""""""""""
+""""""""""""""""""""""""
+2 -Interface sharpening 
+""""""""""""""""""""""""
 .. math::
     \phi :=
     \begin{cases}
@@ -98,8 +102,8 @@ Interface sharpener
     \end{cases}
 
 
-where :math:`\phi`, :math:`c`  , :math:`\alpha` denote phase fraction 
-sharpening threshold, and interface sharpness, respectively. 
+where :math:`\phi`, :math:`c`, and :math:`\alpha` denote phase fraction, 
+sharpening threshold, and interface sharpness respectively. 
 This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_.  
 
 .. _Aliabadi and Tezduyar (2000):  https://www.sciencedirect.com/science/article/pii/S0045782500002000
@@ -124,7 +128,7 @@ the range of :math:`(1-2]`.
 
 In the ``initial condition``, the initial velocity and initial position 
 of the liquid phase are defined. The liquid phase is initially 
-surrounded by a rectangle of length :math:`= 3.5` and height ::math:`= 7`.
+defined as rectangle of length :math:`= 3.5` and height ::math:`= 7`.
 
 .. code-block:: text
 
@@ -141,7 +145,7 @@ surrounded by a rectangle of length :math:`= 3.5` and height ::math:`= 7`.
         end
     end
 
-The `source term` subsection defines the gravitational acceleration:
+The ``source term`` subsection defines the gravitational acceleration:
 
 .. code-block:: text
     
@@ -177,7 +181,7 @@ properties`` subsection, their physical properties should be defined:
     end
 
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
-defined for ``velocity``, ``min refinement level`` and ``max refinement 
+defined for ``velocity``. ``min refinement level`` and ``max refinement 
 level`` are 4 and 5, respectively.
 
 .. code-block:: text
@@ -198,11 +202,20 @@ level`` are 4 and 5, respectively.
 
 
 
-*Call the gls_navier_stokes_2d solver should be used for this 
-simulation.* 
+*Call the gls_navier_stokes_2d by invoking:*  
 
-warning the cade is long make sure to hae compiled lethe in 
-relaes mode and remember to sue mpirun for more cores
+``mpirun -np 2 ./{path-to-lethe-build-dir}/applications/gls_navier_stokes_2d/gls_navier_stokes_2d gls_VOF_dam-break_Martin_and_Moyce.prm``
+
+*to run the simulation using two CPU cores.* (Feel free to use more)
+
+
+.. warning:: 
+    The code will compute :math:`100,000+` dofs for :math:`620+` time 
+    iterations. Make sure to compile lethe in `Release` mode and 
+    run in parallel using mpirun 
+
+
+
 
 -------
 Results
