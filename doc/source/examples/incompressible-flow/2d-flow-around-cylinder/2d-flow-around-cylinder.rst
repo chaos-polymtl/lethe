@@ -22,15 +22,12 @@ Location of the example
 
 Description of the case
 -----------------------
-The following schematic describes the simulation:
+We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. The following schematic describes the geometry with its relevant quantities (taken form the article by Blais et al. [1]):
 
-.. image:: images/geometry_bc.png
-    :alt: The geometry and boundary conditions
+.. image:: images/geometry_description.png
+    :alt: The geometry
     :align: center
-    :name: geometry_and_bc
-
-
-The problem consists of a channel with a fixed cylinder near to the entrance. 
+    :name: geometry_description
 
 Parameter file
 --------------
@@ -101,7 +98,13 @@ In this case we use the ``nodal`` initial condition and the ``subsection uvwp`` 
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~~
-In this section, we specify the boundary conditions taking into account the IDs presented in the description of the case: 
+In this section, we specify the boundary conditions taking into account the IDs presented in the following schematic:
+
+.. image:: images/geometry_bc.png
+    :alt: The boundary conditions
+    :align: center
+    :name: geometry_bc
+
 
 .. code-block:: text
 
@@ -147,19 +150,26 @@ Lethe will generate a number of files. The most important one bears the extensio
 
 Results
 -------
-The results obtained are represented in what follows. From the velocity distribution, we notice how the velocity of the fluid is 0 at the boundaries of the cylinder and how it increases gradually the further away from the cylinder the fluid is.
+
+Using Paraview the following steady-state velocity and pressure profiles can be visualized:
 
 .. image:: images/velocity.png
     :alt: Velocity profile
     :align: center
     :name: velocity
 
-The pressure is also visualized. The pressure difference between the inlet and outlet is visible and we can see how the pressure nears a value of 0 the close to the outlet.
-
 .. image:: images/pressure.png
     :alt: Pressure profile
     :align: center
     :name: pressure
 
+In one hand, from the velocity distribution, we notice how the velocity of the fluid is 0 at the boundaries of the cylinder and how it increases gradually if we move further away from it. On the other hand, the pressure difference between the inlet and outlet is visible and we can see how the pressure is near to 0 close to the outlet.
+
+In addition to these profiles, it is possible to calculate the perpendicular and parallel forces acting on the cylinder and compare the values with the literature. 
+
 Possibilities for extension
 ----------------------------
+
+References
+----------
+[1] Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146.
