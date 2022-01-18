@@ -21,7 +21,7 @@ The following schematic describes the simulation:
 
 .. note:: 
     All the four boundary conditions are slip, and an external 
-    gravity field of :math:`-1`` is applied in the y direction.
+    gravity field of :math:`-1`` is applied in the `y` direction.
 
 --------------
 Parameter file
