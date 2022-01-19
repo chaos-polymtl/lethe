@@ -10,3 +10,4 @@ Examples
     incompressible-flow/incompressible-flow
     multiphysics/multiphysics
     dem/dem
+    cfd-dem/cfd-dem
