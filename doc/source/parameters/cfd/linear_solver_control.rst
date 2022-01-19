@@ -3,6 +3,9 @@ Linear Solver Control
 
 In these subsections, the control options of linear solvers are specified. These control options may include solution method, maximum number of iterations, tolerance, residual precision and preconditioner information. The default values for these parameters are given in the text box below.
 
+.. note::
+	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to the Theory Documentation.
+
 .. code-block:: text
 
 	subsection linear solver
@@ -25,46 +28,46 @@ In these subsections, the control options of linear solvers are specified. These
 	  # Force the linear solver to continue even if it fails
 	  set force linear solver continuation = false
 
-	  #---------------------------------------------------
-	  # GMRES solver parameters
-	  #---------------------------------------------------
-	  # Maximum number of krylov vectors for GMRES solver
+	  # Maximum number of krylov vectors for GMRES and AMG solvers
 	  set max krylov vectors = 100
 
 	  #---------------------------------------------------
-	  # ILU parameters for GMRES and BICGSTAB
+	  # ILU preconditioner parameters for GMRES and BICGSTAB solvers
 	  #---------------------------------------------------
-	  # Ilu preconditioner tolerance
-	  set ilu preconditioner absolute tolerance = 1e-12
-
-	  # Ilu preconditioner fill
+	  # ILU preconditioner fill
 	  set ilu preconditioner fill = 0
 
-	  # Ilu relative tolerance
+	  # ILU preconditioner tolerance
+	  set ilu preconditioner absolute tolerance = 1e-12
+
+	  # ILU relative tolerance
 	  set ilu preconditioner relative tolerance = 1.00
 
 	  #---------------------------------------------------
-	  # AMG solver parameters
+	  # ILU smoother/coarsener parameters for AMG preconditioner
 	  #---------------------------------------------------
-	  # amg preconditioner ILU smoother/coarsener fill
+	  # AMG preconditioner ILU smoother/coarsener fill
 	  set amg preconditioner ilu fill = 0
 
-	  # amg preconditioner ilu smoother/coarsener absolute tolerance
+	  # AMG preconditioner ILU smoother/coarsener absolute tolerance
 	  set amg preconditioner ilu absolute tolerance = 1e-12
 
-	  # amg preconditioner ilu smoother/coarsener relative tolerance
+	  # AMG preconditioner ILU smoother/coarsener relative tolerance
 	  set amg preconditioner ilu relative tolerance = 1.00
 
-	  # amg aggregation threshold
+	  #---------------------------------------------------
+	  # other AMG solver parameters
+	  #---------------------------------------------------
+	  # AMG aggregation threshold
 	  set amg aggregation threshold = 1e-14
 
-	  # amg number of cycles
+	  # AMG number of cycles
 	  set amg n cycles              = 1
 
-	  # amg w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.
+	  # AMG w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.
 	  set amg w cycles              = false
 
-	  # amg smoother sweeps
+	  # AMG smoother sweeps
 	  set amg smoother sweeps       = 2
 
 	  # amg smoother overlap
@@ -84,10 +87,6 @@ In these subsections, the control options of linear solvers are specified. These
 		As the number of mesh elements increase, the ``amg`` solver is the most efficient. Generally, at 1M elements, the ``amg`` solver always outperforms the ``gmres`` or ``bicgstab`` for 2D steady-state problems.
 		
 		The use of ``direct`` solver should be avoided for 3D problems.
-
-.. note::
-	For further understanding about iterative solver methods, the interested reader is referred to the Theory Documentation.
-
 
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations.
 
@@ -110,4 +109,49 @@ In these subsections, the control options of linear solvers are specified. These
 		-Iterative solver took : 0 steps 
 
 
-For all methods, a number of parameters to control the preconditioner can be set.
+* The ``minimum residual`` parameter sets the value that the tolerance of the iterative solver should reach to proceed to the next iteration.
+.. tip::
+	The ``minimum residual`` parameter is directly linked to the numerical convergence of the simulation, but also to the computational cost. 
+
+	A good rule of thumb is to set the linear solver ``minimum residual`` to one or two order of magnitude below the `Non-linear solver <https://lethe-cfd.github.io/lethe/parameters/cfd/non-linear_solver_control.html>`_ ``tolerance`` parameter (linear ``minimum residual`` :math:`=` non-linear ``tolerance`` :math:`/10` or :math:`/100`).
+
+	Typical values of the ``minimum residual`` for simple simulations can be quite low, for instance ``set minimum residual = 1e-13``. However, such a tolerance can be impossible to attain for more complex simulations, and so the ``minimum residual`` can be increased, for instance ``set minimum residual = 1e-5``.
+
+* The ``relative residual`` weights the :math:`\mathcal{L}_2`-norm of the system RHS. This product is then compared to the ``minimum residual`` to assess for convergence of the iteration.
+.. tip::
+	The default value of ``1e-3`` is a good start value. To lower the computational cost for more complex simulations, it can be lowered to ``set relative residual = 1e-4``.
+
+* The ``max iters`` puts a hard stop on the number of solver iterations (number of steps printed when ``set verbosity = verbose``).
+.. tip::
+	If ``max iters`` is reached, the code will throw this type of message: 
+	
+	.. code-block:: text
+	
+		GMRES solver failed! Trying with a higher preconditioner fill level.
+
+	meaning that the code increases the preconditioner fill (see definition below) in order to converge within the number of solver iterations. If you encounter this, consider increasing the ``max iters``.
+
+* ``force linear solver continuation`` enables, when set to ``true``, to force the linear solver to continue, even if the ``minimum residual`` is not reached. Only available for ``GMRES`` solver within the ``gls_navier_stokes`` application.
+.. warning::
+	With this mode on, errors on the linear solver convergence are not thrown. Forcing the solver to continue can be useful for debugging purposes if a given iteration is hard to pass, but use with caution!
+
+* ``max krylov vectors`` sets the maximum number of krylov vectors for ``GMRES`` and ``AMG`` solvers.
+.. tip::
+	Consider using ``set max krylov vectors = 200`` for complex simulations with convergence issues. 
+
+* ``ilu preconditioner fill``, ``ilu preconditioner absolute tolerance`` and ``ilu preconditioner relative tolerance`` control the ILU preconditioner for ``method`` using ILU preconditioner (``gmres`` and ``bicgstab``). Conversely, ``amg preconditioner ilu fill``, ``amg preconditioner ilu absolute tolerance`` and ``amg preconditioner ilu relative tolerance`` control the ILU coarsener and smoother for the AMG preconditioner.
+ 
+.. tip::
+	The default values for these parameters are good start values. 
+
+	For each iteration of the linear solver (at the beginning of which the tolerance of the iterative solver is computed, as printed if ``set verbosity = verbose``), the chosen solver starts by using the ``preconditioner fill`` given in the parameter file. If for any reason the linear solver would have crashed, it will restart with a fill level increased by 1. This restart process will happen up to a maximum of 20 times, after which it will let the solver crash. 
+
+	Hence, for complex simulations, if you get at almost every linear iteration the message:
+
+	.. code-block:: text
+	
+		GMRES solver failed! Trying with a higher preconditioner fill level. New fill = ...
+
+	and it does not disappear when increasing ``max iters``, increasing the ``ilu preconditioner fill`` in the ``.prm`` file will make the computation slightly faster.
+
+* ``amg aggregation threshold``, ``amg n cycles``, ``amg w cycles`` (if this is set to ``true``, W cycling is used, if ``false``, V cycling is used), ``amg smoother sweeps``, and ``amg smoother overlap`` are parameters used for the AMG ``method`` only. For more information about these, the reader is referred to the dealII documentation for the `AMG preconditioner <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_ and its `Additional Data <https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html>`_
