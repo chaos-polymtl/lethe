@@ -33,3 +33,7 @@ The default parameters are:
 
 * The ``initial beta`` parameter sets an initial :math:`\beta` coefficient that may speed up the convergence of the flow rate targeted. Some tests should be done to find a good initial :math:`\beta` coefficient.
 
+.. tip:: 
+
+  A good method to find a reasonable initial beta is to test two or three different initial beta parameters, write down the given flow rate at the first time step in the simulation and do a regression. The correlation is linear and giving a proper value will greatly speed up the convergence.
+
