@@ -43,6 +43,7 @@ Parameter file
 
 We first establish the meshes used for the simulation. Using Nitsche immersed boundaries, two meshes are to be defined : the fluid mesh and the geometry mesh (i.e. the inner cylinder).
 
+
 Mesh
 ~~~~~
 
@@ -65,6 +66,7 @@ The last parameter specifies the ``initial refinement`` of the grid. Most deal.I
     :alt: The fluid mesh
     :align: center
     :name: fluid
+
 
 Nitsche mesh
 ~~~~~~~~~~~~
@@ -105,6 +107,7 @@ The following figure illustrates the background mesh as well as the particles us
     :align: center
     :name: nitsche_particles
 
+
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
 
@@ -121,6 +124,7 @@ The ``boundary conditions`` subsection becomes simple since the inner cylinder b
 
 
 First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The outer cylinder (``0``) is static and, consequently, a ``noslip`` boundary condition is applied. 
+
 
 Physical properties
 ~~~~~~~~~~~~~~~~~~~
@@ -150,7 +154,7 @@ Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^
 
 
 Analytical solution
---------------------
+~~~~~~~~~~~~~~~~~~~
 
 Like in the first Taylor-Couette example, we add an analytical solution section to the parameter handler file. This analytical solution is more complex to define, 
 since the simulation domain encompasses the inside of the inner cylinder as well as the gap between the cylinders. Because of this, we only specify the analytical 
@@ -158,7 +162,7 @@ solution for the velocity field and forego pressure. The analytical solution is 
 
 
 Forces
--------
+~~~~~~
 
 The ``forces`` subsection controls the postprocessing of the torque and the forces acting on the boundaries of the domain.
 
@@ -176,6 +180,7 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 By setting ``calculate torques=true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. 
 Setting ``verbosity=verbose`` will print out the value of the torque calculated for each mesh. 
 
+
 Simulation control and mesh refinement
 --------------------------------------
 
@@ -183,7 +188,7 @@ As stated above, this problem can either be solved using a uniform mesh refineme
 
 
 Uniform mesh refinement
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^ 
 
 The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. 
 By setting ``number mesh adapt=4`` we configure the simulation to solve the fluid dynamics on the mesh and on four(4) subsequently refined mesh. 
