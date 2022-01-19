@@ -1,7 +1,0 @@
-3D flow around a sphere
-This example can be solved using the gls_navier_stokes_3d solver.
-3 parameter files exist: sphere_0.1.prm solves on a static mesh at Re=0.1, sphere_150.prm solves on a static mesh
-at Re=150, and sphere_adapt.prm solves on a dynamically adapting mesh at Re=150.
-
-A description of the test case can be found at the following link :
-https://github.com/lethe-cfd/lethe/wiki/Example-4-:-3D-Flow-around-a-Sphere
