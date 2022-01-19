@@ -19,6 +19,7 @@ General, CFD and Multiphysics
    post_processing
    timer
    multiphysics
+   boundary_conditions_multiphysics
    nitsche
    restart
 
