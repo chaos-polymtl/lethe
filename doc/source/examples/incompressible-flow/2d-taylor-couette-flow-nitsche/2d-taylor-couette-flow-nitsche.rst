@@ -3,7 +3,7 @@
 ========================================================
 
 This is the XXe Lethe example. It revisits the same taylor-couette flow problem in `Example 2 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_, 
-now using immersed boundaries to represent the inner cylinder. This example demonstrates some of the capabilities of Lethe to simulate the flow around complex geometries meshing them explicitly with a conformal mesh, but instead by using the Nitsche immersed boundary method available within Lethe.
+now using immersed boundaries to represent the inner cylinder. This example demonstrates some of the capabilities of Lethe to simulate the flow around complex geometries without meshing them explicitly with a conformal mesh, but instead by using the Nitsche immersed boundary method available within Lethe.
 
 Features
 ----------------------------------
