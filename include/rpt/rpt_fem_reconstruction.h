@@ -84,14 +84,23 @@ private:
   solve_linear_system(unsigned detector_no);
   void
   output_results();
-
   void
   output_raw_results_per_level();
-
   void
   output_counts_on_level(
     unsigned int                                   level,
     std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
+  Vector<double>
+  assemble_matrix_and_rhs(std::vector<std::vector<double> > &vertex_count,
+                          std::vector<double> &experimental_count
+                          );
+  void
+  find_cell();
+
+  void
+  find_cell_containing_point();
+
+
 
 
 
@@ -109,9 +118,6 @@ private:
   std::vector<Detector<dim>>  detectors;
 };
 
-void
-assemble_matrix_and_rhs(std::vector<std::vector<double>> &vertex_count,
-                        std::vector<double>              &experimental_count,
-                        Vector<double>                   &reference_location);
+
 
 #endif
