@@ -34,5 +34,5 @@ The default parameters are:
 
 * The ``flow direction`` parameter sets the absolute direction. It should be ``0`` if the flow is in the :math:`x` direction, ``1`` in the :math:`y` direction and ``2`` in the :math:`z` direction.
 
-* The ``initial beta`` parameter sets an initial beta coefficient that may speed up the convergence of the flow rate targeted. Some tests should be done to find a good initial beta coefficient.
+* The ``initial beta`` parameter sets an initial :math:`\beta` coefficient that may speed up the convergence of the flow rate targeted. Some tests should be done to find a good initial :math:`\beta` coefficient.
 
