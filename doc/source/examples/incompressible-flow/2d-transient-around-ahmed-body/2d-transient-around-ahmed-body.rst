@@ -123,7 +123,7 @@ Time integration is defined by a 1st order backward differentiation (``bdf1``), 
 
 
 .. Warning::
-   To successfully launch the simualtion, the output path where the results are saved must already exist. Otherwise, the simulation will hang because it will be unable to save the results.
+   To successfully launch the simualtion, the ``output path`` where the results are saved (in this example, the folder ``Re720``) must already exist. Otherwise, the simulation will hang because it will be unable to save the results.
 
 Ahmed body are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied  by changing the kinematic viscosity :math:`nu`:
 
