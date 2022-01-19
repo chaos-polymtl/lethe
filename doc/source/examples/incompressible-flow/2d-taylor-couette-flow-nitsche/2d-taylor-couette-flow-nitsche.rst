@@ -147,7 +147,9 @@ The analytical solution for the Taylor-Couette problem is only valid at low Reyn
 FEM interpolation
 ~~~~~~~~~~~~~~~~~
 
-Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^2` norm of the error is :math:`\mathcal{O}\left(h^{n+1} \right)` where :math:`h` is a measure of the element size and `n=1` is the interpolation order of the velocity. However, since the torque applied on the inner cylinder depends on the deviatoric stress tensor, which depends on the velocity gradient, it's error will be :math:`\mathcal{O}(n)`. Taking this into account, we can use second order polynomials in this example to obtain higher accuracy on the torque. We specify the interpolation order for both pressure and velocity using the ``FEM`` subsection:
+.. note::
+
+  In `Example 2 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_ we have used second order element for velocity. In this problem, since we are using immersed boundary conditions, moving to higher order polynomials would not enhance the order of convergence as the solid boundary is not represented with high accuracy.
 
 .. code-block:: text
 
@@ -327,12 +329,6 @@ Using Paraview, the steady-state velocity profile can be visualized for the adap
 .. image:: images/taylor_couette_with_nitsche_velocity_adapt.png
     :alt: velocity distribution
     :align: center
-
-As can be seen, each cell is curved because a Q2 isoparametric mapping was used (by setting ``qmapping=true`` in the FEM subsection). 
-To visualize these high-order cells, we need to subdivide the regular cell to store additional information onto them. 
-By default, Paraview does not render high-order elements. 
-To enable the rendering of high-order elements, the Nonlinear subdivision level slider must be increased above one. For more information on this topic, 
-please consult the deal.II wiki page on `rendering high-order elements <https://github.com/dealii/dealii/wiki/Notes-on-visualizing-high-order-output>`.
 
 
 The end of the simulation log provides the following information about the convergence of the error:
