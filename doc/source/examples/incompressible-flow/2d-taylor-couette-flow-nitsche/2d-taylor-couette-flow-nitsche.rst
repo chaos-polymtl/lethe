@@ -182,7 +182,7 @@ Setting ``verbosity=verbose`` will print out the value of the torque calculated 
 
 
 Simulation control and mesh refinement
---------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As stated above, this problem can either be solved using a uniform mesh refinement or using an adaptative mesh refinement
 
@@ -247,7 +247,7 @@ The mesh can be dynamically adapted using Kelly error estimates on the velocity,
 
 
 Rest of the subsections
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The non-linear and linear solvers subsections do not contain any new information in this example.
 
