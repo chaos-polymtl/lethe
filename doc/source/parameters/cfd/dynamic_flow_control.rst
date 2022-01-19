@@ -32,7 +32,7 @@ The default parameters are:
 
 * The ``boundary id`` parameter is the wall boundary where the flow rate intended is controlled (inlet or outlet).
 
-* The ``flow direction`` parameter sets the absolute direction. It should be ``0`` if the flow is in the :math:`x` direction, ``1`` in the :math:`y` direction and ``2`` in the :math:`y` direction.
+* The ``flow direction`` parameter sets the absolute direction. It should be ``0`` if the flow is in the :math:`x` direction, ``1`` in the :math:`y` direction and ``2`` in the :math:`z` direction.
 
 * The ``initial beta`` parameter sets an initial beta coefficient that may speed up the convergence of the flow rate targeted. Some tests should be done to find a good initial beta coefficient.
 
