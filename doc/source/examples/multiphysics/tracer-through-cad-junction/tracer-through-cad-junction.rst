@@ -6,7 +6,7 @@ In this example, we solve a problem using the simplex capabilities of Lethe. The
 
 Features
 ----------------------------------
-- Solvers: ``gls_navier_stokes_3d`` 
+- Solver: ``gls_navier_stokes_3d`` 
 - Transient problem
 - Displays the use of the tracer physics
 - Displays the use of a simplex mesh generated with a CAD platform
