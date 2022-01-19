@@ -24,9 +24,9 @@ Heat Transfer
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
-* ``type`` : This is the type of boundary condition been imposed. At the moment, choices are 
-* ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary 
-* ``convection`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` following Newton's law of cooling (and heating)
+* ``type``: This is the type of boundary condition been imposed. At the moment, choices are
+    * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary 
+    * ``convection`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` following Newton's law of cooling (and heating)
 
 .. math::
     \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_\textit{inf})
