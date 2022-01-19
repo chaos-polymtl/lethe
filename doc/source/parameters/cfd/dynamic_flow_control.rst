@@ -2,8 +2,8 @@ Dynamic flow control
 ~~~~~~~~~~~~~~~~~~~~
 
 This subsection's purpose is to enable a dynamic flow control. It enables setting a volumetric flow on a specific boundary toward to normal of the wall. 
-It calculates a Beta coefficient at each time step and may be added to a source term. If the chosen wall boundary on which a volumetric flow is imposed is at inlet, 
-the volumetric flow rate targeted must be negative since outward normal vector is used. Thereby, if the chosen wall boundary is at outlet, 
+It calculates a Beta coefficient at each time step and may be added to a source term. If the chosen wall boundary on which a volumetric flow is imposed is at the inlet, 
+the volumetric flow rate targeted must be negative since outward normal vector is used. Thereby, if the chosen wall boundary is at the outlet, 
 volumetric flow rate must be positive.
 
 The default parameters are:
@@ -24,11 +24,11 @@ The default parameters are:
 
 .. warning::
 
-  This value should be negative if imposed on an inlet boundary, and positive if imposed on an outlet boundary.
+  This value should be negative if imposed on an the inlet boundary, and positive if imposed on an outlet boundary.
 
 .. note::
 
-  When there is a periodic boundary, the wall boundary should be at inlet only and if the chosen wall boundary is at inlet, flow rate must be negative and vice versa.
+  When there is a periodic boundary, the wall boundary should be at the inlet only and if the chosen wall boundary is at the inlet, flow rate must be negative and vice versa.
 
 * The ``boundary id`` parameter is the wall boundary where the flow rate intended is controlled (inlet or outlet).
 
