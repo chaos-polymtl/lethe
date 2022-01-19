@@ -60,7 +60,11 @@ The ``mesh`` subsection specifies the computational grid:
 
 The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_. This GridGenerator generates the mesh of the interstice between two concentric cylinders. The arguments of this grid type are the position of center of the cylinders (``0, 0``), the inner cylinder radius (`0.25`), the outer cylinder radius (`1`) and the number of subdivisions in the azimuthal direction (`4`). All arguments are separated by ``:``. We set ``colorize=true`` and this sets the boundary ID of the inner cylinder to ``0`` and of the outer cylinder to ``1``
 
-The last parameter specifies the ``initial refinement`` of the grid. Most deal.II grid generators contain a minimal number of cells. The *hyper_shell* mesh is made of four cells. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of 256 cells.
+The last parameter specifies the ``initial refinement`` of the grid. 
+
+.. note::
+
+  Most deal.II grid generators contain a minimal number of cells. The 2D *hyper_ball* mesh is made of five cells, a square one in the middle and four ones surrounding it. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of 320 cells.
 
 .. image:: images/background_mesh_taylor-couette.png
     :alt: The fluid mesh
