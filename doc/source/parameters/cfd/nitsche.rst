@@ -28,7 +28,9 @@ Lethe can also run simulations using the Nitsche immersed boundary method.
 	  end
           set particles sub iterations = 5
           set stop if particles lost = true
+          set enable particles motion = false
     end
+  end
 
 * ``beta`` is a parameter needed to apply the immersed boundary conditions on the fluid domain, its value is normally between 1 and 1000. ``beta = 0`` (the solid has no influence on the flow) can be used for debugging purposes. A classical value is ``beta = 10``.
 * ``verbosity`` enables printing Nitsche intermediate results to the terminal.
@@ -45,4 +47,9 @@ Lethe can also run simulations using the Nitsche immersed boundary method.
 * ``enable particles motion`` must be set to ``true`` if the immersed boundary moves. If the boundary is static, for example a rotating cylinder, the shape does not have to move within the fluid and this option can be set to ``false``. This saves significant computational time.
 * ``particles sub iterations`` splits the particle time-stepping into ``n`` sub time steps. This enables the particles to move less per iteration and makes the ``sort_particles_into_cells_and_subdomain()`` routine, which is used to locate the cells in which the particles reside, significantly faster. 
 * ``stop if particles lost`` enables stopping the simulation if Nitsche particles have been lost. If ``false``, the simulation will continue. To prevent particle loss, try increasing the ``particles sub iterations``.
+* ``enable particles motion`` makes the particles move physically in the fluid domain.
+
+.. note::
+  The particles motion should remain ``false`` (the default parameter) if steady-state solutions are to be obtain.
+
 * ``subsection test`` prints the positions of the particles in the terminal at the end of the simulation. This is mostly used for testing purposes.
