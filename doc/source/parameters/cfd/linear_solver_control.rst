@@ -110,16 +110,12 @@ In these subsections, the control options of linear solvers are specified. These
 
 
 * The ``minimum residual`` parameter sets the value that the tolerance of the iterative solver should reach to proceed to the next iteration.
-.. tip::
-	The ``minimum residual`` parameter is directly linked to the numerical convergence of the simulation, but also to the computational cost. 
-
-	A good rule of thumb is to set the linear solver ``minimum residual`` to one or two order of magnitude below the `Non-linear solver <https://lethe-cfd.github.io/lethe/parameters/cfd/non-linear_solver_control.html>`_ ``tolerance`` parameter (linear ``minimum residual`` :math:`=` non-linear ``tolerance`` :math:`/10` or :math:`/100`).
-
-	Typical values of the ``minimum residual`` for simple simulations can be quite low, for instance ``set minimum residual = 1e-13``. However, such a tolerance can be impossible to attain for more complex simulations, and so the ``minimum residual`` can be increased, for instance ``set minimum residual = 1e-5``.
 
 * The ``relative residual`` weights the :math:`\mathcal{L}_2`-norm of the system RHS. This product is then compared to the ``minimum residual`` to assess for convergence of the iteration.
 .. tip::
-	The default value of ``1e-3`` is a good start value. To lower the computational cost for more complex simulations, it can be lowered to ``set relative residual = 1e-4``.
+	The ``minimum residual`` parameter is directly linked to the numerical convergence of the simulation, but also to the computational cost. 
+
+	A good rule of thumb is to set the linear solver ``minimum residual`` at least :math:`10` times (preferably :math:`100` times) smaller than the `Non-linear solver <https://lethe-cfd.github.io/lethe/parameters/cfd/non-linear_solver_control.html>`_ ``tolerance`` parameter, and keep the relative residual reasonable, for instance ``set relative residual = 1e-3``. To lower the computational cost for more complex simulations, it can be lowered to ``set relative residual = 1e-4``.
 
 * The ``max iters`` puts a hard stop on the number of solver iterations (number of steps printed when ``set verbosity = verbose``).
 .. tip::
@@ -144,7 +140,7 @@ In these subsections, the control options of linear solvers are specified. These
 .. tip::
 	The default values for these parameters are good starting values. 
 
-	For each iteration of the linear solver (at the beginning of which the tolerance of the iterative solver is computed, as printed if ``set verbosity = verbose``), the chosen solver starts by using the ``preconditioner fill`` given in the parameter file. If for any reason the linear solver would have crashed, it will restart with a fill level increased by 1. This restart process will happen up to a maximum of 20 times, after which it will let the solver crash. 
+	For each iteration of the linear solver (at the beginning of which the tolerance of the iterative solver is computed, as printed if ``set verbosity = verbose``), the chosen solver starts by using the ``preconditioner fill`` given in the parameter file. If for any reason the linear solver would have crashed, it will restart with a fill level increased by 1. This restart process will happen up to a maximum of 3 times, after which it will let the solver crash. 
 
 	Hence, for complex simulations, if you get at almost every linear iteration the message:
 
