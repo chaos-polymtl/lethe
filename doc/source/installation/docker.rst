@@ -1,5 +1,13 @@
+Docker
+======
+
+.. note::
+
+    You will need to install `Docker <https://www.docker.com/get-started>`_ and have 5 GB of free disk space.
+
+#################################
 Using a deal.II  Docker container
-=================================
+#################################
 
 The deal.II library is a mature project containing `O(1,000,000)` lines of C++ code, itself depending on other similar libraries (e.g. Trilinos). Compiling deal.II with its exact dependencies can be a daunting task even for moderate C++ programmers - one with many knobs and dials, normally taking 4-6 hours.
 
@@ -19,7 +27,7 @@ Sometimes it's easier to effectively set up a completely new OS than compile mil
 0. TL;DR
 --------
 
-Get `Docker <https://docs.docker.com/get-docker/>`_, then in some directory run:
+In some directory run:
 
 .. code-block:: bash
 
@@ -161,3 +169,57 @@ Final Notes
 You can now download, run and manage Docker containers pre-configured with deal.II; it is a powerful tool that you can use for any other projects as well, without polluting your main programming environment or spending hours figuring out the specific libraries needed (`dependency hell <https://en.wikipedia.org/wiki/Dependency_hell>`_ is real).
 
 You can now clone ``lethe``, compile it, and run large-scale, efficient multi-physics simulations!
+
+##############################################################
+No compilation required: Using the Provided Lethe Docker Image
+##############################################################
+
+If you don't want to build Lethe and its dependencies, you can use the provided `Docker image <https://github.com/lethe-cfd/lethe/pkgs/container/lethe>`_.
+
+For example, to launch the 2D Lid-Driven Cavity Flow simulation, run the following lines inside the root Lethe folder:
+
+.. code-block:: shell
+
+    docker run --rm \
+        -v $(pwd):/home/dealii \
+        ghcr.io/lethe-cfd/lethe:master \
+        gls_navier_stokes_2d examples/incompressible_flow/2d_lid_driven_cavity/cavity.prm
+
+Usage
+-----
+
+.. code-block:: text
+
+    ██╗     ███████╗████████╗██╗  ██╗███████╗
+    ██║     ██╔════╝╚══██╔══╝██║  ██║██╔════╝
+    ██║     █████╗     ██║   ███████║█████╗
+    ██║     ██╔══╝     ██║   ██╔══██║██╔══╝
+    ███████╗███████╗   ██║   ██║  ██║███████╗
+    ╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝
+
+
+    Usage: <program name> [<program arg>, ...]
+
+    Available programs:
+    ===================
+
+    ▸ cfd_dem_coupling_2d
+    ▸ cfd_dem_coupling_3d
+    ▸ dem_2d
+    ▸ dem_3d
+    ▸ dem_parameter_template
+    ▸ gd_navier_stokes_2d
+    ▸ gd_navier_stokes_3d
+    ▸ gls_navier_stokes_2d
+    ▸ gls_navier_stokes_3d
+    ▸ gls_nitsche_navier_stokes_22
+    ▸ gls_nitsche_navier_stokes_23
+    ▸ gls_nitsche_navier_stokes_33
+    ▸ gls_sharp_navier_stokes_2d
+    ▸ gls_sharp_navier_stokes_3d
+    ▸ gls_vans_2d
+    ▸ gls_vans_3d
+    ▸ initial_conditions
+    ▸ navier_stokes_parameter_template
+    ▸ rpt_3d
+    ▸ rpt_cell_reconstruction_3d

@@ -1,7 +1,0 @@
-3D flow in a fluidized bed
-
-The packing_in_square_duct.prm parameter file is run with the application dem_3d and it simulates the non-uniform packing of particles in a rectangular bed. This will become the bed through which we will simulate a flow of gas.
-The fluidized_bed.prm parameter file is run with the application cfd_dem_3d and it simulates the flow of the gas through the bed. When the fluid inlet velocity at the bottom of the bed is set higher than the minimum fluidization velocity, the pareticles will start to fluidize.
-
-
-

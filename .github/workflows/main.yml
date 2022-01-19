@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - 'doc/**'
   pull_request_target:
+    paths-ignore:
+      - 'doc/**'
 
 env:
   COMPILE_JOBS: 2

@@ -1,4 +1,0 @@
-Taylor-Couette flow
-This example can be solved using the gls_navier_stokes_2d solver and gd_navier_stokes_2d solver
-A description of the test case can be found at the following link :
-https://github.com/lethe-cfd/lethe/wiki/Example-2-:-Taylor%E2%80%90Couette-flow
