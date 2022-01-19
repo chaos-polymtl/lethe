@@ -7,7 +7,7 @@ subsection simulation control
   set method                  = bdf1
   set time step               = 0.0001
   set time end                = 10
-  set output name             = vessels
+  set output name             = tracer_through_cad_junction
   set output path             = ./output/
   set output frequency        = 1000
 end
