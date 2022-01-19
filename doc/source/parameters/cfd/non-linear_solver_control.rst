@@ -5,12 +5,20 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 .. code-block:: text
 
 	subsection non-linear solver
-	  # Non-linear solver that will be used. Choices is newton.
+	  # Non-linear solver that will be used
 	  set solver             = newton
 
-	  # State whether from the non-linear solver should be printed Choices are
-	  # <quiet|verbose>.
+	  # State whether information from the non-linear solver should be printed
 	  set verbosity          = verbose
+
+	  # For the inexact_newton solver, sets the tolerance to re-assemble the Jacobian matrix
+	  set matrix tolerance	 = 0.1
+
+	  # For the inexact_newton solver, carry jacobian matrix over to the new non-linear problem
+	  set reuse matrix	 = false
+
+	  # For the kinsol_newton solver, 
+	  set kinsol_strategy 	 = line_search
 
 	  # Newton solver tolerance
 	  set tolerance          = 1e-6
@@ -20,13 +28,27 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 
 	  # Maximum number of Newton Iterations
 	  set max iterations     = 10
+
+	  # Number of digits displayed when showing residuals
+	  set residual precision = 4
+
+	  # State if the RHS must be calulated at the beginning of every newton iteration
+	  set force rhs calculation = false
 	end
 
-* The ``solver`` parameter enables to choose the nonlinear solver used. Currently, Lethe supports two non-linear solver. The ``newton`` solver is a Newton-Raphson solver which recalculates the jacobian matrix at every iteration (see the Theory Documentation). The ``inexact_newton`` solver is a Newton-Raphson solver where the Jacobian matrix is reused between iterations. If the residual at iteration n+1 (:math:`R_{n+1}`) newton iteration is  lower than ``matrix_tolerance`` times the residual at iteration n, the Newton iteration will keep using the same jacobian matrix. Setting ``reuse matrix= true`` enables the usage of the same jacobian matrix for the following non-linear problem. This approach can be worthwhile in transient simulations with a small time-step. The goal is to seek a compromise between the cost of assembling the matrix and the preconditioner versus the cost of solving the linear system of equations.
-* The ``verbosity`` options enables to display the residual at each non-linear iteration, to monitor how the non-linear iterations are progressing.
+* The ``solver`` parameter enables to choose the nonlinear solver used. Currently, Lethe supports three non-linear solvers:
+	* ``newton`` solver (default parameter value), a Newton-Raphson solver which recalculates the Jacobian matrix at every iteration (see the Theory Documentation).
+	* ``inexact_newton`` solver, a Newton-Raphson solver where the Jacobian matrix is reused between iterations. 
+		*  ``matrix tolerance`` parameter sets the tolerance to re-assemble the Jacobian matrix. If the residual after a newton step :math:`<` ``matrix tolerance`` :math:`\times` the previous residual, that iteration is considered sufficient and the Newton iteration will keep using the same jacobian matrix. 
+		* Setting ``reuse matrix = true`` enables the usage of the same Jacobian matrix for the following non-linear problem. 
+	.. tip::
+		The ``inexact_newton`` solver, along with ``reuse matrix = true`` can be worthwhile in transient simulations with a small time-step. The goal is to seek a compromise between the cost of assembling the matrix and the preconditioner versus the cost of solving the linear system of equations.
+	* ``kinsol_newton`` solver, that uses the Newton-Raphson solver through deal.II, as implemented in the `Sundials library <https://computing.llnl.gov/projects/sundials/kinsol>`_. This solver has an internal algorithm that decides whether to reassemble the Jacobian matrix or not. This non-linear solver is still being tested.
+		* ``kinsol strategy`` parameter enables to choose the strategy that will be used by the kinsol newton solver, and can be ``line_search`` (default value), ``normal_newton``, ``fixed_point`` or ``picard``.
+* The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the non-linear iterations.
 .. note::
 	The residual should decrease rapidly between Newton iterations.
-	Exemple of a ``set verbosity = verbose`` output:
+	Example of a ``set verbosity = verbose`` output:
 	
 	.. code-block:: text
 
@@ -46,3 +68,9 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 
 	For simple simulations, the tolerance can be set quite low, for instance ``set tolerance = 1e-12``. However, such a tolerance can be impossible to attain for more complex simulations : the step tolerance of the non-linear solver can be increased, for instance ``set tolerance = 1e-4``
 * The ``max iterations`` parameter sets a hard limit to the number of Newton iterations, even if the ``tolerance`` is not reached.
+
+.. warning::
+	Be careful to always set an absolute tolerance for the linear solver that is below the tolerance of the non-linear solver. Otherwise, you might find that it is impossible to converge because the linear system of equation is solved with insufficient accuracy.
+* The ``residual precision`` parameter enables to change the number of digits displayed when showing residuals (with ``set verbosity = verbose``).
+* The ``force_rhs_calculation``: Force RHS recalculation at the beginning of every non-linear steps, This is required if there is a fixed point component to the non-linear solver that is changed at the beginning of every newton iteration. This is notably the case of the sharp edge method. The default value of this parameter is false.
+
