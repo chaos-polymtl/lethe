@@ -174,7 +174,7 @@ In this section, we specify the boundary conditions taking into account the IDs 
 * ``bc2`` is applied at the top and bottom walls. This condition allows the simulation to be performed in a finite sized domain. In real life, the cylinder would be placed in a relatively infinite domain. Using ``slip`` condition, we assume that the fluid cannot go out in the normal direction, but that it can still flow from left to right without friction. Thus, the walls have no effect on the flow of the fluid.
 
 .. note::
-    An implicit fourth boundary condition is implemented on the right wall which represents the outlet of the flow. We do not specify anything explicitly, because this corresponds to a natural boundary condition where the pressure becomes close to 0.
+    An implicit fourth boundary condition is implemented on the right wall which represents the outlet of the flow. We do not specify anything explicitly, because this corresponds to a natural boundary condition where the pressure :math:`p` becomes close to 0 due to the imposed :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0`. For more details, refer to `Boundary Conditions <https://lethe-cfd.github.io/lethe/parameters/cfd/boundary_conditions_cfd.html>`_ section.
 
 Forces
 ~~~~~~

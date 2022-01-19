@@ -8,10 +8,10 @@ Features
 - Solver: ``gls_navier_stokes_2d`` (with Q1-Q1) 
 - Transient problem
 - Displays how to import and easily adapt a gmsh file
+- Displays how to run case in parallel with mpirun
 
 Location of the examples
 -------------------------
-
 - Parameter file: ``/examples/incompressible_flow/2d_ahmed_body/ahmed.prm``
 - Geometry file: ``/examples/incompressible_flow/2d_ahmed_body/Ahmed_Body_20_2D.geo``
 - Mesh file: ``/examples/incompressible_flow/2d_ahmed_body/Ahmed_Body_20_2D.geo``
@@ -69,11 +69,24 @@ Geometry parameters can be adapted in the "Parameters" section of the ``.geo`` f
     xmax = 2500/unit;
     ymax = 1000/unit;
 
-The initial mesh is built with `Gmsh <https://gmsh.info/#Download>`_. It is defined as transfinite at the body boundary layer and between the body and the road, and free for the rest of the domain. The mesh is dynamically refined throughout the simulation. This will be explained later in this example.
+The initial `Mesh <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_ is built with `Gmsh <https://gmsh.info/#Download>`_. It is defined as transfinite at the body boundary layer and between the body and the road, and free for the rest of the domain. The mesh is dynamically refined throughout the simulation. This will be explained later in this example.
+
+The input mesh ``Ahmed_Body_20_2D.msh`` is in the same folder as the ``.prm`` file. The mesh subsection is set to use this file.
+
+.. code-block:: text
+
+    subsection mesh
+        set type                 = gmsh
+        set file name            = Ahmed_Body_20_2D.msh
+    end
+
+.. note::
+
+    For further information about `Mesh <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_ generation, we refer to the reader to the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ on the deal.ii documentation and the `Gmsh <https://gmsh.info/#Download>`_ website.
 
 Initial an boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The initial condition and boundary conditions are defined as in `Example 3 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
+The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://lethe-cfd.github.io/lethe/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `Example 3 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
 .. code-block:: text
 
@@ -108,7 +121,7 @@ The initial condition and boundary conditions are defined as in `Example 3 <http
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~
-Time integration is defined by a 1st order backward differentiation (``bdf1``), for a 4 seconds simulation (``time end``) with a 0.01 second ``time step``. The ``output path`` is defined to save obtained results in a sub-directory, as stated in Simulation Control:
+Time integration is defined by a 1st order backward differentiation (``bdf1``), for a 4 seconds simulation (``time end``) with a 0.01 second ``time step``. The ``output path`` is defined to save obtained results in a sub-directory, as stated in `Simulation Control <https://lethe-cfd.github.io/lethe/parameters/cfd/simulation_control.html>`_:
 
 .. code-block:: text
 
@@ -125,7 +138,7 @@ Time integration is defined by a 1st order backward differentiation (``bdf1``), 
 .. Warning::
    To successfully launch the simualtion, the ``output path`` where the results are saved (in this example, the folder ``Re720``) must already exist. Otherwise, the simulation will hang because it will be unable to save the results.
 
-Ahmed body are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied  by changing the kinematic viscosity :math:`nu`:
+Ahmed body are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied  by changing the ``kinematic viscosity``:
 
 .. code-block:: text 
 
@@ -133,15 +146,6 @@ Ahmed body are typically studied considering a 60 m/s flow of air. Here, the flo
        subsection fluid 0
            set kinematic viscosity         = 4e-4
         end
-    end
-
-The input mesh ``Ahmed_Body_20_2D.msh`` is in the same folder as the ``.prm`` file. The mesh subsection is set to use this file.
-
-.. code-block:: text
-
-    subsection mesh
-        set type                 = gmsh
-        set file name            = Ahmed_Body_20_2D.msh
     end
 
 The simulation is launched in the same folder as the ``.prm`` and ``.msh`` file, using the ``gls_navier_stokes_2d`` solver. To decrease simulation time, it is advised to run on multiple cpu, using ``mpirun``:
