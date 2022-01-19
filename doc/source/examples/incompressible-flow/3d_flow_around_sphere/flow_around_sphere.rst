@@ -2,11 +2,11 @@
 3D Flow Around a Sphere
 ==================================
 
-This is the XX Lethe example. In this example, a flow is passing around a sphere. 
+In this example, a flow is passing around a sphere. 
 
 Features
 ----------------------------------
-- Solvers: ``gls_navier_stokes_2d`` (with Q1-Q1) or  ``gd_navier_stokes_2d`` (with Q2-Q1)
+- Solvers: ``gls_navier_stokes_3d`` (with Q1-Q1) or  ``gd_navier_stokes_3d`` (with Q2-Q1)
 - Steady-state problem
 - Displays the importance of adaptative mesh refinement
 - Displays the effect of the Reynolds number on the convergence
@@ -16,109 +16,113 @@ Location of the examples
 ------------------------
 - For :math:`Re=0.1` : ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_0.1.prm``
 - For :math:`Re=150` : ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_150.prm``
-- Using adaptative mesh refinement : ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_adapt.prm``
+- For :math:`Re=150` Using adaptative mesh refinement : ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_adapt.prm``
 
 
 Description of the case
 -----------------------
 
-The lid-driven cavity is a classical fluid dynamics problem . It consists in the flow in an enclosed cavity, where one of the walls (in this example, the top wall) is put in motion at a constant tangential velocity. This case is often used to benchmark the capacity of CFD software because of the simplicity of its geometry and the availability of multiple reference results over a large range of Reynolds numbers. In this example, we investigate this problem in 2D, but simulating this case in 3D would require only a few changes. The geometry and boundary conditions are illustrated in the following figure:
+The following schematic describes the simulation and its boundary condition indices.
 
-.. image:: images/geo.png
+.. image:: images/example_4_setup.png
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry
 
-Only the upper wall boundary moves in the x direction with a constant velocity (:math:`u = 1` m/s) while the other boundaries are static. We will discuss later in this example the meaning of the ID of the boundary conditions used in this figure.
+Note that the sphere surface has a boundary index of `0`, the inlet `1` and the walls parallel to the flow direction have a boundary index of `2`. 
 
-We first investigate this case at a Reynolds number of 400 for which a steady-state solution can be easily obtained. Later, we will increase this Reynolds number to 7500 and leverage some of the advanced functionalities of Lethe to reach a steady-state solution. 
+As this examples allows for two different Reynolds number as well as an adaptative mesh refinement variation, the Parameter file section will specify the differences when applicable. 
 
 
 Parameter file
 --------------
 
-Lethe simulations are controlled by *parameter files* which possess the extension ``.prm``. This is the default text format of the ParameterHandler class of the deal.ii library from which Lethe derives. For more information on this class, we refer to the `deal.II documentation <https://www.dealii.org/current/doxygen/deal.II/classParameterHandler.html>`_. 
-
-Parameter files are made of subsections which describe a portion of the simulation (e.g. mesh generation, physical properties, simulation control). In parameter files, lines starting with ``#`` are comments. Parameters are set using the following syntax:
-
-.. code-block:: text
-
-    set parameter name = value
-
-The syntax is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. For a full list of the parameters within Lethe, we refer to the parameter page.
-
-To set-up the lid-driven cavity case, we first need to establish the mesh used for the simulation.
-
+We first extablish the parameters.
 
 Mesh
 ~~~~~
 
-The ``mesh`` subsection specifies the computational grid:
+The structured mesh is built using `gmsh <https://gmsh.info/#Download>`_. Geometry parameters can be adapted in the "Variables" section of the .geo file, as shown below. 
 
 .. code-block:: text
 
-    subsection mesh
-        set type                 = dealii
-        set grid type            = hyper_cube
-        set grid arguments       = 0 : 1 : true
-        set initial refinement   = 6
-    end
+  // Variables
+  gr=4; 			// Global refinement
+  around=10;		// Refinement around the sphere
+  trail=8;		// Refinement of trail of sphere
+  near_sphere=1.20;	// Progression of cell refinement to sphere surface
+  downstream=16;	        // Length of domain downstream of sphere
+  upstream=-6;		// Length of domain upstream of sphere (must be negative)
+  cross_section=10;	// Half the cross-sectional width/height
+  radius=0.5;		// Radius of sphere
 
-The ``type`` specifies the mesh format used. At the moment, Lethe supports two mesh formats: ``dealii`` and ``gmsh``. ``dealii`` meshes are in-situ generated meshes for simple geometries. The type of grid generated is specified by the ``grid type`` parameters and this grid is parametrized by it's ``grid arguments``. We refer to the documentation of the deal.ii `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ for a detailed explanation of the available grids. 
+.. note::
 
-Since the lid-driven cavity problem domain is a square, we use the *hyper_cube* ``grid_type``. The arguments of this grid type are the position of the bottom left corner, the position of the top right corner and the option to colorize the boundaries in order to give each of them a unique ID. The IDs will be used to set the boundary conditions on specific parts of the boundary of the domain. The ID given to each face was given in the graphical description of the case. If ``colorize`` option were set to false, all boundaries would have been given the ID ``0``.
+  The domain is dimensioned so that the wake has sufficient distance to develop downstream and there is a sufficient cross-sectional area to negate any effect from the wall boundary conditions.
 
-It is a bit surprising that the position of the bottom left and the top right corner are specified by a single value. Since the geometry is a square, the position of the corner is specified using a single number, assuming that this identifies both the x and y value associated with that point. Other grid generators, such as the ``hyper_rectangle``, allow for more flexibility.
+In the parameter file, the mesh can be uploaded this way:
 
-The last parameter specifies the ``initial refinement`` of the grid. Most deal.ii grid generators contain a minimal number of cells. For example, the *hyper_cube* mesh is made of a single cell. Indicating an ``initial refinement=6`` implies that the initial mesh is refined 6 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of :math:`2^{(2\cdot6)}=4096` cells.
+.. code-block:: text
+  subsection mesh
+    set type         = gmsh
+    set file name    = sphere.msh
+  end
 
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The ``boundary conditions`` subsection establishes the constraints on different parts of the domain:
+The ``boundary conditions`` subsection establishes the constraints on different parts of the domain. They are the same for all three parameter sets.
 
 .. code-block:: text
 
-    subsection boundary conditions
-    set number                  = 4
-        subsection bc 0
-            set id                = 0
-            set type              = noslip
+  subsection boundary conditions
+    set number                  = 3
+    subsection bc 0
+        set type              = noslip
+    end
+    subsection bc 1
+        set type              = function
+        subsection u
+            set Function expression = 1
         end
-        subsection bc 1
-            set id                = 1
-            set type              = noslip
+        subsection v
+            set Function expression = 0
         end
-        subsection bc 2
-            set id                = 2
-            set type              = noslip
-        end
-        subsection bc 3
-            set id                = 3
-            set type              = function
-            subsection u
-                set Function expression = 1
-            end
-            subsection v
-                set Function expression = 0
-            end
+        subsection w
+            set Function expression = 0
         end
     end
+    subsection bc 2
+        set type              = slip
+    end
+  end
 
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The left (``0``), right (``1``) and bottom (``2``) walls are static and, consequently, a ``noslip`` boundary condition can be used. This boundary condition imposes :math:`\mathbf{u} = [0,0]^T`. For the top wall, we use the ``function`` boundary type. This type of boundary condition allows us to define the value of the velocity components using ``Function expression``. We set :math:`u=1` and :math:`v=0`. Note that the ``Function expression`` supports writing complex mathematical expressions which may depend on the spatial coordinates (:math:`x,y,z`) and on time.
+There are three boundary conditions, as shown in the figure above. A ``noslip`` condition is applied on the surface of the sphere, where the velocity should be 0. The inlet velocity is set to `u=1m/s`, and the walls have a ``slip`` boundary condition.
 
 
 Physical properties
 ~~~~~~~~~~~~~~~~~~~
 
-For the base case, we wish to simulate the lid-driven cavity at a Reynolds number of 400. Since the characteristic dimension of the cavity is :math:`L=1` and the velocity of the top boundary is :math:`u=1`, the Reynolds number is :math:`Re=\frac{1}{\nu}` where :math:`\nu` is the kinematic viscosity. The kinematic viscosity is set by the ``physical properties`` subsection:
+This is where the parameters differ from the first and the two last examples.
+
+* In ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_0.1.prm`` (:math:`Re=0.1`)
 
 .. code-block:: text
 
   subsection physical properties
     subsection fluid 0
-      set kinematic viscosity            = 0.0025
+      set kinematic viscosity = 10
+    end
+  end
+
+* In ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_150.prm`` and ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_adapt.prm`` (:math:`Re=150`)
+
+.. code-block:: text
+
+  subsection physical properties
+    subsection fluid 0
+      set kinematic viscosity = 0.006666667
     end
   end
 
@@ -128,7 +132,7 @@ By default, simulations only contain a single fluid which is labeled ``0``.
 FEM interpolation
 ~~~~~~~~~~~~~~~~~
 
-Lethe supports the use of arbitrary interpolation order. The default solver for this case is ``gls_navier_stokes_2d`` which uses a stabilized method and supports equal order interpolation. 
+The default FEM parameters for this example use first order polynomials. They can be changed to Q2-Q1 elements.
 
 We specify the interpolation order for both pressure and velocity using the ``FEM`` subsection:
 
@@ -140,43 +144,16 @@ We specify the interpolation order for both pressure and velocity using the ``FE
     end
 
 .. warning:: 
-    An alternative would be to use the ``gd_navier_stokes_2d`` solver; for `LBB <https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition>`_ stable elements must be used (e.g. Qn-Q(n-1)). Only the stabilized solver supports the use of equal order elements. 
 
-Non-linear solver parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    If you choose to use the ``gd_navier_stokes_3d`` solver; only Q2-Q1 elements are supported. 
 
-Lethe is an implicit CFD solver. Consequently, each time-step requires the solution of a non-linear system of equations. By default, Lethe uses a Newton solver for which a ``tolerance`` must be specified:
-
-.. code-block:: text
-
-  subsection non-linear solver
-    set tolerance               = 1e-8
-    set verbosity               = verbose
-  end
-
-The ``verbosity`` option specifies if details about the non-linear solver steps (residual value and iteration number) will be printed out to the terminal. By setting it to ``verbose``, this information is printed out, whereas ``quiet`` would mute all outputs of the non-linear solver. We recommend to always set ``verbosity=verbose`` in order to monitor possible non-convergence of the solver.
-
-Linear solver parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Each non-linear solver step requires the solution of a linear system of equations. Lethe has multiple options to parametrize its linear solvers, but here, we only enable its verbosity to monitor the number of iteration per time step and use the default parameters for the rest. 
-
-.. note:: 
-    A good thing to remember is that, generally, linear solver parameters control the robustness of the simulation.
-
-
-
-.. code-block:: text
-
-  subsection linear solver
-    set method                                 = amg
-    set verbosity                              = verbose
-  end
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The last subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . In this example, it is only used to specify the name of the output files:
+The parameters also slightly from one problem to another differ in this section since as the difference examples experience different flow regimes.
+
+In fact, for the :math:`Re=0.1` 
 
 .. code-block:: text
 
