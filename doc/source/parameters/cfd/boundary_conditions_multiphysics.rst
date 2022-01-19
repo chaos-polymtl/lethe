@@ -17,8 +17,8 @@ Heat Transfer
         end
         subsection bc 1
             set type		    = convection
-            set h 		    = 10
-            set Tinf	   	    = -13
+            set h 		    = 0
+            set Tinf	   	    = 0
         end
     end
 
@@ -44,7 +44,7 @@ Tracer
         subsection bc 0
                 set type              = dirichlet
                 subsection dirichlet
-                    set Function expression = x
+                    set Function expression = 0
                 end
         end
     end
