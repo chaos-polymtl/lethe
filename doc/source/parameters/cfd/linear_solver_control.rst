@@ -142,7 +142,7 @@ In these subsections, the control options of linear solvers are specified. These
 * ``ilu preconditioner fill``, ``ilu preconditioner absolute tolerance`` and ``ilu preconditioner relative tolerance`` control the ILU preconditioner for ``method`` using ILU preconditioner (``gmres`` and ``bicgstab``). Conversely, ``amg preconditioner ilu fill``, ``amg preconditioner ilu absolute tolerance`` and ``amg preconditioner ilu relative tolerance`` control the ILU coarsener and smoother for the AMG preconditioner.
  
 .. tip::
-	The default values for these parameters are good start values. 
+	The default values for these parameters are good starting values. 
 
 	For each iteration of the linear solver (at the beginning of which the tolerance of the iterative solver is computed, as printed if ``set verbosity = verbose``), the chosen solver starts by using the ``preconditioner fill`` given in the parameter file. If for any reason the linear solver would have crashed, it will restart with a fill level increased by 1. This restart process will happen up to a maximum of 20 times, after which it will let the solver crash. 
 
