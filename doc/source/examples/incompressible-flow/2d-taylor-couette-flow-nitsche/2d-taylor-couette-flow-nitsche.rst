@@ -184,7 +184,7 @@ Uniform mesh refinement
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. 
-By setting ``number mesh adapt=4`` we configure to simulation to solve the fluid dynamics on the mesh and on four(4) subsequently refined mesh. 
+By setting ``number mesh adapt=4`` we configure the simulation to solve the fluid dynamics on the mesh and on four(4) subsequently refined mesh. 
 This approach is very interesting, because the solution on the coarse mesh also serves as the initial guest for the solution on the finer mesh. 
 
 .. code-block:: text
