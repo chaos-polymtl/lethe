@@ -18,6 +18,7 @@ General, CFD and Multiphysics
    force_and_torque
    post_processing
    timer
+   non-linear_solver_control
    multiphysics
    nitsche
    restart
