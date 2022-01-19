@@ -9,7 +9,7 @@ Features
 - Solvers: ``cfd_dem_coupling_3d``
 - Three-dimensional problem
 - Displays the selection of models and physical properties.
-- Simulates aa solid-gas fluidized bed.
+- Simulates a solid-gas fluidized bed.
 
 
 Location of the examples
