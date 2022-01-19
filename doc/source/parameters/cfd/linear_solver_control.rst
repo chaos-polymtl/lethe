@@ -129,7 +129,7 @@ In these subsections, the control options of linear solvers are specified. These
 	
 		GMRES solver failed! Trying with a higher preconditioner fill level.
 
-	meaning that the code increases the preconditioner fill (see definition below) in order to converge within the number of solver iterations. If you encounter this, consider increasing the ``max iters``.
+	meaning that the code increases the preconditioner fill (see definition below) in order to converge within the number of solver iterations. If you encounter this, consider increasing the ``max iters`` or adjusting other parameters, for example increasing ``max krylov vectors``.
 
 * ``force linear solver continuation`` enables, when set to ``true``, to force the linear solver to continue, even if the ``minimum residual`` is not reached. Only available for ``GMRES`` solver within the ``gls_navier_stokes`` application.
 .. warning::
