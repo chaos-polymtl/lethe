@@ -25,7 +25,8 @@ For heat transfer boundary conditions, the defaults parameters are:
     end
 
 * ``number``: This is the number of boundary conditions of the problem. 
-
+.. warning::
+    The number of boundary conditions must be specified explicitly as the ParameterHandler is not able to deduce the number of boundary conditions from the number of ``bc`` subsections. This is often a source of error.
 * ``type``: This is the type of boundary condition been imposed. At the moment, choices are
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary 
     * ``convection`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` following Newton's law of cooling (and heating)
@@ -56,5 +57,5 @@ For tracer boundary conditions, the defaults parameters are:
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
-* ``type`` : This is the type of boundary condition been imposed. At the moment, only dirichlet boundary conditions can be imposed for tracer.
+* ``type``: This is the type of boundary condition been imposed. At the moment, only dirichlet boundary conditions can be imposed for tracer.
 
