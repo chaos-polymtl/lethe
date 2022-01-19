@@ -25,7 +25,7 @@ The default parameters are:
 
 .. note::
 
-  When there is a periodic boundary, the wall boundary should be at the inlet only and if the chosen wall boundary is at the inlet, flow rate must be negative and vice versa.
+  If you are simulating a problem with periodic boundary conditions at inlet and outlet walls, it is important to control the volumetric flow rate specifying the boundary id that corresponds to the inlet only (where the flow would have a negative value).
 
 * The ``boundary id`` parameter is the wall boundary where the flow rate intended is controlled (inlet or outlet).
 
