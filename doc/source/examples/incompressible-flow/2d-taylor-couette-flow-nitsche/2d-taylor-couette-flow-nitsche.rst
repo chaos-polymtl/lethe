@@ -28,7 +28,7 @@ We simulate the same case as the regular Taylor-Couette flow where the inner cyl
 while the outer cylinder is fixed. 
 The following figure shows the geometry of this problem and the corresponding boundary conditions. 
 
-.. image:: images/taylor-couette.png
+.. image:: images/taylor_couette.png
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry
