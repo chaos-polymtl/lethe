@@ -2,9 +2,8 @@
 2D Taylor-Couette Flow Using Nitsche Immersed Boundaries
 ========================================================
 
-This is the XXe Lethe example. It revisits the same taylor-couette flow problem in `Example 2 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`, 
-now using immersed boundaries to represent the inner cylinder. This example demonstrates some of the capabilities of Lethe to simulate the flow around complex geometries 
- meshing them explicitly with a conformal mesh, but instead by using the Nitsche immersed boundary method available within Lethe.
+This is the XXe Lethe example. It revisits the same taylor-couette flow problem in `Example 2 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_, 
+now using immersed boundaries to represent the inner cylinder. This example demonstrates some of the capabilities of Lethe to simulate the flow around complex geometries meshing them explicitly with a conformal mesh, but instead by using the Nitsche immersed boundary method available within Lethe.
 
 Features
 ----------------------------------
@@ -53,7 +52,7 @@ The ``mesh`` subsection specifies the computational grid:
     set initial refinement = 3
   end
 
-The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . This GridGenerator generates the mesh of the interstice between two cocentric cylinder. The arguments of this grid type are the position of center of the cylinders (``0, 0``), the inner cylinder radius (`0.25`), the outer cylinder radius (`1`) and the number of subdivision in the azimuthal direction (`4`). All arguments are separated by ``:``. We set ``colorize=true`` and this sets the boundary ID of the inner cylinder to ``0`` and of the outer cylinder to ``1``
+The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_. This GridGenerator generates the mesh of the interstice between two concentric cylinders. The arguments of this grid type are the position of center of the cylinders (``0, 0``), the inner cylinder radius (`0.25`), the outer cylinder radius (`1`) and the number of subdivisions in the azimuthal direction (`4`). All arguments are separated by ``:``. We set ``colorize=true`` and this sets the boundary ID of the inner cylinder to ``0`` and of the outer cylinder to ``1``
 
 The last parameter specifies the ``initial refinement`` of the grid. Most deal.II grid generators contain a minimal number of cells. The *hyper_shell* mesh is made of four cells. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of 256 cells.
 
@@ -62,29 +61,32 @@ The last parameter specifies the ``initial refinement`` of the grid. Most deal.I
     :align: center
     :name: fluid
 
+Nitsche mesh
+~~~~~~~~~~~~
+
 The ``Nitsche`` subsection specifies the solid geometry embedded in the fluid domain. The Nitsche Immersed Boundary (IB) uses particles located at the 
-Gauss quadrature points of the immersed mesh to represent the immersed body. For a thorough explanation of this, we refer the reader to `step-70 <https://www.dealii.org/developer/doxygen/deal.II/step_70>` of deal.II.
+Gauss quadrature points of the immersed mesh to represent the immersed body. For a thorough explanation of this, we refer the reader to `step-70 <https://www.dealii.org/developer/doxygen/deal.II/step_70>`_ of deal.II.
 
 .. code-block:: text
 
   subsection nitsche
-  set beta = 10
-  set number of solids = 1
-  subsection nitsche solid 0
-	  subsection mesh
-		  set type = dealii
-		  set grid type = hyper_ball
-		  set grid arguments = 0, 0 : 0.25 : true
-		  set initial refinement = 6
-	  end
-	  subsection solid velocity
-		  set Function expression = -y ; x
-	  end
-    set enable particles motion		= false
+    set beta = 10
+    set number of solids = 1
+    subsection nitsche solid 0
+      subsection mesh
+        set type = dealii
+        set grid type = hyper_ball
+        set grid arguments = 0, 0 : 0.25 : true
+        set initial refinement = 6
+      end
+      subsection solid velocity
+        set Function expression = -y ; x
+      end
+      set enable particles motion		= false
+    end
+    set calculate torques on solid = true
+    set verbosity = verbose
   end
-  set calculate torques on solid = true
-  set verbosity = verbose
-end
 
 The ``beta`` coefficient is a parameter used to enforce the Nitsche IB. It's value is generally between 1 and 100, according to the size of the mesh. 
 A value of 10 is reasonable. Then, we specify the ``number of solids`` geometries that with be represented with Nitsche IB. 
@@ -170,18 +172,19 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 
 
 By setting ``calculate torques=true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. 
-Setting ``verbose=verbose`` will print out the value of the torque calculated for each mesh. 
+Setting ``verbosity=verbose`` will print out the value of the torque calculated for each mesh. 
 
 Simulation control and mesh refinement
 --------------------------------------
 
 As stated above, this problem can either be solved using a uniform mesh refinement or using an adaptative mesh refinement
 
+
 Uniform mesh refinement
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. 
-By setting ``number mesh adapt=4`` we configure to simulation to carry out to solve the fluid dynamics on the mesh and on four(4) subsequently refined mesh. 
+By setting ``number mesh adapt=4`` we configure to simulation to solve the fluid dynamics on the mesh and on four(4) subsequently refined mesh. 
 This approach is very interesting, because the solution on the coarse mesh also serves as the initial guest for the solution on the finer mesh. 
 
 .. code-block:: text
@@ -201,6 +204,7 @@ We then set the mesh adaptation ``type`` to ``uniform``.
   subsection mesh adaptation
     set type                    = uniform
   end
+
 
 Adaptative mesh refinement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -234,10 +238,12 @@ The mesh can be dynamically adapted using Kelly error estimates on the velocity,
     set fraction coarsening     = 0.15
   end
 
+
 Rest of the subsections
 ------------------------
 
 The non-linear and linear solvers subsections do not contain any new information in this example.
+
 
 Running the simulation
 ----------------------
@@ -245,15 +251,16 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-  gls_navier_stokes_22 uniform_nitsche_taylor-couette.prm
+  gls_nitsche_navier_stokes_22 uniform_nitsche_taylor-couette.prm
 
 or 
 
 .. code-block:: text
 
-  gls_navier_stokes_22 adaptative_nitsche_taylor-couette.prm
+  gls_nitsche_navier_stokes_22 adaptative_nitsche_taylor-couette.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
+
 
 Results
 ---------------------------
@@ -300,6 +307,7 @@ We see that the sum of both torque converge towards zero as the mesh is refined,
 The torque on the inner cylinder should be -0.83776 and we note that the torque on both cylinder converges close to that value. 
 Running the simulation with finer meshes lead to this results.
 
+
 Adaptative mesh refinement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -344,6 +352,7 @@ Correspondingly, the torque on the inner cylinder:
 
 
 We see that even for a small number of cells (~18k), the error on the torque is less than 0.5%.
+
 
 Possibilities for extension
 ----------------------------
