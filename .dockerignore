@@ -1,0 +1,69 @@
+# Projects
+*.cbp
+*.user
+*.cproject
+*.cproject
+*CMakeCache.txt*
+*.cmake
+.vscode/*
+*.vscode/
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Images / post-processing
+*.vtk
+*.pvd
+*.vtu
+*.pvtu
+*.eps
+
+# data
+*.dat
+
+# meshes
+*.msh
+
+# Ignore all build file
+build/*
+cmake-build*/*
+
+# Ignore clion recommandation file
+.idea/*
+
+# Doc
+doc/build/*
+
+# Docker
+Dockerfile
+.dockerignore
