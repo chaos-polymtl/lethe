@@ -325,7 +325,7 @@ CFD-DEM
 We also enable grad_div stabilisation in order to improve local mass conservation. The void fraction time derivative is enabled to account for the time variation of the void fraction. 
 
 .. note:: 
-For certain simulations, this parameter should be disabled to improve stability of the solver.
+    For certain simulations, this parameter should be disabled to improve stability of the solver.
 
 .. code-block:: text
 

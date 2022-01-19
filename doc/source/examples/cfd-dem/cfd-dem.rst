@@ -9,5 +9,4 @@ This section includes examples related to multiphase flows. We organise the exam
     :glob:
     :numbered:
 
-    cylindrical-packed-bed/cylindrical-packed-bed
     square-fluidized-bed/square-fluidized-bed
