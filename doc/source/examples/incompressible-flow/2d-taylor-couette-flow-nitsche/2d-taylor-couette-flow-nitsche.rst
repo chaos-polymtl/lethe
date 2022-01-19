@@ -7,7 +7,12 @@ now using immersed boundaries to represent the inner cylinder. This example demo
 
 Features
 ----------------------------------
-- Solvers: ``gls_nitsche_navier_stokes_22`` (with Q1-Q1 and Q2-Q1)
+- Solvers: ``gls_nitsche_navier_stokes_22`` (with Q1-Q1, Q2-Q1 and Q2-Q2)
+
+.. note:: 
+
+    We have not found that Q2-Q2 elements lead to better results when the flows are at a low Reynolds number.
+
 - Steady-state problem
 - Displays the use of an adaptative mesh refinement using Nitsche immersed boundaries
 - Displays the use of the analytical solution to calculate the mesh convergence 
@@ -142,9 +147,6 @@ Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^
         set velocity order            = 1
         set pressure order            = 1
     end
-
-.. warning:: 
-    With the ``gls_navier_stokes_2d`` solver, Q2-Q2 elements could also be used. However, we have not found that these lead to better results when the flows are at a low Reynolds number.
 
 
 Analytical solution
