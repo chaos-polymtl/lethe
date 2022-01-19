@@ -75,7 +75,7 @@ In these subsections, the control options of linear solvers are specified. These
 	end
 
 
-* The ``method`` parameter enables to choose an iterative solver for the linear system of equations. Lethe currently supports these core solution strategies :
+* The ``method`` parameter enables to choose an iterative solver for the linear system of equations. Lethe currently supports these core solution strategies:
 	* ``gmres`` (default parameter value), a GMRES iterative solver with ILU preconditioning.
 	* ``amg``, a GMRES iterative solver with AMG preconditioning and an ILU coarsener and smoother.
 	* ``bicgstab``, a BICGSTAB iterative solver with ILU preconditioning.
