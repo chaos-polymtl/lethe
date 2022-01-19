@@ -74,7 +74,7 @@ This is the first example that uses a non-uniform mesh adaptation. The parameter
    set fraction coarsening     = 0.1
  end
 
-For steady-state simulations, one can enable a fixed number of mesh adaptions in the simulation control subsection. For this example the following line is added: ``set number mesh adapt = 4``. This means that the mesh will be adapted 4 times following the parameters specified in this subsection. In this case the ``type`` is set to ``kelly`` which corresponds to the `Kelly Error Estimator strategy <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ as implemented in deal.II, and calculated with respect to the ``velocity`` variable. To more details on the different parameters and options refer to the :doc:`../../../parameters/parameters`.
+For steady-state simulations, one can enable a fixed number of mesh adaptations in the simulation control subsection. For this example the following line is added: ``set number mesh adapt = 4``. This means that the mesh will be adapted 4 times following the parameters specified in this subsection. In this case the ``type`` is set to ``kelly`` which corresponds to the `Kelly Error Estimator strategy <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ as implemented in deal.II, and calculated with respect to the ``velocity`` variable. To more details on the different parameters and options refer to the :doc:`../../../parameters/parameters`.
 
 The result of this mesh adaptation can be clearly seen if we compare the initial mesh:
 
@@ -174,7 +174,7 @@ In this section, we specify the boundary conditions taking into account the IDs 
 * ``bc2`` is applied at the top and bottom walls. This condition allows the simulation to be performed in a finite sized domain. In real life, the cylinder would be placed in a relatively infinite domain. Using ``slip`` condition, we assume that the fluid cannot go out in the normal direction, but that it can still flow from left to right without friction. Thus, the walls have no effect on the flow of the fluid.
 
 .. note::
-    An implicit fourth boundary condition is implemented on the right wall which represents the outlet of the flow. We do not specify anything explicitly, because this corresponds to a natural boundary condition where the pressure :math:`p` becomes close to 0 due to the imposed :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0`. For more details, refer to `Boundary Conditions <https://lethe-cfd.github.io/lethe/parameters/cfd/boundary_conditions_cfd.html>`_ section.
+    An implicit fourth boundary condition is implemented on the right wall which represents the outlet of the flow. We do not specify anything explicitly, because this corresponds to a natural boundary condition where the pressure :math:`p` becomes close to 0 due to the imposed :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0`. For more details, refer to :doc:`../../../parameters/cfd/boundary_conditions_cfd` section.
 
 Forces
 ~~~~~~
@@ -237,10 +237,30 @@ In addition to these profiles, we also obtain the values of the forces acting on
    8268 7.1160652038  0.0001911781 0.0000000000 
   15990 7.1227744092 -0.0000746224 0.0000000000 
 
+The force in the x direction is the parallel or drag force, while the force in the y direction is the perpendicular or lift force. The drag and lift coefficients can be calculated as follows:
+
+.. math::
+
+ C_D = \frac{2 f_x}{\rho U_\infty^2 D},  C_L = \frac{2 f_y}{\rho U_\infty^2 D}
+
+where :math:`U_\infty` is the upstream velocity and :math:`D` is the diameter of the cylinder. Considering the small values of the lift force, we calculate only the drag coefficients:
+
+.. code-block:: text
+
+  cells     C_D       
+   1167    13.20  
+   2247    13.93  
+   4302    14.15  
+   8268    14.23  
+  15990    14.24  
+
+We can see that the simulation converges, as the last three values of the force in the x-direction and therefore the drag coefficient differ in less than 1%. An experimental value of the drag coefficient as a function of the Reynolds number is available in the `Drag Coefficient Calculator <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_ , and for a Reynolds number of 1 it corresponds to a value of :math:`C_D = 11.9`.
+
 Possibilities for extension
 ----------------------------
-- Change the mesh adaptation control parameters to study the effect of the mesh on the results of the simulation.
 - Increase the Reynolds number and perform an unsteady simulation to observe the famous von Kármán vortex street pattern.
+- It would be interesting to try the same example in 3D and observe what happens with the drag and lift forces.
+- In principle, this example is the base to more complex simulations including other shapes, such as airfoils.
 
 References
 ----------

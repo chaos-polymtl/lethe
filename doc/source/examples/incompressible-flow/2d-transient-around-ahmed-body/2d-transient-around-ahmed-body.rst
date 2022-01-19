@@ -14,7 +14,7 @@ Location of the examples
 -------------------------
 - Parameter file: ``/examples/incompressible_flow/2d_ahmed_body/ahmed.prm``
 - Geometry file: ``/examples/incompressible_flow/2d_ahmed_body/Ahmed_Body_20_2D.geo``
-- Mesh file: ``/examples/incompressible_flow/2d_ahmed_body/Ahmed_Body_20_2D.geo``
+- Mesh file: ``/examples/incompressible_flow/2d_ahmed_body/Ahmed_Body_20_2D.msh``
 
 Description of the case
 --------------------------
@@ -84,7 +84,7 @@ The input mesh ``Ahmed_Body_20_2D.msh`` is in the same folder as the ``.prm`` fi
 
     For further information about `Mesh <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_ generation, we refer to the reader to the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ on the deal.ii documentation and the `Gmsh <https://gmsh.info/#Download>`_ website.
 
-Initial an boundary conditions
+Initial and boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://lethe-cfd.github.io/lethe/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `Example 3 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
@@ -136,9 +136,9 @@ Time integration is defined by a 1st order backward differentiation (``bdf1``), 
 
 
 .. Warning::
-   To successfully launch the simualtion, the ``output path`` where the results are saved (in this example, the folder ``Re720``) must already exist. Otherwise, the simulation will hang because it will be unable to save the results.
+   To successfully launch the simulation, the ``output path`` where the results are saved (in this example, the folder ``Re720``) must already exist. Otherwise, the simulation will hang because it will be unable to save the results.
 
-Ahmed body are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied  by changing the ``kinematic viscosity``:
+Ahmed bodies are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied  by changing the ``kinematic viscosity``:
 
 .. code-block:: text 
 
@@ -150,13 +150,13 @@ Ahmed body are typically studied considering a 60 m/s flow of air. Here, the flo
 
 The simulation is launched in the same folder as the ``.prm`` and ``.msh`` file, using the ``gls_navier_stokes_2d`` solver. To decrease simulation time, it is advised to run on multiple cpu, using ``mpirun``:
 
-To do so, copy and paste the ``gls_navier_stokes_2d`` exacutable to the same folder as your ``.prm`` file and launch it running the following line:
+To do so, copy and paste the ``gls_navier_stokes_2d`` executable to the same folder as your ``.prm`` file and launch it running the following line:
 
 .. code-block:: text
 
       mpirun -np 6 gls_navier_stokes_2d ahmed.prm
 
-where here 6 is the number of cpu used. The estimated execution time for a 4 seconds simulation is 6 minutes and 53 seconds.
+where 6 is the number of cpu used. The estimated execution time for a 4 seconds simulation is 6 minutes and 53 seconds.
 
 Alternatively, specify the path to the ``gls_navier_stokes_2d`` in your ``build/applications`` folder, as follows:
 
@@ -206,7 +206,7 @@ Possibilities for extension
 
 * Change the ``phi`` value to see the effect of the angle in the streamline.
 * Vary the Reynolds number, or the initial and boundary conditions.
-* Make a tridimentional mesh, or even add other features to it, such as sharpen the edges.
+* Make a three-dimentional mesh, or even add other features to it, such as sharpen the edges.
 * Test higher order elements (e.g., Q2-Q1).
 
 References
