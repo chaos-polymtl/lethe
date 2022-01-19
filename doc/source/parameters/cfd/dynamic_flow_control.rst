@@ -30,7 +30,7 @@ The default parameters are:
 
   When there is a periodic boundary, the wall boundary should be at inlet only and if the chosen wall boundary is at inlet, flow rate must be negative and vice versa.
 
-* The ``boundary id`` parameter is the wall boundary where the flow rate intended is controlled. (inlet or outlet).
+* The ``boundary id`` parameter is the wall boundary where the flow rate intended is controlled (inlet or outlet).
 
 * The ``flow direction`` parameter sets the absolute direction. It should be ``0`` if the flow is in the :math:`x` direction, ``1`` in the :math:`y` direction and ``2`` in the :math:`y` direction.
 
