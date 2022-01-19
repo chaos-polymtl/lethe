@@ -7,6 +7,8 @@ This subsection's purpose is defining the boundary conditions associated to mult
 Heat Transfer
 ^^^^^^^^^^^^^
 
+For heat transfer boundary conditions, the defaults parameters are:
+
 .. code-block:: text
 
     subsection boundary conditions heat transfer
@@ -37,6 +39,9 @@ Heat Transfer
 
 Tracer
 ^^^^^^
+
+For tracer boundary conditions, the defaults parameters are:
+
 .. code-block:: text
 
     subsection boundary conditions tracer
