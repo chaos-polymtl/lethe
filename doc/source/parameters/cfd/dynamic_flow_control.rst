@@ -20,7 +20,7 @@ The default parameters are:
 
 * The ``enable`` parameter is set to ``true`` to enable an imposed volumetric flow rate.
 
-* The ``volumetric flow rate`` parameter specifies the flow rate (:math:`m^2/s`). 
+* The ``volumetric flow rate`` parameter specifies the flow rate (:math:`m^{dim}/s`). 
 
 .. warning::
 
