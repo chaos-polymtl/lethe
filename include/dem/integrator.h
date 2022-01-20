@@ -60,12 +60,12 @@ public:
    */
   virtual void
   integrate_half_step_location(
-    Particles::ParticleHandler<dim> &particle_handler,
-    Tensor<1, dim> &                 body_force,
-    double                           time_step,
-    std::vector<Tensor<1, dim>> &    momentum,
-    std::vector<Tensor<1, dim>> &    force,
-    std::vector<double> &            MOI) = 0;
+    Particles::ParticleHandler<dim> &  particle_handler,
+    const Tensor<1, dim> &             body_force,
+    const double                       time_step,
+    const std::vector<Tensor<1, dim>> &momentum,
+    const std::vector<Tensor<1, dim>> &force,
+    const std::vector<double> &        MOI) = 0;
 
   /**
    * Carries out integrating of particles' velocity and position.
@@ -80,11 +80,11 @@ public:
    */
   virtual void
   integrate(Particles::ParticleHandler<dim> &particle_handler,
-            Tensor<1, dim> &                 body_force,
-            double                           time_step,
+            const Tensor<1, dim> &           body_force,
+            const double                     time_step,
             std::vector<Tensor<1, dim>> &    momentum,
             std::vector<Tensor<1, dim>> &    force,
-            std::vector<double> &            MOI) = 0;
+            const std::vector<double> &      MOI) = 0;
 };
 
 #endif /* integration_h */
