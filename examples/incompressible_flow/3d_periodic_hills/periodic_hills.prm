@@ -1,24 +1,23 @@
 # Listing of Parameters
 # ---------------------
+
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set method                       = bdf1
-  set output name                  = periodic_hills-output
-  set subdivision                  = 2
+  set method                       = bdf2
+  set output name                  = periodic_hills_output_
   set time step                    = 0.1
-  set output frequency             = 1
-  set time end                     = 5.0
+  set output frequency             = 1000
+  set output path                  = ./output/
+  set time end                     = 1000
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-  subsection fluid 0
-    set kinematic viscosity        = 1.95E-05 # Re = 5600
-  end
+    set kinematic viscosity        = 1.78571E-04 # Re = 5600
 end
 
 #---------------------------------------------------
@@ -26,8 +25,8 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                       = periodic_hills
-    set initial refinement         = 3
-    set grid arguments 		   = 1;1;3;3;1
+    set initial refinement         = 5
+    set grid arguments 		         = 1;1;4;2;1
 end
 
 #---------------------------------------------------
@@ -37,15 +36,26 @@ subsection timer
     set type                       = iteration
 end
 
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+subsection restart
+	set restart     = false
+        set checkpoint  = true
+        set filename    = periodic_hills_restart
+        set frequency   = 1000
+end
+
 #---------------------------------------------------
 # Flow control
 #---------------------------------------------------
 subsection flow control
     set enable                     = true
-    set boundary id    		   = 0
-    set volumetric flow rate       = -1        # bulk velocity = -0.1092
-    set flow direction 		   = 0
-    set initial beta		   = 0.833
+    set boundary id    		         = 0
+    set volumetric flow rate       = -9.1575 # bulk velocity = -1
+    set flow direction 		         = 0
+    set initial beta		           = 7.66
     set verbosity                  = verbose
 end
 
@@ -54,7 +64,7 @@ end
 #---------------------------------------------------
 subsection post-processing
     set calculate average velocities    = true
-    set initial time 		        = 4.0
+    set initial time 		                = 207
 end
 
 # --------------------------------------------------
@@ -88,10 +98,10 @@ end
 # FEM
 #---------------------------------------------------
 subsection FEM
-    set velocity order            = 2
-    set pressure order            = 2
-    set qmapping all              = true
+    set velocity order            = 1
+    set pressure order            = 1
 end
+
 
 # --------------------------------------------------
 # Mesh Adaptation Control
@@ -100,10 +110,12 @@ subsection mesh adaptation
   set type                        = none
 end
 
+
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
+  set solver                      = inexact_newton
   set tolerance                   = 1e-5
   set max iterations              = 10
   set verbosity                   = verbose
