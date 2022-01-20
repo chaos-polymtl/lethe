@@ -241,7 +241,7 @@ or
 
 .. code-block:: text
 
-  gls_navier_stokes_2d sphere_150.prm
+  gls_navier_stokes_3d sphere_150.prm
 
 or
 
