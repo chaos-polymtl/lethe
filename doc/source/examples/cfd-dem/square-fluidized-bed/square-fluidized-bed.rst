@@ -202,8 +202,8 @@ Lethe will generate a number of files. The most important one bears the extensio
 
 After the particles have been packed inside the square bed, it is now possible to simulate the fluidization of particles.
 
-VANS parameter file
----------------------
+CFD-DEM parameter file
+-----------------------
 
 The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown here.
 
@@ -374,14 +374,17 @@ Linear solver control
         set max krylov vectors                     = 200
     end
 
-Running the VANS simulation
----------------------------
+Running the CFD-DEM simulation
+------------------------------
 
 The simulation is run using the cfd_dem_coupling_3d application as per the following command:
 
 .. code-block:: text
 
     path_to_cfd_dem_application/cfd_dem_coupling_3d parameter_file.prm 
+
+Results
+--------
 
 The results are shown in a gif below. We show the fluidization of the particles as the gas is introduced from the bottom of the bed.
 
