@@ -11,3 +11,4 @@ Incompressible Flow
     2d-taylor-couette-flow/2d-taylor-couette-flow
     2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche
     3d-flow-around-sphere/flow-around-sphere
+    3d-flow-over-periodic-hills/3d-flow-over-periodic-hills

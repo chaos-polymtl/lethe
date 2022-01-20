@@ -3,6 +3,7 @@
 - Explain the previous issue (description of the issue or the reference number of an open issue)
 - Explain the need for a new feature or component
 - Describe the added code
+
 # Description of the solution
 
 - Explain the solution to the existing issue
@@ -14,6 +15,12 @@
 
 - [ ] Test A
 - [ ] Test B
+
+# Documentation
+
+- If applicable, list the documentation files changed and their changes
+
+- [ ] File A
 
 # Future changes
 
