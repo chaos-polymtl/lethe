@@ -235,7 +235,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-  gls_navier_stokes_2d sphere_0.1.prm
+  gls_navier_stokes_3d sphere_0.1.prm
 
 or 
 
