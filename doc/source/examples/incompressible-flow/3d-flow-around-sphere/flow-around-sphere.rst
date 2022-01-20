@@ -231,7 +231,7 @@ The ``min refinement level`` refers to the base mesh which has been used in the 
 
 Running the simulation
 ----------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_2d`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_3d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
