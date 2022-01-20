@@ -20,7 +20,7 @@ Location of the examples
 Description of the case
 -----------------------
 
-This example simulates the fluidization of spherical particles in air. First, we use Lethe-DEM to fill the bed with particles. Then, we use the ``cfd_dem_coupling`` solver within Lethe to simulate the fluidization of the particles.
+This example simulates the fluidization of spherical particles in air. First, we use Lethe-DEM to fill the bed with particles. Then, we use the ``cfd_dem_coupling_3d`` solver within Lethe to simulate the fluidization of the particles.
 
 
 Parameter file
