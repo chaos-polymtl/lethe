@@ -254,13 +254,13 @@ where :math:`U_\infty` is the upstream velocity and :math:`D` is the diameter of
    8268    14.23  
   15990    14.24  
 
-We can see that the simulation converges, as the last three values of the force in the x-direction and therefore the drag coefficient differ in less than 1%. An experimental value of the drag coefficient as a function of the Reynolds number is available in the `Drag Coefficient Calculator <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_ , and for a Reynolds number of 1 it corresponds to a value of :math:`C_D = 11.9`.
+We can see that the simulation is mesh convergent, as the last three values of the force in the x-direction and therefore the drag coefficient differ in less than 1%. An experimental value of the drag coefficient as a function of the Reynolds number is available in the `Drag Coefficient Calculator <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_ , and for a Reynolds number of 1, it corresponds to a value of :math:`C_D = 11.9`. The value calculated by Lethe differs from the theoretical value because of the slip boundary condition at the top and bottom walls, along with the short distance to them from the surface of the cylinder. To obtain a more accurate drag coefficient, the geometry should be enlarged.
 
 Possibilities for extension
 ----------------------------
+- Play with the size of geometry to observe the effect on the calculation of the drag forces.
 - Increase the Reynolds number and perform an unsteady simulation to observe the famous von Kármán vortex street pattern.
 - It would be interesting to try the same example in 3D and observe what happens with the drag and lift forces.
-- In principle, this example is the base to more complex simulations including other shapes, such as airfoils.
 
 References
 ----------
