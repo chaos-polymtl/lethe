@@ -2,7 +2,7 @@
 3D Flow over periodic hills
 ======================================
 
-This example is a a well-established benchmark for Computational Fluid Dynamics software known as the `periodic hills flow <https://kbwiki.ercoftac.org/w/index.php?title=Abstr:2D_Periodic_Hill_Flow>`_. It includes complex flow features such as the generation of an unsteady shear layer, recirculation, strong pressure gradients, attached and detached boundary layers and turbulence recycling due to the periodicity assumption. 
+This example is a well-established benchmark for Computational Fluid Dynamics software known as the `periodic hills flow <https://kbwiki.ercoftac.org/w/index.php?title=Abstr:2D_Periodic_Hill_Flow>`_. It includes complex flow features such as the generation of an unsteady shear layer, recirculation, strong pressure gradients, attached and detached boundary layers and turbulence recycling due to the periodicity assumption. 
 
 Features
 ---------
@@ -146,7 +146,7 @@ The post-processing subsection allows the calculation of different quantities:
      set initial time 		             = 207
  end
 
-In this example, we enable the calculation of average velocities through the parameter ``calculate average velocities`` after a certain time of the simulation. In this case, this time is set to ``207`` as we allow for the flow to achieve some stability. The results of the calculated values will be available in the ``.vtu`` files when opened with a visualization software. 
+In this example, we enable the calculation of average velocities through the parameter ``calculate average velocities`` after a certain time of the simulation. In this case, this time is set to ``207`` as we allow for the flow to reach some stability. The results of the calculated values will be available in the ``.vtu`` files when opened with a visualization software. 
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~~
