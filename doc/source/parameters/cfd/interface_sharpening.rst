@@ -1,5 +1,5 @@
 Interface sharpening
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 When running a simulation containing multiple fluids using the volume of fluid method (VOF), the interface between two fluids diffuses. 
 To avoid that, this subsection includes parameters related to the interface sharpening. The default parameters are:
@@ -24,4 +24,4 @@ To avoid that, this subsection includes parameters related to the interface shar
 
 .. note::
 
-  The XX examples well represents que sharpening issue.
+  The XX examples well represents tue sharpening issue.
