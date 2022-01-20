@@ -171,7 +171,7 @@ We need to pack the particles in the middle of the cylinder. Therefore, we creat
     end
     
 Running the DEM simulation
-----------------------
+---------------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_3d`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
@@ -226,7 +226,7 @@ The simulation was run for 0.5 s with a time step of 0.002 s. The time scheme ch
         set subdivision                     = 1 
         set log precision                   = 10 
         set output path                     = ./output/
-end
+    end
 
 .. warning:: 
     If an output path is chosen, you need to create the folder before launching the simulation. Otherwise, an error message will appear and the simulation will fail to launch.
