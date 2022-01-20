@@ -279,7 +279,7 @@ Results
 ---------------------------
 
 Uniform mesh refinement
-^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~
 For the uniform mesh refinement problem, the evolution of the L2 error is as follows:
 
 .. code-block:: text
@@ -322,7 +322,7 @@ Running the simulation with finer meshes lead to this results.
 
 
 Adaptative mesh refinement
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using Paraview, the steady-state velocity profile can be visualized for the adaptative mesh refinement case:
 

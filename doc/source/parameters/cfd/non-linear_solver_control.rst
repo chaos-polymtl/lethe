@@ -41,11 +41,14 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 	* ``inexact_newton`` solver, a Newton-Raphson solver where the Jacobian matrix is reused between iterations. 
 		*  ``matrix tolerance`` parameter sets the tolerance to re-assemble the Jacobian matrix. If the residual after a newton step :math:`<` ``matrix tolerance`` :math:`\times` the previous residual, that iteration is considered sufficient and the Newton iteration will keep using the same jacobian matrix. 
 		* Setting ``reuse matrix = true`` enables the usage of the same Jacobian matrix for the following non-linear problem. 
+
 	.. tip::
 		The ``inexact_newton`` solver, along with ``reuse matrix = true`` can be worthwhile in transient simulations with a small time-step. The goal is to seek a compromise between the cost of assembling the matrix and the preconditioner versus the cost of solving the linear system of equations.
+	
 	* ``kinsol_newton`` solver, that uses the Newton-Raphson solver through deal.II, as implemented in the `Sundials library <https://computing.llnl.gov/projects/sundials/kinsol>`_. This solver has an internal algorithm that decides whether to reassemble the Jacobian matrix or not. This non-linear solver is still being tested.
 		* ``kinsol strategy`` parameter enables to choose the strategy that will be used by the kinsol newton solver, and can be ``line_search`` (default value), ``normal_newton``, ``fixed_point`` or ``picard``.
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the non-linear iterations.
+
 .. note::
 	The residual should decrease rapidly between Newton iterations.
 	Example of a ``set verbosity = verbose`` output:
@@ -63,14 +66,17 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 
 * The ``step tolerance`` parameter controls how much the L2 norm of the residual must decrease to proceed to the next non-linear step. If the ``new_residual``:math:`<` ``old_residual``:math:`\times` ``step tolerance``, then a Newton iteration is accepted. If this condition is not reached, then a relaxation of the step is applied (increasing the ``alpha`` parameter, as printed on the terminal if ``set verbosity = verbose``) until this condition is reached.
 * The ``tolerance`` parameter controls the value under which the residual must be to proceed to the next iteration.
+
 .. hint::
 	The ``tolerance`` parameter is directly linked to the numerical convergence of the simulation, but also to the computational cost (number of Newton iteration).
 
 	For simple simulations, the tolerance can be set quite low, for instance ``set tolerance = 1e-12``. However, such a tolerance can be impossible to attain for more complex simulations : the step tolerance of the non-linear solver can be increased, for instance ``set tolerance = 1e-4``
+
 * The ``max iterations`` parameter sets a hard limit to the number of Newton iterations, even if the ``tolerance`` is not reached.
 
 .. warning::
 	Be careful to always set an absolute tolerance for the linear solver that is below the tolerance of the non-linear solver. Otherwise, you might find that it is impossible to converge because the linear system of equation is solved with insufficient accuracy.
+
 * The ``residual precision`` parameter enables to change the number of digits displayed when showing residuals (with ``set verbosity = verbose``).
 * The ``force_rhs_calculation``: Force RHS recalculation at the beginning of every non-linear steps, This is required if there is a fixed point component to the non-linear solver that is changed at the beginning of every newton iteration. This is notably the case of the sharp edge method. The default value of this parameter is false.
 
