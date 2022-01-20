@@ -159,7 +159,7 @@ We specify the interpolation order for both pressure and velocity using the ``FE
 Simulation control
 ~~~~~~~~~~~~~~~~~~
 
-The parameters also slightly different from one problem to another differ in this section since as the different examples experience different flow regimes.
+The parameters also slightly differ from one problem to another as different examples experience different flow regimes.
 
 In fact, for the Re = 0.1, we have a laminar to creeping flow, meaning that the flow is very steady, and therefore can be solved in steady-state.
 
