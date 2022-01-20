@@ -55,11 +55,11 @@ template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
-  Tensor<1, dim> &                 g,
-  double                           dt,
+  const Tensor<1, dim> &           g,
+  const double                     dt,
   std::vector<Tensor<1, dim>> &    momentum,
   std::vector<Tensor<1, dim>> &    force,
-  std::vector<double> &            MOI)
+  const std::vector<double> &      MOI)
 {
   for (auto &particle : particle_handler)
     {
