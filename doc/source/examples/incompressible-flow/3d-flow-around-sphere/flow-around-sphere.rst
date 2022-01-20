@@ -31,7 +31,7 @@ The following schematic describes the simulation and its boundary condition indi
 
 Note that the sphere surface has a boundary index of ``0``, the inlet ``1`` and the walls parallel to the flow direction have a boundary index of ``2``. 
 
-As this examples allows for two different Reynolds number as well as an adaptative mesh refinement variation, the Parameter file section will specify the differences when applicable. 
+As this examples allows for two different Reynolds numbers as well as an adaptative mesh refinement variation, the Parameter file section will specify the differences when applicable. 
 
 
 Parameter file
