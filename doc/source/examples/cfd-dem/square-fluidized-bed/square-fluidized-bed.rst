@@ -29,7 +29,7 @@ Parameter file
 The syntax is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters.html>`_ of the documentation.
 
 To set-up the square fluidized bed case, we first fill the bed with particles. 
-We first introduce the different sections of the parameter file (packing_in_cylinder.prm) needed to run this simulation. In this example, we are simulating a squred fluidized that has a half length of 0.1 m, and a side of 0.04 m. We use the GridGenerator::subdivided_hyper_rectangle function of Deal.II in order to generate the mesh. The square bed is divided 40 times in the y direction. The following portion of the DEM parameter file shows the function called:
+We first introduce the different sections of the parameter file (packing_in_cylinder.prm) needed to run this simulation. In this example, we are simulating a squred fluidized that has a half length of 0.1 m, and a side of 0.04 m. We use the `subdivided_hyper_rectangle GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#ac76417d7404b75cf53c732f456e6e971>`_ of deal.II in order to generate the mesh. The square bed is divided 40 times in the y direction. The following portion of the DEM parameter file shows the function called:
 
 
 Mesh
