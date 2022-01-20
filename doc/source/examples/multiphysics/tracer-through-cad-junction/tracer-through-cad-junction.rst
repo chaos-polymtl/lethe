@@ -162,17 +162,15 @@ Using the tracer physics requires four elements: activating the physics, setting
     end
 
 The boundary conditions are written in a specific way. 
-We have a number of specified 2 boundaries, a Dirichlet condition of 1 for an inlet, and another Dirichlet condition of 0 
-for the two other inlets; all the remaining boundaries are unspecified. 
-An unspecified boundary condition in Lethe is considered as the natural condition of finite elements, 
-which is a zero Neumann condition. This is the condition needed in that case for the walls and outlets: 
-the walls must not let any tracer out, and the outlets must not apply any constraint on their tracer level.
+We have specified 2 boundaries, a Dirichlet condition with a concentration of 1 for the first inlet, and another Dirichlet condition with a tracer concentration of 0 for the second inlet. All the remaining boundaries are unspecified. 
+An unspecified boundary condition in Lethe for the tracer is considered as the natural condition of finite elements, 
+which is a zero gradient condition. 
 
 .. note:: 
     The ``boundary conditions tracer`` subsection is different from the general ``boundary conditions`` 
     which concerns the flow. 
 
-This ``boundary conditions`` subsection for the flow is setup as follows. The inlet with a high tracer concentration (``id = 2``)
+The ``boundary conditions`` subsection for the flow is setup as follows. The inlet with a high tracer concentration (``id = 2``)
 is given a higher velocity than the other two (``id = 1``). The walls of the junction (``id = 3``) are given a ``no slip`` type.
 The remaining boundaries (``id = 4``) are unspecified for the same reason as in the previous subsection: no constraint 
 must be applied to the outlet flow. 
