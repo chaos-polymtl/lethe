@@ -107,6 +107,45 @@ The following image displays a coarse mesh for this example. It can be seen that
     :align: center
     :name: mesh
 
+Boundary conditions
+~~~~~~~~~~~~~~~~~~~~
+In this section, we specify the boundary conditions taking into account the IDs presented in the following scheme:
+
+.. image:: images/boundary_conditions.png
+    :alt: bcs
+    :align: center
+    :name: boundary_conditions
+
+.. code-block:: text
+
+ # --------------------------------------------------
+ # Boundary Conditions
+ #---------------------------------------------------
+ subsection boundary conditions
+   set number                      = 4
+     subsection bc 0
+         set type                  = periodic
+         set id                    = 0
+         set periodic_id           = 1
+         set periodic_direction    = 0
+     end
+     subsection bc 1
+         set id                    = 2
+         set type                  = noslip
+     end
+     subsection bc 2
+         set id                    = 3
+         set type                  = noslip
+     end
+     subsection bc 3
+         set type                  = periodic
+         set id                    = 4
+         set periodic_id           = 5
+         set periodic_direction    = 2
+     end 
+ end
+
+First, a ``periodic`` boundary condition is set for both the inlet id ``0`` and outlet id ``1`` of the flow. For the bottom and top walls we set ``noslip`` boundary conditions, while for the side walls id ``4`` and ``5`` we consider periodic boundary conditions too, because it allows to represent the bulk flow of the channel. All the boundary conditions are set to represent the actual benchmark case. 
 
 Flow control
 ~~~~~~~~~~~~
@@ -148,45 +187,6 @@ The post-processing subsection allows the calculation of different quantities:
 
 In this example, we enable the calculation of average velocities through the parameter ``calculate average velocities`` after a certain time of the simulation. In this case, this time is set to ``207`` as we allow for the flow to reach some stability. The results of the calculated values will be available in the ``.vtu`` files when opened with a visualization software. 
 
-Boundary conditions
-~~~~~~~~~~~~~~~~~~~~
-In this section, we specify the boundary conditions taking into account the IDs presented in the following scheme:
-
-.. image:: images/boundary_conditions.png
-    :alt: bcs
-    :align: center
-    :name: boundary_conditions
-
-.. code-block:: text
-
- # --------------------------------------------------
- # Boundary Conditions
- #---------------------------------------------------
- subsection boundary conditions
-   set number                      = 4
-     subsection bc 0
-         set type                  = periodic
-         set id                    = 0
-         set periodic_id           = 1
-         set periodic_direction    = 0
-     end
-     subsection bc 1
-         set id                    = 2
-         set type                  = noslip
-     end
-     subsection bc 2
-         set id                    = 3
-         set type                  = noslip
-     end
-     subsection bc 3
-         set type                  = periodic
-         set id                    = 4
-         set periodic_id           = 5
-         set periodic_direction    = 2
-     end 
- end
-
-First, a ``periodic`` boundary condition is set for both the inlet id ``0`` and outlet id ``1`` of the flow. For the bottom and top walls we set ``noslip`` boundary conditions, while for the side walls id ``4`` and ``5`` we consider periodic boundary conditions too, because it allows to represent the bulk flow of the channel. All the boundary conditions are set to represent the actual benchmark case. 
 
 FEM
 ~~~
@@ -202,7 +202,7 @@ The FEM subsection specifies the order of the elements used for both velocity an
      set pressure order            = 1
  end
 
-For this example we simply consider Q1-Q1 elements.
+For this example we simply consider Q1-Q1 elements. However, it can also be run using Q2-Q2 elements. In that case, it is important to remember to add the ``set qmapping all = true`` line after the velocity and pressure orders.
 
 Non-Linear Solver Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~
