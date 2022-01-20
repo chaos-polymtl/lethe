@@ -247,7 +247,7 @@ or
 
 .. code-block:: text
 
-  gls_navier_stokes_2d sphere_adapt.prm
+  gls_navier_stokes_3d sphere_adapt.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
