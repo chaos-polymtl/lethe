@@ -20,7 +20,8 @@ Location of the examples
 Description of the case
 -----------------------
 
-This example simulates the fluidization of spherical particles in air. First, we use Lethe-DEM to fill the bed with particles. We nable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``cfd_dem_coupling_3d`` solver within Lethe to simulate the fluidization of the particles by initially reading the checkpoint files from the DEM simulation.
+
+This example simulates the fluidization of spherical particles in air. First, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``cfd_dem_coupling_3d`` solver within Lethe to simulate the fluidization of the particles by initially reading the checkpoint files from the DEM simulation.
 
 
 DEM parameter file
@@ -29,12 +30,13 @@ DEM parameter file
 The syntax is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters.html>`_ of the documentation.
 
 To set-up the square fluidized bed case, we first fill the bed with particles. 
+
 We first introduce the different sections of the parameter file (packing_in_cylinder.prm) needed to run this simulation. 
 
 Mesh
 ~~~~~
 
-In this example, we are simulating a squared fluidized that has a half length of 0.1 m, and a side of 0.04 m. We use the `subdivided_hyper_rectangle GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#ac76417d7404b75cf53c732f456e6e971>`_  in order to generate the mesh. The square bed is divided 40 times in the y direction. The following portion of the DEM parameter file shows the function called:
+In this example, we are simulating a squared fluidized bed that has a half length of 0.1 m, and a side of 0.04 m. We use the `subdivided_hyper_rectangle GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#ac76417d7404b75cf53c732f456e6e971>`_  in order to generate the mesh. The square bed is divided 40 times in the y direction. The following portion of the DEM parameter file shows the function called:
 
 .. code-block:: text
 
