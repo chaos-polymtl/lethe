@@ -119,6 +119,11 @@ The current ``interface sharpening`` method consists of two steps:
         1-(c-1)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
         \end{cases}
 
+``Sharpening frequency`` is an integer parameter that defines the 
+frequency of the interface sharpening; ``sharpening threshold`` defines 
+a phase fraction threshold for interface sharpening (generally :math:`0.5`);
+and ``interface sharpness`` is a model parameter which is generally in
+the range of :math:`(1-2]`.
 
     where :math:`\phi`, :math:`c`, and :math:`\alpha` denote phase fraction, 
     sharpening threshold, and interface sharpness respectively. 
