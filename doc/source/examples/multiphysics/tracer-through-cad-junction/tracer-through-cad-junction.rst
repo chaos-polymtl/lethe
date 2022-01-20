@@ -197,7 +197,7 @@ must be applied to the outlet flow.
                 set Function expression = 1
             end
         end
-        # boundary id2 will have the tracer
+        # The boundary id = 2 will have the tracer
         subsection bc 1
             set id = 2
             set type              = function
