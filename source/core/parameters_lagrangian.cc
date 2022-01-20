@@ -1,5 +1,8 @@
 #include "core/parameters_lagrangian.h"
 
+#include <fstream>
+#include <deal.II/grid/grid_in.h>
+
 namespace Parameters
 {
   namespace Lagrangian
@@ -824,6 +827,117 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+    template <int dim>
+    void
+    FloatingGrid<dim>::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("floating grid");
+      {
+        prm.declare_entry("grid format",
+                          "",
+                          Patterns::Selection("unv|ucd|abaqus|dbmesh|xda|msh|tecplot|vtk|vtu|assimp|exodusii"),
+                          "Floating grid file type"
+                          "Choices are <unv|ucd|abaqus|dbmesh|xda|msh|tecplot|vtk|vtu|assimp|exodusii>."
+                          );
+        prm.declare_entry("grid filename",
+                          "",
+                          Patterns::FileName(),
+                          "Floating grid file name"
+                          );
+
+        prm.enter_subsection("grid motion");
+        {
+          prm.declare_entry(
+            "motion type",
+            "none",
+            Patterns::Selection(
+              "none|translational|rotational|translational_rotational"),
+              "Choosing grid motion type. "
+              "Choices are <none|translational|rotational|translational_rotational>.");
+
+          prm.declare_entry("grid translational velocity x",
+                            "0",
+                            Patterns::Double(),
+                            "grid translational velocity x");
+          prm.declare_entry("grid translational velocity y",
+                            "0",
+                            Patterns::Double(),
+                            "grid translational velocity y");
+          prm.declare_entry("grid translational velocity z",
+                            "0",
+                            Patterns::Double(),
+                            "grid translational velocity z");
+
+          prm.declare_entry("grid rotational speed",
+                            "0",
+                            Patterns::Double(),
+                            "grid rotational speed");
+
+          prm.declare_entry("grid rotational axis",
+                            "0",
+                            Patterns::Integer(),
+                            "grid rotational axis");
+        }
+        prm.leave_subsection();
+
+        prm.declare_entry("start time", "0.", Patterns::Double(), "Start time");
+        prm.declare_entry("end time", "0.", Patterns::Double(), "End time");
+      }
+
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    FloatingGrid<dim>::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("floating grid");
+      {
+        typename GridIn<dim>::Format format = GridIn<dim>::parse_format(prm.get("grid format"));
+        std::ifstream input_file(prm.get("grid filename"));
+
+        GridIn<dim> grid_in;
+        grid_in.attach_triangulation(triangulation);
+        grid_in.read(input_file, format);
+
+        prm.enter_subsection("grid motion");
+        {
+          const std::string motion = prm.get("motion type");
+          if (motion == "rotational")
+          {
+            motion_type           = MotionType::rotational;
+            grid_rotational_speed = prm.get_double("grid rotational speed");
+            grid_rotational_axis  = prm.get_integer("grid rotational axis");
+          }
+          else if (motion == "translational")
+          {
+            motion_type = MotionType::translational;
+            grid_translational_velocity[0] =
+              prm.get_double("grid translational velocity x");
+            grid_translational_velocity[1] =
+              prm.get_double("grid translational velocity y");
+            if (dim == 3)
+              grid_translational_velocity[2] =
+                prm.get_double("grid translational velocity z");
+          }
+          else if (motion == "none")
+          {
+            motion_type = MotionType::none;
+          }
+          else
+          {
+            throw(std::runtime_error("Invalid grid motion "));
+          }
+        }
+        prm.leave_subsection();
+
+        time_start = prm.get_double("start time");
+        time_end = prm.get_double("end time");
+      }
+
+      prm.leave_subsection();
+    }
+
     void
     BCDEM::declareDefaultEntry(ParameterHandler &prm)
     {
@@ -1127,6 +1241,8 @@ namespace Parameters
     template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
+    template class FloatingGrid<2>;
+    template class FloatingGrid<3>;
     template class GridMotion<2>;
     template class GridMotion<3>;
 
