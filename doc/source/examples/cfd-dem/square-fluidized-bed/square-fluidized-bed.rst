@@ -391,9 +391,9 @@ Results
 
 The results are shown in a gif below. We show the fluidization of the particles as the gas is introduced from the bottom of the bed.
 
-.. image:: images/fluidized_bed.gif
-    :alt: fluidized bed
-    :align: center
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/ygJI42x4K5c" frameborder="0" allowfullscreen></iframe>
     
 
     
