@@ -65,9 +65,13 @@ In the parameter file, the mesh is read this way:
 .. code-block:: text
 
   subsection mesh
-    set type         = gmsh
-    set file name    = sphere.msh
+    set type               = gmsh
+    set file name          = sphere.msh
   end
+
+.. note:: text
+
+  The ``initial refinement`` is set to 1 only for the second example (Re = 150 without mesh adaptation). This is added so that it has a number of cells of the same magnitude as the mesh adaptation example. This mesh contains a bit more than 46,000 cells.
 
 
 Boundary conditions
@@ -221,10 +225,10 @@ To increase the accuracy of the drag coefficient, the mesh must be refined in ar
     set max number elements     = 50000
     set min refinement level    = 0
     set max refinement level    = 3
-    set variable		            = velocity
+    set variable		            = pressure
   end
 
-The mesh is dynamically adapted based on an estimate of the error of the solution for the velocity (the Kelly error estimator). The refinement is based on the number of elements. This means that the number of cells refined/coarsened per iteration is based on the fraction of the number of cells, rather than the fraction of the error (where all cells which have the fraction of the error are refined/coarsened).
+The mesh is dynamically adapted based on an estimate of the error of the solution for the pressure (the Kelly error estimator). The refinement is based on the number of elements. This means that the number of cells refined/coarsened per iteration is based on the fraction of the number of cells, rather than the fraction of the error (where all cells which have the fraction of the error are refined/coarsened).
 
 The ``min refinement level`` refers to the base mesh which has been used in the previous static simulations. The mesh can only become finer than this, not coarser. The ``max refinement level`` is set at 3, giving a maximum possible number of cells of 3 million. However, the ``max number elements`` limits the number of cells to 50,000 to keep the simulation within feasible computational expense.
 
@@ -282,22 +286,26 @@ Second case results (Re = 150)
 
 We now consider the case at a Reynolds number of 150. At this value of the Reynolds number, the flow has separated, resulting in an unstable wake and recirculation. 
 
-The velocity and pressure are once again visualised:
+The velocity and pressure are once again visualised as well as the mesh used:
 
 .. image:: images/velocity_150.png
+    :width: 93.8%
     :alt: velocity distribution 150
+    :align: center
+.. image:: images/velocity_mesh_150.png
+    :alt: velocity distribution mesh 150
     :align: center
 
 .. image:: images/pressure_150.png
     :alt: pressure distribution 150
     :align: center
 
-The drag coefficient at Re=150 using this example simulation is 0.858. The coarseness of the grid can clearly be seen in the lack of clarity in the velocity profile near the sphere, and so refinement of the mesh must occur to gain a more accurate simulation.
+The drag coefficient at Re=150 using this example simulation is 0.798, against an analytical solution of 0.889.
 
 Third case results (Re = 150 with an adaptative mesh refinement)
 ----------------------------------------------------------------
 
-The resulting velocity profile is shown without and with the underlying mesh. Refinement around the sphere and wake can be observed:
+Using mesh adaptative refinement, the final mesh contains slightly more than 101,000 cells. The resulting velocity profile is shown without and with the underlying mesh. Refinement around the sphere and wake can be observed:
 
 .. image:: images/adapt_without_mesh.png
     :alt: velocity distribution 150
@@ -307,7 +315,7 @@ The resulting velocity profile is shown without and with the underlying mesh. Re
     :alt: pressure distribution 150
     :align: center
 
-The resulting drag coefficient of 0.855 is more accurate than determined using the static mesh. 
+It is possible the acknowledge how better the mesh fits the velocity profile than in the previous example. The resulting drag coefficient of 0.880 is more accurate than determined using the static mesh, and does not take much more time to execute than the previous example. 
 
 
 Possibilities for extension
