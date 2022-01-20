@@ -62,7 +62,9 @@ Another subsection, which is generally the one we put at the top of the paramete
   	set output frequency            			 = 1000
   	set output path                                      	 = ./output_dem/
     end
-    
+
+.. warning:: 
+    If an output path is chosen, you need to create the folder before launching the simulation. Otherwise, an error message will appear and the simulation will fail to launch.
 
 Restart
 ~~~~~~~~~~~~~~~~~~~
@@ -226,7 +228,8 @@ The simulation was run for 1 s with a time step of 0.002 s. The time scheme chos
         set output path                     = ./output/
 end
 
-
+.. warning:: 
+    If an output path is chosen, you need to create the folder before launching the simulation. Otherwise, an error message will appear and the simulation will fail to launch.
 
 Physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
