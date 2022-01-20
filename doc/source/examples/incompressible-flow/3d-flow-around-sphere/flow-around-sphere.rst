@@ -200,7 +200,7 @@ The ``steady_bdf`` method solves for a steady-state simulation using adjoint tim
 Initial condition
 ~~~~~~~~~~~~~~~~~
 
-An initial condition is introduced for the Re = 150 problem. This way, a Re = 10 initial condition is set. Since the solution can easily be found at Re = 10, this is used as an initial attempt to hence find the solution at :math:`Re=150`.
+An initial condition is introduced for the Re = 150 problem. This way, a Re = 10 initial condition is set. Since the solution can easily be found at Re = 10, this is used as an initial attempt to find the solution at Re=150.
 
 .. code-block:: text
 
@@ -219,13 +219,14 @@ To increase the accuracy of the drag coefficient, the mesh must be refined in ar
 
   subsection mesh adaptation
     set type                    = kelly
-    set fraction coarsening     = 0.1
-    set fraction refinement     = 0.3
-    set fraction type	          = number
-    set max number elements     = 50000
+    set fraction coarsening     = 0.05
+    set fraction refinement     = 0.1
+    set fraction type	      = number
+    set max number elements     = 100000
     set min refinement level    = 0
-    set max refinement level    = 3
-    set variable		            = pressure
+    set max refinement level    = 4
+    set variable		      = pressure
+    set frequency         = 5 
   end
 
 The mesh is dynamically adapted based on an estimate of the error of the solution for the pressure (the Kelly error estimator). The refinement is based on the number of elements. This means that the number of cells refined/coarsened per iteration is based on the fraction of the number of cells, rather than the fraction of the error (where all cells which have the fraction of the error are refined/coarsened).
@@ -279,7 +280,7 @@ We can appreciate the axisymmetrical behavior of the flow. The drag on the spher
   cells      f_x           f_y          f_z      
   5823 98.3705224612 -0.0000000785 0.0000001119
 
-Given the flow parameters, the calculated drag coefficient is 250.50, using 6000 cells. At Re=0.1, an analytical solution of the drag coefficient is known: :math:`C_D = 240`. The deviation from the analytical solution is primarily due to the coarseness of the mesh. It would be relevant to carry out a mesh refinement analysis.
+Given the flow parameters, the calculated drag coefficient is 250.50, using 6000 cells. At Re = 0.1, an analytical solution of the drag coefficient is known: :math:`C_D = 240` (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_). The deviation from the analytical solution is primarily due to the size of the domain (height of the domain compared to the size of the sphere). The coarseness of the mesh can also have an impact on the result. It would be relevant to carry out a mesh refinement analysis.
 
 Second case results (Re = 150)
 ------------------------------
@@ -300,7 +301,7 @@ The velocity and pressure are once again visualised as well as the mesh used:
     :alt: pressure distribution 150
     :align: center
 
-The drag coefficient at Re=150 using this example simulation is 0.798, against an analytical solution of 0.889.
+The drag coefficient at Re = 150 using this example simulation is 0.798, against a predicted coefficient of 0.889 (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_).
 
 Third case results (Re = 150 with an adaptative mesh refinement)
 ----------------------------------------------------------------
@@ -322,6 +323,8 @@ Possibilities for extension
 ---------------------------
 
 - **High-order methods:** Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers. 
+
+- **Mesh size** It would be interesting to increase the height:sphere diameter ratio and see if the drag coefficient becomes closer to the analytical one for Re = 0.1 A Mesh refinement analysis could also be carried out.
 
 - **Dynamic mesh adaptation:** To increase accuracy further, the ``max number elements`` and ``max refinement level`` parameters of the mesh adaption can be increased.
 
