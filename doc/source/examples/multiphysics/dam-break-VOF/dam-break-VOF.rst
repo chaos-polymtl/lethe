@@ -207,14 +207,13 @@ properties`` subsection, their physical properties should be defined:
     end
 
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
-In ``subsection fluid 0`` we set the density and kinematic viscosity of fluid 0 
-of the first phase. Similar procedure is done for the the secondary phase in 
-``subsection fluid 1``
+In ``subsection fluid 0``, we set the density and the kinematic viscosity for the first phase. 
+Similar procedure is done for the secondary phase in ``subsection fluid 1``. 
 
 
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
 defined for ``velocity``. ``min refinement level`` and ``max refinement 
-level`` are 4 and 5, respectively.
+level`` are 3 and 5, respectively.
 
 .. code-block:: text
 
@@ -262,7 +261,7 @@ of the simulation at :math:`0`, :math:`1.1`, :math:`3`, and :math:`4` seconds
     :alt: time-shots
     :align: center
 
-A python post-processing code `(gls_VOF_dam-break_Martin_and_Moyce.py)` 
+A python post-processing code `(Dambreak_2d_lethe.py)` 
 is added to the example folder to post-process the results.
 Run `python3 ./Dambreak_2d_lethe.py ./Output` to execute this 
 post-processing code, where `./Output` is the directory that 
