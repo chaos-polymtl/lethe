@@ -60,7 +60,7 @@ The structured mesh is built using `gmsh <https://gmsh.info/#Download>`_. Geomet
 
   The domain is dimensioned so that the wake has sufficient distance to develop downstream and there is a sufficient cross-sectional area to negate any effect from the wall boundary conditions.
 
-In the parameter file, the mesh can be uploaded this way:
+In the parameter file, the mesh is read this way:
 
 .. code-block:: text
 
