@@ -2,25 +2,37 @@
 Dam break VOF
 ==========================
 
+----------------------------------
+Features
+----------------------------------
+- Solvers: ``gls_navier_stokes_2d`` 
+- Two phase flow handled by the Volume of fluids (VOF) approach with a phase fraction limiter and phase sharpening
+- Unsteady problem handled by an adaptive BDF1 time stepping scheme 
+- The use of a python script for post processing data
+
+
+
+
 This example simulates the dam break experiments of `Martin and Moyce (1952)`_. 
 
 .. _Martin and Moyce (1952): https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1952.0006
 
 A liquid is fixed behind a dam at the left most corner of
 a rectangular domain as shown in the figure below.
-At :math:`t = 0` seconds, the dam is removed, and 
+At :math:`t = 0` s, the dam is removed, and 
 the liquid is released into the total simulation domain. 
 The corresponding parameter file is 
 ``gls_VOF_dam-break_Martin_and_Moyce.prm``.
 
-The following schematic describes the simulation:
+The following schematic describes the geometry and dimensions of the simulation n the :math:`(x,y)` plane:
 
 .. image:: images/VOF_dam_break_configuration.png
     :alt: Schematic
     :align: center
+    :width: 400
 
 .. note:: 
-    All the four boundary conditions are slip, and an external 
+    All the four boundary conditions are ``slip``, and an external 
     gravity field of :math:`-1`` is applied in the y direction.
 
 --------------
@@ -51,17 +63,17 @@ time step of :math:`0.01` seconds.
         set adaptative time step scaling   = 1.1
         set number mesh adapt              = 0
         set output name                    = dam-break_VOF
-        set output frequency               = 20
+        set output frequency               = 10
         set output path                    = ./Output/
         set subdivision                    = 1      
     end
 
 .. warning::
-Make sure to create a directory named `Output` in the same directory 
-you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will hang.
+    Make sure to create a directory named ``Output`` in the same directory 
+    you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will hang.
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
-and off `(false)`` the physics of interest. Here ``VOF`` and 
+and off `(false)` the physics of interest. Here ``VOF`` and 
 ``interface sharpening`` are chosen.
 
 .. note:: 
@@ -80,41 +92,49 @@ and off `(false)`` the physics of interest. Here ``VOF`` and
         set interface sharpening = true
     end 
 
-In the ``interface sharpening`` subsection, the parameters required for 
-sharpening the interface are defined. The current interface 
-sharpening method consists of two steps. These steps are explained as
-follows: 
+
+""""""""""""""""""""""""""""""""
+Interface Sharpening Parameters
+""""""""""""""""""""""""""""""""
+
+
+The current ``interface sharpening`` method consists of two steps:
+
+
+#. Phase fraction limiter   
+
+    .. math:: 
+        \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
+ 
+    The phase fraction :math:`\phi` is a physical paramter that is bounded in the interval :math:`[0-1]`.
+    The phase fraction limiter above will uopdate the phase fraction in case it fell outside of these bounds.
+  
+
+#. Interface sharpening 
+
+    .. math::
+        \phi :=
+        \begin{cases}
+        c^{1-\alpha} \phi^{\alpha} &  (0 \leq \phi < c  ) \\
+        1-(c-1)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
+        \end{cases}
+
+
+    where :math:`\phi`, :math:`c`, and :math:`\alpha` denote phase fraction, 
+    sharpening threshold, and interface sharpness respectively. 
+    This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_.  
+
+    .. _Aliabadi and Tezduyar (2000):  https://www.sciencedirect.com/science/article/pii/S0045782500002000
+
+    ``Sharpening frequency`` is an integer parameter that defines the 
+    frequency of interface sharpening; sharpening threshold defines 
+    a phase fraction threshold for interface sharpening (generally :math:`0.5`).
+    Interface sharpness is a model parameter which is generally in
+    the range of :math:`(1-2]`. 
 
 """"""""""""""""""""""""""
-1- Phase fraction limiter
+Fluid phase parameters 
 """"""""""""""""""""""""""
-
-.. math:: 
-    \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
-
-""""""""""""""""""""""""
-2 -Interface sharpening 
-""""""""""""""""""""""""
-.. math::
-    \phi :=
-    \begin{cases}
-     c^{1-\alpha} \phi^{\alpha} &  (0 \leq \phi < c  ) \\
-     1-(c-1)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
-    \end{cases}
-
-
-where :math:`\phi`, :math:`c`, and :math:`\alpha` denote phase fraction, 
-sharpening threshold, and interface sharpness respectively. 
-This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_.  
-
-.. _Aliabadi and Tezduyar (2000):  https://www.sciencedirect.com/science/article/pii/S0045782500002000
-
-`Sharpening frequency` is an integer parameter that defines the 
-frequency of interface sharpening; sharpening threshold defines 
-a phase fraction threshold for interface sharpening (generally :math:`0.5`);
-and interface sharpness is a model parameter which is generally in
-the range of :math:`(1-2]`.
-
 
 .. code-block:: text
 
@@ -129,7 +149,7 @@ the range of :math:`(1-2]`.
 
 In the ``initial condition``, the initial velocity and initial position 
 of the liquid phase are defined. The liquid phase is initially 
-defined as rectangle of length :math:`= 3.5` and height ::math:`= 7`.
+defined as rectangle of length :math:`= 3.5` and height :math:`= 7`.
 
 .. code-block:: text
 
@@ -170,7 +190,7 @@ properties`` subsection, their physical properties should be defined:
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-        set number of fluids     = 2
+        set number of fluids         = 2
         subsection fluid 0
             set density              = 0.02
             set kinematic viscosity  = 0.1
@@ -180,6 +200,12 @@ properties`` subsection, their physical properties should be defined:
             set kinematic viscosity  = 0.01
         end
     end
+
+We define two fluids here simply by setting the number of fluids to be :math:`2`.
+In ``subsection fluid 0`` we set the density and kinematic viscosity of fluid 0 
+of the first phase. Similar procedure is done for the the secondary phase in 
+``subsection fluid 1``
+
 
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
 defined for ``velocity``. ``min refinement level`` and ``max refinement 
@@ -192,26 +218,26 @@ level`` are 4 and 5, respectively.
     #---------------------------------------------------
     subsection mesh adaptation
         set type                    = kelly
-        set variable                = velocity
+        set variable                = phase
         set fraction type           = fraction
         set max refinement level    = 5
-        set min refinement level    = 4
-        set frequency               = 5
-        set fraction refinement     = 0.2
-        set fraction coarsening     = 0.01
+        set min refinement level    = 3
+        set frequency               = 1
+        set fraction refinement     = 0.95
+        set fraction coarsening     = 0.02
     end
 
 
 
-*Call the gls_navier_stokes_2d by invoking:*  
+Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 2 ./{path-to-lethe-build-dir}/applications/gls_navier_stokes_2d/gls_navier_stokes_2d gls_VOF_dam-break_Martin_and_Moyce.prm``
+``mpirun -np 2 gls_navier_stokes_2d gls_VOF_dam-break_Martin_and_Moyce.prm``
 
-*to run the simulation using two CPU cores.* (Feel free to use more)
+to run the simulation using two CPU cores. Feel free to use more.
 
 
 .. warning:: 
-    The code will compute :math:`100,000+` dofs for :math:`620+` time 
+    The code will compute :math:`35,000+` dofs for :math:`600+` time 
     iterations. Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun 
 
@@ -227,12 +253,12 @@ of the simulation at :math:`0`, :math:`1.1`, :math:`3`, and :math:`4` seconds
 
 
 
-.. image:: images/time-shots.png
+.. image:: images/time-series.png
     :alt: time-shots
     :align: center
 
 A python post-processing code `(gls_VOF_dam-break_Martin_and_Moyce.py)` 
-is added to the example folder for post-processing the results.
+is added to the example folder to post-process the results.
 Run `python3 ./Dambreak_2d_lethe.py ./Output` to execute this 
 post-processing code, where `./Output` is the directory that 
 contains the simulation results. In post-processing, the maximum 

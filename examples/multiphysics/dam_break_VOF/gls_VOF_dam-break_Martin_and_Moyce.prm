@@ -3,18 +3,18 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set method                  		= bdf1
-  set time end                		= 4.1
-  set time step               		= 0.01
+  set method                  	= bdf1
+  set time end                	= 4.1
+  set time step               	= 0.01
     set adapt 		      		= true
   set max cfl		      		= 0.5
-  set stop tolerance          		= 1e-5
+  set stop tolerance          	= 1e-5
   set adaptative time step scaling 	= 1.1
-  set number mesh adapt       		= 0
-  set output name             		= dam-break_VOF
-  set output frequency        		= 20
+  set number mesh adapt       	= 0
+  set output name             	= dam-break_VOF
+  set output frequency        	= 10
   set output path                  	= ./Output/
-  set subdivision             		= 1
+  set subdivision             	= 1
 end
 #---------------------------------------------------
 # Multiphysics
@@ -27,8 +27,8 @@ end
 # Interphase sharpening
 #---------------------------------------------------
 subsection interface sharpening
-  set sharpening threshold              = 0.5
-  set interface sharpness               = 2
+  set sharpening threshold             = 0.5
+  set interface sharpness              = 2
   set sharpening frequency      	= 10
 end
 #---------------------------------------------------
@@ -82,13 +82,13 @@ end
 #---------------------------------------------------
 subsection mesh adaptation
   set type                    = kelly
-  set variable                = velocity
+  set variable                = phase
   set fraction type           = fraction
   set max refinement level    = 5
-  set min refinement level    = 4
-  set frequency               = 5
-  set fraction refinement     = 0.2
-  set fraction coarsening     = 0.01
+  set min refinement level    = 3
+  set frequency               = 1
+  set fraction refinement     = 0.95
+  set fraction coarsening     = 0.02
 end
 
 #---------------------------------------------------
@@ -140,7 +140,7 @@ end
 # Linear Solver Control
 #---------------------------------------------------
 subsection linear solver
-  set verbosity               		     = verbose
+  set verbosity			       = verbose
   set method                                 = gmres
   set max iters                              = 8000
   set relative residual                      = 1e-3
