@@ -2,11 +2,11 @@
 Gas-Solid Fluidized Bed
 ==================================
 
-It is strongly recommended to visit `CFD-DEM parameters <../../../parameters/unresolved_cfd-dem/unresolved_cfd-dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters CFD-DEM.
+It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_  and `CFD-DEM parameters <../../../parameters/unresolved_cfd-dem/unresolved_cfd-dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters ind DEM and CFD-DEM.
 
 Features
 ----------------------------------
-- Solvers: ``cfd_dem_coupling_3d``
+- Solvers: ``dem_3d`` and ``cfd_dem_coupling_3d``
 - Three-dimensional problem
 - Displays the selection of models and physical properties.
 - Simulates a solid-gas fluidized bed.
@@ -20,22 +20,21 @@ Location of the examples
 Description of the case
 -----------------------
 
-This example simulates the fluidization of spherical particles in air. First, we use Lethe-DEM to fill the bed with particles. Then, we use the ``cfd_dem_coupling`` solver within Lethe to simulate the fluidization of the particles.
+This example simulates the fluidization of spherical particles in air. First, we use Lethe-DEM to fill the bed with particles. We nable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``cfd_dem_coupling_3d`` solver within Lethe to simulate the fluidization of the particles by initially reading the checkpoint files from the DEM simulation.
 
 
-Parameter file
---------------
+DEM parameter file
+-------------------
 
 The syntax is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters.html>`_ of the documentation.
 
 To set-up the square fluidized bed case, we first fill the bed with particles. 
-We first introduce the different sections of the parameter file (packing_in_cylinder.prm) needed to run this simulation. In this example, we are simulating a squred fluidized that has a half length of 0.1 m, and a side of 0.04 m. We use the GridGenerator::subdivided_hyper_rectangle function of Deal.II in order to generate the mesh. The square bed is divided 40 times in the y direction. The following portion of the DEM parameter file shows the function called:
-
+We first introduce the different sections of the parameter file (packing_in_cylinder.prm) needed to run this simulation. 
 
 Mesh
 ~~~~~
 
-The ``mesh`` subsection specifies the computational grid:
+In this example, we are simulating a squared fluidized that has a half length of 0.1 m, and a side of 0.04 m. We use the `subdivided_hyper_rectangle GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#ac76417d7404b75cf53c732f456e6e971>`_  in order to generate the mesh. The square bed is divided 40 times in the y direction. The following portion of the DEM parameter file shows the function called:
 
 .. code-block:: text
 
@@ -49,29 +48,24 @@ The ``mesh`` subsection specifies the computational grid:
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Another subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation. A simulation time of 1 s was chosen with a time step of 0.002. It it important to choose a long enough time as to allow all particles to come to rest. We store the output files generated in the folder output_dem:
+Another subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log, and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation. A simulation time of 1 s was chosen with a time step of 0.000005. It is important to choose a long enough time as to allow all particles to come to rest. We store the output files generated in the folder output_dem:
 
 
 .. code-block:: text
 
     subsection simulation control
-        set method                  = bdf1
-        set number mesh adapt       = 0
-  	set output name              = result_
-  	set output frequency	  	= 10
-  	set startup time scaling         = 0.6
-  	set time end                     = 1
-  	set time step                    = 0.002
-  	set subdivision             = 1 
-  	set log precision     = 10 
-  	set output path                  	 = ./output/
+  	set time step                 			 	 = 0.000005
+  	set time end       					 = 1
+  	set log frequency				         = 1000
+  	set output frequency            			 = 1000
+  	set output path                                      	 = ./output_dem/
     end
     
 
 Restart
 ~~~~~~~~~~~~~~~~~~~
 
-The ``cfd_dem_coupling_3d`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the "set filename" option. The DEM parameter file is initialized exactly as the the cylindrical packed bed example. The difference is in the number of particles, their physical proprties and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved_cfd-dem/unresolved_cfd-dem.html>`_ . 
+The ``cfd_dem_coupling_3d`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the "set filename" option. The DEM parameter file is initialized exactly as the cylindrical packed bed example. The difference is in the number of particles, their physical proprties, and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved_cfd-dem/unresolved_cfd-dem.html>`_ . 
 
 .. code-block:: text
 
@@ -108,7 +102,7 @@ We enable dynamic load balancing in order to fully take advantage of the paralle
 Lagrangian physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties section of the particles allows us to specify the different parameters related to the particle such as its density, diameter, and the different coefficients that dictates the collision behaviour of the particles. Also, in this section we define the total number of particles for the simulation. The gravitational acceleration as well as the physical properties of particles and walls are specified in the ``Lagrangian physical properties`` subsection. These properties include diameter and density of particles, Young's modulus, Poisson's ratio, restitution coefficient, friction and rolling friction coefficients. We insert 30,000 particles in the simulation.
+The physical properties section of the particles allows us to specify the different parameters related to the particle such as its density, diameter, and the different coefficients that dictates the collision behavior of the particles. Also, in this section we define the total number of particles for the simulation. The gravitational acceleration as well as the physical properties of particles and walls are specified in the ``Lagrangian physical properties`` subsection. These properties include diameter and density of particles, Young's modulus, Poisson's ratio, restitution coefficient, friction and rolling friction coefficients. We insert 30,000 particles in the simulation.
 
 .. code-block:: text
 
@@ -138,7 +132,7 @@ The physical properties section of the particles allows us to specify the differ
 Insertion info
 ~~~~~~~~~~~~~~~~~~~
 
-The ``insertion info`` subsection manages the insertion of particles. It allows us to control the insertion of particles at each time step. This section is already explained in the DEM examples. However, further information regarding the information box will be given. The volume of insertion box should be large enough to fit all particles. Also, its bounds should be located within the mesh generated in the Mesh subsection.  
+The ``insertion info`` subsection manages the insertion of particles. It allows us to control the insertion of particles at each time step. This section is already explained in the DEM examples. However, further information regarding the information box will be given. The volume of the insertion box should be large enough to fit all particles. Also, its bounds should be located within the mesh generated in the Mesh subsection.  
 
 .. code-block:: text
 
@@ -161,7 +155,7 @@ The ``insertion info`` subsection manages the insertion of particles. It allows 
 Floating walls
 ~~~~~~~~~~~~~~~~~~~
 
-We need to pack the particles in the middle of the cylinder. Therefore, we create a stopper (floating wall) somewhere below the center of the bed. We chose the point with a y-coordinate of -0.06 to create the wall. We then define a normal to the wall at this point. Make sure that the end time of the floating wall is bigger than the simulation time to ensure that the particles remain suspended. This is shown in:
+We need to pack the particles in the middle of the square bed. Therefore, we create a stopper (floating wall) somewhere below the center of the bed. We chose the point with a y-coordinate of -0.06 to create the wall. We then define a normal to the wall at this point. Make sure that the end time of the floating wall is bigger than the simulation time to ensure that the particles remain suspended. This is shown in:
 
 .. code-block:: text
 
@@ -184,19 +178,19 @@ We need to pack the particles in the middle of the cylinder. Therefore, we creat
 
     end
     
-Running the simulation
-----------------------
+Running the DEM simulation
+---------------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_3d`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
 
-  dem_3d packing_in_circle.prm
+  dem_3d packing_in_square_duct.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d packing_in_circle.prm
+  mpirun -np 8 dem_3d packing_in_square_duct.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -205,6 +199,9 @@ Lethe will generate a number of files. The most important one bears the extensio
     The vtu files generated by Lethe are compressed archives. Consequently, they cannot be postprocessed directly. Although they can be easily post-processed using Paraview, it is sometimes necessary to be able to work with the raw data. The python library `PyVista <https://www.pyvista.org/>`_  allows us to do this. 
 
 After the particles have been packed inside the square bed, it is now possible to simulate the fluidization of particles.
+
+VANS parameter file
+---------------------
 
 The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown here.
 
@@ -217,7 +214,6 @@ The simulation was run for 1 s with a time step of 0.002 s. The time scheme chos
 
     subsection simulation control
         set method                          = bdf1
-        set number mesh adapt               = 0
         set output name                     = result_
         set output frequency	  	    = 10
         set startup time scaling            = 0.6
@@ -263,7 +259,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the boundary conditions, we choose a slip boundary condition on the walls of the cylinder (ID = 0) and an inlet velocity of 0.2 m/s at the lower face of the bed (ID = 2).
+For the boundary conditions, we choose a slip boundary condition on the walls of the square bed (IDs = 0, 1, 4, 5) and an inlet velocity of 0.2 m/s at the lower face of the bed (ID = 2).
 
 .. code-block:: text
 
@@ -305,7 +301,7 @@ The additional sections for the CFD-DEM simulations are the void fraction subsec
 Void fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to "dem". For this, we need to read the dem files which we already wrote using check-pointing. We therefore set the read dem to "true" and specify the prefix of the dem files to be dem. In order to ensure that our void fraction projection is bounded, we choose an upper bound limit of 1. We decide not to lower bound the void fraction and thus attributed a value of 0 to the L2 lower bound parameter. We now choose a smoothing factor for the void fraction as to reduce discontinuity which can lead to oscillations in the velocity. The factor we choose is around the square of twice the particle's diameter. 
+Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to "dem". For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the read dem to "true" and specify the prefix of the dem files to be dem. In order to ensure that our void fraction projection is bounded, we choose an upper bound limit of 1. We decide not to lower bound the void fraction and thus attributed a value of 0 to the L2 lower bound parameter. We now choose a smoothing factor for the void fraction to reduce discontinuity which can lead to oscillations in the velocity. The factor we choose is around the square of twice the particle's diameter. 
  
 .. code-block:: text
 
@@ -322,7 +318,7 @@ Since we are calculating the void fraction using the packed bed of the DEM simul
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We also enable grad_div stabilisation in order to improve local mass conservation. The void fraction time derivative is enabled to account for the time variation of the void fraction. 
+We also enable grad_div stabilization in order to improve local mass conservation. The void fraction time derivative is enabled to account for the time variation of the void fraction. 
 
 .. note:: 
     For certain simulations, this parameter should be disabled to improve stability of the solver.
@@ -375,7 +371,10 @@ Linear solver control
         set verbosity                              = verbose
         set max krylov vectors                     = 200
     end
-    
+
+Running the VANS simulation
+---------------------------
+
 The simulation is run using the cfd_dem_coupling_3d application as per the following command:
 
 .. code-block:: text
