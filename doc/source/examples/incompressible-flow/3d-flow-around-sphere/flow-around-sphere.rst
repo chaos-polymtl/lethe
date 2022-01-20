@@ -173,7 +173,7 @@ In fact, for the Re = 0.1, we have a laminar to creeping flow, meaning that the 
     set subdivision             = 1
   end
 
-At Re = 150, the flow has separated, resulting in an unstable wake and recirculation. It is hence more difficult to converge to a steady-state solution. Therefore, two changes are implemented to allow a steady-state solution to be found. Firstly, the time-stepping method is changed from ``steady`` to ``steady_bdf``.
+At Re = 150, the flow has separated, resulting in an unstable wake and recirculation. It is hence more difficult to converge to a steady-state solution. 
 
 .. code-block:: text
 
