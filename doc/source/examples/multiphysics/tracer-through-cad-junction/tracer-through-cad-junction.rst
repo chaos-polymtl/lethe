@@ -2,7 +2,9 @@
 Tracer through CAD Junction in Simplex
 ======================================
 
-In this example, we solve a problem using the simplex capabilities of Lethe. The simplex grids can be generated easily to represent complex geometries, such as a junction of channels made from boolean addition. The tracer physics usage will also be demonstrated.
+In this example, we solve a problem using the simplex capabilities of Lethe. 
+The simplex grids can be generated easily to represent complex geometries, such as a junction of channels made from boolean addition. 
+We will also demonstrate the tracer physics capabilities.
 
 Features
 ----------------------------------
@@ -18,8 +20,10 @@ Location of the example
 Description of the case
 -----------------------
 
-A junction of pipes following an arbitrary path, in this case orthogonal sinusoids, is difficult to mesh properly with hexaedral elements. 
-A simplex mesh, on the other hand, is easy to setup and can be done with many well-established algorithms; all software that can create a mesh can create a simplex mesh.
+A junction of pipes following an arbitrary path is difficult to mesh properly with hexaedral elements. 
+A simplex mesh, on the other hand, is easy to setup and can be built with many well-established algorithms; 
+all software that can create a mesh can create a simplex mesh.
+In this example, we consider a junction of pipes that follow orthogonal sinusoids.
 This case shows how a passive tracer injected in such a geometry can be used to visualize preferential paths.
 
 
@@ -137,7 +141,7 @@ Using the tracer physics requires four elements: activating the physics, setting
 .. code-block:: text
 
     # --------------------------------------------------
-    # Boundary Conditions
+    # Tracer Boundary Conditions
     #---------------------------------------------------
     subsection boundary conditions tracer
     set number                  = 2
@@ -157,12 +161,81 @@ Using the tracer physics requires four elements: activating the physics, setting
         end
     end
 
-The boundary conditions are written in a specific way. We have a number of specified 2 boundaries, a Dirichlet condition of 1 for an inlet, and another Dirichlet condition of 0 for the two other inlets; all the remaining boundaries are unspecified. An unspecified boundary condition in Lethe is considered as the natural condition of finite elements, which is a zero Neumann condition. This is the condition needed in that case for the walls and outlets: the walls must not let any tracer out, and the outlets must not apply any constraint on their tracer level.
+The boundary conditions are written in a specific way. 
+We have a number of specified 2 boundaries, a Dirichlet condition of 1 for an inlet, and another Dirichlet condition of 0 
+for the two other inlets; all the remaining boundaries are unspecified. 
+An unspecified boundary condition in Lethe is considered as the natural condition of finite elements, 
+which is a zero Neumann condition. This is the condition needed in that case for the walls and outlets: 
+the walls must not let any tracer out, and the outlets must not apply any constraint on their tracer level.
 
-Results
-----------
-The case must be run with the solver and the parameter file. Then, the results can be viewed using software such as Paraview.
+.. note:: 
+    The ``boundary conditions tracer`` subsection is different from the general ``boundary conditions`` 
+    which concerns the flow. 
+
+This ``boundary conditions`` subsection for the flow is setup as follows. The inlet with a high tracer concentration (``id = 2``)
+is given a higher velocity than the other two (``id = 1``). The walls of the junction (``id = 3``) are given a ``no slip`` type.
+The remaining boundaries (``id = 4``) are unspecified for the same reason as in the previous subsection: no constraint 
+must be applied to the outlet flow. 
+
+.. code-block:: text
+
+    # --------------------------------------------------
+    # Boundary Conditions
+    #---------------------------------------------------
+    subsection boundary conditions
+        set number                  = 3
+        subsection bc 0
+            set id = 1
+            set type              = function
+            subsection u
+                set Function expression = 0
+            end
+            subsection v
+                set Function expression = 0
+            end
+            subsection w
+                set Function expression = 1
+            end
+        end
+        # boundary id2 will have the tracer
+        subsection bc 1
+            set id = 2
+            set type              = function
+            subsection u
+                set Function expression = 0
+            end
+            subsection v
+                set Function expression = 0
+            end
+            subsection w
+                set Function expression = 4
+            end
+        end
+        subsection bc 2
+            set id = 3
+            set type              = noslip
+        end
+    end
+
+Simulation and results
+------------------------
+The case must be run with the solver and the parameter file. 
+The simulation is launched in the same folder as the ``.prm`` file,
+using the ``gls_navier_stokes_3d`` solver. It takes a long time since problem is 
+transient and the time steps are short:
+
+.. code-block:: sh
+    
+    ../../exe/bin/gls_navier_stokes_3d tracer_through_cad_junction.prm
+
+
+The results in ``.pvd`` format can then be viewed using visualisation software such as Paraview. 
 
 .. image:: images/paraview_tracer.png
     :alt: Simulation results in Meshgrid format
     :align: center
+
+The higher presence of tracer in the outlet on the same side as the tracer inlet may indicate poor mixing.
+As the tracer diffusivity is low, the mixing between the streams comes mainly from advection.
+However, since the kinematic viscosity is high, the flow is laminar (i.e. dominated by viscous forces) and
+the streamlines do not cross. 
