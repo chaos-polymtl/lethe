@@ -9,3 +9,4 @@ Incompressible Flow
 
     2d-lid‐driven-cavity-flow/lid‐driven-cavity-flow
     2d-taylor-couette-flow/2d-taylor-couette-flow
+    3d-flow-around-sphere/flow-around-sphere
