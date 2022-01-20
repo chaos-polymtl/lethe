@@ -31,13 +31,13 @@ The following schematic describes the simulation and its boundary condition indi
 
 Note that the sphere surface has a boundary index of ``0``, the inlet ``1`` and the walls parallel to the flow direction have a boundary index of ``2``. 
 
-As this examples allows for two different Reynolds number as well as an adaptative mesh refinement variation, the Parameter file section will specify the differences when applicable. 
+As this examples allows for two different Reynolds numbers as well as an adaptative mesh refinement variation, the Parameter file section will specify the differences when applicable. 
 
 
 Parameter file
 --------------
 
-We first extablish the parameters.
+We first establish the parameters.
 
 Mesh
 ~~~~
@@ -60,7 +60,7 @@ The structured mesh is built using `gmsh <https://gmsh.info/#Download>`_. Geomet
 
   The domain is dimensioned so that the wake has sufficient distance to develop downstream and there is a sufficient cross-sectional area to negate any effect from the wall boundary conditions.
 
-In the parameter file, the mesh can be uploaded this way:
+In the parameter file, the mesh is read this way:
 
 .. code-block:: text
 
@@ -159,7 +159,7 @@ We specify the interpolation order for both pressure and velocity using the ``FE
 Simulation control
 ~~~~~~~~~~~~~~~~~~
 
-The parameters also slightly different from one problem to another differ in this section since as the different examples experience different flow regimes.
+The parameters also slightly differ from one problem to another as different examples experience different flow regimes.
 
 In fact, for the Re = 0.1, we have a laminar to creeping flow, meaning that the flow is very steady, and therefore can be solved in steady-state.
 
@@ -226,28 +226,28 @@ To increase the accuracy of the drag coefficient, the mesh must be refined in ar
 
 The mesh is dynamically adapted based on an estimate of the error of the solution for the velocity (the Kelly error estimator). The refinement is based on the number of elements. This means that the number of cells refined/coarsened per iteration is based on the fraction of the number of cells, rather than the fraction of the error (where all cells which have the fraction of the error are refined/coarsened).
 
-The ``min refinement level`` refers to the base mesh which has been used in the previous static simulations. The mesh can only become finer than this, not coarser. The ``max refinement level`` is set at 3, giving a maximum possible number of cells at 3 million. However, the ``max number elements`` limits the number of cells to 50,000 to keep the simulation within feasible computational expense.
+The ``min refinement level`` refers to the base mesh which has been used in the previous static simulations. The mesh can only become finer than this, not coarser. The ``max refinement level`` is set at 3, giving a maximum possible number of cells of 3 million. However, the ``max number elements`` limits the number of cells to 50,000 to keep the simulation within feasible computational expense.
 
 
 Running the simulation
 ----------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_2d`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_3d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
-  gls_navier_stokes_2d sphere_0.1.prm
+  gls_navier_stokes_3d sphere_0.1.prm
 
 or 
 
 .. code-block:: text
 
-  gls_navier_stokes_2d sphere_150.prm
+  gls_navier_stokes_3d sphere_150.prm
 
 or
 
 .. code-block:: text
 
-  gls_navier_stokes_2d sphere_adapt.prm
+  gls_navier_stokes_3d sphere_adapt.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
