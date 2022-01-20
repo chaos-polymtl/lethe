@@ -37,7 +37,7 @@ As this examples allows for two different Reynolds numbers as well as an adaptat
 Parameter file
 --------------
 
-We first extablish the parameters.
+We first establish the parameters.
 
 Mesh
 ~~~~
