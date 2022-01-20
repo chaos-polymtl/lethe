@@ -2,7 +2,7 @@
 Tracer through CAD Junction in Simplex
 ======================================
 
-In this example, we solve a problem using the simplex capabilities of Lethe. The simplex grids can be generated easily to represent complex geometries, such as a junction of channels made a boolean addition. The tracer physics usage will also be demonstrated.
+In this example, we solve a problem using the simplex capabilities of Lethe. The simplex grids can be generated easily to represent complex geometries, such as a junction of channels made from boolean addition. The tracer physics usage will also be demonstrated.
 
 Features
 ----------------------------------
@@ -28,7 +28,7 @@ Generating a geometry with SALOME
 
 Complex geometries can be set up and meshed with the SALOME platform. 
 
-First, the geometry module must be loaded as such, and geometric shapes can be added. For example, here, disks are drawn alongside sinusoidal curves that will be used for pipe generation through extrusion. The Fuse command can then be used to obtain a single geometry.
+First, the geometry module must be loaded as such, and geometric shapes can be added. For example, here, disks are drawn alongside sinusoidal curves that will be used for pipe generation through extrusion. The ``Fuse`` command can then be used to obtain a single geometry.
 
 .. image:: images/salome_menu.png
     :alt: Salome menu with geometry visible
@@ -38,7 +38,7 @@ First, the geometry module must be loaded as such, and geometric shapes can be a
     :alt: Geometry generated with Salome
     :align: center
 
-Second, the mesh module can be loaded to generate a ``.mesh`` file. A new mesh must be created with an associated geometry, algorithm and hypothesis. NETGEN 1D-2D-3D works well, and automatic hypothesis selection can be used. The element sizes can be edited to specific requirements, and then the Compute command must be used to generate the grid. Through File->Export->GMF File, the ``.mesh`` file can be output.
+Second, the mesh module can be loaded to generate a ``.mesh`` file. A new mesh must be created with an associated geometry, algorithm and hypothesis. ``NETGEN 1D-2D-3D`` works well, and automatic hypothesis selection can be used. The element size can be edited to specific requirements, and then the Compute command must be used to generate the grid. Through ``File -> Export -> GMF File``, the ``.mesh`` file can be output.
 
 .. image:: images/salome_mesh_creation.png
     :alt: Contextual menu for mesh generation in Salome
@@ -50,8 +50,9 @@ Adding the boundary IDs from Gmsh
 
 A criterion for the use of ``.msh`` file in Lethe is that the boundaries have an associated ID number. These numbers can be added in Gmsh.
 
-The boundaries from the mesh must be linked to a Physical object. In 3D for example, the inlet, outlet and walls must be specified as Physical surfaces. Selecting the surface for the inlet and outlet can be done easily, and then the ``.geo`` file can be text-edited to add a new physical surface with the remaining surfaces. The physical volume must also be specified.
-In this specific case, there are four boundaries: inlets with no tracer (1), inlet with tracer (2), walls (3) and outlets (4).
+The boundaries from the mesh must be linked to a Physical object. In 3D for example, the inlet, outlet and walls must be specified as ``Physical surfaces``. Selecting the surface for the inlet and outlet can be done easily, and then the ``.geo`` file can be text-edited to add a new physical surface with the remaining surfaces.
+
+In this specific case, there are four boundaries: inlets with no tracer (1), inlet with tracer (2), walls (3) and outlets (4), as stated in the ``.geo`` file (see excerpt in the text block below).
 
 .. code-block:: text
 
@@ -60,7 +61,13 @@ In this specific case, there are four boundaries: inlets with no tracer (1), inl
     Physical Surface(2) = {10};
     Physical Surface(3) = {1:9,11:711,713:728,730:848,850,852:5000};
     Physical Surface(4) = {849, 851};
+
+The ``Physical Volume`` must also be specified for compatibility with deal.II, as stated with this line from the ``.geo`` file:
+
+.. code-block:: text
+
     Physical Volume(1) = {1};
+
 
 The last step in Gmsh is to generate the 3D mesh, and then save it to a ``.msh`` file.
 
@@ -72,7 +79,7 @@ Using Lethe requires a solver executable, in this case ``gls_navier_stokes_3d``,
 Enabling the Simplex mode
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simplex mode can be used by setting a boolean to true and making sure the ``.msh`` file used has the proper type of elements. 
+In the ``subsection mesh``, the simplex mode can be enabled with ``set simplex = true``. Also, the mesh in the ``.msh`` file must obviously be built with simplex elements.
 
 .. code-block:: text
 
@@ -87,10 +94,10 @@ The simplex mode can be used by setting a boolean to true and making sure the ``
     end
 
 .. warning:: 
-    If the mesh type is set to ``dealii`` instead of ``gmsh``, making sure the imported mesh is built with simplices doesn't make sense; the deal.II generated mesh will be built properly.
+    If the mesh type is set to ``dealii`` instead of ``gmsh``, the deal.II generated mesh will be properly built with simplices.
 
 .. warning:: 
-    It is crucial to consider a current (2022-01-19) limitation : simplex grid refinement isn't implemented in Lethe.
+    [2022-01-19] It is crucial to consider a current limitation : simplex grid refinement isn't implemented in Lethe.
 
 Setting up the tracer physics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
