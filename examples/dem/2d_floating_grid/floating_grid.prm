@@ -1,0 +1,73 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set time step                 			 = 1e-6
+  set time end       					 = 3
+  set log frequency				         = 10000
+  set output frequency            			 = 10000
+end
+
+# --------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+subsection model parameters
+  set contact detection method 		   		 = dynamic
+  set dynamic contact search size coefficient            = 0.7
+  set neighborhood threshold				 = 1.5
+  set particle particle contact force method             = hertz_mindlin_limit_overlap
+  set particle wall contact force method                 = nonlinear
+  set integration method				 = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection lagrangian physical properties
+    set gx            		 			= 0.0
+    set gy            		 			= -9.81
+    set number of particle types	                = 1
+    	subsection particle type 0
+		set size distribution type		= uniform
+    		set diameter            	 	= 0.005
+		set number				= 150
+    		set density particles  	 		= 2000
+    		set young modulus particles         	= 100000000
+    		set poisson ratio particles          	= 0.3
+    		set restitution coefficient particles	= 0.9
+    		set friction coefficient particles      = 0.3
+    		set rolling friction particles         	= 0.1
+	end
+    set young modulus wall            			= 100000000
+    set poisson ratio wall            			= 0.3
+    set restitution coefficient wall           		= 0.9
+    set friction coefficient wall         		= 0.3
+    set rolling friction wall         	      	  	= 0.1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+	set type = gmsh
+	set file name = ./bucket.msh
+end
+
+#---------------------------------------------------
+# Floating Grid
+#---------------------------------------------------
+subsection floating grid
+    set type = gmsh
+    set file name = ./wall.msh
+
+    subsection grid motion
+        set motion type                 = translational
+        grid translation velocity       = 0.01;
+
+    end
+
+    set start time				= 0
+    set end time				= 3
+end

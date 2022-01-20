@@ -833,13 +833,13 @@ namespace Parameters
     {
       prm.enter_subsection("floating grid");
       {
-        prm.declare_entry("grid format",
+        prm.declare_entry("type",
                           "",
                           Patterns::Selection("unv|ucd|abaqus|dbmesh|xda|msh|tecplot|vtk|vtu|assimp|exodusii"),
                           "Floating grid file type"
                           "Choices are <unv|ucd|abaqus|dbmesh|xda|msh|tecplot|vtk|vtu|assimp|exodusii>."
                           );
-        prm.declare_entry("grid filename",
+        prm.declare_entry("file name",
                           "",
                           Patterns::FileName(),
                           "Floating grid file name"
@@ -893,8 +893,8 @@ namespace Parameters
     {
       prm.enter_subsection("floating grid");
       {
-        typename GridIn<dim>::Format format = GridIn<dim>::parse_format(prm.get("grid format"));
-        std::ifstream input_file(prm.get("grid filename"));
+        typename GridIn<dim>::Format format = GridIn<dim>::parse_format(prm.get("type"));
+        std::ifstream input_file(prm.get("file name"));
 
         GridIn<dim> grid_in;
         grid_in.attach_triangulation(triangulation);
