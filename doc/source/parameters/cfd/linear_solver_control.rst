@@ -109,12 +109,10 @@ In these subsections, the control options of linear solvers are specified. These
 		-Iterative solver took : 0 steps 
 
 
-* The ``minimum residual`` parameter sets the value that the tolerance of the iterative solver should reach to proceed to the next iteration.
+* The ``minimum residual`` for the linear solver.
 
-* The ``relative residual`` weights the :math:`\mathcal{L}_2`-norm of the system RHS. This product is then compared to the ``minimum residual`` to assess for convergence of the iteration.
+* The ``relative residual`` for the linear solver.
 .. tip::
-	The ``minimum residual`` parameter is directly linked to the numerical convergence of the simulation, but also to the computational cost. 
-
 	A good rule of thumb is to set the linear solver ``minimum residual`` at least :math:`10` times (preferably :math:`100` times) smaller than the `Non-linear solver <https://lethe-cfd.github.io/lethe/parameters/cfd/non-linear_solver_control.html>`_ ``tolerance`` parameter, and keep the relative residual reasonable, for instance ``set relative residual = 1e-3``. To lower the computational cost for more complex simulations, it can be lowered to ``set relative residual = 1e-4``.
 
 * The ``max iters`` puts a hard stop on the number of solver iterations (number of steps printed when ``set verbosity = verbose``).
