@@ -19,6 +19,7 @@ General, CFD and Multiphysics
    post_processing
    timer
    non-linear_solver_control
+   linear_solver_control
    multiphysics
    boundary_conditions_multiphysics
    nitsche
