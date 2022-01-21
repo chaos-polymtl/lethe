@@ -85,7 +85,7 @@ FEM
 	    set pressure order        = 1
 	end
 	
-Here we use Q1Q1 elements. This case is only for demonstration purposes has such we want to propose a simulation that is not too costly to run. 
+Here we use Q1Q1 elements. This case is only for demonstration purposes as such we want to propose a simulation that is not too costly to run. 
 
 Mesh
 ~~~~~~
