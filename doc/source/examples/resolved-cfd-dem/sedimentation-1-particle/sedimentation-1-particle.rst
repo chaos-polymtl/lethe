@@ -288,7 +288,7 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``number of particles`` is set to one as we only want one particle.
 
-* The ``stencil order`` is set to 3 as this is the highest order we can use for this case, and it won't lead to Runge instability.
+* The ``stencil order`` is set to 3 as this is the highest order we can use for this case, and it will not lead to Runge instability.
 
 * The ``refine mesh inside radius factor`` is set to 0.8. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
