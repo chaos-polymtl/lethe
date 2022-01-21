@@ -323,7 +323,7 @@ Results
 ---------------
 In this section we will brefly show some results of this simulation.
 
-First we will look at a slice of the velocity profile during the acceleration phase.
+First, we look at a slice of the velocity profile during the acceleration phase.
 
 .. image:: images/flow_field_acceleration.png
     :alt: flow_field_acceleration
