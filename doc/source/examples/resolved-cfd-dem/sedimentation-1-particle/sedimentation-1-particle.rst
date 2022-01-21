@@ -296,7 +296,7 @@ This section is where we define most of the parameters that are related to the p
 
 * The ``initial refinement`` is set to 6. Here we want to have the mesh as small as possible for the first time step. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle is as small as possible. This number of refinement is 1 more than necessary. This is to avoid having part of the particle not properly refined as the initial mesh is big enough that some elements cut by the IB may not be properly detected at the beginning of the process. Doing one more refinement ensures that all the elements are properly refined. 
 
-* The ``fluid density`` is set to 0.000960 according to the description of the problem. Has mentioned above, this parameter is a duplication of the density parameter in the physique properties. This will be changed soon, and this parameter will be removed.
+* The ``fluid density`` is set to 0.000960 according to the description of the problem. As mentioned above, this parameter is a duplication of the density parameter in the physics properties. This will be changed soon, and this parameter will be removed.
 
 * The ``integrate motion`` is set to true because we are interested in the dynamic of the particle as it sediment in the rectangular box.
 
