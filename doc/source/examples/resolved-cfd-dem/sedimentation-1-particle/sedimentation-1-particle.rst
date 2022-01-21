@@ -241,7 +241,7 @@ Linear Solver Control
 	  set verbosity                              = verbose
 	end
 	
-* The ``method`` is set to ``gmres``. This solver is cheaper than the other option, and this case doesn't require any special preconditioner. This makes the ``gmres`` solver the best option available.
+* The ``method`` is set to ``gmres``. This solver is less computationally expensive than the other option, and this case does not require any special preconditioner. This makes the ``gmres`` solver the best option available.
 
 * The ``max iters`` is set to 1000. This is a lot more steps than how much it should take to solve the system.
 
