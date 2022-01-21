@@ -27,7 +27,7 @@ In this example, we study the flow around a static cylinder in 2D using the shar
 
 This case uses a cartesian structured rectangular mesh, and we define the position and radius of the immersed boundary.
     
-The mesh is defined with the following parameter.
+The mesh is defined using the following subsection.
 
 .. code-block:: text
 
