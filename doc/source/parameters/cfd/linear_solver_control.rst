@@ -3,7 +3,7 @@ Linear Solver Control
 
 In this subsection, the control options of linear solvers are specified. These control options may include solution method, maximum number of iterations, tolerance, residual precision and preconditioner information. The default values for these parameters are given in the text box below.
 
-.. note::
+.. seealso::
 	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to the Theory Documentation.
 
 .. code-block:: text
@@ -81,17 +81,24 @@ In this subsection, the control options of linear solvers are specified. These c
 	* ``bicgstab``, a BICGSTAB iterative solver with ILU preconditioning.
 	* ``direct``, a direct solver using `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_. 
 
-	.. tip:: 
-		On coarse meshes, the ``gmres``/``bicgstab`` solver with ILU preconditioning is more efficient. 
+	.. hint:: 
+		Which solver is the most efficient for a given problem?
+		
+		* For steady-state problems (2D and 3D):
+			* coarse meshes: ``gmres``/``bicgstab`` solver with ILU preconditioning.
+			* fine meshes (from :math:`\approx 1` M cells): ``amg`` solver.
+		* For transient problems, this is much more problem dependent, but generally:
+			* relatively low :math:`\text{CFL}` condition: ``gmres`` solver with a low fill level, for instance ``set ilu preconditioner fill = 0``. This applies even the mesh is very large (:math:`>10` M cells), because the transient version of the system of equation is much easier to solve.
+			* large :math:`\text{CFL}` condition (:math:`\text{CFL}>10`) and/or very large mesh: ``amg`` solver may become preferable. 
 
-		As the number of mesh elements increase, the ``amg`` solver is the most efficient. Generally, at 1M elements, the ``amg`` solver generally outperforms the ``gmres`` or ``bicgstab`` for 2D and 3D steady-state problems. For transient problem, this is much more problem dependent. When the CFL is relatively low, it is generally preferable to use the ``gmres`` solver with a low fill level (e.g. 0) even when the mesh is very large (>10M cells). This is because the transient version of the system of equation is much easier to solve. At large CFL conditions (>10) and/or very large mesh, it may become preferable to transition to the ``amg`` solver. Be aware that the setup of the AMG preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the ``inexact newton``` (see :doc:`non-linear_solver_control`)
+	.. caution:: 
+		Be aware that the setup of the ``amg`` preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the ``inexact newton`` (see :doc:`non-linear_solver_control`).
 		
 		The use of ``direct`` solver should be avoided for 3D problems.
 
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations.
 
-.. note::
-	Example of a ``set verbosity = verbose`` output:
+.. admonition:: Example of a ``set verbosity = verbose`` output:
 
 	.. code-block:: text
 
@@ -113,7 +120,7 @@ In this subsection, the control options of linear solvers are specified. These c
 
 * The ``relative residual`` for the linear solver.
 .. tip::
-	A good rule of thumb is to set the linear solver ``minimum residual`` at least :math:`10` times (preferably :math:`100` times) smaller than the `Non-linear solver <https://lethe-cfd.github.io/lethe/parameters/cfd/non-linear_solver_control.html>`_ ``tolerance`` parameter, and keep the relative residual reasonable, for instance ``set relative residual = 1e-3``. To lower the computational cost for more complex simulations, it can be lowered to ``set relative residual = 1e-4``.
+	A good rule of thumb is to set the linear solver ``minimum residual`` at least :math:`10` times (preferably :math:`100` times) smaller than the `Non-linear solver :doc:non-linear_solver_control` ``tolerance`` parameter, and keep the relative residual reasonable, for instance ``set relative residual = 1e-3``. To lower the computational cost for more complex simulations, it can be lowered to ``set relative residual = 1e-4``.
 
 * The ``max iters`` puts a hard stop on the number of solver iterations (number of steps printed when ``set verbosity = verbose``).
 .. tip::
@@ -148,4 +155,7 @@ In this subsection, the control options of linear solvers are specified. These c
 
 	and it does not disappear when increasing ``max iters``, increasing the ``ilu preconditioner fill`` in the ``.prm`` file will make the computation slightly faster.
 
-* ``amg aggregation threshold``, ``amg n cycles``, ``amg w cycles`` (if this is set to ``true``, W cycling is used, if ``false``, V cycling is used), ``amg smoother sweeps``, and ``amg smoother overlap`` are parameters used for the AMG ``method`` only. For more information about these, the reader is referred to the dealII documentation for the `AMG preconditioner <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_ and its `Additional Data <https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html>`_
+* ``amg aggregation threshold``, ``amg n cycles``, ``amg w cycles`` (if this is set to ``true``, W cycling is used, if ``false``, V cycling is used), ``amg smoother sweeps``, and ``amg smoother overlap`` are parameters used for the AMG ``method`` only. 
+
+.. seealso::
+	For more information about the ``amg`` solver parameters, the reader is referred to the dealII documentation for the `AMG preconditioner <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_ and its `Additional Data <https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html>`_
