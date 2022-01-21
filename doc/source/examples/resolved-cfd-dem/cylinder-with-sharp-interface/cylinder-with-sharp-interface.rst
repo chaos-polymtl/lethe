@@ -93,9 +93,9 @@ The initial condition has been modified compared to the initial solution propose
 The only thing that is left to define is the immersed boundary.
 .. note::
 
-	At this point, the immersed boundary tool only allows the representation of spherical objects. This means the immersed boundary can represent a cylinder in 2D and a spherical shell in 3d. We refer to the parameter definition of the immersed boundary in `this <../../../parameters/resolved_cfd-dem/resolved_cfd-dem.html>`_ section of the documentation.
+	At this point, the immersed boundary tool only allows the representation of spherical objects. This means the immersed boundary can represent a circle in 2D and a spherical shell in 3d. We refer to the parameter definition of the immersed boundary in `this <../../../parameters/resolved_cfd-dem/resolved_cfd-dem.html>`_ section of the documentation.
 
-In this case, we want to define a cylindrical boundary of radius 0.5 center at (8,8) that has no velocity.
+In this case, we want to define a circular boundary of radius 0.5 center at (8,8) that has no velocity.
 
 .. code-block:: text
 
@@ -121,15 +121,15 @@ In this case, we want to define a cylindrical boundary of radius 0.5 center at (
             end
         end
 
-* The ``number of particles`` is set to one as we only want one cylinder.
+* The ``number of particles`` is set to one as we only want one particle.
 
-* The ``stencil order`` is set to 2 as this is the highest order we can use, and it won't lead to Runge instability.
+* The ``stencil order`` is set to 2 as this is the highest order we can use, and it does not lead to Runge instability.
 
-* The ``refine mesh inside radius factor`` is set to 0.8. This will create a mesh refinement around the particle that avoids having hanging nodes used in the calculation and help ensure a small enough mesh around the cylinder.
+* The ``refine mesh inside radius factor`` is set to 0.8. This will create a mesh refinement around the particle that avoids having hanging nodes in the calculation and help ensure an adequately fine mesh around the particle.
 
-* The ``refine mesh outside radius factor`` is set to 1.2. This will create a mesh refinement around the particle that avoids having hanging nodes used in the calculation and help ensure a small enough mesh around the cylinder.
+* The ``refine mesh outside radius factor`` is set to 1.2. This will create a mesh refinement around the particle that avoids having hanging nodes in the calculation and help ensure an adequately fine mesh around the particle.
 
-* The ``initial refinement`` is set to 0. In this case, the initial mesh is small enough that the mesh around the particle is sufficiently smaller than the particle. In this case, it's not necessary to pre-refine the mesh around the particle.
+* The ``initial refinement`` is set to 0. In this case, the initial mesh is small enough to ensure that the mesh around the particle is sufficiently smaller than the particle. In this case, it is not necessary to pre-refine the mesh around the particle.
 
 * The ``integrate motion`` is set to false because we are not interested in the dynamic of the particle as this is a steady case.
 
@@ -139,7 +139,7 @@ In this case, we want to define a cylindrical boundary of radius 0.5 center at (
 
 * The ``velocity`` Function expression is set to 0;0 as the velocity of the particle is 0 and the case is steady. 
 
-All the other parameters have been set to there default values since they don't play a role in this case.
+All the other parameters have been set to their default values since they do not play a role in this case.
 
 
 Results
@@ -172,7 +172,7 @@ particle_ID    T_z      f_x       f_y
           0 -0.000014 6.962307  0.000057 
           
 .. note:: 
-	The drag coefficient obtained in this case is above the drag coefficient for a cylinder at a Reynolds number of 1 as the size of the domain is not big enough relative to the size of the particle. The flow around the particle is then constrained, and this leads to a higher drag coefficient.
+	The drag coefficient obtained in this case is higher than the drag coefficient for a cylinder at a Reynolds number of 1 as the size of the domain is not large enough relative to the size of the particle. The flow around the particle is then constrained, and this leads to a higher drag coefficient.
 	
 	
 	
