@@ -111,7 +111,7 @@ subsection mesh adaptation
   set max number elements     = 50000
   set min refinement level    = 0
   set max refinement level    = 3
-  set variable		      = velocity
+  set variable		      = pressure
 end
 
 # --------------------------------------------------
