@@ -11,3 +11,4 @@ Examples
     multiphysics/multiphysics
     dem/dem
     cfd-dem/cfd-dem
+    resolved-cfd-dem/resolved-cfd-dem
