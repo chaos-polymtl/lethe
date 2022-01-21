@@ -329,7 +329,7 @@ First we will look at a slice of the velocity profile during the acceleration ph
     :alt: flow_field_acceleration
     :align: center
 
-We can also compare the results obtain for the velocity in time with the results proposed by the article of Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_
+We can also compare the results obtained for the velocity in time with the results proposed by the article of Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_
 
 IMAGE COMMING SOON !!!
 
