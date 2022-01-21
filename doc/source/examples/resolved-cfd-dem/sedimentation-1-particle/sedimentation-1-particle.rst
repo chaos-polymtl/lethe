@@ -6,7 +6,7 @@ This example aims to numerically reproduce the results obtained by Ten Cate `et 
 
 
 .. warning:: 
-    * This case is heavier than most examples. It can take several hours to run.
+    * This case is a computationally expensive example. It can take several hours to run.
     * This case is designed with the upcomming IB_contact_and_stability features.
     
 
