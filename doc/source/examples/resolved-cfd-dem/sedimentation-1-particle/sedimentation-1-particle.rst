@@ -298,7 +298,7 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``fluid density`` is set to 0.000960 according to the description of the problem. As mentioned above, this parameter is a duplication of the density parameter in the physics properties. This will be changed soon, and this parameter will be removed.
 
-* The ``integrate motion`` is set to true because we are interested in the dynamic of the particle as it sediment in the rectangular box.
+* The ``integrate motion`` is set to true because we are interested in the dynamic of the particle as it sediments in the rectangular box.
 
 * The ``assemble Navier-Stokes inside particles`` is set to false because we are not interested in the flow inside of the particle.
 
