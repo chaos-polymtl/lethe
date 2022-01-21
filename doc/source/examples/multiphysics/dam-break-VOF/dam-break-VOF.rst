@@ -5,10 +5,10 @@ Dam break VOF
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``gls_navier_stokes_2d`` 
-- Two phase flow handled by the Volume of fluids (VOF) approach with a phase fraction limiter and phase sharpening
+- Solver: ``gls_navier_stokes_2d`` 
+- Two phase flow handled by the Volume of fluids (VOF) approach, with a phase fraction limiter and phase sharpening
 - Unsteady problem handled by an adaptive BDF1 time stepping scheme 
-- The use of a python script for post processing data
+- The use of a python script for post-processing data
 
 
 
@@ -24,7 +24,7 @@ the liquid is released into the total simulation domain.
 The corresponding parameter file is 
 ``gls_VOF_dam-break_Martin_and_Moyce.prm``.
 
-The following schematic describes the geometry and dimensions of the simulation n the :math:`(x,y)` plane:
+The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
 .. image:: images/VOF_dam_break_configuration.png
     :alt: Schematic
@@ -44,7 +44,7 @@ Time integration is handled by a 1st order backward differentiation scheme
 time step of :math:`0.01` seconds.
 
 .. note::   
-    This example uses an adaptive time-stepping method in which the 
+    This example uses an adaptive time-stepping method, where the 
     time-steps are modified during the simulation to keep the maximum value of the CFL condition
     below a given threshold.
 
@@ -76,11 +76,6 @@ The ``multiphysics`` subsection enables to turn on `(true)`
 and off `(false)` the physics of interest. Here ``VOF`` and 
 ``interface sharpening`` are chosen.
 
-.. note:: 
-     If the interface sharpening is not selected, the interface 
-     between phases will become blurry (due to diffusion). 
-     The following section defines the interface sharpening 
-     parameters.
 
 .. code-block:: text
 
@@ -91,7 +86,12 @@ and off `(false)` the physics of interest. Here ``VOF`` and
         set VOF = true
         set interface sharpening = true
     end 
-
+    
+.. warning:: 
+     If the interface sharpening is not selected, the interface 
+     between phases will become blurry (due to diffusion). 
+     The next section defines the interface sharpening 
+     parameters.
 
 """"""""""""""""""""""""""""""""
 Interface Sharpening Parameters
@@ -106,8 +106,8 @@ The current ``interface sharpening`` method consists of two steps:
     .. math:: 
         \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
  
-    The phase fraction :math:`\phi` is a physical paramter that is bounded in the interval :math:`[0-1]`.
-    The phase fraction limiter above will uopdate the phase fraction in case it fell outside of these bounds.
+The phase fraction :math:`\phi` is a physical parameter that is bounded in the interval :math:`[0-1]`.
+The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.
   
 
 #. Interface sharpening 
@@ -125,17 +125,18 @@ a phase fraction threshold for interface sharpening (generally :math:`0.5`);
 and ``interface sharpness`` is a model parameter which is generally in
 the range of :math:`(1-2]`.
 
-    where :math:`\phi`, :math:`c`, and :math:`\alpha` denote phase fraction, 
-    sharpening threshold, and interface sharpness respectively. 
-    This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_.  
+where :math:`\phi`, :math:`c`, and :math:`\alpha` denote phase fraction, 
+sharpening threshold, and interface sharpness respectively. 
+This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_.  
 
-    .. _Aliabadi and Tezduyar (2000):  https://www.sciencedirect.com/science/article/pii/S0045782500002000
+.. _Aliabadi and Tezduyar (2000):  https://www.sciencedirect.com/science/article/pii/S0045782500002000
 
-    ``Sharpening frequency`` is an integer parameter that defines the 
-    frequency of interface sharpening; sharpening threshold defines 
-    a phase fraction threshold for interface sharpening (generally :math:`0.5`).
-    Interface sharpness is a model parameter which is generally in
-    the range of :math:`(1-2]`. 
+
+``Sharpening frequency`` is an integer parameter that defines the 
+frequency of interface sharpening; sharpening threshold defines 
+a phase fraction threshold for interface sharpening (generally :math:`0.5`).
+Interface sharpness is a model parameter which is generally in
+the range of :math:`(1-2]`. 
 
 """"""""""""""""""""""""""
 Fluid phase parameters 
@@ -144,7 +145,7 @@ Fluid phase parameters
 .. code-block:: text
 
     #---------------------------------------------------
-    # Interphase sharpening
+    # Interface sharpening
     #---------------------------------------------------
     subsection interface sharpening
         set sharpening threshold        = 0.5
@@ -210,7 +211,23 @@ We define two fluids here simply by setting the number of fluids to be :math:`2`
 In ``subsection fluid 0``, we set the density and the kinematic viscosity for the first phase. 
 Similar procedure is done for the secondary phase in ``subsection fluid 1``. 
 
+We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
+:math:`[14,10]`. The first :math:`14,10` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
+This makes it so our initial mesh is composed of perfect squares. We proceed then to redefine the mesh globally four times by setting
+``set initial refinement=4``. 
 
+.. code-block:: text
+        
+    #---------------------------------------------------
+    # Mesh
+    #---------------------------------------------------
+    subsection mesh
+            set type = dealii
+            set grid type = subdivided_hyper_rectangle
+            set grid arguments = 14, 10 : 0, 0 : 14, 10 : true
+            set initial refinement = 4
+    end
+    
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
 defined for ``velocity``. ``min refinement level`` and ``max refinement 
 level`` are 3 and 5, respectively.
@@ -263,13 +280,13 @@ of the simulation at :math:`0`, :math:`1.1`, :math:`3`, and :math:`4` seconds
 
 A python post-processing code `(Dambreak_2d_lethe.py)` 
 is added to the example folder to post-process the results.
-Run `python3 ./Dambreak_2d_lethe.py ./Output` to execute this 
-post-processing code, where `./Output` is the directory that 
+Run ``python3 ./Dambreak_2d_lethe.py ./Output`` to execute this 
+post-processing code, where ``./Output`` is the directory that 
 contains the simulation results. In post-processing, the maximum 
 dimensionless lateral position of the liquid phase is tracked 
 through time and compared with the experiments of Martin and Moyce
 (1952). The following figure shows the result of
-the post-processing:
+the post-processing, with a very good agreement between the simulation and the experiment:
 
 .. image:: images/xmax_t.png
     :alt: xmax_t
