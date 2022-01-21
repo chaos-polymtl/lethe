@@ -100,7 +100,7 @@ Mesh
 
 The domain is a rectangular box as such we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have orientated the y-direction with gravity. As such, we have the long side of the box along this axis.
 
-* The ``grid arguments`` is set to  ``5,8,5: 0,0,0 : 10 , 16 ,10 : true``. This section has 3 subsections. First ``5,8,5`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly ``0,0,0 : 10 , 16 ,10`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (10,16,10). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This will allow us to define a boundary condition separately for each side of the box.
+* The ``grid arguments`` is set to  ``5,8,5: 0,0,0 : 10 , 16 ,10 : true``. This section has 3 subsections. First ``5,8,5`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly ``0,0,0 : 10 , 16 ,10`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (10,16,10). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
 
 * The ``initial refinement`` is set to 1. This will ensure to have a base mesh that is a bit smaller than the particle.
 
