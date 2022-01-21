@@ -84,7 +84,7 @@ In this subsection, the control options of linear solvers are specified. These c
 	.. tip:: 
 		On coarse meshes, the ``gmres``/``bicgstab`` solver with ILU preconditioning is more efficient. 
 
-		As the number of mesh elements increase, the ``amg`` solver is the most efficient. Generally, at 1M elements, the ``amg`` solver always outperforms the ``gmres`` or ``bicgstab`` for 2D steady-state problems.
+		As the number of mesh elements increase, the ``amg`` solver is the most efficient. Generally, at 1M elements, the ``amg`` solver generally outperforms the ``gmres`` or ``bicgstab`` for 2D and 3D steady-state problems. For transient problem, this is much more problem dependent. When the CFL is relatively low, it is generally preferable to use the ``gmres`` solver with a low fill level (e.g. 0) even when the mesh is very large (>10M cells). This is because the transient version of the system of equation is much easier to solve. At large CFL conditions (>10) and/or very large mesh, it may become preferable to transition to the ``amg`` solver. Be aware that the setup of the AMG preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the ``inexact newton``` (see :doc:`non-linear_solver_control`)
 		
 		The use of ``direct`` solver should be avoided for 3D problems.
 
