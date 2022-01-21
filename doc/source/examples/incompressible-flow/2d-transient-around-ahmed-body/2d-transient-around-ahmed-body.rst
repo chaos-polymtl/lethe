@@ -156,7 +156,7 @@ To do so, copy and paste the ``gls_navier_stokes_2d`` executable to the same fol
 
       mpirun -np 6 gls_navier_stokes_2d ahmed.prm
 
-where 6 is the number of cpu used. The estimated execution time for a 4 seconds simulation is 6 minutes and 53 seconds.
+where 6 is the number of CPUs used. The estimated execution time for a 4 seconds simulation with 6 CPUs in a 32 GB RAM machine is 6 minutes and 53 seconds. For 1 CPU, the estimated time is 30 minutes and 37 seconds.
 
 Alternatively, specify the path to the ``gls_navier_stokes_2d`` in your ``build/applications`` folder, as follows:
 
