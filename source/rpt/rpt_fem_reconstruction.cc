@@ -237,7 +237,7 @@ RPTFEMReconstruction<dim>::L2_project()
   Triangulation<dim> temp_triangulation;
   Triangulation<dim> flat_temp_triangulation;
   GridGenerator::cylinder(temp_triangulation, 0.1, 0.2);
-  temp_triangulation.refine_global(3);
+  temp_triangulation.refine_global(2);
 
   GridGenerator::flatten_triangulation(temp_triangulation,
                                        flat_temp_triangulation);
@@ -277,245 +277,285 @@ RPTFEMReconstruction<dim>::L2_project()
   output_results();
   output_raw_results_per_level();
   find_cell();
-  //find_cell_containing_point();
+  // find_cell_containing_point();
 }
 
 template <int dim>
 Vector<double>
-RPTFEMReconstruction<dim>::assemble_matrix_and_rhs(std::vector<std::vector<double>> &vertex_count,
-                        std::vector<double>              &experimental_count
-                                                )
+RPTFEMReconstruction<dim>::assemble_matrix_and_rhs(
+  std::vector<std::vector<double>> &vertex_count,
+  std::vector<double> &             experimental_count)
 {
-    // Assembling system_matrix
-    Vector<double> reference_location;
+  // Assembling system_matrix
+  Vector<double> reference_location;
 
 
 
-    LAPACKFullMatrix<double> system_matrix;
-    system_matrix.reinit(3);
+  LAPACKFullMatrix<double> system_matrix;
+  system_matrix.reinit(3);
 
-    unsigned int detector_size = vertex_count.size();
-    //std::cout << "Detector size is " << detector_size << std::endl;
-
-
-    // TODO, this could be refactored to just three loops...
-    double sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (-vertex_count[i][0] + vertex_count[i][1]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-      }
-    system_matrix.set(0, 0, sigma);
+  unsigned int detector_size = vertex_count.size();
+  // std::cout << "Detector size is " << detector_size << std::endl;
 
 
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-      }
-    system_matrix.set(0, 1, sigma);
+  // TODO, this could be refactored to just three loops...
+  double sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][1]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
+    }
+  system_matrix.set(0, 0, sigma);
+
+
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
+    }
+  system_matrix.set(0, 1, sigma);
 
 
 
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-      }
-    system_matrix.set(0, 2, sigma);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
+    }
+  system_matrix.set(0, 2, sigma);
 
 
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-      }
-    system_matrix.set(1, 0, sigma);
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
+    }
+  system_matrix.set(1, 0, sigma);
 
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
-                 (-vertex_count[i][0] + vertex_count[i][2]);
-      }
-
-    system_matrix.set(1, 1, sigma);
-
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][2]);
-      }
-    system_matrix.set(1, 2, sigma);
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-      }
-    system_matrix.set(2, 0, sigma);
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][2]);
-      }
-    system_matrix.set(2, 1, sigma);
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][3]);
-      }
-    system_matrix.set(2, 2, sigma);
-
-    //std::cout << "Printing matrix " << std::endl;
-    //system_matrix.print_formatted(std::cout);
-
-
-    // Assembling system_rhs
-    Vector<double> system_rhs;
-    system_rhs.reinit(3);
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (vertex_count[i][0] - experimental_count[i]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-      }
-    system_rhs[0] = -sigma;
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (vertex_count[i][0] - experimental_count[i]) *
-                 (-vertex_count[i][0] + vertex_count[i][2]);
-      }
-    system_rhs[1] = -sigma;
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-      {
-        sigma += (vertex_count[i][0] - experimental_count[i]) *
-                 (-vertex_count[i][0] + vertex_count[i][3]);
-      }
-    system_rhs[2] = -sigma;
-
-    //std::cout << "Printing RHS " << std::endl;
-    //system_rhs.print(std::cout);
-    // SOLVE
-
-    system_matrix.set_property(LAPACKSupport::general);
-    system_matrix.compute_lu_factorization();
-    system_matrix.solve(system_rhs);
-
-    //std::cout << "Printing solution " << std::endl;
-    //system_rhs.print(std::cout);
-
-
-    reference_location = system_rhs;
-    return reference_location;
-
-
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
+               (-vertex_count[i][0] + vertex_count[i][2]);
     }
 
+  system_matrix.set(1, 1, sigma);
+
+
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][2]);
+    }
+  system_matrix.set(1, 2, sigma);
+
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
+    }
+  system_matrix.set(2, 0, sigma);
+
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][2]);
+    }
+  system_matrix.set(2, 1, sigma);
+
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
+               (-vertex_count[i][0] + vertex_count[i][3]);
+    }
+  system_matrix.set(2, 2, sigma);
+
+  // std::cout << "Printing matrix " << std::endl;
+  // system_matrix.print_formatted(std::cout);
+
+
+  // Assembling system_rhs
+  Vector<double> system_rhs;
+  system_rhs.reinit(3);
+
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (vertex_count[i][0] - experimental_count[i]) *
+               (-vertex_count[i][0] + vertex_count[i][1]);
+    }
+  system_rhs[0] = -sigma;
+
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (vertex_count[i][0] - experimental_count[i]) *
+               (-vertex_count[i][0] + vertex_count[i][2]);
+    }
+  system_rhs[1] = -sigma;
+
+  sigma = 0;
+  for (unsigned int i = 0; i < detector_size; i++)
+    {
+      sigma += (vertex_count[i][0] - experimental_count[i]) *
+               (-vertex_count[i][0] + vertex_count[i][3]);
+    }
+  system_rhs[2] = -sigma;
+
+  // std::cout << "Printing RHS " << std::endl;
+  // system_rhs.print(std::cout);
+  // SOLVE
+
+  system_matrix.set_property(LAPACKSupport::general);
+  system_matrix.compute_lu_factorization();
+  system_matrix.solve(system_rhs);
+
+  // std::cout << "Printing solution " << std::endl;
+  // system_rhs.print(std::cout);
+
+
+  reference_location = system_rhs;
+  return reference_location;
+}
 
 
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::find_cell(){
+RPTFEMReconstruction<dim>::find_cell()
+{
+  // Loop over cell in the finest level, loop over detetors get nodal values,
+  // solve first loop over cell
 
-    //Loop over cell in the finest level, loop over detetors get nodal values, solve
-    //first loop over cell
+  // for now I define experimental counts manually
+  std::vector<double> experimental_count({895.914, 335.409, 1283.14});
 
-    //for now I define experimental counts manually
-    std::vector<double>experimental_count({895.914,335.409,1283.14});
-
+  double max_reconstruction_error = DBL_MAX;
 
 
-    const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-    for (const auto &cell : cell_iterator)
+  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+  for (const auto &cell : cell_iterator)
+    {
+      std::vector<std::vector<double>> count_from_all_detectors;
+
+      for (unsigned int i = 0; i < detectors.size(); ++i)
         {
-        std::vector<std::vector<double>> count_from_all_detectors;
-
-        for (unsigned int i=0;i<detectors.size();++i){
-
-            std::vector<double>detectorCount;
+          std::vector<double> detectorCount;
 
 
-            for(unsigned int v=0;v < cell->n_vertices();++v){
-
-                auto dof_index=cell->vertex_dof_index(v,0);
-                detectorCount.push_back(nodal_counts[i][dof_index]);
-
-
+          for (unsigned int v = 0; v < cell->n_vertices(); ++v)
+            {
+              auto dof_index = cell->vertex_dof_index(v, 0);
+              detectorCount.push_back(nodal_counts[i][dof_index]);
             }
 
 
 
-            count_from_all_detectors.push_back(detectorCount);
-            detectorCount.clear();
-
+          count_from_all_detectors.push_back(detectorCount);
+          detectorCount.clear();
         }
 
 
-        Vector<double> reference_location=assemble_matrix_and_rhs(count_from_all_detectors,experimental_count);
-        if ((0<reference_location[0] && reference_location[0]<1) &&
-                (0<reference_location[1] && reference_location[1]<1) &&
-                (0<reference_location[2] && reference_location[2]<1)&&
-                ((0<1-reference_location[0]-reference_location[1]-reference_location[2])&&
-                 (1-reference_location[0]-reference_location[1]-reference_location[2]<1)))
+      Vector<double> reference_location =
+        assemble_matrix_and_rhs(count_from_all_detectors, experimental_count);
 
+      // Check if the location is a valid one
+      std::vector<double> err_coordinates(4);
+
+      for (unsigned int i = 0; i < 3; ++i)
         {
-            std::cout << "Printing solution " << std::endl;
-            reference_location.print(std::cout);
-            std::cout << "Printing vertex " << std::endl;
-            for(unsigned int v=0;v < cell->n_vertices();++v){
+          err_coordinates[i] = 0;
+          if (reference_location[i] > 1)
+            err_coordinates[i] = (reference_location[0] - 1);
 
-                auto vertex_location = cell->vertex(v);
-                std::cout<<vertex_location<<std::endl;
-
+          if (reference_location[i] < 0)
+            err_coordinates[i] = (0 - reference_location[0]);
         }
 
+      // fourth error block
+      {
+        err_coordinates[3] = 0;
+
+        if ((1 - reference_location[0] - reference_location[1] -
+             reference_location[2]) < 0)
+          err_coordinates[3] =
+            std::abs(1 - reference_location[0] - reference_location[1] -
+                     reference_location[2]);
+        else if ((1 - reference_location[0] - reference_location[1] -
+                  reference_location[2]) > 1)
+          err_coordinates[3] =
+            1 - std::abs(1 - reference_location[0] - reference_location[1] -
+                         reference_location[2]);
+      }
+
+
+      double norm_error_coordinates = 0;
+      for (unsigned int i = 0; i < 4; ++i)
+        {
+          norm_error_coordinates += err_coordinates[i] * err_coordinates[i];
         }
 
 
-        count_from_all_detectors.clear();
+      // if ((0 < reference_location[0] && reference_location[0] < 1) &&
+      //    (0 < reference_location[1] && reference_location[1] < 1) &&
+      //    (0 < reference_location[2] && reference_location[2] < 1) &&
+      //    ((0 < 1 - reference_location[0] - reference_location[1] -
+      //            reference_location[2]) &&
+      //     (1 - reference_location[0] - reference_location[1] -
+      //        reference_location[2] <
+      //      1)))
+      if (norm_error_coordinates < max_reconstruction_error)
+        {
+          std::cout << "Printing reference solution " << std::endl;
+          reference_location.print(std::cout);
+          Point<dim> real_location;
+          std::cout << "Printing vertex " << std::endl;
+          for (unsigned int v = 0; v < cell->n_vertices(); ++v)
+            {
+              auto vertex_location = cell->vertex(v);
+              std::cout << vertex_location << std::endl;
+              if (v == 0)
+                real_location = cell->vertex(v);
+              else
+                real_location =
+                  real_location + reference_location[v - 1] *
+                                    (cell->vertex(v) - cell->vertex(0));
+            }
+          max_reconstruction_error = norm_error_coordinates;
+          std::cout << "The reconstruction error is : "
+                    << norm_error_coordinates << std::endl;
+          std::cout << "The real location is : " << real_location << std::endl;
+        }
+
+
+      count_from_all_detectors.clear();
     }
 }
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>:: find_cell_containing_point(){
+RPTFEMReconstruction<dim>::find_cell_containing_point()
+{
+  Point<dim> point(0.07, 0, 0.065);
 
-    Point<dim>point(0.07,0,0.065);
-
-    typename Triangulation<dim>::active_cell_iterator cell1 =
-            GridTools::find_active_cell_around_point(triangulation,point);
-    for(unsigned int v=0;v < cell1->n_vertices();++v){
-
-        auto vertex_location = cell1->vertex(v);
-        auto center=cell1->center();
-        //std::cout<<vertex_location<<std::endl;
-        std::cout<<center<<std::endl;
-
-
+  typename Triangulation<dim>::active_cell_iterator cell1 =
+    GridTools::find_active_cell_around_point(triangulation, point);
+  for (unsigned int v = 0; v < cell1->n_vertices(); ++v)
+    {
+      auto vertex_location = cell1->vertex(v);
+      auto center          = cell1->center();
+      // std::cout<<vertex_location<<std::endl;
+      std::cout << center << std::endl;
     }
-
 }
 
 
 
-
 template class RPTFEMReconstruction<3>;
-
-
