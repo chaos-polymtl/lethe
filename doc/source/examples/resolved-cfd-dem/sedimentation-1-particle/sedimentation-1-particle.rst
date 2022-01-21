@@ -290,7 +290,7 @@ This section is where we define most of the parameters that are related to the p
 
 * The ``stencil order`` is set to 3 as this is the highest order we can use for this case, and it won't lead to Runge instability.
 
-* The ``refine mesh inside radius factor`` is set to 0.8. This will create a mesh refinement around the particle that avoids having hanging nodes used in the calculation and help ensure a small enough mesh around the particle.
+* The ``refine mesh inside radius factor`` is set to 0.8. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
 * The ``refine mesh outside radius factor`` is set to 1.3. This will create a mesh refinement around the particle that avoids having hanging nodes used in the calculation and help ensure a small enough mesh around the particle.
 
