@@ -55,7 +55,7 @@ Simulation and IO Control
 
 * The ``time step`` is set to  0.0025. This ensures a low error due to the time discretization for this case.
 
-* The ``time end`` is set to  1.3. This is slightly longer than the expected simulation time based on the experimental results of Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_. This should ensure that the entire trajectory of the particle has been simulated.
+* The ``time end`` is set to  1.3. This is slightly longer than the experimental results of Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_. This ensures that the entire trajectory of the particle has been simulated.
 
 
 
