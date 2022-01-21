@@ -113,7 +113,7 @@ The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial
         subsection w
             set Function expression = 0
         end
-    end
+        end
         subsection bc 2
             set type              = slip
         end
