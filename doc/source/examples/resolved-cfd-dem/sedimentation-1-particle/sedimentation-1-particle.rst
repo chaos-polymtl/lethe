@@ -7,7 +7,7 @@ This example aims to reproduce numerically the results obtained by Ten Cate `et 
 
 .. warning:: 
     * This case is heavier than most examples. It can take several hours to run.
-    * This case is design with the upcomming IB_contact_and_stability pull Request.
+    * This case is designed with the upcomming IB_contact_and_stability pull Request.
     
 
 Features
