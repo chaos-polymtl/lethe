@@ -302,7 +302,7 @@ This section is where we define most of the parameters that are related to the p
 
 * The ``assemble Navier-Stokes inside particles`` is set to false because we are not interested in the flow inside of the particle.
 
-* The ``length ratio`` as been set to 2. This is small enough, so it doesn't impact too much the conditioning of the matrix while avoiding interpolation of the immersed boundary stencil in multiple elements.
+* The ``length ratio`` as been set to 2. This is small enough, so it does not impact too much the conditioning of the matrix while avoiding interpolation of the immersed boundary stencil in multiple elements.
 
 * The ``particle nonlinear tolerance`` as been set to 1e-5. This is small enough to ensure that the particle dynamics is adequately resolved. We expect a velocity of the particle of the order of 10.
 
