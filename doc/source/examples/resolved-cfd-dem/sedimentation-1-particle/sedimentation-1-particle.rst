@@ -138,7 +138,7 @@ Mesh Adaptation Control
 	  set variable             = velocity
 	end
 
-* The ``fraction coarsening`` is set to 0.3. This limits the accumulation of elements when the particle is moving. It allows cells not close to the particle to be coarsened when the particles get furder away.
+* The ``fraction coarsening`` is set to 0.3. This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.
 
 * The ``fraction refinement`` is set to 0.05. The objective here is to refine elements that become close to the particle when it's moving. This will mostly refine elements around the particle that are not included in the refinement zone around the particle. The refinement zone around the particle will be discussed in more detail in the IB particle section.
 
