@@ -1,7 +1,7 @@
 Linear Solver Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In these subsections, the control options of linear solvers are specified. These control options may include solution method, maximum number of iterations, tolerance, residual precision and preconditioner information. The default values for these parameters are given in the text box below.
+In this subsection, the control options of linear solvers are specified. These control options may include solution method, maximum number of iterations, tolerance, residual precision and preconditioner information. The default values for these parameters are given in the text box below.
 
 .. note::
 	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to the Theory Documentation.
