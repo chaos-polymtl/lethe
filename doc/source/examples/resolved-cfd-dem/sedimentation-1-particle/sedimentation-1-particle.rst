@@ -215,7 +215,7 @@ Non-Linear Solver Control
 	
 * The ``tolerance`` is set to 1e-6. This is small enough to ensure that the flow field is adequately resolved, as here, we expect a velocity of the particle of the order of 10.
 
-* The ``max iterations`` is set to 10. The objective here is to allow enough Newton non-linear steps to ensure the convergence and limit the time pass on a time step if the system is too stiff to reach the tolerance fix.  
+* The ``max iterations`` is set to 10. The objective here is to allow enough Newton non-linear steps to ensure the convergence to the tolerance. Also, we should limit the time pass on a single time step if the system is too stiff.  
 
 * The ``force rhs calculation`` is set to ``true``. This is the most important modification with most of the other examples. By default, the non-linear solver will recalculate the RHS only after the update of the solution. But here, we need to evaluate it before every matrix resolution, and we cannot use the last RHS evaluation that was done after the last newton iteration. The particle position was updated between these two steps, changing the RHS evaluation. This means that for every non-linear step, we evaluate the RHS twice. The non-linear solver follows this sequence of steps for each newton iteration.
 	* update the particle position
