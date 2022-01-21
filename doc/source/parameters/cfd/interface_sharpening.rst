@@ -24,4 +24,4 @@ To avoid that, this subsection includes parameters related to the interface shar
 
 .. note::
 
-  The `Dam break <>`_ example using VOF well represents the interface sharpening issue.
+  The `Dam break <https://lethe-cfd.github.io/lethe/examples/multiphysics/dam-break-VOF/dam-break-VOF.html>`_ example using VOF well represents the interface sharpening issue.
