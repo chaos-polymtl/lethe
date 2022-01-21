@@ -41,7 +41,7 @@ The mesh is defined using the following subsection.
 	    set initial refinement   = 6
 	end
 	
-As for the `Example 3 <../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, we define the boundary conditions in order to have an inlet on the left, two slip boundary conditions on the top and bottom, and an outlet on the right of the domain.
+As for the `Example 3 <../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, we define the boundary conditions in order to have an inlet on the left, two slip boundary conditions at the top and bottom, and an outlet on the right of the domain.
 
 
 .. code-block:: text
