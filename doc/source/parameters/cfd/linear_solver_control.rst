@@ -119,10 +119,12 @@ In this subsection, the control options of linear solvers are specified. These c
 * The ``minimum residual`` for the linear solver.
 
 * The ``relative residual`` for the linear solver.
+
 .. tip::
 	A good rule of thumb is to set the linear solver ``minimum residual`` at least :math:`10` times (preferably :math:`100` times) smaller than the `Non-linear solver :doc:non-linear_solver_control` ``tolerance`` parameter, and keep the relative residual reasonable, for instance ``set relative residual = 1e-3``. To lower the computational cost for more complex simulations, it can be lowered to ``set relative residual = 1e-4``.
 
 * The ``max iters`` puts a hard stop on the number of solver iterations (number of steps printed when ``set verbosity = verbose``).
+
 .. tip::
 	If ``max iters`` is reached, the code will throw this type of message: 
 	
@@ -133,10 +135,12 @@ In this subsection, the control options of linear solvers are specified. These c
 	meaning that the code increases the preconditioner fill (see definition below) in order to converge within the number of solver iterations. If you encounter this, consider increasing the ``max iters`` or adjusting other parameters, for example increasing ``max krylov vectors``.
 
 * ``force linear solver continuation`` enables, when set to ``true``, to force the linear solver to continue, even if the ``minimum residual`` is not reached. Only available for ``GMRES`` solver within the ``gls_navier_stokes`` application.
+
 .. warning::
 	With this mode on, errors on the linear solver convergence are not thrown. Forcing the solver to continue can be useful for debugging purposes if a given iteration is hard to pass, but use with caution!
 
 * ``max krylov vectors`` sets the maximum number of krylov vectors for ``GMRES`` and ``AMG`` solvers.
+
 .. tip::
 	Consider using ``set max krylov vectors = 200`` for complex simulations with convergence issues. 
 
