@@ -6,10 +6,12 @@ using namespace DEM;
 template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate_half_step_location(
-  Particles::ParticleHandler<dim> &particle_handler,
-  Tensor<1, dim> &                 g,
-  std::vector<Tensor<1, dim>> &    force,
-  double                           dt)
+  Particles::ParticleHandler<dim> &  particle_handler,
+  const Tensor<1, dim> &             g,
+  const double                       dt,
+  const std::vector<Tensor<1, dim>> &momentum,
+  const std::vector<Tensor<1, dim>> &force,
+  const std::vector<double> &        MOI)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -24,19 +26,22 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
 #else
       types::particle_index particle_id = particle->get_id();
 #endif
-      Tensor<1, dim>  particle_acceleration;
-      Tensor<1, dim> &particle_force = force[particle_id];
+      Tensor<1, dim> particle_acceleration;
 
       for (int d = 0; d < dim; ++d)
         {
           // Update acceleration
           particle_acceleration[d] =
-            g[d] +
-            (particle_force[d]) / particle_properties[PropertiesIndex::mass];
+            g[d] + (force[particle_id][d]) /
+                     particle_properties[PropertiesIndex::mass];
 
           // Half-step velocity
           particle_properties[PropertiesIndex::v_x + d] +=
             0.5 * particle_acceleration[d] * dt;
+
+          // Half-step angular velocity
+          particle_properties[PropertiesIndex::omega_x + d] +=
+            0.5 * (momentum[particle_id][d] / MOI[particle_id]) * dt;
 
           // Update particle position using half-step velocity
           particle_position[d] +=
@@ -50,11 +55,11 @@ template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
-  Tensor<1, dim> &                 g,
-  double                           dt,
+  const Tensor<1, dim> &           g,
+  const double                     dt,
   std::vector<Tensor<1, dim>> &    momentum,
   std::vector<Tensor<1, dim>> &    force,
-  std::vector<double> &            MOI)
+  const std::vector<double> &      MOI)
 {
   for (auto &particle : particle_handler)
     {

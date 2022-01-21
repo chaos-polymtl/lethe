@@ -997,8 +997,10 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
       integrator_object->integrate_half_step_location(
         this->particle_handler,
         dem_parameters.lagrangian_physical_properties.g,
+        dem_time_step,
+        momentum,
         force,
-        dem_time_step);
+        MOI);
     }
   else
     {
