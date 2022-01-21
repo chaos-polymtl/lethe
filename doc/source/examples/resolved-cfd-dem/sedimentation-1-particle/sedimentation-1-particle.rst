@@ -292,7 +292,7 @@ This section is where we define most of the parameters that are related to the p
 
 * The ``refine mesh inside radius factor`` is set to 0.8. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
-* The ``refine mesh outside radius factor`` is set to 1.3. This will create a mesh refinement around the particle that avoids having hanging nodes used in the calculation and help ensure a small enough mesh around the particle.
+* The ``refine mesh outside radius factor`` is set to 1.3. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
 * The ``initial refinement`` is set to 6. Here we want to have the mesh as small as possible for the first time step. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle is as small as possible. This number of refinement is 1 more than necessary. This is to avoid having part of the particle not properly refined as the initial mesh is big enough that some elements cut by the IB may not be properly detected at the beginning of the process. Doing one more refinement ensures that all the elements are properly refined. 
 
