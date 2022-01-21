@@ -90,7 +90,10 @@ The initial condition has been modified compared to the initial solution propose
 	    end
 	end
 	
-The only thing that is left to define is the immersed boundary. At this point, the immersed boundary tool only allows the representation of spherical objects. This means the immersed boundary can represent a cylinder in 2D and a spherical shell in 3d. We refer to the parameter definition of the immersed boundary in `this <../../../parameters/resolved_cfd-dem/resolved_cfd-dem.html>`_ section of the documentation.
+The only thing that is left to define is the immersed boundary.
+.. note::
+
+	At this point, the immersed boundary tool only allows the representation of spherical objects. This means the immersed boundary can represent a cylinder in 2D and a spherical shell in 3d. We refer to the parameter definition of the immersed boundary in `this <../../../parameters/resolved_cfd-dem/resolved_cfd-dem.html>`_ section of the documentation.
 
 In this case, we want to define a cylindrical boundary of radius 0.5 center at (8,8) that has no velocity.
 
@@ -138,7 +141,10 @@ In this case, we want to define a cylindrical boundary of radius 0.5 center at (
 
 All the other parameters have been set to there default values since they don't play a role in this case.
 
-This results in the following solution for the velocity and pressure field. 
+
+Results
+---------------
+The simulation of this case results in the following solution for the velocity and pressure field. 
 
 
 Velocity:
