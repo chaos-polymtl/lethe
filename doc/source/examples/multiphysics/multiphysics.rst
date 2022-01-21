@@ -9,3 +9,4 @@ Multiphysics Examples
 
     warming-up-a-viscous-fluid/warming-up-a-viscous-fluid
     tracer-through-cad-junction/tracer-through-cad-junction
+    dam-break-VOF/dam-break-VOF
