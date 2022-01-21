@@ -2,7 +2,7 @@
 Sedimentation of one particle.
 ==============================================================================
 
-This example aims to reproduce numerically the results obtained by Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_ for the E4 experience. This experience measures the velocity of the sedimentation of a 1.5 cm particle in a container filled with a viscous fluid. The container is sufficiently small to impact the particle sedimentation.
+This example aims to numerically reproduce the results obtained by Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_ for the E4 experience. This experience measures the velocity of the sedimentation of a 1.5 cm particle in a container filled with a viscous fluid. The container is sufficiently small to impact the particle sedimentation.
 
 
 .. warning:: 
