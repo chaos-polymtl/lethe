@@ -81,11 +81,10 @@ namespace SourceTerms
   SourceTerm<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("source term");
-    prm.declare_entry(
-      "enable",
-      "true",
-      Patterns::Bool(),
-      "Enable the calculation of the analytical solution and L2 error");
+    prm.declare_entry("enable",
+                      "false",
+                      Patterns::Bool(),
+                      "Enable the calculation of a source term");
 
     prm.enter_subsection("xyz");
     navier_stokes_source.declare_parameters(prm, dim);
