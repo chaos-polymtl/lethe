@@ -146,7 +146,7 @@ Mesh Adaptation Control
 
 * The ``max refinement level`` is set to 6. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to 48 elements per diameter of the particle. This should be sufficient to get accurate results.
 
-* The ``type`` is set to ``kelly``. Since the particle is moving and we don't want a uniform refinement of all the cell, we use the kelly error estimator based on the ``velocity`` variable.
+* The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
 
 
 
