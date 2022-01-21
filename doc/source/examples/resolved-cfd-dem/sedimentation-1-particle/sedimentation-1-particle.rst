@@ -221,7 +221,7 @@ Non-Linear Solver Control
 	* update the particle position
 	* update the Jacobian matrix
 	* update the RHS
-	* solved the matrix system
+	* solve the matrix system
 	* reevaluate the RHS to check the convergence.
 	
 	
