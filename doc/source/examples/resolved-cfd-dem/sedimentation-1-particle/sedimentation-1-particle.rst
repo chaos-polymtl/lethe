@@ -304,7 +304,7 @@ This section is where we define most of the parameters that are related to the p
 
 * The ``length ratio`` as been set to 2. This is small enough, so it does not impact too much the conditioning of the matrix while avoiding interpolation of the immersed boundary stencil in multiple elements.
 
-* The ``particle nonlinear tolerance`` as been set to 1e-5. This is small enough to ensure that the particle dynamics is adequately resolved. We expect a velocity of the particle of the order of 10.
+* The ``particle nonlinear tolerance`` has been set to 1e-5. This is small enough to ensure that the particle dynamics are adequately resolved. We expect a velocity of the particle of the order of 10.
 
 * The ``gravity`` ``Function expression`` is set to 0;-981;0 according to the definition of the case. As we choose the long axis of the rectangular box along the Y, we define gravity in this direction. 
 
