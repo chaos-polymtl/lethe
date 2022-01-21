@@ -24,7 +24,7 @@ subsection multiphysics
     set interface sharpening = true
 end
 #---------------------------------------------------
-# Interphase sharpening
+# Interface sharpening
 #---------------------------------------------------
 subsection interface sharpening
   set sharpening threshold              = 0.5
