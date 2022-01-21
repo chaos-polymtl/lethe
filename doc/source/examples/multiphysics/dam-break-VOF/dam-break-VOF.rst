@@ -7,7 +7,7 @@ Features
 ----------------------------------
 - Solver: ``gls_navier_stokes_2d`` 
 - Two phase flow handled by the Volume of fluids (VOF) approach, with a phase fraction limiter and phase sharpening
-- Unsteady problem handled by an adaptive BDF1 time stepping scheme 
+- Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 - The use of a python script for post-processing data
 
 
@@ -40,7 +40,7 @@ Parameter file
 --------------
 
 Time integration is handled by a 1st order backward differentiation scheme 
-`(bdf1)`, for a :math:`4.1` seconds simulation time with an initial 
+`(bdf1)`, for a :math:`4.1` s simulation time with an initial 
 time step of :math:`0.01` seconds.
 
 .. note::   
@@ -70,7 +70,7 @@ time step of :math:`0.01` seconds.
 
 .. warning::
     Make sure to create a directory named ``Output`` in the same directory 
-    you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will hang.
+    you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will break.
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
 and off `(false)` the physics of interest. Here ``VOF`` and 
@@ -208,8 +208,8 @@ properties`` subsection, their physical properties should be defined:
     end
 
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
-In ``subsection fluid 0``, we set the density and the kinematic viscosity for the first phase. 
-Similar procedure is done for the secondary phase in ``subsection fluid 1``. 
+In ``subsection fluid 0``, we set the density and the kinematic viscosity for the first associated with a VOF indicator of 0. 
+Similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
 :math:`[14,10]`. The first :math:`14,10` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
@@ -295,7 +295,7 @@ the post-processing, with a very good agreement between the simulation and the e
 
 As mentioned previously, this simulation uses adaptive mesh
 refinement. The following image shows the mesh and the position of
-the interface at :math:`4` seconds. The mesh refinement detects 
+the interface at :math:`4` s. The mesh refinement detects 
 and refines the meshes on the interface.
 
 .. image:: images/refinement.png
