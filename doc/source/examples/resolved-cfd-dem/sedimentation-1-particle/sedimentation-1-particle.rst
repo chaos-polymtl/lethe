@@ -283,7 +283,7 @@ IB particles
 
 	end
 
-This section is where we define most of the parameters that are related to the particle.
+In this subsection, we define most of the parameters that are related to the particle.
 
 
 * The ``number of particles`` is set to one as we only want one particle.
