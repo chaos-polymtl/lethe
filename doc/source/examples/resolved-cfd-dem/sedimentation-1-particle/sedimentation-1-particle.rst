@@ -21,7 +21,7 @@ Description of the case
 The E4 experiment consists in the release of a 1.5 :math:`\text{cm}` particle of Nylon (:math:`\rho_p=0.001120 \frac{\text{kg}}{\text{cm}^{3}}`) with its center being located 12.75 centimeter above the bottom of a 10x16x10 cm container. The viscosity of the fluid is :math:`\mu_f=0.00058 \frac{\text{kg}}{\text{s cm}}` which is equivalent to :math:`\mu_f=0.058 \frac{\text{N s}}{\text{m}^{2}}`. The density of the fluid is :math:`\rho_f=0.000960 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hit the bottom of the container, at which point we stop the simulation.
 
 .. note:: 
-    You will note that we have transformed every length unit into centimeters. The reason is that the particle is very close to 1 cm. Representing the problem in this way helps the linear solver. It avoids extremely small values in the matrix due to the volume of cells being expressed in :math:`\text{cm}^{3}` instead of :math:`\text{m}^{3}`. 
+   You will note that we have transformed every length unit into centimeters. The reason is that the particle's size is very close to 1 cm. Representing the problem in this way helps the linear solver converge. It avoids extremely small values in the matrix due to the volume of cells being expressed in :math:`\text{cm}^{3}` instead of :math:`\text{m}^{3}`. 
     
 All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
