@@ -33,7 +33,7 @@ Location of the examples
 Parameter file
 ---------------
 
-We will detail every part of this prm file. In each section of the parameter file, we will describe relevant parameters. The omitted parameters are only user preference parameters and won’t impact the simulation results. For more detailed on these parameter we suggest visiting the `parameters section <../../../parameters.rst>`_.
+We explain every part of this prm file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail on these parameter we suggest visiting the `parameters section <../../../parameters.rst>`_.
  
 Simulation and IO Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
