@@ -208,7 +208,7 @@ properties`` subsection, their physical properties should be defined:
     end
 
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
-In ``subsection fluid 0``, we set the density and the kinematic viscosity for the first associated with a VOF indicator of 0. 
+In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
 Similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
@@ -268,11 +268,9 @@ to run the simulation using two CPU cores. Feel free to use more.
 -------
 Results
 -------
-The following image shows the screenshots 
-of the simulation at :math:`0`, :math:`1.1`, :math:`3`, and :math:`4` seconds
 
-
-
+The following image shows the screenshots of the simulation at :math:`0`, :math:`1.1`, :math:`3`, and :math:`4` seconds,
+with the red area and the blue area corresponding conversely to the water location and the air location.
 
 .. image:: images/time-series.png
     :alt: time-shots
