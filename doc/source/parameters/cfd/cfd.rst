@@ -10,6 +10,7 @@ General, CFD and Multiphysics
    physical_properties
    initial_conditions
    mesh
+   mesh_adaptation_control
    fem
    boundary_conditions_cfd
    source_term
@@ -17,10 +18,10 @@ General, CFD and Multiphysics
    force_and_torque
    post_processing
    timer
+   non-linear_solver_control
    multiphysics
+   boundary_conditions_multiphysics
    nitsche
+   restart
+   dynamic_flow_control
    interface_sharpening
-
-
-
-

@@ -8,3 +8,4 @@ Multiphysics Examples
     :numbered:
 
     warming-up-a-viscous-fluid/warming-up-a-viscous-fluid
+    tracer-through-cad-junction/tracer-through-cad-junction
