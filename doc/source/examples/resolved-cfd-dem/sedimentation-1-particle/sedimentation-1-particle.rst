@@ -183,7 +183,7 @@ Boundary conditions
 Here we define the 5 ``no slip`` boundary for all the box walls and let the boundary with ``id=3`` free to represent the top of the box. We refer the reader to the `boundary conditions <../../../parameters.rst>`_. section on how those boundaries are defined. 
 
 .. note:: 
-	The boundary id of dealii rectangular mesh are number as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
+	The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
 
 
 Initial condition
