@@ -321,7 +321,7 @@ The following parameters are defined in the particle subsection.
 
 Results
 ---------------
-In this section we will brefly show some results of this simulation.
+In this section we will briefly show some results of this simulation.
 
 First, we look at a slice of the velocity profile during the acceleration phase.
 
