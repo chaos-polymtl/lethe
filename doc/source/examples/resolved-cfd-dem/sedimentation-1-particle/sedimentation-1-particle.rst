@@ -49,7 +49,7 @@ Simulation and IO Control
 	  set subdivision             = 1       # Mesh subdivision when outputend
 	end
 
-* The ``method`` is set to  ``bdf2`` to have a second-order time-stepping method. This should ensure a low error due to the time discretization for this case.
+* The ``method`` is set to  ``bdf2`` to have a second-order time-stepping method. This ensures a low error due to the time discretization in this case.
 
 * The ``bdf startup method`` is set to  ``multiple step bdf``  as we do not have an initial solution that allows us to generate previous time steps. The sharp interface immersed boundary is not compatible at this point in time with the sdirk solver. This leaves us with the multiple step bdf approach that will ramp the order of the scheme in the first few time steps.
 
