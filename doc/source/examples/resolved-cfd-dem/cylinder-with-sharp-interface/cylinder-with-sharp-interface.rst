@@ -6,7 +6,6 @@ Features
 - Solvers: ``gls_sharp_navier_stokes_2d`` (with Q1-Q1) 
 - Steady-state problem
 - Explains how to set sharp interface immersed boundary to represent a particle
-- Specifies an initial condition
 - Displays the use of non-uniform mesh adaptation 
 
 Location of the example
