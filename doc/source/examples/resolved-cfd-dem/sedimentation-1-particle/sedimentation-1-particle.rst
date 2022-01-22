@@ -333,7 +333,7 @@ We can also compare the results obtained for the velocity in time with the resul
 
 IMAGE COMMING SOON !!!
 
-.. image:: images/flow_field_acceleration.png
+.. image:: images/velocity_comparaison.png
     :alt: flow_field_acceleration
     :align: center
 
