@@ -231,7 +231,8 @@ private:
    */
   void
   add_boundary_neighbors_of_boundary_cells(
-    std::map<int, boundary_cells_info_struct<dim>> &boundary_cells_information,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    std::map<int, boundary_cells_info_struct<dim>> & boundary_cells_information,
     const std::map<int, boundary_cells_info_struct<dim>>
       &global_boundary_cells_information);
 
