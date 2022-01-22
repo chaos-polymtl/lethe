@@ -663,6 +663,8 @@ CFDDEMSolver<dim>::load_balance()
     dem_parameters.boundary_conditions.outlet_boundaries,
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh
       .check_for_diamond_cells,
+    this->cfd_dem_simulation_parameters.cfd_parameters.mesh
+      .expand_particle_wall_contact_search,
     this->pcout);
 
   const auto average_minimum_maximum_cells =
@@ -771,6 +773,8 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     dem_parameters.boundary_conditions.outlet_boundaries,
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh
       .check_for_diamond_cells,
+    this->cfd_dem_simulation_parameters.cfd_parameters.mesh
+      .expand_particle_wall_contact_search,
     this->pcout);
 
   // Setting chosen contact force, insertion and integration methods

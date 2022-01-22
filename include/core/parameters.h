@@ -682,6 +682,14 @@ namespace Parameters
     // Enables checking the input grid for diamond-shaped cells
     bool check_for_diamond_cells;
 
+    // A boolean parameter which enables adding the neighbor boundary cells of
+    // boundary cells in DEM simulations. This parameter should only be enabled
+    // for simulations with concave geometries (for instance particles inside a
+    // drum). In simulations with convex geometries, it must not be enabled.
+    // This is also reported to users in a warning in
+    // find_boundary_cells_information.
+    bool expand_particle_wall_contact_search;
+
     // Grid displacement at initiation
     bool   translate;
     double delta_x;

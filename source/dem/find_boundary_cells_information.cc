@@ -8,6 +8,8 @@
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
 
+#include <boost/range/adaptor/map.hpp>
+
 
 using namespace dealii;
 
@@ -23,7 +25,8 @@ BoundaryCellsInformation<dim>::build(
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const std::vector<unsigned int> &                 outlet_boundaries,
   const bool &                                      check_diamond_cells,
-  const ConditionalOStream &                        pcout)
+  const bool &              expand_particle_wall_contact_search,
+  const ConditionalOStream &pcout)
 {
   boundary_cells_with_faces.clear();
   global_boundary_cells_with_faces.clear();
@@ -52,6 +55,21 @@ BoundaryCellsInformation<dim>::build(
                                                   outlet_boundaries,
                                                   check_diamond_cells,
                                                   pcout);
+
+  if (expand_particle_wall_contact_search)
+    {
+      std::cout << "Before: " << boundary_cells_information.size() << std::endl;
+      pcout
+        << "Warning: expansion of particle-wall contact list is enabled. "
+        << std::endl
+        << "This feature should only be activated in geometries with concanve boundaries. "
+           "(For example, for particles flow inside a cylinder or sphere). In geometries with "
+           "convex boundaries, this feature MUST NOT be activated."
+        << std::endl;
+      add_boundary_neighbors_of_boundary_cells(
+        boundary_cells_information, global_boundary_cells_information);
+      std::cout << "After: " << boundary_cells_information.size() << std::endl;
+    }
 }
 
 template <int dim>
@@ -638,6 +656,80 @@ BoundaryCellsInformation<dim>::find_boundary_cells_for_floating_walls(
                       boundary_cells_for_floating_walls[floating_wall_id]
                         .insert(cell);
                     }
+                }
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
+  std::map<int, boundary_cells_info_struct<dim>> &boundary_cells_information,
+  const std::map<int, boundary_cells_info_struct<dim>>
+    &global_boundary_cells_information)
+{
+  for (auto &&boundary_cells_info :
+       boundary_cells_information | boost::adaptors::map_values)
+    {
+      // The boundary cell is local by definition
+      // Get the neighbors of the boundary cells
+      std::vector<typename Triangulation<dim>::active_cell_iterator>
+        active_neighbors_of_boundary_cell;
+
+      GridTools::get_active_neighbors<Triangulation<dim>>(
+        boundary_cells_info.cell, active_neighbors_of_boundary_cell);
+
+      // Loop through the active_neighbors_of_boundary_cell
+      for (auto &neighbor_of_boundary_cell : active_neighbors_of_boundary_cell)
+        {
+          // Iterating over the faces of each cell
+          for (int face_id = 0;
+               face_id < int(GeometryInfo<dim>::faces_per_cell);
+               ++face_id)
+            // check if the neighbor exists in global_boundary_cells_information
+            // (has boundary face)
+            {
+              if (global_boundary_cells_information.count(
+                    neighbor_of_boundary_cell->face_index(face_id)) > 0)
+
+                {
+                  auto boundary_neighbor_information =
+                    global_boundary_cells_information.at(
+                      neighbor_of_boundary_cell->face_index(face_id));
+
+                  // Add the main boundary cell with the information (point and
+                  // normal vector) of the neighbor boundary cell to the
+                  // boundary_cells_information container. Note that since we
+                  // may already have an element with the key of face_id (key of
+                  // the boundary_cells_information map) in the
+                  // boundary_cells_information, we add the new element with a
+                  // unique key to create a unique id in the map. This unique
+                  // key is generated using Cantor pairing function: unique_key
+                  // = 0.5 * (a + b) * (a + b + 1) + b where a and b are global
+                  // boundary face ids of the main boundary cell and the
+                  // neighbor boundary cell.
+                  int imaginary_key =
+                    -0.5 *
+                      (boundary_cells_info.global_face_id +
+                       boundary_neighbor_information.global_face_id) *
+                      (boundary_cells_info.global_face_id +
+                       boundary_neighbor_information.global_face_id + 1) +
+                    boundary_neighbor_information.global_face_id;
+
+                  boundary_cells_info_struct<dim> boundary_information;
+                  boundary_information.cell = boundary_cells_info.cell;
+                  boundary_information.normal_vector =
+                    boundary_neighbor_information.normal_vector;
+                  boundary_information.point_on_face =
+                    boundary_neighbor_information.point_on_face;
+                  boundary_information.global_face_id =
+                    boundary_neighbor_information.global_face_id;
+                  boundary_information.boundary_id =
+                    boundary_neighbor_information.boundary_id;
+
+                  boundary_cells_information.insert(
+                    {imaginary_key, boundary_information});
                 }
             }
         }

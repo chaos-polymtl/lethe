@@ -988,6 +988,12 @@ namespace Parameters
         Patterns::Bool(),
         "Enables checking the input grid for diamond-shaped cells.");
 
+      prm.declare_entry(
+        "expand particle-wall contact search",
+        "false",
+        Patterns::Bool(),
+        "Enables adding the boundary neighbor cells of boundary cells to the"
+        "particle-wall contact search list.");
 
       prm.declare_entry("target size",
                         "1",
@@ -1071,7 +1077,9 @@ namespace Parameters
       refine_until_target_size = prm.get_bool("enable target size");
       simplex                  = prm.get_bool("simplex");
       check_for_diamond_cells  = prm.get_bool("check diamond cells");
-      target_size              = prm.get_double("target size");
+      expand_particle_wall_contact_search =
+        prm.get_bool("expand particle-wall contact search");
+      target_size = prm.get_double("target size");
 
 
       translate = prm.get_bool("translate");
