@@ -8,13 +8,14 @@ The following schematic describes the simulation.
 
 .. image:: images/warming_scheme.png
     :alt: Simulation schematic
+    :height: 10cm
     :align: center
 
 * bc = 0 : no slip and thermal insulation boundary condition
 * bc = 1 : flow in the y-direction (v=2) and heating at Tw
 
-.. warning:: 
-    The whole simulation is carried out in the frame of one-way coupling: the fluid velocity influences the heat generated - through viscous dissipation -, but the heat transfer does not influence the fluid velocity. Moreover, fluid state changes are not considered.
+.. important:: 
+    The whole simulation is carried out in the frame of one-way coupling: the fluid velocity influences the heat generated through viscous dissipation, but the heat transfer does not influence the fluid velocity. Moreover, fluid state changes are not considered.
 
 Parameter file
 --------------
@@ -58,9 +59,11 @@ The fluid's ``physical properties`` are defined in the following subsection, acc
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-      set density              = 0.9
-      set kinematic viscosity    = 0.5
-      set thermal conductivity = 0.12
+      subsection fluid 0
+        set density              = 0.9
+        set kinematic viscosity    = 0.5
+        set thermal conductivity = 0.12
+      end
     # water = 1 density, 0.01 viscosity, 0.59 conductivity
     # oil = 0.9 density, 0.5 viscosity, 0.12 conductivity
     end
@@ -68,7 +71,7 @@ The fluid's ``physical properties`` are defined in the following subsection, acc
 .. warning:: 
     If no physical properties are defined, default values (of 1.0) are taken for the simulation.
 
-The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid type ``hyper_rectangle``, represented the fluid volume considered between the two plates. Here, the width between the two plates is set to ``0,5``.
+The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid type `hyper_rectangle <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a56019d263ae45708302d5d7599f0d458>`_, to represent the fluid volume considered between the two plates. Here, the width between the two plates is set to ``0,5``.
 
 .. code-block:: text
 
@@ -98,7 +101,7 @@ The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``)
       set viscous dissipation = true
     end
 
-The` analytical solution` is defined, according to the fluid and simulation properties:
+The ``analytical solution`` is defined, according to the fluid and simulation properties:
 
 .. math::
     T(x) = T_\omega + \frac{\rho \nu v^2}{2K}\left ( 1 - \left ( \frac{x}{B} \right )^2 \right )
@@ -181,30 +184,32 @@ Convergence with regards to the analytical solution on the temperature:
 
 .. image:: images/error_analytical.png
     :alt: Convergence with regards to the analytical solution on the temperature
+    :height: 10cm
     :align: center
 
 Domain with temperature:
 
 .. image:: images/domain_t0.png
     :alt: Domain with temperature (t = 0)
-    :width: 40%
+    :height: 10cm
 
 .. image:: images/domain_t1.png
     :alt: Domain with temperature (t = 1)
-    :width: 40%
+    :height: 10cm
 
 .. image:: images/domain_t2.png
     :alt: Domain with temperature (t = 2)
-    :width: 40%
+    :height: 10cm
 
 .. image:: images/domain_t7.png
     :alt: Domain with temperature (t = 3)
-    :width: 40%
+    :height: 10cm
 
 Temperature evolution over time:
 
 .. image:: images/temperature_over_time.png
     :alt: Temperature evolution over time
+    :height: 15cm
     :align: center
 
 
@@ -238,6 +243,7 @@ As water has a higher thermal conductivity than oil, the temperature becomes qua
 
 .. image:: images/temperature_over_time_water.png
     :alt: Temperature evolution over time
+    :height: 15cm
     :align: center
 
 .. image:: images/domain_t05_water.png
@@ -262,6 +268,7 @@ After the fluid has been heated up by the right plate, the temperature is really
 
 .. image:: images/temperature_over_time_water_nodiss.png
     :alt: Temperature evolution over time
+    :height: 15cm
     :align: center
 
 .. image:: images/domain_t05_water_nodiss.png

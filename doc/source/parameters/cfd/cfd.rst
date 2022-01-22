@@ -25,3 +25,4 @@ General, CFD and Multiphysics
    nitsche
    restart
    dynamic_flow_control
+   help_from_2D_to_2D
