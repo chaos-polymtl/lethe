@@ -58,7 +58,6 @@ BoundaryCellsInformation<dim>::build(
 
   if (expand_particle_wall_contact_search)
     {
-      std::cout << "Before: " << boundary_cells_information.size() << std::endl;
       pcout
         << "Warning: expansion of particle-wall contact list is enabled. "
         << std::endl
@@ -68,7 +67,6 @@ BoundaryCellsInformation<dim>::build(
         << std::endl;
       add_boundary_neighbors_of_boundary_cells(
         boundary_cells_information, global_boundary_cells_information);
-      std::cout << "After: " << boundary_cells_information.size() << std::endl;
     }
 }
 
