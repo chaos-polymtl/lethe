@@ -13,7 +13,7 @@ This subsection contains the general information of the simulation, including th
 
   subsection simulation control
 
-    # The kind of solver for the linear system
+    # Time-stepping method
     set method 	= steady
 
     #---------------------------------------------------
@@ -31,17 +31,17 @@ This subsection contains the general information of the simulation, including th
     # Method used to startup high order BDF methods
     set bdf startup method 	= multiple step bdf
 
-    # Scaling factor used in the iterations necessary to start-up the BDF schemes
+    # Scaling factor used in the iterations necessary to startup the BDF schemes
     set startup time scaling    = 0.4
 
     #---------------------------------------------------
-    # Time-stepping parameters
+    # Transient simulations parameters
     #---------------------------------------------------
     # End time value of the simulation
     set time end        = 1
   
     # Time step value
-    set time step       = 1.
+    set time step       = 1
 
     # Adaptative time-stepping
     set adapt 		= false
@@ -99,19 +99,19 @@ This subsection contains the general information of the simulation, including th
 	* ``sdirk2``: 2nd order singly diagonally implicit Runge Kutta
 	* ``sdirk3``: 3rd order singly diagonally implicit Runge Kutta
 
-* ``number of mesh adapt``: number of mesh adaptation during the steady-sate simulation
+* ``number mesh adapt``: number of mesh adaptations during the steady-sate simulation
 
-* ``stop tolerance``: tolerance at which the adjoint time stepping steady state simulations (``method = steady-bdf``) stops. 
+* ``stop tolerance``: tolerance at which the adjoint time stepping steady state simulation (``method = steady-bdf``) stops. 
 
 .. note::
 	The adjoint time stepping will stop when the :math:`\mathcal{L}_2` norm of the initial residual is lower than ``stop tolerance`` at the start of a non-linear solution step.
 
-* ``bdf startup method``: scheme used to start a high order bdf scheme. The available options are: 
+* ``bdf startup method``: scheme used to start a high order bdf scheme (2nd order and above). The available options are: 
 	* ``multiple step bdf``
 	* ``sdirk step``
 	* ``initial solution``
 
-* ``startup time scaling``: scaling factor used in the iterations necessary to start-up the BDF schemes
+* ``startup time scaling``: scaling factor used in the iterations necessary to startup the BDF schemes
 
 * ``time end``: value of the time to end the transient simulation
 
@@ -146,20 +146,19 @@ This subsection contains the general information of the simulation, including th
 .. tip::
 	If ``set output frequency = 0``, no ``.pvd`` / ``.vtu`` file will be written.
 
-	If the ``output frequency`` is set at a higher number than the total number of iterations in the simulation, the first (start-up) iteration will still be outputted.
+	If the ``output frequency`` is set at a higher number than the total number of iterations in the simulation, the startup iteration will still be outputted.
 
 
 * ``output time``: controls the time when the ``.pvd`` / ``.vtu`` results are written. This parameter is only used when ``set output control = time``.
 
-* ``group files``: number of ``vtu`` files generated in a parallel simulation
+* ``group files``: number of ``.vtu`` files generated in a parallel simulation
 
 .. tip::
-	This parameter allows to reduce the number of files generated when the simulation is run with a large number of processors. ``set group files = 1`` ensures that a single ``vtu`` file will be generated, using MPI I/O functionalities. 
+	This parameter allows to reduce the number of files generated when the simulation is run with a large number of processors. ``set group files = 1`` ensures that a single ``.vtu`` file will be generated. In this case, the file is written using MPI IO functionalities.
 
 	The value for this parameter should always be a compromise between keeping a low number of files but preventing excessive MPI communications. We have found that the default value of 1 does not have a significant impact on performance on Compute Canada clusters.
 
-
-* ``output boundaries``: controls if the boundaries of the domain are written to a file. This will write additional ``vtu`` files made of the contour of the domain. 
+* ``output boundaries``: controls if the boundaries of the domain are written to a file. This will write additional ``.vtu`` files made of the contour of the domain. 
 
 .. tip::
 	This is particularly useful for the visualisation of 3D flows with obstacles or objects.
@@ -168,10 +167,4 @@ This subsection contains the general information of the simulation, including th
 
 .. tip::
 	Generally, we advise to use a subdivision level of :math:`(n-1)` for interpolation order of :math:`n`. For example, a Q2-Q2 interpolation could be visualized with ``set subdivision = 1``.
-
-
-
-
-
-
 
