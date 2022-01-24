@@ -30,4 +30,4 @@ To avoid that, this subsection includes parameters related to the interface shar
 
 .. seealso::
 
-  The :doc:`../../examples/multiphysics/dam-break-VOF/dam-break-VOF` example using VOF well represents the interface sharpening issue.
+  The :doc:`../../examples/multiphysics/dam-break-VOF/dam-break-VOF` example using VOF represents well the interface sharpening issue.
