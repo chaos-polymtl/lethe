@@ -19,7 +19,7 @@ To avoid that, this subsection includes parameters related to the interface shar
 
 * The ``interface sharpness`` parameter defines the sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_).
 
-.. tip::
+.. warning::
 
   This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be between 1 and 2.
 
