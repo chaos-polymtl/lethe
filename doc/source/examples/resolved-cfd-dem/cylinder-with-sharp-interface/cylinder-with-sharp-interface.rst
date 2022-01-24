@@ -18,7 +18,7 @@ Description of the case
 -----------------------
 
 In this example, we study the flow around a static cylinder in 2D using the sharp-interface method to represent the cylinder. The geometry of the flow takes the same basic case defined in 
-`Example 3 <../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. As such, we use the parameter file associated with `Example 3 <../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_ as the base for this example. The exact dimensions for this example can be found in the following figure. 
+ :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`. As such, we use the parameter file associated with :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder` as the base for this example. The exact dimensions for this example can be found in the following figure. 
 
 .. image:: images/cylinder_case.png
     :alt: Simulation schematic
@@ -40,7 +40,7 @@ The mesh is defined using the following subsection.
 	    set initial refinement   = 6
 	end
 	
-As for the `Example 3 <../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, we define the boundary conditions in order to have an inlet on the left, two slip boundary conditions at the top and bottom, and an outlet on the right of the domain.
+As for the :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`, we define the boundary conditions in order to have an inlet on the left, two slip boundary conditions at the top and bottom, and an outlet on the right of the domain.
 
 
 .. code-block:: text
@@ -75,7 +75,7 @@ As for the `Example 3 <../../incompressible-flow/2d-flow-around-cylinder/2d-flow
 	    end
 	end
 	
-The initial condition has been modified compared to the initial solution proposed in `Example 3 <../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. We use the following initial condition to ensure that the particle's boundary condition is satisfied.
+The initial condition has been modified compared to the initial solution proposed in :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`. We use the following initial condition to ensure that the particle's boundary condition is satisfied.
 
 .. code-block:: text
 
@@ -90,9 +90,9 @@ The initial condition has been modified compared to the initial solution propose
 	end
 	
 The only thing that is left to define is the immersed boundary.
-.. note::
+.. note:: text
 
-	At this point, the immersed boundary tool only allows the representation of spherical objects. This means the immersed boundary can represent a circle in 2D and a spherical shell in 3d. We refer to the parameter definition of the immersed boundary in `this <../../../parameters/resolved_cfd-dem/resolved_cfd-dem.html>`_ section of the documentation.
+	At this point, the immersed boundary tool only allows the representation of spherical objects. This means the immersed boundary can represent a circle in 2D and a spherical shell in 3d. We refer to the parameter definition of the immersed boundary in :doc:`../../../parameters/resolved_cfd-dem/resolved_cfd-dem` section of the documentation.
 
 In this case, we want to define a circular boundary of radius 0.5 center at (8,8) that has no velocity.
 
@@ -122,7 +122,7 @@ In this case, we want to define a circular boundary of radius 0.5 center at (8,8
 
 * The ``number of particles`` is set to one as we only want one particle.
 
-* The ``stencil order`` is set to 2 as this is the highest order we can use, and it does not lead to Runge instability.
+* The ``stencil order`` is set to 2 as this is the highest order that is compatible with the FEM scheme and it does not lead to Runge instability. The highest order of stencil compatible with a FEM scheme is defined by the polynomial order of the scheme time the number of dimensions. In this case 2.
 
 * The ``refine mesh inside radius factor`` is set to 0.8. This will create a mesh refinement around the particle that avoids having hanging nodes in the calculation and help ensure an adequately fine mesh around the particle.
 
@@ -158,8 +158,7 @@ Pressure:
     :alt: Simulation schematic
     :align: center
 
-We get the following force applied on the particle for each of the mesh refinements, which is similar to the one obtained with a conformal mesh in `Example 3 <../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
-
+We get the following force applied on the particle for each of the mesh refinements, which is similar to the one obtained with a conformal mesh in :doc:`..incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`. With the conformal mesh drag force applied to the particle is 7.123. The difference between the 2 can mostly be attributed to the discretization error.
 
 .. code-block:: text
 

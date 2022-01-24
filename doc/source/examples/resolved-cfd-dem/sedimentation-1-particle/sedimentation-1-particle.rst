@@ -33,7 +33,7 @@ Location of the examples
 Parameter file
 ---------------
 
-We explain every part of this prm file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail on these parameter we suggest visiting the `parameters section <../../../parameters.rst>`_.
+We explain every part of this prm file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail on these parameter we suggest visiting the :doc:`../../../parameters/parameters`.
  
 Simulation and IO Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -180,7 +180,7 @@ Boundary conditions
 	    end
 	end
 
-Here we define the 5 ``no slip`` boundary for all the box walls and let the boundary with ``id=3`` free to represent the top of the box. We refer the reader to the `boundary conditions <../../../parameters.rst>`_. section on how those boundaries are defined. 
+Here we define the 5 ``no slip`` boundary for all the box walls and let the boundary with ``id=3`` free to represent the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
 
 .. note:: 
 	The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
