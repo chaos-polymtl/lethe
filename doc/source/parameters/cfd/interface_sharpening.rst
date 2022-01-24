@@ -28,6 +28,6 @@ To avoid that, this subsection includes parameters related to the interface shar
 
 * The ``sharpening frequency`` parameter defines the VOF interface sharpening frequency. It sets at what frequency the interface sharpening calculations should be carried out.
 
-.. see-also::
+.. seealso::
 
-  The `Dam break :doc:dam-break-VOF example using VOF well represents the interface sharpening issue.
+  The :doc:`../../examples/multiphysics/dam-break-VOF/dam-break-VOF` example using VOF well represents the interface sharpening issue.
