@@ -990,7 +990,7 @@ namespace Parameters
 
       prm.declare_entry(
         "expand particle-wall contact search",
-        "false",
+        "true",
         Patterns::Bool(),
         "Enables adding the boundary neighbor cells of boundary cells to the"
         "particle-wall contact search list.");
