@@ -15,6 +15,9 @@ To avoid that, this subsection includes parameters related to the interface shar
 .. warning::
    Do not forget to ``set interface sharpening = true`` in the :doc:multiphysics subsection of the ``.prm``.   
    
+.. warning::
+   Do not forget to ``set interface sharpening = true`` in the :doc:multiphysics subsection of the ``.prm``.   
+   
 * The ``sharpening threshold`` is the phase fraction threshold, and therefore takes a value between 0 and 1. It defines the interface sharpening threshold that represents the mass conservation level.
 
 * The ``interface sharpness`` parameter defines the sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_).
