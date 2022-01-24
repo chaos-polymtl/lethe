@@ -2,6 +2,22 @@
 Warming Up a Viscous Fluid
 ==========================
 
+This example introduces how to solve another physics along with the CFD solver.
+
+Features
+--------------
+* Solver: ``gls_navier_stokes_2d``
+* Transient problem
+* Multiphysics
+* Displays the use of heat transfer physics
+* Analytical solution
+
+Location of the example
+--------------
+``examples/multiphysics/warming_up_viscous_fluid``
+
+Description of the case
+--------------
 A viscous fluid lays between two parallel plates: one fixed and insulated, and the other moving and heated. The velocity profile and the temperature evolution are simulated. The parameter file used is ``warming_up_viscous_fluid.prm``.
 
 The following schematic describes the simulation.
@@ -19,6 +35,9 @@ The following schematic describes the simulation.
 
 Parameter file
 --------------
+
+Simulation Control
+~~~~~~~~~~~~~~
 
 Time integration is defined by a 2nd order backward differentiation (``bdf2``), for a 7.0 seconds simulation (``time end``) with a 0.05 second ``time step``, as stated in the subsection ``simulation control``:
 
@@ -38,6 +57,9 @@ Time integration is defined by a 2nd order backward differentiation (``bdf2``), 
 .. note:: 
     Heat transfer phenomenon occur at a much larger characteristic time than fluid transport phenomenon. To reach a stable state for the system, the end time much be quite big, but the time step can also be increased (in the limit of numerical convergence).
 
+FEM
+~~~~~~~~~~~~~~
+
 The order of resolution for the ``velocity``, ``pressure`` and ``temperature`` are given in the subsection FEM:
 
 .. code-block:: text
@@ -50,6 +72,9 @@ The order of resolution for the ``velocity``, ``pressure`` and ``temperature`` a
       set pressure order        = 1
       set temperature order     = 2
     end
+
+Physical Properties
+~~~~~~~~~~~~~~
 
 The fluid's ``physical properties`` are defined in the following subsection, according to the properties of oil.
 
@@ -71,7 +96,10 @@ The fluid's ``physical properties`` are defined in the following subsection, acc
 .. warning:: 
     If no physical properties are defined, default values (of 1.0) are taken for the simulation.
 
-The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid type `hyper_rectangle <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a56019d263ae45708302d5d7599f0d458>`_, to represent the fluid volume considered between the two plates. Here, the width between the two plates is set to ``0,5``.
+Mesh
+~~~~~~~~~~~~~~
+
+The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid type `hyper_rectangle <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a56019d263ae45708302d5d7599f0d458>`_, to represent the fluid volume considered between the two plates. Here, the width between the two plates is set to ``0.5``.
 
 .. code-block:: text
 
@@ -88,8 +116,10 @@ The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid typ
 .. note::
     As the fluid velocity is not influences by heat transfer (one-way coupling), the fluid velocity will remain constant for the whole simulation across the domain, and as heat transfer occurs at a larger scale, the mesh can be coarse.
 
-The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``) the physics of interest. Here ``heat transfer`` and ``viscous dissipation`` must be set (see Bonuses for results without viscous dissipation).
+Multiphysics
+~~~~~~~~~~~~~~
 
+The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``) the physics of interest. Here ``heat transfer`` and ``viscous dissipation`` must be set (see Bonuses for results without viscous dissipation).
 
 .. code-block:: text
 
@@ -100,6 +130,9 @@ The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``)
       set heat transfer = true
       set viscous dissipation = true
     end
+
+Analytical Solution
+~~~~~~~~~~~~~~
 
 The ``analytical solution`` is defined, according to the fluid and simulation properties:
 
@@ -124,6 +157,9 @@ with :math:`x` the axis perpendicular to the plates, :math:`\rho` the density, :
               set Function expression = Tw+(((rho*nu)*v*v)/(2*K))*(1-(x/B)*(x/B))
         end
     end
+
+Boundary Conditions
+~~~~~~~~~~~~~~
 
 The ``boundary conditions`` are set for:
 
@@ -168,17 +204,20 @@ The ``boundary conditions`` are set for:
         end
     end
 
-The simulation is launched in the same folder as the ``.prm`` file, using the gls_navier_stokes_2d solver. It takes only about 5 seconds with one cpu:
+Running the simulation
+--------------
+
+The simulation is launched in the same folder as the ``.prm`` file, using the ``gls_navier_stokes_2d`` solver. It takes only about 5 seconds with one cpu:
 
 .. code-block:: sh
     
     ../../exe/bin/gls_navier_stokes_2d warming_up_viscous_fluid.prm
 
 Results
--------
+--------------
 
 Visualizations
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 Convergence with regards to the analytical solution on the temperature:
 
@@ -214,15 +253,15 @@ Temperature evolution over time:
 
 
 Physical interpretation
-^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
-From :math:`t=0s`` to :math:`t=2s`, the right plate (:math:`T=80C`) heats up the fluid (initially at :math:`T=0C`). At :math:`t=2s`, the temperature is quasi-homogeneous in the fluid, with :math:`T=80C`. As the fluid continues to be forced to flow at the right wall, viscous dissipation generates more heat, so that the wall with a fixed temperature of :math:`T=80C` now cools down the fluid. A steady state between viscous dissipation heating and the fixed temperature cooling is reached at about :math:`t=4.5s`.
+From :math:`t=0s`` to :math:`t=2s`, the right plate (:math:`T=80^\circ`) heats up the fluid (initially at :math:`T=0^\circ`). At :math:`t=2s`, the temperature is quasi-homogeneous in the fluid, with :math:`T=80^\circ`. As the fluid continues to be forced to flow at the right wall, viscous dissipation generates more heat, so that the wall with a fixed temperature of :math:`T=80^\circ` now cools down the fluid. A steady state between viscous dissipation heating and the fixed temperature cooling is reached at about :math:`t=4.5s`.
 
 Bonuses
--------
+--------------
 
 Results for water
-^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 For water, ``physical properties`` are:
 
@@ -260,11 +299,11 @@ As water has a higher thermal conductivity than oil, the temperature becomes qua
 
 
 Results without viscous dissipation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 The viscous dissipation can be disabled physically, if the two plates remain fixed (``v=0`` for ``bc 1``), or numerically with ``set viscous dissipation = false``. Both cases give the same results shown below. The fluid considered is still water.
 
-After the fluid has been heated up by the right plate, the temperature is really homogeneous throughout the domain, and both minimum and maximum temperatures stay at :math:`T_\omega=80C`. Adapting the temperature scale shows that there is no viscous dissipation at all.
+After the fluid has been heated up by the right plate, the temperature is really homogeneous throughout the domain, and both minimum and maximum temperatures stay at :math:`T_\omega=80^\circ`. Adapting the temperature scale shows that there is no viscous dissipation at all.
 
 .. image:: images/temperature_over_time_water_nodiss.png
     :alt: Temperature evolution over time
@@ -282,3 +321,10 @@ After the fluid has been heated up by the right plate, the temperature is really
 .. image:: images/domain_t7_water_rescale_nodiss.png
     :alt: Rescaled domain with temperature (t = 7)
     :width: 30%
+
+Possibilities for extension
+--------------
+
+* Study the **sensitivity to the time step**, namely to assess how large the ``time step`` can be before stating any difference in the heat transfer solution.
+* Test **different time integration scheme** and see if there is any difference in the computational cost and/or the precision with reguards to the analytical solution.
+* See how the **resolution order** (``velocity order``, ``pressure order`` and ``temperature order``) affects the precision with reguards to the analytical solution.
