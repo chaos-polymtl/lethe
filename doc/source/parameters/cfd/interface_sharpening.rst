@@ -23,7 +23,7 @@ To avoid that, this subsection includes parameters related to the interface shar
 
   This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be between 1 and 2.
 
-* The ``sharpening frequency`` parameter defines the VOF interface sharpening frequency. It sets at what frequency the interface sharpening calculations should be printed out.
+* The ``sharpening frequency`` parameter defines the VOF interface sharpening frequency. It sets at what frequency the interface sharpening calculations should be carried out.
 
 .. see-also::
 
