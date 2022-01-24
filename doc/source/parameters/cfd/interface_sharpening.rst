@@ -22,6 +22,6 @@ To avoid that, this subsection includes parameters related to the interface shar
 
 * The ``sharpening frequency`` parameter defines the VOF interface sharpening frequency. It sets at what frequency the interface sharpening calculations should be printed out.
 
-.. note::
+.. see-also::
 
   The `Dam break :doc:dam-break-VOF example using VOF well represents the interface sharpening issue.
