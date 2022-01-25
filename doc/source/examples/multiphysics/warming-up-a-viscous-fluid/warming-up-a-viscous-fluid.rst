@@ -114,7 +114,7 @@ The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid typ
     end
 
 .. note::
-    As the fluid velocity is not influences by heat transfer (one-way coupling), the fluid velocity will remain constant for the whole simulation across the domain, and as heat transfer occurs at a larger scale, the mesh can be coarse.
+    As the fluid velocity is not influenced by heat transfer (one-way coupling), the fluid velocity will remain constant for the whole simulation across the domain, and as heat transfer occurs at a larger scale, the mesh can be coarse.
 
 Multiphysics
 ~~~~~~~~~~~~~~
