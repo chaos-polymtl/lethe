@@ -6,11 +6,9 @@ void
 IBParticle<dim>::initialise_all()
 {
   // initilise all the variables associated to an immersed boundary particle.
-  mass               = 1;
-  radius             = 1;
-  local_alpha_torque = 1;
-  local_alpha_force  = 1;
-  particle_id        = 0;
+  mass        = 1;
+  radius      = 1;
+  particle_id = 0;
 
   inertia[0][0] = 1;
   inertia[1][1] = 1;

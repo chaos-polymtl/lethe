@@ -717,7 +717,8 @@ IBParticlesDEM<dim>::particles_dem(double dt)
       dem_particles[p_i].omega           = dem_particles[p_i].last_omega[0];
       dem_particles[p_i].impulsion       = 0;
       dem_particles[p_i].omega_impulsion = 0;
-      dem_particles[p_i].contact_impulsion = 0;
+      dem_particles[p_i].contact_impulsion       = 0;
+      dem_particles[p_i].omega_contact_impulsion = 0;
       g[0] = this->parameters.particlesParameters->f_gravity->value(
         dem_particles[p_i].position, 0);
       g[1] = this->parameters.particlesParameters->f_gravity->value(
@@ -789,14 +790,17 @@ IBParticlesDEM<dim>::particles_dem(double dt)
 
           // Integration of the impulsion
           dem_particles[p_i].impulsion +=
-            (current_fluid_force[p_i] + gravity) * dt_dem;
+            (current_fluid_force[p_i] + gravity + contact_wall_force[p_i] +
+             contact_force[p_i]) *
+            dt_dem;
           dem_particles[p_i].contact_impulsion +=
             (contact_wall_force[p_i] + contact_force[p_i]) * dt_dem;
-
           dem_particles[p_i].omega_impulsion +=
             (current_fluid_torque[p_i] + contact_torque[p_i] +
              contact_wall_torque[p_i]) *
             dt_dem;
+          dem_particles[p_i].omega_contact_impulsion +=
+            (contact_torque[p_i] + contact_wall_torque[p_i]) * dt_dem;
         }
       t += dt_dem;
     }
