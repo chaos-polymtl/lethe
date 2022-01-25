@@ -107,38 +107,38 @@ public:
   // The particle position.
   Point<dim> position;
   // The particle at the end of the last time step.
-  std::vector<Point<dim>> last_position;
+  std::vector<Point<dim>> previous_position;
   // The fluid force applied on the particle.
   Tensor<1, dim> forces;
   // The fluid force applied on the particle at the end of the last time step.
-  Tensor<1, dim> last_forces;
+  Tensor<1, dim> previous_forces;
   // The fluid torque applied on the particle.
   Tensor<1, 3> torques;
   // The fluid torque is applied on the particle at the end of the last time
   // step.
-  Tensor<1, 3> last_torques;
+  Tensor<1, 3> previous_torques;
   // The translational velocity
   Tensor<1, dim> velocity;
   // The translational velocity at the end of the last time step.
-  std::vector<Tensor<1, dim>> last_velocity;
+  std::vector<Tensor<1, dim>> previous_velocity;
   // The last iteration of the velocity vector.
   Tensor<1, dim> velocity_iter;
   // The last correction vector of the velocity value without any relaxation.
-  Tensor<1, dim> last_d_velocity;
+  Tensor<1, dim> previous_d_velocity;
 
   // Angular velocity
   // By default, the angular position is always 0 on every axis.
-  Tensor<1, 3> angular_position;
+  Tensor<1, 3> orientation;
   // Store the last angular position of the particle for integration.
-  std::vector<Tensor<1, 3>> last_angular_position;
+  std::vector<Tensor<1, 3>> previous_orientation;
   // Angular velocity
   Tensor<1, 3> omega;
   // The angular velocity at the end of the last time step.
-  std::vector<Tensor<1, 3>> last_omega;
+  std::vector<Tensor<1, 3>> previous_omega;
   // The last iteration of the omega vector.
   Tensor<1, 3> omega_iter;
   // The last correction vector of the velocity value without any relaxation.
-  Tensor<1, 3> last_d_omega;
+  Tensor<1, 3> previous_d_omega;
 
   // The total impulsion that the particle feels during the current time step.
   Tensor<1, dim> impulsion;
@@ -176,10 +176,10 @@ public:
   double residual_omega;
   // Last relaxation parameter used for this particle translational velocity
   // iteration.
-  double last_local_alpha_velocity;
+  double previous_local_alpha_velocity;
   // Last relaxation parameter used for this particle angular velocity
   // iteration.
-  double last_local_alpha_omega;
+  double previous_local_alpha_omega;
 
   // Location of the pressure reference point relative to the center of the
   // particle. This point is used to define a constant on the pressure.
