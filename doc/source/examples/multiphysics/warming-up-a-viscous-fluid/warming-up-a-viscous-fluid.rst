@@ -13,11 +13,11 @@ Features
 * Analytical solution
 
 Location of the example
---------------
+-----------------------
 ``examples/multiphysics/warming_up_viscous_fluid``
 
 Description of the case
---------------
+------------------------
 A viscous fluid lays between two parallel plates: one fixed and insulated, and the other moving and heated. The velocity profile and the temperature evolution are simulated. The parameter file used is ``warming_up_viscous_fluid.prm``.
 
 The following schematic describes the simulation.
@@ -34,10 +34,10 @@ The following schematic describes the simulation.
     The whole simulation is carried out in the frame of one-way coupling: the fluid velocity influences the heat generated through viscous dissipation, but the heat transfer does not influence the fluid velocity. Moreover, fluid state changes are not considered.
 
 Parameter file
---------------
+---------------
 
 Simulation Control
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 Time integration is defined by a 2nd order backward differentiation (``bdf2``), for a 7.0 seconds simulation (``time end``) with a 0.05 second ``time step``, as stated in the subsection ``simulation control``:
 
@@ -74,7 +74,7 @@ The order of resolution for the ``velocity``, ``pressure`` and ``temperature`` a
     end
 
 Physical Properties
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 The fluid's ``physical properties`` are defined in the following subsection, according to the properties of oil.
 
@@ -132,7 +132,7 @@ The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``)
     end
 
 Analytical Solution
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 The ``analytical solution`` is defined, according to the fluid and simulation properties:
 
@@ -159,7 +159,7 @@ with :math:`x` the axis perpendicular to the plates, :math:`\rho` the density, :
     end
 
 Boundary Conditions
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` are set for:
 
@@ -205,7 +205,7 @@ The ``boundary conditions`` are set for:
     end
 
 Running the simulation
---------------
+-----------------------
 
 The simulation is launched in the same folder as the ``.prm`` file, using the ``gls_navier_stokes_2d`` solver. It takes only about 5 seconds with one cpu:
 
@@ -253,7 +253,7 @@ Temperature evolution over time:
 
 
 Physical interpretation
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 From :math:`t=0s`` to :math:`t=2s`, the right plate (:math:`T=80^\circ`) heats up the fluid (initially at :math:`T=0^\circ`). At :math:`t=2s`, the temperature is quasi-homogeneous in the fluid, with :math:`T=80^\circ`. As the fluid continues to be forced to flow at the right wall, viscous dissipation generates more heat, so that the wall with a fixed temperature of :math:`T=80^\circ` now cools down the fluid. A steady state between viscous dissipation heating and the fixed temperature cooling is reached at about :math:`t=4.5s`.
 
@@ -261,7 +261,7 @@ Bonuses
 --------------
 
 Results for water
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 For water, ``physical properties`` are:
 
@@ -299,7 +299,7 @@ As water has a higher thermal conductivity than oil, the temperature becomes qua
 
 
 Results without viscous dissipation
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The viscous dissipation can be disabled physically, if the two plates remain fixed (``v=0`` for ``bc 1``), or numerically with ``set viscous dissipation = false``. Both cases give the same results shown below. The fluid considered is still water.
 
@@ -323,7 +323,7 @@ After the fluid has been heated up by the right plate, the temperature is really
     :width: 30%
 
 Possibilities for extension
---------------
+----------------------------
 
 * Study the **sensitivity to the time step**, namely to assess how large the ``time step`` can be before stating any difference in the heat transfer solution.
 * Test **different time integration scheme** and see if there is any difference in the computational cost and/or the precision with reguards to the analytical solution.
