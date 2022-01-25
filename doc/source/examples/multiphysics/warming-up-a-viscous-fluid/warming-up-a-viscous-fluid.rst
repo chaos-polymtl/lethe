@@ -55,7 +55,7 @@ Time integration is defined by a 2nd order backward differentiation (``bdf2``), 
     end
 
 .. note:: 
-    Heat transfer phenomenon occur at a much larger characteristic time than fluid transport phenomenon. To reach a stable state for the system, the end time much be quite big, but the time step can also be increased (in the limit of numerical convergence).
+    Heat transfer phenomenon occur at a much larger characteristic time than fluid transport phenomenon. To reach a stable state for the system, the end time much be quite big, but the time step can also be increased (in the limit of numerical stability).
 
 FEM
 ~~~~~~~~~~~~~~
