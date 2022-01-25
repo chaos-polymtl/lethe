@@ -504,7 +504,8 @@ private:
 
   std::vector<TableHandler> table_p;
 
-  // Object used to sub-time step the particle dynamics to allow contact between particles.
+  // Object used to sub-time step the particle dynamics to allow contact between
+  // particles.
   IBParticlesDEM<dim> ib_dem;
 };
 

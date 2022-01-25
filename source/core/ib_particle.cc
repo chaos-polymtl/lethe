@@ -45,7 +45,7 @@ IBParticle<dim>::initialise_all()
   // Fill the vectors with default value
   previous_forces = forces;
   previous_torque = torque;
-  velocity_iter = velocity;
+  velocity_iter   = velocity;
 
   omega_iter           = omega;
   omega_impulsion      = 0;
@@ -61,13 +61,13 @@ IBParticle<dim>::initialise_all()
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      previous_position[i]         = position;
-      previous_velocity[i]         = velocity;
+      previous_position[i]    = position;
+      previous_velocity[i]    = velocity;
       previous_orientation[i] = orientation;
-      previous_omega[i]            = omega;
+      previous_omega[i]       = omega;
     }
-  residual_velocity            = DBL_MAX;
-  residual_omega               = DBL_MAX;
+  residual_velocity = DBL_MAX;
+  residual_omega    = DBL_MAX;
 }
 
 template <int dim>
@@ -83,10 +83,10 @@ IBParticle<dim>::initialise_last()
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      previous_position[i]         = position;
-      previous_velocity[i]         = velocity;
+      previous_position[i]    = position;
+      previous_velocity[i]    = velocity;
       previous_orientation[i] = orientation;
-      previous_omega[i]            = omega;
+      previous_omega[i]       = omega;
     }
 }
 

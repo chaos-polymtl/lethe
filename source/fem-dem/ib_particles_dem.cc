@@ -712,11 +712,11 @@ IBParticlesDEM<dim>::particles_dem(double dt)
   // initialized the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
-      dem_particles[p_i].position        = dem_particles[p_i].previous_position[0];
-      dem_particles[p_i].velocity        = dem_particles[p_i].previous_velocity[0];
-      dem_particles[p_i].omega           = dem_particles[p_i].previous_omega[0];
-      dem_particles[p_i].impulsion       = 0;
-      dem_particles[p_i].omega_impulsion = 0;
+      dem_particles[p_i].position  = dem_particles[p_i].previous_position[0];
+      dem_particles[p_i].velocity  = dem_particles[p_i].previous_velocity[0];
+      dem_particles[p_i].omega     = dem_particles[p_i].previous_omega[0];
+      dem_particles[p_i].impulsion = 0;
+      dem_particles[p_i].omega_impulsion         = 0;
       dem_particles[p_i].contact_impulsion       = 0;
       dem_particles[p_i].omega_contact_impulsion = 0;
       g[0] = this->parameters.particlesParameters->f_gravity->value(

@@ -290,8 +290,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // Clear particle force and torque
   for (unsigned int i = 0; i < particles.size(); ++i)
     {
-      particles[i].forces  = 0;
-      particles[i].torque  = 0;
+      particles[i].forces = 0;
+      particles[i].torque = 0;
     }
 
   double       total_area    = 0;
@@ -1240,15 +1240,16 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   if (matrix_alpha != 0)
                     {
                       local_alpha = abs(rhs_alpha / (matrix_alpha));
-                      local_alpha = (local_alpha - 1) *
-                                    particles[p].previous_d_velocity.norm() *
-                                    particles[p].previous_local_alpha_velocity *
-                                    particles[p].previous_d_velocity.norm() *
-                                    particles[p].previous_local_alpha_velocity /
-                                    scalar_product(
-                                      dv,
-                                      particles[p].previous_d_velocity *
-                                        particles[p].previous_local_alpha_velocity);
+                      local_alpha =
+                        (local_alpha - 1) *
+                        particles[p].previous_d_velocity.norm() *
+                        particles[p].previous_local_alpha_velocity *
+                        particles[p].previous_d_velocity.norm() *
+                        particles[p].previous_local_alpha_velocity /
+                        scalar_product(
+                          dv,
+                          particles[p].previous_d_velocity *
+                            particles[p].previous_local_alpha_velocity);
                     }
                   else
                     local_alpha = 1;
@@ -1264,8 +1265,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               particles[p].velocity_iter = particles[p].velocity;
               particles[p].velocity =
                 particles[p].velocity_iter - dv * alpha * local_alpha;
-              particles[p].impulsion_iter            = particles[p].impulsion;
-              particles[p].previous_d_velocity       = dv;
+              particles[p].impulsion_iter      = particles[p].impulsion;
+              particles[p].previous_d_velocity = dv;
               particles[p].previous_local_alpha_velocity = local_alpha;
 
               // If the particles have impacted a wall or another particle, we
@@ -1356,12 +1357,13 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               double rhs_alpha    = 0;
               for (unsigned int d = 0; d < 3; ++d)
                 {
-                  matrix_alpha += (-d_omega[d] * particles[p].previous_d_omega[d] *
-                                     particles[p].previous_local_alpha_omega +
-                                   particles[p].previous_d_omega[d] *
-                                     particles[p].previous_d_omega[d] *
-                                     particles[p].previous_local_alpha_omega *
-                                     particles[p].previous_local_alpha_omega);
+                  matrix_alpha +=
+                    (-d_omega[d] * particles[p].previous_d_omega[d] *
+                       particles[p].previous_local_alpha_omega +
+                     particles[p].previous_d_omega[d] *
+                       particles[p].previous_d_omega[d] *
+                       particles[p].previous_local_alpha_omega *
+                       particles[p].previous_local_alpha_omega);
                   rhs_alpha += particles[p].previous_d_omega[d] *
                                particles[p].previous_d_omega[d] *
                                particles[p].previous_local_alpha_omega *
@@ -1392,8 +1394,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           particles[p].omega = particles[p].omega_iter - invert(jac_omega) *
                                                            residual_omega *
                                                            alpha * local_alpha;
-          particles[p].omega_impulsion_iter   = particles[p].omega_impulsion;
-          particles[p].previous_d_omega       = d_omega;
+          particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
+          particles[p].previous_d_omega     = d_omega;
           particles[p].previous_local_alpha_omega = local_alpha;
 
 
@@ -1588,11 +1590,14 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
-      for (unsigned int i = particles[p].previous_velocity.size() - 1; i > 0; --i)
+      for (unsigned int i = particles[p].previous_velocity.size() - 1; i > 0;
+           --i)
         {
-          particles[p].previous_position[i] = particles[p].previous_position[i - 1];
-          particles[p].previous_velocity[i] = particles[p].previous_velocity[i - 1];
-          particles[p].previous_omega[i]    = particles[p].previous_omega[i - 1];
+          particles[p].previous_position[i] =
+            particles[p].previous_position[i - 1];
+          particles[p].previous_velocity[i] =
+            particles[p].previous_velocity[i - 1];
+          particles[p].previous_omega[i] = particles[p].previous_omega[i - 1];
         }
 
       particles[p].previous_position[0] = particles[p].position;
@@ -2758,7 +2763,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
           particles[p_i].forces[0]   = restart_data["f_x"][p_i];
           particles[p_i].forces[1]   = restart_data["f_y"][p_i];
           particles[p_i].omega[2]    = restart_data["omega_z"][p_i];
-          particles[p_i].torque[2]  = restart_data["T_z"][p_i];
+          particles[p_i].torque[2]   = restart_data["T_z"][p_i];
         }
     }
   if (dim == 3)
@@ -2777,11 +2782,12 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
           particles[p_i].omega[0]    = restart_data["omega_x"][p_i];
           particles[p_i].omega[1]    = restart_data["omega_y"][p_i];
           particles[p_i].omega[2]    = restart_data["omega_z"][p_i];
-          particles[p_i].torque[0]  = restart_data["T_x"][p_i];
-          particles[p_i].torque[1]  = restart_data["T_y"][p_i];
-          particles[p_i].torque[2]  = restart_data["T_z"][p_i];
+          particles[p_i].torque[0]   = restart_data["T_x"][p_i];
+          particles[p_i].torque[1]   = restart_data["T_y"][p_i];
+          particles[p_i].torque[2]   = restart_data["T_z"][p_i];
 
-          for (unsigned int i = 0; i < particles[p_i].previous_position.size(); ++i)
+          for (unsigned int i = 0; i < particles[p_i].previous_position.size();
+               ++i)
             {
               particles[p_i].previous_position[i] = particles[p_i].position;
               particles[p_i].previous_velocity[i] = particles[p_i].velocity;
