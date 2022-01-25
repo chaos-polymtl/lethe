@@ -158,6 +158,9 @@ This subsection contains the general information of the simulation, including th
 
 	The value for this parameter should always be a compromise between keeping a low number of files but preventing excessive MPI communications. We have found that the default value of 1 does not have a significant impact on performance on Compute Canada clusters.
 
+	.. warning::
+		However, as soon as the size of the output ``.vtu`` file reaches 1 Gb, it is preferable to start splitting them into multiple smaller files as this may lead to corrupted files on some file systems.
+
 * ``output boundaries``: controls if the boundaries of the domain are written to a file. This will write additional ``.vtu`` files made of the contour of the domain. 
 
 .. tip::
