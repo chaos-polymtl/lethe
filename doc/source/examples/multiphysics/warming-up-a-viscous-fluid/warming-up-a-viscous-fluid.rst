@@ -326,5 +326,5 @@ Possibilities for extension
 ----------------------------
 
 * Study the **sensitivity to the time step**, namely to assess how large the ``time step`` can be before stating any difference in the heat transfer solution.
-* Test **different time integration scheme** and see if there is any difference in the computational cost and/or the precision with reguards to the analytical solution.
-* See how the **resolution order** (``velocity order``, ``pressure order`` and ``temperature order``) affects the precision with reguards to the analytical solution.
+* Test a **different time integration scheme** and see if there is any difference in the computational cost and/or the precision with regards to the analytical solution.
+* See how the **resolution order** (``velocity order``, ``pressure order`` and ``temperature order``) affects the precision with regards to the analytical solution.
