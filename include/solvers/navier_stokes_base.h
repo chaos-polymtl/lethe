@@ -118,11 +118,6 @@ protected:
   {
     return nonzero_constraints;
   };
-  double
-  get_current_residual() override
-  {
-    return system_rhs.l2_norm();
-  }
 
   /**
    *  Generic interface routine to allow the CFD solver

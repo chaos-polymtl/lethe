@@ -712,9 +712,9 @@ IBParticlesDEM<dim>::particles_dem(double dt)
   // initialized the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
-      dem_particles[p_i].position        = dem_particles[p_i].last_position[0];
-      dem_particles[p_i].velocity        = dem_particles[p_i].last_velocity[0];
-      dem_particles[p_i].omega           = dem_particles[p_i].last_omega[0];
+      dem_particles[p_i].position        = dem_particles[p_i].previous_position[0];
+      dem_particles[p_i].velocity        = dem_particles[p_i].previous_velocity[0];
+      dem_particles[p_i].omega           = dem_particles[p_i].previous_omega[0];
       dem_particles[p_i].impulsion       = 0;
       dem_particles[p_i].omega_impulsion = 0;
       dem_particles[p_i].contact_impulsion       = 0;
@@ -769,7 +769,7 @@ IBParticlesDEM<dim>::particles_dem(double dt)
 
           // BDF 1 on the force
           current_fluid_force[p_i]  = dem_particles[p_i].forces;
-          current_fluid_torque[p_i] = dem_particles[p_i].torques;
+          current_fluid_torque[p_i] = dem_particles[p_i].torque;
 
 
           // Explicite Euler

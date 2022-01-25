@@ -1,4 +1,4 @@
-﻿/* ---------------------------------------------------------------------
+/* ---------------------------------------------------------------------
  *
  * Copyright (C) 2019 - 2019 by the Lethe authors
  *
@@ -499,18 +499,12 @@ private:
   PVDHandler ib_particles_pvdhandler;
 
 
-  const bool                   SUPG        = true;
-  const bool                   PSPG        = true;
-  const double                 GLS_u_scale = 1;
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
 
   std::vector<TableHandler> table_p;
 
-  // Particles contact history
-
-  TableHandler table_residual;
-
+  // Object used to sub-time step the particle dynamics to allow contact between particles.
   IBParticlesDEM<dim> ib_dem;
 };
 

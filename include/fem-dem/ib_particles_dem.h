@@ -17,7 +17,6 @@
 #include <deal.II/dofs/dof_tools.h>
 
 using namespace dealii;
-using namespace std;
 
 
 /**
@@ -29,7 +28,6 @@ using namespace std;
  * the flow is solved
  *
  * @ingroup solvers
- * @author Lucka Barbeau, Bruno Blais, Shahab Golshan 2021
  */
 
 template <int dim>

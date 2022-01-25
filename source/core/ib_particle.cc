@@ -23,13 +23,13 @@ IBParticle<dim>::initialise_all()
   position[0] = 0;
   position[1] = 0;
 
-  torques[0] = 0;
-  torques[1] = 0;
-  torques[2] = 0;
+  torque[0] = 0;
+  torque[1] = 0;
+  torque[2] = 0;
 
-  angular_position[0] = 0;
-  angular_position[1] = 0;
-  angular_position[2] = 0;
+  orientation[0] = 0;
+  orientation[1] = 0;
+  orientation[2] = 0;
 
   omega[0] = 0;
   omega[1] = 0;
@@ -42,8 +42,9 @@ IBParticle<dim>::initialise_all()
       position[2] = 0;
     }
 
-  last_forces   = forces;
-  last_torques  = torques;
+  // Fill the vectors with default value
+  previous_forces = forces;
+  previous_torque = torque;
   velocity_iter = velocity;
 
   omega_iter           = omega;
@@ -53,23 +54,18 @@ IBParticle<dim>::initialise_all()
   impulsion_iter       = 0;
   contact_impulsion    = 0;
 
-  last_position.resize(3);
-  last_velocity.resize(3);
-  last_angular_position.resize(3);
-  last_omega.resize(3);
+  previous_position.resize(3);
+  previous_velocity.resize(3);
+  previous_orientation.resize(3);
+  previous_omega.resize(3);
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      last_position[i]         = position;
-      last_velocity[i]         = velocity;
-      last_angular_position[i] = angular_position;
-      last_omega[i]            = omega;
+      previous_position[i]         = position;
+      previous_velocity[i]         = velocity;
+      previous_orientation[i] = orientation;
+      previous_omega[i]            = omega;
     }
-  youngs_modulus               = 10000000;
-  restitution_coefficient      = 1;
-  friction_coefficient         = 1;
-  poisson_ratio                = 0.3;
-  rolling_friction_coefficient = 0.1;
   residual_velocity            = DBL_MAX;
   residual_omega               = DBL_MAX;
 }
@@ -79,7 +75,7 @@ void
 IBParticle<dim>::initialise_last()
 {
   // initilise all the variables associated to an immersed boundary particle
-  last_forces          = forces;
+  previous_forces      = forces;
   velocity_iter        = velocity;
   impulsion_iter       = impulsion;
   omega_iter           = omega;
@@ -87,10 +83,10 @@ IBParticle<dim>::initialise_last()
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      last_position[i]         = position;
-      last_velocity[i]         = velocity;
-      last_angular_position[i] = angular_position;
-      last_omega[i]            = omega;
+      previous_position[i]         = position;
+      previous_velocity[i]         = velocity;
+      previous_orientation[i] = orientation;
+      previous_omega[i]            = omega;
     }
 }
 
@@ -131,9 +127,9 @@ IBParticle<dim>::get_properties()
   properties[8]  = omega[0];
   properties[9]  = omega[1];
   properties[10] = omega[2];
-  properties[11] = torques[0];
-  properties[12] = torques[1];
-  properties[13] = torques[2];
+  properties[11] = torque[0];
+  properties[12] = torque[1];
+  properties[13] = torque[2];
   if (dim == 2)
     {
       properties[4] = 0;
