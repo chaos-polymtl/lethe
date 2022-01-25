@@ -113,10 +113,10 @@ public:
   // The fluid force applied on the particle at the end of the last time step.
   Tensor<1, dim> previous_forces;
   // The fluid torque applied on the particle.
-  Tensor<1, 3> torques;
+  Tensor<1, 3> torque;
   // The fluid torque is applied on the particle at the end of the last time
   // step.
-  Tensor<1, 3> previous_torques;
+  Tensor<1, 3> previous_torque;
   // The translational velocity
   Tensor<1, dim> velocity;
   // The translational velocity at the end of the last time step.
