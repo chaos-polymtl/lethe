@@ -15,5 +15,8 @@ string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_LOWER_BUILD_TYPE)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
        	set_tests_properties(gls_sharp_navier_stokes_3d/steady_couette_sphere.debug PROPERTIES TIMEOUT 2000) 
        	set_tests_properties(gls_sharp_navier_stokes_3d/check_point.debug PROPERTIES TIMEOUT 2000) 
+       	set_tests_properties(gls_sharp_navier_stokes_3d/pp_contact_test.debug PROPERTIES TIMEOUT 2000) 
+       	set_tests_properties(gls_sharp_navier_stokes_3d/coupled_moving_stokes.debug PROPERTIES TIMEOUT 2000) 
+       	set_tests_properties(gls_sharp_navier_stokes_3d/pw_contact_test.debug PROPERTIES TIMEOUT 2000) 
 ENDIF()
 
