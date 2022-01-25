@@ -36,7 +36,7 @@ On Niagara, Beluga, Graham or Cedar
 All operations can be performed on login nodes.
 
 .. warning:: 
- If on **Niagara**, this additional module is needed beforehand: ``module load CCENv``.
+ If on **Niagara**, this additional module is needed beforehand: ``module load CCEnv``.
 
 For any cluster except Narval (that is: Niagara, Beluga, Graham, Cedar), load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules:
 
