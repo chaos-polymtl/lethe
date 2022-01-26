@@ -579,7 +579,9 @@ GLSVANSSolver<dim>::setup_assemblers()
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.push_back(std::make_shared<GLSVansAssemblerBDF<dim>>(
-        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
+        this->simulation_control,
+        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
+        this->cfd_dem_simulation_parameters.cfd_dem));
     }
 
   //  Fluid_Particle Interactions Assembler
