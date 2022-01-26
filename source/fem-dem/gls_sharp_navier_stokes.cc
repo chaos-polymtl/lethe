@@ -1204,7 +1204,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 }
             }
 
-          // relaxation parameter for the particle dynamics.
+          // Relaxation parameter for the particle dynamics.
           double local_alpha = 1;
           // We keep in memory the state of the particle before the update in
           // case something went wrong and the particle is now outside of the

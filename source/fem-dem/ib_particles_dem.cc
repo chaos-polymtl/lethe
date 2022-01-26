@@ -686,10 +686,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 template <int dim>
 void
 IBParticlesDEM<dim>::particles_dem(double dt)
-{ // add refilling containers
+{
+  // Initialize local containers and physical variables
   using numbers::PI;
-
-
   double rho    = parameters.particlesParameters->density;
   double dt_dem = dt / parameters.particlesParameters->coupling_frequency;
 
@@ -704,12 +703,14 @@ IBParticlesDEM<dim>::particles_dem(double dt)
   std::vector<Tensor<1, dim>> velocity(dem_particles.size());
   std::vector<Point<dim>>     position(dem_particles.size());
 
-  // local time for the dem step
-  double         t = 0;
+  // Local time for the dem step.
+  double t = 0;
+  // The gravitational acceleration.
   Tensor<1, dim> g;
   this->parameters.particlesParameters->f_gravity->set_time(cfd_time);
+  // The gravitational force on the particle.
   Tensor<1, dim> gravity;
-  // initialized the particles
+  // Initialized the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
       dem_particles[p_i].position  = dem_particles[p_i].previous_position[0];
@@ -719,6 +720,7 @@ IBParticlesDEM<dim>::particles_dem(double dt)
       dem_particles[p_i].omega_impulsion         = 0;
       dem_particles[p_i].contact_impulsion       = 0;
       dem_particles[p_i].omega_contact_impulsion = 0;
+      // Initialized the gravity at the particle position.
       g[0] = this->parameters.particlesParameters->f_gravity->value(
         dem_particles[p_i].position, 0);
       g[1] = this->parameters.particlesParameters->f_gravity->value(
@@ -728,14 +730,13 @@ IBParticlesDEM<dim>::particles_dem(double dt)
           dem_particles[p_i].position, 2);
     }
 
-  // integrate on the with the sub_time_step
+  // Integrate with the sub_time_step
   while (t + dt_dem / 2 < dt)
     {
       current_fluid_force.clear();
       current_fluid_force.resize(dem_particles.size());
       current_fluid_torque.clear();
       current_fluid_torque.resize(dem_particles.size());
-
       contact_torque.clear();
       contact_torque.resize(dem_particles.size());
       contact_force.clear();
@@ -767,17 +768,21 @@ IBParticlesDEM<dim>::particles_dem(double dt)
                                dem_particles[p_i].radius * PI * rho);
             }
 
-          // BDF 1 on the force
+          // We consider only the force at t+dt so the scheme is consistent to a
+          // BDFn scheme on the fluid side. If there is no contact.
           current_fluid_force[p_i]  = dem_particles[p_i].forces;
           current_fluid_torque[p_i] = dem_particles[p_i].torque;
 
 
-          // Explicite Euler
+          // Explicit Euler for the sub_time_stepping. This is exact for the
+          // gravity and fluid impulsion integration. In case of contact the
+          // scheme becomes first order. This could be improved in the futur.
           dem_particles[p_i].velocity =
             dem_particles[p_i].velocity +
             (current_fluid_force[p_i] + contact_force[p_i] +
              contact_wall_force[p_i] + gravity) *
               dt_dem / dem_particles[p_i].mass;
+
           dem_particles[p_i].position =
             dem_particles[p_i].position + dem_particles[p_i].velocity * dt_dem;
 
@@ -788,7 +793,9 @@ IBParticlesDEM<dim>::particles_dem(double dt)
                contact_wall_torque[p_i]) *
               dt_dem;
 
-          // Integration of the impulsion
+          // Integration of the impulsion applied to the particle.
+          // This is what will be transferred to the CFD to integrate the
+          // particle.
           dem_particles[p_i].impulsion +=
             (current_fluid_force[p_i] + gravity + contact_wall_force[p_i] +
              contact_force[p_i]) *
