@@ -695,9 +695,6 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
   auto &strong_residual = copy_data.strong_residual;
   auto &local_rhs       = copy_data.local_rhs;
 
-  // Grad-div weight factor
-  const double gamma = 0.1;
-
   // Time stepping information
   const auto          method = this->simulation_control->get_assembly_method();
   std::vector<double> time_steps_vector =
