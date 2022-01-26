@@ -32,9 +32,6 @@ GLSVansAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  // Grad-div weight factor
-  const double gamma = 0.1;
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -60,6 +57,9 @@ GLSVansAssemblerCore<dim>::assemble_matrix(
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
+
+      // Grad-div weight factor used to be constant 0.1
+      const double gamma = viscosity + u_mag * h;
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -237,8 +237,9 @@ GLSVansAssemblerCore<dim>::assemble_rhs(
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * viscosity / (h * h), 2));
 
-      // Grad-div weight factor
-      const double gamma = 0.1;
+      // Grad-div weight factor used to be constant 0.1
+      const double gamma = viscosity + u_mag * h;
+
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity * void_fraction +
@@ -376,6 +377,9 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
+  const double viscosity = physical_properties.fluids[0].viscosity;
+
+  const double       h          = scratch_data.cell_size;
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -412,6 +416,10 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
           strong_residual[q] += bdf_coefs[p] * velocity[p] * void_fraction[0];
         }
 
+      // Grad-div weight factor used to be constant 0.1
+      const double u_mag = std::max(velocity[0].norm(), 1e-12);
+      const double gamma = viscosity + u_mag * h;
+
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -432,7 +440,7 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
                   if (cfd_dem.grad_div == true)
                     {
                       local_rhs_i -=
-                        (bdf_coefs[p] * void_fraction[p]) * div_phi_u_i;
+                        gamma * (bdf_coefs[p] * void_fraction[p]) * div_phi_u_i;
                     }
                 }
             }

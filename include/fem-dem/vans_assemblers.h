@@ -115,8 +115,10 @@ class GLSVansAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSVansAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control,
+                      Parameters::PhysicalProperties     physical_properties,
                       Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
     , cfd_dem(cfd_dem)
   {}
 
@@ -139,7 +141,9 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::CFDDEM                 cfd_dem;
+  Parameters::PhysicalProperties     physical_properties;
+
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
