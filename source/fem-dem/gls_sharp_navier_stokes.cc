@@ -1259,7 +1259,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 local_alpha = 1;
               if (local_alpha < 0)
                 local_alpha = 0;
-
+              if (isnan(local_alpha))
+                local_alpha = 1;
               // Update the particle state and keep in memory the last iteration
               // information.
               particles[p].velocity_iter = particles[p].velocity;
@@ -1389,6 +1390,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             local_alpha = 1;
           if (local_alpha < 0)
             local_alpha = 0;
+          if (isnan(local_alpha))
+            local_alpha = 1;
 
           particles[p].omega_iter = particles[p].omega;
           particles[p].omega = particles[p].omega_iter - invert(jac_omega) *
