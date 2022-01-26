@@ -167,14 +167,17 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
             }
         }
     }
+  // Loop over the boundary cell on level 0 to check their children.
   last_boundary_cells_candidates = boundary_cells_candidates;
   if (boundary_cells_candidates.size() != 0)
     {
       bool all_cell_are_active = false;
       while (!all_cell_are_active)
         {
+          // Only stop when all the candidate cell are active
           all_cell_are_active = true;
           boundary_cells_candidates.clear();
+          // loop over the last set of candidates.
           for (auto cell : last_boundary_cells_candidates)
             {
               if (cell->at_boundary())
@@ -183,6 +186,7 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
                        i < GeometryInfo<dim>::vertices_per_cell;
                        ++i)
                     {
+                      // Check if the cell is in the sphere.
                       if ((cell->vertex(i) - center).norm() <= radius ||
                           cell->point_inside(center))
                         {
@@ -192,9 +196,12 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
                             }
                           else
                             {
+                              // If we are here, the cell has children.
                               all_cell_are_active = false;
                               for (unsigned int j = 0; j < max_childs; ++j)
                                 {
+                                  // Store the children of the cell for further
+                                  // checks.
                                   boundary_cells_candidates.insert(
                                     cell->child(j));
                                 }
@@ -210,6 +217,7 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
     }
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
     cells_at_boundary_v(cells_at_boundary.begin(), cells_at_boundary.end());
+  // Output all the actives cells in the sphere radius that are at a boundary.
   return cells_at_boundary_v;
 }
 

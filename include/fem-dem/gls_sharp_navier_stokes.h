@@ -252,7 +252,7 @@ private:
    */
   void
   integrate_particles();
-  
+
   /**
    * @brief
    * Store the solution of the particles dynamics parameters for integration.

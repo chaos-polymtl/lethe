@@ -151,6 +151,11 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
               Tensor<1, dim> r;
               r[0] = particles[p].radius;
 
+              // Check if a point on the boundary is contained in that cell.
+              // The idea here is that if the particle is much smaller than the
+              // cell, it can be hard to detect it, so we refine this cell
+              // anyway if it contains this random point on the boundary. This
+              // will help the detection of the particle on the next refinement.
               bool cell_as_ib_inside =
                 cell->point_inside(particles[p].position + r);
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
