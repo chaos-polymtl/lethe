@@ -25,13 +25,11 @@
 #include <core/nitsche.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
-
+#include <dem/dem_solver_parameters.h>
+#include <fem-dem/parameters_cfd_dem.h>
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/source_terms.h>
-
-#include <dem/dem_solver_parameters.h>
-#include <fem-dem/parameters_cfd_dem.h>
 
 template <int dim>
 class SimulationParameters
@@ -55,6 +53,7 @@ public:
   BoundaryConditions::NSBoundaryConditions<dim>     boundary_conditions;
   BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
+  BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
   Parameters::InitialConditions<dim> *              initial_condition;
   AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
   SourceTerms::SourceTerm<dim> *                    source_term;
@@ -77,6 +76,7 @@ public:
     boundary_conditions.declare_parameters(prm);
     boundary_conditions_ht.declare_parameters(prm);
     boundary_conditions_tracer.declare_parameters(prm);
+    boundary_conditions_vof.declare_parameters(prm);
 
 
     initial_condition = new Parameters::InitialConditions<dim>;
@@ -134,6 +134,7 @@ public:
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);
     boundary_conditions_tracer.parse_parameters(prm);
+    boundary_conditions_vof.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);
     analytical_solution->parse_parameters(prm);
