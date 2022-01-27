@@ -37,10 +37,13 @@ namespace BoundaryConditions
     periodic,
     pressure,
     // for heat transfer
-    temperature,      // Dirichlet
-    convection,       // Robin
+    temperature,      // - Dirichlet
+    convection,       // - Robin
                       // for tracer
-    tracer_dirichlet, // Dirichlet tracer
+    tracer_dirichlet, // - Dirichlet tracer
+                      // for vof
+    none,             // - none
+    vof_peeling,      // - peeling/wetting
   };
 
   /**
@@ -364,7 +367,7 @@ namespace BoundaryConditions
    * @brief This class manages the boundary conditions for Heat-Transfer solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
-   * The members "value" and "Tenv" contain double used for bc calculation :
+   * The members "value", "h" and "Tinf" contain double used for bc calculation:
    *  - if bc type is "temperature" (Dirichlet condition), "value" is the
    * double passed to the deal.ii ConstantFunction
    *  - if bc type is "convection" (Robin condition), "h" is the
@@ -678,6 +681,162 @@ namespace BoundaryConditions
     prm.leave_subsection();
   }
 
+  /**
+   * @brief This class manages the boundary conditions for VOF solver
+   * It introduces the boundary functions and declares the boundary conditions
+   * coherently. (TODO update)
+   * The members ... contain double used for bc calculation :
+   *  - if bc type is "..." (... condition), "..." is the
+   * double passed to the deal.ii ConstantFunction
+   */
+
+  template <int dim>
+  class VOFBoundaryConditions : public BoundaryConditions<dim>
+  {
+  public:
+    std::vector<double> peeling_threshold;
+    std::vector<double> wetting_threshold;
+
+    void
+    declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_boundary(ParameterHandler &prm, unsigned int i_bc);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Declares the default parameters for a boundary condition id i_bc
+   * i.e. Dirichlet condition (ConstantFunction) with value 0
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition id.
+   */
+  template <int dim>
+  void
+  VOFBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm,
+                                                  unsigned int      i_bc)
+  {
+    prm.declare_entry("type",
+                      "none",
+                      Patterns::Selection("none|vof_peeling"),
+                      "Type of boundary condition for VOF"
+                      "Choices are <none|vof_peeling>.");
+
+    prm.declare_entry("id",
+                      Utilities::int_to_string(i_bc, 2),
+                      Patterns::Integer(),
+                      "Mesh id for boundary conditions");
+
+    prm.declare_entry("peeling threshold",
+                      "0",
+                      Patterns::Double(),
+                      "Value (Double) for peeling threshold at bc");
+
+    prm.declare_entry("wetting threshold",
+                      "0",
+                      Patterns::Double(),
+                      "Value (Double) for wetting threshold at bc");
+  }
+
+  /**
+   * @brief Declare the boundary conditions default parameters
+   * Calls declareDefaultEntry method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+  template <int dim>
+  void
+  VOFBoundaryConditions<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    this->max_size = 14;
+
+    prm.enter_subsection("boundary conditions VOF");
+    {
+      prm.declare_entry("number",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of boundary conditions");
+      this->id.resize(this->max_size);
+      this->type.resize(this->max_size);
+
+      for (unsigned int n = 0; n < this->max_size; n++)
+        {
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            declareDefaultEntry(prm, n);
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  /**
+   * @brief Parse the information for a boundary condition
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition number (and not necessarily it's id).
+   */
+
+  template <int dim>
+  void
+  VOFBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm,
+                                             unsigned int      i_bc)
+  {
+    const std::string op = prm.get("type");
+    if (op == "none")
+      {
+        this->type[i_bc] = BoundaryType::none;
+      }
+    else if (op == "vof_peeling")
+      {
+        this->type[i_bc]              = BoundaryType::vof_peeling;
+        this->peeling_threshold[i_bc] = prm.get_double("peeling threshold");
+        this->wetting_threshold[i_bc] = prm.get_double("wetting threshold");
+      }
+
+    this->id[i_bc] = prm.get_integer("id");
+  }
+
+  /**
+   * @brief Parse the boundary conditions
+   * Calls parse_boundary method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+
+  template <int dim>
+  void
+  VOFBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("boundary conditions VOF");
+    {
+      this->size = prm.get_integer("number");
+
+      this->type.resize(this->size);
+      this->id.resize(this->size);
+      this->peeling_threshold.resize(this->size);
+      this->wetting_threshold.resize(this->size);
+
+      for (unsigned int n = 0; n < this->max_size; n++)
+        {
+          if (this->size >= n + 1)
+            {
+              prm.enter_subsection("bc " + std::to_string(n));
+              {
+                parse_boundary(prm, n);
+              }
+              prm.leave_subsection();
+            }
+        }
+    }
+    prm.leave_subsection();
+  }
 
 } // namespace BoundaryConditions
 
