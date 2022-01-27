@@ -53,6 +53,13 @@ subsection void fraction
 end
 
 #---------------------------------------------------
+# CFD-DEM
+#---------------------------------------------------
+subsection cfd-dem
+   set grad div = false
+end
+
+#---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
 subsection initial conditions
