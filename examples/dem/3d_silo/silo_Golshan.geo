@@ -1,3 +1,23 @@
+Mesh.Algorithm = 6;
+Mesh.Hexahedra = 1;
+Mesh.HighOrderNumLayers = 6;
+Mesh.MeshSizeFactor = 1.5;
+Mesh.MeshSizeMin = 0.3;
+Mesh.MeshSizeMax = 0.4;
+Mesh.MetisAlgorithm = 1;
+Mesh.MetisEdgeMatching = 2;
+Mesh.MetisRefinementAlgorithm = 2;
+Mesh.Optimize = 1;
+Mesh.OptimizeThreshold = 0.3;
+Mesh.RecombinationAlgorithm = 2;
+Mesh.RecombineAll = 1;
+Mesh.RefineSteps = 10;
+Mesh.Smoothing = 10;
+Mesh.SmoothRatio = 1.8;
+
+
+
+
 //+
 Point(1) = {-0.4, -0.05, 1.1, 1.0};
 //+
