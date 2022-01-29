@@ -64,7 +64,7 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 10
+    set beta = 10
     subsection nitsche solid 0
 	    subsection mesh
 		    set type = gmsh
@@ -72,9 +72,9 @@ subsection nitsche
 	    end
 	    subsection solid velocity
 		    set Function expression = 0 ; -z ; y
-	      end
-      end
-  set calculate torques on solid = true
+	    end
+	    set calculate torques on solid = true
+    end
   set verbosity = verbose
 end
 

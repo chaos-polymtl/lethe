@@ -58,6 +58,12 @@ namespace Parameters
     // Information for force calculation
     Point<dim>
       center_of_rotation; // Center of rotation used for torque calculation
+
+    bool        calculate_force_on_solid;
+    bool        calculate_torque_on_solid;
+    Point<dim>  cor; // Center of rotation used for torque calculation
+    std::string force_output_name;
+    std::string torque_output_name;
   };
 
 
@@ -106,6 +112,23 @@ namespace Parameters
       prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
       prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
       prm.leave_subsection();
+
+      prm.declare_entry("calculate forces on solid",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of forces on solid");
+      prm.declare_entry("calculate torques on solid",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of torques on solid");
+      prm.declare_entry("solid force name",
+                        "force_solid",
+                        Patterns::FileName(),
+                        "File output solid force prefix");
+      prm.declare_entry("solid torque name",
+                        "torque_solid",
+                        Patterns::FileName(),
+                        "File output solid torque prefix");
     }
     prm.leave_subsection();
   }
@@ -131,6 +154,11 @@ namespace Parameters
       if (dim == 3)
         center_of_rotation[2] = prm.get_double("z");
       prm.leave_subsection();
+
+      calculate_force_on_solid  = prm.get_bool("calculate forces on solid");
+      calculate_torque_on_solid = prm.get_bool("calculate torques on solid");
+      force_output_name         = prm.get("solid force name");
+      torque_output_name        = prm.get("solid torque name");
     }
     prm.leave_subsection();
   }
@@ -151,12 +179,7 @@ namespace Parameters
     double beta;
 
     // Calculate forces
-    Verbosity   verbosity;
-    bool        calculate_force_on_solid;
-    bool        calculate_torque_on_solid;
-    Point<dim>  cor; // Center of rotation used for torque calculation
-    std::string force_output_name;
-    std::string torque_output_name;
+    Verbosity verbosity;
 
     // Nitsche solid objects
     std::vector<std::shared_ptr<NitscheSolid<dim>>> nitsche_solids;
@@ -183,22 +206,7 @@ namespace Parameters
         Patterns::Selection("quiet|verbose"),
         "State whether the force on the solid should be printed "
         "Choices are <quiet|verbose>.");
-      prm.declare_entry("calculate forces on solid",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of forces on solid");
-      prm.declare_entry("calculate torques on solid",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of torques on solid");
-      prm.declare_entry("solid force name",
-                        "force_solid",
-                        Patterns::FileName(),
-                        "File output solid force prefix");
-      prm.declare_entry("solid torque name",
-                        "torque_solid",
-                        Patterns::FileName(),
-                        "File output solid torque prefix");
+
       prm.declare_entry("number of solids",
                         "1",
                         Patterns::Integer(),
@@ -225,10 +233,6 @@ namespace Parameters
         verbosity = Verbosity::verbose;
       if (op == "quiet")
         verbosity = Verbosity::quiet;
-      calculate_force_on_solid  = prm.get_bool("calculate forces on solid");
-      calculate_torque_on_solid = prm.get_bool("calculate torques on solid");
-      force_output_name         = prm.get("solid force name");
-      torque_output_name        = prm.get("solid torque name");
 
       number_solids = prm.get_integer("number of solids");
       for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)

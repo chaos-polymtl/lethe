@@ -80,16 +80,21 @@ private:
 
   /**
    * @brief Post-process for forces on solid after an iteration
+   * @param i_solid is the solid index
+   * @param first_solid_forces is a boolean set to true for the first call of this method, used for table output formatting
    */
   void
-  postprocess_solid_forces();
+  postprocess_solid_forces(const unsigned int i_solid, bool first_solid_forces);
 
 
   /**
    * @brief Post-process for torques on solid after an iteration
+   * @param i_solid is the solid index
+   * @param first_solid_torques is a boolean set to true for the first call of this method, used for table output formatting
    */
   void
-  postprocess_solid_torques();
+  postprocess_solid_torques(const unsigned int i_solid,
+                            bool               first_solid_torques);
 
   /**
    * @brief Call for the assembly of the matrix

@@ -72,17 +72,17 @@ end
 #---------------------------------------------------
 subsection nitsche
 	set beta = 10
-  	set calculate torques on solid = true
   	set verbosity = verbose
   	set number of solids = 1
 
   	subsection nitsche solid 0
-	  	subsection mesh
+		subsection mesh
 	  		set simplex = true
 		  	set type = gmsh
 			set file name = ../../sphere.msh
-	  end
-  end
+		end
+		set calculate torques on solid = true
+	end
 end
 
 
