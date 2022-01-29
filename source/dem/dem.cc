@@ -267,11 +267,13 @@ DEMSolver<dim>::load_balance()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
 
-  boundary_cell_object.build(triangulation,
-                             parameters.floating_walls,
-                             parameters.boundary_conditions.outlet_boundaries,
-                             parameters.mesh.check_for_diamond_cells,
-                             pcout);
+  boundary_cell_object.build(
+    triangulation,
+    parameters.floating_walls,
+    parameters.boundary_conditions.outlet_boundaries,
+    parameters.mesh.check_for_diamond_cells,
+    parameters.mesh.expand_particle_wall_contact_search,
+    pcout);
 
   if (parameters.grid_motion.motion_type !=
       Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
@@ -852,11 +854,13 @@ DEMSolver<dim>::solve()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
   // Finding boundary cells with faces
-  boundary_cell_object.build(triangulation,
-                             parameters.floating_walls,
-                             parameters.boundary_conditions.outlet_boundaries,
-                             parameters.mesh.check_for_diamond_cells,
-                             pcout);
+  boundary_cell_object.build(
+    triangulation,
+    parameters.floating_walls,
+    parameters.boundary_conditions.outlet_boundaries,
+    parameters.mesh.check_for_diamond_cells,
+    parameters.mesh.expand_particle_wall_contact_search,
+    pcout);
 
   // Setting chosen contact force, insertion and integration methods
   insertion_object  = set_insertion_type(parameters);
