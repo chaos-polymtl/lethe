@@ -632,11 +632,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques(
       table.write_text(std::cout);
     }
 
-
-  //  for (unsigned int i_solid = 0;
-  //       i_solid < this->simulation_parameters.nitsche->number_solids;
-  //       ++i_solid)
-  //    {
   if (this->simulation_control->is_steady())
     {
       solid_torques_table[i_solid].add_value(
@@ -669,7 +664,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques(
   std::ofstream output_torque(filename_torque.c_str());
 
   solid_torques_table[i_solid].write_text(output_torque);
-  //    }
 }
 
 template <int dim, int spacedim>
