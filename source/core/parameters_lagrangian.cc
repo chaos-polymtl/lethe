@@ -833,17 +833,7 @@ namespace Parameters
     {
       prm.enter_subsection("floating grid");
       {
-        prm.declare_entry("type",
-                          "",
-                          Patterns::Selection("unv|ucd|abaqus|dbmesh|xda|msh|tecplot|vtk|vtu|assimp|exodusii"),
-                          "Floating grid file type"
-                          "Choices are <unv|ucd|abaqus|dbmesh|xda|msh|tecplot|vtk|vtu|assimp|exodusii>."
-                          );
-        prm.declare_entry("file name",
-                          "",
-                          Patterns::FileName(),
-                          "Floating grid file name"
-                          );
+        mesh.declare_parameters(prm);
 
         prm.enter_subsection("grid motion");
         {
@@ -893,12 +883,7 @@ namespace Parameters
     {
       prm.enter_subsection("floating grid");
       {
-        typename GridIn<dim>::Format format = GridIn<dim>::parse_format(prm.get("type"));
-        std::ifstream input_file(prm.get("file name"));
-
-        GridIn<dim> grid_in;
-        grid_in.attach_triangulation(triangulation);
-        grid_in.read(input_file, format);
+        mesh.parse_parameters(prm);
 
         prm.enter_subsection("grid motion");
         {

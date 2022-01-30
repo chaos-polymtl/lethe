@@ -303,8 +303,8 @@ namespace Parameters
     class FloatingGrid
     {
       public:
-        // Triangulation data for the floating grid
-        dealii::Triangulation<dim> triangulation;
+        // Mesh for the floating grid
+        Parameters::Mesh mesh;
 
         // Grid motion type
         enum class MotionType
