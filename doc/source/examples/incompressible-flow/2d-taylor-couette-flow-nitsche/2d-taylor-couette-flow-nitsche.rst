@@ -94,8 +94,8 @@ Gauss quadrature points of the immersed mesh to represent the immersed body. For
         set Function expression = -y ; x
       end
       set enable particles motion		= false
+      set calculate torques on solid = true
     end
-    set calculate torques on solid = true
     set verbosity = verbose
   end
 
