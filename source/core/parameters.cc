@@ -1629,7 +1629,7 @@ namespace Parameters
       prm.declare_entry("DEM coupling frequency",
                         "1000",
                         Patterns::Integer(),
-                        "The number of DEM time step per CFD time step");
+                        "The number of DEM time steps per CFD time step");
       prm.declare_entry("fluid density",
                         "1",
                         Patterns::Double(),

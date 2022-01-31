@@ -6,9 +6,10 @@
 
 template <int dim>
 void
-IBParticlesDEM<dim>::initialize(SimulationParameters<dim> p_nsparam,
-                                MPI_Comm &mpi_communicator_input,
-                                std::vector<IBParticle<dim>> particles)
+IBParticlesDEM<dim>::initialize(
+  std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
+  MPI_Comm &                                     mpi_communicator_input,
+  std::vector<IBParticle<dim>>                   particles)
 {
   parameters       = p_nsparam;
   mpi_communicator = mpi_communicator_input;
@@ -408,16 +409,13 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
   std::vector<Tensor<1, dim>> &contact_force,
   std::vector<Tensor<1, 3>> &  contact_torque)
 {
-  double wall_youngs_modulus =
-    parameters.particlesParameters->wall_youngs_modulus;
-  double wall_poisson_ratio =
-    parameters.particlesParameters->wall_poisson_ratio;
+  double wall_youngs_modulus = parameters->wall_youngs_modulus;
+  double wall_poisson_ratio  = parameters->wall_poisson_ratio;
   double wall_rolling_friction_coefficient =
-    parameters.particlesParameters->wall_rolling_friction_coefficient;
-  double wall_friction_coefficient =
-    parameters.particlesParameters->wall_friction_coefficient;
+    parameters->wall_rolling_friction_coefficient;
+  double wall_friction_coefficient = parameters->wall_friction_coefficient;
   double wall_restitution_coefficient =
-    parameters.particlesParameters->wall_restitution_coefficient;
+    parameters->wall_restitution_coefficient;
 
 
   for (auto &particle : dem_particles)
@@ -689,8 +687,8 @@ IBParticlesDEM<dim>::particles_dem(double dt)
 {
   // Initialize local containers and physical variables
   using numbers::PI;
-  double rho    = parameters.particlesParameters->density;
-  double dt_dem = dt / parameters.particlesParameters->coupling_frequency;
+  double rho    = parameters->density;
+  double dt_dem = dt / parameters->coupling_frequency;
 
   std::vector<Tensor<1, dim>> contact_force(dem_particles.size());
   std::vector<Tensor<1, 3>>   contact_torque(dem_particles.size());
@@ -707,7 +705,7 @@ IBParticlesDEM<dim>::particles_dem(double dt)
   double t = 0;
   // The gravitational acceleration.
   Tensor<1, dim> g;
-  this->parameters.particlesParameters->f_gravity->set_time(cfd_time);
+  this->parameters->f_gravity->set_time(cfd_time);
   // The gravitational force on the particle.
   Tensor<1, dim> gravity;
   // Initialized the particles
@@ -721,13 +719,11 @@ IBParticlesDEM<dim>::particles_dem(double dt)
       dem_particles[p_i].contact_impulsion       = 0;
       dem_particles[p_i].omega_contact_impulsion = 0;
       // Initialized the gravity at the particle position.
-      g[0] = this->parameters.particlesParameters->f_gravity->value(
-        dem_particles[p_i].position, 0);
-      g[1] = this->parameters.particlesParameters->f_gravity->value(
-        dem_particles[p_i].position, 1);
+      g[0] = this->parameters->f_gravity->value(dem_particles[p_i].position, 0);
+      g[1] = this->parameters->f_gravity->value(dem_particles[p_i].position, 1);
       if (dim == 3)
-        g[2] = this->parameters.particlesParameters->f_gravity->value(
-          dem_particles[p_i].position, 2);
+        g[2] =
+          this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
     }
 
   // Integrate with the sub_time_step
@@ -776,7 +772,7 @@ IBParticlesDEM<dim>::particles_dem(double dt)
 
           // Explicit Euler for the sub_time_stepping. This is exact for the
           // gravity and fluid impulsion integration. In case of contact the
-          // scheme becomes first order. This could be improved in the futur.
+          // scheme becomes first order. This could be improved in the future.
           dem_particles[p_i].velocity =
             dem_particles[p_i].velocity +
             (current_fluid_force[p_i] + contact_force[p_i] +

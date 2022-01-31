@@ -150,7 +150,7 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
   std::set<typename DoFHandler<dim>::cell_iterator>
                                                     last_boundary_cells_candidates;
   std::set<typename DoFHandler<dim>::cell_iterator> cells_at_boundary;
-  // Loop on the cells on level 0 of the mesh
+  // Loop over the cells on level 0 of the mesh
   for (const auto &cell : cell_iterator)
     {
       if (cell->at_boundary())
@@ -167,7 +167,7 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
             }
         }
     }
-  // Loop over the boundary cell on level 0 to check their children.
+  // Loop over the boundary cells on level 0 to check their children.
   last_boundary_cells_candidates = boundary_cells_candidates;
   if (boundary_cells_candidates.size() != 0)
     {
@@ -217,7 +217,7 @@ LetheGridTools::find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,
     }
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
     cells_at_boundary_v(cells_at_boundary.begin(), cells_at_boundary.end());
-  // Output all the actives cells in the sphere radius that are at a boundary.
+  // Output all the active cells in the sphere radius that are at a boundary.
   return cells_at_boundary_v;
 }
 

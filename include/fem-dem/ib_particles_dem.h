@@ -22,7 +22,7 @@ using namespace dealii;
 /**
  * A solver class for the DEM used in conjunction with IB particles and
  * gls_sharp_navier_stokes. This class defines and use some function of the DEM
- * class that has been modified and simplified to use IB_particles.
+ * class that has been modified and simplified to use with IB_particles.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
@@ -36,17 +36,17 @@ class IBParticlesDEM
 public:
   /**
    * @brief
-   * Initialize the IBParticlesDEM object with the parameter, the mpi
+   * Initialize the IBParticlesDEM object with the parameters, the mpi
    * communicator and the particles.
    *
-   * @param p_nsparam The parameter of the simulation.
+   * @param p_nsparam The parameters' object of the simulation.
    *
    * @param mpi_communicator_input The mpi communicator of the simulation.
    *
    * @param particles The particles vector containing all the IB particles.
    */
   void
-  initialize(SimulationParameters<dim>    p_nsparam,
+  initialize(std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
              MPI_Comm &                   mpi_communicator_input,
              std::vector<IBParticle<dim>> particles);
 
@@ -54,7 +54,7 @@ public:
   /**
    * @brief
    * update the boundary cells that are contact candidate for each of the
-   * particle.
+   * particles.
    *
    * @param particles The particles vector containing all the IB particles.
    */
@@ -162,7 +162,7 @@ private:
     return vector_c;
   }
 
-  SimulationParameters<dim> parameters;
+  std::shared_ptr<Parameters::IBParticles<dim>> parameters;
 
   MPI_Comm mpi_communicator;
 

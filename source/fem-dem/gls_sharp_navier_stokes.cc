@@ -119,7 +119,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
     }
 
   table_p.resize(particles.size());
-  ib_dem.initialize(this->simulation_parameters,
+  ib_dem.initialize(this->simulation_parameters.particlesParameters,
                     this->mpi_communicator,
                     particles);
 }
@@ -160,10 +160,11 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                 cell->point_inside(particles[p].position + r);
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
-                  // Count the number of dofs that are smaller or larger than
-                  // the radius of the particles if all the dof are on one side
-                  // the cell is not cut by the boundary meaning we don’t have
-                  // to do anything
+                  // Count the number of dofs that have a smaller or larger
+                  // distance with the center of the particle  than the radius
+                  // of the particles. If all the dofs are on one side the cell
+                  // is not cut by the boundary, meaning we don’t have to do
+                  // anything
 
                   if (((support_points[local_dof_indices[j]] - center_immersed)
                            .norm() <=
@@ -710,7 +711,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
   total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
   this->pcout << std::setprecision(17);
-  // this->pcout << "total area " << total_area << std::endl;
 }
 
 template <int dim>
@@ -1101,7 +1101,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
 
   TimerOutput::Scope t(this->computing_timer, "integrate particles");
-  // Integrate the velocity of the particle. If integrate motion is defined as
+  // Integrate the velocity of the particle. If integrate motion is set to
   // true in the parameter this function will also integrate the force to update
   // the velocity. Otherwise the velocity is kept constant
 
@@ -1168,13 +1168,13 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           residual_velocity +=
             (particles[p].impulsion) / particles[p].mass / dt;
 
-          // Approximate a diagonal Jacobin with a secant methods.
+          // Approximate a diagonal Jacobian with a secant methods.
           Tensor<2, dim> jac_velocity;
           if (particles[p].impulsion_iter.norm() == 0)
             {
               // If we are here, it is because this is the first-newton step.
               // We cannot use the secant method directly.
-              // For the first step, we use an approximated guess:
+              // For the first step, we use an approximate guess:
               // the effect of the virtual mass controls the Jacobian of the
               // residual.
               for (unsigned int d = 0; d < dim; ++d)
@@ -1187,7 +1187,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             {
               // If we are here, it is because this is the first-newton step.
               // We cannot use the secant method directly.
-              // For the first step, we use an approximated guess:
+              // For the first step, we use an approximate guess:
               // the effect of the virtual mass controls the Jacobian of the
               // residual.
               for (unsigned int d = 0; d < dim; ++d)
@@ -1422,7 +1422,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           particles[p].residual_omega =
             (particles[p].omega - particles[p].omega_iter).norm();
           particles_residual_vect[p] = this_particle_residual;
-          // L_inf of all the particle residual.
+          // L_inf of all the particles' residual.
           if (this_particle_residual > particle_residual)
             {
               particle_residual          = this_particle_residual;
@@ -2082,8 +2082,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           use_ib_for_pressure || particle_close_to_wall)
                         {
                           // Give the DOF an approximated value. This help
-                          // with pressure shock when the DOF passe from part of
-                          // the boundary to the fluid.
+                          // with pressure shock when the DOF passes from part
+                          // of the boundary to the fluid.
 
                           this->system_matrix.add(global_index_overwrite,
                                                   global_index_overwrite,
@@ -2821,8 +2821,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
     this->simulation_parameters.restart_parameters.restart,
     this->simulation_parameters.boundary_conditions);
 
-
-  // GridTools::distort_random(0.2,*this->triangulation);
   define_particles();
   this->setup_dofs();
   this->box_refine_mesh();
@@ -2842,6 +2840,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
            this->simulation_parameters.particlesParameters->initial_refinement;
            ++i)
         {
+          this->pcout << "Starts the " << i + 1
+                      << " initial refinement around IB particles" << std::endl;
+
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
