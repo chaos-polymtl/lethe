@@ -35,6 +35,11 @@ The following schematic describes the geometry and dimensions of the simulation 
     All the four boundary conditions are ``slip``, and an external 
     gravity field of :math:`-1`` is applied in the y direction.
 
+------------------------
+Location of the example
+------------------------
+``examples/multiphysics/dam_break_VOF/gls_VOF_dam-break_Martin_and_Moyce.prm``
+
 --------------
 Parameter file
 --------------
@@ -106,7 +111,7 @@ The current ``interface sharpening`` method consists of two steps:
     .. math:: 
         \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
  
-The phase fraction :math:`\phi` is a physical parameter that is bounded in the interval :math:`[0-1]`.
+The phase fraction :math:`\phi` is a physical parameter that is bounded in the interval :math:`[0,1]`.
 The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.
   
 
@@ -123,7 +128,7 @@ The phase fraction limiter above will update the phase fraction if it failed to 
 frequency of the interface sharpening; ``sharpening threshold`` defines 
 a phase fraction threshold for interface sharpening (generally :math:`0.5`);
 and ``interface sharpness`` is a model parameter which is generally in
-the range of :math:`(1-2]`.
+the range of :math:`(1,2]`.
 
 where :math:`\phi`, :math:`c`, and :math:`\alpha` denote phase fraction, 
 sharpening threshold, and interface sharpness respectively. 
@@ -136,7 +141,7 @@ This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_
 frequency of interface sharpening; sharpening threshold defines 
 a phase fraction threshold for interface sharpening (generally :math:`0.5`).
 Interface sharpness is a model parameter which is generally in
-the range of :math:`(1-2]`. 
+the range of :math:`(1,2]`. 
 
 """"""""""""""""""""""""""
 Fluid phase parameters 
