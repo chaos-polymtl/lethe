@@ -19,7 +19,7 @@ IBParticlesDEM<dim>::initialize(
 template <int dim>
 void
 IBParticlesDEM<dim>::update_particles(std::vector<IBParticle<dim>> particles,
-                                      double                       time)
+                                      double                     &  time)
 {
   dem_particles = particles;
   cfd_time      = time;
@@ -683,7 +683,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 }
 template <int dim>
 void
-IBParticlesDEM<dim>::particles_dem(double dt)
+IBParticlesDEM<dim>::particles_dem(double & dt)
 {
   // Initialize local containers and physical variables
   using numbers::PI;
@@ -711,7 +711,7 @@ IBParticlesDEM<dim>::particles_dem(double dt)
   // Initialized the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
-      dem_particles[p_i].position  = dem_particles[p_i].previous_position[0];
+      dem_particles[p_i].position  = dem_particles[p_i].previous_positions[0];
       dem_particles[p_i].velocity  = dem_particles[p_i].previous_velocity[0];
       dem_particles[p_i].omega     = dem_particles[p_i].previous_omega[0];
       dem_particles[p_i].impulsion = 0;
@@ -766,8 +766,8 @@ IBParticlesDEM<dim>::particles_dem(double dt)
 
           // We consider only the force at t+dt so the scheme is consistent to a
           // BDFn scheme on the fluid side. If there is no contact.
-          current_fluid_force[p_i]  = dem_particles[p_i].forces;
-          current_fluid_torque[p_i] = dem_particles[p_i].torque;
+          current_fluid_force[p_i]  = dem_particles[p_i].fluid_forces;
+          current_fluid_torque[p_i] = dem_particles[p_i].fluid_torque;
 
           // Explicit Euler for the sub_time_stepping. This is exact for the
           // gravity and fluid impulsion integration. In case of contact the

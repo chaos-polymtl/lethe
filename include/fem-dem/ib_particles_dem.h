@@ -21,7 +21,7 @@ using namespace dealii;
 
 /**
  * A solver class for the DEM used in conjunction with IB particles and
- * gls_sharp_navier_stokes. This class defines and use some function of the DEM
+ * gls_sharp_navier_stokes. This class defines and uses some functions  of the DEM
  * class that has been modified and simplified to use with IB_particles.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
@@ -53,27 +53,29 @@ public:
 
   /**
    * @brief
-   * update the boundary cells that are contact candidate for each of the
+   * Updates the boundary cells that are contact candidates for each of the
    * particles.
    *
    * @param particles The particles vector containing all the IB particles.
+   *
+   * @param time The current CFD time.
    */
   void
-  update_particles(std::vector<IBParticle<dim>> particles, double time);
+  update_particles(std::vector<IBParticle<dim>> particles, double & time);
 
 
   /**
    * @brief
-   * Integrate the dynamics of the IB_particle taking into account the contact
+   * Integrates the dynamics of the IB_particle taking into account the contact
    * between particles and between particles and walls.
    * @param dt The CFD time step.
    *
    */
   void
-  particles_dem(double dt);
+  particles_dem(double & dt);
 
   /**
-   * @brief Calculate non-linear (Hertzian) particle-particle contact force
+   * @brief Calculates non-linear (Hertzian) particle-particle contact force
    *
    * @param dt_dem The sub time stepping time step.
    *
@@ -88,7 +90,7 @@ public:
 
 
   /**
-   * @brief Calculate non-linear (Hertzian) particle-wall contact force
+   * @brief Calculates non-linear (Hertzian) particle-wall contact force
    *
    * @param dt_dem The sub time stepping time step.
    *
@@ -102,11 +104,15 @@ public:
                              std::vector<Tensor<1, 3>> &  contact_torque);
 
   /**
-   * @brief  Update the boundary cells that are contact candidate for each of the particle.
+   * @brief  Updates the boundary cells that are contact candidates for each of the particles.
    *
    * @param particles The particles vector containing all the IB particles.
    *
    * @param dof_handler The dof handler of the mesh used for the fluid simulation.
+   *
+   * @param face_quadrature_formula The face quadrature formula used in the elements.
+   *
+   * @param mapping The FEM mapping of the face element.
    */
 
   void

@@ -213,6 +213,17 @@ namespace LetheGridTools
       &                    object,
     const Point<spacedim> &trial_point);
 
+  /**
+   * @brief
+   * Function returns all the boundary cells with at least one vertex in a sphere.
+   *
+   * @param dof_handler the dof handler containing all the elements.
+   *
+   * @param center The center of the sphere.
+   *
+   * @param radius The radius of the sphere.
+   *
+   */
   template <int dim>
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
   find_boundary_cell_in_sphere(const DoFHandler<dim> &dof_handler,

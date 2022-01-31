@@ -98,7 +98,7 @@ public:
   double poisson_ratio;
   // The particle friction coefficient. Used in case of contact.
   double friction_coefficient;
-  // The particle rolling_friction coefficient. Used in case of contact.
+  // The particle rolling friction coefficient. Used in case of contact.
   double rolling_friction_coefficient;
   // The particle mass.
   double mass;
@@ -106,22 +106,22 @@ public:
   Tensor<2, 3> inertia;
   // The particle position.
   Point<dim> position;
-  // The particle at the end of the last time step.
-  std::vector<Point<dim>> previous_position;
+  // The vector of particle positions at the end of the last n time steps.
+  std::vector<Point<dim>> previous_positions;
   // The fluid force applied on the particle.
-  Tensor<1, dim> forces;
+  Tensor<1, dim> fluid_forces;
   // The fluid force applied on the particle at the end of the last time step.
-  Tensor<1, dim> previous_forces;
+  Tensor<1, dim> previous_fluid_forces;
   // The fluid torque applied on the particle.
-  Tensor<1, 3> torque;
+  Tensor<1, 3> fluid_torque;
   // The fluid torque is applied on the particle at the end of the last time
   // step.
-  Tensor<1, 3> previous_torque;
+  Tensor<1, 3> previous_fluid_torque;
   // The translational velocity
   Tensor<1, dim> velocity;
-  // The translational velocity at the end of the last time step.
+  // The vector of particle translational velocity at the end of the last n time steps.
   std::vector<Tensor<1, dim>> previous_velocity;
-  // The last iteration of the velocity vector.
+  // The last non-linear iteration of the velocity vector.
   Tensor<1, dim> velocity_iter;
   // The last correction vector of the velocity value without any relaxation.
   Tensor<1, dim> previous_d_velocity;
@@ -129,7 +129,7 @@ public:
   // Angular velocity
   // By default, the angular position is always 0 on every axis.
   Tensor<1, 3> orientation;
-  // Store the last angular position of the particle for integration.
+  //  The vector of the particle angular position of the last n time steps.
   std::vector<Tensor<1, 3>> previous_orientation;
   // Angular velocity
   Tensor<1, 3> omega;
@@ -144,14 +144,14 @@ public:
   Tensor<1, dim> impulsion;
   // The impulsion from contact that the particle feels.
   Tensor<1, dim> contact_impulsion;
-  // The last iteration of the total impulsion felt by the particle
+  // The last non-linear iteration of the total impulsion felt by the particle
   Tensor<1, dim> impulsion_iter;
-  // The angular impulsion that the particle as felt during the current time
+  // The total angular impulsion that the particle as felt during the current time
   // step.
   Tensor<1, 3> omega_impulsion;
-  // The impulsion from contact that the particle feels.
+  // The angular impulsion from contact that the particle feels.
   Tensor<1, 3> omega_contact_impulsion;
-  // The last iteration of the total angular impulsion felt by the particle.
+  // The last non-linear iteration of the total angular impulsion felt by the particle.
   Tensor<1, 3> omega_impulsion_iter;
 
   // The function from which the initial particle velocity is determined.

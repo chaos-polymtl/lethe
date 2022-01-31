@@ -14,8 +14,8 @@ IBParticle<dim>::initialise_all()
   inertia[1][1] = 1;
   inertia[2][2] = 1;
 
-  forces[0] = 0;
-  forces[1] = 0;
+  fluid_forces[0] = 0;
+  fluid_forces[1] = 0;
 
   velocity[0] = 0;
   velocity[1] = 0;
@@ -23,9 +23,9 @@ IBParticle<dim>::initialise_all()
   position[0] = 0;
   position[1] = 0;
 
-  torque[0] = 0;
-  torque[1] = 0;
-  torque[2] = 0;
+  fluid_torque[0] = 0;
+  fluid_torque[1] = 0;
+  fluid_torque[2] = 0;
 
   orientation[0] = 0;
   orientation[1] = 0;
@@ -37,14 +37,14 @@ IBParticle<dim>::initialise_all()
 
   if (dim == 3)
     {
-      forces[2]   = 0;
+      fluid_forces[2]   = 0;
       velocity[2] = 0;
       position[2] = 0;
     }
 
   // Fill the vectors with default value
-  previous_forces = forces;
-  previous_torque = torque;
+  previous_fluid_forces = fluid_forces;
+  previous_fluid_torque = fluid_torque;
   velocity_iter   = velocity;
 
   omega_iter           = omega;
@@ -54,14 +54,14 @@ IBParticle<dim>::initialise_all()
   impulsion_iter       = 0;
   contact_impulsion    = 0;
 
-  previous_position.resize(3);
+  previous_positions.resize(3);
   previous_velocity.resize(3);
   previous_orientation.resize(3);
   previous_omega.resize(3);
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      previous_position[i]    = position;
+      previous_positions[i]    = position;
       previous_velocity[i]    = velocity;
       previous_orientation[i] = orientation;
       previous_omega[i]       = omega;
@@ -75,7 +75,7 @@ void
 IBParticle<dim>::initialise_last()
 {
   // initialise all the variables associated to an immersed boundary particle
-  previous_forces      = forces;
+  previous_fluid_forces = fluid_forces;
   velocity_iter        = velocity;
   impulsion_iter       = impulsion;
   omega_iter           = omega;
@@ -83,7 +83,7 @@ IBParticle<dim>::initialise_last()
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      previous_position[i]    = position;
+      previous_positions[i]    = position;
       previous_velocity[i]    = velocity;
       previous_orientation[i] = orientation;
       previous_omega[i]       = omega;
@@ -122,14 +122,14 @@ IBParticle<dim>::get_properties()
   properties[1]  = radius * 2;
   properties[2]  = velocity[0];
   properties[3]  = velocity[1];
-  properties[5]  = forces[0];
-  properties[6]  = forces[1];
+  properties[5]  = fluid_forces[0];
+  properties[6]  = fluid_forces[1];
   properties[8]  = omega[0];
   properties[9]  = omega[1];
   properties[10] = omega[2];
-  properties[11] = torque[0];
-  properties[12] = torque[1];
-  properties[13] = torque[2];
+  properties[11] = fluid_torque[0];
+  properties[12] = fluid_torque[1];
+  properties[13] = fluid_torque[2];
   if (dim == 2)
     {
       properties[4] = 0;
@@ -138,7 +138,7 @@ IBParticle<dim>::get_properties()
   if (dim == 3)
     {
       properties[4] = velocity[2];
-      properties[7] = forces[2];
+      properties[7] = fluid_forces[2];
     }
 
   return properties;
