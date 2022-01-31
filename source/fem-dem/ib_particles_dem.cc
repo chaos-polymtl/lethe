@@ -779,7 +779,7 @@ IBParticlesDEM<dim>::particles_dem(double dt)
              contact_wall_force[p_i] + gravity) *
               dt_dem / dem_particles[p_i].mass;
 
-          
+
           dem_particles[p_i].position =
             dem_particles[p_i].position + dem_particles[p_i].velocity * dt_dem;
 
