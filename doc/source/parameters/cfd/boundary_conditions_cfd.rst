@@ -16,6 +16,7 @@ This subsection defines the boundary conditions associated with fluid dynamics p
      set number                  = 2
      set time dependent          = false
      subsection bc 0
+           set id                = 0
            set type              = function
           
            subsection u
@@ -47,9 +48,11 @@ This subsection defines the boundary conditions associated with fluid dynamics p
 .. warning::
     The number of boundary conditions must be specified explicitly as the ParameterHandler is not able to deduce the number of boundary conditions from the number of ``bc`` subsections. This is often a source of error.
 
-* ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false```). By default, this parameter is set to ``false``. This is there to improve the computational efficiency for transient cases in which the boundary conditions do not change.
+* ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false```). By default, this parameter is set to ``false``. This is there to improve the computational efficiency for transient cases in which the boundary conditions do not change. 
 
 * Each fluid dynamics boundary condition is stored in a ``bc no`` subsection :
+    * ``id``  is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc. 
+    
     * ``type`` is the type of the boundary condition. Only slip, no-slip, periodic and function are enabled.
     
     * The subsections ``u``, ``v`` and ``w`` are used to specify the individual components of the velocity at the boundary using function expressions. These functions can depend on position (:math:`x,y,z`) and on time (:math:`t`).

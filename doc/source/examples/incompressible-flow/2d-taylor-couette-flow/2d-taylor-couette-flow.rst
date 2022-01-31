@@ -2,7 +2,7 @@
 2D Taylor-Couette Flow
 ==================================
 
-This is the second Lethe example. It showcases another classical fluid mechanics problem, the taylor-couette flow. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.
+This example showcases another classical fluid mechanics problem, the taylor-couette flow. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.
 
 Features
 ----------------------------------
@@ -219,6 +219,8 @@ Using Paraview, the steady-state velocity profile can be visualized:
 
 As can be seen, each cell is curved because a Q2 isoparametric mapping was used (by setting ``qmapping=true`` in the FEM subsection). To visualize these high-order cells, we need to subdivide the regular cell to store additional information onto them. A good practice is to use as many subdivisions as the interpolation order of the scheme. Hence, we used ``subdivision=2`` in the simulation control subsection. Finally, by default, Paraview does not render high-order elements. To enable the rendering of high-order elements, the Nonlinear subdivision level slider must be increased above one. For more information on this topic, please consult the deal.II wiki page on `rendering high-order elements <https://github.com/dealii/dealii/wiki/Notes-on-visualizing-high-order-output>`.
 
+.. note::
+  To showcase the curvature of the cells, we have illustrated the results on a mesh coarser that the initial mesh used in this simulation
 
 A python script provided in the example folder allows to compare the velocity profile along the radius with the analytical solution. Using this script, the following resuts are obtained for the initial mesh:
 
@@ -270,7 +272,7 @@ The analytical value of the torque is : :math:`T_z=0.837758`. Two main conclusio
 Possibilities for extension
 ----------------------------
 
-- Calculate formally the order of convergence for the torque :math:`T_z`.
+- Calculate the order of convergence for the torque :math:`T_z`.
 - It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. This, however, would be a major undertaking. 
 
 
