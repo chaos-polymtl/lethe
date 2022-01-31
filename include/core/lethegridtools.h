@@ -215,7 +215,8 @@ namespace LetheGridTools
 
   /**
    * @brief
-   * Function returns all the boundary cells with at least one vertex in a sphere.
+   * Function returns all the boundary cells with at least one vertex in a
+   * sphere.
    *
    * @param dof_handler the dof handler containing all the elements.
    *

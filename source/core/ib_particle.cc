@@ -37,15 +37,15 @@ IBParticle<dim>::initialise_all()
 
   if (dim == 3)
     {
-      fluid_forces[2]   = 0;
-      velocity[2] = 0;
-      position[2] = 0;
+      fluid_forces[2] = 0;
+      velocity[2]     = 0;
+      position[2]     = 0;
     }
 
   // Fill the vectors with default value
   previous_fluid_forces = fluid_forces;
   previous_fluid_torque = fluid_torque;
-  velocity_iter   = velocity;
+  velocity_iter         = velocity;
 
   omega_iter           = omega;
   omega_impulsion      = 0;
@@ -61,7 +61,7 @@ IBParticle<dim>::initialise_all()
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      previous_positions[i]    = position;
+      previous_positions[i]   = position;
       previous_velocity[i]    = velocity;
       previous_orientation[i] = orientation;
       previous_omega[i]       = omega;
@@ -76,14 +76,14 @@ IBParticle<dim>::initialise_last()
 {
   // initialise all the variables associated to an immersed boundary particle
   previous_fluid_forces = fluid_forces;
-  velocity_iter        = velocity;
-  impulsion_iter       = impulsion;
-  omega_iter           = omega;
-  omega_impulsion_iter = omega_impulsion;
+  velocity_iter         = velocity;
+  impulsion_iter        = impulsion;
+  omega_iter            = omega;
+  omega_impulsion_iter  = omega_impulsion;
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      previous_positions[i]    = position;
+      previous_positions[i]   = position;
       previous_velocity[i]    = velocity;
       previous_orientation[i] = orientation;
       previous_omega[i]       = omega;

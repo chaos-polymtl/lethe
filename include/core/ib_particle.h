@@ -119,7 +119,8 @@ public:
   Tensor<1, 3> previous_fluid_torque;
   // The translational velocity
   Tensor<1, dim> velocity;
-  // The vector of particle translational velocity at the end of the last n time steps.
+  // The vector of particle translational velocity at the end of the last n time
+  // steps.
   std::vector<Tensor<1, dim>> previous_velocity;
   // The last non-linear iteration of the velocity vector.
   Tensor<1, dim> velocity_iter;
@@ -146,12 +147,13 @@ public:
   Tensor<1, dim> contact_impulsion;
   // The last non-linear iteration of the total impulsion felt by the particle
   Tensor<1, dim> impulsion_iter;
-  // The total angular impulsion that the particle as felt during the current time
-  // step.
+  // The total angular impulsion that the particle as felt during the current
+  // time step.
   Tensor<1, 3> omega_impulsion;
   // The angular impulsion from contact that the particle feels.
   Tensor<1, 3> omega_contact_impulsion;
-  // The last non-linear iteration of the total angular impulsion felt by the particle.
+  // The last non-linear iteration of the total angular impulsion felt by the
+  // particle.
   Tensor<1, 3> omega_impulsion_iter;
 
   // The function from which the initial particle velocity is determined.

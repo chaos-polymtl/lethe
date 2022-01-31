@@ -19,7 +19,7 @@ IBParticlesDEM<dim>::initialize(
 template <int dim>
 void
 IBParticlesDEM<dim>::update_particles(std::vector<IBParticle<dim>> particles,
-                                      double                     &  time)
+                                      double &                     time)
 {
   dem_particles = particles;
   cfd_time      = time;
@@ -683,7 +683,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 }
 template <int dim>
 void
-IBParticlesDEM<dim>::particles_dem(double & dt)
+IBParticlesDEM<dim>::particles_dem(double &dt)
 {
   // Initialize local containers and physical variables
   using numbers::PI;

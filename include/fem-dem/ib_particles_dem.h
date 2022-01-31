@@ -21,8 +21,8 @@ using namespace dealii;
 
 /**
  * A solver class for the DEM used in conjunction with IB particles and
- * gls_sharp_navier_stokes. This class defines and uses some functions  of the DEM
- * class that has been modified and simplified to use with IB_particles.
+ * gls_sharp_navier_stokes. This class defines and uses some functions  of the
+ * DEM class that has been modified and simplified to use with IB_particles.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
@@ -61,7 +61,7 @@ public:
    * @param time The current CFD time.
    */
   void
-  update_particles(std::vector<IBParticle<dim>> particles, double & time);
+  update_particles(std::vector<IBParticle<dim>> particles, double &time);
 
 
   /**
@@ -72,7 +72,7 @@ public:
    *
    */
   void
-  particles_dem(double & dt);
+  particles_dem(double &dt);
 
   /**
    * @brief Calculates non-linear (Hertzian) particle-particle contact force
