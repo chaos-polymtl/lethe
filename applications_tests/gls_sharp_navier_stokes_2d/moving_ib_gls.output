@@ -2,9 +2,11 @@ Running on 1 MPI rank(s)...
    Number of active cells:       256
    Number of degrees of freedom: 867
    Volume of triangulation:      16
+Starts the 1 initial refinement around IB particles
    Number of active cells:       457
    Number of degrees of freedom: 1524
    Volume of triangulation:      16
+Starts the 2 initial refinement around IB particles
    Number of active cells:       457
    Number of degrees of freedom: 1524
    Volume of triangulation:      16

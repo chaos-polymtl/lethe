@@ -769,16 +769,17 @@ IBParticlesDEM<dim>::particles_dem(double dt)
           current_fluid_force[p_i]  = dem_particles[p_i].forces;
           current_fluid_torque[p_i] = dem_particles[p_i].torque;
 
-
           // Explicit Euler for the sub_time_stepping. This is exact for the
           // gravity and fluid impulsion integration. In case of contact the
           // scheme becomes first order. This could be improved in the future.
+
           dem_particles[p_i].velocity =
             dem_particles[p_i].velocity +
             (current_fluid_force[p_i] + contact_force[p_i] +
              contact_wall_force[p_i] + gravity) *
               dt_dem / dem_particles[p_i].mass;
 
+          
           dem_particles[p_i].position =
             dem_particles[p_i].position + dem_particles[p_i].velocity * dt_dem;
 
