@@ -41,7 +41,7 @@ The basic geometry for the Ahmed body is given below, as defined in Ahmed et al.
 
 Parameter file
 --------------
-First, we import the mesh ad in the `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
+First, we import the mesh as in the `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
 
 Mesh
 ~~~~~
