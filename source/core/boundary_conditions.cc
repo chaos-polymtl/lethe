@@ -29,6 +29,4 @@ namespace BoundaryConditions
   extern template class HTBoundaryConditions<3>;
   extern template class TracerBoundaryConditions<2>;
   extern template class TracerBoundaryConditions<3>;
-  extern template class VOFBoundaryConditions<2>;
-  extern template class VOFBoundaryConditions<3>;
 } // namespace BoundaryConditions
