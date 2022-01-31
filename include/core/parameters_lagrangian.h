@@ -23,7 +23,6 @@
 //#include <deal.II/base/conditional_ostream.h>
 //#include <deal.II/base/function.h>
 #include <core/parameters.h>
-#include <deal.II/grid/tria.h>
 
 #include <deal.II/base/parameter_handler.h>
 
@@ -299,41 +298,6 @@ namespace Parameters
       unsigned int max_number_floating_walls = 9;
     };
 
-    template <int dim>
-    class FloatingGrid
-    {
-      public:
-        // Mesh for the floating grid
-        Parameters::Mesh mesh;
-
-        // Grid motion type
-        enum class MotionType
-          {
-          translational,
-          rotational,
-          none
-          } motion_type;
-
-        // Translational velocity of the moving grid
-        Tensor<1, dim> grid_translational_velocity;
-
-        // Rotational speed of rotating grid in rad/s
-        double grid_rotational_speed;
-
-        // Rotational axis of rotating grid. Similar to deal.II, we use 0=x axis,
-        // 1=y axis, 2=z axis.
-        unsigned int grid_rotational_axis;
-
-        // Beginning time
-        double time_start;
-        // Ending time
-        double time_end;
-
-        void
-        declare_parameters(ParameterHandler &prm);
-        void
-        parse_parameters(ParameterHandler &prm);
-      };
 
     struct BCDEM
     {
@@ -444,6 +408,26 @@ namespace Parameters
       std::string granular_temperature_name;
 
       static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
+    template <int dim>
+    struct FloatingGrid
+    {
+      // Floating mesh motion information
+      Parameters::Mesh mesh;
+
+      // Floating grid motion information
+      Parameters::Lagrangian::GridMotion<dim> motion;
+
+      // Beginning time
+      double time_start;
+      // Ending time
+      double time_end;
+
+      void
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);

@@ -1,6 +1,5 @@
 #include "core/parameters_lagrangian.h"
 
-#include <fstream>
 #include <deal.II/grid/grid_in.h>
 
 namespace Parameters
@@ -827,102 +826,6 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template <int dim>
-    void
-    FloatingGrid<dim>::declare_parameters(ParameterHandler &prm)
-    {
-      prm.enter_subsection("floating grid");
-      {
-        mesh.declare_parameters(prm);
-
-        prm.enter_subsection("grid motion");
-        {
-          prm.declare_entry(
-            "motion type",
-            "none",
-            Patterns::Selection(
-              "none|translational|rotational|translational_rotational"),
-              "Choosing grid motion type. "
-              "Choices are <none|translational|rotational|translational_rotational>.");
-
-          prm.declare_entry("grid translational velocity x",
-                            "0",
-                            Patterns::Double(),
-                            "grid translational velocity x");
-          prm.declare_entry("grid translational velocity y",
-                            "0",
-                            Patterns::Double(),
-                            "grid translational velocity y");
-          prm.declare_entry("grid translational velocity z",
-                            "0",
-                            Patterns::Double(),
-                            "grid translational velocity z");
-
-          prm.declare_entry("grid rotational speed",
-                            "0",
-                            Patterns::Double(),
-                            "grid rotational speed");
-
-          prm.declare_entry("grid rotational axis",
-                            "0",
-                            Patterns::Integer(),
-                            "grid rotational axis");
-        }
-        prm.leave_subsection();
-
-        prm.declare_entry("start time", "0.", Patterns::Double(), "Start time");
-        prm.declare_entry("end time", "0.", Patterns::Double(), "End time");
-      }
-
-      prm.leave_subsection();
-    }
-
-    template <int dim>
-    void
-    FloatingGrid<dim>::parse_parameters(ParameterHandler &prm)
-    {
-      prm.enter_subsection("floating grid");
-      {
-        mesh.parse_parameters(prm);
-
-        prm.enter_subsection("grid motion");
-        {
-          const std::string motion = prm.get("motion type");
-          if (motion == "rotational")
-          {
-            motion_type           = MotionType::rotational;
-            grid_rotational_speed = prm.get_double("grid rotational speed");
-            grid_rotational_axis  = prm.get_integer("grid rotational axis");
-          }
-          else if (motion == "translational")
-          {
-            motion_type = MotionType::translational;
-            grid_translational_velocity[0] =
-              prm.get_double("grid translational velocity x");
-            grid_translational_velocity[1] =
-              prm.get_double("grid translational velocity y");
-            if (dim == 3)
-              grid_translational_velocity[2] =
-                prm.get_double("grid translational velocity z");
-          }
-          else if (motion == "none")
-          {
-            motion_type = MotionType::none;
-          }
-          else
-          {
-            throw(std::runtime_error("Invalid grid motion "));
-          }
-        }
-        prm.leave_subsection();
-
-        time_start = prm.get_double("start time");
-        time_end = prm.get_double("end time");
-      }
-
-      prm.leave_subsection();
-    }
-
     void
     BCDEM::declareDefaultEntry(ParameterHandler &prm)
     {
@@ -1219,6 +1122,35 @@ namespace Parameters
         particles_velocity_name   = prm.get("particles velocity output name");
         granular_temperature_name = prm.get("granular temperature output name");
       }
+      prm.leave_subsection();
+    }
+    template <int dim>
+    void
+    FloatingGrid<dim>::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("floating grid");
+      {
+        mesh.declare_parameters(prm);
+        motion.declare_parameters(prm);
+        prm.declare_entry("start time", "0.", Patterns::Double(), "Start time");
+        prm.declare_entry("end time", "0.", Patterns::Double(), "End time");
+      }
+
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    FloatingGrid<dim>::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("floating grid");
+      {
+        mesh.parse_parameters(prm);
+        motion.parse_parameters(prm);
+        time_start = prm.get_double("start time");
+        time_end = prm.get_double("end time");
+      }
+
       prm.leave_subsection();
     }
 

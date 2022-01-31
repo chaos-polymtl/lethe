@@ -59,13 +59,14 @@ end
 # Floating Grid
 #---------------------------------------------------
 subsection floating grid
-    set type = gmsh
-    set file name = ./wall.msh
+    subsection mesh
+        set type = gmsh
+        set file name = ./wall.msh
+    end
 
     subsection grid motion
-        set motion type                 = translational
-        grid translation velocity       = 0.01;
-
+        set motion type                     = translational
+        set grid translational velocity x   = 0.01
     end
 
     set start time				= 0
