@@ -291,7 +291,6 @@ We now consider the case at a Reynolds number of 150. At this value of the Reyno
 The velocity and pressure are once again visualised as well as the mesh used:
 
 .. image:: images/velocity_150.png
-    :width: 93.8%
     :alt: velocity distribution 150
     :align: center
 .. image:: images/velocity_mesh_150.png
