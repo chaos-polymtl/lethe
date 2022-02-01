@@ -306,5 +306,77 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
                          rolling_resistance_torque);
 }
 
+template <int dim>
+void
+ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
+  particle_wall_contact_info_struct<dim> &contact_info,
+  Tensor<1, dim> &                        normal_force,
+  Tensor<1, dim> &                        tangential_force,
+  Tensor<1, dim> &                        tangential_torque,
+  Tensor<1, dim> &                        rolling_resistance_torque,
+  IBParticle<dim> &                       particle,
+  const double &                          wall_youngs_modulus,
+  const double &                          wall_poisson_ratio,
+  const double &                          wall_restitution_coefficient,
+  const double &                          wall_friction_coefficient,
+  const double &                          wall_rolling_friction_coefficient,
+  const double &                          dt)
+{
+  const ArrayView<const double> particle_properties = particle.get_properties();
+
+  // DEM::PropertiesIndex::type is the first (0) property of particles in the
+  // DEM solver. For the IB particles, the first property is ID. For force and
+  // torque calculations, we need pair-wise properties (such as effective
+  // Young's modulus, effective coefficient of restitution, etc.) We rewrite
+  // these pair-wise properties by using the ID of IB particles (using
+  // DEM::PropertiesIndex::type) and use them in force calculations.
+  const unsigned int particle_type =
+    particle_properties[DEM::PropertiesIndex::type];
+
+  this->effective_youngs_modulus[particle_type] =
+    (particle.youngs_modulus * wall_youngs_modulus) /
+    (wall_youngs_modulus *
+       (1 - particle.poisson_ratio * particle.poisson_ratio) +
+     particle.youngs_modulus * (1 - wall_poisson_ratio * wall_poisson_ratio) +
+     DBL_MIN);
+
+  this->effective_shear_modulus[particle_type] =
+    (particle.youngs_modulus * wall_youngs_modulus) /
+    ((2 * wall_youngs_modulus * (2 - particle.poisson_ratio) *
+      (1 + particle.poisson_ratio)) +
+     (2 * particle.youngs_modulus * (2 - wall_poisson_ratio) *
+      (1 + wall_poisson_ratio)) +
+     DBL_MIN);
+
+  this->effective_coefficient_of_restitution[particle_type] =
+    2 * particle.restitution_coefficient * wall_restitution_coefficient /
+    (particle.restitution_coefficient + wall_restitution_coefficient + DBL_MIN);
+
+  this->effective_coefficient_of_friction[particle_type] =
+    2 * particle.friction_coefficient * wall_friction_coefficient /
+    (particle.friction_coefficient + wall_friction_coefficient + DBL_MIN);
+
+  this->effective_coefficient_of_rolling_friction[particle_type] =
+    2 * particle.rolling_friction_coefficient *
+    wall_rolling_friction_coefficient /
+    (particle.rolling_friction_coefficient + wall_rolling_friction_coefficient +
+     DBL_MIN);
+
+  this->update_contact_information(contact_info, particle_properties, dt);
+
+  // This tuple (forces and torques) contains four elements which
+  // are: 1, normal force, 2, tangential force, 3, tangential torque
+  // and 4, rolling resistance torque, respectively
+  std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+    forces_and_torques =
+      calculate_nonlinear_contact_force_and_torque(contact_info,
+                                                   particle_properties);
+
+  normal_force              = std::get<0>(forces_and_torques);
+  tangential_force          = std::get<1>(forces_and_torques);
+  tangential_torque         = std::get<2>(forces_and_torques);
+  rolling_resistance_torque = std::get<3>(forces_and_torques);
+}
+
 template class ParticleWallNonLinearForce<2>;
 template class ParticleWallNonLinearForce<3>;

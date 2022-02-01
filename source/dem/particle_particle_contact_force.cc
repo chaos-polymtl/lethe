@@ -123,5 +123,13 @@ ParticleParticleContactForce<dim>::find_effective_radius_and_mass(
                            particle_two_properties[DEM::PropertiesIndex::dp]));
 }
 
+template <int dim>
+inline double
+ParticleParticleContactForce<dim>::harmonic_mean(const double &value_one,
+                                                 const double &value_two)
+{
+  return (2 * value_one * value_two / (value_one + value_two + DBL_MIN));
+}
+
 template class ParticleParticleContactForce<2>;
 template class ParticleParticleContactForce<3>;

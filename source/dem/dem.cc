@@ -38,6 +38,8 @@
 #include <dem/print_initial_information.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
+#include <dem/set_particle_particle_contact_force_model.h>
+#include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/uniform_insertion.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
@@ -626,86 +628,6 @@ DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
 }
 
 template <int dim>
-std::shared_ptr<ParticleParticleContactForce<dim>>
-DEMSolver<dim>::set_particle_particle_contact_force(
-  const DEMSolverParameters<dim> &parameters)
-{
-  if (parameters.model_parameters.particle_particle_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::
-        ParticleParticleContactForceModel::linear)
-    {
-      particle_particle_contact_force_object =
-        std::make_shared<ParticleParticleLinearForce<dim>>(parameters);
-    }
-  else if (parameters.model_parameters.particle_particle_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleParticleContactForceModel::hertz_mindlin_limit_overlap)
-    {
-      particle_particle_contact_force_object =
-        std::make_shared<ParticleParticleHertzMindlinLimitOverlap<dim>>(
-          parameters);
-    }
-  else if (parameters.model_parameters.particle_particle_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleParticleContactForceModel::hertz_mindlin_limit_force)
-    {
-      particle_particle_contact_force_object =
-        std::make_shared<ParticleParticleHertzMindlinLimitForce<dim>>(
-          parameters);
-    }
-  else if (parameters.model_parameters.particle_particle_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleParticleContactForceModel::hertz)
-    particle_particle_contact_force_object =
-      std::make_shared<ParticleParticleHertz<dim>>(parameters);
-  else
-    {
-      throw "The chosen particle-particle contact force model is invalid";
-    }
-  return particle_particle_contact_force_object;
-}
-
-template <int dim>
-std::shared_ptr<ParticleWallContactForce<dim>>
-DEMSolver<dim>::set_particle_wall_contact_force(
-  const DEMSolverParameters<dim> &parameters)
-{
-  std::vector<types::boundary_id> boundary_index =
-    triangulation.get_boundary_ids();
-  if (parameters.model_parameters.particle_wall_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
-        linear)
-    {
-      particle_wall_contact_force_object =
-        std::make_shared<ParticleWallLinearForce<dim>>(
-          parameters.boundary_conditions.boundary_translational_velocity,
-          parameters.boundary_conditions.boundary_rotational_speed,
-          parameters.boundary_conditions.boundary_rotational_vector,
-          triangulation_cell_diameter,
-          parameters,
-          boundary_index);
-    }
-  else if (parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleWallContactForceModel::nonlinear)
-    {
-      particle_wall_contact_force_object =
-        std::make_shared<ParticleWallNonLinearForce<dim>>(
-          parameters.boundary_conditions.boundary_translational_velocity,
-          parameters.boundary_conditions.boundary_rotational_speed,
-          parameters.boundary_conditions.boundary_rotational_vector,
-          triangulation_cell_diameter,
-          parameters,
-          boundary_index);
-    }
-  else
-    {
-      throw "The chosen particle-wall contact force model is invalid";
-    }
-  return particle_wall_contact_force_object;
-}
-
-template <int dim>
 void
 DEMSolver<dim>::write_output_results()
 {
@@ -862,9 +784,11 @@ DEMSolver<dim>::solve()
   insertion_object  = set_insertion_type(parameters);
   integrator_object = set_integrator_type(parameters);
   particle_particle_contact_force_object =
-    set_particle_particle_contact_force(parameters);
+    set_particle_particle_contact_force_model(parameters);
   particle_wall_contact_force_object =
-    set_particle_wall_contact_force(parameters);
+    set_particle_wall_contact_force_model(parameters,
+                                          triangulation,
+                                          triangulation_cell_diameter);
 
   // DEM engine iterator:
   while (simulation_control->integrate())

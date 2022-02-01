@@ -42,10 +42,11 @@ public:
     ox           = 8,
     oy           = 9,
     oz           = 10,
-    tx           = 11,
-    ty           = 12,
-    tz           = 13,
-    n_properties = 14,
+    m            = 11,
+    tx           = 12,
+    ty           = 13,
+    tz           = 14,
+    n_properties = 15,
   };
   /**
    * @brief

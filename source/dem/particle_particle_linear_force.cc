@@ -62,18 +62,15 @@ ParticleParticleLinearForce<dim>::ParticleParticleLinearForce(
              DBL_MIN);
 
           this->effective_coefficient_of_restitution[i][j] =
-            2 * restitution_coefficient_i * restitution_coefficient_j /
-            (restitution_coefficient_i + restitution_coefficient_j + DBL_MIN);
+            this->harmonic_mean(restitution_coefficient_i,
+                                restitution_coefficient_j);
 
           this->effective_coefficient_of_friction[i][j] =
-            2 * friction_coefficient_i * friction_coefficient_j /
-            (friction_coefficient_i + friction_coefficient_j + DBL_MIN);
+            this->harmonic_mean(friction_coefficient_i, friction_coefficient_j);
 
           this->effective_coefficient_of_rolling_friction[i][j] =
-            2 * rolling_friction_coefficient_i *
-            rolling_friction_coefficient_j /
-            (rolling_friction_coefficient_i + rolling_friction_coefficient_j +
-             DBL_MIN);
+            this->harmonic_mean(rolling_friction_coefficient_i,
+                                rolling_friction_coefficient_j);
         }
     }
   if (dem_parameters.model_parameters.rolling_resistance_method ==
@@ -306,6 +303,92 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
             }
         }
     }
+}
+
+template <int dim>
+void
+ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
+  const double &                              normal_overlap,
+  particle_particle_contact_info_struct<dim> &contact_info,
+  Tensor<1, dim> &                            normal_force,
+  Tensor<1, dim> &                            tangential_force,
+  Tensor<1, dim> &                            particle_one_tangential_torque,
+  Tensor<1, dim> &                            particle_two_tangential_torque,
+  Tensor<1, dim> &                            rolling_resistance_torque,
+  IBParticle<dim> &                           particle_one,
+  IBParticle<dim> &                           particle_two,
+  const Point<dim> &                          particle_one_location,
+  const Point<dim> &                          particle_two_location,
+  const double &                              dt)
+{
+  const ArrayView<const double> particle_one_properties =
+    particle_one.get_properties();
+  const ArrayView<const double> particle_two_properties =
+    particle_two.get_properties();
+
+  // DEM::PropertiesIndex::type is the first (0) property of particles in the
+  // DEM solver. For the IB particles, the first property is ID. For force and
+  // torque calculations, we need pair-wise properties (such as effective
+  // Young's modulus, effective coefficient of restitution, etc.) We rewrite
+  // these pair-wise properties by using the ID of IB particles (using
+  // DEM::PropertiesIndex::type) and use them in force calculations.
+  const unsigned int particle_one_type =
+    particle_one_properties[DEM::PropertiesIndex::type];
+  const unsigned int particle_two_type =
+    particle_two_properties[DEM::PropertiesIndex::type];
+
+  this->effective_youngs_modulus[particle_one_type][particle_two_type] =
+    (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+    ((particle_two.youngs_modulus *
+      (1 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
+     (particle_one.youngs_modulus *
+      (1 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
+     DBL_MIN);
+
+  this->effective_shear_modulus[particle_one_type][particle_two_type] =
+    (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+    (2 * ((particle_two.youngs_modulus * (2 - particle_one.poisson_ratio) *
+           (1 + particle_one.poisson_ratio)) +
+          (particle_one.youngs_modulus * (2 - particle_two.poisson_ratio) *
+           (1 + particle_two.poisson_ratio))) +
+     DBL_MIN);
+
+  this->effective_coefficient_of_restitution[particle_one_type]
+                                            [particle_two_type] =
+    this->harmonic_mean(particle_one.restitution_coefficient,
+                        particle_two.restitution_coefficient);
+  this
+    ->effective_coefficient_of_friction[particle_one_type][particle_two_type] =
+    this->harmonic_mean(particle_one.friction_coefficient,
+                        particle_two.friction_coefficient);
+  this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                 [particle_two_type] =
+    this->harmonic_mean(particle_one.rolling_friction_coefficient,
+                        particle_two.rolling_friction_coefficient);
+
+  // Since the normal overlap is already calculated we update
+  // this element of the container here. The rest of information
+  // are updated using the following function
+  this->update_contact_information(contact_info,
+                                   normal_relative_velocity_value,
+                                   normal_unit_vector,
+                                   particle_one_properties,
+                                   particle_two_properties,
+                                   particle_one_location,
+                                   particle_two_location,
+                                   dt);
+
+  calculate_linear_contact_force_and_torque(contact_info,
+                                            normal_relative_velocity_value,
+                                            normal_unit_vector,
+                                            normal_overlap,
+                                            particle_one_properties,
+                                            particle_two_properties,
+                                            normal_force,
+                                            tangential_force,
+                                            particle_one_tangential_torque,
+                                            particle_two_tangential_torque,
+                                            rolling_resistance_torque);
 }
 
 // Calculates linear contact force and torques

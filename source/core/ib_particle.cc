@@ -6,7 +6,6 @@ void
 IBParticle<dim>::initialise_all()
 {
   // initialise all the variables associated to an immersed boundary particle.
-  mass        = 1;
   radius      = 1;
   particle_id = 0;
 
@@ -104,6 +103,7 @@ IBParticle<dim>::get_properties_name()
   properties[PropertiesIndex::fx] = std::make_pair("Force", 3);
   properties[PropertiesIndex::fy] = std::make_pair("Force", 1);
   properties[PropertiesIndex::fz] = std::make_pair("Force", 1);
+  properties[PropertiesIndex::m]  = std::make_pair("Mass", 1);
   properties[PropertiesIndex::ox] = std::make_pair("Omega", 3);
   properties[PropertiesIndex::oy] = std::make_pair("Omega", 1);
   properties[PropertiesIndex::oz] = std::make_pair("Omega", 1);
@@ -124,12 +124,13 @@ IBParticle<dim>::get_properties()
   properties[3]  = velocity[1];
   properties[5]  = fluid_forces[0];
   properties[6]  = fluid_forces[1];
-  properties[8]  = omega[0];
-  properties[9]  = omega[1];
-  properties[10] = omega[2];
-  properties[11] = fluid_torque[0];
-  properties[12] = fluid_torque[1];
-  properties[13] = fluid_torque[2];
+  properties[8]  = mass;
+  properties[9]  = omega[0];
+  properties[10] = omega[1];
+  properties[11] = omega[2];
+  properties[12] = fluid_torque[0];
+  properties[13] = fluid_torque[1];
+  properties[14] = fluid_torque[2];
   if (dim == 2)
     {
       properties[4] = 0;

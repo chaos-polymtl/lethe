@@ -11,6 +11,10 @@
 
 #include <solvers/navier_stokes_base.h>
 
+#include <dem/particle_particle_contact_force.h>
+#include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_wall_contact_info_struct.h>
+
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -40,13 +44,14 @@ public:
    * communicator and the particles.
    *
    * @param p_nsparam The parameters' object of the simulation.
-   *
+   * @param dem_parameters
    * @param mpi_communicator_input The mpi communicator of the simulation.
    *
    * @param particles The particles vector containing all the IB particles.
    */
   void
   initialize(std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
+             const DEMSolverParameters<dim> &               dem_parameters,
              MPI_Comm &                   mpi_communicator_input,
              std::vector<IBParticle<dim>> particles);
 
@@ -86,7 +91,7 @@ public:
   void
   calculate_pp_contact_force(const double &               dt_dem,
                              std::vector<Tensor<1, dim>> &contact_force,
-                             std::vector<Tensor<1, 3>> &  contact_torque);
+                             std::vector<Tensor<1, dim>> &contact_torque);
 
 
   /**
@@ -101,7 +106,7 @@ public:
   void
   calculate_pw_contact_force(const double &               dt_dem,
                              std::vector<Tensor<1, dim>> &contact_force,
-                             std::vector<Tensor<1, 3>> &  contact_torque);
+                             std::vector<Tensor<1, dim>> &contact_torque);
 
   /**
    * @brief  Updates the boundary cells that are contact candidates for each of the particles.
@@ -126,14 +131,6 @@ public:
   std::vector<IBParticle<dim>> dem_particles;
 
 private:
-  // A struct to store contact tangential history
-  struct ContactTangentialHistory
-  {
-    Tensor<1, dim> tangential_relative_velocity;
-    Tensor<1, dim> tangential_overlap;
-  };
-  // Particles contact history
-
   // A struct to store boundary cells' information
   struct BoundaryCellsInfo
   {
@@ -152,30 +149,25 @@ private:
     Point<dim>     point_on_boundary;
   };
 
-  /** This function is used to find the projection of vector_a on
-   * vector_b
-   * @param vector_a A vector which is going to be projected on vector_b
-   * @param vector_b The projection vector of vector_a
-   * @return The projection of vector_a on vector_b
-   */
-  inline Tensor<1, dim>
-  find_projection(const Tensor<1, dim> &vector_a,
-                  const Tensor<1, dim> &vector_b)
-  {
-    Tensor<1, dim> vector_c;
-    vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
-
-    return vector_c;
-  }
-
   std::shared_ptr<Parameters::IBParticles<dim>> parameters;
+  MPI_Comm                                      mpi_communicator;
 
-  MPI_Comm mpi_communicator;
+  std::shared_ptr<ParticleParticleContactForce<dim>>
+    particle_particle_contact_force_object;
+
+  std::shared_ptr<ParticleWallContactForce<dim>>
+    particle_wall_contact_force_object;
+
+  // Empty parameters to initilize particle_wall_contact_force_object
+  const parallel::distributed::Triangulation<dim> empty_triangulation;
+  const double triangulation_cell_diameter = 0.0;
 
   // Particles contact history
-  std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
+  std::map<unsigned int,
+           std::map<unsigned int, particle_particle_contact_info_struct<dim>>>
     pp_contact_map;
-  std::map<unsigned int, std::map<unsigned int, ContactTangentialHistory>>
+  std::map<unsigned int,
+           std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
     pw_contact_map;
 
   // A vector of vectors of candidate cells for each of the particle.
