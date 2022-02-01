@@ -631,14 +631,14 @@ namespace Parameters
         Patterns::Selection("quiet|verbose"),
         "State whether from the non-linear solver should be printed "
         "Choices are <quiet|verbose>.");
-      prm.declare_entry("calculate forces",
+      prm.declare_entry("calculate force",
                         "false",
                         Patterns::Bool(),
-                        "Enable calculation of forces");
-      prm.declare_entry("calculate torques",
+                        "Enable calculation of force");
+      prm.declare_entry("calculate torque",
                         "false",
                         Patterns::Bool(),
-                        "Enable calculation of torques");
+                        "Enable calculation of torque");
       prm.declare_entry("force name",
                         "force",
                         Patterns::FileName(),
@@ -673,8 +673,8 @@ namespace Parameters
         verbosity = Verbosity::verbose;
       if (op == "quiet")
         verbosity = Verbosity::quiet;
-      calculate_force       = prm.get_bool("calculate forces");
-      calculate_torque      = prm.get_bool("calculate torques");
+      calculate_force       = prm.get_bool("calculate force");
+      calculate_torque      = prm.get_bool("calculate torque");
       force_output_name     = prm.get("force name");
       torque_output_name    = prm.get("torque name");
       output_precision      = prm.get_integer("output precision");

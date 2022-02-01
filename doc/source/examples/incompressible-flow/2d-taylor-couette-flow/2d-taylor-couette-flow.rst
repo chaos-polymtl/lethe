@@ -186,11 +186,11 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 .. code-block:: text
 
   subsection forces
-      set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-      set calculate torques     = true     # Enable torque calculation
+      set verbosity             = verbose   # Output force and torque in log <quiet|verbose>
+      set calculate torque      = true      # Enable torque calculation
   end
 
-By setting ``calculate torques=true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbose=verbose`` will print out the value of the torque calculated for each mesh. 
+By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbose=verbose`` will print out the value of the torque calculated for each mesh. 
 
 
 Rest of the subsections
