@@ -69,10 +69,13 @@ Default values for a non Newtonian fluid are
 .. code-block:: text
 
     subsection physical properties
-    set non newtonian flow	= false
+      set number of fluids		= 1
+      subsection fluid 0
+        set non newtonian flow	= false
         subsection non newtonian
-        set model 		= carreau
+          set model 		= carreau
         end
+      end
     end
     
 * The ``non newtonian flow`` parameter has to be set to ``true`` to use a rheological model.
@@ -94,7 +97,9 @@ The parameters for the Carreau model are defined by the ``carreau`` subsection. 
 .. code-block:: text
 
   subsection physical properties
-    set non newtonian flow	= true
+    set number of fluids		= 1
+    subsection fluid 0
+      set non newtonian flow	= true
       subsection non newtonian
         set model 		= carreau
         subsection carreau
@@ -104,6 +109,7 @@ The parameters for the Carreau model are defined by the ``carreau`` subsection. 
           set lambda = 1.0
           set n = 0.5
         end
+      end
     end
   end
 
@@ -130,17 +136,20 @@ When using the Power-Law model, the default values are:
 
 .. code-block:: text
 
-    subsection physical properties
-    set non newtonian flow	= true
-        subsection non newtonian
+  subsection physical properties
+    set number of fluids		= 1
+    subsection fluid 0
+      set non newtonian flow	= true
+      subsection non newtonian
         set model 		= power-law
-            subsection power-law
-              set K = 1.0
-              set n = 0.5
-              set shear rate min = 1e-3
-            end
+        subsection power-law
+          set K = 1.0
+          set n = 0.5
+          set shear rate min = 1e-3
         end
+      end
     end
+  end
 
 * The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity is it were Newtonian.
 
