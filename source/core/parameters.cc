@@ -537,7 +537,7 @@ namespace Parameters
         Patterns::Double(),
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
-      
+
       prm.declare_entry("non newtonian flow",
                         "false",
                         Patterns::Bool(),

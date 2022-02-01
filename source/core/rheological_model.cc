@@ -9,20 +9,25 @@ RheologicalModel::model_cast(
   else if (physical_properties.fluids[0].non_newtonian_parameters.model ==
            Parameters::NonNewtonian::Model::powerlaw)
     return std::make_shared<PowerLaw>(
-      physical_properties.fluids[0].non_newtonian_parameters.powerlaw_parameters.K,
-      physical_properties.fluids[0].non_newtonian_parameters.powerlaw_parameters.n,
-      physical_properties.fluids[0].non_newtonian_parameters.powerlaw_parameters
-        .shear_rate_min);
+      physical_properties.fluids[0]
+        .non_newtonian_parameters.powerlaw_parameters.K,
+      physical_properties.fluids[0]
+        .non_newtonian_parameters.powerlaw_parameters.n,
+      physical_properties.fluids[0]
+        .non_newtonian_parameters.powerlaw_parameters.shear_rate_min);
   else // if (physical_properties.fluid[0].non_newtonian_parameters.model ==
        //  Parameters::NonNewtonian::Model::carreau)
     return std::make_shared<Carreau>(
-      physical_properties.fluids[0].non_newtonian_parameters.carreau_parameters
-        .viscosity_0,
-      physical_properties.fluids[0].non_newtonian_parameters.carreau_parameters
-        .viscosity_inf,
-      physical_properties.fluids[0].non_newtonian_parameters.carreau_parameters.lambda,
-      physical_properties.fluids[0].non_newtonian_parameters.carreau_parameters.a,
-      physical_properties.fluids[0].non_newtonian_parameters.carreau_parameters.n);
+      physical_properties.fluids[0]
+        .non_newtonian_parameters.carreau_parameters.viscosity_0,
+      physical_properties.fluids[0]
+        .non_newtonian_parameters.carreau_parameters.viscosity_inf,
+      physical_properties.fluids[0]
+        .non_newtonian_parameters.carreau_parameters.lambda,
+      physical_properties.fluids[0]
+        .non_newtonian_parameters.carreau_parameters.a,
+      physical_properties.fluids[0]
+        .non_newtonian_parameters.carreau_parameters.n);
 }
 
 double
