@@ -21,10 +21,10 @@
 #ifndef nitsche_h
 #define nitsche_h
 
+#include <core/parameters.h>
+
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
-
-#include <core/parameters.h>
 
 using namespace dealii;
 
