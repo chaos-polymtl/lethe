@@ -154,34 +154,6 @@ namespace Parameters
   };
 
   /**
-   * @brief Fluid - Class for fluid definition
-   */
-  class Fluid
-  {
-  public:
-    Fluid()
-    {}
-
-    void
-    declare_parameters(ParameterHandler &prm, unsigned int id);
-    void
-    parse_parameters(ParameterHandler &prm, unsigned int id);
-
-    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
-    double viscosity;
-    // volumetric mass density (rho) in units of kg/m^3
-    double density;
-    // specific heat capacity (cp) in J/K/kg
-    double specific_heat;
-    // thermal conductivity (k) in W/m/K
-    double thermal_conductivity;
-    // thermal expansion coefficient (alpha) in 1/K
-    double thermal_expansion;
-    // tracer diffusivity) in L^2/s
-    double tracer_diffusivity;
-  };
-
-  /**
    * @brief Power-law rheological model to solve for non Newtonian
    * flows.
    */
@@ -246,6 +218,38 @@ namespace Parameters
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
+  };
+
+   /**
+   * @brief Fluid - Class for fluid definition
+   */
+  class Fluid
+  {
+  public:
+    Fluid()
+    {}
+
+    void
+    declare_parameters(ParameterHandler &prm, unsigned int id);
+    void
+    parse_parameters(ParameterHandler &prm, unsigned int id);
+
+    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
+    double viscosity;
+    // volumetric mass density (rho) in units of kg/m^3
+    double density;
+    // specific heat capacity (cp) in J/K/kg
+    double specific_heat;
+    // thermal conductivity (k) in W/m/K
+    double thermal_conductivity;
+    // thermal expansion coefficient (alpha) in 1/K
+    double thermal_expansion;
+    // tracer diffusivity) in L^2/s
+    double tracer_diffusivity;
+
+    // Non Newtonian parameters
+    bool         non_newtonian_flow;
+    NonNewtonian non_newtonian_parameters;
   };
 
 
@@ -321,11 +325,6 @@ namespace Parameters
   public:
     PhysicalProperties()
     {}
-
-    // Non Newtonian parameters
-    bool         non_newtonian_flow;
-    NonNewtonian non_newtonian_parameters;
-
     // Phase change parameters
     bool        enable_phase_change;
     PhaseChange phase_change_parameters;

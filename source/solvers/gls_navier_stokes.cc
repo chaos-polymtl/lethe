@@ -425,7 +425,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
             this->simulation_parameters.physical_properties));
         }
 
-      if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+      if (this->simulation_parameters.physical_properties.fluids[0].non_newtonian_flow)
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
@@ -479,7 +479,7 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
                               *this->cell_quadrature,
                               *this->mapping);
     }
-  if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+  if (this->simulation_parameters.physical_properties.fluids[0].non_newtonian_flow)
     scratch_data.enable_hessian();
 
   WorkStream::run(
@@ -590,7 +590,7 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                                         *this->mapping);
     }
 
-  if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+  if (this->simulation_parameters.physical_properties.fluids[0].non_newtonian_flow)
     scratch_data.enable_hessian();
 
 
