@@ -75,7 +75,7 @@ subsection nitsche
 	    end
 	    set calculate torques on solid = true
     end
-  set verbosity = verbose
+    set verbosity = verbose
 end
 
 # --------------------------------------------------
