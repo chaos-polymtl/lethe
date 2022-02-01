@@ -19,6 +19,12 @@
 std::shared_ptr<ThermalConductivityModel>
 ThermalConductivityModel::model_cast(const Parameters::Fluid &fluid_properties)
 {
-  return std::make_shared<ThermalConductivityConstant>(
-    fluid_properties.thermal_conductivity);
+  if (fluid_properties.thermal_conductivity_model ==
+      Parameters::Fluid::ThermalConductivityModel::linear)
+    return std::make_shared<ThermalConductivityLinear>(fluid_properties.k_A0,
+                                                       fluid_properties.k_A1);
+  else
+
+    return std::make_shared<ThermalConductivityConstant>(
+      fluid_properties.thermal_conductivity);
 }

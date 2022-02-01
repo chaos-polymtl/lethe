@@ -24,6 +24,14 @@ PhysicalPropertiesManager::PhysicalPropertiesManager(
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)
     {
+      density.push_back(
+        DensityModel::model_cast(physical_properties.fluids[f]));
+
+      specific_heat.push_back(
+        SpecificHeatModel::model_cast(physical_properties.fluids[f]));
+
+      thermal_conductivity.push_back(
+        ThermalConductivityModel::model_cast(physical_properties.fluids[f]));
     }
   // For
 }

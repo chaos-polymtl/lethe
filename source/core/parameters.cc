@@ -464,7 +464,6 @@ namespace Parameters
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
         {
-          fluids[i_fluid] = Fluid();
           fluids[i_fluid].declare_parameters(prm, i_fluid);
         }
     }
@@ -476,16 +475,6 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-<<<<<<< HEAD
-      // Management of phase_change
-      enable_phase_change = prm.get_bool("enable phase change");
-      phase_change_parameters.parse_parameters(prm);
-=======
-      // Management of non_newtonian_flows
-      non_newtonian_flow = prm.get_bool("non newtonian flow");
-      non_newtonian_parameters.parse_parameters(prm);
->>>>>>> 4a9cb28 (WIP physical properties)
-
       // Multiphasic simulations parameters definition
       number_of_fluids = prm.get_integer("number of fluids");
       Assert(number_of_fluids == 1 || number_of_fluids == 2,
@@ -561,6 +550,8 @@ namespace Parameters
                         "Model used for the calculation of the specific heat"
                         "Choices are <constant|phase_change>.");
 
+      phase_change_parameters.declare_parameters(prm);
+
       prm.declare_entry(
         "thermal conductivity model",
         "constant",
@@ -568,9 +559,20 @@ namespace Parameters
         "Model used for the calculation of the thermal conductivity"
         "Choices are <constant|linear>.");
 
+      prm.declare_entry("k_A0",
+                        "0",
+                        Patterns::Double(),
+                        "k_A0 parameter for linear conductivity model");
 
+<<<<<<< HEAD
       phase_change_parameters.declare_parameters(prm);
 >>>>>>> 4a9cb28 (WIP physical properties)
+=======
+      prm.declare_entry("k_A1",
+                        "0",
+                        Patterns::Double(),
+                        "k_A1 parameter for linear conductivity model");
+>>>>>>> c6b6e35 (First working version of manager without rheology)
     }
     prm.leave_subsection();
   }
@@ -606,14 +608,16 @@ namespace Parameters
       else if (op == "linear")
         thermal_conductivity_model = ThermalConductivityModel::linear;
 
+      // Linear conductivity model parameters
+      k_A0 = prm.get_double("k_A0");
+      k_A1 = prm.get_double("k_A1");
+
       // Specific heat
       op = prm.get("specific heat model");
       if (op == "constant")
         specific_heat_model = SpecificHeatModel::constant;
       else if (op == "phase_change")
         specific_heat_model = SpecificHeatModel::phase_change;
-
-
 
       phase_change_parameters.parse_parameters(prm);
 >>>>>>> 4a9cb28 (WIP physical properties)

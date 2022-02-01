@@ -233,6 +233,10 @@ namespace Parameters
       constant,
       linear
     } thermal_conductivity_model;
+
+    // Linear thermal conductivity parameters : k = k_A0 + k_A1 * T
+    double k_A0;
+    double k_A1;
   };
 
   /**
