@@ -459,11 +459,7 @@ namespace Parameters
                         Patterns::Integer(),
                         "Number of fluids");
 
-      prm.declare_entry("enable phase change",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable melting/freezing of fluids");
-      phase_change_parameters.declare_parameters(prm);
+
 
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
@@ -480,9 +476,15 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
+<<<<<<< HEAD
       // Management of phase_change
       enable_phase_change = prm.get_bool("enable phase change");
       phase_change_parameters.parse_parameters(prm);
+=======
+      // Management of non_newtonian_flows
+      non_newtonian_flow = prm.get_bool("non newtonian flow");
+      non_newtonian_parameters.parse_parameters(prm);
+>>>>>>> 4a9cb28 (WIP physical properties)
 
       // Multiphasic simulations parameters definition
       number_of_fluids = prm.get_integer("number of fluids");
@@ -538,11 +540,37 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
+<<<<<<< HEAD
       prm.declare_entry("non newtonian flow",
                         "false",
                         Patterns::Bool(),
                         "Non Newtonian flow");
       non_newtonian_parameters.declare_parameters(prm);
+=======
+
+
+      prm.declare_entry("density model",
+                        "constant",
+                        Patterns::Selection("constant"),
+                        "Model used for the calculation of the density"
+                        "Choices are <constant>.");
+
+      prm.declare_entry("specific heat model",
+                        "constant",
+                        Patterns::Selection("constant|phase_change"),
+                        "Model used for the calculation of the specific heat"
+                        "Choices are <constant|phase_change>.");
+
+      prm.declare_entry(
+        "thermal conductivity model",
+        "constant",
+        Patterns::Selection("constant|linear"),
+        "Model used for the calculation of the thermal conductivity"
+        "Choices are <constant|linear>.");
+
+
+      phase_change_parameters.declare_parameters(prm);
+>>>>>>> 4a9cb28 (WIP physical properties)
     }
     prm.leave_subsection();
   }
@@ -558,8 +586,37 @@ namespace Parameters
       thermal_conductivity = prm.get_double("thermal conductivity");
       thermal_expansion    = prm.get_double("thermal expansion");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
+<<<<<<< HEAD
       non_newtonian_flow   = prm.get_bool("non newtonian flow");
       non_newtonian_parameters.parse_parameters(prm);
+=======
+
+      // Parse models for the physical properties
+      std::string op;
+
+      // Density
+      op = prm.get("density model");
+      if (op == "constant")
+        density_model = DensityModel::constant;
+
+      // Thermal conductivity
+      op = prm.get("thermal conductivity model");
+      if (op == "constant")
+        thermal_conductivity_model = ThermalConductivityModel::constant;
+      else if (op == "linear")
+        thermal_conductivity_model = ThermalConductivityModel::linear;
+
+      // Specific heat
+      op = prm.get("specific heat model");
+      if (op == "constant")
+        specific_heat_model = SpecificHeatModel::constant;
+      else if (op == "phase_change")
+        specific_heat_model = SpecificHeatModel::phase_change;
+
+
+
+      phase_change_parameters.parse_parameters(prm);
+>>>>>>> 4a9cb28 (WIP physical properties)
     }
     prm.leave_subsection();
   }
