@@ -28,12 +28,12 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose
-    set calculate forces      = false
-    set calculate torques     = true
+    set calculate force       = false
+    set calculate torque      = true
     set force name            = force
     set torque name           = torque
     set output precision      = 10
@@ -73,7 +73,7 @@ subsection nitsche
 	    subsection solid velocity
 		    set Function expression = 0 ; -z ; y
 	    end
-	    set calculate torques on solid = true
+	    set calculate torque on solid = true
     end
     set verbosity = verbose
 end

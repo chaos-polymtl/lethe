@@ -1,16 +1,16 @@
 Force and torque calculation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This subsection controls the post-processing of the forces and the torque on the boundary conditions. Using these options, the user can calculate the force  acting on a wall or the torque acting on a boundary. 
+This subsection controls the post-processing of the force and the torque on the boundary conditions. Using these options, the user can calculate the force  acting on a wall or the torque acting on a boundary. 
 
 .. code-block:: text
 
    subsection forces
-     # Enable calculation of forces
-     set calculate forces      = true
+     # Enable calculation of force
+     set calculate force      = true
    
-     # Enable calculation of torques
-     set calculate torques     = true
+     # Enable calculation of torque
+     set calculate torque     = true
    
      # Calculation frequency
      set calculation frequency = 1
@@ -31,9 +31,9 @@ This subsection controls the post-processing of the forces and the torque on the
      set verbosity             = quiet
    end
 
-* ``calculate forces`` enables the calculation of the forces on all boundaries. If multiple walls bear the same ID, the total force for this ID will be calculated.
+* ``calculate force`` enables the calculation of the force on all boundaries. If multiple walls bear the same ID, the total force for this ID will be calculated.
 
-* ``calculate torques`` enables the calculation of the torque on all boundaries that bear an ID. If multiple walls bear the same ID, the total torque for this ID will be calculated.
+* ``calculate torque`` enables the calculation of the torque on all boundaries that bear an ID. If multiple walls bear the same ID, the total torque for this ID will be calculated.
 
 * ``calculation frequency`` is an integer that specifies the frequency of the calculation of the force. Setting ``calculation frequency=10`` means that forces and torques will be calculated every 10 iterations. Calculating the forces and the torques on the boundaries is a very cheap operation and, consequently, there is not much to optimize by using a larger frequency.
 

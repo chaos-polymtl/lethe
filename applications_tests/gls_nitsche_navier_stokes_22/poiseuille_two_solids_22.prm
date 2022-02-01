@@ -71,7 +71,7 @@ subsection nitsche
 		        set grid arguments = 0, -0.5 : 1, 0. : true
         		set initial refinement = 6
 		end
-		set calculate forces on solid = true
+		set calculate force on solid = true
         end
         subsection nitsche solid 1
 		subsection mesh
@@ -80,7 +80,7 @@ subsection nitsche
 		        set grid arguments = 0, 0.5 : 1, 1.0 : true
         		set initial refinement = 6
 		end
-		set calculate forces on solid = true
+		set calculate force on solid = true
         end
 end
 # --------------------------------------------------

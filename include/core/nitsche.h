@@ -21,10 +21,10 @@
 #ifndef nitsche_h
 #define nitsche_h
 
-#include <core/parameters.h>
-
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+
+#include <core/parameters.h>
 
 using namespace dealii;
 
@@ -113,11 +113,11 @@ namespace Parameters
       prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
       prm.leave_subsection();
 
-      prm.declare_entry("calculate forces on solid",
+      prm.declare_entry("calculate force on solid",
                         "false",
                         Patterns::Bool(),
                         "Enable calculation of forces on solid");
-      prm.declare_entry("calculate torques on solid",
+      prm.declare_entry("calculate torque on solid",
                         "false",
                         Patterns::Bool(),
                         "Enable calculation of torques on solid");
@@ -155,8 +155,8 @@ namespace Parameters
         center_of_rotation[2] = prm.get_double("z");
       prm.leave_subsection();
 
-      calculate_force_on_solid  = prm.get_bool("calculate forces on solid");
-      calculate_torque_on_solid = prm.get_bool("calculate torques on solid");
+      calculate_force_on_solid  = prm.get_bool("calculate force on solid");
+      calculate_torque_on_solid = prm.get_bool("calculate torque on solid");
       force_output_name         = prm.get("solid force name");
       torque_output_name        = prm.get("solid torque name");
     }
