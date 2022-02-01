@@ -110,7 +110,8 @@ GDNavierStokesSolver<dim>::setup_assemblers()
             this->simulation_parameters.physical_properties));
         }
 
-      if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+      if (this->simulation_parameters.physical_properties.fluids[0]
+            .non_newtonian_flow)
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
