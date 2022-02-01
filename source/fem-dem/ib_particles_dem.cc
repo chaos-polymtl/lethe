@@ -1,15 +1,17 @@
 //
 // Created by lucka on 2021-10-11.
 //
-#include <dem/set_particle_particle_contact_force_model.h>
-#include <dem/set_particle_wall_contact_force_model.h>
+#include <dem/dem_solver_parameters.h>
+#include <dem/particle_wall_linear_force.h>
+#include <dem/particle_wall_nonlinear_force.h>
+#include <dem/particle_particle_linear_force.h>
+#include <dem/particle_particle_nonlinear_force.h>
 #include <fem-dem/ib_particles_dem.h>
 
 template <int dim>
 void
 IBParticlesDEM<dim>::initialize(
   std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
-  const DEMSolverParameters<dim> &               dem_parameters,
   MPI_Comm &                                     mpi_communicator_input,
   std::vector<IBParticle<dim>>                   particles)
 {
@@ -17,12 +19,24 @@ IBParticlesDEM<dim>::initialize(
   mpi_communicator = mpi_communicator_input;
   dem_particles    = particles;
   boundary_cells.resize(dem_particles.size());
+
+  dem_parameters.model_parameters
+      .particle_particle_contact_force_method =
+    Parameters::Lagrangian::ModelParameters::
+      ParticleParticleContactForceModel::hertz;
+  dem_parameters.model_parameters.particle_wall_contact_force_method =
+    Parameters::Lagrangian::ModelParameters::
+      ParticleWallContactForceModel::nonlinear;
   particle_particle_contact_force_object =
-    set_particle_particle_contact_force_model(dem_parameters);
-  particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model(dem_parameters,
-                                          empty_triangulation,
-                                          triangulation_cell_diameter);
+    std::make_shared<ParticleParticleHertz<dim>>(dem_parameters);
+  std::vector<types::boundary_id> boundary_index(0);
+  particle_wall_contact_force_object =std::make_shared<ParticleWallNonLinearForce<dim>>(
+      dem_parameters.boundary_conditions.boundary_translational_velocity,
+      dem_parameters.boundary_conditions.boundary_rotational_speed,
+      dem_parameters.boundary_conditions.boundary_rotational_vector,
+      triangulation_cell_diameter,
+      dem_parameters,
+      boundary_index);
 }
 template <int dim>
 void
@@ -333,9 +347,9 @@ IBParticlesDEM<dim>::particles_dem(double &dt)
   double dt_dem = dt / parameters->coupling_frequency;
 
   std::vector<Tensor<1, dim>> contact_force(dem_particles.size());
+  std::vector<Tensor<1, dim>> contact_wall_force(dem_particles.size());
   std::vector<Tensor<1, dim>> contact_torque(dem_particles.size());
   std::vector<Tensor<1, dim>> contact_wall_torque(dem_particles.size());
-  std::vector<Tensor<1, dim>> contact_wall_force(dem_particles.size());
 
   std::vector<Tensor<1, dim>> current_fluid_force(dem_particles.size());
   std::vector<Tensor<1, 3>>   current_fluid_torque(dem_particles.size());

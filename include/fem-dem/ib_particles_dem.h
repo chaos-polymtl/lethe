@@ -51,7 +51,6 @@ public:
    */
   void
   initialize(std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
-             const DEMSolverParameters<dim> &               dem_parameters,
              MPI_Comm &                   mpi_communicator_input,
              std::vector<IBParticle<dim>> particles);
 
@@ -150,6 +149,7 @@ private:
   };
 
   std::shared_ptr<Parameters::IBParticles<dim>> parameters;
+  DEMSolverParameters<dim> dem_parameters{};
   MPI_Comm                                      mpi_communicator;
 
   std::shared_ptr<ParticleParticleContactForce<dim>>
@@ -159,8 +159,7 @@ private:
     particle_wall_contact_force_object;
 
   // Empty parameters to initilize particle_wall_contact_force_object
-  const parallel::distributed::Triangulation<dim> empty_triangulation;
-  const double triangulation_cell_diameter = 0.0;
+  double triangulation_cell_diameter = 0.0;
 
   // Particles contact history
   std::map<unsigned int,
