@@ -13,6 +13,8 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
+set number of fluids = 1
+  subsection fluid 0
     set non newtonian flow	= true
     subsection non newtonian
     	set model 		= power-law
@@ -22,6 +24,7 @@ subsection physical properties
 	    	set shear rate min = 1e-8
 	end
     end
+end
 end
 
 #---------------------------------------------------
