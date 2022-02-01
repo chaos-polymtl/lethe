@@ -437,6 +437,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
       if (this->this_mpi_process == 0)
         {
           std::string filename =
+            simulation_parameters.simulation_control.output_folder +
             simulation_parameters.analytical_solution->get_filename() + ".dat";
           std::ofstream output(filename.c_str());
           error_table.write_text(output);

@@ -179,24 +179,24 @@ In this section, we specify the boundary conditions taking into account the IDs 
 Forces
 ~~~~~~
 
-To calculate forces acting on the boundary conditions, for example, the forces acting on the cylinder, we can use the forces subsection:
+To calculate forces acting on the boundary conditions, for example, the forces acting on the cylinder, we can use the ``forces`` subsection:
 
 .. code-block:: text
 
  #---------------------------------------------------
- # Force
+ # Forces
  #---------------------------------------------------
  subsection forces
      set verbosity             = verbose
-     set calculate forces      = true
-     set calculate torques     = false
+     set calculate force       = true
+     set calculate torque      = false
      set force name            = force
      set output precision      = 10
      set calculation frequency = 1
      set output frequency      = 1
  end
 
-To print the values of the forces in the terminal we set ``verbosity`` to ``verbose``. The calculation of the forces in all boundaries is set by the ``set calculate forces = true`` line. A ``.dat`` file is created with the corresponding data. Therefore, one can specify the prefix of the file by the ``force name`` parameter, the number of significant digits for the force values by the ``output precision`` and the frequency of calculation and output which are set to ``1``. 
+To print the values of the forces in the terminal we set ``verbosity`` to ``verbose``. The calculation of the forces in all boundaries is set by the ``set calculate force = true`` line. A ``.dat`` file is created with the corresponding data. Therefore, one can specify the prefix of the file by the ``force name`` parameter, the number of significant digits for the force values by the ``output precision`` and the frequency of calculation and output which are set to ``1``. 
 
 Running the simulation
 ----------------------

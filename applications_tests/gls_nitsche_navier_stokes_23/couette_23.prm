@@ -29,12 +29,12 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose
-    set calculate forces      = true
-    set calculate torques     = false
+    set calculate force       = true
+    set calculate torque      = false
     set force name            = force
     set torque name           = torque
     set output precision      = 10
@@ -77,8 +77,6 @@ end
 subsection nitsche
 	set beta 			= 10
 	set verbosity 			= verbose
-	set calculate forces on solid 	= true
-	set solid force name 		= solid_force
 
         subsection nitsche solid 0
 	    subsection mesh
@@ -86,8 +84,9 @@ subsection nitsche
 		set grid type = hyper_rectangle
 		set grid arguments = 0., 0. : 1, 1 : true
 		set initial refinement = 5
-
             end
+	    set calculate force on solid 	= true
+	    set solid force name 		= solid_force
         end
 end
 

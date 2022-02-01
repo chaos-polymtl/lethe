@@ -8,14 +8,14 @@ Lethe can also run simulations using the Nitsche immersed boundary method.
   subsection nitsche
     set beta = 10
     set verbosity = verbose
-    set calculate forces on solid = false
-    set solid force name = force_solid
-    set calculate torques on solid = true
-    set solid torque name = torque_solid
 
     set number of solids = 1
 
     subsection nitsche solid 0
+      set calculate forces on solid = false
+      set solid force name = force_solid
+      set calculate torques on solid = true
+      set solid torque name = torque_solid
       subsection mesh
         set type = dealii
         set grid type = hyper_ball
@@ -39,10 +39,10 @@ Lethe can also run simulations using the Nitsche immersed boundary method.
 
 * ``beta`` is a parameter needed to apply the immersed boundary conditions on the fluid domain, its value is normally between 1 and 1000. ``beta = 0`` (the solid has no influence on the flow) can be used for debugging purposes. A classical value is ``beta = 10``.
 * ``verbosity`` enables printing Nitsche intermediate results to the terminal.
-* ``calculate forces on solid`` enables forces calculation on the immersed geometry, written in the output file named ``solid force name``. 
-* ``calculate torques on solid`` enables torques calculation, written in the file in the output file named ``solid torque name``. 
 * ``number of solids`` specifies the number of Nitsche solids in the simulation. Each solid will then correspond to a ``subsection nitsche solid``.
 * ``subsection nitsche solid 0`` defines a solid object on which the Nitsche immersed boundary is applied. Multiple solids can be added in the same fashion (add ``subsection nitsche solid 1`` etc.).
+* ``calculate forces on solid`` enables forces calculation on the immersed geometry, written in the output file named ``solid force name``, with the solid index automatically added at the end.
+* ``calculate torques on solid`` enables torques calculation, written in the file in the output file named ``solid torque name``, with the solid index automatically added at the end. 
 * ``subsection mesh`` defines the solid mesh used to apply Nitsche immersed boundary. The syntax is the same as that of the mesh subsection, see :doc:`mesh` for more details.
 
 .. note::

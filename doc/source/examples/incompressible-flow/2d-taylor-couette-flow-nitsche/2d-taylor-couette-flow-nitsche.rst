@@ -93,16 +93,16 @@ Gauss quadrature points of the immersed mesh to represent the immersed body. For
       subsection solid velocity
         set Function expression = -y ; x
       end
-      set enable particles motion		= false
+      set enable particles motion	= false
+      set calculate torque on solid 	= true
     end
-    set calculate torques on solid = true
     set verbosity = verbose
   end
 
 The ``beta`` coefficient is a parameter used to enforce the Nitsche IB. It's value is generally between 1 and 100, according to the size of the mesh. 
 A value of 10 is reasonable. Then, we specify the ``number of solids`` geometries that with be represented with Nitsche IB. 
 For each Nitsche IB, a mesh representing the immersed solid has to be specified. Additionally, the solid velocity of the Nitsche IB is specified using the ``solid velocity`` 
-subsection. Finally, the motion of the particle is disabled. This means that even if the immersed particles have a non-zero velocity, they will not physically move in the fluid domain. In this case, this is because our problem has rotation symmetry and we will be seeking steady-state solutions. We note that in this problem, the Nitsche solid grid has the same dimension as the background grid. This is necessary for 2D simulations. Additionally, the Nitsche solid grid is well-refined to ensure that at approximately each fluid cell contains one particle of the immersed body. Finally, we enable the calculation of the torque on the Nitsche IB by setting calculate torsque on solid to ``true``. 
+subsection. Finally, the motion of the particle is disabled. This means that even if the immersed particles have a non-zero velocity, they will not physically move in the fluid domain. In this case, this is because our problem has rotation symmetry and we will be seeking steady-state solutions. We note that in this problem, the Nitsche solid grid has the same dimension as the background grid. This is necessary for 2D simulations. Additionally, the Nitsche solid grid is well-refined to ensure that at approximately each fluid cell contains one particle of the immersed body. Finally, we enable the calculation of the torque on the Nitsche IB by setting ``calculate torque on solid = true``. 
 
 The following figure illustrates the background mesh as well as the particles used to represent the IB on top of it:
 
@@ -176,14 +176,14 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 
   subsection forces
     set verbosity             = verbose   # Output force and torques in log 
-    set calculate torques     = true     # Enable torque calculation
+    set calculate torque      = true      # Enable torque calculation
     set torque name           = torque    # Name prefix of torque files
     set calculation frequency = 1         # Frequency of the force calculation
     set output frequency      = 1         # Frequency of file update
   end
 
 
-By setting ``calculate torques=true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. 
+By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. 
 Setting ``verbosity=verbose`` will print out the value of the torque calculated for each mesh. 
 
 
