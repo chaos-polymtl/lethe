@@ -454,13 +454,6 @@ namespace Parameters
 
     prm.enter_subsection("physical properties");
     {
-      prm.declare_entry("non newtonian flow",
-                        "false",
-                        Patterns::Bool(),
-                        "Non Newtonian flow");
-      non_newtonian_parameters.declare_parameters(prm);
-
-
       prm.declare_entry("number of fluids",
                         "1",
                         Patterns::Integer(),
@@ -487,10 +480,6 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-      // Management of non_newtonian_flows
-      non_newtonian_flow = prm.get_bool("non newtonian flow");
-      non_newtonian_parameters.parse_parameters(prm);
-
       // Management of phase_change
       enable_phase_change = prm.get_bool("enable phase change");
       phase_change_parameters.parse_parameters(prm);
@@ -548,6 +537,12 @@ namespace Parameters
         Patterns::Double(),
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
+
+      prm.declare_entry("non newtonian flow",
+                        "false",
+                        Patterns::Bool(),
+                        "Non Newtonian flow");
+      non_newtonian_parameters.declare_parameters(prm);
     }
     prm.leave_subsection();
   }
@@ -563,6 +558,8 @@ namespace Parameters
       thermal_conductivity = prm.get_double("thermal conductivity");
       thermal_expansion    = prm.get_double("thermal expansion");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
+      non_newtonian_flow   = prm.get_bool("non newtonian flow");
+      non_newtonian_parameters.parse_parameters(prm);
     }
     prm.leave_subsection();
   }
