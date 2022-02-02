@@ -1,33 +1,26 @@
 #include <core/rheological_model.h>
 
 std::shared_ptr<RheologicalModel>
-RheologicalModel::model_cast(
-  const Parameters::PhysicalProperties &physical_properties)
+RheologicalModel::model_cast(const Parameters::Fluid &fluid_properties)
 {
-  if (!physical_properties.fluids[0].non_newtonian_flow)
-    return std::make_shared<Newtonian>(physical_properties.fluids[0].viscosity);
-  else if (physical_properties.fluids[0].non_newtonian_parameters.model ==
-           Parameters::NonNewtonian::Model::powerlaw)
+  if (!fluid_properties.non_newtonian_flow)
+    return std::make_shared<Newtonian>(fluid_properties.viscosity);
+  else if (fluid_properties.rheology_model ==
+           Parameters::Fluid::RheologyModel::powerlaw)
     return std::make_shared<PowerLaw>(
-      physical_properties.fluids[0]
-        .non_newtonian_parameters.powerlaw_parameters.K,
-      physical_properties.fluids[0]
-        .non_newtonian_parameters.powerlaw_parameters.n,
-      physical_properties.fluids[0]
-        .non_newtonian_parameters.powerlaw_parameters.shear_rate_min);
+      fluid_properties.non_newtonian_parameters.powerlaw_parameters.K,
+      fluid_properties.non_newtonian_parameters.powerlaw_parameters.n,
+      fluid_properties.non_newtonian_parameters.powerlaw_parameters
+        .shear_rate_min);
   else // if (physical_properties.fluid[0].non_newtonian_parameters.model ==
        //  Parameters::NonNewtonian::Model::carreau)
     return std::make_shared<Carreau>(
-      physical_properties.fluids[0]
-        .non_newtonian_parameters.carreau_parameters.viscosity_0,
-      physical_properties.fluids[0]
-        .non_newtonian_parameters.carreau_parameters.viscosity_inf,
-      physical_properties.fluids[0]
-        .non_newtonian_parameters.carreau_parameters.lambda,
-      physical_properties.fluids[0]
-        .non_newtonian_parameters.carreau_parameters.a,
-      physical_properties.fluids[0]
-        .non_newtonian_parameters.carreau_parameters.n);
+      fluid_properties.non_newtonian_parameters.carreau_parameters.viscosity_0,
+      fluid_properties.non_newtonian_parameters.carreau_parameters
+        .viscosity_inf,
+      fluid_properties.non_newtonian_parameters.carreau_parameters.lambda,
+      fluid_properties.non_newtonian_parameters.carreau_parameters.a,
+      fluid_properties.non_newtonian_parameters.carreau_parameters.n);
 }
 
 double
@@ -47,7 +40,7 @@ PowerLaw::value(const std::map<field, double> &field_values)
 void
 PowerLaw::vector_value(
   const std::map<field, std::vector<double>> &field_vectors,
-  std::vector<double> &                       property_vector)
+  std::vector<double>                        &property_vector)
 {
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
@@ -69,7 +62,7 @@ void
 PowerLaw::vector_jacobian(
   const std::map<field, std::vector<double>> &field_vectors,
   const field                                 id,
-  std::vector<double> &                       jacobian_vector)
+  std::vector<double>                        &jacobian_vector)
 {
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
@@ -113,7 +106,7 @@ void
 Carreau::vector_jacobian(
   const std::map<field, std::vector<double>> &field_vectors,
   const field                                 id,
-  std::vector<double> &                       jacobian_vector)
+  std::vector<double>                        &jacobian_vector)
 {
   if (id == field::shear_rate)
     this->vector_numerical_jacobian(field_vectors,

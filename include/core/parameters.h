@@ -187,59 +187,6 @@ namespace Parameters
   };
 
   /**
-   * @brief Fluid - Class for fluid definition
-   */
-  class Fluid
-  {
-  public:
-    Fluid()
-    {}
-
-    void
-    declare_parameters(ParameterHandler &prm, unsigned int id);
-    void
-    parse_parameters(ParameterHandler &prm, unsigned int id);
-
-    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
-    double viscosity;
-    // volumetric mass density (rho) in units of kg/m^3
-    double density;
-    // specific heat capacity (cp) in J/K/kg
-    double specific_heat;
-    // thermal conductivity (k) in W/m/K
-    double thermal_conductivity;
-    // thermal expansion coefficient (alpha) in 1/K
-    double thermal_expansion;
-    // tracer diffusivity) in L^2/s
-    double tracer_diffusivity;
-
-    // Phase change parameters
-    PhaseChange phase_change_parameters;
-
-
-    enum class DensityModel
-    {
-      constant
-    } density_model;
-
-    enum class SpecificHeatModel
-    {
-      constant,
-      phase_change
-    } specific_heat_model;
-
-    enum class ThermalConductivityModel
-    {
-      constant,
-      linear
-    } thermal_conductivity_model;
-
-    // Linear thermal conductivity parameters : k = k_A0 + k_A1 * T
-    double k_A0;
-    double k_A1;
-  };
-
-  /**
    * @brief Power-law rheological model to solve for non Newtonian
    * flows.
    */
@@ -290,13 +237,6 @@ namespace Parameters
 
   struct NonNewtonian
   {
-    // Non Newtonian model
-    enum class Model
-    {
-      powerlaw,
-      carreau
-    } model;
-
     CarreauParameters  carreau_parameters;
     PowerLawParameters powerlaw_parameters;
 
@@ -320,22 +260,52 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm, unsigned int id);
 
-    // Kinematic viscosity (nu = mu/rho) in units of m^2/s
+    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
     double viscosity;
     // volumetric mass density (rho) in units of kg/m^3
     double density;
-    // specific heat capacity (cp) in J/(kg.K)
+    // specific heat capacity (cp) in J/K/kg
     double specific_heat;
-    // thermal conductivity (k) in W/(m.K)
+    // thermal conductivity (k) in W/m/K
     double thermal_conductivity;
     // thermal expansion coefficient (alpha) in 1/K
     double thermal_expansion;
-    // tracer diffusivity) in m^2/s
+    // tracer diffusivity) in L^2/s
     double tracer_diffusivity;
 
-    // Non Newtonian parameters
-    bool         non_newtonian_flow;
+    // Phase change parameters
+    PhaseChange phase_change_parameters;
+
+    // Non Newtonian model parameters
+    bool non_newtonian_flow;
+    enum class RheologyModel
+    {
+      powerlaw,
+      carreau,
+      newtonian
+    } rheology_model;
     NonNewtonian non_newtonian_parameters;
+
+    enum class DensityModel
+    {
+      constant
+    } density_model;
+
+    enum class SpecificHeatModel
+    {
+      constant,
+      phase_change
+    } specific_heat_model;
+
+    enum class ThermalConductivityModel
+    {
+      constant,
+      linear
+    } thermal_conductivity_model;
+
+    // Linear thermal conductivity parameters : k = k_A0 + k_A1 * T
+    double k_A0;
+    double k_A1;
   };
 
 

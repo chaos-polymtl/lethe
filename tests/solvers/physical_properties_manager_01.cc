@@ -21,6 +21,7 @@
 
 // Lethe
 #include <core/parameters.h>
+#include <core/physical_property_model.h>
 
 #include <solvers/physical_properties_manager.h>
 
@@ -29,7 +30,39 @@
 
 void
 test()
-{}
+{
+  // Create a physical property manager
+
+  Parameters::PhysicalProperties physical_properties;
+  physical_properties.number_of_fluids = 1;
+  physical_properties.fluids.resize(1);
+  physical_properties.fluids[0].density_model =
+    Parameters::Fluid::DensityModel::constant;
+  physical_properties.fluids[0].specific_heat_model =
+    Parameters::Fluid::SpecificHeatModel::constant;
+  physical_properties.fluids[0].thermal_conductivity_model =
+    Parameters::Fluid::ThermalConductivityModel::constant;
+
+  physical_properties.fluids[0].density              = 1;
+  physical_properties.fluids[0].thermal_conductivity = 3;
+  physical_properties.fluids[0].specific_heat        = 2;
+
+  PhysicalPropertiesManager physical_properties_manager(physical_properties);
+
+  std::map<field, double> dummy_fields;
+
+  deallog << "Testing PhysicalPropertiesManager" << std::endl;
+  deallog << "Density              : "
+          << physical_properties_manager.density[0]->value(dummy_fields)
+          << std::endl;
+  deallog << "Specific heat        : "
+          << physical_properties_manager.specific_heat[0]->value(dummy_fields)
+          << std::endl;
+  deallog << "Thermal conductivity : "
+          << physical_properties_manager.thermal_conductivity[0]->value(
+               dummy_fields)
+          << std::endl;
+}
 
 int
 main()

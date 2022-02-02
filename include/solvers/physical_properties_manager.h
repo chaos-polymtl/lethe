@@ -29,15 +29,26 @@ using namespace dealii;
 
 class PhysicalPropertiesManager
 {
+public:
+  /**
+   * @brief Default constructor that initialized none of the physical properties
+   */
+  PhysicalPropertiesManager()
+  {}
+
   PhysicalPropertiesManager(Parameters::PhysicalProperties physical_properties);
 
+  void
+  initialize(Parameters::PhysicalProperties physical_properties);
 
-
-private:
   std::vector<std::shared_ptr<DensityModel>>             density;
   std::vector<std::shared_ptr<SpecificHeatModel>>        specific_heat;
   std::vector<std::shared_ptr<ThermalConductivityModel>> thermal_conductivity;
+  std::vector<std::shared_ptr<RheologicalModel>>         rheology;
 
+  bool non_newtonian_flow;
+
+private:
   unsigned int number_of_fluids;
 };
 

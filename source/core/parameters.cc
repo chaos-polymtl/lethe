@@ -308,11 +308,6 @@ namespace Parameters
   {
     prm.enter_subsection("non newtonian");
     {
-      prm.declare_entry("model",
-                        "carreau",
-                        Patterns::Selection("power-law|carreau"),
-                        "Non newtonian model "
-                        "Choices are <power-law|carreau>.");
       powerlaw_parameters.declare_parameters(prm);
       carreau_parameters.declare_parameters(prm);
     }
@@ -324,17 +319,8 @@ namespace Parameters
   {
     prm.enter_subsection("non newtonian");
     {
-      const std::string op = prm.get("model");
-      if (op == "power-law")
-        {
-          model = Model::powerlaw;
-          powerlaw_parameters.parse_parameters(prm);
-        }
-      else if (op == "carreau")
-        {
-          model = Model::carreau;
-          carreau_parameters.parse_parameters(prm);
-        }
+      powerlaw_parameters.parse_parameters(prm);
+      carreau_parameters.parse_parameters(prm);
     }
     prm.leave_subsection();
   }
@@ -529,13 +515,18 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-<<<<<<< HEAD
       prm.declare_entry("non newtonian flow",
                         "false",
                         Patterns::Bool(),
                         "Non Newtonian flow");
+
+      prm.declare_entry("rheological model",
+                        "newtonian",
+                        Patterns::Selection("newtonian|power-law|carreau"),
+                        "Rheological model "
+                        "Choices are <newtonian|power-law|carreau>.");
+
       non_newtonian_parameters.declare_parameters(prm);
-=======
 
 
       prm.declare_entry("density model",
@@ -564,15 +555,10 @@ namespace Parameters
                         Patterns::Double(),
                         "k_A0 parameter for linear conductivity model");
 
-<<<<<<< HEAD
-      phase_change_parameters.declare_parameters(prm);
->>>>>>> 4a9cb28 (WIP physical properties)
-=======
       prm.declare_entry("k_A1",
                         "0",
                         Patterns::Double(),
                         "k_A1 parameter for linear conductivity model");
->>>>>>> c6b6e35 (First working version of manager without rheology)
     }
     prm.leave_subsection();
   }
@@ -588,10 +574,7 @@ namespace Parameters
       thermal_conductivity = prm.get_double("thermal conductivity");
       thermal_expansion    = prm.get_double("thermal expansion");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
-<<<<<<< HEAD
-      non_newtonian_flow   = prm.get_bool("non newtonian flow");
-      non_newtonian_parameters.parse_parameters(prm);
-=======
+
 
       // Parse models for the physical properties
       std::string op;
@@ -620,7 +603,23 @@ namespace Parameters
         specific_heat_model = SpecificHeatModel::phase_change;
 
       phase_change_parameters.parse_parameters(prm);
->>>>>>> 4a9cb28 (WIP physical properties)
+
+      // Rheology
+      non_newtonian_flow = prm.get_bool("non newtonian flow");
+      op                 = prm.get("rheology model");
+      if (op == "power-law")
+        {
+          rheology_model = RheologyModel::powerlaw;
+        }
+      else if (op == "carreau")
+        {
+          rheology_model = RheologyModel::carreau;
+        }
+      else if (op == "newtonian")
+        {
+          rheology_model = RheologyModel::newtonian;
+        }
+      non_newtonian_parameters.parse_parameters(prm);
     }
     prm.leave_subsection();
   }

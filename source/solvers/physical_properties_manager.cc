@@ -19,8 +19,17 @@
 
 PhysicalPropertiesManager::PhysicalPropertiesManager(
   Parameters::PhysicalProperties physical_properties)
-  : number_of_fluids(physical_properties.number_of_fluids)
 {
+  initialize(physical_properties);
+}
+
+void
+PhysicalPropertiesManager::initialize(
+  Parameters::PhysicalProperties physical_properties)
+{
+  number_of_fluids = physical_properties.number_of_fluids;
+
+  non_newtonian_flow = false;
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)
     {
@@ -32,6 +41,9 @@ PhysicalPropertiesManager::PhysicalPropertiesManager(
 
       thermal_conductivity.push_back(
         ThermalConductivityModel::model_cast(physical_properties.fluids[f]));
+
+      rheology.push_back(
+        RheologicalModel::model_cast(physical_properties.fluids[f]));
     }
   // For
 }
