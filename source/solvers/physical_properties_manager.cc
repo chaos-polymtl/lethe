@@ -19,6 +19,7 @@
 
 PhysicalPropertiesManager::PhysicalPropertiesManager(
   Parameters::PhysicalProperties physical_properties)
+  : is_initialized(true)
 {
   initialize(physical_properties);
 }
@@ -44,6 +45,8 @@ PhysicalPropertiesManager::initialize(
 
       rheology.push_back(
         RheologicalModel::model_cast(physical_properties.fluids[f]));
+      if (physical_properties.fluids[f].rheology_model !=
+          Parameters::Fluid::RheologyModel::newtonian)
+        non_newtonian_flow = true;
     }
-  // For
 }

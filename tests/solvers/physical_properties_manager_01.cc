@@ -53,13 +53,14 @@ test()
 
   deallog << "Testing PhysicalPropertiesManager" << std::endl;
   deallog << "Density              : "
-          << physical_properties_manager.density[0]->value(dummy_fields)
+          << physical_properties_manager.get_density()->value(dummy_fields)
           << std::endl;
   deallog << "Specific heat        : "
-          << physical_properties_manager.specific_heat[0]->value(dummy_fields)
+          << physical_properties_manager.get_specific_heat()->value(
+               dummy_fields)
           << std::endl;
   deallog << "Thermal conductivity : "
-          << physical_properties_manager.thermal_conductivity[0]->value(
+          << physical_properties_manager.get_thermal_conductivity()->value(
                dummy_fields)
           << std::endl;
 }

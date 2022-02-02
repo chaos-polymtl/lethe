@@ -27,6 +27,14 @@
 using namespace dealii;
 
 
+/** @class The PhysicalPropertiesManager class manages the physical properties
+ * model which are required to calculate the various physical properties
+ * This centralizes the place where the models are created.
+ * The class can be constructed empty and initialized from parameters
+ * or it can be constructed directly with a Parameters section.
+ *
+ */
+
 class PhysicalPropertiesManager
 {
 public:
@@ -34,13 +42,57 @@ public:
    * @brief Default constructor that initialized none of the physical properties
    */
   PhysicalPropertiesManager()
+    : is_initialized(false)
   {}
 
+  /**
+   * @brief PhysicalPropertiesManager Constructor that initializes the class
+   * @param physical_properties Parameters for the physical properties
+   */
+
   PhysicalPropertiesManager(Parameters::PhysicalProperties physical_properties);
+
+  /**
+   * @brief initialize Initializes the physical properties using the parameters
+   * @param physical_properties Parameters for the physical properties
+   */
 
   void
   initialize(Parameters::PhysicalProperties physical_properties);
 
+  std::shared_ptr<DensityModel>
+  get_density(unsigned int fluid_id = 0)
+  {
+    return density[fluid_id];
+  }
+
+  std::shared_ptr<SpecificHeatModel>
+  get_specific_heat(unsigned int fluid_id = 0)
+  {
+    return specific_heat[fluid_id];
+  }
+
+  std::shared_ptr<ThermalConductivityModel>
+  get_thermal_conductivity(unsigned int fluid_id = 0)
+  {
+    return thermal_conductivity[fluid_id];
+  }
+
+  std::shared_ptr<RheologicalModel>
+  get_rheology(unsigned int fluid_id = 0)
+  {
+    return rheology[fluid_id];
+  }
+
+  bool
+  is_non_newtonian()
+  {
+    return non_newtonian_flow;
+  }
+
+
+private:
+  bool                                                   is_initialized;
   std::vector<std::shared_ptr<DensityModel>>             density;
   std::vector<std::shared_ptr<SpecificHeatModel>>        specific_heat;
   std::vector<std::shared_ptr<ThermalConductivityModel>> thermal_conductivity;
@@ -48,7 +100,6 @@ public:
 
   bool non_newtonian_flow;
 
-private:
   unsigned int number_of_fluids;
 };
 
