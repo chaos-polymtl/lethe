@@ -1,7 +1,7 @@
 Interface sharpening
 --------------------
 
-When running a multiphase flow simulation using the volume of fluid method (VOF), the interface between two fluids becomes more and more blurry after each time step due to diffusion. 
+When running a multiphase flow simulation using the volume of fluid method (VOF), the interface between two fluids becomes more and more blurry after each time step due to numerical diffusion. 
 
 To avoid that, this subsection includes parameters related to the interface sharpening.
 
@@ -25,7 +25,7 @@ To avoid that, this subsection includes parameters related to the interface shar
 
   This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be between 1 and 2.
 
-* ``sharpening frequency``: sets the frequency (in number of iteration) for the interface sharpening computation.
+* ``sharpening frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
 
 .. seealso::
 

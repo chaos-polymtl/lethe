@@ -43,7 +43,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   When ``set VOF = true``, these optional parameters can be used:
     * ``interface sharpening``: controls if the interface sharpening method is used. Additional parameters can be found at :doc:`interface_sharpening`.
-    * ``conservation monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid with the given ``fluid index``. Results are outputed in a data table (`free_surface_monitoring.dat`).
+    * ``conservation monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid with the given ``fluid index``. Results are outputted in a data table (`free_surface_monitoring.dat`).
 
 
 .. warning::
