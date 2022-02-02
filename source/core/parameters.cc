@@ -606,7 +606,7 @@ namespace Parameters
 
       // Rheology
       non_newtonian_flow = prm.get_bool("non newtonian flow");
-      op                 = prm.get("rheology model");
+      op                 = prm.get("rheological model");
       if (op == "power-law")
         {
           rheology_model = RheologyModel::powerlaw;

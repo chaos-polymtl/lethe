@@ -55,13 +55,12 @@ public:
   BoundaryConditions::NSBoundaryConditions<dim>     boundary_conditions;
   BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
-  Parameters::InitialConditions<dim> *              initial_condition;
-  AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
-  SourceTerms::SourceTerm<dim> *                    source_term;
+  Parameters::InitialConditions<dim>               *initial_condition;
+  AnalyticalSolutions::AnalyticalSolution<dim>     *analytical_solution;
+  SourceTerms::SourceTerm<dim>                     *source_term;
   Parameters::VelocitySource                        velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
-  Parameters::NonNewtonian                          non_newtonian;
   Parameters::InterfaceSharpening                   interface_sharpening;
   Parameters::Multiphysics                          multiphysics;
 
@@ -97,7 +96,6 @@ public:
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
-    non_newtonian.declare_parameters(prm);
     interface_sharpening.declare_parameters(prm);
 
     analytical_solution = new AnalyticalSolutions::AnalyticalSolution<dim>;
@@ -128,7 +126,6 @@ public:
     forces_parameters.parse_parameters(prm);
     post_processing.parse_parameters(prm);
     flow_control.parse_parameters(prm);
-    non_newtonian.parse_parameters(prm);
     interface_sharpening.parse_parameters(prm);
     restart_parameters.parse_parameters(prm);
     boundary_conditions.parse_parameters(prm);
