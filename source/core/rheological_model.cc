@@ -40,7 +40,7 @@ PowerLaw::value(const std::map<field, double> &field_values)
 void
 PowerLaw::vector_value(
   const std::map<field, std::vector<double>> &field_vectors,
-  std::vector<double>                        &property_vector)
+  std::vector<double> &                       property_vector)
 {
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
@@ -62,7 +62,7 @@ void
 PowerLaw::vector_jacobian(
   const std::map<field, std::vector<double>> &field_vectors,
   const field                                 id,
-  std::vector<double>                        &jacobian_vector)
+  std::vector<double> &                       jacobian_vector)
 {
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
@@ -106,7 +106,7 @@ void
 Carreau::vector_jacobian(
   const std::map<field, std::vector<double>> &field_vectors,
   const field                                 id,
-  std::vector<double>                        &jacobian_vector)
+  std::vector<double> &                       jacobian_vector)
 {
   if (id == field::shear_rate)
     this->vector_numerical_jacobian(field_vectors,
