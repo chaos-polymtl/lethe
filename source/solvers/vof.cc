@@ -1,12 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -23,6 +14,14 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 void
@@ -455,6 +454,60 @@ template <int dim>
 void
 VolumeOfFluid<dim>::modify_solution()
 {
+  // Peeling/wetting (create another method?)
+  {
+    const DoFHandler<dim> *dof_handler_fluid =
+      multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+    auto scratch_data = VOFScratchData<dim>(*this->fe,
+                                            *this->cell_quadrature,
+                                            *this->fs_mapping,
+                                            dof_handler_fluid->get_fe());
+
+    FEFaceValues<dim> fe_face_values_cfd(mapping,
+                                         fe,
+                                         face_quadrature_formula,
+                                         update_values |
+                                           update_quadrature_points |
+                                           update_gradients |
+                                           update_JxW_values |
+                                           update_normal_vectors);
+
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions_vof.size;
+         ++i_bc)
+      {
+        if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
+            BoundaryConditions::BoundaryType::vof_peeling)
+          {
+            std::cout << "peeling demandé!!" << std::endl;
+            unsigned int boundary_id =
+              this->simulation_parameters.boundary_conditions.id[i_bc];
+
+            // TODO voir dans postprocessing_cfd -> calculate_forces
+            // For all cells at boundary
+            for (const auto &cell : dof_handler_fluid.active_cell_iterators())
+              {
+                if ((cell->is_locally_owned()) && (cell->at_boundary()))
+                  {
+                    for (const auto face : cell->face_indices())
+                      {
+                        if (cell->face(face)->at_boundary())
+                          {
+                            // Reinit fe_face_values for CFD and VOF
+                            fe_face_values_cfd.reinit(cell, face);
+                            if (cell->face(face)->boundary_id() == boundary_id)
+                              {
+                                std::cout << "cellule à analyser" << std::endl;
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  }
+  // Interface sharpening
   if (this->simulation_parameters.multiphysics.interface_sharpening)
     {
       // Limit the phase fractions between 0 and 1

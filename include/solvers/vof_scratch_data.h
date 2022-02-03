@@ -16,8 +16,6 @@
  * Scratch data for the VOF auxiliary physics
  */
 
-#include <core/multiphysics.h>
-
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -28,6 +26,8 @@
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/multiphysics.h>
 
 
 #ifndef lethe_VOF_scratch_data_h
@@ -44,8 +44,8 @@ using namespace dealii;
  * function (values, gradients, laplacians) at all the gauss points for all
  * degrees of freedom and stores it into arrays.
  * This class serves as a seperation between the evaluation at the gauss point
- *of the variables of interest and their use in the assembly, which is carried
- *out by the assembler functions.
+ * of the variables of interest and their use in the assembly, which is carried
+ * out by the assembler functions.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
@@ -88,7 +88,7 @@ public:
 
   /**
    * @brief Copy Constructor. Same as the main constructor.
-   *  This constructor only uses the other scratch to build the FeValues, it
+   * This constructor only uses the other scratch to build the FeValues, it
    * does not copy the content of the other scratch into itself since, by
    * definition of the WorkStream mechanism it is assumed that the content of
    * the scratch will be reset on a cell basis.

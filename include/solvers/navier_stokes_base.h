@@ -26,7 +26,6 @@
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
-
 #include <solvers/flow_control.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_assemblers.h>
@@ -267,17 +266,17 @@ protected:
    **/
 
   /**
-   * @brief calculate_forces
+   * @brief postprocessing_forces
    * Post-processing function
-   * Calculate forces acting on each boundary condition
+   * Outputs the forces acting on each boundary condition
    */
   void
   postprocessing_forces(const VectorType &evaluation_point);
 
   /**
-   * @brief calculate_torques
+   * @brief postprocessing_torques
    * Post-processing function
-   * Calculate torque acting on each boundary condition
+   * Outputs the torque acting on each boundary condition
    */
   void
   postprocessing_torques(const VectorType &evaluation_point);
