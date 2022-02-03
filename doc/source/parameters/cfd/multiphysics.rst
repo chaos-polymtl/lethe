@@ -17,7 +17,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     set VOF 			= false
     set interface sharpening 	= false
     set conservation monitoring = false
-    set fluid index 		= 0
+    set fluid monitored		= 1
   end
 
 
@@ -43,12 +43,17 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   When ``set VOF = true``, these optional parameters can be used:
     * ``interface sharpening``: controls if the interface sharpening method is used. Additional parameters can be found at :doc:`interface_sharpening`.
-    * ``conservation monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid with the given ``fluid index``. Results are outputted in a data table (`free_surface_monitoring.dat`).
+    * ``conservation monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the ``fluid monitored``. Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
+    * ``fluid monitored``: index of the monitored fluid, if ``set conservation monitoring = true``. 
+
+      .. important::
+
+        Must match with the index set in `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_. For instance, if the physical properties for the fluid of interest is defined in ``subsection fluid 0``, use ``set fluid monitored = 0``.
 
 
 .. warning::
 
-  At the moment, a maximum of two fluids is supported, with respective ``fluid index`` of ``0`` and ``1``.
+  At the moment, a maximum of two fluids is supported, with respective index of ``0`` and ``1``. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
 
 .. seealso::
 

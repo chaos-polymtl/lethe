@@ -1,7 +1,7 @@
 
-#include <core/parameters_multiphysics.h>
-
 #include <deal.II/base/parameter_handler.h>
+
+#include <core/parameters_multiphysics.h>
 
 
 
@@ -55,7 +55,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry(
       "fluid monitored",
-      "0",
+      "1",
       Patterns::Integer(),
       "Index of the fluid which conservation is monitored <0|1>");
   }
