@@ -439,7 +439,7 @@ calculate_apparent_viscosity(
   // Cast rheological model to either a Newtonian model or one of the
   // non Newtonian models according to the physical properties
   std::shared_ptr<RheologicalModel> rheological_model =
-    RheologicalModel::model_cast(physical_properties);
+    RheologicalModel::model_cast(physical_properties.fluids[0]);
 
   const FESystem<dim, dim> fe = dof_handler.get_fe();
   FEValues<dim>            fe_values(mapping,
@@ -537,7 +537,7 @@ calculate_forces(
   // Cast rheological model to either a Newtonian model or one of the
   // non Newtonian models according to the physical properties
   std::shared_ptr<RheologicalModel> rheological_model =
-    RheologicalModel::model_cast(physical_properties);
+    RheologicalModel::model_cast(physical_properties.fluids[0]);
 
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
@@ -672,7 +672,7 @@ calculate_torques(
   // Cast rheological model to either a Newtonian model or one of the
   // non Newtonian models according to the physical properties
   std::shared_ptr<RheologicalModel> rheological_model =
-    RheologicalModel::model_cast(physical_properties);
+    RheologicalModel::model_cast(physical_properties.fluids[0]);
 
 
   const unsigned int               n_q_points = face_quadrature_formula.size();

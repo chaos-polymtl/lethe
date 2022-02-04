@@ -184,7 +184,8 @@ public:
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
   {
-    rheological_model = RheologicalModel::model_cast(physical_properties);
+    rheological_model =
+      RheologicalModel::model_cast(physical_properties.fluids[0]);
   }
 
   /**
@@ -426,7 +427,8 @@ public:
     , physical_properties(physical_properties)
     , gamma(gamma)
   {
-    rheological_model = RheologicalModel::model_cast(physical_properties);
+    rheological_model =
+      RheologicalModel::model_cast(physical_properties.fluids[0]);
   }
 
   /**
