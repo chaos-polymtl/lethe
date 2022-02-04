@@ -182,7 +182,8 @@ public:
     Parameters::PhysicalProperties p_physical_properties)
     : DataPostprocessorScalar<dim>("viscosity", update_gradients)
   {
-    rheological_model = RheologicalModel::model_cast(p_physical_properties);
+    rheological_model =
+      RheologicalModel::model_cast(p_physical_properties.fluids[0]);
   }
   virtual void
   evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,

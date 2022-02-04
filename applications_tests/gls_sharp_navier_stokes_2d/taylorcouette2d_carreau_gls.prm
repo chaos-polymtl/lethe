@@ -16,8 +16,8 @@ subsection physical properties
 set number of fluids = 1
   subsection fluid 0
     set non newtonian flow	= true
+   	set rheological model 		= carreau
     subsection non newtonian
-    	set model 		= carreau
     	subsection carreau
 	    	set viscosity_0		= 1.2
 	    	set viscosity_inf 	= 0.8
