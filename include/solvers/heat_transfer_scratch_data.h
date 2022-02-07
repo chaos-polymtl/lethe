@@ -27,6 +27,7 @@
 
 #include <core/density_model.h>
 #include <core/multiphysics.h>
+#include <core/physical_property_model.h>
 #include <core/specific_heat_model.h>
 #include <core/thermal_conductivity_model.h>
 
@@ -87,6 +88,7 @@ public:
    */
   HeatTransferScratchData(
     const Parameters::PhysicalProperties physical_properties,
+    const PhysicalPropertiesManager      propertis_manager,
     const FiniteElement<dim> &           fe_ht,
     const Quadrature<dim> &              quadrature,
     const Mapping<dim> &                 mapping,
@@ -349,6 +351,18 @@ public:
       }
   }
 
+
+  /** @brief Calculates the physical properties. This function calculates the physical properties
+   * that may be required by the heat transfer problem. Namely the density,
+   * specific heat, thermal conductivity and viscosity (for viscous
+   * dissipation).
+   *
+   */
+  void
+  calculate_physical_properties();
+
+
+
   // FEValues for the HT problem
   const Parameters::PhysicalProperties physical_properties;
   FEValues<dim>                        fe_values_T;
@@ -369,9 +383,12 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
   std::vector<std::vector<double>>         stages_temperature_values;
 
-  std::vector<double> specific_heat;
-  std::vector<double> thermal_conductivity;
-  std::vector<double> density;
+  // Physical properties
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  specific_heat;
+  std::vector<double>                  thermal_conductivity;
+  std::vector<double>                  density;
+  std::vector<double>                  viscosity;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;

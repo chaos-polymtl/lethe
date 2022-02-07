@@ -28,6 +28,7 @@
 
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
+#include <solvers/physical_properties_manager.h>
 #include <solvers/source_terms.h>
 
 #include <dem/dem_solver_parameters.h>
@@ -63,6 +64,8 @@ public:
   Parameters::DynamicFlowControl                    flow_control;
   Parameters::InterfaceSharpening                   interface_sharpening;
   Parameters::Multiphysics                          multiphysics;
+
+  PhysicalPropertiesManager physical_properties_manager;
 
   void
   declare(ParameterHandler &prm)
@@ -140,6 +143,8 @@ public:
     particlesParameters->parse_parameters(prm);
 
     multiphysics.parse_parameters(prm);
+
+    physical_properties_manager.initialize(physical_properties);
 
     // Check consistency of parameters parsed in different subsections
     if (multiphysics.VOF && physical_properties.number_of_fluids != 2)

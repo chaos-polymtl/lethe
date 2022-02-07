@@ -60,6 +60,8 @@ public:
   void
   initialize(Parameters::PhysicalProperties physical_properties);
 
+
+  // Getters for the physical property models
   std::shared_ptr<DensityModel>
   get_density(unsigned int fluid_id = 0)
   {
@@ -90,6 +92,15 @@ public:
     return non_newtonian_flow;
   }
 
+  bool
+  field_is_required(field id)
+  {
+    return required_fields[id];
+  }
+
+  void
+  establish_fields_required_by_model(PhysicalPropertyModel &model);
+
 
 private:
   bool                                                   is_initialized;
@@ -97,6 +108,8 @@ private:
   std::vector<std::shared_ptr<SpecificHeatModel>>        specific_heat;
   std::vector<std::shared_ptr<ThermalConductivityModel>> thermal_conductivity;
   std::vector<std::shared_ptr<RheologicalModel>>         rheology;
+
+  std::map<field, bool> required_fields;
 
   bool non_newtonian_flow;
 

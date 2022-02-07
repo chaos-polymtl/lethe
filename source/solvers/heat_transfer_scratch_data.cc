@@ -32,6 +32,7 @@ HeatTransferScratchData<dim>::allocate()
   this->specific_heat        = std::vector<double>(n_q_points);
   this->thermal_conductivity = std::vector<double>(n_q_points);
   this->density              = std::vector<double>(n_q_points);
+  this->viscosity            = std::vector<double>(n_q_points);
 
   // Velocity for BDF schemes
   this->previous_temperature_values =
@@ -59,6 +60,11 @@ HeatTransferScratchData<dim>::allocate()
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
 
   // Allocate memory for the physical properties
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::temperature, n_q_points));
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::previous_temperature,
+                                          n_q_points));
   specific_heat        = std::vector<double>(n_q_points);
   density              = std::vector<double>(n_q_points);
   thermal_conductivity = std::vector<double>(n_q_points);
@@ -79,6 +85,20 @@ HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
   previous_vof_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
+}
+
+
+template <int dim>
+void
+HeatTransferScratchData<dim>::calculate_physical_properties()
+{
+  set_field_vector(field::temperature,
+                   this->present_temperature_values,
+                   this->fields);
+
+  set_field_vector(field::previous_temperature,
+                   this->previous_temperature_values[0],
+                   this->fields);
 }
 
 

@@ -22,7 +22,15 @@ PhysicalPropertiesManager::PhysicalPropertiesManager(
   : is_initialized(true)
 {
   initialize(physical_properties);
+  required_fields[field::temperature]          = false;
+  required_fields[field::previous_temperature] = false;
+  required_fields[field::shear_rate]           = false;
 }
+
+void
+PhysicalPropertiesManager::establish_fields_required_by_model(
+  PhysicalPropertyModel &model)
+{}
 
 void
 PhysicalPropertiesManager::initialize(
@@ -36,15 +44,21 @@ PhysicalPropertiesManager::initialize(
     {
       density.push_back(
         DensityModel::model_cast(physical_properties.fluids[f]));
+      establish_fields_required_by_model((*density[f]));
 
       specific_heat.push_back(
         SpecificHeatModel::model_cast(physical_properties.fluids[f]));
+      establish_fields_required_by_model((*specific_heat[f]));
+
 
       thermal_conductivity.push_back(
         ThermalConductivityModel::model_cast(physical_properties.fluids[f]));
+      establish_fields_required_by_model((*thermal_conductivity[f]));
 
       rheology.push_back(
         RheologicalModel::model_cast(physical_properties.fluids[f]));
+      establish_fields_required_by_model((*rheology[f]));
+
       if (physical_properties.fluids[f].rheology_model !=
           Parameters::Fluid::RheologyModel::newtonian)
         non_newtonian_flow = true;

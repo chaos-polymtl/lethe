@@ -92,6 +92,7 @@ HeatTransfer<dim>::assemble_system_matrix()
 
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties,
+    this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
@@ -186,6 +187,7 @@ HeatTransfer<dim>::assemble_system_rhs()
 
   auto scratch_data = HeatTransferScratchData<dim>(
     this->simulation_parameters.physical_properties,
+    this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
