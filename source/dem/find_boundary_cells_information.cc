@@ -210,7 +210,7 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
 template <int dim>
 void
 BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
-  std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+  std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
     &updated_boundary_points_and_normal_vectors)
 {
   // Initialize a simple quadrature for on the system. This will be used to
@@ -242,12 +242,37 @@ BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
                        ++f_q_point)
                     {
                       // Finding the normal vector of the boundary face
-                      Tensor<1, dim> normal_vector =
-                        -fe_face_values.normal_vector(f_q_point);
+                      Tensor<1, 3> normal_vector;
+
+                      if constexpr (dim == 3)
+                        normal_vector =
+                          -fe_face_values.normal_vector(f_q_point);
+
+                      if constexpr (dim == 2)
+                        {
+                          Tensor<1, 2> normal_vector_2d =
+                            -fe_face_values.normal_vector(f_q_point);
+                          normal_vector[0] = normal_vector_2d[0];
+                          normal_vector[1] = normal_vector_2d[1];
+                          normal_vector[2] = 0.0;
+                        }
 
                       // Finding a point on the boundary face
-                      Point<dim> quad_point =
-                        fe_face_values.quadrature_point(0);
+                      Point<3> quad_point;
+
+                      if constexpr (dim == 3)
+                        quad_point = fe_face_values.quadrature_point(0);
+
+                      if constexpr (dim == 2)
+                        {
+                          Tensor<1, 2> quad_point_2d =
+                            fe_face_values.quadrature_point(0);
+                          quad_point[0] = quad_point_2d[0];
+                          quad_point[1] = quad_point_2d[1];
+                          quad_point[2] = 0.0;
+                        }
+
+
                       updated_boundary_points_and_normal_vectors
                         [cell->face_index(face_id)] =
                           std::make_pair(normal_vector, quad_point);

@@ -1,10 +1,9 @@
 #include <dem/output_force_torque_calculation.h>
 
-template <int dim>
 void
 write_forces_torques_output_locally(
-  std::map<unsigned int, Tensor<1, dim>> force_on_walls,
-  std::map<unsigned int, Tensor<1, dim>> torque_on_walls)
+  std::map<unsigned int, Tensor<1, 3>> force_on_walls,
+  std::map<unsigned int, Tensor<1, 3>> torque_on_walls)
 {
   TableHandler table;
 
@@ -27,13 +26,3 @@ write_forces_torques_output_locally(
 
   table.write_text(std::cout);
 }
-
-template void
-write_forces_torques_output_locally(
-  std::map<unsigned int, Tensor<1, 2>> force_on_walls,
-  std::map<unsigned int, Tensor<1, 2>> torque_on_walls);
-
-template void
-write_forces_torques_output_locally(
-  std::map<unsigned int, Tensor<1, 3>> force_on_walls,
-  std::map<unsigned int, Tensor<1, 3>> torque_on_walls);

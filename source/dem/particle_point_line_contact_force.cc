@@ -16,8 +16,8 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
                            particle_point_line_contact_info_struct<dim>>
     *particle_point_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
-    &                          physical_properties,
-  std::vector<Tensor<1, dim>> &force)
+    &                        physical_properties,
+  std::vector<Tensor<1, 3>> &force)
 
 {
   // Looping over particle_point_line_pairs_in_contact
@@ -132,7 +132,7 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
 
           // Getting force
 #if DEAL_II_VERSION_GTE(10, 0, 0)
-          Tensor<1, dim> &particle_force = force[particle->get_local_index()];
+          Tensor<1, 3> &particle_force = force[particle->get_local_index()];
 #else
           Tensor<1, dim> &particle_force = force[particle->get_id()];
 #endif
@@ -155,8 +155,8 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
                            particle_point_line_contact_info_struct<dim>>
     *particle_line_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
-    &                          physical_properties,
-  std::vector<Tensor<1, dim>> &force)
+    &                        physical_properties,
+  std::vector<Tensor<1, 3>> &force)
 {
   // Looping over particle_point_line_pairs_in_contact
   for (auto pairs_in_contact_iterator = particle_line_pairs_in_contact->begin();
@@ -277,7 +277,7 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
 
           // Getting force
 #if DEAL_II_VERSION_GTE(10, 0, 0)
-          Tensor<1, dim> &particle_force = force[particle->get_local_index()];
+          Tensor<1, 3> &particle_force = force[particle->get_local_index()];
 #else
           Tensor<1, dim> &particle_force = force[particle->get_id()];
 #endif

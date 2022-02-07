@@ -63,8 +63,8 @@ public:
                              particle_point_line_contact_info_struct<dim>>
       *particle_point_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
-      &                          lagrangian_physical_properties,
-    std::vector<Tensor<1, dim>> &force);
+      &                        lagrangian_physical_properties,
+    std::vector<Tensor<1, 3>> &force);
 
   /**
    * Carries out the calculation of the particle-line contact force using
@@ -82,8 +82,8 @@ public:
                              particle_point_line_contact_info_struct<dim>>
       *particle_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
-      &                          lagrangian_physical_properties,
-    std::vector<Tensor<1, dim>> &force);
+      &                        lagrangian_physical_properties,
+    std::vector<Tensor<1, 3>> &force);
 
 private:
   /** This private function is used to find the projection of point_p on

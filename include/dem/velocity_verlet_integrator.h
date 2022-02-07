@@ -61,18 +61,18 @@ public:
    * to integrate
    * @param body_force A constant volumetric body force applied to all particles
    * @param time_step The value of the time step used for the integration
-   * @param momentum Momentum of particles
+   * @param torque Torque acting on particles
    * @param force Force acting on particles
    * @param MOI A container of moment of inertia of particles
    */
   virtual void
   integrate_half_step_location(
-    Particles::ParticleHandler<dim> &  particle_handler,
-    const Tensor<1, dim> &             body_force,
-    const double                       time_step,
-    const std::vector<Tensor<1, dim>> &momentum,
-    const std::vector<Tensor<1, dim>> &force,
-    const std::vector<double> &        MOI) override;
+    Particles::ParticleHandler<dim> &particle_handler,
+    const Tensor<1, dim> &           body_force,
+    const double                     time_step,
+    const std::vector<Tensor<1, 3>> &torque,
+    const std::vector<Tensor<1, 3>> &force,
+    const std::vector<double> &      MOI) override;
 
   /**
    * Carries out the correction integration of the motion of all
@@ -82,7 +82,7 @@ public:
    * to integrate
    * @param body_force A constant volumetric body force applied to all particles
    * @param time_step The value of the time step used for the integration
-   * @param momentum Momentum of particles
+   * @param torque Torque acting on particles
    * @param force Force acting on particles
    * @param MOI A container of moment of inertia of particles
    */
@@ -90,8 +90,8 @@ public:
   integrate(Particles::ParticleHandler<dim> &particle_handler,
             const Tensor<1, dim> &           body_force,
             const double                     time_step,
-            std::vector<Tensor<1, dim>> &    momentum,
-            std::vector<Tensor<1, dim>> &    force,
+            std::vector<Tensor<1, 3>> &      momentum,
+            std::vector<Tensor<1, 3>> &      force,
             const std::vector<double> &      MOI) override;
 };
 

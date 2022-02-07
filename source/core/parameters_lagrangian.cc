@@ -664,8 +664,7 @@ namespace Parameters
       prm.enter_subsection("center of mass coordinate");
       point_center_mass[0] = prm.get_double("x");
       point_center_mass[1] = prm.get_double("y");
-      if (dim == 3)
-        point_center_mass[2] = prm.get_double("z");
+      point_center_mass[2] = prm.get_double("z");
       prm.leave_subsection();
       prm.leave_subsection();
     }
@@ -834,9 +833,8 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::declareDefaultEntry(ParameterHandler &prm)
+    BCDEM::declareDefaultEntry(ParameterHandler &prm)
     {
       prm.declare_entry("boundary id", "0", Patterns::Integer(), "Boundary ID");
       prm.declare_entry(
@@ -877,9 +875,8 @@ namespace Parameters
                         "Rotational vector element in z direction");
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::parse_boundary_conditions(ParameterHandler &prm)
+    BCDEM::parse_boundary_conditions(ParameterHandler &prm)
     {
       const unsigned int boundary_id   = prm.get_integer("boundary id");
       const std::string  boundary_type = prm.get("type");
@@ -892,26 +889,23 @@ namespace Parameters
       else if (boundary_type == "translational")
         {
           BC_type = BoundaryType::translational;
-          Tensor<1, dim> translational_velocity;
+          Tensor<1, 3> translational_velocity;
           translational_velocity[0] = prm.get_double("speed x");
           translational_velocity[1] = prm.get_double("speed y");
-          if (dim == 3)
-            translational_velocity[2] = prm.get_double("speed z");
+          translational_velocity[2] = prm.get_double("speed z");
 
           this->boundary_translational_velocity.at(boundary_id) =
             translational_velocity;
         }
       else if (boundary_type == "rotational")
         {
-          BC_type                         = BoundaryType::rotational;
-          double         rotational_speed = prm.get_double("rotational speed");
-          Tensor<1, dim> rotational_vector;
-          if (dim == 3)
-            {
-              rotational_vector[0] = prm.get_double("rotational vector x");
-              rotational_vector[1] = prm.get_double("rotational vector y");
-              rotational_vector[2] = prm.get_double("rotational vector z");
-            }
+          BC_type                       = BoundaryType::rotational;
+          double       rotational_speed = prm.get_double("rotational speed");
+          Tensor<1, 3> rotational_vector;
+
+          rotational_vector[0] = prm.get_double("rotational vector x");
+          rotational_vector[1] = prm.get_double("rotational vector y");
+          rotational_vector[2] = prm.get_double("rotational vector z");
 
           this->boundary_rotational_speed.at(boundary_id)  = rotational_speed;
           this->boundary_rotational_vector.at(boundary_id) = rotational_vector;
@@ -926,9 +920,8 @@ namespace Parameters
         }
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::declare_parameters(ParameterHandler &prm)
+    BCDEM::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("DEM boundary conditions");
       {
@@ -950,9 +943,8 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::parse_parameters(ParameterHandler &prm)
+    BCDEM::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("DEM boundary conditions");
 
@@ -975,18 +967,17 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::initialize_containers(
-      std::unordered_map<unsigned int, Tensor<1, dim>>
+    BCDEM::initialize_containers(
+      std::unordered_map<unsigned int, Tensor<1, 3>>
         &                                       boundary_translational_velocity,
       std::unordered_map<unsigned int, double> &boundary_rotational_speed,
-      std::unordered_map<unsigned int, Tensor<1, dim>>
+      std::unordered_map<unsigned int, Tensor<1, 3>>
         &                        boundary_rotational_vector,
       std::vector<unsigned int> &outlet_boundaries)
     {
-      Tensor<1, dim> zero_tensor;
-      for (unsigned int d = 0; d < dim; ++d)
+      Tensor<1, 3> zero_tensor;
+      for (unsigned int d = 0; d < 3; ++d)
         {
           zero_tensor[d] = 0;
         }
@@ -1151,8 +1142,6 @@ namespace Parameters
     template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
-    template class BCDEM<2>;
-    template class BCDEM<3>;
     template class GridMotion<2>;
     template class GridMotion<3>;
 

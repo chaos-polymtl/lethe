@@ -6,8 +6,8 @@
 subsection simulation control
   set time step                 			 = 0.00001
   set time end       					 = 0.4
-  set log frequency				         = 10000000
-  set output frequency            			 = 10000000
+  set log frequency				         = 1000000
+  set output frequency            			 = 1000000
 end
 
 #---------------------------------------------------
@@ -51,14 +51,14 @@ subsection lagrangian physical properties
     		set density particles   	 	= 2000
     		set young modulus particles         	= 1000000
     		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.3
-    		set friction coefficient particles      = 0.05
+    		set restitution coefficient particles	= 0.5
+    		set friction coefficient particles      = 0.5
     		set rolling friction particles         	= 0.01
 	end
     set young modulus wall            			= 1000000
     set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.3
-    set friction coefficient wall         		= 0.05
+    set restitution coefficient wall           		= 0.5
+    set friction coefficient wall         		= 0.5
     set rolling friction wall         	      	  	= 0.01
 end
 
@@ -98,5 +98,8 @@ subsection DEM boundary conditions
 	set boundary id					= 0
         set type              				= rotational
 	set rotational speed				= 1
+	set rotational vector x				= 0
+        set rotational vector y				= 0
+        set rotational vector z				= 1
     end
 end

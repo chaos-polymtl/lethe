@@ -6,12 +6,12 @@ using namespace DEM;
 template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate_half_step_location(
-  Particles::ParticleHandler<dim> &  particle_handler,
-  const Tensor<1, dim> &             g,
-  const double                       dt,
-  const std::vector<Tensor<1, dim>> &momentum,
-  const std::vector<Tensor<1, dim>> &force,
-  const std::vector<double> &        MOI)
+  Particles::ParticleHandler<dim> &particle_handler,
+  const Tensor<1, dim> &           g,
+  const double                     dt,
+  const std::vector<Tensor<1, 3>> &torque,
+  const std::vector<Tensor<1, 3>> &force,
+  const std::vector<double> &      MOI)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -41,7 +41,7 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
 
           // Half-step angular velocity
           particle_properties[PropertiesIndex::omega_x + d] +=
-            0.5 * (momentum[particle_id][d] / MOI[particle_id]) * dt;
+            0.5 * (torque[particle_id][d] / MOI[particle_id]) * dt;
 
           // Update particle position using half-step velocity
           particle_position[d] +=
@@ -57,8 +57,8 @@ VelocityVerletIntegrator<dim>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, dim> &           g,
   const double                     dt,
-  std::vector<Tensor<1, dim>> &    momentum,
-  std::vector<Tensor<1, dim>> &    force,
+  std::vector<Tensor<1, 3>> &      torque,
+  std::vector<Tensor<1, 3>> &      force,
   const std::vector<double> &      MOI)
 {
   for (auto &particle : particle_handler)
@@ -70,15 +70,29 @@ VelocityVerletIntegrator<dim>::integrate(
 #else
       types::particle_index particle_id = particle.get_id();
 #endif
-      auto            particle_properties = particle.get_properties();
-      Tensor<1, dim> &particle_momentum   = momentum[particle_id];
-      Tensor<1, dim> &particle_force      = force[particle_id];
-      Tensor<1, dim>  particle_acceleration;
-      auto            particle_position = particle.get_location();
+      auto           particle_properties = particle.get_properties();
+      Tensor<1, 3> & particle_torque     = torque[particle_id];
+      Tensor<1, 3> & particle_force      = force[particle_id];
+      Tensor<1, dim> particle_acceleration;
+      Point<3>       particle_position;
       double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
       double MOI_inverse  = 1 / MOI[particle_id];
 
-      for (int d = 0; d < dim; ++d)
+      if constexpr (dim == 3)
+        {
+          particle_position = particle.get_location();
+        }
+
+      if constexpr (dim == 2)
+        {
+          Point<2> particle_position_2d = particle.get_location();
+
+          particle_position[0] = particle_position_2d[0];
+          particle_position[1] = particle_position_2d[1];
+          particle_position[2] = 0.0;
+        }
+
+      for (int d = 0; d < 3; ++d)
         {
           particle_acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;
 
@@ -92,15 +106,30 @@ VelocityVerletIntegrator<dim>::integrate(
 
           // Updating angular velocity
           particle_properties[PropertiesIndex::omega_x + d] +=
-            dt * (particle_momentum[d] * MOI_inverse);
-
-          // Reinitializing force
-          particle_force[d] = 0;
-
-          // Reinitializing torque
-          particle_momentum[d] = 0;
+            dt * (particle_torque[d] * MOI_inverse);
         }
-      particle.set_location(particle_position);
+
+      // *************
+
+
+      // Reinitialize force
+      particle_force = 0;
+
+      // Reinitialize torque
+      particle_torque = 0;
+
+      if constexpr (dim == 3)
+        {
+          particle.set_location(particle_position);
+        }
+
+      if constexpr (dim == 2)
+        {
+          Point<2> position_2d;
+          position_2d[0] = particle_position[0];
+          position_2d[1] = particle_position[1];
+          particle.set_location(position_2d);
+        }
     }
 }
 

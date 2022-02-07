@@ -797,7 +797,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 #endif
 
   force.resize(displacement.size());
-  momentum.resize(displacement.size());
+  torque.resize(displacement.size());
 
 
   this->particle_handler.exchange_ghost_particles(true);
@@ -815,7 +815,7 @@ CFDDEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<double> &                    MOI)
 {
-  MOI.resize(momentum.size());
+  MOI.resize(torque.size());
 
   for (auto &particle : particle_handler)
     {
@@ -983,7 +983,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
     ->calculate_particle_particle_contact_force(local_adjacent_particles,
                                                 ghost_adjacent_particles,
                                                 dem_time_step,
-                                                momentum,
+                                                torque,
                                                 force);
 
   // Particles-walls contact force:
@@ -1002,7 +1002,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
         this->particle_handler,
         dem_parameters.lagrangian_physical_properties.g,
         dem_time_step,
-        momentum,
+        torque,
         force,
         MOI);
     }
@@ -1012,7 +1012,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
         this->particle_handler,
         dem_parameters.lagrangian_physical_properties.g,
         dem_time_step,
-        momentum,
+        torque,
         force,
         MOI);
     }
@@ -1059,7 +1059,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       }
 #endif
       force.resize(displacement.size());
-      momentum.resize(displacement.size());
+      torque.resize(displacement.size());
 
       this->particle_handler.exchange_ghost_particles(true);
 
@@ -1231,7 +1231,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-    particle_wall_pairs_in_contact, dem_time_step, momentum, force);
+    particle_wall_pairs_in_contact, dem_time_step, torque, force);
 
   if (this->cfd_dem_simulation_parameters.dem_parameters.forces_torques
         .calculate_force_torque)
@@ -1247,7 +1247,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-        pfw_pairs_in_contact, dem_time_step, momentum, force);
+        pfw_pairs_in_contact, dem_time_step, torque, force);
     }
 
   particle_point_line_contact_force_object

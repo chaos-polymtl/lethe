@@ -41,7 +41,7 @@ public:
   Parameters::Lagrangian::InsertionInfo            insertion_info;
   Parameters::Lagrangian::ModelParameters          model_parameters;
   Parameters::Lagrangian::FloatingWalls<dim>       floating_walls;
-  Parameters::Lagrangian::BCDEM<dim>               boundary_conditions;
+  Parameters::Lagrangian::BCDEM                    boundary_conditions;
   Parameters::Lagrangian::ForceTorqueOnWall<dim>   forces_torques;
   Parameters::Lagrangian::GridMotion<dim>          grid_motion;
   Parameters::Lagrangian::LagrangianPostProcessing post_processing;
