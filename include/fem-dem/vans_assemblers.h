@@ -14,15 +14,13 @@
  * ---------------------------------------------------------------------*/
 
 
-#include <core/simulation_control.h>
+#include <deal.II/particles/particle_handler.h>
 
+#include <core/simulation_control.h>
+#include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
-
-#include <fem-dem/cfd_dem_simulation_parameters.h>
-
-#include <deal.II/particles/particle_handler.h>
 
 #ifndef lethe_vans_assemblers_h
 #  define lethe_vans_assemblers_h
@@ -267,6 +265,32 @@ class GLSVansAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
 {
 public:
   GLSVansAssemblerDallavalle()
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+};
+
+/**
+ * @brief Class that assembles the drag force using a constant model for the
+ * VANS equations where the momentum exchange coefficient
+ *  beta = constant * particle_volume
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerKochHill : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerKochHill()
   {}
 
   /**

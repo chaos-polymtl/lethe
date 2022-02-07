@@ -1,12 +1,12 @@
-#include "solvers/postprocessing_cfd.h"
-
-#include <fem-dem/gls_vans.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <fem-dem/gls_vans.h>
+
+#include "solvers/postprocessing_cfd.h"
 
 
 // Constructor for class GLS_VANS
@@ -544,6 +544,14 @@ GLSVANSSolver<dim>::setup_assemblers()
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
             std::make_shared<GLSVansAssemblerDallavalle<dim>>());
+        }
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::kochhill)
+        {
+          // Koch and Hill Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerKochHill<dim>>());
         }
     }
 
