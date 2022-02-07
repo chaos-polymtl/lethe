@@ -479,7 +479,8 @@ private:
   TableHandler volume_table_fs;
 
   // Peeling analysis (ou VectorType)
-  Vector<double> solution_peeling;
+  //  Vector<double> solution_peeling;
+  TrilinosWrappers::MPI::Vector solution_peeling;
 
   // Enable DCDD shock capturing scheme
   const bool DCDD = true;
