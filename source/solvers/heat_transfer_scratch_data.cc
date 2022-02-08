@@ -1,7 +1,9 @@
 #include <core/bdf.h>
 #include <core/sdirk.h>
+#include <core/utilities.h>
 
 #include <solvers/heat_transfer_scratch_data.h>
+
 
 template <int dim>
 void
@@ -22,6 +24,8 @@ HeatTransferScratchData<dim>::allocate()
   // Velocity
   this->velocity_values          = std::vector<Tensor<1, dim>>(n_q_points);
   this->velocity_gradient_values = std::vector<Tensor<2, dim>>(n_q_points);
+  this->shear_rate_values        = std::vector<double>(n_q_points);
+
 
   // Initialize arrays related to temperature
   this->present_temperature_values = std::vector<double>(n_q_points);
@@ -68,6 +72,7 @@ HeatTransferScratchData<dim>::allocate()
   specific_heat        = std::vector<double>(n_q_points);
   density              = std::vector<double>(n_q_points);
   thermal_conductivity = std::vector<double>(n_q_points);
+  viscosity            = std::vector<double>(n_q_points);
 }
 
 template <int dim>
@@ -85,6 +90,17 @@ HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
   previous_vof_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
+
+
+  specific_heat_0        = std::vector<double>(n_q_points);
+  density_0              = std::vector<double>(n_q_points);
+  thermal_conductivity_0 = std::vector<double>(n_q_points);
+  viscosity_0            = std::vector<double>(n_q_points);
+
+  specific_heat_1        = std::vector<double>(n_q_points);
+  density_1              = std::vector<double>(n_q_points);
+  thermal_conductivity_1 = std::vector<double>(n_q_points);
+  viscosity_1            = std::vector<double>(n_q_points);
 }
 
 
@@ -103,7 +119,19 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
 
   if (properties_manager.field_is_required(field::shear_rate))
     {
-      // TODO calculate shear rate
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          // Calculate shear rate (at each q)
+          const Tensor<2, dim> shear_rate_tensor =
+            velocity_gradient_values[q] +
+            transpose(velocity_gradient_values[q]);
+
+          // Calculate the shear rate magnitude
+          shear_rate_values[q] =
+            calculate_shear_rate_magnitude(shear_rate_tensor);
+        }
+
+      set_field_vector(field::shear_rate, shear_rate_values, this->fields);
     }
 
 
@@ -114,16 +142,62 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
       const auto specific_heat_model = properties_manager.get_specific_heat();
       const auto thermal_conductivity_model =
         properties_manager.get_thermal_conductivity();
+      const auto rheology_model = properties_manager.get_rheology();
 
       density_model->vector_value(fields, density);
       specific_heat_model->vector_value(fields, specific_heat);
       thermal_conductivity_model->vector_value(fields, thermal_conductivity);
+      thermal_conductivity_model->vector_value(fields, viscosity);
     }
+  else // properties_manager.get_number_of_fluids() == 2
+    {
+      const auto density_model_0 = properties_manager.get_density(0);
+      const auto specific_heat_model_0 =
+        properties_manager.get_specific_heat(0);
+      const auto thermal_conductivity_model_0 =
+        properties_manager.get_thermal_conductivity(0);
+      const auto rheology_model_0 = properties_manager.get_rheology(0);
 
+      density_model_0->vector_value(fields, density_0);
+      specific_heat_model_0->vector_value(fields, specific_heat_0);
+      thermal_conductivity_model_0->vector_value(fields,
+                                                 thermal_conductivity_0);
+      rheology_model_0->vector_value(fields, viscosity_0);
 
-  // Case where you have two fluids
+      const auto density_model_1 = properties_manager.get_density(1);
+      const auto specific_heat_model_1 =
+        properties_manager.get_specific_heat(1);
+      const auto thermal_conductivity_model_1 =
+        properties_manager.get_thermal_conductivity(1);
+      const auto rheology_model_1 = properties_manager.get_rheology(1);
 
-  // const auto &density =
+      density_model_1->vector_value(fields, density_1);
+      specific_heat_model_1->vector_value(fields, specific_heat_1);
+      thermal_conductivity_model_1->vector_value(fields,
+                                                 thermal_conductivity_1);
+      rheology_model_1->vector_value(fields, viscosity_1);
+
+      // Blend the physical properties using the VOF field
+      for (unsigned int q = 0; q < this->n_q_points; ++q)
+        {
+          density[q] = calculate_point_property(this->phase_values[q],
+                                                this->density_0[q],
+                                                this->density_1[q]);
+
+          specific_heat[q] = calculate_point_property(this->phase_values[q],
+                                                      this->specific_heat_0[q],
+                                                      this->specific_heat_1[q]);
+
+          thermal_conductivity[q] =
+            calculate_point_property(this->phase_values[q],
+                                     this->thermal_conductivity_0[q],
+                                     this->thermal_conductivity_1[q]);
+
+          viscosity[q] = calculate_point_property(this->phase_values[q],
+                                                  this->viscosity_0[q],
+                                                  this->viscosity_1[q]);
+        }
+    }
 }
 
 
