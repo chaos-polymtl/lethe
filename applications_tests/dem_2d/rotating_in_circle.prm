@@ -52,13 +52,13 @@ subsection lagrangian physical properties
     		set young modulus particles         	= 1000000
     		set poisson ratio particles          	= 0.3
     		set restitution coefficient particles	= 0.5
-    		set friction coefficient particles      = 0.5
+    		set friction coefficient particles      = 0.1
     		set rolling friction particles         	= 0.01
 	end
     set young modulus wall            			= 1000000
     set poisson ratio wall            			= 0.3
     set restitution coefficient wall           		= 0.5
-    set friction coefficient wall         		= 0.5
+    set friction coefficient wall         		= 0.1
     set rolling friction wall         	      	  	= 0.01
 end
 
@@ -97,7 +97,7 @@ subsection DEM boundary conditions
     subsection boundary condition 0
 	set boundary id					= 0
         set type              				= rotational
-	set rotational speed				= 1
+	set rotational speed				= 0.5
 	set rotational vector x				= 0
         set rotational vector y				= 0
         set rotational vector z				= 1
