@@ -62,7 +62,7 @@ public:
     const std::unordered_map<types::particle_index,
                              particle_point_line_contact_info_struct<dim>>
       *particle_point_line_pairs_in_contact,
-    const Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
+    const Parameters::Lagrangian::LagrangianPhysicalProperties
       &                        lagrangian_physical_properties,
     std::vector<Tensor<1, 3>> &force);
 
@@ -81,7 +81,7 @@ public:
     const std::unordered_map<types::particle_index,
                              particle_point_line_contact_info_struct<dim>>
       *particle_line_pairs_in_contact,
-    const Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
+    const Parameters::Lagrangian::LagrangianPhysicalProperties
       &                        lagrangian_physical_properties,
     std::vector<Tensor<1, 3>> &force);
 
@@ -95,10 +95,10 @@ private:
    * @return The projection of point_p on the line (from point_a to point_b)
    */
 
-  Point<dim>
-  find_projection_point(const Point<dim> &point_p,
-                        const Point<dim> &point_a,
-                        const Point<dim> &point_b);
+  Point<3>
+  find_projection_point(const Point<3> &point_p,
+                        const Point<3> &point_a,
+                        const Point<3> &point_b);
 };
 
 #endif

@@ -33,12 +33,11 @@ namespace Parameters
 {
   namespace Lagrangian
   {
-    template <int dim>
-    class LagrangianPhysicalProperties
+    struct LagrangianPhysicalProperties
     {
     public:
       // Gravitational acceleration
-      Tensor<1, dim> g;
+      Tensor<1, 3> g;
 
       // Size distribution type
       enum class size_distribution_type

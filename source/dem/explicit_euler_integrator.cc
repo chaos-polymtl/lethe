@@ -8,7 +8,7 @@ template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate_half_step_location(
   Particles::ParticleHandler<dim> & /*particle_handler*/,
-  const Tensor<1, dim> & /*body_force*/,
+  const Tensor<1, 3> & /*body_force*/,
   const double /*time_step*/,
   const std::vector<Tensor<1, 3>> & /*momentum*/,
   const std::vector<Tensor<1, 3>> & /*force*/,
@@ -19,7 +19,7 @@ template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
-  const Tensor<1, dim> &           g,
+  const Tensor<1, 3> &             g,
   const double                     dt,
   std::vector<Tensor<1, 3>> &      momentum,
   std::vector<Tensor<1, 3>> &      force,

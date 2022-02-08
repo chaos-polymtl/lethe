@@ -276,7 +276,7 @@ private:
   bool                                 contact_detection_step;
   bool                                 load_balance_step;
   bool                                 checkpoint_step;
-  Tensor<1, dim>                       g;
+  Tensor<1, 3>                         g;
   double                               triangulation_cell_diameter;
 
   // Simulation control for time stepping and I/Os

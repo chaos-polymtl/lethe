@@ -15,7 +15,7 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
   const std::unordered_map<types::particle_index,
                            particle_point_line_contact_info_struct<dim>>
     *particle_point_pairs_in_contact,
-  const Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
+  const Parameters::Lagrangian::LagrangianPhysicalProperties
     &                        physical_properties,
   std::vector<Tensor<1, 3>> &force)
 
@@ -31,59 +31,54 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
       auto contact_information = &pairs_in_contact_iterator->second;
 
       // Defining particle and properties of particle as local parameters
-      auto             particle            = contact_information->particle;
-      auto             particle_properties = particle->get_properties();
-      auto             particle_location   = particle->get_location();
-      const Point<dim> point               = contact_information->point_one;
+      auto     particle            = contact_information->particle;
+      auto     particle_properties = particle->get_properties();
+      Point<3> particle_location_3d;
 
-      double normal_overlap =
+      if constexpr (dim == 3)
+        particle_location_3d = particle->get_location();
+
+      if constexpr (dim == 2)
+        {
+          Point<2> particle_location_2d = particle->get_location();
+          particle_location_3d[0]       = particle_location_2d[0];
+          particle_location_3d[1]       = particle_location_2d[1];
+          particle_location_3d[2]       = 0.0;
+        }
+
+      const Point<3> point = contact_information->point_one;
+      double         normal_overlap =
         ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
-        point.distance(particle_location);
+        point.distance(particle_location_3d);
 
       if (normal_overlap > 0)
         {
           // Calculation of normal vector, particle velocity and contact
           // relative velocity
-          Tensor<1, dim> point_to_particle_vector = particle_location - point;
-          Tensor<1, dim> normal_vector =
+          Tensor<1, 3> point_to_particle_vector = particle_location_3d - point;
+          Tensor<1, 3> normal_vector =
             point_to_particle_vector / point_to_particle_vector.norm();
 
-          Tensor<1, dim> particle_velocity;
+          Tensor<1, 3> particle_velocity;
           particle_velocity[0] = particle_properties[DEM::PropertiesIndex::v_x];
           particle_velocity[1] = particle_properties[DEM::PropertiesIndex::v_y];
-          if (dim == 3)
-            {
-              particle_velocity[2] =
-                particle_properties[DEM::PropertiesIndex::v_z];
-            }
+          particle_velocity[2] = particle_properties[DEM::PropertiesIndex::v_z];
 
-          Tensor<1, dim> particle_omega;
+          Tensor<1, 3> particle_omega;
           particle_omega[0] =
             particle_properties[DEM::PropertiesIndex::omega_x];
           particle_omega[1] =
             particle_properties[DEM::PropertiesIndex::omega_y];
-          if (dim == 3)
-            {
-              particle_omega[2] =
-                particle_properties[DEM::PropertiesIndex::omega_z];
-            }
+          particle_omega[2] =
+            particle_properties[DEM::PropertiesIndex::omega_z];
 
           // Defining relative contact velocity
-          Tensor<1, dim> contact_relative_velocity;
-          if (dim == 3)
-            {
-              contact_relative_velocity =
-                particle_velocity +
-                cross_product_3d(
-                  (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
-                   particle_omega),
-                  normal_vector);
-            }
-
-          if (dim == 2)
-            {
-              contact_relative_velocity = particle_velocity;
-            }
+          Tensor<1, 3> contact_relative_velocity =
+            particle_velocity +
+            cross_product_3d((((particle_properties[DEM::PropertiesIndex::dp]) /
+                               2) *
+                              particle_omega),
+                             normal_vector);
 
           // Calculation of normal relative velocity
           double normal_relative_velocity =
@@ -118,27 +113,27 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
                  particle_properties[DEM::PropertiesIndex::mass]);
 
           // Calculation of normal force using spring and dashpot normal forces
-          Tensor<1, dim> spring_normal_force =
+          Tensor<1, 3> spring_normal_force =
             (normal_spring_constant * normal_overlap) * normal_vector;
 
-          Tensor<1, dim> dashpot_normal_force =
+          Tensor<1, 3> dashpot_normal_force =
             (normal_damping_constant * normal_relative_velocity) *
             normal_vector;
 
           // In particle-point and particle-line contacts, the tangential force
           // is meaningless. So the total force is equal to the normal force
-          Tensor<1, dim> total_force =
-            spring_normal_force - dashpot_normal_force;
+          Tensor<1, 3> total_force = spring_normal_force - dashpot_normal_force;
 
           // Getting force
 #if DEAL_II_VERSION_GTE(10, 0, 0)
           Tensor<1, 3> &particle_force = force[particle->get_local_index()];
 #else
-          Tensor<1, dim> &particle_force = force[particle->get_id()];
+          Tensor<1, 3> &particle_force = force[particle->get_id()];
 #endif
 
           // Updating the body force of particles in the particle handler
-          for (int d = 0; d < dim; ++d)
+          // ********* VECTORIZE
+          for (int d = 0; d < 3; ++d)
             {
               particle_force[d] = particle_force[d] + total_force[d];
             }
@@ -154,7 +149,7 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
   const std::unordered_map<types::particle_index,
                            particle_point_line_contact_info_struct<dim>>
     *particle_line_pairs_in_contact,
-  const Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
+  const Parameters::Lagrangian::LagrangianPhysicalProperties
     &                        physical_properties,
   std::vector<Tensor<1, 3>> &force)
 {
@@ -168,67 +163,66 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
       auto contact_information = &pairs_in_contact_iterator->second;
 
       // Defining particle and properties of particle as local parameters
-      auto             particle            = contact_information->particle;
-      auto             particle_properties = particle->get_properties();
-      auto             particle_location   = particle->get_location();
-      const Point<dim> point_one           = contact_information->point_one;
-      const Point<dim> point_two           = contact_information->point_two;
+      auto     particle            = contact_information->particle;
+      auto     particle_properties = particle->get_properties();
+      Point<3> particle_location_3d;
+
+      if constexpr (dim == 3)
+        particle_location_3d = particle->get_location();
+
+      if constexpr (dim == 2)
+        {
+          Point<2> particle_location_2d = particle->get_location();
+          particle_location_3d[0]       = particle_location_2d[0];
+          particle_location_3d[1]       = particle_location_2d[1];
+          particle_location_3d[2]       = 0.0;
+        }
+
+      Point<3> point_one = contact_information->point_one;
+      Point<3> point_two = contact_information->point_two;
 
       // For finding the particle-line distance, the projection of the particle
       // on the line should be obtained
-      Point<dim> projection =
-        find_projection_point(particle_location, point_one, point_two);
+      Point<3> projection =
+        find_projection_point(particle_location_3d, point_one, point_two);
 
       // Calculation of the distance between the particle and boundary line
       const double normal_overlap =
         ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
-        projection.distance(particle_location);
+        projection.distance(particle_location_3d);
 
       if (normal_overlap > 0)
         {
           // Calculation of normal vector, particle velocity and contact
           // relative velocity
-          Tensor<1, dim> point_to_particle_vector =
-            particle_location - projection;
-          Tensor<1, dim> normal_vector =
+          Tensor<1, 3> point_to_particle_vector =
+            particle_location_3d - projection;
+          Tensor<1, 3> normal_vector =
             point_to_particle_vector / point_to_particle_vector.norm();
 
-          Tensor<1, dim> particle_velocity;
+          Tensor<1, 3> particle_velocity;
           particle_velocity[0] = particle_properties[DEM::PropertiesIndex::v_x];
           particle_velocity[1] = particle_properties[DEM::PropertiesIndex::v_y];
-          if (dim == 3)
-            {
-              particle_velocity[2] =
-                particle_properties[DEM::PropertiesIndex::v_z];
-            }
+          particle_velocity[2] = particle_properties[DEM::PropertiesIndex::v_z];
 
-          Tensor<1, dim> particle_omega;
+
+          Tensor<1, 3> particle_omega;
           particle_omega[0] =
             particle_properties[DEM::PropertiesIndex::omega_x];
           particle_omega[1] =
             particle_properties[DEM::PropertiesIndex::omega_y];
-          if (dim == 3)
-            {
-              particle_omega[2] =
-                particle_properties[DEM::PropertiesIndex::omega_z];
-            }
+          particle_omega[2] =
+            particle_properties[DEM::PropertiesIndex::omega_z];
+
 
           // Defining relative contact velocity
-          Tensor<1, dim> contact_relative_velocity;
-          if (dim == 3)
-            {
-              contact_relative_velocity =
-                particle_velocity +
-                cross_product_3d(
-                  (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
-                   particle_omega),
-                  normal_vector);
-            }
+          Tensor<1, 3> contact_relative_velocity =
+            particle_velocity +
+            cross_product_3d((((particle_properties[DEM::PropertiesIndex::dp]) /
+                               2) *
+                              particle_omega),
+                             normal_vector);
 
-          if (dim == 2)
-            {
-              contact_relative_velocity = particle_velocity;
-            }
 
           // Calculation of normal relative velocity
           double normal_relative_velocity =
@@ -263,27 +257,27 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
                  particle_properties[DEM::PropertiesIndex::mass]);
 
           // Calculation of normal force using spring and dashpot normal forces
-          Tensor<1, dim> spring_normal_force =
+          Tensor<1, 3> spring_normal_force =
             (normal_spring_constant * normal_overlap) * normal_vector;
 
-          Tensor<1, dim> dashpot_normal_force =
+          Tensor<1, 3> dashpot_normal_force =
             (normal_damping_constant * normal_relative_velocity) *
             normal_vector;
 
           // In particle-point and particle-line contacts, the tangential force
           // is meaningless. So the total force is equal to the normal force
-          Tensor<1, dim> total_force =
-            spring_normal_force - dashpot_normal_force;
+          Tensor<1, 3> total_force = spring_normal_force - dashpot_normal_force;
 
           // Getting force
 #if DEAL_II_VERSION_GTE(10, 0, 0)
           Tensor<1, 3> &particle_force = force[particle->get_local_index()];
 #else
-          Tensor<1, dim> &particle_force = force[particle->get_id()];
+          Tensor<1, 3> &particle_force = force[particle->get_id()];
 #endif
 
           // Updating the body force of particles in the particle handler
-          for (int d = 0; d < dim; ++d)
+          // ********** VECTORIZE
+          for (int d = 0; d < 3; ++d)
             {
               particle_force[d] = particle_force[d] + total_force[d];
             }
@@ -292,15 +286,15 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
 }
 
 template <int dim>
-Point<dim>
-ParticlePointLineForce<dim>::find_projection_point(const Point<dim> &point_p,
-                                                   const Point<dim> &point_a,
-                                                   const Point<dim> &point_b)
+Point<3>
+ParticlePointLineForce<dim>::find_projection_point(const Point<3> &point_p,
+                                                   const Point<3> &point_a,
+                                                   const Point<3> &point_b)
 {
-  Tensor<1, dim> vector_ab = point_b - point_a;
-  Tensor<1, dim> vector_ap = point_p - point_a;
+  Tensor<1, 3> vector_ab = point_b - point_a;
+  Tensor<1, 3> vector_ap = point_p - point_a;
 
-  Point<dim> projection =
+  Point<3> projection =
     point_a + ((vector_ap * vector_ab) / (vector_ab * vector_ab)) * vector_ab;
 
   return projection;

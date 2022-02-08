@@ -36,7 +36,7 @@ public:
   Parameters::Restart           restart;
   Parameters::Timer             timer;
   Parameters::SimulationControl simulation_control;
-  Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
+  Parameters::Lagrangian::LagrangianPhysicalProperties
                                                    lagrangian_physical_properties;
   Parameters::Lagrangian::InsertionInfo            insertion_info;
   Parameters::Lagrangian::ModelParameters          model_parameters;

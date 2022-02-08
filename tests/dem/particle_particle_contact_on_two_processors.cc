@@ -201,25 +201,22 @@ locate_local_particles_in_cells(
 template <int dim>
 void
 reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
-                   std::vector<Tensor<1, dim>> &    momentum,
-                   std::vector<Tensor<1, dim>> &    force)
+                   std::vector<Tensor<1, 3>> &      torque,
+                   std::vector<Tensor<1, 3>> &      force)
 {
-  momentum.resize(particle_handler.n_locally_owned_particles());
+  torque.resize(particle_handler.n_locally_owned_particles());
   force.resize(particle_handler.n_locally_owned_particles());
 
-  for (unsigned int i = 0; i < momentum.size(); ++i)
+  for (unsigned int i = 0; i < torque.size(); ++i)
     {
-      // Reinitializing forces and momentums of particles in the system
+      // Reinitializing forces and torques of particles in the system
       force[i][0] = 0;
       force[i][1] = 0;
+      force[i][2] = 0;
 
-      momentum[i][0] = 0;
-      momentum[i][1] = 0;
-      if (dim == 3)
-        {
-          force[i][2]    = 0;
-          momentum[i][2] = 0;
-        }
+      torque[i][0] = 0;
+      torque[i][1] = 0;
+      torque[i][2] = 0;
     }
 }
 
@@ -358,9 +355,9 @@ test()
   std::unordered_map<unsigned int, std::vector<unsigned int>>
     ghost_contact_pair_candidates;
 
-  std::vector<Tensor<1, dim>> momentum;
-  std::vector<Tensor<1, dim>> force;
-  std::vector<double>         MOI;
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<Tensor<1, 3>> force;
+  std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if DEAL_II_VERSION_GTE(10, 0, 0)
@@ -373,7 +370,7 @@ test()
     force.resize(max_particle_id + 1);
   }
 #endif
-  momentum.resize(force.size());
+  torque.resize(force.size());
   MOI.resize(force.size());
   for (unsigned i = 0; i < MOI.size(); ++i)
     MOI[i] = 1;
@@ -381,7 +378,7 @@ test()
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
       // Reinitializing forces
-      reinitialize_force(particle_handler, momentum, force);
+      reinitialize_force(particle_handler, torque, force);
 
       particle_handler.exchange_ghost_particles();
 
@@ -414,12 +411,11 @@ test()
         cleared_local_adjacent_particles,
         cleared_ghost_adjacent_particles,
         dt,
-        momentum,
+        torque,
         force);
 
       // Integration
-      integrator_object.integrate(
-        particle_handler, g, dt, momentum, force, MOI);
+      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
 
       update_contact_containers(local_adjacent_particles,
                                 ghost_adjacent_particles,
