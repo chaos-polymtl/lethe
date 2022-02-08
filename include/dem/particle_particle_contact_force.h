@@ -131,19 +131,12 @@ protected:
     Tensor<1, 3> total_force = normal_force + tangential_force;
 
     // Updating the force and torque of particles in the particle handler
-    // VECTORIZE THIS *******************
-    for (int d = 0; d < 3; ++d)
-      {
-        particle_one_force[d] = particle_one_force[d] - total_force[d];
-        particle_two_force[d] = particle_two_force[d] + total_force[d];
-
-        particle_one_torque[d] = particle_one_torque[d] -
-                                 particle_one_tangential_torque[d] +
-                                 rolling_resistance_torque[d];
-        particle_two_torque[d] = particle_two_torque[d] -
-                                 particle_two_tangential_torque[d] -
-                                 rolling_resistance_torque[d];
-      }
+    particle_one_force -= total_force;
+    particle_two_force += total_force;
+    particle_one_torque +=
+      -particle_one_tangential_torque + rolling_resistance_torque;
+    particle_two_torque +=
+      -particle_two_tangential_torque - rolling_resistance_torque;
   }
 
   /**
@@ -155,7 +148,7 @@ protected:
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
    * @param rolling_friction_torque Contact rolling resistance torque
-   * @param particle_one_momentum Momentum of particle one (local)
+   * @param particle_one_torque Torque acting on particle one (local)
    * @param particle_one_force Force acting on particle one
    */
   inline void
@@ -164,21 +157,16 @@ protected:
     const Tensor<1, 3> &tangential_force,
     const Tensor<1, 3> &particle_one_tangential_torque,
     const Tensor<1, 3> &rolling_resistance_torque,
-    Tensor<1, 3> &      particle_one_momentum,
+    Tensor<1, 3> &      particle_one_torque,
     Tensor<1, 3> &      particle_one_force)
   {
     // Calculation of total force
     Tensor<1, 3> total_force = normal_force + tangential_force;
 
     // Updating the force and torque acting on particles in the particle handler
-    for (int d = 0; d < 3; ++d)
-      {
-        particle_one_force[d] = particle_one_force[d] - total_force[d];
-
-        particle_one_momentum[d] = particle_one_momentum[d] -
-                                   particle_one_tangential_torque[d] +
-                                   rolling_resistance_torque[d];
-      }
+    particle_one_force -= total_force;
+    particle_one_torque +=
+      -particle_one_tangential_torque + rolling_resistance_torque;
   }
 
   /**

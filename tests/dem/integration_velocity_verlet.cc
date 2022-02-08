@@ -96,16 +96,16 @@ test()
   pit->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   pit->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
-  std::vector<Tensor<1, dim>> momentum;
-  std::vector<Tensor<1, dim>> force;
-  std::vector<double>         MOI;
-  momentum.push_back(Tensor<1, dim>({0, 0, 0}));
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<Tensor<1, 3>> force;
+  std::vector<double>       MOI;
+  torque.push_back(Tensor<1, dim>({0, 0, 0}));
   force.push_back(Tensor<1, dim>({0, 0, 0}));
   MOI.push_back(1);
 
   // Calling velocity verlet integrator
   VelocityVerletIntegrator<dim> integration_object;
-  integration_object.integrate(particle_handler, g, dt, momentum, force, MOI);
+  integration_object.integrate(particle_handler, g, dt, torque, force, MOI);
 
   // Output
   for (auto particle_iterator = particle_handler.begin();

@@ -133,18 +133,10 @@ protected:
                                            point_on_boundary);
 
     // Updating the force of particles in the particle handler
-    // ***** VECTORIZE
-    for (int d = 0; d < 3; ++d)
-      {
-        particle_force[d] = particle_force[d] + total_force[d];
-      }
+    particle_force += total_force;
 
     // Updating the torque acting on particles
-    for (int d = 0; d < 3; ++d)
-      {
-        particle_torque[d] = particle_torque[d] + tangential_torque[d] +
-                             rolling_resistance_torque[d];
-      }
+    particle_torque += tangential_torque + rolling_resistance_torque;
   }
 
   /** This function is used to calculate the total force and total torque on

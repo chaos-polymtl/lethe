@@ -103,11 +103,7 @@ private:
                 const double & /*normal_force_norm*/,
                 const Tensor<1, 3> & /*normal_contact_vector*/)
   {
-    Tensor<1, 3> rolling_resistance;
-    // ******* VECTORIZE
-    for (int d = 0; d < 3; ++d)
-      rolling_resistance[d] = 0;
-
+    Tensor<1, 3> rolling_resistance({0, 0, 0});
     return rolling_resistance;
   }
 
@@ -137,11 +133,7 @@ private:
 
     // Calculation of particle-wall angular velocity (norm of the
     // particle angular velocity)
-    Tensor<1, 3> particle_wall_angular_velocity;
-    for (int d = 0; d < 3; ++d)
-      {
-        particle_wall_angular_velocity[d] = 0;
-      }
+    Tensor<1, 3> particle_wall_angular_velocity({0.0, 0.0, 0.0});
 
     double omega_value = angular_velocity.norm();
     if (omega_value != 0)
@@ -184,11 +176,7 @@ private:
 
     // Calculation of particle-wall angular velocity (norm of the
     // particle angular velocity)
-    Tensor<1, 3> particle_wall_angular_velocity;
-    for (int d = 0; d < 3; ++d)
-      {
-        particle_wall_angular_velocity[d] = 0;
-      }
+    Tensor<1, 3> particle_wall_angular_velocity({0.0, 0.0, 0.0});
 
     double omega_value = angular_velocity.norm();
     if (omega_value != 0)

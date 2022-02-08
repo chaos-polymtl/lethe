@@ -45,10 +45,7 @@ no_rolling_resistance_torque(
 {
   // No rolling resistance torque model. When this model is use, the rolling
   // friction is zero.
-  Tensor<1, 3> rolling_resistance_torque;
-
-  for (int d = 0; d < 3; ++d)
-    rolling_resistance_torque[d] = 0;
+  Tensor<1, 3> rolling_resistance_torque({0.0, 0.0, 0.0});
 
   return rolling_resistance_torque;
 }
@@ -111,7 +108,6 @@ viscous_rolling_resistance_torque(
   Tensor<1, 3> particle_one_angular_velocity, particle_two_angular_velocity,
     omega_ij, omega_ij_direction;
 
-  // *********** VECTORIZE
   for (int d = 0; d < 3; ++d)
     {
       particle_one_angular_velocity[d] =

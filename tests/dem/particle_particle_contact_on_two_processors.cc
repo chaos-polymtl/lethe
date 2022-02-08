@@ -237,11 +237,11 @@ test()
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining general simulation parameters
-  Tensor<1, dim> g{{0, 0}};
-  double         dt                                                  = 0.00001;
-  double         particle_diameter                                   = 0.005;
-  unsigned int   step_end                                            = 1000;
-  unsigned int   output_frequency                                    = 10;
+  Tensor<1, 3> g{{0, 0, 0}};
+  double       dt                                                    = 0.00001;
+  double       particle_diameter                                     = 0.005;
+  unsigned int step_end                                              = 1000;
+  unsigned int output_frequency                                      = 10;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.youngs_modulus_particle[0] =
     50000000;

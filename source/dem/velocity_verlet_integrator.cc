@@ -109,9 +109,6 @@ VelocityVerletIntegrator<dim>::integrate(
             dt * (particle_torque[d] * MOI_inverse);
         }
 
-      // *************
-
-
       // Reinitialize force
       particle_force = 0;
 

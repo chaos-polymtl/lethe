@@ -967,11 +967,7 @@ namespace Parameters
         &                        boundary_rotational_vector,
       std::vector<unsigned int> &outlet_boundaries)
     {
-      Tensor<1, 3> zero_tensor;
-      for (unsigned int d = 0; d < 3; ++d)
-        {
-          zero_tensor[d] = 0;
-        }
+      Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
       for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
         {

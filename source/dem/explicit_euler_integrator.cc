@@ -10,7 +10,7 @@ ExplicitEulerIntegrator<dim>::integrate_half_step_location(
   Particles::ParticleHandler<dim> & /*particle_handler*/,
   const Tensor<1, 3> & /*body_force*/,
   const double /*time_step*/,
-  const std::vector<Tensor<1, 3>> & /*momentum*/,
+  const std::vector<Tensor<1, 3>> & /*torque*/,
   const std::vector<Tensor<1, 3>> & /*force*/,
   const std::vector<double> & /*MOI*/)
 {}
@@ -21,7 +21,7 @@ ExplicitEulerIntegrator<dim>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3> &             g,
   const double                     dt,
-  std::vector<Tensor<1, 3>> &      momentum,
+  std::vector<Tensor<1, 3>> &      torque,
   std::vector<Tensor<1, 3>> &      force,
   const std::vector<double> &      MOI)
 {
@@ -38,7 +38,7 @@ ExplicitEulerIntegrator<dim>::integrate(
 #endif
 
       auto          particle_properties = particle->get_properties();
-      Tensor<1, 3> &particle_momentum   = momentum[particle_id];
+      Tensor<1, 3> &particle_torque     = torque[particle_id];
       Tensor<1, 3> &particle_force      = force[particle_id];
       Point<3>      particle_position;
       double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
@@ -71,14 +71,14 @@ ExplicitEulerIntegrator<dim>::integrate(
             dt * particle_properties[PropertiesIndex::v_x + d];
 
           particle_properties[PropertiesIndex::omega_x + d] +=
-            dt * (particle_momentum[d] * MOI_inverse);
+            dt * (particle_torque[d] * MOI_inverse);
         }
 
       // Reinitialize force
       particle_force = 0;
 
       // Reinitialize torque
-      particle_momentum = 0;
+      particle_torque = 0;
 
       if constexpr (dim == 3)
         {

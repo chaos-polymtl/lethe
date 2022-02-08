@@ -132,11 +132,7 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
 #endif
 
           // Updating the body force of particles in the particle handler
-          // ********* VECTORIZE
-          for (int d = 0; d < 3; ++d)
-            {
-              particle_force[d] = particle_force[d] + total_force[d];
-            }
+          particle_force += total_force;
         }
     }
 }
@@ -276,11 +272,7 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
 #endif
 
           // Updating the body force of particles in the particle handler
-          // ********** VECTORIZE
-          for (int d = 0; d < 3; ++d)
-            {
-              particle_force[d] = particle_force[d] + total_force[d];
-            }
+          particle_force += total_force;
         }
     }
 }

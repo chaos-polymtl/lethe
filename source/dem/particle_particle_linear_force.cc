@@ -191,7 +191,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
                     particle_two_tangential_torque,
                     rolling_resistance_torque);
 
-                  // Getting particles' momentum and force
+                  // Getting particles' torque and force
 #if DEAL_II_VERSION_GTE(10, 0, 0)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();
@@ -314,7 +314,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
                     particle_two_tangential_torque,
                     rolling_resistance_torque);
 
-                  // Getting momentum and force of particle one
+                  // Getting torque and force of particle one
 #if DEAL_II_VERSION_GTE(10, 0, 0)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();

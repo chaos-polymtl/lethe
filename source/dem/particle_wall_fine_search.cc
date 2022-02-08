@@ -181,12 +181,7 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
 
               // Setting tangential overlap of the new particle-floating wall
               // contact pair equal to zero
-              // VECTORIZE ***********
-              Tensor<1, 3> tangential_overlap;
-              tangential_overlap[0] = 0.0;
-              tangential_overlap[1] = 0.0;
-              tangential_overlap[2] = 0.0;
-
+              Tensor<1, 3> tangential_overlap({0.0, 0.0, 0.0});
 
               // Creating a sample from the particle_wall_contact_info_struct
               // and adding contact info to the sample

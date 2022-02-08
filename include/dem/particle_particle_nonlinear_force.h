@@ -173,7 +173,7 @@ public:
                          particle_particle_contact_info_struct<dim>>>
       &                        ghost_adjacent_particles,
     const double &             dt,
-    std::vector<Tensor<1, 3>> &momentum,
+    std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;
 
 private:
@@ -254,7 +254,7 @@ public:
    * local-ghost particle-particle contact force. These information were
    * obtained in the fine search
    * @param dt DEM time-step
-   * @param momentum An unordered_map of momentum of particles
+   * @param torque Torque acting on particles
    * @param force Force acting on particles
    */
   virtual void
@@ -270,7 +270,7 @@ public:
                          particle_particle_contact_info_struct<dim>>>
       &                        ghost_adjacent_particles,
     const double &             dt,
-    std::vector<Tensor<1, 3>> &momentum,
+    std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;
 
 private:
