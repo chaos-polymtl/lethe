@@ -61,6 +61,13 @@ public:
   initialize(Parameters::PhysicalProperties physical_properties);
 
 
+
+  inline unsigned int
+  get_number_of_fluids()
+  {
+    return number_of_fluids;
+  }
+
   // Getters for the physical property models
   std::shared_ptr<DensityModel>
   get_density(unsigned int fluid_id = 0)

@@ -73,6 +73,16 @@ public:
     model_depends_on[previous_temperature] = false;
   }
 
+  /**
+   * @brief Returns true if the PhysicalPropertyModel depends on a field, false if not.
+   */
+
+  inline bool
+  depends_on(field id)
+  {
+    return model_depends_on[id];
+  }
+
 
   /**
    * @brief value Calculates the value of a physical property.

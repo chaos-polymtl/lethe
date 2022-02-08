@@ -88,13 +88,14 @@ public:
    */
   HeatTransferScratchData(
     const Parameters::PhysicalProperties physical_properties,
-    const PhysicalPropertiesManager      propertis_manager,
+    const PhysicalPropertiesManager      properties_manager,
     const FiniteElement<dim> &           fe_ht,
     const Quadrature<dim> &              quadrature,
     const Mapping<dim> &                 mapping,
     const FiniteElement<dim> &           fe_navier_stokes,
     const Quadrature<dim - 1> &          face_quadrature)
     : physical_properties(physical_properties)
+    , properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,
                   quadrature,
@@ -129,6 +130,7 @@ public:
    */
   HeatTransferScratchData(const HeatTransferScratchData<dim> &sd)
     : physical_properties(sd.physical_properties)
+    , properties_manager(sd.properties_manager)
     , fe_values_T(sd.fe_values_T.get_mapping(),
                   sd.fe_values_T.get_fe(),
                   sd.fe_values_T.get_quadrature(),
@@ -362,13 +364,23 @@ public:
   calculate_physical_properties();
 
 
+  // Physical properties
+  const Parameters::PhysicalProperties physical_properties;
+  PhysicalPropertiesManager            properties_manager;
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  specific_heat;
+  std::vector<double>                  thermal_conductivity;
+  std::vector<double>                  density;
+  std::vector<double>                  viscosity;
+
 
   // FEValues for the HT problem
-  const Parameters::PhysicalProperties physical_properties;
-  FEValues<dim>                        fe_values_T;
-  unsigned int                         n_dofs;
-  unsigned int                         n_q_points;
-  double                               cell_size;
+  FEValues<dim> fe_values_T;
+  unsigned int  n_dofs;
+  unsigned int  n_q_points;
+  double        cell_size;
+
+
 
   // Quadrature
   std::vector<double>     JxW;
@@ -383,12 +395,6 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
   std::vector<std::vector<double>>         stages_temperature_values;
 
-  // Physical properties
-  std::map<field, std::vector<double>> fields;
-  std::vector<double>                  specific_heat;
-  std::vector<double>                  thermal_conductivity;
-  std::vector<double>                  density;
-  std::vector<double>                  viscosity;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;

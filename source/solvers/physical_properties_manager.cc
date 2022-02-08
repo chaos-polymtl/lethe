@@ -30,7 +30,14 @@ PhysicalPropertiesManager::PhysicalPropertiesManager(
 void
 PhysicalPropertiesManager::establish_fields_required_by_model(
   PhysicalPropertyModel &model)
-{}
+{
+  // Loop through the map. The use of or (||) is there to ensure
+  // that if a field is already required, it won't be erased.
+  for (auto &f : required_fields)
+    {
+      f.second = f.second || model.depends_on(f.first);
+    }
+}
 
 void
 PhysicalPropertiesManager::initialize(
@@ -49,7 +56,6 @@ PhysicalPropertiesManager::initialize(
       specific_heat.push_back(
         SpecificHeatModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model((*specific_heat[f]));
-
 
       thermal_conductivity.push_back(
         ThermalConductivityModel::model_cast(physical_properties.fluids[f]));

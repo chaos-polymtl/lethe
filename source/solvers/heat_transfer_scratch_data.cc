@@ -96,9 +96,34 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
                    this->present_temperature_values,
                    this->fields);
 
-  set_field_vector(field::previous_temperature,
-                   this->previous_temperature_values[0],
-                   this->fields);
+  if (properties_manager.field_is_required(field::previous_temperature))
+    set_field_vector(field::previous_temperature,
+                     this->previous_temperature_values[0],
+                     this->fields);
+
+  if (properties_manager.field_is_required(field::shear_rate))
+    {
+      // TODO calculate shear rate
+    }
+
+
+  // Case where you have one fluid
+  if (properties_manager.get_number_of_fluids() == 1)
+    {
+      const auto density_model       = properties_manager.get_density();
+      const auto specific_heat_model = properties_manager.get_specific_heat();
+      const auto thermal_conductivity_model =
+        properties_manager.get_thermal_conductivity();
+
+      density_model->vector_value(fields, density);
+      specific_heat_model->vector_value(fields, specific_heat);
+      thermal_conductivity_model->vector_value(fields, thermal_conductivity);
+    }
+
+
+  // Case where you have two fluids
+
+  // const auto &density =
 }
 
 

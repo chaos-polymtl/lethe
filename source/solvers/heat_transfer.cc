@@ -148,6 +148,9 @@ HeatTransfer<dim>::assemble_local_system_matrix(
       scratch_data.reinit_velocity(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
+
+  scratch_data.calculate_physical_properties();
+
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -249,6 +252,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
       scratch_data.reinit_velocity_gradient(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
+
+  scratch_data.calculate_physical_properties();
 
   copy_data.reset();
 
