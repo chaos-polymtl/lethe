@@ -242,9 +242,9 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "phase");
   // Peeling output, gathered after initialization step
-  if (solution_peeling.size() != 0) // A REVOIR (parse first_iteration?)
+  if (marker_pw.size() != 0) // A REVOIR (parse first_iteration?)
     {
-      data_out.add_data_vector(dof_handler, solution_peeling, "VOF_peeling");
+      data_out.add_data_vector(dof_handler, marker_pw, "marker_pw");
     }
 }
 
@@ -481,8 +481,11 @@ VolumeOfFluid<dim>::modify_solution()
     locally_owned_dofs = dof_handler.locally_owned_dofs();
     std::vector<types::global_dof_index> dof_indices_vof(
       fe->dofs_per_cell); //  Local connectivity
-    auto mpi_communicator = triangulation->get_communicator();
-    solution_peeling.reinit(this->locally_owned_dofs, mpi_communicator);
+    //    auto mpi_communicator = triangulation->get_communicator();
+    marker_pw.reinit(this->locally_owned_dofs,
+                     triangulation->get_communicator());
+    TrilinosWrappers::MPI::Vector solution_pw(present_solution);
+    //(this->locally_owned_dofs, mpi_communicator);
 
     // TODO clean updated values
     FEFaceValues<dim> fe_face_values_vof(*this->fs_mapping,
@@ -509,13 +512,12 @@ VolumeOfFluid<dim>::modify_solution()
     std::vector<double>              pressure_values(n_q_points);
     std::vector<double>              phase_values(n_q_points);
 
-
     for (unsigned int i_bc = 0;
          i_bc < this->simulation_parameters.boundary_conditions_vof.size;
          ++i_bc)
       {
         if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
-            BoundaryConditions::BoundaryType::vof_peeling)
+            BoundaryConditions::BoundaryType::pw)
           {
             unsigned int boundary_id =
               this->simulation_parameters.boundary_conditions.id[i_bc];
@@ -563,24 +565,30 @@ VolumeOfFluid<dim>::modify_solution()
                               {
                                 for (unsigned int q = 0; q < n_q_points; q++)
                                   {
-                                    // wetting
-                                    if (pressure_values[q] > 2000)
+                                    // wetting of lower density fluid
+                                    if (pressure_values[q] > 1000 &&
+                                        phase_values[q] <
+                                          0.95) // TODO fix value = see index of
+                                                // higher density fluid
                                       {
                                         // go to local index (see deal.II step
                                         // 4)
                                         cell_vof->get_dof_indices(
                                           dof_indices_vof);
-
+                                        // mark cells
                                         for (unsigned int k = 0;
                                              k < fe->dofs_per_cell;
                                              ++k)
                                           {
-                                            solution_peeling
-                                              [dof_indices_vof[k]] = 1;
+                                            marker_pw[dof_indices_vof[k]]   = 1;
+                                            solution_pw[dof_indices_vof[k]] = 1;
                                           }
                                       }
-                                    // peeling
-                                    if (pressure_values[q] < -100)
+                                    // peeling of higher density fluid
+                                    if (pressure_values[q] < -100 &&
+                                        phase_values[q] >
+                                          0.05) // TODO fix value = see index of
+                                                // lower density fluid
                                       {
                                         // go to local index (see deal.II step
                                         // 4)
@@ -591,8 +599,8 @@ VolumeOfFluid<dim>::modify_solution()
                                              k < fe->dofs_per_cell;
                                              ++k)
                                           {
-                                            solution_peeling
-                                              [dof_indices_vof[k]] = -1;
+                                            marker_pw[dof_indices_vof[k]] = -1;
+                                            solution_pw[dof_indices_vof[k]] = 0;
                                           }
                                       }
                                   }
@@ -603,6 +611,7 @@ VolumeOfFluid<dim>::modify_solution()
               }
           }
       }
+    present_solution = solution_pw;
   }
 
   // Interface sharpening

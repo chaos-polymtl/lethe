@@ -43,7 +43,7 @@ namespace BoundaryConditions
     tracer_dirichlet, // - Dirichlet tracer
                       // for vof
     none,             // - none
-    vof_peeling,      // - peeling/wetting
+    pw,               // - peeling/wetting
   };
 
   /**
@@ -722,9 +722,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|vof_peeling"),
+                      Patterns::Selection("none|pw"),
                       "Type of boundary condition for VOF"
-                      "Choices are <none|vof_peeling>.");
+                      "Choices are <none|pw>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -793,9 +793,9 @@ namespace BoundaryConditions
       {
         this->type[i_bc] = BoundaryType::none;
       }
-    else if (op == "vof_peeling")
+    else if (op == "pw")
       {
-        this->type[i_bc]              = BoundaryType::vof_peeling;
+        this->type[i_bc]              = BoundaryType::pw;
         this->peeling_threshold[i_bc] = prm.get_double("peeling threshold");
         this->wetting_threshold[i_bc] = prm.get_double("wetting threshold");
       }

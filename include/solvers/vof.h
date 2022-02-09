@@ -478,9 +478,8 @@ private:
   // Conservation Analysis
   TableHandler volume_table_fs;
 
-  // Peeling analysis (ou VectorType)
-  //  Vector<double> solution_peeling;
-  TrilinosWrappers::MPI::Vector solution_peeling;
+  // Peeling/Wetting analysis
+  TrilinosWrappers::MPI::Vector marker_pw;
 
   // Enable DCDD shock capturing scheme
   const bool DCDD = true;
