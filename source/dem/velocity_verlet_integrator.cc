@@ -71,11 +71,11 @@ VelocityVerletIntegrator<dim>::integrate(
 #else
       types::particle_index particle_id = particle.get_id();
 #endif
-      auto           particle_properties = particle.get_properties();
-      Tensor<1, 3> & particle_torque     = torque[particle_id];
-      Tensor<1, 3> & particle_force      = force[particle_id];
-      Tensor<1, dim> particle_acceleration;
-      Point<3>       particle_position;
+      auto          particle_properties = particle.get_properties();
+      Tensor<1, 3> &particle_torque     = torque[particle_id];
+      Tensor<1, 3> &particle_force      = force[particle_id];
+      Tensor<1, 3>  particle_acceleration;
+      Point<3>      particle_position;
       double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
       double MOI_inverse  = 1 / MOI[particle_id];
 

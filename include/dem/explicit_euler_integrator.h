@@ -89,7 +89,7 @@ public:
             const std::vector<double> &      MOI) override;
 
 private:
-  Tensor<1, dim> acceleration;
+  Tensor<1, 3> acceleration;
 };
 
 #endif
