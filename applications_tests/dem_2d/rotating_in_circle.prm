@@ -47,7 +47,7 @@ subsection lagrangian physical properties
     	subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            	 	= 0.005
-    		set number				= 50
+    		set number				= 20
     		set density particles   	 	= 2000
     		set young modulus particles         	= 1000000
     		set poisson ratio particles          	= 0.3
@@ -74,7 +74,7 @@ subsection insertion info
     set insertion box maximum x            	        = 0.05
     set insertion box maximum y           	 	= -0.02
     set insertion distance threshold			= 1.5
-    set insertion random number range			= 0.2
+    set insertion random number range			= 0.1
     set insertion random number seed			= 19
 end
 
@@ -97,7 +97,7 @@ subsection DEM boundary conditions
     subsection boundary condition 0
 	set boundary id					= 0
         set type              				= rotational
-	set rotational speed				= 0.5
+	set rotational speed				= 0.2
 	set rotational vector x				= 0
         set rotational vector y				= 0
         set rotational vector z				= 1

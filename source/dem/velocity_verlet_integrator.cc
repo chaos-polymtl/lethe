@@ -1,3 +1,4 @@
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <dem/dem_properties.h>
 #include <dem/velocity_verlet_integrator.h>
 
@@ -79,18 +80,10 @@ VelocityVerletIntegrator<dim>::integrate(
       double MOI_inverse  = 1 / MOI[particle_id];
 
       if constexpr (dim == 3)
-        {
-          particle_position = particle.get_location();
-        }
+        particle_position = particle.get_location();
 
       if constexpr (dim == 2)
-        {
-          Point<2> particle_position_2d = particle.get_location();
-
-          particle_position[0] = particle_position_2d[0];
-          particle_position[1] = particle_position_2d[1];
-          particle_position[2] = 0.0;
-        }
+        particle_position = copy_2d_point_in_3d(particle.get_location());
 
       for (int d = 0; d < 3; ++d)
         {
@@ -116,9 +109,7 @@ VelocityVerletIntegrator<dim>::integrate(
       particle_torque = 0;
 
       if constexpr (dim == 3)
-        {
-          particle.set_location(particle_position);
-        }
+        particle.set_location(particle_position);
 
       if constexpr (dim == 2)
         {

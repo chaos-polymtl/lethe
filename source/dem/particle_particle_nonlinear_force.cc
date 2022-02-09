@@ -1,3 +1,4 @@
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <dem/particle_particle_nonlinear_force.h>
 
 using namespace DEM;
@@ -158,18 +159,10 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
 
               if constexpr (dim == 2)
                 {
-                  Point<2> particle_one_location_2d =
-                    particle_one->get_location();
-                  Point<2> particle_two_location_2d =
-                    particle_two->get_location();
-
-                  particle_one_location[0] = particle_one_location_2d[0];
-                  particle_one_location[1] = particle_one_location_2d[1];
-                  particle_one_location[2] = 0.0;
-
-                  particle_two_location[0] = particle_two_location_2d[0];
-                  particle_two_location[1] = particle_two_location_2d[1];
-                  particle_two_location[2] = 0.0;
+                  particle_one_location =
+                    copy_2d_point_in_3d(particle_one->get_location());
+                  particle_two_location =
+                    copy_2d_point_in_3d(particle_two->get_location());
                 }
 
               // Calculation of normal overlap
@@ -283,18 +276,10 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
 
               if constexpr (dim == 2)
                 {
-                  Point<2> particle_one_location_2d =
-                    particle_one->get_location();
-                  Point<2> particle_two_location_2d =
-                    particle_two->get_location();
-
-                  particle_one_location[0] = particle_one_location_2d[0];
-                  particle_one_location[1] = particle_one_location_2d[1];
-                  particle_one_location[2] = 0.0;
-
-                  particle_two_location[0] = particle_two_location_2d[0];
-                  particle_two_location[1] = particle_two_location_2d[1];
-                  particle_two_location[2] = 0.0;
+                  particle_one_location =
+                    copy_2d_point_in_3d(particle_one->get_location());
+                  particle_two_location =
+                    copy_2d_point_in_3d(particle_two->get_location());
                 }
 
               // Calculation of normal overlap
@@ -656,18 +641,10 @@ ParticleParticleHertzMindlinLimitForce<dim>::
 
               if constexpr (dim == 2)
                 {
-                  Point<2> particle_one_location_2d =
-                    particle_one->get_location();
-                  Point<2> particle_two_location_2d =
-                    particle_two->get_location();
-
-                  particle_one_location[0] = particle_one_location_2d[0];
-                  particle_one_location[1] = particle_one_location_2d[1];
-                  particle_one_location[2] = 0.0;
-
-                  particle_two_location[0] = particle_two_location_2d[0];
-                  particle_two_location[1] = particle_two_location_2d[1];
-                  particle_two_location[2] = 0.0;
+                  particle_one_location =
+                    copy_2d_point_in_3d(particle_one->get_location());
+                  particle_two_location =
+                    copy_2d_point_in_3d(particle_two->get_location());
                 }
 
               // Calculation of normal overlap
@@ -786,18 +763,10 @@ ParticleParticleHertzMindlinLimitForce<dim>::
 
               if constexpr (dim == 2)
                 {
-                  Point<2> particle_one_location_2d =
-                    particle_one->get_location();
-                  Point<2> particle_two_location_2d =
-                    particle_two->get_location();
-
-                  particle_one_location[0] = particle_one_location_2d[0];
-                  particle_one_location[1] = particle_one_location_2d[1];
-                  particle_one_location[2] = 0.0;
-
-                  particle_two_location[0] = particle_two_location_2d[0];
-                  particle_two_location[1] = particle_two_location_2d[1];
-                  particle_two_location[2] = 0.0;
+                  particle_one_location =
+                    copy_2d_point_in_3d(particle_one->get_location());
+                  particle_two_location =
+                    copy_2d_point_in_3d(particle_two->get_location());
                 }
 
               if (normal_overlap > 0)
@@ -1142,18 +1111,10 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
 
               if constexpr (dim == 2)
                 {
-                  Point<2> particle_one_location_2d =
-                    particle_one->get_location();
-                  Point<2> particle_two_location_2d =
-                    particle_two->get_location();
-
-                  particle_one_location[0] = particle_one_location_2d[0];
-                  particle_one_location[1] = particle_one_location_2d[1];
-                  particle_one_location[2] = 0.0;
-
-                  particle_two_location[0] = particle_two_location_2d[0];
-                  particle_two_location[1] = particle_two_location_2d[1];
-                  particle_two_location[2] = 0.0;
+                  particle_one_location =
+                    copy_2d_point_in_3d(particle_one->get_location());
+                  particle_two_location =
+                    copy_2d_point_in_3d(particle_two->get_location());
                 }
 
               // Calculation of normal overlap
@@ -1271,18 +1232,10 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
 
               if constexpr (dim == 2)
                 {
-                  Point<2> particle_one_location_2d =
-                    particle_one->get_location();
-                  Point<2> particle_two_location_2d =
-                    particle_two->get_location();
-
-                  particle_one_location[0] = particle_one_location_2d[0];
-                  particle_one_location[1] = particle_one_location_2d[1];
-                  particle_one_location[2] = 0.0;
-
-                  particle_two_location[0] = particle_two_location_2d[0];
-                  particle_two_location[1] = particle_two_location_2d[1];
-                  particle_two_location[2] = 0.0;
+                  particle_one_location =
+                    copy_2d_point_in_3d(particle_one->get_location());
+                  particle_two_location =
+                    copy_2d_point_in_3d(particle_two->get_location());
                 }
 
               if (normal_overlap > 0)

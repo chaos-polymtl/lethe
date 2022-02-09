@@ -1,3 +1,4 @@
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <dem/particle_point_line_fine_search.h>
 
 using namespace dealii;
@@ -48,25 +49,14 @@ ParticlePointLineFineSearch<dim>::particle_point_fine_search(
         vertex_location_3d = std::get<1>(*pair_candidates);
 
       if constexpr (dim == 2)
-        {
-          Point<2> vertex_location_2d = std::get<1>(*pair_candidates);
-          vertex_location_3d[0]       = vertex_location_2d[0];
-          vertex_location_3d[1]       = vertex_location_2d[1];
-          vertex_location_3d[2]       = 0.0;
-        }
+        vertex_location_3d = copy_2d_point_in_3d(std::get<1>(*pair_candidates));
 
       Point<3> particle_location_3d;
       if constexpr (dim == 3)
         particle_location_3d = particle->get_location();
 
       if constexpr (dim == 2)
-        {
-          Point<2> particle_location_2d = particle->get_location();
-          particle_location_3d[0]       = particle_location_2d[0];
-          particle_location_3d[1]       = particle_location_2d[1];
-          particle_location_3d[2]       = 0.0;
-        }
-
+        particle_location_3d = copy_2d_point_in_3d(particle->get_location());
 
       // Calculation of the square_distance between the particle and boundary
       // vertex
@@ -139,14 +129,10 @@ ParticlePointLineFineSearch<dim>::particle_line_fine_search(
 
       if constexpr (dim == 2)
         {
-          Point<2> vertex_one_location_2d = std::get<1>(*pair_candidates);
-          Point<2> vertex_two_location_2d = std::get<2>(*pair_candidates);
-          vertex_one_location_3d[0]       = vertex_one_location_2d[0];
-          vertex_one_location_3d[1]       = vertex_one_location_2d[1];
-          vertex_one_location_3d[2]       = 0.0;
-          vertex_two_location_3d[0]       = vertex_two_location_2d[0];
-          vertex_two_location_3d[1]       = vertex_two_location_2d[1];
-          vertex_two_location_3d[2]       = 0.0;
+          vertex_one_location_3d =
+            copy_2d_point_in_3d(std::get<1>(*pair_candidates));
+          vertex_two_location_3d =
+            copy_2d_point_in_3d(std::get<2>(*pair_candidates));
         }
 
       Point<3> particle_location_3d;
@@ -154,13 +140,7 @@ ParticlePointLineFineSearch<dim>::particle_line_fine_search(
         particle_location_3d = particle->get_location();
 
       if constexpr (dim == 2)
-        {
-          Point<2> particle_location_2d = particle->get_location();
-          particle_location_3d[0]       = particle_location_2d[0];
-          particle_location_3d[1]       = particle_location_2d[1];
-          particle_location_3d[2]       = 0.0;
-        }
-
+        particle_location_3d = copy_2d_point_in_3d(particle->get_location());
 
       // For finding the particle-line distance, the projection of the particle
       // on the line should be obtained

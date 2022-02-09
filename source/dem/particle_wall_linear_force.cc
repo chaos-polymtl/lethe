@@ -1,3 +1,4 @@
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <dem/particle_wall_linear_force.h>
 
 using namespace dealii;
@@ -149,12 +150,8 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
             particle_location_3d = particle->get_location();
 
           if constexpr (dim == 2)
-            {
-              Point<2> particle_location_2d = particle->get_location();
-              particle_location_3d[0]       = particle_location_2d[0];
-              particle_location_3d[1]       = particle_location_2d[1];
-              particle_location_3d[2]       = 0.0;
-            }
+            particle_location_3d =
+              copy_2d_point_in_3d(particle->get_location());
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then

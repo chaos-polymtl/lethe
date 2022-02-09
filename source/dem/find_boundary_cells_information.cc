@@ -1,3 +1,4 @@
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <dem/find_boundary_cells_information.h>
 
 #include <deal.II/distributed/tria.h>
@@ -249,13 +250,8 @@ BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
                           -fe_face_values.normal_vector(f_q_point);
 
                       if constexpr (dim == 2)
-                        {
-                          Tensor<1, 2> normal_vector_2d =
-                            -fe_face_values.normal_vector(f_q_point);
-                          normal_vector[0] = normal_vector_2d[0];
-                          normal_vector[1] = normal_vector_2d[1];
-                          normal_vector[2] = 0.0;
-                        }
+                        normal_vector = copy_2d_tensor_in_3d(
+                          -fe_face_values.normal_vector(f_q_point));
 
                       // Finding a point on the boundary face
                       Point<3> quad_point;
@@ -264,14 +260,8 @@ BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
                         quad_point = fe_face_values.quadrature_point(0);
 
                       if constexpr (dim == 2)
-                        {
-                          Tensor<1, 2> quad_point_2d =
-                            fe_face_values.quadrature_point(0);
-                          quad_point[0] = quad_point_2d[0];
-                          quad_point[1] = quad_point_2d[1];
-                          quad_point[2] = 0.0;
-                        }
-
+                        quad_point = copy_2d_point_in_3d(
+                          fe_face_values.quadrature_point(0));
 
                       updated_boundary_points_and_normal_vectors
                         [cell->face_index(face_id)] =
