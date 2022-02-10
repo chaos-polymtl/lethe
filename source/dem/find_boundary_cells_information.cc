@@ -1,3 +1,4 @@
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <dem/find_boundary_cells_information.h>
 
 #include <deal.II/distributed/tria.h>
@@ -210,7 +211,7 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
 template <int dim>
 void
 BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
-  std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+  std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
     &updated_boundary_points_and_normal_vectors)
 {
   // Initialize a simple quadrature for on the system. This will be used to
@@ -242,12 +243,26 @@ BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
                        ++f_q_point)
                     {
                       // Finding the normal vector of the boundary face
-                      Tensor<1, dim> normal_vector =
-                        -fe_face_values.normal_vector(f_q_point);
+                      Tensor<1, 3> normal_vector;
+
+                      if constexpr (dim == 3)
+                        normal_vector =
+                          -fe_face_values.normal_vector(f_q_point);
+
+                      if constexpr (dim == 2)
+                        normal_vector = copy_2d_tensor_in_3d(
+                          -fe_face_values.normal_vector(f_q_point));
 
                       // Finding a point on the boundary face
-                      Point<dim> quad_point =
-                        fe_face_values.quadrature_point(0);
+                      Point<3> quad_point;
+
+                      if constexpr (dim == 3)
+                        quad_point = fe_face_values.quadrature_point(0);
+
+                      if constexpr (dim == 2)
+                        quad_point = copy_2d_point_in_3d(
+                          fe_face_values.quadrature_point(0));
+
                       updated_boundary_points_and_normal_vectors
                         [cell->face_index(face_id)] =
                           std::make_pair(normal_vector, quad_point);

@@ -67,9 +67,9 @@ test()
   const int                writing_frequency = 100;
 
   // Defining general simulation parameters
-  Tensor<1, dim> g{{0, -9.81}};
-  double         dt                                                  = 0.0001;
-  double         particle_diameter                                   = 0.1;
+  Tensor<1, 3> g{{0.0, -9.81, 0.0}};
+  double       dt                                                    = 0.0001;
+  double       particle_diameter                                     = 0.1;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.youngs_modulus_particle[0] =
     200000000000;
@@ -101,6 +101,7 @@ test()
   Particles::Particle<dim> particle1(position1, position1, id);
   typename Triangulation<dim>::active_cell_iterator particle_cell =
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
+
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
   pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
@@ -132,9 +133,9 @@ test()
   ParticlePointLineForce<dim>   force_object;
   VelocityVerletIntegrator<dim> integrator_object;
 
-  std::vector<Tensor<1, dim>> momentum;
-  std::vector<Tensor<1, dim>> force;
-  std::vector<double>         MOI;
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<Tensor<1, 3>> force;
+  std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if DEAL_II_VERSION_GTE(10, 0, 0)
@@ -147,7 +148,7 @@ test()
     force.resize(max_particle_id + 1);
   }
 #endif
-  momentum.resize(force.size());
+  torque.resize(force.size());
   MOI.resize(force.size());
   for (unsigned i = 0; i < MOI.size(); ++i)
     MOI[i] = 1;
@@ -157,6 +158,7 @@ test()
       auto particle                = particle_handler.begin();
       force[particle->get_id()][0] = 0;
       force[particle->get_id()][1] = 0;
+      force[particle->get_id()][2] = 0;
 
       contact_candidates =
         broad_search_object.find_particle_point_contact_pairs(
@@ -171,8 +173,8 @@ test()
         &contact_information,
         dem_parameters.lagrangian_physical_properties,
         force);
-      integrator_object.integrate(
-        particle_handler, g, dt, momentum, force, MOI);
+
+      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
 
       if (step % writing_frequency == 0)
         {

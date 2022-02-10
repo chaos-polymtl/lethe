@@ -30,11 +30,10 @@
  * Writes the results of force and torque calculations in the terminal at the
  * frequency requested in the prm.
  */
-template <int dim>
 void
 write_forces_torques_output_locally(
-  std::map<unsigned int, Tensor<1, dim>> force_on_walls,
-  std::map<unsigned int, Tensor<1, dim>> torque_on_walls);
+  std::map<unsigned int, Tensor<1, 3>> force_on_walls,
+  std::map<unsigned int, Tensor<1, 3>> torque_on_walls);
 
 /**
  * @brief write_forces_torques_output_results
@@ -48,9 +47,9 @@ write_forces_torques_output_results(
   const unsigned int              output_frequency,
   const std::vector<unsigned int> boundary_index,
   const double                    time_step,
-  std::map<unsigned int, std::map<unsigned int, dealii::Tensor<1, dim>>>
+  std::map<unsigned int, std::map<unsigned int, dealii::Tensor<1, 3>>>
     &forces_boundary_information,
-  std::map<unsigned int, std::map<unsigned int, dealii::Tensor<1, dim>>>
+  std::map<unsigned int, std::map<unsigned int, dealii::Tensor<1, 3>>>
     &torques_boundary_information)
 {
   unsigned int this_mpi_process =

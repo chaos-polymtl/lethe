@@ -58,7 +58,7 @@ public:
    * loacl-ghost particle-particle contact force. These information were
    * obtained in the fine search
    * @param dt DEM time step
-   * @param momentum An unordered_map of momentum of particles
+   * @param torque An unordered_map of torque of particles
    * @param force Force acting on particles
    */
   virtual void
@@ -72,10 +72,10 @@ public:
       types::particle_index,
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info_struct<dim>>>
-      &                          ghost_adjacent_particles,
-    const double &               dt,
-    std::vector<Tensor<1, dim>> &momentum,
-    std::vector<Tensor<1, dim>> &force) = 0;
+      &                        ghost_adjacent_particles,
+    const double &             dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force) = 0;
 
 protected:
   /**
@@ -94,11 +94,11 @@ protected:
   update_contact_information(
     particle_particle_contact_info_struct<dim> &adjacent_pair_information,
     double &                                    normal_relative_velocity_value,
-    Tensor<1, dim> &                            normal_unit_vector,
+    Tensor<1, 3> &                              normal_unit_vector,
     const ArrayView<const double> &             particle_one_properties,
     const ArrayView<const double> &             particle_two_properties,
-    const Point<dim> &                          particle_one_location,
-    const Point<dim> &                          particle_two_location,
+    const Point<3> &                            particle_one_location,
+    const Point<3> &                            particle_two_location,
     const double &                              dt);
 
   /**
@@ -110,39 +110,33 @@ protected:
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
    * @param rolling_friction_torque Contact rolling resistance torque
-   * @param particle_one_momentum Momentum of particle one
-   * @param particle_two_momentum Momentum of particle two
+   * @param particle_one_torque
+   * @param particle_two_torque
    * @param particle_one_force Force acting on particle one
    * @param particle_two_force Force acting on particle two
    */
   inline void
   apply_force_and_torque_on_local_particles(
-    const Tensor<1, dim> &normal_force,
-    const Tensor<1, dim> &tangential_force,
-    const Tensor<1, dim> &particle_one_tangential_torque,
-    const Tensor<1, dim> &particle_two_tangential_torque,
-    const Tensor<1, dim> &rolling_resistance_torque,
-    Tensor<1, dim> &      particle_one_momentum,
-    Tensor<1, dim> &      particle_two_momentum,
-    Tensor<1, dim> &      particle_one_force,
-    Tensor<1, dim> &      particle_two_force)
+    const Tensor<1, 3> &normal_force,
+    const Tensor<1, 3> &tangential_force,
+    const Tensor<1, 3> &particle_one_tangential_torque,
+    const Tensor<1, 3> &particle_two_tangential_torque,
+    const Tensor<1, 3> &rolling_resistance_torque,
+    Tensor<1, 3> &      particle_one_torque,
+    Tensor<1, 3> &      particle_two_torque,
+    Tensor<1, 3> &      particle_one_force,
+    Tensor<1, 3> &      particle_two_force)
   {
     // Calculation of total force
-    Tensor<1, dim> total_force = normal_force + tangential_force;
+    Tensor<1, 3> total_force = normal_force + tangential_force;
 
     // Updating the force and torque of particles in the particle handler
-    for (int d = 0; d < dim; ++d)
-      {
-        particle_one_force[d] = particle_one_force[d] - total_force[d];
-        particle_two_force[d] = particle_two_force[d] + total_force[d];
-
-        particle_one_momentum[d] = particle_one_momentum[d] -
-                                   particle_one_tangential_torque[d] +
-                                   rolling_resistance_torque[d];
-        particle_two_momentum[d] = particle_two_momentum[d] -
-                                   particle_two_tangential_torque[d] -
-                                   rolling_resistance_torque[d];
-      }
+    particle_one_force -= total_force;
+    particle_two_force += total_force;
+    particle_one_torque +=
+      -particle_one_tangential_torque + rolling_resistance_torque;
+    particle_two_torque +=
+      -particle_two_tangential_torque - rolling_resistance_torque;
   }
 
   /**
@@ -154,30 +148,25 @@ protected:
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
    * @param rolling_friction_torque Contact rolling resistance torque
-   * @param particle_one_momentum Momentum of particle one (local)
+   * @param particle_one_torque Torque acting on particle one (local)
    * @param particle_one_force Force acting on particle one
    */
   inline void
   apply_force_and_torque_on_ghost_particles(
-    const Tensor<1, dim> &normal_force,
-    const Tensor<1, dim> &tangential_force,
-    const Tensor<1, dim> &particle_one_tangential_torque,
-    const Tensor<1, dim> &rolling_resistance_torque,
-    Tensor<1, dim> &      particle_one_momentum,
-    Tensor<1, dim> &      particle_one_force)
+    const Tensor<1, 3> &normal_force,
+    const Tensor<1, 3> &tangential_force,
+    const Tensor<1, 3> &particle_one_tangential_torque,
+    const Tensor<1, 3> &rolling_resistance_torque,
+    Tensor<1, 3> &      particle_one_torque,
+    Tensor<1, 3> &      particle_one_force)
   {
     // Calculation of total force
-    Tensor<1, dim> total_force = normal_force + tangential_force;
+    Tensor<1, 3> total_force = normal_force + tangential_force;
 
     // Updating the force and torque acting on particles in the particle handler
-    for (int d = 0; d < dim; ++d)
-      {
-        particle_one_force[d] = particle_one_force[d] - total_force[d];
-
-        particle_one_momentum[d] = particle_one_momentum[d] -
-                                   particle_one_tangential_torque[d] +
-                                   rolling_resistance_torque[d];
-      }
+    particle_one_force -= total_force;
+    particle_one_torque +=
+      -particle_one_tangential_torque + rolling_resistance_torque;
   }
 
   /**

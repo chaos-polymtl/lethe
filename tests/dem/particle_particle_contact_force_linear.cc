@@ -140,9 +140,9 @@ test()
   pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
-  std::vector<Tensor<1, dim>> momentum;
-  std::vector<Tensor<1, dim>> force;
-  std::vector<double>         MOI;
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<Tensor<1, 3>> force;
+  std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if DEAL_II_VERSION_GTE(10, 0, 0)
@@ -155,7 +155,7 @@ test()
     force.resize(max_particle_id + 1);
   }
 #endif
-  momentum.resize(force.size());
+  torque.resize(force.size());
   MOI.resize(force.size());
   for (unsigned i = 0; i < MOI.size(); ++i)
     MOI[i] = 1;
@@ -206,7 +206,7 @@ test()
   // Calling linear force
   ParticleParticleLinearForce<dim> linear_force_object(dem_parameters);
   linear_force_object.calculate_particle_particle_contact_force(
-    local_adjacent_particles, ghost_adjacent_particles, dt, momentum, force);
+    local_adjacent_particles, ghost_adjacent_particles, dt, torque, force);
 
   // Output
   auto particle = particle_handler.begin();

@@ -276,7 +276,7 @@ private:
   bool                                 contact_detection_step;
   bool                                 load_balance_step;
   bool                                 checkpoint_step;
-  Tensor<1, dim>                       g;
+  Tensor<1, 3>                         g;
   double                               triangulation_cell_diameter;
 
   // Simulation control for time stepping and I/Os
@@ -339,7 +339,7 @@ private:
     particle_container;
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     ghost_particle_container;
-  std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+  std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
                                            updated_boundary_points_and_normal_vectors;
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
@@ -370,14 +370,14 @@ private:
   PVDHandler                    particles_pvdhandler;
   const double                  standard_deviation_multiplier;
 
-  std::vector<Tensor<1, dim>> momentum;
-  std::vector<Tensor<1, dim>> force;
-  std::vector<double>         displacement;
-  std::vector<double>         MOI;
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<Tensor<1, 3>> force;
+  std::vector<double>       displacement;
+  std::vector<double>       MOI;
 
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
+  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
     forces_boundary_information;
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
+  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
     torques_boundary_information;
 
   // Information for parallel grid processing

@@ -316,10 +316,9 @@ template <int dim>
 class GLSVansAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerBuoyancy(
-    Parameters::PhysicalProperties physical_properties,
-    Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
-      lagrangian_physical_properties)
+  GLSVansAssemblerBuoyancy(Parameters::PhysicalProperties physical_properties,
+                           Parameters::Lagrangian::LagrangianPhysicalProperties
+                             lagrangian_physical_properties)
     : physical_properties(physical_properties)
     , lagrangian_physical_properties(lagrangian_physical_properties)
 
@@ -335,7 +334,7 @@ public:
     NavierStokesScratchData<dim> &scratch_data) override;
 
   Parameters::PhysicalProperties physical_properties;
-  Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
+  Parameters::Lagrangian::LagrangianPhysicalProperties
     lagrangian_physical_properties;
 };
 
