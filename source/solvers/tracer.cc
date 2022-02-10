@@ -76,8 +76,8 @@ template <int dim>
 void
 Tracer<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  TracerScratchData<dim>                               &scratch_data,
-  StabilizedMethodsCopyData                            &copy_data)
+  TracerScratchData<dim> &                              scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -171,8 +171,8 @@ template <int dim>
 void
 Tracer<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  TracerScratchData<dim>                               &scratch_data,
-  StabilizedMethodsCopyData                            &copy_data)
+  TracerScratchData<dim> &                              scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())

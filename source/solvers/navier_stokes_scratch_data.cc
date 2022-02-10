@@ -90,8 +90,8 @@ NavierStokesScratchData<dim>::allocate()
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_VOF(const FiniteElement<dim> &fe,
-                                         const Quadrature<dim>    &quadrature,
-                                         const Mapping<dim>       &mapping)
+                                         const Quadrature<dim> &   quadrature,
+                                         const Mapping<dim> &      mapping)
 {
   gather_VOF    = true;
   fe_values_VOF = std::make_shared<FEValues<dim>>(
@@ -110,8 +110,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_void_fraction(
   const FiniteElement<dim> &fe,
-  const Quadrature<dim>    &quadrature,
-  const Mapping<dim>       &mapping)
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
 {
   gather_void_fraction    = true;
   fe_values_void_fraction = std::make_shared<FEValues<dim>>(
@@ -146,8 +146,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_heat_transfer(
   const FiniteElement<dim> &fe,
-  const Quadrature<dim>    &quadrature,
-  const Mapping<dim>       &mapping)
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
 {
   gather_temperature = true;
   fe_values_temperature =

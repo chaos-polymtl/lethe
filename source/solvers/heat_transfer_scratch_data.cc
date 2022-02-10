@@ -80,8 +80,8 @@ HeatTransferScratchData<dim>::allocate()
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
-                                         const Quadrature<dim>    &quadrature,
-                                         const Mapping<dim>       &mapping)
+                                         const Quadrature<dim> &   quadrature,
+                                         const Mapping<dim> &      mapping)
 {
   gather_vof    = true;
   fe_values_vof = std::make_shared<FEValues<dim>>(
