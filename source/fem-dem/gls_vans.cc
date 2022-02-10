@@ -527,9 +527,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // DiFelice Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDiFelice<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_parameters
-                .physical_properties));
+            std::make_shared<GLSVansAssemblerDiFelice<dim>>());
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -537,9 +535,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerRong<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_parameters
-                .physical_properties));
+            std::make_shared<GLSVansAssemblerRong<dim>>());
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -547,9 +543,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDallavalle<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_parameters
-                .physical_properties));
+            std::make_shared<GLSVansAssemblerDallavalle<dim>>());
         }
     }
 
@@ -557,7 +551,6 @@ GLSVANSSolver<dim>::setup_assemblers()
     // Buoyancy Force Assembler
     particle_fluid_assemblers.push_back(
       std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
@@ -565,23 +558,18 @@ GLSVANSSolver<dim>::setup_assemblers()
     // Pressure Force
     particle_fluid_assemblers.push_back(
       std::make_shared<GLSVansAssemblerPressureForce<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
         this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
     // Shear Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerShearForce<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_parameters
-          .physical_properties));
+      std::make_shared<GLSVansAssemblerShearForce<dim>>());
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.push_back(std::make_shared<GLSVansAssemblerBDF<dim>>(
-        this->simulation_control,
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-        this->cfd_dem_simulation_parameters.cfd_dem));
+        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
     }
 
   //  Fluid_Particle Interactions Assembler
@@ -595,17 +583,13 @@ GLSVANSSolver<dim>::setup_assemblers()
       Parameters::VANSModel::modelA)
     this->assemblers.push_back(
       std::make_shared<GLSVansAssemblerCoreModelA<dim>>(
-        this->simulation_control,
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-        this->cfd_dem_simulation_parameters.cfd_dem));
+        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
       Parameters::VANSModel::modelB)
     this->assemblers.push_back(
       std::make_shared<GLSVansAssemblerCoreModelB<dim>>(
-        this->simulation_control,
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-        this->cfd_dem_simulation_parameters.cfd_dem));
+        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 }
 
 template <int dim>
@@ -683,6 +667,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
                                                   particle_handler,
                                                   this->dof_handler,
                                                   void_fraction_dof_handler);
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
@@ -794,6 +779,7 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
                                                   this->dof_handler,
                                                   void_fraction_dof_handler);
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)

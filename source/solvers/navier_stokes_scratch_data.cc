@@ -189,6 +189,9 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
       // In this case, only viscosity is the required property
       const auto rheology_model = properties_manager.get_rheology();
       rheology_model->vector_value(fields, viscosity);
+
+      const auto density_model = properties_manager.get_density(0);
+      density_model->vector_value(fields, density);
     }
   else // properties_manager.get_number_of_fluids() == 2
     {

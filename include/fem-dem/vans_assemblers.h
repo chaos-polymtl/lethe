@@ -67,10 +67,8 @@ class GLSVansAssemblerCoreModelB : public NavierStokesAssemblerBase<dim>
 public:
   GLSVansAssemblerCoreModelB(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
     Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
     , cfd_dem(cfd_dem)
   {}
 
@@ -95,7 +93,6 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
   Parameters::CFDDEM                 cfd_dem;
 };
 
@@ -112,10 +109,8 @@ class GLSVansAssemblerCoreModelA : public NavierStokesAssemblerBase<dim>
 public:
   GLSVansAssemblerCoreModelA(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
     Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
     , cfd_dem(cfd_dem)
   {}
 
@@ -140,7 +135,6 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
   Parameters::CFDDEM                 cfd_dem;
 };
 
@@ -161,10 +155,8 @@ class GLSVansAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSVansAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control,
-                      Parameters::PhysicalProperties     physical_properties,
                       Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
     , cfd_dem(cfd_dem)
   {}
 
@@ -187,7 +179,6 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
 
   Parameters::CFDDEM cfd_dem;
 };
@@ -211,9 +202,7 @@ template <int dim>
 class GLSVansAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDiFelice(Parameters::PhysicalProperties physical_properties)
-    : physical_properties(physical_properties)
-
+  GLSVansAssemblerDiFelice()
   {}
 
   /**
@@ -224,8 +213,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::PhysicalProperties physical_properties;
 };
 
 /**
@@ -249,9 +236,7 @@ template <int dim>
 class GLSVansAssemblerRong : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerRong(Parameters::PhysicalProperties physical_properties)
-    : physical_properties(physical_properties)
-
+  GLSVansAssemblerRong()
   {}
 
   /**
@@ -262,8 +247,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::PhysicalProperties physical_properties;
 };
 
 /**
@@ -283,9 +266,7 @@ template <int dim>
 class GLSVansAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDallavalle(Parameters::PhysicalProperties physical_properties)
-    : physical_properties(physical_properties)
-
+  GLSVansAssemblerDallavalle()
   {}
 
   /**
@@ -296,8 +277,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::PhysicalProperties physical_properties;
 };
 
 
@@ -351,11 +330,8 @@ template <int dim>
 class GLSVansAssemblerPressureForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerPressureForce(
-    Parameters::PhysicalProperties physical_properties,
-    Parameters::CFDDEM             cfd_dem)
-    : physical_properties(physical_properties)
-    , cfd_dem(cfd_dem)
+  GLSVansAssemblerPressureForce(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -367,8 +343,7 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  Parameters::PhysicalProperties physical_properties;
-  Parameters::CFDDEM             cfd_dem;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -384,8 +359,8 @@ template <int dim>
 class GLSVansAssemblerShearForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerShearForce(Parameters::PhysicalProperties physical_properties)
-    : physical_properties(physical_properties)
+  GLSVansAssemblerShearForce()
+
   {}
 
   /**
@@ -396,8 +371,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::PhysicalProperties physical_properties;
 };
 
 /**
