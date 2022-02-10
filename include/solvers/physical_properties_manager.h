@@ -108,7 +108,7 @@ public:
   }
 
   bool
-  is_non_newtonian()
+  is_non_newtonian() const
   {
     return non_newtonian_flow;
   }

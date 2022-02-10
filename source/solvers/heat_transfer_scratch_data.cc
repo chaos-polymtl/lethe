@@ -69,6 +69,8 @@ HeatTransferScratchData<dim>::allocate()
   fields.insert(
     std::pair<field, std::vector<double>>(field::previous_temperature,
                                           n_q_points));
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
   specific_heat        = std::vector<double>(n_q_points);
   density              = std::vector<double>(n_q_points);
   thermal_conductivity = std::vector<double>(n_q_points);
@@ -78,8 +80,8 @@ HeatTransferScratchData<dim>::allocate()
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
-                                         const Quadrature<dim> &   quadrature,
-                                         const Mapping<dim> &      mapping)
+                                         const Quadrature<dim>    &quadrature,
+                                         const Mapping<dim>       &mapping)
 {
   gather_vof    = true;
   fe_values_vof = std::make_shared<FEValues<dim>>(
@@ -147,7 +149,7 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
       density_model->vector_value(fields, density);
       specific_heat_model->vector_value(fields, specific_heat);
       thermal_conductivity_model->vector_value(fields, thermal_conductivity);
-      thermal_conductivity_model->vector_value(fields, viscosity);
+      rheology_model->vector_value(fields, viscosity);
     }
   else // properties_manager.get_number_of_fluids() == 2
     {

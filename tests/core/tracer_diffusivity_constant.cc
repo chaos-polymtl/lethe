@@ -1,5 +1,5 @@
 /**
- * @brief Tests the constant density model. This model should always return a constant.
+ * @brief Tests the constant tracer diffusivity model. This model should always return a constant.
  */
 
 // Lethe
