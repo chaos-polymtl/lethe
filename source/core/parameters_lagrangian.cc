@@ -4,10 +4,8 @@ namespace Parameters
 {
   namespace Lagrangian
   {
-    template <int dim>
     void
-    LagrangianPhysicalProperties<dim>::declareDefaultEntry(
-      ParameterHandler &prm)
+    LagrangianPhysicalProperties::declareDefaultEntry(ParameterHandler &prm)
     {
       prm.declare_entry("size distribution type",
                         "uniform",
@@ -56,9 +54,8 @@ namespace Parameters
                         "Particle rolling friction");
     }
 
-    template <int dim>
     void
-    LagrangianPhysicalProperties<dim>::parse_particle_properties(
+    LagrangianPhysicalProperties::parse_particle_properties(
       const unsigned int &particle_type,
       ParameterHandler &  prm)
     {
@@ -94,27 +91,24 @@ namespace Parameters
         prm.get_double("rolling friction particles");
     }
 
-    template <int dim>
     void
-    LagrangianPhysicalProperties<dim>::declare_parameters(ParameterHandler &prm)
+    LagrangianPhysicalProperties::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("lagrangian physical properties");
       {
         prm.declare_entry("gx",
-                          "1.",
+                          "0.",
                           Patterns::Double(),
                           "Gravitational acceleration in x direction");
         prm.declare_entry("gy",
-                          "1.",
+                          "0.",
                           Patterns::Double(),
                           "Gravitational acceleration in y direction");
-        if (dim == 3)
-          {
-            prm.declare_entry("gz",
-                              "1.",
-                              Patterns::Double(),
-                              "Gravitational acceleration in z direction");
-          }
+        prm.declare_entry("gz",
+                          "0.",
+                          Patterns::Double(),
+                          "Gravitational acceleration in z direction");
+
 
         prm.declare_entry("number of particle types",
                           "1",
@@ -156,9 +150,8 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template <int dim>
     void
-    LagrangianPhysicalProperties<dim>::parse_parameters(ParameterHandler &prm)
+    LagrangianPhysicalProperties::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("lagrangian physical properties");
       initialize_containers(particle_average_diameter,
@@ -173,8 +166,7 @@ namespace Parameters
       {
         g[0] = prm.get_double("gx");
         g[1] = prm.get_double("gy");
-        if (dim == 3)
-          g[2] = prm.get_double("gz");
+        g[2] = prm.get_double("gz");
 
         particle_type_number = prm.get_integer("number of particle types");
 
@@ -230,9 +222,8 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template <int dim>
     void
-    LagrangianPhysicalProperties<dim>::initialize_containers(
+    LagrangianPhysicalProperties::initialize_containers(
       std::unordered_map<unsigned int, double> &particle_average_diameter,
       std::unordered_map<unsigned int, double> &particle_size_std,
       std::unordered_map<unsigned int, int> &   number,
@@ -664,8 +655,7 @@ namespace Parameters
       prm.enter_subsection("center of mass coordinate");
       point_center_mass[0] = prm.get_double("x");
       point_center_mass[1] = prm.get_double("y");
-      if (dim == 3)
-        point_center_mass[2] = prm.get_double("z");
+      point_center_mass[2] = prm.get_double("z");
       prm.leave_subsection();
       prm.leave_subsection();
     }
@@ -834,9 +824,8 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::declareDefaultEntry(ParameterHandler &prm)
+    BCDEM::declareDefaultEntry(ParameterHandler &prm)
     {
       prm.declare_entry("boundary id", "0", Patterns::Integer(), "Boundary ID");
       prm.declare_entry(
@@ -877,9 +866,8 @@ namespace Parameters
                         "Rotational vector element in z direction");
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::parse_boundary_conditions(ParameterHandler &prm)
+    BCDEM::parse_boundary_conditions(ParameterHandler &prm)
     {
       const unsigned int boundary_id   = prm.get_integer("boundary id");
       const std::string  boundary_type = prm.get("type");
@@ -892,26 +880,23 @@ namespace Parameters
       else if (boundary_type == "translational")
         {
           BC_type = BoundaryType::translational;
-          Tensor<1, dim> translational_velocity;
+          Tensor<1, 3> translational_velocity;
           translational_velocity[0] = prm.get_double("speed x");
           translational_velocity[1] = prm.get_double("speed y");
-          if (dim == 3)
-            translational_velocity[2] = prm.get_double("speed z");
+          translational_velocity[2] = prm.get_double("speed z");
 
           this->boundary_translational_velocity.at(boundary_id) =
             translational_velocity;
         }
       else if (boundary_type == "rotational")
         {
-          BC_type                         = BoundaryType::rotational;
-          double         rotational_speed = prm.get_double("rotational speed");
-          Tensor<1, dim> rotational_vector;
-          if (dim == 3)
-            {
-              rotational_vector[0] = prm.get_double("rotational vector x");
-              rotational_vector[1] = prm.get_double("rotational vector y");
-              rotational_vector[2] = prm.get_double("rotational vector z");
-            }
+          BC_type                       = BoundaryType::rotational;
+          double       rotational_speed = prm.get_double("rotational speed");
+          Tensor<1, 3> rotational_vector;
+
+          rotational_vector[0] = prm.get_double("rotational vector x");
+          rotational_vector[1] = prm.get_double("rotational vector y");
+          rotational_vector[2] = prm.get_double("rotational vector z");
 
           this->boundary_rotational_speed.at(boundary_id)  = rotational_speed;
           this->boundary_rotational_vector.at(boundary_id) = rotational_vector;
@@ -926,9 +911,8 @@ namespace Parameters
         }
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::declare_parameters(ParameterHandler &prm)
+    BCDEM::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("DEM boundary conditions");
       {
@@ -950,9 +934,8 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::parse_parameters(ParameterHandler &prm)
+    BCDEM::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("DEM boundary conditions");
 
@@ -975,21 +958,16 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template <int dim>
     void
-    BCDEM<dim>::initialize_containers(
-      std::unordered_map<unsigned int, Tensor<1, dim>>
+    BCDEM::initialize_containers(
+      std::unordered_map<unsigned int, Tensor<1, 3>>
         &                                       boundary_translational_velocity,
       std::unordered_map<unsigned int, double> &boundary_rotational_speed,
-      std::unordered_map<unsigned int, Tensor<1, dim>>
+      std::unordered_map<unsigned int, Tensor<1, 3>>
         &                        boundary_rotational_vector,
       std::vector<unsigned int> &outlet_boundaries)
     {
-      Tensor<1, dim> zero_tensor;
-      for (unsigned int d = 0; d < dim; ++d)
-        {
-          zero_tensor[d] = 0;
-        }
+      Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
       for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
         {
@@ -1145,14 +1123,10 @@ namespace Parameters
       prm.leave_subsection();
     }
 
-    template class LagrangianPhysicalProperties<2>;
-    template class LagrangianPhysicalProperties<3>;
     template class ForceTorqueOnWall<2>;
     template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
-    template class BCDEM<2>;
-    template class BCDEM<3>;
     template class GridMotion<2>;
     template class GridMotion<3>;
 

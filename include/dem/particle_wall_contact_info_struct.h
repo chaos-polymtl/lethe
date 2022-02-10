@@ -35,12 +35,12 @@ template <int dim>
 struct particle_wall_contact_info_struct
 {
   Particles::ParticleIterator<dim> particle;
-  Tensor<1, dim>                   normal_vector;
-  Point<dim>                       point_on_boundary;
+  Tensor<1, 3>                     normal_vector;
+  Point<3>                         point_on_boundary;
   double                           normal_overlap;
   double                           normal_relative_velocity;
-  Tensor<1, dim>                   tangential_overlap;
-  Tensor<1, dim>                   tangential_relative_velocity;
+  Tensor<1, 3>                     tangential_overlap;
+  Tensor<1, 3>                     tangential_relative_velocity;
   types::boundary_id               boundary_id;
   int                              global_face_id;
 };

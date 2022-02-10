@@ -960,8 +960,8 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  const auto     pic = scratch_data.pic;
-  Tensor<1, dim> buoyancy_force;
+  const auto   pic = scratch_data.pic;
+  Tensor<1, 3> buoyancy_force;
 
   // Loop over particles in cell
   for (auto &particle : pic)

@@ -103,10 +103,10 @@ private:
    * @return The projection of point_p on the line (from point_a to point_b)
    */
 
-  Point<dim>
-  find_projection_point(const Point<dim> &point_p,
-                        const Point<dim> &point_a,
-                        const Point<dim> &point_b);
+  Point<3>
+  find_projection_point(const Point<3> &point_p,
+                        const Point<3> &point_a,
+                        const Point<3> &point_b);
 };
 
 #endif /* particle_point_line_fine_search_h */

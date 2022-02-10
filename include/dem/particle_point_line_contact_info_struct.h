@@ -35,8 +35,8 @@ template <int dim>
 struct particle_point_line_contact_info_struct
 {
   Particles::ParticleIterator<dim> particle;
-  Point<dim>                       point_one;
-  Point<dim>                       point_two;
+  Point<3>                         point_one;
+  Point<3>                         point_two;
 };
 
 #endif /* particle_point_line_contact_info_struct_h */
