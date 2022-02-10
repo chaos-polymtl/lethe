@@ -1,0 +1,1 @@
+Simulation_time_evaluation tracks the changes in the performance of the dem_3d solver. The benchmark used for this evaluation test is packing_10k_particles located inside the folder. Benchmark_simulation_time contains the history of the simulation time of this benchmark on 1, 8, and 12 processes.
