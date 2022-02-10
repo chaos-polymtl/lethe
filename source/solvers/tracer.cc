@@ -39,8 +39,8 @@ Tracer<dim>::setup_assemblers()
         std::make_shared<TracerAssemblerBDF<dim>>(this->simulation_control));
     }
   // Core assembler
-  this->assemblers.push_back(std::make_shared<TracerAssemblerCore<dim>>(
-    this->simulation_control, this->simulation_parameters.physical_properties));
+  this->assemblers.push_back(
+    std::make_shared<TracerAssemblerCore<dim>>(this->simulation_control));
 }
 
 template <int dim>
@@ -53,10 +53,12 @@ Tracer<dim>::assemble_system_matrix()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  auto scratch_data = TracerScratchData<dim>(*this->fe,
-                                             *this->cell_quadrature,
-                                             *this->mapping,
-                                             dof_handler_fluid->get_fe());
+  auto scratch_data = TracerScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -74,8 +76,8 @@ template <int dim>
 void
 Tracer<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  TracerScratchData<dim> &                              scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  TracerScratchData<dim>                               &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -107,6 +109,8 @@ Tracer<dim>::assemble_local_system_matrix(
       scratch_data.reinit_velocity(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
+
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -144,10 +148,12 @@ Tracer<dim>::assemble_system_rhs()
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  auto scratch_data = TracerScratchData<dim>(*this->fe,
-                                             *this->cell_quadrature,
-                                             *this->mapping,
-                                             dof_handler_fluid->get_fe());
+  auto scratch_data = TracerScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -165,8 +171,8 @@ template <int dim>
 void
 Tracer<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  TracerScratchData<dim> &                              scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  TracerScratchData<dim>                               &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -199,6 +205,7 @@ Tracer<dim>::assemble_local_system_rhs(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
