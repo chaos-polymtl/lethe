@@ -23,6 +23,8 @@
 #include <core/rheological_model.h>
 #include <core/specific_heat_model.h>
 #include <core/thermal_conductivity_model.h>
+#include <core/thermal_expansion_model.h>
+#include <core/tracer_diffusivity_model.h>
 
 using namespace dealii;
 
@@ -93,6 +95,18 @@ public:
     return rheology[fluid_id];
   }
 
+  std::shared_ptr<ThermalExpansionModel>
+  get_thermal_expansion(unsigned int fluid_id = 0)
+  {
+    return thermal_expansion[fluid_id];
+  }
+
+  std::shared_ptr<TracerDiffusivityModel>
+  get_tracer_diffusivity(unsigned int fluid_id = 0)
+  {
+    return tracer_diffusivity[fluid_id];
+  }
+
   bool
   is_non_newtonian()
   {
@@ -115,6 +129,8 @@ private:
   std::vector<std::shared_ptr<SpecificHeatModel>>        specific_heat;
   std::vector<std::shared_ptr<ThermalConductivityModel>> thermal_conductivity;
   std::vector<std::shared_ptr<RheologicalModel>>         rheology;
+  std::vector<std::shared_ptr<ThermalExpansionModel>>    thermal_expansion;
+  std::vector<std::shared_ptr<TracerDiffusivityModel>>   tracer_diffusivity;
 
   std::map<field, bool> required_fields;
 

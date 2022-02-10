@@ -65,6 +65,14 @@ PhysicalPropertiesManager::initialize(
         RheologicalModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model((*rheology[f]));
 
+      tracer_diffusivity.push_back(
+        TracerDiffusivityModel::model_cast(physical_properties.fluids[f]));
+      establish_fields_required_by_model((*tracer_diffusivity[f]));
+
+      thermal_expansion.push_back(
+        ThermalExpansionModel::model_cast(physical_properties.fluids[f]));
+      establish_fields_required_by_model((*thermal_expansion[f]));
+
       if (physical_properties.fluids[f].rheology_model !=
           Parameters::Fluid::RheologyModel::newtonian)
         non_newtonian_flow = true;
