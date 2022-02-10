@@ -224,6 +224,7 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
 
@@ -359,6 +360,7 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
                                           PhysicsID::heat_transfer));
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
   for (auto &assembler : this->assemblers)
     {

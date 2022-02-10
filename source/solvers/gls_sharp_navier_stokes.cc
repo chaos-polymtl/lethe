@@ -72,7 +72,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        this->dof_handler,
                                        support_points);
   cut_cells_map.clear();
-  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -1583,7 +1583,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p(
-  std::vector<types::global_dof_index> &         local_dof_indices,
+  std::vector<types::global_dof_index>          &local_dof_indices,
   std::map<types::global_dof_index, Point<dim>> &support_points,
   unsigned int                                   p)
 {
@@ -1617,8 +1617,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_cut(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index> &                local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>> &       support_points)
+  std::vector<types::global_dof_index>                 &local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>>        &support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -1640,8 +1640,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_inside(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index> &                local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>> &       support_points)
+  std::vector<types::global_dof_index>                 &local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>>        &support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -2248,8 +2248,7 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
           // Core assembler
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties));
+              this->simulation_control));
         }
     }
 
@@ -2263,8 +2262,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2309,6 +2308,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   // check if we assemble the NS eqaution inside the particle or the Laplacien
@@ -2355,8 +2355,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2402,6 +2402,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   // check if we assemble the NS eqaution inside the particle or the Laplacien

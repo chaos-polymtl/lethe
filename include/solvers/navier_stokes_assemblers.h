@@ -45,7 +45,7 @@ public:
    */
 
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) = 0;
 
 
@@ -58,7 +58,7 @@ public:
    */
 
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) = 0;
 };
 
@@ -79,10 +79,8 @@ class GLSNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties)
+    std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
   {}
 
   /**
@@ -91,7 +89,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -101,7 +99,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -112,7 +110,6 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
 };
 
 
@@ -148,7 +145,7 @@ public:
    */
 
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -157,7 +154,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   Parameters::VelocitySource velocity_sources;
@@ -199,9 +196,9 @@ public:
   Tensor<1, dim>
   get_viscosity_gradient(const Tensor<2, dim> &velocity_gradient,
                          const Tensor<3, dim> &velocity_hessians,
-                         const double &        shear_rate_magnitude,
-                         const double &        non_newtonian_viscosity,
-                         const double &        d_gamma_dot) const
+                         const double         &shear_rate_magnitude,
+                         const double         &non_newtonian_viscosity,
+                         const double         &d_gamma_dot) const
   {
     std::map<field, double> field_values_plus;
 
@@ -257,7 +254,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -267,7 +264,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -309,7 +306,7 @@ public:
    */
 
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -318,7 +315,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
@@ -348,7 +345,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -357,7 +354,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
@@ -395,7 +392,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -405,7 +402,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -437,7 +434,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -447,7 +444,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -483,7 +480,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -493,7 +490,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -530,7 +527,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -540,7 +537,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -579,7 +576,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -589,7 +586,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -626,7 +623,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -636,7 +633,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
