@@ -77,6 +77,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
+  , floating_grid(dem_parameters, pcout, simulation_control->get_time_step())
 {
   // Check if the output directory exists
   std::string output_dir_name = parameters.simulation_control.output_folder;
@@ -207,7 +208,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                standard_deviation_multiplier);
 
   grid_motion_object =
-    std::make_shared<GridMotion<dim>>(parameters,
+    std::make_shared<GridMotion<dim, dim>>(parameters,
                                       simulation_control->get_time_step());
 }
 

@@ -1,17 +1,17 @@
 #include <dem/read_mesh.h>
 
-template <int dim>
+template <int dim, int spacedim=dim>
 void
-read_mesh(const DEMSolverParameters<dim> &           parameters,
+read_mesh(const DEMSolverParameters<spacedim> &           parameters,
           const ConditionalOStream &                 pcout,
-          parallel::distributed::Triangulation<dim> &triangulation,
+          Triangulation<dim, spacedim> &triangulation,
           double &triangulation_cell_diameter)
 {
   pcout << "Reading triangulation " << std::endl;
   // GMSH input
   if (parameters.mesh.type == Parameters::Mesh::Type::gmsh)
     {
-      GridIn<dim> grid_in;
+      GridIn<dim, spacedim> grid_in;
       grid_in.attach_triangulation(triangulation);
       std::ifstream input_file(parameters.mesh.file_name);
       grid_in.read_msh(input_file);
@@ -57,13 +57,25 @@ read_mesh(const DEMSolverParameters<dim> &           parameters,
 }
 
 template void
-read_mesh(const DEMSolverParameters<2> &           parameters,
-          const ConditionalOStream &               pcout,
-          parallel::distributed::Triangulation<2> &triangulation,
-          double &                                 triangulation_cell_diameter);
+read_mesh<1, 2>(const DEMSolverParameters<2> &           parameters,
+                const ConditionalOStream &               pcout,
+                Triangulation<1, 2> &triangulation,
+                double &                                 triangulation_cell_diameter);
 
 template void
-read_mesh(const DEMSolverParameters<3> &           parameters,
-          const ConditionalOStream &               pcout,
-          parallel::distributed::Triangulation<3> &triangulation,
-          double &                                 triangulation_cell_diameter);
+read_mesh<2, 2>(const DEMSolverParameters<2> &           parameters,
+                const ConditionalOStream &               pcout,
+                Triangulation<2, 2> &triangulation,
+                double &                                 triangulation_cell_diameter);
+
+template void
+read_mesh<2, 3>(const DEMSolverParameters<3> &           parameters,
+                const ConditionalOStream &               pcout,
+                Triangulation<2, 3> &triangulation,
+                double &                                 triangulation_cell_diameter);
+
+template void
+read_mesh<3, 3>(const DEMSolverParameters<3> &           parameters,
+                const ConditionalOStream &               pcout,
+                Triangulation<3, 3> &triangulation,
+                double &                                 triangulation_cell_diameter);

@@ -43,11 +43,11 @@ using namespace std;
  * @param triangulation_cell_diameter Triangulation cell diameter
  */
 
-template <int dim>
+template <int dim, int spacedim=dim>
 void
-read_mesh(const DEMSolverParameters<dim> &           dem_parameters,
+read_mesh(const DEMSolverParameters<spacedim> &           dem_parameters,
           const ConditionalOStream &                 pcout,
-          parallel::distributed::Triangulation<dim> &triangulation,
+          Triangulation<dim, spacedim> &triangulation,
           double &triangulation_cell_diameter);
 
 #endif /* read_mesh_h */

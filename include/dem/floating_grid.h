@@ -13,11 +13,11 @@ using namespace dealii;
 #ifndef floating_grid_h
 #define floating_grid_h
 
-template <int dim>
+template <int dim, int spacedim>
 class FloatingGrid
 {
 public:
-  FloatingGrid(const DEMSolverParameters<dim> &dem_parameters,
+  FloatingGrid(const DEMSolverParameters<spacedim> &dem_parameters,
                const ConditionalOStream &      pcout,
                const double &                  dem_time_step);
 
@@ -32,8 +32,8 @@ public:
              const unsigned int                     digits = 4);
 
 private:
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  GridMotion<dim> gridMotion;
+  Triangulation<dim, spacedim> triangulation;
+  GridMotion<dim, spacedim> gridMotion;
   double triangulation_cell_diameter;
   PVDHandler pvdHandler;
 };
