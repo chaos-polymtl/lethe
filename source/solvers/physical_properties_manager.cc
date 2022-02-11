@@ -49,6 +49,10 @@ PhysicalPropertiesManager::initialize(
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)
     {
+      required_fields[field::temperature]          = false;
+      required_fields[field::previous_temperature] = false;
+      required_fields[field::shear_rate]           = false;
+
       density.push_back(
         DensityModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model((*density[f]));
@@ -63,7 +67,7 @@ PhysicalPropertiesManager::initialize(
 
       rheology.push_back(
         RheologicalModel::model_cast(physical_properties.fluids[f]));
-      establish_fields_required_by_model((*rheology[f]));
+      this->establish_fields_required_by_model(*(rheology[f]));
 
       tracer_diffusivity.push_back(
         TracerDiffusivityModel::model_cast(physical_properties.fluids[f]));
