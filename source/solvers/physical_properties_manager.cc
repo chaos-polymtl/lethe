@@ -16,17 +16,6 @@
 
 #include <solvers/physical_properties_manager.h>
 
-
-PhysicalPropertiesManager::PhysicalPropertiesManager(
-  Parameters::PhysicalProperties physical_properties)
-  : is_initialized(true)
-{
-  initialize(physical_properties);
-  required_fields[field::temperature]          = false;
-  required_fields[field::previous_temperature] = false;
-  required_fields[field::shear_rate]           = false;
-}
-
 void
 PhysicalPropertiesManager::establish_fields_required_by_model(
   PhysicalPropertyModel &model)
@@ -43,16 +32,19 @@ void
 PhysicalPropertiesManager::initialize(
   Parameters::PhysicalProperties physical_properties)
 {
+  is_initialized = true;
+
   number_of_fluids = physical_properties.number_of_fluids;
 
   non_newtonian_flow = false;
+
+  required_fields[field::temperature]          = false;
+  required_fields[field::previous_temperature] = false;
+  required_fields[field::shear_rate]           = false;
+
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)
     {
-      required_fields[field::temperature]          = false;
-      required_fields[field::previous_temperature] = false;
-      required_fields[field::shear_rate]           = false;
-
       density.push_back(
         DensityModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model((*density[f]));
