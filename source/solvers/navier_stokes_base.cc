@@ -269,7 +269,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
   this->forces_on_boundaries =
     calculate_forces(this->dof_handler,
                      evaluation_point,
-                     simulation_parameters.physical_properties,
+                     simulation_parameters.physical_properties_manager,
                      simulation_parameters.boundary_conditions,
                      *this->face_quadrature,
                      *this->mapping);
@@ -348,7 +348,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
   this->torques_on_boundaries =
     calculate_torques(this->dof_handler,
                       evaluation_point,
-                      simulation_parameters.physical_properties,
+                      simulation_parameters.physical_properties_manager,
                       simulation_parameters.boundary_conditions,
                       *this->face_quadrature,
                       *this->mapping);
@@ -1081,7 +1081,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         this->present_solution,
         *this->cell_quadrature,
         *this->mapping,
-        this->simulation_parameters.physical_properties);
+        this->simulation_parameters.physical_properties_manager);
 
       this->apparent_viscosity_table.add_value(
         "time", simulation_control->get_current_time());

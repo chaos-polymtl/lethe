@@ -231,11 +231,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
   // Rheological model for viscosity properties
   double viscosity;
-  // Cast rheological model to either a Newtonian model or one of the
-  // non Newtonian models according to the physical properties
-  std::shared_ptr<RheologicalModel> rheological_model =
-    RheologicalModel::model_cast(
-      this->simulation_parameters.physical_properties.fluids[0]);
+  const auto rheological_model =
+    this->simulation_parameters.physical_properties_manager.get_rheology();
 
   const unsigned int vertices_per_face = GeometryInfo<dim>::vertices_per_face;
   const unsigned int n_q_points_face   = this->face_quadrature->size();
