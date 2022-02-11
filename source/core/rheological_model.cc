@@ -34,7 +34,7 @@ PowerLaw::value(const std::map<field, double> &field_values)
 {
   const double shear_rate_magnitude = field_values.at(field::shear_rate);
 
-  return calculate_viscosity(shear_rate_magnitude);
+  return calculate_viscosity(shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12);
 }
 
 void
@@ -45,7 +45,7 @@ PowerLaw::vector_value(
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
   for (unsigned int i = 0; i < shear_rate_magnitude.size(); ++i)
-    property_vector[i] = calculate_viscosity(shear_rate_magnitude[i]);
+    property_vector[i] = calculate_viscosity(shear_rate_magnitude[i]> 1e-12 ? shear_rate_magnitude[i] : 1e-12);
 }
 
 double
@@ -78,7 +78,7 @@ Carreau::value(const std::map<field, double> &field_values)
 {
   const double shear_rate_magnitude = field_values.at(field::shear_rate);
 
-  return calculate_viscosity(shear_rate_magnitude);
+  return calculate_viscosity(shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12);
 }
 
 void
@@ -89,7 +89,7 @@ Carreau::vector_value(const std::map<field, std::vector<double>> &field_vectors,
 
   for (unsigned int i = 0; i < shear_rate_magnitude.size(); ++i)
     {
-      property_vector[i] = calculate_viscosity(shear_rate_magnitude[i]);
+      property_vector[i] = calculate_viscosity(shear_rate_magnitude[i]> 1e-12 ? shear_rate_magnitude[i] : 1e-12);
     }
 }
 
