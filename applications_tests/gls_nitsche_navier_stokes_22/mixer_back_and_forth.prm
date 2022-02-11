@@ -89,9 +89,9 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 100
 	set number of solids = 2
 	subsection nitsche solid 0
+		set beta = 100
 		subsection mesh
 			set type = dealii
 			set grid type = hyper_rectangle
@@ -104,6 +104,7 @@ subsection nitsche
 		end
 	end
 	subsection nitsche solid 1
+		set beta = 100
 		subsection mesh
 			set type = dealii
    			set grid type = hyper_rectangle
