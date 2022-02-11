@@ -230,7 +230,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
 
   // Rheological model for viscosity properties
-  double viscosity;
+  double     viscosity;
   const auto rheological_model =
     this->simulation_parameters.physical_properties_manager.get_rheology();
 
