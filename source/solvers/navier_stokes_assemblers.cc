@@ -313,10 +313,6 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       shear_rate_magnitude =
         shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
 
-      // Calculate de current non newtonian viscosity on each quadrature point
-      std::map<field, double> field_values;
-      field_values[field::shear_rate] = shear_rate_magnitude;
-
       // Calculate viscosity gradient
       const Tensor<1, dim> viscosity_gradient =
         this->get_viscosity_gradient(velocity_gradient,
@@ -486,10 +482,6 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
       shear_rate_magnitude =
         shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
-
-      // Calculate de current non newtonian viscosity on each quadrature point
-      std::map<field, double> field_values;
-      field_values[field::shear_rate] = shear_rate_magnitude;
 
       // Calculate viscosity gradient
       const Tensor<1, dim> viscosity_gradient =
@@ -1019,18 +1011,6 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
 
-      // Calculate shear rate (at each q)
-      const Tensor<2, dim> shear_rate =
-        velocity_gradient + transpose(velocity_gradient);
-
-      // Calculate the shear rate magnitude
-      const double shear_rate_magnitude =
-        calculate_shear_rate_magnitude(shear_rate);
-
-      // Calculate de current non newtonian viscosity on each quadrature point
-      std::map<field, double> field_values;
-      field_values[field::shear_rate] = shear_rate_magnitude;
-
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
@@ -1116,14 +1096,6 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
         velocity_gradient + transpose(velocity_gradient);
-
-      // Calculate the shear rate magnitude
-      const double shear_rate_magnitude =
-        calculate_shear_rate_magnitude(shear_rate);
-
-      // Calculate de current non newtonian viscosity on each quadrature point
-      std::map<field, double> field_values;
-      field_values[field::shear_rate] = shear_rate_magnitude;
 
       // Pressure
       const double pressure = scratch_data.pressure_values[q];
