@@ -37,8 +37,8 @@ enum field : int
 };
 
 inline void
-set_field_vector(const field                          id,
-                 const std::vector<double> &          data,
+set_field_vector(const field                           id,
+                 const std::vector<double> &           data,
                  std::map<field, std::vector<double>> &fields)
 {
   std::vector<double> &target = fields.at(id);
