@@ -2234,14 +2234,13 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
         }
 
       // Core assemblers
-      if (this->simulation_parameters.physical_properties.fluids[0]
-            .non_newtonian_flow)
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerNonNewtonianCore<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties));
+              this->simulation_control));
         }
       else
         {

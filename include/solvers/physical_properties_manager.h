@@ -107,6 +107,13 @@ public:
     return tracer_diffusivity[fluid_id];
   }
 
+  void
+  set_rheology(std::shared_ptr<RheologicalModel> p_rheology,
+               unsigned int                      fluid_id = 0)
+  {
+    rheology[fluid_id] = p_rheology;
+  }
+
   bool
   is_non_newtonian() const
   {

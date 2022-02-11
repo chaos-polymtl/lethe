@@ -78,8 +78,10 @@ NavierStokesScratchData<dim>::allocate()
   fields.insert(
     std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
 
-  density   = std::vector<double>(n_q_points);
-  viscosity = std::vector<double>(n_q_points);
+  density                   = std::vector<double>(n_q_points);
+  viscosity                 = std::vector<double>(n_q_points);
+  grad_viscosity_shear_rate = std::vector<double>(n_q_points);
+
 
   density_0   = std::vector<double>(n_q_points);
   density_1   = std::vector<double>(n_q_points);
@@ -192,6 +194,15 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
       const auto density_model = properties_manager.get_density(0);
       density_model->vector_value(fields, density);
+
+
+      if (properties_manager.is_non_newtonian())
+        {
+          // Calculate derivative of viscosity with respect to shear rate
+          rheology_model->vector_jacobian(fields,
+                                          field::shear_rate,
+                                          grad_viscosity_shear_rate);
+        }
     }
   else // properties_manager.get_number_of_fluids() == 2
     {

@@ -318,8 +318,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         this->get_viscosity_gradient(velocity_gradient,
                                      velocity_hessian,
                                      shear_rate_magnitude,
-                                     viscosity[q],
-                                     1e-6);
+                                     scratch_data.grad_viscosity_shear_rate[q]);
 
       // Forcing term
       const Tensor<1, dim> force       = scratch_data.force[q];
@@ -488,8 +487,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
         this->get_viscosity_gradient(velocity_gradient,
                                      velocity_hessian,
                                      shear_rate_magnitude,
-                                     viscosity[q],
-                                     1e-6);
+                                     scratch_data.grad_viscosity_shear_rate[q]);
 
       // Pressure
       const double         pressure = scratch_data.pressure_values[q];

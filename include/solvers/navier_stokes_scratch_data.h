@@ -742,6 +742,7 @@ public:
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  density;
   std::vector<double>                  viscosity;
+  std::vector<double>                  grad_viscosity_shear_rate;
 
   // For VOF simulations
   std::vector<double> density_0;

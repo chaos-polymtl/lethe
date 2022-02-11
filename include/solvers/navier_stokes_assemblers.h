@@ -176,14 +176,9 @@ class GLSNavierStokesAssemblerNonNewtonianCore
 {
 public:
   GLSNavierStokesAssemblerNonNewtonianCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties)
+    std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
-  {
-    rheological_model =
-      RheologicalModel::model_cast(physical_properties.fluids[0]);
-  }
+  {}
 
   /**
    * @brief Calculates an approximation of the gradient of the viscosity
@@ -193,25 +188,12 @@ public:
      @param d_gamma_dot Th difference in the shear rate magnitude to approximate the
      viscosity variation with a slight change in the shear_rate magnitude
    */
-  Tensor<1, dim>
+  inline Tensor<1, dim>
   get_viscosity_gradient(const Tensor<2, dim> &velocity_gradient,
                          const Tensor<3, dim> &velocity_hessians,
-                         const double &        shear_rate_magnitude,
-                         const double &        non_newtonian_viscosity,
-                         const double &        d_gamma_dot) const
+                         const double          shear_rate_magnitude,
+                         const double          grad_viscosity_shear_rate) const
   {
-    std::map<field, double> field_values_plus;
-
-    // Calculates an approximation of the derivative of the viscosity with a
-    // slight change in the shear rate magnitude using finite difference
-    field_values_plus[field::shear_rate] = shear_rate_magnitude + d_gamma_dot;
-
-    const double non_newtonian_viscosity_plus =
-      rheological_model->value(field_values_plus);
-
-    double grad_viscosity_shear_rate =
-      (non_newtonian_viscosity_plus - non_newtonian_viscosity) / d_gamma_dot;
-
     // Calculates an approximation of the shear rate magnitude gradient using
     // the derived form, since it does not change with rheological models
     Tensor<1, dim> grad_shear_rate;
@@ -275,8 +257,6 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
-  std::shared_ptr<RheologicalModel>  rheological_model;
 };
 
 
@@ -418,15 +398,10 @@ class GDNavierStokesAssemblerNonNewtonianCore
 public:
   GDNavierStokesAssemblerNonNewtonianCore(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
     const double                       gamma)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
     , gamma(gamma)
-  {
-    rheological_model =
-      RheologicalModel::model_cast(physical_properties.fluids[0]);
-  }
+  {}
 
   /**
    * @brief assemble_matrix Assembles the matrix
@@ -449,9 +424,7 @@ public:
 
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
   double                             gamma;
-  std::shared_ptr<RheologicalModel>  rheological_model;
 };
 
 

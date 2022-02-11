@@ -277,13 +277,12 @@ namespace Parameters
     PhaseChange phase_change_parameters;
 
     // Non Newtonian model parameters
-    bool non_newtonian_flow;
-    enum class RheologyModel
+    enum class RheologicalModel
     {
       powerlaw,
       carreau,
       newtonian
-    } rheology_model;
+    } rheological_model;
     NonNewtonian non_newtonian_parameters;
 
     enum class DensityModel

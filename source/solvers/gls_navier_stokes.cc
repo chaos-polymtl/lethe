@@ -425,14 +425,13 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
             this->simulation_parameters.physical_properties));
         }
 
-      if (this->simulation_parameters.physical_properties.fluids[0]
-            .non_newtonian_flow)
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerNonNewtonianCore<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties));
+              this->simulation_control));
         }
       else
         {
@@ -729,17 +728,25 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
       this->set_nodal_values();
-      double viscosity =
-        this->simulation_parameters.physical_properties.fluids[0].viscosity;
-      this->simulation_parameters.physical_properties.fluids[0].viscosity =
-        this->simulation_parameters.initial_condition->viscosity;
+      std::shared_ptr<RheologicalModel> original_viscosity_model =
+        this->simulation_parameters.physical_properties_manager.get_rheology();
+
+      std::shared_ptr<Newtonian> temporary_rheology =
+        std::make_shared<Newtonian>(
+          this->simulation_parameters.initial_condition->viscosity);
+
+      this->simulation_parameters.physical_properties_manager.set_rheology(
+        temporary_rheology);
+
+
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         false);
       this->finish_time_step_fd();
-      this->simulation_parameters.physical_properties.fluids[0].viscosity =
-        viscosity;
+
+      this->simulation_parameters.physical_properties_manager.set_rheology(
+        original_viscosity_model);
     }
   else
     {

@@ -3,10 +3,11 @@
 std::shared_ptr<RheologicalModel>
 RheologicalModel::model_cast(const Parameters::Fluid &fluid_properties)
 {
-  if (!fluid_properties.non_newtonian_flow)
+  if (fluid_properties.rheological_model ==
+      Parameters::Fluid::RheologicalModel::newtonian)
     return std::make_shared<Newtonian>(fluid_properties.viscosity);
-  else if (fluid_properties.rheology_model ==
-           Parameters::Fluid::RheologyModel::powerlaw)
+  else if (fluid_properties.rheological_model ==
+           Parameters::Fluid::RheologicalModel::powerlaw)
     return std::make_shared<PowerLaw>(
       fluid_properties.non_newtonian_parameters.powerlaw_parameters.K,
       fluid_properties.non_newtonian_parameters.powerlaw_parameters.n,
