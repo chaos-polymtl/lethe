@@ -36,6 +36,8 @@ PhysicalPropertiesManager::initialize(
 
   number_of_fluids = physical_properties.number_of_fluids;
 
+  viscosity_scale = physical_properties.fluids[0].viscosity;
+
   non_newtonian_flow = false;
 
   required_fields[field::temperature]          = false;

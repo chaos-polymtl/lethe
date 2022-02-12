@@ -9,11 +9,11 @@
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto        &JxW_vec    = scratch_data.JxW;
+  const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -191,11 +191,11 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto        &JxW_vec    = scratch_data.JxW;
+  const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -339,11 +339,11 @@ template class GLSNavierStokesVOFAssemblerCore<3>;
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto        &JxW        = scratch_data.JxW;
+  const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -363,7 +363,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
                                        number_of_previous_solutions(method));
 
   // Phase values and limiters
-  std::vector<double>              &phase_values = scratch_data.phase_values;
+  std::vector<double> &             phase_values = scratch_data.phase_values;
   std::vector<std::vector<double>> &previous_phase_values =
     scratch_data.previous_phase_values;
 
@@ -414,11 +414,11 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto        &JxW        = scratch_data.JxW;
+  const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -437,7 +437,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
                                        number_of_previous_solutions(method));
 
   // Phase values and limiters
-  std::vector<double>              &phase_values = scratch_data.phase_values;
+  std::vector<double> &             phase_values = scratch_data.phase_values;
   std::vector<std::vector<double>> &previous_phase_values =
     scratch_data.previous_phase_values;
 

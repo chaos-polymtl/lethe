@@ -144,6 +144,9 @@ private:
   bool non_newtonian_flow;
 
   unsigned int number_of_fluids;
+
+  // Viscosity scaling, used for GD solver.
+  double viscosity_scale;
 };
 
 #endif
