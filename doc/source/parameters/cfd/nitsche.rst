@@ -77,7 +77,9 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 .. tip::
 	``beta`` value is normally between 1 and 1000. A classical value is ``beta = 10`` (default parameter value).
 
-	For ``beta = 0``, the solid has no influence on the flow: this value can be used for debugging purposes. 
+	For ``beta = 0``, the solid has no influence on the flow: this value can be used for debugging purposes.
+	
+	In case of a static solid, ``beta`` parameter has to be greatly increased, up to ``100`` or ``1000``, to prevent the fluid moving through the solid.
 
 * ``subsection mesh``: defines the solid mesh used to apply Nitsche immersed boundary. The syntax is the same as that of the mesh subsection, see :doc:`mesh` for more details.
 
