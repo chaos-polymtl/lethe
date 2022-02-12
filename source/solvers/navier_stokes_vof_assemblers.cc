@@ -362,11 +362,6 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
-  // Phase values and limiters
-  std::vector<double> &             phase_values = scratch_data.phase_values;
-  std::vector<std::vector<double>> &previous_phase_values =
-    scratch_data.previous_phase_values;
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -435,11 +430,6 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
   Vector<double> bdf_coefs = bdf_coefficients(method, time_steps_vector);
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
-
-  // Phase values and limiters
-  std::vector<double> &             phase_values = scratch_data.phase_values;
-  std::vector<std::vector<double>> &previous_phase_values =
-    scratch_data.previous_phase_values;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
