@@ -45,7 +45,6 @@ public:
   Parameters::Mesh                                  mesh;
   std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
-  Parameters::PhysicalProperties                    physical_properties;
   Parameters::SimulationControl                     simulation_control;
   Parameters::Timer                                 timer;
   Parameters::FEM                                   fem_parameters;
@@ -56,9 +55,9 @@ public:
   BoundaryConditions::NSBoundaryConditions<dim>     boundary_conditions;
   BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
-  Parameters::InitialConditions<dim> *              initial_condition;
-  AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
-  SourceTerms::SourceTerm<dim> *                    source_term;
+  Parameters::InitialConditions<dim>               *initial_condition;
+  AnalyticalSolutions::AnalyticalSolution<dim>     *analytical_solution;
+  SourceTerms::SourceTerm<dim>                     *source_term;
   Parameters::VelocitySource                        velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
@@ -153,6 +152,9 @@ public:
           "Inconsistency in .prm!\n with VOF = true\n use: number of fluids = 2");
       }
   }
+
+public:
+  Parameters::PhysicalProperties physical_properties;
 };
 
 #endif

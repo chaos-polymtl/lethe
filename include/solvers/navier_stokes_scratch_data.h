@@ -86,9 +86,9 @@ public:
    *
    */
   NavierStokesScratchData(PhysicalPropertiesManager &properties_manager,
-                          const FESystem<dim> &      fe,
-                          const Quadrature<dim> &    quadrature,
-                          const Mapping<dim> &       mapping,
+                          const FESystem<dim>       &fe,
+                          const Quadrature<dim>     &quadrature,
+                          const Mapping<dim>        &mapping,
                           const Quadrature<dim - 1> &face_quadrature)
     : properties_manager(properties_manager)
     , fe_values(mapping,
@@ -193,10 +193,10 @@ public:
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType &                                    current_solution,
+         const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages,
-         Function<dim> *                forcing_function,
+         Function<dim>                 *forcing_function,
          Tensor<1, dim>                 beta_force)
   {
     this->fe_values.reinit(cell);
@@ -439,8 +439,8 @@ public:
 
   void
   enable_VOF(const FiniteElement<dim> &fe,
-             const Quadrature<dim> &   quadrature,
-             const Mapping<dim> &      mapping);
+             const Quadrature<dim>    &quadrature,
+             const Mapping<dim>       &mapping);
 
   /** @brief Reinitialize the content of the scratch for the VOF
    *
@@ -459,7 +459,7 @@ public:
   template <typename VectorType>
   void
   reinit_VOF(const typename DoFHandler<dim>::active_cell_iterator &cell,
-             const VectorType &             current_solution,
+             const VectorType              &current_solution,
              const std::vector<VectorType> &previous_solutions,
              const std::vector<VectorType> & /*solution_stages*/)
   {
@@ -490,8 +490,8 @@ public:
 
   void
   enable_void_fraction(const FiniteElement<dim> &fe,
-                       const Quadrature<dim> &   quadrature,
-                       const Mapping<dim> &      mapping);
+                       const Quadrature<dim>    &quadrature,
+                       const Mapping<dim>       &mapping);
 
   /** @brief Reinitialize the content of the scratch for the void fraction
    *
@@ -511,8 +511,8 @@ public:
   void
   reinit_void_fraction(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
+    const VectorType                                     &current_solution,
+    const std::vector<VectorType>                        &previous_solutions,
     const std::vector<VectorType> & /*solution_stages*/)
   {
     this->fe_values_void_fraction->reinit(cell);
@@ -567,8 +567,8 @@ public:
     const VectorType                                      previous_solution,
     const VectorType                       void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
-    DoFHandler<dim> &                      dof_handler,
-    DoFHandler<dim> &                      void_fraction_dof_handler)
+    DoFHandler<dim>                       &dof_handler,
+    DoFHandler<dim>                       &void_fraction_dof_handler)
   {
     const FiniteElement<dim> &fe = this->fe_values.get_fe();
     const FiniteElement<dim> &fe_void_fraction =
@@ -700,8 +700,8 @@ public:
 
   void
   enable_heat_transfer(const FiniteElement<dim> &fe,
-                       const Quadrature<dim> &   quadrature,
-                       const Mapping<dim> &      mapping);
+                       const Quadrature<dim>    &quadrature,
+                       const Mapping<dim>       &mapping);
 
 
   /** @brief Reinitialize the content of the scratch for the heat transfer
@@ -720,7 +720,7 @@ public:
   void
   reinit_heat_transfer(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution)
+    const VectorType                                     &current_solution)
   {
     this->fe_values_temperature->reinit(cell);
 
@@ -742,9 +742,11 @@ public:
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  density;
   std::vector<double>                  viscosity;
+  std::vector<double>                  thermal_expansion;
   std::vector<double>                  grad_viscosity_shear_rate;
+  std::vector<std::vector<double>>     previous_density;
 
-  // For VOF simulations
+  // For VOF simulations. Present properties for fluid 0 and 1.
   std::vector<double> density_0;
   std::vector<double> density_1;
   std::vector<double> viscosity_0;

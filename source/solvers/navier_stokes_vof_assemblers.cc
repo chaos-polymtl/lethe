@@ -9,11 +9,11 @@
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -41,18 +41,14 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   const double density_ratio      = 2;
   double       phase_force_cutoff = 0;
 
-  if (physical_properties.fluids[0].density <
-        physical_properties.fluids[1].density &&
-      physical_properties.fluids[0].density * density_ratio <
-        physical_properties.fluids[1].density)
+  if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
+      scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
       // gravity not will be applied for phase < phase_force_cutoff
       phase_force_cutoff = 1e-6;
     }
-  if (physical_properties.fluids[1].density <
-        physical_properties.fluids[0].density &&
-      physical_properties.fluids[1].density * density_ratio <
-        physical_properties.fluids[0].density)
+  if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
+      scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
       // gravity not will be applied for phase > phase_force_cutoff
       phase_force_cutoff = 1 - 1e-6;
@@ -88,15 +84,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       const double JxW = JxW_vec[q];
 
       // Calculation of the equivalent density at the quadrature point
-      double density_eq =
-        calculate_point_property(phase_values[q],
-                                 physical_properties.fluids[0].density,
-                                 physical_properties.fluids[1].density);
+      double density_eq = scratch_data.density[q];
 
-      double viscosity_eq =
-        calculate_point_property(phase_values[q],
-                                 physical_properties.fluids[0].viscosity,
-                                 physical_properties.fluids[1].viscosity);
+      double viscosity_eq = scratch_data.viscosity[q];
 
       const double dynamic_viscosity_eq = density_eq * viscosity_eq;
 
@@ -201,11 +191,11 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -233,22 +223,20 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   const double density_ratio      = 2;
   double       phase_force_cutoff = 0;
 
-  if (physical_properties.fluids[0].density <
-        physical_properties.fluids[1].density &&
-      physical_properties.fluids[0].density * density_ratio <
-        physical_properties.fluids[1].density)
+
+  if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
+      scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
       // gravity not will be applied for phase < phase_force_cutoff
       phase_force_cutoff = 1e-6;
     }
-  if (physical_properties.fluids[1].density <
-        physical_properties.fluids[0].density &&
-      physical_properties.fluids[1].density * density_ratio <
-        physical_properties.fluids[0].density)
+  if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
+      scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
       // gravity not will be applied for phase > phase_force_cutoff
       phase_force_cutoff = 1 - 1e-6;
     }
+
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -283,16 +271,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       const double JxW = JxW_vec[q];
 
       // Calculation of the equivalent density at the quadrature point
-      double density_eq =
-        calculate_point_property(phase_values[q],
-                                 physical_properties.fluids[0].density,
-                                 physical_properties.fluids[1].density);
+      double density_eq = scratch_data.density[q];
 
-      double viscosity_eq =
-        calculate_point_property(phase_values[q],
-                                 physical_properties.fluids[0].viscosity,
-                                 physical_properties.fluids[1].viscosity);
-
+      double       viscosity_eq         = scratch_data.viscosity[q];
       const double dynamic_viscosity_eq = density_eq * viscosity_eq;
 
       // Calculation of the GLS stabilization parameter. The
@@ -358,11 +339,11 @@ template class GLSNavierStokesVOFAssemblerCore<3>;
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -382,7 +363,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
                                        number_of_previous_solutions(method));
 
   // Phase values and limiters
-  std::vector<double> &             phase_values = scratch_data.phase_values;
+  std::vector<double>              &phase_values = scratch_data.phase_values;
   std::vector<std::vector<double>> &previous_phase_values =
     scratch_data.previous_phase_values;
 
@@ -395,18 +376,12 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
 
       std::vector<double> densities(number_of_previous_solutions(method) + 1);
 
-      densities[0] =
-        calculate_point_property(phase_values[q],
-                                 physical_properties.fluids[0].density,
-                                 physical_properties.fluids[1].density);
+      densities[0] = scratch_data.density[q];
 
       for (unsigned int p = 1; p < number_of_previous_solutions(method) + 1;
            ++p)
         {
-          densities[p] =
-            calculate_point_property(previous_phase_values[p - 1][q],
-                                     physical_properties.fluids[0].density,
-                                     physical_properties.fluids[1].density);
+          densities[p] = scratch_data.previous_density[p - 1][q];
         }
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
@@ -439,11 +414,11 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -462,7 +437,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
                                        number_of_previous_solutions(method));
 
   // Phase values and limiters
-  std::vector<double> &             phase_values = scratch_data.phase_values;
+  std::vector<double>              &phase_values = scratch_data.phase_values;
   std::vector<std::vector<double>> &previous_phase_values =
     scratch_data.previous_phase_values;
 
@@ -476,18 +451,12 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
 
       std::vector<double> densities(number_of_previous_solutions(method) + 1);
 
-      densities[0] =
-        calculate_point_property(phase_values[q],
-                                 physical_properties.fluids[0].density,
-                                 physical_properties.fluids[1].density);
+      densities[0] = scratch_data.density[q];
 
       for (unsigned int p = 1; p < number_of_previous_solutions(method) + 1;
            ++p)
         {
-          densities[p] =
-            calculate_point_property(previous_phase_values[p - 1][q],
-                                     physical_properties.fluids[0].density,
-                                     physical_properties.fluids[1].density);
+          densities[p] = scratch_data.previous_density[p - 1][q];
         }
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;

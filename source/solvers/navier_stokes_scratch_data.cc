@@ -80,6 +80,7 @@ NavierStokesScratchData<dim>::allocate()
 
   density                   = std::vector<double>(n_q_points);
   viscosity                 = std::vector<double>(n_q_points);
+  thermal_expansion         = std::vector<double>(n_q_points);
   grad_viscosity_shear_rate = std::vector<double>(n_q_points);
 
 
@@ -87,13 +88,17 @@ NavierStokesScratchData<dim>::allocate()
   density_1   = std::vector<double>(n_q_points);
   viscosity_0 = std::vector<double>(n_q_points);
   viscosity_1 = std::vector<double>(n_q_points);
+
+  previous_density =
+    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
+                                     std::vector<double>(this->n_q_points));
 }
 
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_VOF(const FiniteElement<dim> &fe,
-                                         const Quadrature<dim> &   quadrature,
-                                         const Mapping<dim> &      mapping)
+                                         const Quadrature<dim>    &quadrature,
+                                         const Mapping<dim>       &mapping)
 {
   gather_VOF    = true;
   fe_values_VOF = std::make_shared<FEValues<dim>>(
@@ -112,8 +117,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_void_fraction(
   const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_void_fraction    = true;
   fe_values_void_fraction = std::make_shared<FEValues<dim>>(
@@ -148,8 +153,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_heat_transfer(
   const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_temperature = true;
   fe_values_temperature =
@@ -203,18 +208,24 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                           field::shear_rate,
                                           grad_viscosity_shear_rate);
         }
+
+      if (this->gather_temperature)
+        {
+          const auto thermal_expansion_model =
+            properties_manager.get_thermal_expansion();
+          thermal_expansion_model->vector_value(fields, thermal_expansion);
+        }
     }
   else // properties_manager.get_number_of_fluids() == 2
     {
       // In this case,  we need both density and viscosity
       const auto density_model_0  = properties_manager.get_density(0);
       const auto rheology_model_0 = properties_manager.get_rheology(0);
+      const auto density_model_1  = properties_manager.get_density(1);
+      const auto rheology_model_1 = properties_manager.get_rheology(1);
 
       density_model_0->vector_value(fields, density_0);
       rheology_model_0->vector_value(fields, viscosity_0);
-
-      const auto density_model_1  = properties_manager.get_density(1);
-      const auto rheology_model_1 = properties_manager.get_rheology(1);
 
       density_model_1->vector_value(fields, density_1);
       rheology_model_1->vector_value(fields, viscosity_1);
@@ -229,6 +240,22 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           viscosity[q] = calculate_point_property(this->phase_values[q],
                                                   this->viscosity_0[q],
                                                   this->viscosity_1[q]);
+        }
+
+
+
+      for (unsigned p = 0; p < previous_phase_values.size(); ++p)
+        {
+          // Blend the physical properties using the VOF field
+          for (unsigned int q = 0; q < this->n_q_points; ++q)
+            {
+              // Calculate previous density (right now assumes constant density
+              // model per phase)
+              previous_density[p][q] =
+                calculate_point_property(this->previous_phase_values[p][q],
+                                         this->density_0[q],
+                                         this->density_1[q]);
+            }
         }
     }
 }
