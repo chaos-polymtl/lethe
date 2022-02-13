@@ -21,10 +21,10 @@
 #ifndef nitsche_h
 #define nitsche_h
 
-#include <core/parameters.h>
-
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+
+#include <core/parameters.h>
 
 using namespace dealii;
 
@@ -105,7 +105,7 @@ namespace Parameters
 
       prm.declare_entry(
         "stop if particles lost",
-        "false",
+        "true",
         Patterns::Bool(),
         "Enable stopping the simulation if Nitsche particles have been lost");
 
