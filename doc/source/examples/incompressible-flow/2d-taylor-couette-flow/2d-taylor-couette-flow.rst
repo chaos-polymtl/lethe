@@ -22,12 +22,13 @@ Description of the case
 
 The Taylor-Couette flow is the name of a fluid flow in the gap between two long concentric cylinders with different rotational velocities. One or both of these cylinders may rotate along the axis, however generally it is assumed that the outer cylinder is fixed, and the inner cylinder rotates with a constant angular velocity. For the Taylor-Couette flow, an analytical solution of the Navier-Stokes equations can be found, although this solution is not stable for all ranges of operating conditions and becomes unstable at high Reynolds number.
 
-We assume that the inner cylinder rotates at a constant angular velocity :math:`\omega` in the anti-clockwise direction , while the outer cylinder is fixed. The following figure shows the geometry of this problem and the corresponding boundary conditions:
+We assume that the inner cylinder rotates at a constant angular velocity :math:`\omega` in the anti-clockwise direction, while the outer cylinder is fixed. The following figure shows the geometry of this problem and the corresponding boundary conditions:
 
-.. image:: images/geometry.png
+.. image:: images/geometry.svg
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry
+    :height: 10cm
 
 The analytical solution of this problem can be found relatively easily in cylindrical coordinates (see for example the book by Bird, Stewart and Lightfoot [1]):
 
@@ -216,6 +217,7 @@ Using Paraview, the steady-state velocity profile can be visualized:
 .. image:: images/flow_patterns.png
     :alt: velocity distribution
     :align: center
+    :height: 10cm
 
 As can be seen, each cell is curved because a Q2 isoparametric mapping was used (by setting ``qmapping=true`` in the FEM subsection). To visualize these high-order cells, we need to subdivide the regular cell to store additional information onto them. A good practice is to use as many subdivisions as the interpolation order of the scheme. Hence, we used ``subdivision=2`` in the simulation control subsection. Finally, by default, Paraview does not render high-order elements. To enable the rendering of high-order elements, the Nonlinear subdivision level slider must be increased above one. For more information on this topic, please consult the deal.II wiki page on `rendering high-order elements <https://github.com/dealii/dealii/wiki/Notes-on-visualizing-high-order-output>`.
 
@@ -227,6 +229,7 @@ A python script provided in the example folder allows to compare the velocity pr
 .. image:: images/lethe_analytical_taylor_couette_comparison.png
     :alt: Azimuthal velocity compared with the analytical solution
     :align: center
+    :height: 10cm
 
 
 The end of the simulation log provides the following information about the convergence of the error:

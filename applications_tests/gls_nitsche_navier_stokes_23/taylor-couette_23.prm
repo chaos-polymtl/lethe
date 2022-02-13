@@ -64,8 +64,8 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-    set beta = 10
     subsection nitsche solid 0
+	    set beta = 10
 	    subsection mesh
 		    set type = gmsh
 		    set file name = ../cylinder.msh

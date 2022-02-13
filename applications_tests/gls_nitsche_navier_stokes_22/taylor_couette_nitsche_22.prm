@@ -65,11 +65,11 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-    set beta = 10
     set verbosity = verbose
     set calculate torques on solid = true
 
     subsection nitsche solid 0
+	set beta = 10
 	subsection mesh
 		set type = dealii
 		set grid type = hyper_ball
