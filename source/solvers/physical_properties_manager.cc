@@ -40,6 +40,7 @@ PhysicalPropertiesManager::initialize(
   density_scale   = physical_properties.fluids[0].density;
 
   non_newtonian_flow = false;
+  constant_density   = true;
 
   required_fields[field::temperature]          = false;
   required_fields[field::previous_temperature] = false;
@@ -51,6 +52,13 @@ PhysicalPropertiesManager::initialize(
       density.push_back(
         DensityModel::model_cast(physical_properties.fluids[f]));
       establish_fields_required_by_model(*density[f]);
+
+      // Store an indicator for the density to indicate if it is not constant
+      // This indicator is used elsewhere in the code to throw assertions
+      // if non-constant density is not implemented in a post-processing utility
+      if (physical_properties.fluids[f].density_model !=
+          Parameters::Fluid::DensityModel::constant)
+        constant_density = false;
 
       specific_heat.push_back(
         SpecificHeatModel::model_cast(physical_properties.fluids[f]));

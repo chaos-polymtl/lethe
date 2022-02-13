@@ -67,6 +67,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 {
   TimerOutput::Scope t(this->computing_timer, "assemble Nitsche restriction");
 
+  Assert(
+    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity("assemble_nitsche_restriction"));
+
   // Viscosity for stabilization constant
   const double viscosity =
     this->simulation_parameters.physical_properties_manager.viscosity_scale;
@@ -250,6 +254,12 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
   Tensor<2, 3> fluid_pressure;
   Tensor<1, 3> force; // to be changed for a vector of tensors when
   // allowing multiple solids
+
+
+  Assert(
+    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity("assemble_nitsche_restriction"));
+
   const double viscosity =
     this->simulation_parameters.physical_properties_manager.viscosity_scale;
 

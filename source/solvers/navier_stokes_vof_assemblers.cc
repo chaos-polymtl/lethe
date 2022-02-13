@@ -41,6 +41,11 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   const double density_ratio      = 2;
   double       phase_force_cutoff = 0;
 
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
       scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
@@ -223,6 +228,11 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   const double density_ratio      = 2;
   double       phase_force_cutoff = 0;
 
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
       scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])

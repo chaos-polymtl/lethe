@@ -988,6 +988,10 @@ GLSVANSSolver<dim>::post_processing()
 
   QGauss<dim>     cell_quadrature_formula(this->number_quadrature_points);
   QGauss<dim - 1> face_quadrature_formula(this->number_quadrature_points);
+
+  Assert(this->cfd_dem_simulation_parameters.cfd_parameters
+           .physical_properties_manager.density_is_constant(),
+         RequiresConstantDensity("Pressure drop calculation"));
   pressure_drop =
     calculate_pressure_drop(
       this->dof_handler,

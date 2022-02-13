@@ -29,6 +29,23 @@
 using namespace dealii;
 
 
+DeclException1(
+  RequiresConstantDensity,
+  std::string,
+  "The following assembler or post-processing utility "
+    << arg1
+    << " that you are trying to use does not support the use of a non-constant density model. Modifications to Lethe are required to take this into account.");
+
+
+DeclException1(
+  RequiresConstantViscosity,
+  std::string,
+  "The following assembler or post-processing utility "
+    << arg1
+    << " that you are trying to use does not support the use of a non-constant viscosity model. Modifications to Lethe are required to take this into account.");
+
+
+
 /** @class The PhysicalPropertiesManager class manages the physical properties
  * model which are required to calculate the various physical properties
  * This centralizes the place where the models are created.
@@ -45,6 +62,7 @@ public:
    */
   PhysicalPropertiesManager()
     : is_initialized(false)
+
   {}
 
   /**
@@ -126,6 +144,13 @@ public:
     return required_fields[id];
   }
 
+  bool
+  density_is_constant()
+  {
+    return constant_density;
+  }
+
+
   void
   establish_fields_required_by_model(PhysicalPropertyModel &model);
 
@@ -149,6 +174,7 @@ private:
   std::map<field, bool> required_fields;
 
   bool non_newtonian_flow;
+  bool constant_density;
 
   unsigned int number_of_fluids;
 };

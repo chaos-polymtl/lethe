@@ -12,7 +12,7 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Scheme and physical properties
+  // Viscosity at Gauss points
   const std::vector<double> &viscosity = scratch_data.viscosity;
 
   // Loop and quadrature informations
@@ -779,8 +779,19 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
-  const double viscosity = scratch_data.viscosity[0];
-  const double density   = scratch_data.density[0];
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
 
   const auto pic  = scratch_data.pic;
   beta_drag       = 0;
@@ -845,8 +856,16 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
-  const double viscosity = scratch_data.viscosity[0];
-  const double density   = scratch_data.density[0];
+  // Physical Properties
+  Assert(!scratch_data.properties_manager.is_non_newtonian(),
+         RequiresConstantViscosity(
+           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
 
   const auto pic  = scratch_data.pic;
   beta_drag       = 0;
@@ -914,8 +933,18 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
-  const double viscosity = scratch_data.viscosity[0];
-  const double density   = scratch_data.density[0];
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
 
   const auto pic  = scratch_data.pic;
   beta_drag       = 0;
@@ -971,8 +1000,12 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   const auto   pic = scratch_data.pic;
   Tensor<1, 3> buoyancy_force;
 
-  const double density = scratch_data.density[0];
-
+  // Physical Properties
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1010,10 +1043,14 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
 
   particle_number = 0;
 
-  // Viscosity and density are currently assumed constant from the particle
-  // point of view.
-  const double density = scratch_data.density[0];
+  // Physical Properties
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerPressureForc<dim>::calculate_particle_fluid_interactions"));
 
+
+  const double density = scratch_data.properties_manager.density_scale;
   // Loop over particles in cell
   for (auto &particle : pic)
     {
@@ -1063,8 +1100,18 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
 
   // Viscosity and density are currently assumed constant from the particle
   // point of view.
-  const double viscosity = scratch_data.viscosity[0];
-  const double density   = scratch_data.density[0];
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
 
   // Loop over particles in cell
   for (auto &particle : pic)
