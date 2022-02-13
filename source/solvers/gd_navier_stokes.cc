@@ -184,8 +184,8 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -302,8 +302,8 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -848,7 +848,7 @@ GDNavierStokesSolver<dim>::setup_ILU()
   system_ilu_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>(
     gamma,
-    this->simulation_parameters.physical_properties.fluids[0].viscosity,
+    this->simulation_parameters.physical_properties_manager.viscosity_scale,
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_ilu_preconditioner),
@@ -934,7 +934,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
   if (this->pressure_fem_degree > 1)
     higher_order_elements = true;
   TrilinosWrappers::PreconditionAMG::AdditionalData
-                                      pressure_preconditioner_options(elliptic_pressure,
+                         pressure_preconditioner_options(elliptic_pressure,
                                     higher_order_elements,
                                     n_cycles,
                                     w_cycle,
@@ -945,7 +945,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
                                     output_details,
                                     smoother_type,
                                     coarse_type);
-  Teuchos::ParameterList              pressure_parameter_ml;
+  Teuchos::ParameterList pressure_parameter_ml;
   std::unique_ptr<Epetra_MultiVector> pressure_distributed_constant_modes;
   velocity_preconditioner_options.set_parameters(
     pressure_parameter_ml,
@@ -963,7 +963,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
   system_amg_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionAMG>>(
     gamma,
-    this->simulation_parameters.physical_properties.fluids[0].viscosity,
+    this->simulation_parameters.physical_properties_manager.viscosity_scale,
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_amg_preconditioner),

@@ -633,8 +633,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -744,8 +744,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -997,9 +997,8 @@ GLSVANSSolver<dim>::post_processing()
       face_quadrature_formula,
       this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
       this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
-    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties
-      .fluids[0]
-      .density;
+    this->cfd_dem_simulation_parameters.cfd_parameters
+      .physical_properties_manager.density_scale;
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
   this->pcout << "Max Local Mass Source: " << max_local_mass_source << " s^-1"

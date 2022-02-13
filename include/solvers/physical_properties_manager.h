@@ -130,6 +130,13 @@ public:
   establish_fields_required_by_model(PhysicalPropertyModel &model);
 
 
+  // Temporary scaling variables. This will be deprecated once the migration is
+  // well finished.
+public:
+  // Viscosity and density scaling used for some post-processing capabilities.
+  double viscosity_scale;
+  double density_scale;
+
 private:
   bool                                                   is_initialized;
   std::vector<std::shared_ptr<DensityModel>>             density;
@@ -144,9 +151,6 @@ private:
   bool non_newtonian_flow;
 
   unsigned int number_of_fluids;
-
-  // Viscosity scaling, used for GD solver.
-  double viscosity_scale;
 };
 
 #endif

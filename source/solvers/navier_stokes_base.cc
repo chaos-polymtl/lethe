@@ -795,7 +795,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &                           present_solution = this->present_solution;
+  auto                            &present_solution = this->present_solution;
 
   if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::pressure)
@@ -1131,9 +1131,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Pressure drop: "
-                      << this->simulation_parameters.physical_properties
-                             .fluids[0]
-                             .density *
+                      << this->simulation_parameters.physical_properties_manager
+                             .density_scale *
                            pressure_drop
                       << " Pa" << std::endl;
         }
@@ -1524,7 +1523,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     data_out.add_data_vector(solution, srf);
 
   NonNewtonianViscosityPostprocessor<dim> non_newtonian_viscosity(
-    simulation_parameters.physical_properties);
+    this->simulation_parameters.physical_properties_manager.get_rheology());
   ShearRatePostprocessor<dim> shear_rate_processor;
 
   if (this->simulation_parameters.physical_properties_manager
