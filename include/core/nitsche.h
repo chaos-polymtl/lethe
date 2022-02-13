@@ -51,6 +51,9 @@ namespace Parameters
     Functions::ParsedFunction<dim> solid_velocity;
     bool                           enable_particles_motion;
 
+    // Penalization term
+    double beta;
+
     // Particle motion integration parameters
     unsigned int particles_sub_iterations;
     bool         stop_particles_lost;
@@ -74,6 +77,7 @@ namespace Parameters
     prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
       solid_mesh.declare_parameters(prm);
+
       prm.enter_subsection("solid velocity");
       solid_velocity.declare_parameters(prm, dim);
       if (dim == 2)
@@ -81,10 +85,16 @@ namespace Parameters
       if (dim == 3)
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
+
       prm.declare_entry("enable particles motion",
                         "false",
                         Patterns::Bool(),
                         "Condition on the motion of particles");
+
+      prm.declare_entry("beta",
+                        "10",
+                        Patterns::Double(),
+                        "Penalization term for Nitsche method");
 
       prm.declare_entry(
         "particles sub iterations",
@@ -95,7 +105,7 @@ namespace Parameters
 
       prm.declare_entry(
         "stop if particles lost",
-        "false",
+        "true",
         Patterns::Bool(),
         "Enable stopping the simulation if Nitsche particles have been lost");
 
@@ -144,6 +154,7 @@ namespace Parameters
       solid_velocity.parse_parameters(prm);
       prm.leave_subsection();
       enable_particles_motion  = prm.get_bool("enable particles motion");
+      beta                     = prm.get_double("beta");
       particles_sub_iterations = prm.get_integer("particles sub iterations");
       stop_particles_lost      = prm.get_bool("stop if particles lost");
       number_quadrature_points = prm.get_integer("number quadrature points");
@@ -175,9 +186,6 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
 
-    // Penalization term
-    double beta;
-
     // Calculate forces
     Verbosity verbosity;
 
@@ -196,10 +204,6 @@ namespace Parameters
 
     prm.enter_subsection("nitsche");
     {
-      prm.declare_entry("beta",
-                        "1",
-                        Patterns::Double(),
-                        "Penalization term for Nitsche method");
       prm.declare_entry(
         "verbosity",
         "quiet",
@@ -227,7 +231,6 @@ namespace Parameters
   {
     prm.enter_subsection("nitsche");
     {
-      beta                 = prm.get_double("beta");
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
         verbosity = Verbosity::verbose;

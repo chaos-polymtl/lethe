@@ -71,11 +71,11 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 10
   	set verbosity = verbose
   	set number of solids = 1
 
   	subsection nitsche solid 0
+		set beta = 10
 		subsection mesh
 	  		set simplex = true
 		  	set type = gmsh
