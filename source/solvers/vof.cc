@@ -242,7 +242,7 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "phase");
   // Peeling output, gathered after initialization step
-  if (marker_pw.size() != 0) // A REVOIR (parse first_iteration?)
+  if (marker_pw.size() != 0) // TODO parse first_iteration? initialize somehow?
     {
       data_out.add_data_vector(dof_handler, marker_pw, "marker_pw");
     }
@@ -460,164 +460,31 @@ template <int dim>
 void
 VolumeOfFluid<dim>::modify_solution()
 {
-  // Peeling/wetting (TODO create another method)
-  {
-    const DoFHandler<dim> *dof_handler_cfd =
-      multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-
-    // Get fluid present solution
-    //    if (multiphysics->fluid_dynamics_is_block())
-    //      {
-    //        const auto current_solution_cfd(
-    //          *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
-    //      }
-    //    else
-    //      {
-    const auto current_solution_cfd(
-      *multiphysics->get_solution(PhysicsID::fluid_dynamics));
-    //      }
-
-    // Initializations
-    locally_owned_dofs = dof_handler.locally_owned_dofs();
-    std::vector<types::global_dof_index> dof_indices_vof(
-      fe->dofs_per_cell); //  Local connectivity
-    //    auto mpi_communicator = triangulation->get_communicator();
-    marker_pw.reinit(this->locally_owned_dofs,
-                     triangulation->get_communicator());
-    TrilinosWrappers::MPI::Vector solution_pw(present_solution);
-    //(this->locally_owned_dofs, mpi_communicator);
-
-    // TODO clean updated values
-    FEFaceValues<dim> fe_face_values_vof(*this->fs_mapping,
-                                         *this->fe,
-                                         *this->face_quadrature,
-                                         update_values |
-                                           update_quadrature_points |
-                                           update_gradients |
-                                           update_JxW_values |
-                                           update_normal_vectors);
-
-    FEFaceValues<dim> fe_face_values_cfd(*this->fs_mapping,
-                                         dof_handler_cfd->get_fe(),
-                                         *this->face_quadrature,
-                                         update_values |
-                                           update_quadrature_points |
-                                           update_gradients |
-                                           update_JxW_values |
-                                           update_normal_vectors);
-
-    const unsigned int n_q_points = this->cell_quadrature->size();
-
-    const FEValuesExtractors::Scalar pressure(dim);
-    std::vector<double>              pressure_values(n_q_points);
-    std::vector<double>              phase_values(n_q_points);
-
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_vof.size;
-         ++i_bc)
-      {
-        if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
-            BoundaryConditions::BoundaryType::pw)
-          {
-            unsigned int boundary_id =
-              this->simulation_parameters.boundary_conditions.id[i_bc];
-
-            // For all cells at pw boundary
-            // TODO voir pour sélectionner frontière d'intérêt seulement
-            // (changer boucles?)
-            // Loop on cell_vof
-            for (const auto &cell_vof : dof_handler.active_cell_iterators())
-              {
-                // if cell is at pw boundary
-                if ((cell_vof->is_locally_owned()) && (cell_vof->at_boundary()))
-                  {
-                    for (const auto face : cell_vof->face_indices())
-                      {
-                        if (cell_vof->face(face)
-                              ->at_boundary()) // nécessaire?
-                                               // (cell_vof->at_boundary
-                                               // plus haut)
-                          {
-                            // Translate equivalent dof_handler for CFD
-                            typename DoFHandler<dim>::active_cell_iterator
-                              cell_cfd(&(*(this->triangulation)),
-                                       cell_vof->level(),
-                                       cell_vof->index(),
-                                       dof_handler_cfd);
-
-                            // Reinit fe_face_values for CFD and VOF
-                            fe_face_values_vof.reinit(cell_vof, face);
-                            fe_face_values_cfd.reinit(cell_cfd, face);
-
-                            // Get pressure values
-                            fe_face_values_cfd[pressure].get_function_values(
-                              current_solution_cfd, pressure_values);
-
-                            // Get phase values
-                            fe_face_values_vof.get_function_values(
-                              present_solution, phase_values);
-
-                            if (cell_vof->face(face)->boundary_id() ==
-                                boundary_id)
-                              // mettre avec
-                              // (cell_vof->face(face)->at_boundary())?
-                              {
-                                for (unsigned int q = 0; q < n_q_points; q++)
-                                  {
-                                    // wetting of lower density fluid
-                                    if (pressure_values[q] >
-                                          this->simulation_parameters
-                                            .boundary_conditions_vof
-                                            .wetting_threshold[i_bc] &&
-                                        phase_values[q] <
-                                          0.95) // TODO fix value = see index of
-                                                // higher density fluid
-                                      {
-                                        // go to local index (see deal.II step
-                                        // 4)
-                                        cell_vof->get_dof_indices(
-                                          dof_indices_vof);
-
-                                        for (unsigned int k = 0;
-                                             k < fe->dofs_per_cell;
-                                             ++k)
-                                          {
-                                            marker_pw[dof_indices_vof[k]]   = 1;
-                                            solution_pw[dof_indices_vof[k]] = 1;
-                                          }
-                                      }
-                                    // peeling of higher density fluid
-                                    if (pressure_values[q] <
-                                          this->simulation_parameters
-                                            .boundary_conditions_vof
-                                            .peeling_threshold[i_bc] &&
-                                        phase_values[q] >
-                                          0.05) // TODO fix value = see index of
-                                                // lower density fluid
-                                      {
-                                        // go to local index (see deal.II step
-                                        // 4)
-                                        cell_vof->get_dof_indices(
-                                          dof_indices_vof);
-
-                                        for (unsigned int k = 0;
-                                             k < fe->dofs_per_cell;
-                                             ++k)
-                                          {
-                                            marker_pw[dof_indices_vof[k]] = -1;
-                                            solution_pw[dof_indices_vof[k]] = 0;
-                                          }
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-      }
-    present_solution = solution_pw;
-  }
+  // Peeling/wetting
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_vof.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
+          BoundaryConditions::BoundaryType::pw)
+        {
+          // TODO debug (here = test to have is_block/else condition working)
+          // Get fluid present solution
+          //          if (multiphysics->fluid_dynamics_is_block())
+          //            {
+          //              const TrilinosWrappers::MPI::Vector
+          //              current_solution_cfd(
+          //                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+          //              apply_peeling_wetting(i_bc, current_solution_cfd);
+          //            }
+          //          else
+          //            {
+          const TrilinosWrappers::MPI::Vector current_solution_cfd(
+            *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+          apply_peeling_wetting(i_bc, current_solution_cfd);
+          //            }
+        }
+    }
 
   // Interface sharpening
   if (this->simulation_parameters.multiphysics.interface_sharpening)
@@ -1245,6 +1112,137 @@ VolumeOfFluid<dim>::assemble_mass_matrix_diagonal(
                                                          mass_matrix);
         }
     }
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::apply_peeling_wetting(
+  const unsigned int                   i_bc,
+  const TrilinosWrappers::MPI::Vector &current_solution_cfd)
+{
+  const DoFHandler<dim> *dof_handler_cfd =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  // Initializations
+  locally_owned_dofs = dof_handler.locally_owned_dofs();
+  std::vector<types::global_dof_index> dof_indices_vof(
+    fe->dofs_per_cell); //  Local connectivity
+
+  marker_pw.reinit(this->locally_owned_dofs, triangulation->get_communicator());
+  TrilinosWrappers::MPI::Vector solution_pw(present_solution);
+
+  FEFaceValues<dim> fe_face_values_vof(*this->fs_mapping,
+                                       *this->fe,
+                                       *this->face_quadrature,
+                                       update_values |
+                                         update_quadrature_points);
+
+  FEFaceValues<dim> fe_face_values_cfd(*this->fs_mapping,
+                                       dof_handler_cfd->get_fe(),
+                                       *this->face_quadrature,
+                                       update_values |
+                                         update_quadrature_points);
+
+  const unsigned int n_q_points = this->cell_quadrature->size();
+
+  const FEValuesExtractors::Scalar pressure(dim);
+  std::vector<double>              pressure_values(n_q_points);
+  std::vector<double>              phase_values(n_q_points);
+
+  unsigned int boundary_id =
+    this->simulation_parameters.boundary_conditions.id[i_bc];
+
+  // Loop on cell_vof
+  for (const auto &cell_vof : dof_handler.active_cell_iterators())
+    {
+      if (cell_vof->is_locally_owned() && cell_vof->at_boundary())
+        {
+          for (const auto face : cell_vof->face_indices())
+            {
+              if (cell_vof->face(face)->at_boundary() &&
+                  cell_vof->face(face)->boundary_id() == boundary_id)
+                {
+                  // Translate equivalent dof_handler for CFD
+                  typename DoFHandler<dim>::active_cell_iterator cell_cfd(
+                    &(*(this->triangulation)),
+                    cell_vof->level(),
+                    cell_vof->index(),
+                    dof_handler_cfd);
+
+                  // Reinit fe_face_values for CFD and VOF
+                  fe_face_values_vof.reinit(cell_vof, face);
+                  fe_face_values_cfd.reinit(cell_cfd, face);
+
+                  // Get pressure values
+                  fe_face_values_cfd[pressure].get_function_values(
+                    current_solution_cfd, pressure_values);
+
+                  // Get phase values
+                  fe_face_values_vof.get_function_values(present_solution,
+                                                         phase_values);
+
+                  // Number of points meeting the peeling criteria in the cell
+                  unsigned int nb_q_peeled(0);
+
+                  // Number of points meeting the wetting criteria in the cell
+                  unsigned int nb_q_wet(0);
+
+                  for (unsigned int q = 0; q < n_q_points; q++)
+                    {
+                      // wetting of lower density fluid
+                      if (pressure_values[q] >
+                            this->simulation_parameters.boundary_conditions_vof
+                              .wetting_threshold[i_bc] &&
+                          phase_values[q] < 0.95) // TODO fix value = see index
+                                                  // of higher density fluid
+                        {
+                          nb_q_wet++;
+
+                          // If enough quadrature points meet the condition
+                          if (nb_q_wet > n_q_points / 2)
+                            {
+                              // go to local index (see deal.II step 4)
+                              cell_vof->get_dof_indices(dof_indices_vof);
+
+                              for (unsigned int k = 0; k < fe->dofs_per_cell;
+                                   ++k)
+                                {
+                                  // TODO wetting-peeling only if given number
+                                  // of point meet condition
+                                  marker_pw[dof_indices_vof[k]]   = 1;
+                                  solution_pw[dof_indices_vof[k]] = 1;
+                                }
+                            }
+                        }
+                      // peeling of higher density fluid
+                      if (pressure_values[q] <
+                            this->simulation_parameters.boundary_conditions_vof
+                              .peeling_threshold[i_bc] &&
+                          phase_values[q] > 0.05) // TODO fix value = see index
+                                                  // of lower density fluid
+                        {
+                          nb_q_peeled++;
+
+                          // If enough quadrature points meet the condition
+                          if (nb_q_peeled > n_q_points / 2)
+                            {
+                              // go to local index (see deal.II step 4)
+                              cell_vof->get_dof_indices(dof_indices_vof);
+
+                              for (unsigned int k = 0; k < fe->dofs_per_cell;
+                                   ++k)
+                                {
+                                  marker_pw[dof_indices_vof[k]]   = -1;
+                                  solution_pw[dof_indices_vof[k]] = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+  present_solution = solution_pw;
 }
 
 template class VolumeOfFluid<2>;

@@ -108,6 +108,10 @@ public:
         << std::endl
         << "The interface sharpness value should be set between 1 and 2"
         << std::endl;
+
+    //    // Init marker_pw, used to mark peeled and wet cells
+    //    marker_pw.reinit(this->locally_owned_dofs,
+    //                     triangulation->get_communicator());
   }
 
   /**
@@ -416,6 +420,18 @@ private:
    */
   void
   assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
+
+  /**
+   * @brief Modification of the solution
+   *
+   * @param i_bc peeling-wetting boundary index
+   *
+   * @param current_solution_cfd current solution for the fluid dynamics
+   */
+  void
+  apply_peeling_wetting(
+    const unsigned int                   i_bc,
+    const TrilinosWrappers::MPI::Vector &current_solution_cfd);
 
   TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
 
