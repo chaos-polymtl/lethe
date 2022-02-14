@@ -211,8 +211,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                           grad_viscosity_shear_rate);
         }
 
-      if (properties_manager.field_is_required(field::temperature) &&
-          gather_temperature)
+      if (gather_temperature)
         {
           const auto thermal_expansion_model =
             properties_manager.get_thermal_expansion();
