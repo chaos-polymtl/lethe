@@ -506,7 +506,7 @@ VolumeOfFluid<dim>::modify_solution()
                                            update_JxW_values |
                                            update_normal_vectors);
 
-    const unsigned int n_q_points = dim - 1;
+    const unsigned int n_q_points = this->cell_quadrature->size();
 
     const FEValuesExtractors::Scalar pressure(dim);
     std::vector<double>              pressure_values(n_q_points);
@@ -522,14 +522,13 @@ VolumeOfFluid<dim>::modify_solution()
             unsigned int boundary_id =
               this->simulation_parameters.boundary_conditions.id[i_bc];
 
-            // TODO voir dans postprocessing_cfd -> calculate_forces
-            // For all cells at boundary (at THIS one or at boundary in
-            // general??)
+            // For all cells at pw boundary
             // TODO voir pour sélectionner frontière d'intérêt seulement
             // (changer boucles?)
             // Loop on cell_vof
             for (const auto &cell_vof : dof_handler.active_cell_iterators())
               {
+                // if cell is at pw boundary
                 if ((cell_vof->is_locally_owned()) && (cell_vof->at_boundary()))
                   {
                     for (const auto face : cell_vof->face_indices())
@@ -566,7 +565,10 @@ VolumeOfFluid<dim>::modify_solution()
                                 for (unsigned int q = 0; q < n_q_points; q++)
                                   {
                                     // wetting of lower density fluid
-                                    if (pressure_values[q] > 1000 &&
+                                    if (pressure_values[q] >
+                                          this->simulation_parameters
+                                            .boundary_conditions_vof
+                                            .wetting_threshold[i_bc] &&
                                         phase_values[q] <
                                           0.95) // TODO fix value = see index of
                                                 // higher density fluid
@@ -575,7 +577,7 @@ VolumeOfFluid<dim>::modify_solution()
                                         // 4)
                                         cell_vof->get_dof_indices(
                                           dof_indices_vof);
-                                        // mark cells
+
                                         for (unsigned int k = 0;
                                              k < fe->dofs_per_cell;
                                              ++k)
@@ -585,7 +587,10 @@ VolumeOfFluid<dim>::modify_solution()
                                           }
                                       }
                                     // peeling of higher density fluid
-                                    if (pressure_values[q] < -100 &&
+                                    if (pressure_values[q] <
+                                          this->simulation_parameters
+                                            .boundary_conditions_vof
+                                            .peeling_threshold[i_bc] &&
                                         phase_values[q] >
                                           0.05) // TODO fix value = see index of
                                                 // lower density fluid
