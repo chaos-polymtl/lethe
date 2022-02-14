@@ -1005,6 +1005,7 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
       "GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
+
   const double density = scratch_data.properties_manager.density_scale;
 
   // Loop over particles in cell

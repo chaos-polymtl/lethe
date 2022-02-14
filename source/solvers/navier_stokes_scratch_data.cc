@@ -73,8 +73,7 @@ NavierStokesScratchData<dim>::allocate()
   // Physical properties
 
   // Allocate memory for the physical properties
-  fields.insert(
-    std::pair<field, std::vector<double>>(field::temperature, n_q_points));
+
   fields.insert(
     std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
 
@@ -161,6 +160,8 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
     std::make_shared<FEValues<dim>>(mapping, fe, quadrature, update_values);
 
   temperature_values = std::vector<double>(this->n_q_points);
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::temperature, n_q_points));
 }
 
 
@@ -168,11 +169,13 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::calculate_physical_properties()
 {
-  if (properties_manager.field_is_required(field::temperature))
-    set_field_vector(field::temperature,
-                     this->temperature_values,
-                     this->fields);
-
+  if (properties_manager.field_is_required(field::temperature) &&
+      gather_temperature)
+    {
+      set_field_vector(field::temperature,
+                       this->temperature_values,
+                       this->fields);
+    }
 
   if (properties_manager.field_is_required(field::shear_rate))
     {
@@ -189,7 +192,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
       set_field_vector(field::shear_rate, shear_rate, this->fields);
     }
 
-
   // Case where you have one fluid
   if (properties_manager.get_number_of_fluids() == 1)
     {
@@ -197,7 +199,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
       const auto rheology_model = properties_manager.get_rheology();
       rheology_model->vector_value(fields, viscosity);
 
-      const auto density_model = properties_manager.get_density(0);
+      const auto density_model = properties_manager.get_density();
       density_model->vector_value(fields, density);
 
 
@@ -209,7 +211,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                           grad_viscosity_shear_rate);
         }
 
-      if (this->gather_temperature)
+      if (properties_manager.field_is_required(field::temperature) &&
+          gather_temperature)
         {
           const auto thermal_expansion_model =
             properties_manager.get_thermal_expansion();

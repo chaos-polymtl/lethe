@@ -141,6 +141,11 @@ public:
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
   {
+    gather_VOF                   = false;
+    gather_void_fraction         = false;
+    gather_particles_information = false;
+    gather_temperature           = false;
+
     allocate();
     if (sd.gather_VOF)
       enable_VOF(sd.fe_values_VOF->get_fe(),

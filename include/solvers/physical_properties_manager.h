@@ -162,8 +162,10 @@ public:
   double viscosity_scale;
   double density_scale;
 
+  bool is_initialized;
+
+
 private:
-  bool                                                   is_initialized;
   std::vector<std::shared_ptr<DensityModel>>             density;
   std::vector<std::shared_ptr<SpecificHeatModel>>        specific_heat;
   std::vector<std::shared_ptr<ThermalConductivityModel>> thermal_conductivity;
