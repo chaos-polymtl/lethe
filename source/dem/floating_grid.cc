@@ -13,10 +13,13 @@ FloatingGrid<dim, spacedim>::FloatingGrid(const DEMSolverParameters<spacedim> &d
                                           const double                   &dem_time_step)
   : gridMotion(dem_parameters, dem_time_step)
 {
-  read_mesh(dem_parameters,
-            pcout,
-            triangulation,
-            triangulation_cell_diameter);
+  if(dem_parameters.floating_grid.mesh.file_name != "none") {
+    read_mesh(dem_parameters.floating_grid.mesh,
+              dem_parameters.restart.restart,
+              pcout,
+              triangulation,
+              triangulation_cell_diameter);
+    }
 }
 
 template <int dim, int spacedim>

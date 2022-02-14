@@ -77,7 +77,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
-  , floating_grid(dem_parameters, pcout, simulation_control->get_time_step())
 {
   // Check if the output directory exists
   std::string output_dir_name = parameters.simulation_control.output_folder;
@@ -209,7 +208,10 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
   grid_motion_object =
     std::make_shared<GridMotion<dim, dim>>(parameters,
-                                      simulation_control->get_time_step());
+                                           simulation_control->get_time_step());
+
+  floating_grid_object = std::make_shared<FloatingGrid<dim-1, dim>>(
+    parameters, pcout, simulation_control->get_time_step());
 }
 
 template <int dim>
@@ -435,7 +437,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double> &                    MOI)
+  std::vector<double>                     &MOI)
 {
   MOI.resize(torque.size());
 
@@ -754,7 +756,7 @@ DEMSolver<dim>::solve()
   print_initial_information(pcout, n_mpi_processes);
 
   // Reading mesh
-  read_mesh(parameters, pcout, triangulation, triangulation_cell_diameter);
+  read_mesh(parameters.mesh, parameters.restart.restart, pcout, triangulation, triangulation_cell_diameter);
 
   if (parameters.restart.restart == true)
     {

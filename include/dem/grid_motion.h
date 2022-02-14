@@ -38,7 +38,7 @@ using namespace dealii;
  *
  */
 
-template <int dim, int spacedim>
+template <int dim, int spacedim=dim>
 class GridMotion
 {
   using FuncPtrType = void (GridMotion<dim, spacedim>::*)(

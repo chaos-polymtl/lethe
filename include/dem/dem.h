@@ -350,6 +350,7 @@ private:
 
   // Initilization of classes and building objects
   std::shared_ptr<GridMotion<dim, dim>>  grid_motion_object;
+  std::shared_ptr<FloatingGrid<dim-1, dim>> floating_grid_object;
   ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
   ParticleParticleFineSearch<dim>   particle_particle_fine_search_object;
   ParticleWallBroadSearch<dim>      particle_wall_broad_search_object;
@@ -383,7 +384,6 @@ private:
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
 
-  FloatingGrid<dim-1, dim> floating_grid;
 };
 
 #endif
