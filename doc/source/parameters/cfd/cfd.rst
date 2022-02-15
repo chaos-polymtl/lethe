@@ -25,3 +25,4 @@ General, CFD and Multiphysics
    nitsche
    restart
    dynamic_flow_control
+   interface_sharpening

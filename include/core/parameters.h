@@ -153,32 +153,37 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+
+
   /**
-   * @brief Fluid - Class for fluid definition
+   * @brief Phase change model for melting/freezing liquids
+   * The model assumes that the phase change occurs between
+   * a solidus and liquidus temperature. This defines a solidification
+   * interval which is used to smooth the non-linearity of the melting problem
+   * or to fit the real thermodynamics of the melting process.
+   *
    */
-  class Fluid
+  struct PhaseChange
   {
-  public:
-    Fluid()
-    {}
+    // Solidus temperature - Units in K
+    double T_solidus;
 
-    void
-    declare_parameters(ParameterHandler &prm, unsigned int id);
-    void
-    parse_parameters(ParameterHandler &prm, unsigned int id);
+    // Liquidus temperature - Units in K
+    double T_liquidus;
 
-    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
-    double viscosity;
-    // volumetric mass density (rho) in units of kg/m^3
-    double density;
-    // specific heat capacity (cp) in J/K/kg
-    double specific_heat;
-    // thermal conductivity (k) in W/m/K
-    double thermal_conductivity;
-    // thermal expansion coefficient (alpha) in 1/K
-    double thermal_expansion;
-    // tracer diffusivity) in L^2/s
-    double tracer_diffusivity;
+    // Latent enthalpy for the phase change - Units in J/kg
+    double latent_enthalpy;
+
+    // Specific heat liquid - Units in J/(kg*K)
+    double cp_l;
+
+    // Specific heat solid - Units in J/(kg*K)
+    double cp_s;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
   };
 
   /**
@@ -232,13 +237,6 @@ namespace Parameters
 
   struct NonNewtonian
   {
-    // Non Newtonian model
-    enum class Model
-    {
-      powerlaw,
-      carreau
-    } model;
-
     CarreauParameters  carreau_parameters;
     PowerLawParameters powerlaw_parameters;
 
@@ -248,37 +246,69 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
-
   /**
-   * @brief Phase change model for melting/freezing liquids
-   * The model assumes that the phase change occurs between
-   * a solidus and liquidus temperature. This defines a solidification
-   * interval which is used to smooth the non-linearity of the melting problem
-   * or to fit the real thermodynamics of the melting process.
-   *
+   * @brief Fluid - Class for fluid definition
    */
-  struct PhaseChange
+  class Fluid
   {
-    // Solidus temperature - Units in K
-    double T_solidus;
+  public:
+    Fluid()
+    {}
 
-    // Liquidus temperature - Units in K
-    double T_liquidus;
-
-    // Latent enthalpy for the phase change - Units in J/kg
-    double latent_enthalpy;
-
-    // Specific heat liquid - Units in J/(kg*K)
-    double cp_l;
-
-    // Specific heat solid - Units in J/(kg*K)
-    double cp_s;
-
-    static void
-    declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm, unsigned int id);
+    void
+    parse_parameters(ParameterHandler &prm, unsigned int id);
+
+    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
+    double viscosity;
+    // volumetric mass density (rho) in units of kg/m^3
+    double density;
+    // specific heat capacity (cp) in J/K/kg
+    double specific_heat;
+    // thermal conductivity (k) in W/m/K
+    double thermal_conductivity;
+    // thermal expansion coefficient (alpha) in 1/K
+    double thermal_expansion;
+    // tracer diffusivity) in L^2/s
+    double tracer_diffusivity;
+
+    // Phase change parameters
+    PhaseChange phase_change_parameters;
+
+    // Non Newtonian model parameters
+    bool non_newtonian_flow;
+    enum class RheologyModel
+    {
+      powerlaw,
+      carreau,
+      newtonian
+    } rheology_model;
+    NonNewtonian non_newtonian_parameters;
+
+    enum class DensityModel
+    {
+      constant
+    } density_model;
+
+    enum class SpecificHeatModel
+    {
+      constant,
+      phase_change
+    } specific_heat_model;
+
+    enum class ThermalConductivityModel
+    {
+      constant,
+      linear
+    } thermal_conductivity_model;
+
+    // Linear thermal conductivity parameters : k = k_A0 + k_A1 * T
+    double k_A0;
+    double k_A1;
   };
+
+
 
   /**
    * @brief InterfaceSharpening - Defines the parameters for
@@ -321,14 +351,6 @@ namespace Parameters
   public:
     PhysicalProperties()
     {}
-
-    // Non Newtonian parameters
-    bool         non_newtonian_flow;
-    NonNewtonian non_newtonian_parameters;
-
-    // Phase change parameters
-    bool        enable_phase_change;
-    PhaseChange phase_change_parameters;
 
     // Fluid objects for multiphasic simulations
     std::vector<Fluid>        fluids;
@@ -681,6 +703,14 @@ namespace Parameters
 
     // Enables checking the input grid for diamond-shaped cells
     bool check_for_diamond_cells;
+
+    // A boolean parameter which enables adding the neighbor boundary cells of
+    // boundary cells in DEM simulations. This parameter should only be enabled
+    // for simulations with concave geometries (for instance particles inside a
+    // drum). In simulations with convex geometries, it must not be enabled.
+    // This is also reported to users in a warning in
+    // find_boundary_cells_information.
+    bool expand_particle_wall_contact_search;
 
     // Grid displacement at initiation
     bool   translate;

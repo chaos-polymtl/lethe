@@ -273,8 +273,8 @@ Possibilities for extension
 
 References
 ----------
-[1] ERCOFTAC. File: hill3d.jpg. 2010. URL https://www.kbwiki.ercoftac.org/w/index.580php?title=File:Hill3d.jpg#filelinks.
+[1] ERCOFTAC. File: hill3d.jpg. 2010. URL https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg.
 
 [2] Rapp C. Experimentelle studie der turbulenten strömung über periodische hügel. Ph.D. thesis; Technische Universität München; 2009
 
-[3] Breuer M, Peller N, Rapp C, Manhart M. Flow over periodic hills – numerical and experimental study in a wide range of Reynolds numbers. Computers & Fluids 2009;38(2):433–32 doi:\bibinfo{doi}{https://doi.org/10.1016/j.compfluid.2008.05.002}. URL https://www.sciencedirect.com/science/article/pii/S0045793008001126.
+[3] Breuer M, Peller N, Rapp C, Manhart M. Flow over periodic hills – numerical and experimental study in a wide range of Reynolds numbers. Computers & Fluids 2009;38(2):433–32, https://doi.org/10.1016/j.compfluid.2008.05.002.

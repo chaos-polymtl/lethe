@@ -29,12 +29,12 @@ subsection timer
     set type    = iteration
 end
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 subsection forces		
     set verbosity             = verbose
-    set calculate forces      = true
-    set calculate torques     = false
+    set calculate force       = true
+    set calculate torque      = false
     set force name            = force
     set output precision      = 10
     set calculation frequency = 1

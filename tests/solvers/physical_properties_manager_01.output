@@ -1,0 +1,5 @@
+
+DEAL::Testing PhysicalPropertiesManager
+DEAL::Density              : 1.00000
+DEAL::Specific heat        : 2.00000
+DEAL::Thermal conductivity : 3.00000

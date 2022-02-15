@@ -41,7 +41,7 @@ The basic geometry for the Ahmed body is given below, as defined in Ahmed et al.
 
 Parameter file
 --------------
-First, we import the mesh like in the `Example 3 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
+First, we import the mesh as in the `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
 
 Mesh
 ~~~~~
@@ -156,7 +156,7 @@ To do so, copy and paste the ``gls_navier_stokes_2d`` executable to the same fol
 
       mpirun -np 6 gls_navier_stokes_2d ahmed.prm
 
-where 6 is the number of CPUs used. The estimated execution time for a 4 seconds simulation with 6 CPUs in a 32 GB RAM machine is 6 minutes and 53 seconds. For 1 CPU, the estimated time is 30 minutes and 37 seconds.
+where 6 is the number of CPUs used. The estimated execution time for a 4 seconds simulation with 6 CPUs is 6 minutes and 53 seconds. For 1 CPU, the estimated time is 30 minutes and 37 seconds.
 
 Alternatively, specify the path to the ``gls_navier_stokes_2d`` in your ``build/applications`` folder, as follows:
 

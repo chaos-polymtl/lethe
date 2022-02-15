@@ -6,8 +6,8 @@
 subsection simulation control
   set time step                 			 = 0.00001
   set time end       					 = 0.4
-  set log frequency				         = 10000000
-  set output frequency            			 = 10000000
+  set log frequency				         = 1000000
+  set output frequency            			 = 1000000
 end
 
 #---------------------------------------------------
@@ -47,18 +47,18 @@ subsection lagrangian physical properties
     	subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            	 	= 0.005
-    		set number				= 50
+    		set number				= 20
     		set density particles   	 	= 2000
     		set young modulus particles         	= 1000000
     		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.3
-    		set friction coefficient particles      = 0.05
+    		set restitution coefficient particles	= 0.5
+    		set friction coefficient particles      = 0.1
     		set rolling friction particles         	= 0.01
 	end
     set young modulus wall            			= 1000000
     set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.3
-    set friction coefficient wall         		= 0.05
+    set restitution coefficient wall           		= 0.5
+    set friction coefficient wall         		= 0.1
     set rolling friction wall         	      	  	= 0.01
 end
 
@@ -74,7 +74,7 @@ subsection insertion info
     set insertion box maximum x            	        = 0.05
     set insertion box maximum y           	 	= -0.02
     set insertion distance threshold			= 1.5
-    set insertion random number range			= 0.2
+    set insertion random number range			= 0.1
     set insertion random number seed			= 19
 end
 
@@ -86,6 +86,7 @@ subsection mesh
     set grid type      	     				= hyper_ball
     set grid arguments      			 	= 0.0, 0.0 : 0.1 : true
     set initial refinement   				= 3
+    set expand particle-wall contact search		= false
 end
 
 #---------------------------------------------------
@@ -96,6 +97,9 @@ subsection DEM boundary conditions
     subsection boundary condition 0
 	set boundary id					= 0
         set type              				= rotational
-	set rotational speed				= 1
+	set rotational speed				= 0.2
+	set rotational vector x				= 0
+        set rotational vector y				= 0
+        set rotational vector z				= 1
     end
 end

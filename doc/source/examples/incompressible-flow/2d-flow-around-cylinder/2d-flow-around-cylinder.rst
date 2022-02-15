@@ -2,7 +2,7 @@
 2D Flow around a Cylinder
 ======================================
 
-This is the third Lethe example and it corresponds to a flow around a fixed cylinder. This is a classical problem studied in fluid mechanics. This example introduces several important features supported by Lethe.
+This example corresponds to a flow around a fixed cylinder. This is a classical problem studied in fluid mechanics. This example introduces several important features supported by Lethe.
 
 Features
 ---------
@@ -132,7 +132,7 @@ Despite this problem being a steady-state problem, one known strategy to improve
         end
     end
 
-In this case we use the ``nodal`` initial condition and the ``subsection uvwp`` allows the description of a velocity-pressure vector-valued function. It can be seen that the individual components of the function are separated by semicolons in the ``set Function expression``. In this case, the velocity in the x-direction is set to ``1``, the velocity in the y-direction is set to``0``, and the pressure is set to ``0``. If the problem was in three dimensions, four values should be specified, velocity in x, y and z and the pressure.
+In this case we use the ``nodal`` initial condition and the ``subsection uvwp`` allows the description of a velocity-pressure vector-valued function. It can be seen that the individual components of the function are separated by semicolons in the ``set Function expression``. In this case, the velocity in the x-direction is set to ``1``, the velocity in the y-direction is set to ``0``, and the pressure is set to ``0``. If the problem was in three dimensions, four values should be specified, velocity in x, y and z and the pressure.
 
 
 Boundary conditions
@@ -179,24 +179,24 @@ In this section, we specify the boundary conditions taking into account the IDs 
 Forces
 ~~~~~~
 
-To calculate forces acting on the boundary conditions, for example, the forces acting on the cylinder, we can use the forces subsection:
+To calculate forces acting on the boundary conditions, for example, the forces acting on the cylinder, we can use the ``forces`` subsection:
 
 .. code-block:: text
 
  #---------------------------------------------------
- # Force
+ # Forces
  #---------------------------------------------------
  subsection forces
      set verbosity             = verbose
-     set calculate forces      = true
-     set calculate torques     = false
+     set calculate force       = true
+     set calculate torque      = false
      set force name            = force
      set output precision      = 10
      set calculation frequency = 1
      set output frequency      = 1
  end
 
-To print the values of the forces in the terminal we set ``verbosity`` to ``verbose``. The calculation of the forces in all boundaries is set by the ``set calculate forces = true`` line. A ``.dat`` file is created with the corresponding data. Therefore, one can specify the prefix of the file by the ``force name`` parameter, the number of significant digits for the force values by the ``output precision`` and the frequency of calculation and output which are set to ``1``. 
+To print the values of the forces in the terminal we set ``verbosity`` to ``verbose``. The calculation of the forces in all boundaries is set by the ``set calculate force = true`` line. A ``.dat`` file is created with the corresponding data. Therefore, one can specify the prefix of the file by the ``force name`` parameter, the number of significant digits for the force values by the ``output precision`` and the frequency of calculation and output which are set to ``1``. 
 
 Running the simulation
 ----------------------

@@ -29,12 +29,12 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose
-    set calculate forces      = true
-    set calculate torques     = false
+    set calculate force       = true
+    set calculate torque      = false
     set force name            = force
     set torque name           = torque
     set output precision      = 10
@@ -75,9 +75,8 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 100
-
         subsection nitsche solid 0
+	    set beta = 100
 	    subsection mesh
 		set type = dealii
 		set grid type = hyper_rectangle

@@ -2,7 +2,7 @@
 2D Taylor-Couette Flow
 ==================================
 
-This is the second Lethe example. It showcases another classical fluid mechanics problem, the taylor-couette flow. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.
+This example showcases another classical fluid mechanics problem, the taylor-couette flow. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.
 
 Features
 ----------------------------------
@@ -22,12 +22,13 @@ Description of the case
 
 The Taylor-Couette flow is the name of a fluid flow in the gap between two long concentric cylinders with different rotational velocities. One or both of these cylinders may rotate along the axis, however generally it is assumed that the outer cylinder is fixed, and the inner cylinder rotates with a constant angular velocity. For the Taylor-Couette flow, an analytical solution of the Navier-Stokes equations can be found, although this solution is not stable for all ranges of operating conditions and becomes unstable at high Reynolds number.
 
-We assume that the inner cylinder rotates at a constant angular velocity :math:`\omega` in the anti-clockwise direction , while the outer cylinder is fixed. The following figure shows the geometry of this problem and the corresponding boundary conditions:
+We assume that the inner cylinder rotates at a constant angular velocity :math:`\omega` in the anti-clockwise direction, while the outer cylinder is fixed. The following figure shows the geometry of this problem and the corresponding boundary conditions:
 
-.. image:: images/geometry.png
+.. image:: images/geometry.svg
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry
+    :height: 10cm
 
 The analytical solution of this problem can be found relatively easily in cylindrical coordinates (see for example the book by Bird, Stewart and Lightfoot [1]):
 
@@ -186,11 +187,11 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 .. code-block:: text
 
   subsection forces
-      set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-      set calculate torques     = true     # Enable torque calculation
+      set verbosity             = verbose   # Output force and torque in log <quiet|verbose>
+      set calculate torque      = true      # Enable torque calculation
   end
 
-By setting ``calculate torques=true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbose=verbose`` will print out the value of the torque calculated for each mesh. 
+By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbose=verbose`` will print out the value of the torque calculated for each mesh. 
 
 
 Rest of the subsections
@@ -216,15 +217,19 @@ Using Paraview, the steady-state velocity profile can be visualized:
 .. image:: images/flow_patterns.png
     :alt: velocity distribution
     :align: center
+    :height: 10cm
 
 As can be seen, each cell is curved because a Q2 isoparametric mapping was used (by setting ``qmapping=true`` in the FEM subsection). To visualize these high-order cells, we need to subdivide the regular cell to store additional information onto them. A good practice is to use as many subdivisions as the interpolation order of the scheme. Hence, we used ``subdivision=2`` in the simulation control subsection. Finally, by default, Paraview does not render high-order elements. To enable the rendering of high-order elements, the Nonlinear subdivision level slider must be increased above one. For more information on this topic, please consult the deal.II wiki page on `rendering high-order elements <https://github.com/dealii/dealii/wiki/Notes-on-visualizing-high-order-output>`.
 
+.. note::
+  To showcase the curvature of the cells, we have illustrated the results on a mesh coarser that the initial mesh used in this simulation
 
 A python script provided in the example folder allows to compare the velocity profile along the radius with the analytical solution. Using this script, the following resuts are obtained for the initial mesh:
 
 .. image:: images/lethe_analytical_taylor_couette_comparison.png
     :alt: Azimuthal velocity compared with the analytical solution
     :align: center
+    :height: 10cm
 
 
 The end of the simulation log provides the following information about the convergence of the error:
@@ -270,7 +275,7 @@ The analytical value of the torque is : :math:`T_z=0.837758`. Two main conclusio
 Possibilities for extension
 ----------------------------
 
-- Calculate formally the order of convergence for the torque :math:`T_z`.
+- Calculate the order of convergence for the torque :math:`T_z`.
 - It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. This, however, would be a major undertaking. 
 
 

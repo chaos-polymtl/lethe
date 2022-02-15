@@ -61,25 +61,27 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 100
-    set calculate forces on solid = true
-    set verbosity = verbose
-    set number of solids = 2
+	set verbosity = verbose
+	set number of solids = 2
         subsection nitsche solid 0
-	        subsection mesh
-		        set type = dealii
+		set beta = 100
+		subsection mesh
+			set type = dealii
 		        set grid type = hyper_rectangle
 		        set grid arguments = 0, -0.5 : 1, 0. : true
         		set initial refinement = 6
-            end
+		end
+		set calculate force on solid = true
         end
         subsection nitsche solid 1
-	        subsection mesh
-		        set type = dealii
+		set beta = 100
+		subsection mesh
+			set type = dealii
 		        set grid type = hyper_rectangle
 		        set grid arguments = 0, 0.5 : 1, 1.0 : true
         		set initial refinement = 6
-            end
+		end
+		set calculate force on solid = true
         end
 end
 # --------------------------------------------------

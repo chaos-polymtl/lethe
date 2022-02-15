@@ -437,6 +437,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
       if (this->this_mpi_process == 0)
         {
           std::string filename =
+            simulation_parameters.simulation_control.output_folder +
             simulation_parameters.analytical_solution->get_filename() + ".dat";
           std::ofstream output(filename.c_str());
           error_table.write_text(output);
@@ -1529,7 +1530,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     simulation_parameters.physical_properties);
   ShearRatePostprocessor<dim> shear_rate_processor;
 
-  if (simulation_parameters.physical_properties.non_newtonian_flow)
+  if (simulation_parameters.physical_properties.fluids[0].non_newtonian_flow)
     {
       data_out.add_data_vector(solution, non_newtonian_viscosity);
       data_out.add_data_vector(solution, shear_rate_processor);

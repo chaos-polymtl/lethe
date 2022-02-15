@@ -73,7 +73,7 @@ namespace Parameters
   {
     prm.enter_subsection("cfd-dem");
     prm.declare_entry("grad div",
-                      "false",
+                      "true",
                       Patterns::Bool(),
                       "Choose whether or not to apply grad_div stabilization");
     prm.declare_entry("void fraction time derivative",
@@ -116,6 +116,10 @@ namespace Parameters
                       "100",
                       Patterns::Integer(),
                       "dem-cfd coupling frequency");
+    prm.declare_entry("vans model",
+                      "modelB",
+                      Patterns::Selection("modelA|modelB"),
+                      "The volume averaged Navier Stokes model to be solved.");
     prm.leave_subsection();
   }
 
@@ -144,6 +148,15 @@ namespace Parameters
       drag_model = Parameters::DragModel::dallavalle;
     else
       throw(std::runtime_error("Invalid drag model"));
+
+    const std::string op1 = prm.get("vans model");
+    if (op1 == "modelA")
+      vans_model = Parameters::VANSModel::modelA;
+    else if (op1 == "modelB")
+      vans_model = Parameters::VANSModel::modelB;
+    else
+      throw(std::runtime_error(
+        "Invalid vans model. Valid choices are modelA and modelB."));
     prm.leave_subsection();
   }
 } // namespace Parameters

@@ -133,10 +133,10 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
-  std::vector<Tensor<1, dim>> momentum;
-  std::vector<Tensor<1, dim>> force;
-  std::vector<double>         MOI;
-  momentum.push_back(Tensor<1, dim>({0, 0, 0}));
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<Tensor<1, 3>> force;
+  std::vector<double>       MOI;
+  torque.push_back(Tensor<1, dim>({0, 0, 0}));
   force.push_back(Tensor<1, dim>({0, 0, 0}));
   MOI.push_back(1);
   double step_force;
@@ -195,7 +195,7 @@ test()
           // If particle and wall are not in contact, only the integration class
           // is called
           integrator_object.integrate(
-            particle_handler, g, dt, momentum, force, MOI);
+            particle_handler, g, dt, torque, force, MOI);
         }
       else
         {
@@ -227,14 +227,14 @@ test()
             }
 
           particle_wall_force_object.calculate_particle_wall_contact_force(
-            particle_wall_contact_information, dt, momentum, force);
+            particle_wall_contact_information, dt, torque, force);
 
           // Storing force before integration
           step_force = force[0][0];
 
 
           integrator_object.integrate(
-            particle_handler, g, dt, momentum, force, MOI);
+            particle_handler, g, dt, torque, force, MOI);
 
 
           deallog

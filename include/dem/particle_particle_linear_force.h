@@ -57,7 +57,7 @@ public:
    * of the local-ghost particle-particle contact force. This information
    * was obtained in the fine search
    * @param dt DEM time-step
-   * @param momentum An unordered_map of momentum of particles
+   * @param torque An unordered_map of torque of particles
    * @param force Force acting on particles
    */
   virtual void
@@ -71,10 +71,10 @@ public:
       types::particle_index,
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info_struct<dim>>>
-      &                          ghost_adjacent_particles,
-    const double &               dt,
-    std::vector<Tensor<1, dim>> &momentum,
-    std::vector<Tensor<1, dim>> &force) override;
+      &                        ghost_adjacent_particles,
+    const double &             dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -132,25 +132,25 @@ private:
   calculate_linear_contact_force_and_torque(
     particle_particle_contact_info_struct<dim> &contact_info,
     const double &                              normal_relative_velocity_value,
-    const Tensor<1, dim> &                      normal_unit_vector,
+    const Tensor<1, 3> &                        normal_unit_vector,
     const double &                              normal_overlap,
     const ArrayView<const double> &             particle_one_properties,
     const ArrayView<const double> &             particle_two_properties,
-    Tensor<1, dim> &                            normal_force,
-    Tensor<1, dim> &                            tangential_force,
-    Tensor<1, dim> &                            particle_one_tangential_torque,
-    Tensor<1, dim> &                            particle_two_tangential_torque,
-    Tensor<1, dim> &                            rolling_resistance_torque);
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque);
 
   // Normal and tangential contact forces, tangential and rolling torques,
   // normal unit vector of the contact and contact relative velocity in the
   // normal direction
-  Tensor<1, dim>               normal_unit_vector;
-  Tensor<1, dim>               normal_force;
-  Tensor<1, dim>               tangential_force;
-  Tensor<1, dim>               particle_one_tangential_torque;
-  Tensor<1, dim>               particle_two_tangential_torque;
-  Tensor<1, dim>               rolling_resistance_torque;
+  Tensor<1, 3>                 normal_unit_vector;
+  Tensor<1, 3>                 normal_force;
+  Tensor<1, 3>                 tangential_force;
+  Tensor<1, 3>                 particle_one_tangential_torque;
+  Tensor<1, 3>                 particle_two_tangential_torque;
+  Tensor<1, 3>                 rolling_resistance_torque;
   double                       normal_relative_velocity_value;
   RollingResistanceTorqueModel rolling_reistance_model;
 };

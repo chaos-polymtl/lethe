@@ -2,10 +2,9 @@
 
 using namespace dealii;
 
-template <int dim>
 double
 find_maximum_particle_size(
-  const Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
+  const Parameters::Lagrangian::LagrangianPhysicalProperties
     &           physical_properties,
   const double &standard_deviation_multiplier)
 {
@@ -21,15 +20,3 @@ find_maximum_particle_size(
     }
   return maximum_particle_size;
 }
-
-template double
-find_maximum_particle_size(
-  const Parameters::Lagrangian::LagrangianPhysicalProperties<2>
-    &           physical_properties,
-  const double &standard_deviation_multiplier);
-
-template double
-find_maximum_particle_size(
-  const Parameters::Lagrangian::LagrangianPhysicalProperties<3>
-    &           physical_properties,
-  const double &standard_deviation_multiplier);

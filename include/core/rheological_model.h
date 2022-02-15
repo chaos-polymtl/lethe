@@ -45,7 +45,7 @@ public:
    * Newtonian flow
    */
   static std::shared_ptr<RheologicalModel>
-  model_cast(const Parameters::PhysicalProperties &physical_properties);
+  model_cast(const Parameters::Fluid &fluid_properties);
 };
 
 class Newtonian : public RheologicalModel

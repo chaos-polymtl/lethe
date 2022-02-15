@@ -297,7 +297,7 @@ VolumeOfFluid<dim>::calculate_L2_error()
 
 template <int dim>
 double
-VolumeOfFluid<dim>::calculate_volume(int fluid_index)
+VolumeOfFluid<dim>::calculate_volume(int monitor_fluid_id)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -321,12 +321,13 @@ VolumeOfFluid<dim>::calculate_volume(int fluid_index)
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              switch (fluid_index)
+              switch (monitor_fluid_id)
                 {
                   case 0:
                     {
                       if (q_scalar_values[q] < 0.5)
-                        volume += fe_values_fs.JxW(q) * q_scalar_values[q];
+                        volume +=
+                          fe_values_fs.JxW(q) * (1 - q_scalar_values[q]);
                       break;
                     }
                   case 1:
@@ -416,7 +417,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.multiphysics.conservation_monitoring)
     {
       double volume =
-        calculate_volume(simulation_parameters.multiphysics.fluid_index);
+        calculate_volume(simulation_parameters.multiphysics.monitor_fluid_id);
 
       auto         mpi_communicator = triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -439,7 +440,11 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           volume_table_fs.set_scientific("fluid_volume", true);
 
           // Save table to free_surface_monitoring.dat
-          std::string   filename = "free_surface_monitoring.dat";
+          std::string filename =
+            "VOF_monitoring_fluid_" +
+            Utilities::int_to_string(
+              simulation_parameters.multiphysics.monitor_fluid_id, 1) +
+            ".dat";
           std::ofstream output(filename.c_str());
           volume_table_fs.write_text(output);
         }

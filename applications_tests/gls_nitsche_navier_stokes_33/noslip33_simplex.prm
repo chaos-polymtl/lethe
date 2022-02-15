@@ -34,12 +34,12 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate forces      = true      # Enable force calculation
-    set calculate torques     = false     # Enable torque calculation
+    set calculate force       = true      # Enable force calculation
+    set calculate torque      = false     # Enable torque calculation
     set force name            = force     # Name prefix of force files
     set torque name           = torque    # Name prefix of torque files
     set output precision      = 10        # Output precision
@@ -71,18 +71,18 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 10
-  	set calculate torques on solid = true
   	set verbosity = verbose
   	set number of solids = 1
 
   	subsection nitsche solid 0
-	  	subsection mesh
+		set beta = 10
+		subsection mesh
 	  		set simplex = true
 		  	set type = gmsh
 			set file name = ../../sphere.msh
-	  end
-  end
+		end
+		set calculate torque on solid = true
+	end
 end
 
 

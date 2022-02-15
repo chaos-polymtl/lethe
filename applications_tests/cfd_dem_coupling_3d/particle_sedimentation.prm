@@ -44,6 +44,7 @@ subsection mesh
     set grid type            				= subdivided_cylinder
     set grid arguments       				= 5:0.05:0.1
     set initial refinement   				= 1
+        set expand particle-wall contact search		= false
 end
 
 #---------------------------------------------------

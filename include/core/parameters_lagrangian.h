@@ -33,12 +33,11 @@ namespace Parameters
 {
   namespace Lagrangian
   {
-    template <int dim>
-    class LagrangianPhysicalProperties
+    struct LagrangianPhysicalProperties
     {
     public:
       // Gravitational acceleration
-      Tensor<1, dim> g;
+      Tensor<1, 3> g;
 
       // Size distribution type
       enum class size_distribution_type
@@ -258,7 +257,7 @@ namespace Parameters
       std::string force_torque_output_name;
 
       // Center of mass
-      Point<dim> point_center_mass;
+      Point<3> point_center_mass;
 
       void
       declare_parameters(ParameterHandler &prm);
@@ -298,8 +297,8 @@ namespace Parameters
       unsigned int max_number_floating_walls = 9;
     };
 
-    template <int dim>
-    class BCDEM
+
+    struct BCDEM
     {
     public:
       // Number of DEM boundary conditions
@@ -318,15 +317,14 @@ namespace Parameters
       std::vector<unsigned int> outlet_boundaries;
 
       // Translational velocities of moving boundaries
-      std::unordered_map<unsigned int, Tensor<1, dim>>
+      std::unordered_map<unsigned int, Tensor<1, 3>>
         boundary_translational_velocity;
 
       // Rotational speeds of rotating boundaries in rad/s
       std::unordered_map<unsigned int, double> boundary_rotational_speed;
 
       // Rotational axes of rotating boundaries
-      std::unordered_map<unsigned int, Tensor<1, dim>>
-        boundary_rotational_vector;
+      std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
 
       void
       declare_parameters(ParameterHandler &prm);
@@ -341,10 +339,10 @@ namespace Parameters
       unsigned int DEM_BC_number_max = 10;
       void
       initialize_containers(
-        std::unordered_map<unsigned int, Tensor<1, dim>>
+        std::unordered_map<unsigned int, Tensor<1, 3>>
           &boundary_translational_velocity,
         std::unordered_map<unsigned int, double> &boundary_rotational_speed,
-        std::unordered_map<unsigned int, Tensor<1, dim>>
+        std::unordered_map<unsigned int, Tensor<1, 3>>
           &                        boundary_rotational_vector,
         std::vector<unsigned int> &outlet_boundaries);
     };

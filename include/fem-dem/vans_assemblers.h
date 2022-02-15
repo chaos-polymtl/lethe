@@ -55,19 +55,65 @@ public:
 
 
 /**
- * @brief Class that assembles the core of the Volume Averaged Navier-Stokes equations.
+ * @brief Class that assembles the core of Model B of the Volume Averaged Navier-Stokes equations.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers
  */
 template <int dim>
-class GLSVansAssemblerCore : public NavierStokesAssemblerBase<dim>
+class GLSVansAssemblerCoreModelB : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerCore(std::shared_ptr<SimulationControl> simulation_control,
-                       Parameters::PhysicalProperties     physical_properties,
-                       Parameters::CFDDEM                 cfd_dem)
+  GLSVansAssemblerCoreModelB(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    Parameters::CFDDEM                 cfd_dem)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)Particles::ParticleHandler
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const bool SUPG = true;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  Parameters::CFDDEM                 cfd_dem;
+};
+
+/**
+ * @brief Class that assembles the core of Model A of the Volume Averaged Navier-Stokes equations.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class GLSVansAssemblerCoreModelA : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerCoreModelA(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
     , cfd_dem(cfd_dem)
@@ -115,8 +161,10 @@ class GLSVansAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSVansAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control,
+                      Parameters::PhysicalProperties     physical_properties,
                       Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
     , cfd_dem(cfd_dem)
   {}
 
@@ -139,8 +187,11 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::CFDDEM                 cfd_dem;
+  Parameters::PhysicalProperties     physical_properties;
+
+  Parameters::CFDDEM cfd_dem;
 };
+
 
 /**
  * @brief Class that assembles the drag force using DiFelice model for the
@@ -265,10 +316,9 @@ template <int dim>
 class GLSVansAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerBuoyancy(
-    Parameters::PhysicalProperties physical_properties,
-    Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
-      lagrangian_physical_properties)
+  GLSVansAssemblerBuoyancy(Parameters::PhysicalProperties physical_properties,
+                           Parameters::Lagrangian::LagrangianPhysicalProperties
+                             lagrangian_physical_properties)
     : physical_properties(physical_properties)
     , lagrangian_physical_properties(lagrangian_physical_properties)
 
@@ -284,7 +334,7 @@ public:
     NavierStokesScratchData<dim> &scratch_data) override;
 
   Parameters::PhysicalProperties physical_properties;
-  Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
+  Parameters::Lagrangian::LagrangianPhysicalProperties
     lagrangian_physical_properties;
 };
 
@@ -302,8 +352,10 @@ class GLSVansAssemblerPressureForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
   GLSVansAssemblerPressureForce(
-    Parameters::PhysicalProperties physical_properties)
+    Parameters::PhysicalProperties physical_properties,
+    Parameters::CFDDEM             cfd_dem)
     : physical_properties(physical_properties)
+    , cfd_dem(cfd_dem)
   {}
 
   /**
@@ -316,6 +368,7 @@ public:
     NavierStokesScratchData<dim> &scratch_data) override;
 
   Parameters::PhysicalProperties physical_properties;
+  Parameters::CFDDEM             cfd_dem;
 };
 
 /**
@@ -360,7 +413,8 @@ template <int dim>
 class GLSVansAssemblerFPI : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerFPI()
+  GLSVansAssemblerFPI(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
 
   {}
 
@@ -381,6 +435,8 @@ public:
   virtual void
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  Parameters::CFDDEM cfd_dem;
 };
 
 

@@ -756,7 +756,6 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<std::vector<Tensor<1, dim>>> stages_velocity_values;
 
-
   // Shape functions
   std::vector<std::vector<double>>         div_phi_u;
   std::vector<std::vector<Tensor<1, dim>>> phi_u;

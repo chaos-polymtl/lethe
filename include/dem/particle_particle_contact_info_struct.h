@@ -33,8 +33,8 @@ using namespace dealii;
 template <int dim>
 struct particle_particle_contact_info_struct
 {
-  Tensor<1, dim>                   tangential_relative_velocity;
-  Tensor<1, dim>                   tangential_overlap;
+  Tensor<1, 3>                     tangential_relative_velocity;
+  Tensor<1, 3>                     tangential_overlap;
   Particles::ParticleIterator<dim> particle_one;
   Particles::ParticleIterator<dim> particle_two;
 };

@@ -29,12 +29,12 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate forces      = false     # Enable force calculation
-    set calculate torques     = true     # Enable torque calculation
+    set calculate force       = false     # Enable force calculation
+    set calculate torque      = true      # Enable torque calculation
     set force name            = force     # Name prefix of force files
     set torque name           = torque    # Name prefix of torque files
     set output precision      = 10        # Output precision
@@ -65,8 +65,7 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 10
-  set calculate torques on solid = true
+  set beta = 10
   set verbosity = verbose
   set number of solids = 1
 
@@ -81,6 +80,7 @@ subsection nitsche
 		  set Function expression = -y ; x
 	  end
     set enable particles motion		= false
+    set calculate torque on solid 	= true
   end
 end
 

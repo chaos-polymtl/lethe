@@ -269,11 +269,13 @@ DEMSolver<dim>::load_balance()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
 
-  boundary_cell_object.build(triangulation,
-                             parameters.floating_walls,
-                             parameters.boundary_conditions.outlet_boundaries,
-                             parameters.mesh.check_for_diamond_cells,
-                             pcout);
+  boundary_cell_object.build(
+    triangulation,
+    parameters.floating_walls,
+    parameters.boundary_conditions.outlet_boundaries,
+    parameters.mesh.check_for_diamond_cells,
+    parameters.mesh.expand_particle_wall_contact_search,
+    pcout);
 
   if (parameters.grid_motion.motion_type !=
       Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
@@ -411,7 +413,7 @@ DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<double> &                    MOI)
 {
-  MOI.resize(momentum.size());
+  MOI.resize(torque.size());
 
   for (auto &particle : particle_handler)
     {
@@ -501,7 +503,7 @@ DEMSolver<dim>::particle_wall_contact_force()
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
     particle_wall_pairs_in_contact,
     simulation_control->get_time_step(),
-    momentum,
+    torque,
     force);
 
   if (parameters.forces_torques.calculate_force_torque)
@@ -518,7 +520,7 @@ DEMSolver<dim>::particle_wall_contact_force()
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
         pfw_pairs_in_contact,
         simulation_control->get_time_step(),
-        momentum,
+        torque,
         force);
     }
 
@@ -559,7 +561,7 @@ DEMSolver<dim>::finish_simulation()
   // Outputting force and torques over boundary
   if (parameters.forces_torques.calculate_force_torque)
     {
-      write_forces_torques_output_results(
+      write_forces_torques_output_results<dim>(
         parameters.forces_torques.force_torque_output_name,
         parameters.forces_torques.output_frequency,
         triangulation.get_boundary_ids(),
@@ -750,7 +752,7 @@ DEMSolver<dim>::solve()
       }
 #endif
       force.resize(displacement.size());
-      momentum.resize(displacement.size());
+      torque.resize(displacement.size());
 
       update_moment_of_inertia(particle_handler, MOI);
 
@@ -774,11 +776,13 @@ DEMSolver<dim>::solve()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
   // Finding boundary cells with faces
-  boundary_cell_object.build(triangulation,
-                             parameters.floating_walls,
-                             parameters.boundary_conditions.outlet_boundaries,
-                             parameters.mesh.check_for_diamond_cells,
-                             pcout);
+  boundary_cell_object.build(
+    triangulation,
+    parameters.floating_walls,
+    parameters.boundary_conditions.outlet_boundaries,
+    parameters.mesh.check_for_diamond_cells,
+    parameters.mesh.expand_particle_wall_contact_search,
+    pcout);
 
   // Setting chosen contact force, insertion and integration methods
   insertion_object  = set_insertion_type(parameters);
@@ -854,7 +858,7 @@ DEMSolver<dim>::solve()
           }
 #endif
           force.resize(displacement.size());
-          momentum.resize(displacement.size());
+          torque.resize(displacement.size());
 
           // Updating moment of inertia container
           update_moment_of_inertia(particle_handler, MOI);
@@ -925,7 +929,7 @@ DEMSolver<dim>::solve()
           local_adjacent_particles,
           ghost_adjacent_particles,
           simulation_control->get_time_step(),
-          momentum,
+          torque,
           force);
 
       // We have to update the positions of the points on boundary faces and
@@ -953,7 +957,7 @@ DEMSolver<dim>::solve()
             particle_handler,
             parameters.lagrangian_physical_properties.g,
             simulation_control->get_time_step(),
-            momentum,
+            torque,
             force,
             MOI);
         }
@@ -963,7 +967,7 @@ DEMSolver<dim>::solve()
             particle_handler,
             parameters.lagrangian_physical_properties.g,
             simulation_control->get_time_step(),
-            momentum,
+            torque,
             force,
             MOI);
         }
@@ -980,7 +984,7 @@ DEMSolver<dim>::solve()
            0) &&
           (parameters.forces_torques.force_torque_verbosity ==
            Parameters::Verbosity::verbose))
-        write_forces_torques_output_locally<dim>(
+        write_forces_torques_output_locally(
           forces_boundary_information[simulation_control->get_step_number()],
           torques_boundary_information[simulation_control->get_step_number()]);
 

@@ -252,7 +252,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // non Newtonian models according to the physical properties
   std::shared_ptr<RheologicalModel> rheological_model =
     RheologicalModel::model_cast(
-      this->simulation_parameters.physical_properties);
+      this->simulation_parameters.physical_properties.fluids[0]);
 
   const unsigned int vertices_per_face = GeometryInfo<dim>::vertices_per_face;
   const unsigned int n_q_points_face   = this->face_quadrature->size();
@@ -2418,7 +2418,8 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
         }
 
       // Core assemblers
-      if (this->simulation_parameters.physical_properties.non_newtonian_flow)
+      if (this->simulation_parameters.physical_properties.fluids[0]
+            .non_newtonian_flow)
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
