@@ -1,0 +1,6 @@
+
+DEAL::Beggining
+DEAL::Testing thermal expansion
+DEAL:: T = 1    , thermal expansion = 5.00000
+DEAL:: T = 2    , thermal expansion = 5.00000
+DEAL::OK

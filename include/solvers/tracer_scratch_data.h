@@ -18,6 +18,8 @@
 
 #include <core/multiphysics.h>
 
+#include <solvers/physical_properties_manager.h>
+
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -75,11 +77,13 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  TracerScratchData(const FiniteElement<dim> &fe_tracer,
-                    const Quadrature<dim> &   quadrature,
-                    const Mapping<dim> &      mapping,
-                    const FiniteElement<dim> &fe_navier_stokes)
-    : fe_values_tracer(mapping,
+  TracerScratchData(const PhysicalPropertiesManager &properties_manager,
+                    const FiniteElement<dim> &       fe_tracer,
+                    const Quadrature<dim> &          quadrature,
+                    const Mapping<dim> &             mapping,
+                    const FiniteElement<dim> &       fe_navier_stokes)
+    : properties_manager(properties_manager)
+    , fe_values_tracer(mapping,
                        fe_tracer,
                        quadrature,
                        update_values | update_quadrature_points |
@@ -106,7 +110,8 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    */
   TracerScratchData(const TracerScratchData<dim> &sd)
-    : fe_values_tracer(sd.fe_values_tracer.get_mapping(),
+    : properties_manager(sd.properties_manager)
+    , fe_values_tracer(sd.fe_values_tracer.get_mapping(),
                        sd.fe_values_tracer.get_fe(),
                        sd.fe_values_tracer.get_quadrature(),
                        update_values | update_quadrature_points |
@@ -216,6 +221,21 @@ public:
     this->fe_values_navier_stokes[velocities].get_function_values(
       current_solution, velocity_values);
   }
+
+  /** @brief Calculates the physical properties. This function calculates the physical properties
+   * that may be required by the tracer. Namely the diffusivity.
+   *
+   */
+  void
+  calculate_physical_properties();
+
+  // Physical properties
+  PhysicalPropertiesManager            properties_manager;
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  tracer_diffusivity;
+  std::vector<double>                  tracer_diffusivity_0;
+  std::vector<double>                  tracer_diffusivity_1;
+
 
 
   // FEValues for the Tracer problem

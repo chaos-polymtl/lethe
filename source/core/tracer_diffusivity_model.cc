@@ -14,17 +14,11 @@
  * ---------------------------------------------------------------------
  */
 
-#include <core/thermal_conductivity_model.h>
+#include <core/tracer_diffusivity_model.h>
 
-std::shared_ptr<ThermalConductivityModel>
-ThermalConductivityModel::model_cast(const Parameters::Fluid &fluid_properties)
+std::shared_ptr<TracerDiffusivityModel>
+TracerDiffusivityModel::model_cast(const Parameters::Fluid &fluid_properties)
 {
-  if (fluid_properties.thermal_conductivity_model ==
-      Parameters::Fluid::ThermalConductivityModel::linear)
-    return std::make_shared<ThermalConductivityLinear>(fluid_properties.k_A0,
-                                                       fluid_properties.k_A1);
-  else
-
-    return std::make_shared<ConstantThermalConductivity>(
-      fluid_properties.thermal_conductivity);
+  return std::make_shared<ConstantTracerDiffusivity>(
+    fluid_properties.tracer_diffusivity);
 }

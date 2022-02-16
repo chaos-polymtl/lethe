@@ -515,11 +515,6 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-      prm.declare_entry("non newtonian flow",
-                        "false",
-                        Patterns::Bool(),
-                        "Non Newtonian flow");
-
       prm.declare_entry("rheological model",
                         "newtonian",
                         Patterns::Selection("newtonian|power-law|carreau"),
@@ -605,19 +600,18 @@ namespace Parameters
       phase_change_parameters.parse_parameters(prm);
 
       // Rheology
-      non_newtonian_flow = prm.get_bool("non newtonian flow");
-      op                 = prm.get("rheological model");
+      op = prm.get("rheological model");
       if (op == "power-law")
         {
-          rheology_model = RheologyModel::powerlaw;
+          rheological_model = RheologicalModel::powerlaw;
         }
       else if (op == "carreau")
         {
-          rheology_model = RheologyModel::carreau;
+          rheological_model = RheologicalModel::carreau;
         }
       else if (op == "newtonian")
         {
-          rheology_model = RheologyModel::newtonian;
+          rheological_model = RheologicalModel::newtonian;
         }
       non_newtonian_parameters.parse_parameters(prm);
     }

@@ -1,9 +1,9 @@
 /**
- * @brief Tests the constant thermal conductivity model. This model should always return a constant.
+ * @brief Tests the constant thermal expansion model. This model should always return a constant.
  */
 
 // Lethe
-#include <core/thermal_conductivity_model.h>
+#include <core/thermal_expansion_model.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -13,18 +13,19 @@ test()
 {
   deallog << "Beggining" << std::endl;
 
-  ConstantThermalConductivity thermal_conductivity_model(5);
 
-  deallog << "Testing thermal conductivity - k" << std::endl;
+  ConstantThermalExpansion model(5);
 
-  // field values can remain empty since the constant thermal conductivity does
+  deallog << "Testing thermal expansion" << std::endl;
+
+  // field values can remain empty since the constant thermal expansion does
   // not depend on any fields
   std::map<field, double> field_values;
 
-  deallog << " T = 1    , k = "
-          << thermal_conductivity_model.value(field_values) << std::endl;
-  deallog << " T = 2    , k = "
-          << thermal_conductivity_model.value(field_values) << std::endl;
+  deallog << " T = 1    , thermal expansion = " << model.value(field_values)
+          << std::endl;
+  deallog << " T = 2    , thermal expansion = " << model.value(field_values)
+          << std::endl;
 
   deallog << "OK" << std::endl;
 }

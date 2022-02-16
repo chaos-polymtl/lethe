@@ -36,15 +36,29 @@ enum field : int
   previous_temperature
 };
 
+inline void
+set_field_vector(const field &                         id,
+                 const std::vector<double> &           data,
+                 std::map<field, std::vector<double>> &fields)
+{
+  std::vector<double> &target = fields.at(id);
+  size_t               sz     = target.size();
+  for (size_t i = 0; i < sz; ++i)
+    {
+      target[i] = data[i];
+    }
+}
+
 /**
  * @brief PhysicalPropertyModel. Abstract class that defines the interface for a physical property model
- * Physical property model provides an abstract interface to calculate the value
- * of a physical property or a vector of physical property value for given field
- * value. By default, the interface does not require that all (or any) fields be
- * specified. This is why a map is used to pass the dependent variable. To allow
- * for the calculation of the appropriate jacobian matrix (when that is
- * necessary) the interface also provides a jacobian function, which must
- * provide the derivative with respect to the field specified as an argument.
+ * Physical property model provides an abstract interface to calculate the
+ * value of a physical property or a vector of physical property value for
+ * given field value. By default, the interface does not require that all (or
+ * any) fields be specified. This is why a map is used to pass the dependent
+ * variable. To allow for the calculation of the appropriate jacobian matrix
+ * (when that is necessary) the interface also provides a jacobian function,
+ * which must provide the derivative with respect to the field specified as an
+ * argument.
  */
 class PhysicalPropertyModel
 {
@@ -57,6 +71,16 @@ public:
     model_depends_on[shear_rate]           = false;
     model_depends_on[temperature]          = false;
     model_depends_on[previous_temperature] = false;
+  }
+
+  /**
+   * @brief Returns true if the PhysicalPropertyModel depends on a field, false if not.
+   */
+
+  inline bool
+  depends_on(const field &id)
+  {
+    return model_depends_on[id];
   }
 
 

@@ -14,7 +14,6 @@ end
 #---------------------------------------------------
 subsection physical properties
   subsection fluid 0
-    set non newtonian flow	= true
     set rheological model 	= carreau
     subsection non newtonian
     	subsection carreau

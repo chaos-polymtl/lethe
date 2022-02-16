@@ -27,6 +27,7 @@
 
 #include <core/density_model.h>
 #include <core/multiphysics.h>
+#include <core/physical_property_model.h>
 #include <core/specific_heat_model.h>
 #include <core/thermal_conductivity_model.h>
 
@@ -85,14 +86,13 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  HeatTransferScratchData(
-    const Parameters::PhysicalProperties physical_properties,
-    const FiniteElement<dim> &           fe_ht,
-    const Quadrature<dim> &              quadrature,
-    const Mapping<dim> &                 mapping,
-    const FiniteElement<dim> &           fe_navier_stokes,
-    const Quadrature<dim - 1> &          face_quadrature)
-    : physical_properties(physical_properties)
+  HeatTransferScratchData(const PhysicalPropertiesManager properties_manager,
+                          const FiniteElement<dim> &      fe_ht,
+                          const Quadrature<dim> &         quadrature,
+                          const Mapping<dim> &            mapping,
+                          const FiniteElement<dim> &      fe_navier_stokes,
+                          const Quadrature<dim - 1> &     face_quadrature)
+    : properties_manager(properties_manager)
     , fe_values_T(mapping,
                   fe_ht,
                   quadrature,
@@ -126,7 +126,7 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    */
   HeatTransferScratchData(const HeatTransferScratchData<dim> &sd)
-    : physical_properties(sd.physical_properties)
+    : properties_manager(sd.properties_manager)
     , fe_values_T(sd.fe_values_T.get_mapping(),
                   sd.fe_values_T.get_fe(),
                   sd.fe_values_T.get_quadrature(),
@@ -349,12 +349,44 @@ public:
       }
   }
 
+
+  /** @brief Calculates the physical properties. This function calculates the physical properties
+   * that may be required by the heat transfer problem. Namely the density,
+   * specific heat, thermal conductivity and viscosity (for viscous
+   * dissipation).
+   *
+   */
+  void
+  calculate_physical_properties();
+
+
+  // Physical properties
+  PhysicalPropertiesManager            properties_manager;
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  specific_heat;
+  std::vector<double>                  thermal_conductivity;
+  std::vector<double>                  density;
+  std::vector<double>                  viscosity;
+
+  // Auxiliary property vector for VOF simulations
+  std::vector<double> specific_heat_0;
+  std::vector<double> thermal_conductivity_0;
+  std::vector<double> density_0;
+  std::vector<double> viscosity_0;
+
+  std::vector<double> specific_heat_1;
+  std::vector<double> thermal_conductivity_1;
+  std::vector<double> density_1;
+  std::vector<double> viscosity_1;
+
+
   // FEValues for the HT problem
-  const Parameters::PhysicalProperties physical_properties;
-  FEValues<dim>                        fe_values_T;
-  unsigned int                         n_dofs;
-  unsigned int                         n_q_points;
-  double                               cell_size;
+  FEValues<dim> fe_values_T;
+  unsigned int  n_dofs;
+  unsigned int  n_q_points;
+  double        cell_size;
+
+
 
   // Quadrature
   std::vector<double>     JxW;
@@ -369,9 +401,6 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
   std::vector<std::vector<double>>         stages_temperature_values;
 
-  std::vector<double> specific_heat;
-  std::vector<double> thermal_conductivity;
-  std::vector<double> density;
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;
@@ -401,6 +430,7 @@ public:
   FEValues<dim>               fe_values_navier_stokes;
   std::vector<Tensor<1, dim>> velocity_values;
   std::vector<Tensor<2, dim>> velocity_gradient_values;
+  std::vector<double>         shear_rate_values;
 
   // Scratch for the face boundary condition
   FEFaceValues<dim>                fe_face_values_ht;

@@ -269,7 +269,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
   this->forces_on_boundaries =
     calculate_forces(this->dof_handler,
                      evaluation_point,
-                     simulation_parameters.physical_properties,
+                     simulation_parameters.physical_properties_manager,
                      simulation_parameters.boundary_conditions,
                      *this->face_quadrature,
                      *this->mapping);
@@ -348,7 +348,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
   this->torques_on_boundaries =
     calculate_torques(this->dof_handler,
                       evaluation_point,
-                      simulation_parameters.physical_properties,
+                      simulation_parameters.physical_properties_manager,
                       simulation_parameters.boundary_conditions,
                       *this->face_quadrature,
                       *this->mapping);
@@ -1081,7 +1081,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         this->present_solution,
         *this->cell_quadrature,
         *this->mapping,
-        this->simulation_parameters.physical_properties);
+        this->simulation_parameters.physical_properties_manager);
 
       this->apparent_viscosity_table.add_value(
         "time", simulation_control->get_current_time());
@@ -1131,9 +1131,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Pressure drop: "
-                      << this->simulation_parameters.physical_properties
-                             .fluids[0]
-                             .density *
+                      << this->simulation_parameters.physical_properties_manager
+                             .density_scale *
                            pressure_drop
                       << " Pa" << std::endl;
         }
@@ -1524,10 +1523,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     data_out.add_data_vector(solution, srf);
 
   NonNewtonianViscosityPostprocessor<dim> non_newtonian_viscosity(
-    simulation_parameters.physical_properties);
+    this->simulation_parameters.physical_properties_manager.get_rheology());
   ShearRatePostprocessor<dim> shear_rate_processor;
 
-  if (simulation_parameters.physical_properties.fluids[0].non_newtonian_flow)
+  if (this->simulation_parameters.physical_properties_manager
+        .is_non_newtonian())
     {
       data_out.add_data_vector(solution, non_newtonian_viscosity);
       data_out.add_data_vector(solution, shear_rate_processor);
