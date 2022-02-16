@@ -17,14 +17,6 @@
 #ifndef lethe_VOF_h
 #define lethe_VOF_h
 
-#include <core/bdf.h>
-#include <core/simulation_control.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/multiphysics_interface.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/table_handler.h>
@@ -43,6 +35,13 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/error_estimator.h>
+
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 class VolumeOfFluid
@@ -432,6 +431,25 @@ private:
   apply_peeling_wetting(
     const unsigned int                   i_bc,
     const TrilinosWrappers::MPI::Vector &current_solution_cfd);
+
+  /**
+   * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy
+   * error likelihood in apply_peeling_wetting.
+   *
+   * @param type a string stating the needed change ("wetting" or "peeling")
+   *
+   * @param new_phase the new phase value for the cell (0 or 1)
+   *
+   * @param solution_pw VOF solution after peeling and wetting corrections are applied
+   *
+   * @param dof_indices_vof local index for the VOF solution
+   */
+  void
+  change_cell_phase(
+    const std::string                           type,
+    const unsigned int                          new_phase,
+    TrilinosWrappers::MPI::Vector &             solution_pw,
+    const std::vector<types::global_dof_index> &dof_indices_vof);
 
   TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
 
