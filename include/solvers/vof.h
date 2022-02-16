@@ -428,10 +428,10 @@ private:
    *
    * @param current_solution_cfd current solution for the fluid dynamics
    */
+  template <typename VectorType>
   void
-  apply_peeling_wetting(
-    const unsigned int                   i_bc,
-    const TrilinosWrappers::MPI::Vector &current_solution_cfd);
+  apply_peeling_wetting(const unsigned int i_bc,
+                        const VectorType & current_solution_cfd);
 
   /**
    * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy

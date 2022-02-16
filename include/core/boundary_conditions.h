@@ -722,9 +722,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|pw"),
+                      Patterns::Selection("none|peeling/wetting"),
                       "Type of boundary condition for VOF"
-                      "Choices are <none|pw>.");
+                      "Choices are <none|peeling/wetting>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -793,7 +793,7 @@ namespace BoundaryConditions
       {
         this->type[i_bc] = BoundaryType::none;
       }
-    else if (op == "pw")
+    else if (op == "peeling/wetting")
       {
         this->type[i_bc]              = BoundaryType::pw;
         this->peeling_threshold[i_bc] = prm.get_double("peeling threshold");

@@ -241,11 +241,8 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "phase");
-  // Peeling output, gathered after initialization step
-  if (marker_pw.size() != 0) // TODO initialize in constructor?
-    {
-      data_out.add_data_vector(dof_handler, marker_pw, "marker_pw");
-    }
+  // Peeling/wetting output
+  data_out.add_data_vector(dof_handler, marker_pw, "marker_pw");
 }
 
 template <int dim>
@@ -468,22 +465,23 @@ VolumeOfFluid<dim>::modify_solution()
       if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
           BoundaryConditions::BoundaryType::pw)
         {
-          // TODO debug (here = test to have is_block/else condition working)
-          // Get fluid present solution
-          //          if (multiphysics->fluid_dynamics_is_block())
-          //            {
-          //              const TrilinosWrappers::MPI::Vector
-          //              current_solution_cfd(
-          //                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
-          //              apply_peeling_wetting(i_bc, current_solution_cfd);
-          //            }
-          //          else
-          //            {
-          const TrilinosWrappers::MPI::Vector current_solution_cfd(
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics));
-          //            }
-
-          apply_peeling_wetting(i_bc, current_solution_cfd);
+          // Parse fluid present solution to apply_peeling_wetting method
+          if (multiphysics->fluid_dynamics_is_block())
+            {
+              const TrilinosWrappers::MPI::BlockVector current_solution_cfd(
+                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+              // apply_peeling_wetting is templated with current_solution_cfd
+              // VectorType
+              apply_peeling_wetting(i_bc, current_solution_cfd);
+            }
+          else
+            {
+              const TrilinosWrappers::MPI::Vector current_solution_cfd(
+                *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+              // apply_peeling_wetting is templated with current_solution_cfd
+              // VectorType
+              apply_peeling_wetting(i_bc, current_solution_cfd);
+            }
         }
     }
 
@@ -737,6 +735,9 @@ VolumeOfFluid<dim>::setup_dofs()
                        locally_owned_dofs,
                        dsp,
                        mpi_communicator);
+
+  // Initialize peeling/wetting marker vector
+  marker_pw.reinit(locally_owned_dofs, mpi_communicator);
 
   this->pcout << "   Number of VOF degrees of freedom: " << dof_handler.n_dofs()
               << std::endl;
@@ -1116,10 +1117,11 @@ VolumeOfFluid<dim>::assemble_mass_matrix_diagonal(
 }
 
 template <int dim>
+template <typename VectorType>
 void
 VolumeOfFluid<dim>::apply_peeling_wetting(
-  const unsigned int                   i_bc,
-  const TrilinosWrappers::MPI::Vector &current_solution_cfd)
+  const unsigned int i_bc,
+  const VectorType & current_solution_cfd)
 {
   const DoFHandler<dim> *dof_handler_cfd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -1129,7 +1131,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
   std::vector<types::global_dof_index> dof_indices_vof(
     fe->dofs_per_cell); //  Local connectivity
 
-  marker_pw.reinit(this->locally_owned_dofs, triangulation->get_communicator());
+
   TrilinosWrappers::MPI::Vector solution_pw(present_solution);
 
   FEFaceValues<dim> fe_face_values_vof(*this->fs_mapping,
@@ -1280,6 +1282,26 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
 
   present_solution = solution_pw;
 }
+
+template void
+VolumeOfFluid<2>::apply_peeling_wetting<TrilinosWrappers::MPI::Vector>(
+  const unsigned int                   i_bc,
+  const TrilinosWrappers::MPI::Vector &current_solution_cfd);
+
+template void
+VolumeOfFluid<3>::apply_peeling_wetting<TrilinosWrappers::MPI::Vector>(
+  const unsigned int                   i_bc,
+  const TrilinosWrappers::MPI::Vector &current_solution_cfd);
+
+template void
+VolumeOfFluid<2>::apply_peeling_wetting<TrilinosWrappers::MPI::BlockVector>(
+  const unsigned int                        i_bc,
+  const TrilinosWrappers::MPI::BlockVector &current_solution_cfd);
+
+template void
+VolumeOfFluid<3>::apply_peeling_wetting<TrilinosWrappers::MPI::BlockVector>(
+  const unsigned int                        i_bc,
+  const TrilinosWrappers::MPI::BlockVector &current_solution_cfd);
 
 template <int dim>
 void
