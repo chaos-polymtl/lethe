@@ -13,7 +13,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &viscosity = scratch_data.viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -37,7 +37,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const double         viscosity = viscosity_vector[q];
+      const Tensor<1, dim> velocity  = scratch_data.velocity_values[q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
@@ -65,13 +66,13 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity[q] / (h * h), 2)) :
+                         9 * std::pow(4 * viscosity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity[q] / (h * h), 2));
+                         9 * std::pow(4 * viscosity / (h * h), 2));
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
-                             viscosity[q] * velocity_laplacian - force +
+                             viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -90,7 +91,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
-             grad_phi_p_j - viscosity[q] * laplacian_phi_u_j +
+             grad_phi_p_j - viscosity * laplacian_phi_u_j +
              mass_source * phi_u_j);
 
           // Store these temporary products in auxiliary variables for speed
@@ -124,7 +125,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
               double local_matrix_ij =
-                viscosity[q] * scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
                 velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j +
                 mass_source * phi_u_j * phi_u_i +
@@ -159,7 +160,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &viscosity = scratch_data.viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -180,6 +181,9 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
       // Velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
@@ -211,14 +215,14 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity[q] / (h * h), 2)) :
+                         9 * std::pow(4 * viscosity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity[q] / (h * h), 2));
+                         9 * std::pow(4 * viscosity / (h * h), 2));
 
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
-                             viscosity[q] * velocity_laplacian - force +
+                             viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
 
       // Assembly of the right-hand side
@@ -236,7 +240,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
           local_rhs_i +=
             (
               // Momentum
-              -viscosity[q] * scalar_product(velocity_gradient, grad_phi_u_i) -
+              -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) -
               velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
               force * phi_u_i - mass_source * velocity * phi_u_i -
               // Continuity
@@ -269,7 +273,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &viscosity = scratch_data.viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -293,6 +297,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
+      const double viscosity = viscosity_vector[q];
+
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
@@ -339,14 +345,14 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity[q] / (h * h), 2)) :
+                         9 * std::pow(4 * viscosity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity[q] / (h * h), 2));
+                         9 * std::pow(4 * viscosity / (h * h), 2));
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
                              shear_rate * viscosity_gradient -
-                             viscosity[q] * velocity_laplacian - force +
+                             viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -368,7 +374,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
-             grad_phi_p_j - viscosity[q] * laplacian_phi_u_j -
+             grad_phi_p_j - viscosity * laplacian_phi_u_j -
              grad_phi_u_j_non_newtonian * viscosity_gradient +
              mass_source * phi_u_j);
 
@@ -406,7 +412,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
               double local_matrix_ij =
-                viscosity[q] *
+                viscosity *
                   scalar_product(grad_phi_u_j_non_newtonian, grad_phi_u_i) +
                 velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j +
@@ -442,7 +448,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &viscosity = scratch_data.viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -463,6 +469,9 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
       // Velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
@@ -512,15 +521,15 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity[q] / (h * h), 2)) :
+                         9 * std::pow(4 * viscosity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity[q] / (h * h), 2));
+                         9 * std::pow(4 * viscosity / (h * h), 2));
 
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
                              shear_rate * viscosity_gradient -
-                             viscosity[q] * velocity_laplacian - force +
+                             viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
 
       // Assembly of the right-hand side
@@ -538,7 +547,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
           local_rhs_i +=
             (
               // Momentum
-              -viscosity[q] * scalar_product(shear_rate, grad_phi_u_i) -
+              -viscosity * scalar_product(shear_rate, grad_phi_u_i) -
               velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
               force * phi_u_i - mass_source * velocity * phi_u_i -
               // Continuity
@@ -1072,7 +1081,7 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &viscosity = scratch_data.viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -1085,6 +1094,9 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
       // Velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
@@ -1118,7 +1130,7 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
           local_rhs_i +=
             (
               // Momentum
-              -viscosity[q] * scalar_product(shear_rate, grad_phi_u_i) -
+              -viscosity * scalar_product(shear_rate, grad_phi_u_i) -
               velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
               force * phi_u_i +
               // Continuity
@@ -1142,7 +1154,7 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &viscosity = scratch_data.viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -1155,6 +1167,10 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
+
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> velocity_gradient =
@@ -1197,7 +1213,7 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
               const auto &phi_p_j = scratch_data.phi_p[q][j];
 
               double local_matrix_ij =
-                viscosity[q] * scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
                 velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j -
                 // Continuity
@@ -1219,7 +1235,7 @@ GDNavierStokesAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &viscosity = scratch_data.viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -1232,6 +1248,10 @@ GDNavierStokesAssemblerCore<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
+
       // Velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
@@ -1261,7 +1281,7 @@ GDNavierStokesAssemblerCore<dim>::assemble_rhs(
           local_rhs_i +=
             (
               // Momentum
-              -viscosity[q] * scalar_product(velocity_gradient, grad_phi_u_i) -
+              -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) -
               velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
               force * phi_u_i +
               // Continuity

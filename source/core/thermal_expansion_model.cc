@@ -19,6 +19,6 @@
 std::shared_ptr<ThermalExpansionModel>
 ThermalExpansionModel::model_cast(const Parameters::Fluid &fluid_properties)
 {
-  return std::make_shared<ThermalExpansionConstant>(
+  return std::make_shared<ConstantThermalExpansion>(
     fluid_properties.thermal_expansion);
 }

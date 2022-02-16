@@ -14,7 +14,7 @@ test()
   deallog << "Beggining" << std::endl;
 
 
-  ThermalExpansionConstant model(5);
+  ConstantThermalExpansion model(5);
 
   deallog << "Testing thermal expansion" << std::endl;
 

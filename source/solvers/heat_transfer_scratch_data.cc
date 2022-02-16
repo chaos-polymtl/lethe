@@ -94,11 +94,13 @@ HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
                                      std::vector<double>(this->n_q_points));
 
 
+  // Properties of fluid 0 (VOF)
   specific_heat_0        = std::vector<double>(n_q_points);
   density_0              = std::vector<double>(n_q_points);
   thermal_conductivity_0 = std::vector<double>(n_q_points);
   viscosity_0            = std::vector<double>(n_q_points);
 
+  // Properties of fluid 1 (VOF)
   specific_heat_1        = std::vector<double>(n_q_points);
   density_1              = std::vector<double>(n_q_points);
   thermal_conductivity_1 = std::vector<double>(n_q_points);
@@ -137,68 +139,71 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
     }
 
 
-  // Case where you have one fluid
-  if (properties_manager.get_number_of_fluids() == 1)
+  switch (properties_manager.get_number_of_fluids())
     {
-      const auto density_model       = properties_manager.get_density();
-      const auto specific_heat_model = properties_manager.get_specific_heat();
-      const auto thermal_conductivity_model =
-        properties_manager.get_thermal_conductivity();
-      const auto rheology_model = properties_manager.get_rheology();
-
-      density_model->vector_value(fields, density);
-      specific_heat_model->vector_value(fields, specific_heat);
-      thermal_conductivity_model->vector_value(fields, thermal_conductivity);
-      rheology_model->vector_value(fields, viscosity);
-    }
-  else // properties_manager.get_number_of_fluids() == 2
-    {
-      const auto density_model_0 = properties_manager.get_density(0);
-      const auto specific_heat_model_0 =
-        properties_manager.get_specific_heat(0);
-      const auto thermal_conductivity_model_0 =
-        properties_manager.get_thermal_conductivity(0);
-      const auto rheology_model_0 = properties_manager.get_rheology(0);
-
-      density_model_0->vector_value(fields, density_0);
-      specific_heat_model_0->vector_value(fields, specific_heat_0);
-      thermal_conductivity_model_0->vector_value(fields,
-                                                 thermal_conductivity_0);
-      rheology_model_0->vector_value(fields, viscosity_0);
-
-      const auto density_model_1 = properties_manager.get_density(1);
-      const auto specific_heat_model_1 =
-        properties_manager.get_specific_heat(1);
-      const auto thermal_conductivity_model_1 =
-        properties_manager.get_thermal_conductivity(1);
-      const auto rheology_model_1 = properties_manager.get_rheology(1);
-
-      density_model_1->vector_value(fields, density_1);
-      specific_heat_model_1->vector_value(fields, specific_heat_1);
-      thermal_conductivity_model_1->vector_value(fields,
-                                                 thermal_conductivity_1);
-      rheology_model_1->vector_value(fields, viscosity_1);
-
-      // Blend the physical properties using the VOF field
-      for (unsigned int q = 0; q < this->n_q_points; ++q)
+      case 1:
         {
-          density[q] = calculate_point_property(this->phase_values[q],
-                                                this->density_0[q],
-                                                this->density_1[q]);
+          const auto density_model = properties_manager.get_density();
+          const auto specific_heat_model =
+            properties_manager.get_specific_heat();
+          const auto thermal_conductivity_model =
+            properties_manager.get_thermal_conductivity();
+          const auto rheology_model = properties_manager.get_rheology();
 
-          specific_heat[q] = calculate_point_property(this->phase_values[q],
-                                                      this->specific_heat_0[q],
-                                                      this->specific_heat_1[q]);
-
-          thermal_conductivity[q] =
-            calculate_point_property(this->phase_values[q],
-                                     this->thermal_conductivity_0[q],
-                                     this->thermal_conductivity_1[q]);
-
-          viscosity[q] = calculate_point_property(this->phase_values[q],
-                                                  this->viscosity_0[q],
-                                                  this->viscosity_1[q]);
+          density_model->vector_value(fields, density);
+          specific_heat_model->vector_value(fields, specific_heat);
+          thermal_conductivity_model->vector_value(fields,
+                                                   thermal_conductivity);
+          rheology_model->vector_value(fields, viscosity);
+          break;
         }
+      case 2:
+        {
+          const auto density_models = properties_manager.get_density_vector();
+          const auto specific_heat_models =
+            properties_manager.get_specific_heat_vector();
+          const auto thermal_conductivity_models =
+            properties_manager.get_thermal_conductivity_vector();
+          const auto rheology_models = properties_manager.get_rheology_vector();
+
+          density_models[0]->vector_value(fields, density_0);
+          specific_heat_models[0]->vector_value(fields, specific_heat_0);
+          thermal_conductivity_models[0]->vector_value(fields,
+                                                       thermal_conductivity_0);
+          rheology_models[0]->vector_value(fields, viscosity_0);
+
+
+          density_models[1]->vector_value(fields, density_1);
+          specific_heat_models[1]->vector_value(fields, specific_heat_1);
+          thermal_conductivity_models[1]->vector_value(fields,
+                                                       thermal_conductivity_1);
+          rheology_models[1]->vector_value(fields, viscosity_1);
+
+          // Blend the physical properties using the VOF field
+          for (unsigned int q = 0; q < this->n_q_points; ++q)
+            {
+              density[q] = calculate_point_property(this->phase_values[q],
+                                                    this->density_0[q],
+                                                    this->density_1[q]);
+
+              specific_heat[q] =
+                calculate_point_property(this->phase_values[q],
+                                         this->specific_heat_0[q],
+                                         this->specific_heat_1[q]);
+
+              thermal_conductivity[q] =
+                calculate_point_property(this->phase_values[q],
+                                         this->thermal_conductivity_0[q],
+                                         this->thermal_conductivity_1[q]);
+
+              viscosity[q] = calculate_point_property(this->phase_values[q],
+                                                      this->viscosity_0[q],
+                                                      this->viscosity_1[q]);
+            }
+          break;
+        }
+      default:
+        throw std::runtime_error("Unsupported number of fluids (>2)");
     }
 }
 

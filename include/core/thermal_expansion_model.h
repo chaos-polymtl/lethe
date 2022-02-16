@@ -40,13 +40,13 @@ public:
 /**
  * @brief Constant thermal expansion coefficient.
  */
-class ThermalExpansionConstant : public ThermalExpansionModel
+class ConstantThermalExpansion : public ThermalExpansionModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  ThermalExpansionConstant(const double p_thermal_expansion)
+  ConstantThermalExpansion(const double p_thermal_expansion)
     : thermal_expansion(p_thermal_expansion)
   {}
 

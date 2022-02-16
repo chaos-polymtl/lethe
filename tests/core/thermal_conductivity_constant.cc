@@ -13,7 +13,7 @@ test()
 {
   deallog << "Beggining" << std::endl;
 
-  ThermalConductivityConstant thermal_conductivity_model(5);
+  ConstantThermalConductivity thermal_conductivity_model(5);
 
   deallog << "Testing thermal conductivity - k" << std::endl;
 

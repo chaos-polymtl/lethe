@@ -768,6 +768,7 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
       std::shared_ptr<RheologicalModel> original_viscosity_model =
         this->simulation_parameters.physical_properties_manager.get_rheology();
 
+      // Temporarily set the rheology to be newtonian with predefined viscosity
       std::shared_ptr<Newtonian> temporary_rheology =
         std::make_shared<Newtonian>(
           this->simulation_parameters.initial_condition->viscosity);

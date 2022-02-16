@@ -312,7 +312,7 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      double rho_cp = density[q] * specific_heat[q];
+      const double rho_cp = density[q] * specific_heat[q];
 
       const double tau_ggls =
         std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / rho_cp;

@@ -52,8 +52,8 @@ template <int dim>
 class Tracer : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
-  Tracer<dim>(MultiphysicsInterface<dim> *multiphysics_interface,
-              SimulationParameters<dim> & p_simulation_parameters,
+  Tracer<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
+              const SimulationParameters<dim> &p_simulation_parameters,
               std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                                  p_triangulation,
               std::shared_ptr<SimulationControl> p_simulation_control)
@@ -341,8 +341,8 @@ private:
   void
   write_tracer_statistics();
 
-  MultiphysicsInterface<dim> *multiphysics;
-  SimulationParameters<dim> & simulation_parameters;
+  MultiphysicsInterface<dim> *     multiphysics;
+  const SimulationParameters<dim> &simulation_parameters;
 
 
   // Core elements for the tracer

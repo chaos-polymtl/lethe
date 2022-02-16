@@ -40,13 +40,13 @@ public:
 /**
  * @brief Constant tracer diffusivity.
  */
-class TracerDiffusivityConstant : public TracerDiffusivityModel
+class ConstantTracerDiffusivity : public TracerDiffusivityModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  TracerDiffusivityConstant(const double p_tracer_diffusivity)
+  ConstantTracerDiffusivity(const double p_tracer_diffusivity)
     : tracer_diffusivity(p_tracer_diffusivity)
   {}
 

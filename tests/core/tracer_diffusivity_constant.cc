@@ -14,7 +14,7 @@ test()
   deallog << "Beggining" << std::endl;
 
 
-  TracerDiffusivityConstant model(5);
+  ConstantTracerDiffusivity model(5);
 
   deallog << "Testing tracer diffusivity" << std::endl;
 

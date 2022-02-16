@@ -19,6 +19,6 @@
 std::shared_ptr<TracerDiffusivityModel>
 TracerDiffusivityModel::model_cast(const Parameters::Fluid &fluid_properties)
 {
-  return std::make_shared<TracerDiffusivityConstant>(
+  return std::make_shared<ConstantTracerDiffusivity>(
     fluid_properties.tracer_diffusivity);
 }

@@ -77,11 +77,11 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  TracerScratchData(PhysicalPropertiesManager &properties_manager,
-                    const FiniteElement<dim> & fe_tracer,
-                    const Quadrature<dim> &    quadrature,
-                    const Mapping<dim> &       mapping,
-                    const FiniteElement<dim> & fe_navier_stokes)
+  TracerScratchData(const PhysicalPropertiesManager &properties_manager,
+                    const FiniteElement<dim> &       fe_tracer,
+                    const Quadrature<dim> &          quadrature,
+                    const Mapping<dim> &             mapping,
+                    const FiniteElement<dim> &       fe_navier_stokes)
     : properties_manager(properties_manager)
     , fe_values_tracer(mapping,
                        fe_tracer,

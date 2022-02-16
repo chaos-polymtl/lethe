@@ -25,6 +25,6 @@ ThermalConductivityModel::model_cast(const Parameters::Fluid &fluid_properties)
                                                        fluid_properties.k_A1);
   else
 
-    return std::make_shared<ThermalConductivityConstant>(
+    return std::make_shared<ConstantThermalConductivity>(
       fluid_properties.thermal_conductivity);
 }

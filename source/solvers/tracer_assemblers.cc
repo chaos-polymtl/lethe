@@ -11,7 +11,8 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
                                           StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &diffusivity = scratch_data.tracer_diffusivity;
+  const std::vector<double> &diffusivity_vector =
+    scratch_data.tracer_diffusivity;
   const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
@@ -35,6 +36,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
+      const double         diffusivity     = diffusivity_vector[q];
       const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
       const Tensor<1, dim> velocity        = scratch_data.velocity_values[q];
 
@@ -73,16 +75,16 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
       const double tau =
         is_steady(method) ?
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * diffusivity[q] / (h * h), 2)) :
+                         9 * std::pow(4 * diffusivity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * diffusivity[q] / (h * h), 2));
+                         9 * std::pow(4 * diffusivity / (h * h), 2));
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
           const double laplacian_phi_T_j    = scratch_data.laplacian_phi[q][j];
           strong_jacobian_vec[q][j] +=
-            velocity * grad_phi_T_j - diffusivity[q] * laplacian_phi_T_j;
+            velocity * grad_phi_T_j - diffusivity * laplacian_phi_T_j;
 
           if (DCDD)
             strong_jacobian_vec[q][j] += -vdcdd * laplacian_phi_T_j;
@@ -98,10 +100,9 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
               const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
 
               // Weak form : - D * laplacian T +  u * gradT - f=0
-              local_matrix(i, j) +=
-                (diffusivity[q] * grad_phi_T_i * grad_phi_T_j +
-                 phi_T_i * velocity * grad_phi_T_j) *
-                JxW;
+              local_matrix(i, j) += (diffusivity * grad_phi_T_i * grad_phi_T_j +
+                                     phi_T_i * velocity * grad_phi_T_j) *
+                                    JxW;
 
 
 
@@ -130,7 +131,8 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
-  const std::vector<double> &diffusivity = scratch_data.tracer_diffusivity;
+  const std::vector<double> &diffusivity_vector =
+    scratch_data.tracer_diffusivity;
   const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
@@ -153,6 +155,7 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
+      const double         diffusivity      = diffusivity_vector[q];
       const Tensor<1, dim> tracer_gradient  = scratch_data.tracer_gradients[q];
       const double         tracer_laplacian = scratch_data.tracer_laplacians[q];
       const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
@@ -186,13 +189,13 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
       const double tau =
         is_steady(method) ?
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * diffusivity[q] / (h * h), 2)) :
+                         9 * std::pow(4 * diffusivity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * diffusivity[q] / (h * h), 2));
+                         9 * std::pow(4 * diffusivity / (h * h), 2));
 
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] +=
-        velocity * tracer_gradient - diffusivity[q] * tracer_laplacian;
+        velocity * tracer_gradient - diffusivity * tracer_laplacian;
 
       if (DCDD)
         strong_residual_vec[q] += -vdcdd * tracer_laplacian;
@@ -203,7 +206,7 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
           const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
 
           // rhs for : - D * laplacian T +  u * grad T - f=0
-          local_rhs(i) -= (diffusivity[q] * grad_phi_T_i * tracer_gradient +
+          local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient +
                            phi_T_i * velocity * tracer_gradient -
                            scratch_data.source[q] * phi_T_i) *
                           JxW;

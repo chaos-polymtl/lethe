@@ -34,7 +34,8 @@ DeclException1(
   std::string,
   "The following assembler or post-processing utility "
     << arg1
-    << " that you are trying to use does not support the use of a non-constant density model. Modifications to Lethe are required to take this into account.");
+    << " that you are trying to use does not support the use of a non-constant density model."
+       " Modifications to Lethe are required to take this into account.");
 
 
 DeclException1(
@@ -42,7 +43,8 @@ DeclException1(
   std::string,
   "The following assembler or post-processing utility "
     << arg1
-    << " that you are trying to use does not support the use of a non-constant viscosity model. Modifications to Lethe are required to take this into account.");
+    << " that you are trying to use does not support the use of a non-constant viscosity model. "
+       "Modifications to Lethe are required to take this into account.");
 
 
 
@@ -83,51 +85,88 @@ public:
 
 
   inline unsigned int
-  get_number_of_fluids()
+  get_number_of_fluids() const
   {
     return number_of_fluids;
   }
 
   // Getters for the physical property models
   std::shared_ptr<DensityModel>
-  get_density(unsigned int fluid_id = 0)
+  get_density(const unsigned int fluid_id = 0) const
   {
     return density[fluid_id];
   }
 
   std::shared_ptr<SpecificHeatModel>
-  get_specific_heat(unsigned int fluid_id = 0)
+  get_specific_heat(const unsigned int fluid_id = 0) const
   {
     return specific_heat[fluid_id];
   }
 
   std::shared_ptr<ThermalConductivityModel>
-  get_thermal_conductivity(unsigned int fluid_id = 0)
+  get_thermal_conductivity(const unsigned int fluid_id = 0) const
   {
     return thermal_conductivity[fluid_id];
   }
 
   std::shared_ptr<RheologicalModel>
-  get_rheology(unsigned int fluid_id = 0)
+  get_rheology(const unsigned int fluid_id = 0) const
   {
     return rheology[fluid_id];
   }
 
   std::shared_ptr<ThermalExpansionModel>
-  get_thermal_expansion(unsigned int fluid_id = 0)
+  get_thermal_expansion(const unsigned int fluid_id = 0) const
   {
     return thermal_expansion[fluid_id];
   }
 
   std::shared_ptr<TracerDiffusivityModel>
-  get_tracer_diffusivity(unsigned int fluid_id = 0)
+  get_tracer_diffusivity(const unsigned int fluid_id = 0) const
   {
     return tracer_diffusivity[fluid_id];
   }
 
+  // Vector Getters for the physical property models
+  std::vector<std::shared_ptr<DensityModel>>
+  get_density_vector() const
+  {
+    return density;
+  }
+
+  std::vector<std::shared_ptr<SpecificHeatModel>>
+  get_specific_heat_vector() const
+  {
+    return specific_heat;
+  }
+
+  std::vector<std::shared_ptr<ThermalConductivityModel>>
+  get_thermal_conductivity_vector() const
+  {
+    return thermal_conductivity;
+  }
+
+  std::vector<std::shared_ptr<RheologicalModel>>
+  get_rheology_vector() const
+  {
+    return rheology;
+  }
+
+  std::vector<std::shared_ptr<ThermalExpansionModel>>
+  get_thermal_expansion_vector() const
+  {
+    return thermal_expansion;
+  }
+
+  std::vector<std::shared_ptr<TracerDiffusivityModel>>
+  get_tracer_diffusivity_vector() const
+  {
+    return tracer_diffusivity;
+  }
+
   void
   set_rheology(std::shared_ptr<RheologicalModel> p_rheology,
-               unsigned int                      fluid_id = 0)
+               const unsigned int                fluid_id = 0)
   {
     rheology[fluid_id] = p_rheology;
   }
@@ -139,18 +178,18 @@ public:
   }
 
   bool
-  field_is_required(field id)
+  field_is_required(const field id) const
   {
-    return required_fields[id];
+    return required_fields.at(id);
   }
 
   bool
-  density_is_constant()
+  density_is_constant() const
   {
     return constant_density;
   }
 
-
+private:
   void
   establish_fields_required_by_model(PhysicalPropertyModel &model);
 
