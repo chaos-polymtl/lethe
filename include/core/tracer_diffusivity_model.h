@@ -52,7 +52,7 @@ public:
 
   /**
    * @brief value Calculates the tracer diffusivity
-   * @param fields_value Value of the various field on which the property may depend.
+   * @param fields_value Value of the various fields on which the property may depend.
    * @return value of the physical property calculated with the fields_value
    */
   double

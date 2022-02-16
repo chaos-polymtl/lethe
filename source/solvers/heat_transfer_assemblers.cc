@@ -491,7 +491,7 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
     {
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
-      double dynamic_viscosity = viscosity[q] * density[q];
+      const double dynamic_viscosity = viscosity[q] * density[q];
 
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
