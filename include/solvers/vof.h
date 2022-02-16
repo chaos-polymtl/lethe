@@ -17,6 +17,14 @@
 #ifndef lethe_VOF_h
 #define lethe_VOF_h
 
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+
+#include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
+
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/table_handler.h>
@@ -35,13 +43,6 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/error_estimator.h>
-
-#include <core/bdf.h>
-#include <core/simulation_control.h>
-#include <solvers/auxiliary_physics.h>
-#include <solvers/multiphysics_interface.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 class VolumeOfFluid

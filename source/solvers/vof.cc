@@ -1,3 +1,12 @@
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
+
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -14,14 +23,6 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 void
@@ -241,7 +242,7 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "phase");
   // Peeling output, gathered after initialization step
-  if (marker_pw.size() != 0) // TODO parse first_iteration? initialize somehow?
+  if (marker_pw.size() != 0) // TODO initialize in constructor?
     {
       data_out.add_data_vector(dof_handler, marker_pw, "marker_pw");
     }
@@ -480,8 +481,9 @@ VolumeOfFluid<dim>::modify_solution()
           //            {
           const TrilinosWrappers::MPI::Vector current_solution_cfd(
             *multiphysics->get_solution(PhysicsID::fluid_dynamics));
-          apply_peeling_wetting(i_bc, current_solution_cfd);
           //            }
+
+          apply_peeling_wetting(i_bc, current_solution_cfd);
         }
     }
 
