@@ -28,6 +28,7 @@
 
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
+#include <solvers/physical_properties_manager.h>
 #include <solvers/source_terms.h>
 
 #include <dem/dem_solver_parameters.h>
@@ -44,7 +45,6 @@ public:
   Parameters::Mesh                                  mesh;
   std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
-  Parameters::PhysicalProperties                    physical_properties;
   Parameters::SimulationControl                     simulation_control;
   Parameters::Timer                                 timer;
   Parameters::FEM                                   fem_parameters;
@@ -63,6 +63,8 @@ public:
   Parameters::DynamicFlowControl                    flow_control;
   Parameters::InterfaceSharpening                   interface_sharpening;
   Parameters::Multiphysics                          multiphysics;
+
+  PhysicalPropertiesManager physical_properties_manager;
 
   void
   declare(ParameterHandler &prm)
@@ -141,6 +143,8 @@ public:
 
     multiphysics.parse_parameters(prm);
 
+    physical_properties_manager.initialize(physical_properties);
+
     // Check consistency of parameters parsed in different subsections
     if (multiphysics.VOF && physical_properties.number_of_fluids != 2)
       {
@@ -148,6 +152,9 @@ public:
           "Inconsistency in .prm!\n with VOF = true\n use: number of fluids = 2");
       }
   }
+
+private:
+  Parameters::PhysicalProperties physical_properties;
 };
 
 #endif

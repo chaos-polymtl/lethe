@@ -40,10 +40,8 @@ class GLSNavierStokesVOFAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties)
+    std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
   {}
 
   /**
@@ -67,7 +65,6 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
 };
 
 /**
@@ -87,10 +84,8 @@ class GLSNavierStokesVOFAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties)
+    std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
   {}
 
   /**
@@ -112,7 +107,6 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
 };
 
 #endif

@@ -1,9 +1,9 @@
 /**
- * @brief Tests the constant thermal conductivity model. This model should always return a constant.
+ * @brief Tests the constant tracer diffusivity model. This model should always return a constant.
  */
 
 // Lethe
-#include <core/thermal_conductivity_model.h>
+#include <core/tracer_diffusivity_model.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -13,18 +13,19 @@ test()
 {
   deallog << "Beggining" << std::endl;
 
-  ConstantThermalConductivity thermal_conductivity_model(5);
 
-  deallog << "Testing thermal conductivity - k" << std::endl;
+  ConstantTracerDiffusivity model(5);
 
-  // field values can remain empty since the constant thermal conductivity does
+  deallog << "Testing tracer diffusivity" << std::endl;
+
+  // field values can remain empty since the constant thermal expansion does
   // not depend on any fields
   std::map<field, double> field_values;
 
-  deallog << " T = 1    , k = "
-          << thermal_conductivity_model.value(field_values) << std::endl;
-  deallog << " T = 2    , k = "
-          << thermal_conductivity_model.value(field_values) << std::endl;
+  deallog << " T = 1    , tracer diffusivity = " << model.value(field_values)
+          << std::endl;
+  deallog << " T = 2    , tracer diffusivity = " << model.value(field_values)
+          << std::endl;
 
   deallog << "OK" << std::endl;
 }

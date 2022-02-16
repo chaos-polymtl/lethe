@@ -47,13 +47,13 @@ public:
  * @brief Constant specific heat. Returns a constant specific
  * heat for a fluid
  */
-class SpecificHeatConstant : public SpecificHeatModel
+class ConstantSpecificHeat : public SpecificHeatModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  SpecificHeatConstant(const double p_specific_heat)
+  ConstantSpecificHeat(const double p_specific_heat)
     : specific_heat(p_specific_heat)
   {}
 

@@ -14,12 +14,11 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
-  double density       = this->physical_properties.fluids[0].density;
-  double specific_heat = this->physical_properties.fluids[0].specific_heat;
-  double thermal_conductivity =
-    this->physical_properties.fluids[0].thermal_conductivity;
-  double rho_cp = density * specific_heat;
-  double alpha  = thermal_conductivity / rho_cp;
+  const std::vector<double> &density       = scratch_data.density;
+  const std::vector<double> &specific_heat = scratch_data.specific_heat;
+  const std::vector<double> &thermal_conductivity =
+    scratch_data.thermal_conductivity;
+
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -47,29 +46,8 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      if (this->multiphysics_parameters.VOF)
-        {
-          // Calculation of the equivalent physical properties at the
-          // quadrature point
-          density = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].density,
-            this->physical_properties.fluids[1].density);
-
-          specific_heat = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].specific_heat,
-            this->physical_properties.fluids[1].specific_heat);
-
-          thermal_conductivity = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].thermal_conductivity,
-            this->physical_properties.fluids[1].thermal_conductivity);
-
-          // Useful definitions
-          rho_cp = density * specific_heat;
-          alpha  = thermal_conductivity / rho_cp;
-        }
+      const double rho_cp = density[q] * specific_heat[q];
+      const double alpha  = thermal_conductivity[q] / rho_cp;
 
       const auto method = this->simulation_control->get_assembly_method();
 
@@ -112,7 +90,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
               // so tau:grad(u) =
               // mu*(grad(u)+transpose(grad(u)).transpose(grad(u))
               local_matrix(i, j) +=
-                (thermal_conductivity * grad_phi_T_i * grad_phi_T_j +
+                (thermal_conductivity[q] * grad_phi_T_i * grad_phi_T_j +
                  rho_cp * phi_T_i * velocity * grad_phi_T_j) *
                 JxW;
 
@@ -135,6 +113,11 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
   const double       h          = scratch_data.cell_size;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
+  const std::vector<double> &density       = scratch_data.density;
+  const std::vector<double> &specific_heat = scratch_data.specific_heat;
+  const std::vector<double> &thermal_conductivity =
+    scratch_data.thermal_conductivity;
+
 
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
@@ -156,37 +139,8 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
-      double density       = this->physical_properties.fluids[0].density;
-      double specific_heat = this->physical_properties.fluids[0].specific_heat;
-      double thermal_conductivity =
-        this->physical_properties.fluids[0].thermal_conductivity;
-
-      double rho_cp = density * specific_heat;
-      double alpha  = thermal_conductivity / rho_cp;
-
-      if (this->multiphysics_parameters.VOF)
-        {
-          // Calculation of the equivalent physical properties at the
-          // quadrature point
-          density = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].density,
-            this->physical_properties.fluids[1].density);
-
-          specific_heat = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].specific_heat,
-            this->physical_properties.fluids[1].specific_heat);
-
-          thermal_conductivity = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].thermal_conductivity,
-            this->physical_properties.fluids[1].thermal_conductivity);
-
-          // Useful definitions
-          rho_cp = density * specific_heat;
-          alpha  = thermal_conductivity / rho_cp;
-        }
+      double rho_cp = density[q] * specific_heat[q];
+      double alpha  = thermal_conductivity[q] / rho_cp;
 
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
@@ -211,7 +165,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] += rho_cp * velocity * temperature_gradient -
-                                thermal_conductivity * temperature_laplacian;
+                                thermal_conductivity[q] * temperature_laplacian;
 
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -222,7 +176,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
           // rhs for : - k * laplacian T + rho * cp * u * grad T - f
           // -grad(u)*grad(u) = 0
           local_rhs(i) -=
-            (thermal_conductivity * grad_phi_T_i * temperature_gradient +
+            (thermal_conductivity[q] * grad_phi_T_i * temperature_gradient +
              rho_cp * phi_T_i * velocity * temperature_gradient -
              scratch_data.source[q] * phi_T_i) *
             JxW;
@@ -248,6 +202,9 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
+  const std::vector<double> &density       = scratch_data.density;
+  const std::vector<double> &specific_heat = scratch_data.specific_heat;
+
   // Copy data elements
   auto &strong_residual = copy_data.strong_residual;
   auto &strong_jacobian = copy_data.strong_jacobian;
@@ -260,9 +217,6 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
 
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
-  double density       = this->physical_properties.fluids[0].density;
-  double specific_heat = this->physical_properties.fluids[0].specific_heat;
-  double rho_cp        = density * specific_heat;
 
   const double h = scratch_data.cell_size;
 
@@ -275,24 +229,7 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      if (this->multiphysics_parameters.VOF)
-        {
-          // Calculation of the equivalent physical properties at the
-          // quadrature point
-          density = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].density,
-            this->physical_properties.fluids[1].density);
-
-          specific_heat = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].specific_heat,
-            this->physical_properties.fluids[1].specific_heat);
-
-          // Useful definitions
-          rho_cp = density * specific_heat;
-        }
-
+      const double rho_cp = density[q] * specific_heat[q];
 
       temperature[0] = scratch_data.present_temperature_values[q];
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
@@ -347,9 +284,8 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
-  double density       = this->physical_properties.fluids[0].density;
-  double specific_heat = this->physical_properties.fluids[0].specific_heat;
-  double rho_cp        = density * specific_heat;
+  const std::vector<double> &density       = scratch_data.density;
+  const std::vector<double> &specific_heat = scratch_data.specific_heat;
 
 
   // Loop and quadrature informations
@@ -373,30 +309,14 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
   std::vector<Tensor<1, dim>> temperature_gradient(
     1 + number_of_previous_solutions(method));
 
-
-  const double tau_ggls =
-    std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / rho_cp;
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      if (this->multiphysics_parameters.VOF)
-        {
-          // Calculation of the equivalent physical properties at the
-          // quadrature point
-          density = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].density,
-            this->physical_properties.fluids[1].density);
+      const double rho_cp = density[q] * specific_heat[q];
 
-          specific_heat = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].specific_heat,
-            this->physical_properties.fluids[1].specific_heat);
+      const double tau_ggls =
+        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / rho_cp;
 
-          // Useful definitions
-          rho_cp = density * specific_heat;
-        }
 
       temperature[0]          = scratch_data.present_temperature_values[q];
       temperature_gradient[0] = scratch_data.temperature_gradients[q];
@@ -552,8 +472,10 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
   StabilizedMethodsCopyData &   copy_data)
 {
   const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  const unsigned int n_dofs = scratch_data.n_dofs;
+  const std::vector<double> &density   = scratch_data.density;
+  const std::vector<double> &viscosity = scratch_data.viscosity;
 
 
   // Time steps and inverse time steps which is used for stabilization
@@ -569,28 +491,7 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
     {
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
-      double density   = this->physical_properties.fluids[0].density;
-      double viscosity = this->physical_properties.fluids[0].viscosity;
-
-      double dynamic_viscosity = viscosity * density;
-
-      if (this->multiphysics_parameters.VOF)
-        {
-          // Calculation of the equivalent physical properties at the
-          // quadrature point
-          density = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].density,
-            this->physical_properties.fluids[1].density);
-
-          viscosity = calculate_point_property(
-            scratch_data.phase_values[q],
-            this->physical_properties.fluids[0].viscosity,
-            this->physical_properties.fluids[1].viscosity);
-
-          // Useful definitions
-          dynamic_viscosity = viscosity * density;
-        }
+      const double dynamic_viscosity = viscosity[q] * density[q];
 
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
