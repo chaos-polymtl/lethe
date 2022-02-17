@@ -101,10 +101,10 @@ public:
   virtual void
   calculate_IB_particle_wall_contact_force(
     particle_wall_contact_info_struct<dim> &contact_info,
-    Tensor<1, dim> &                        normal_force,
-    Tensor<1, dim> &                        tangential_force,
-    Tensor<1, dim> &                        tangential_torque,
-    Tensor<1, dim> &                        rolling_resistance_torque,
+    Tensor<1, 3> &                        normal_force,
+    Tensor<1, 3> &                        tangential_force,
+    Tensor<1, 3> &                        tangential_torque,
+    Tensor<1, 3> &                        rolling_resistance_torque,
     IBParticle<dim> &                       particle,
     const double &                          wall_youngs_modulus,
     const double &                          wall_poisson_ratio,
@@ -119,11 +119,10 @@ public:
    * @param vector_b The projection vector of vector_a
    * @return The projection of vector_a on vector_b
    */
-  inline Tensor<1, dim>
-  find_projection(const Tensor<1, dim> &vector_a,
-                  const Tensor<1, dim> &vector_b)
+  inline Tensor<1, 3>
+  find_projection(const Tensor<1, 3> &vector_a, const Tensor<1, 3> &vector_b)
   {
-    Tensor<1, dim> vector_c;
+    Tensor<1, 3> vector_c;
     vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
 
     return vector_c;
@@ -163,7 +162,7 @@ protected:
       &           forces_and_torques,
     Tensor<1, 3> &particle_torque,
     Tensor<1, 3> &particle_force,
-    Point<3> &    point_on_boundary = 0,
+    Point<3> &    point_on_boundary,
     int           boundary_id       = 0)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
@@ -207,21 +206,6 @@ protected:
    */
   void
   mpi_correction_over_calculation_of_forces_and_torques();
-
-  /** This function is used to find the projection of vector_a on
-   * vector_b
-   * @param vector_a A vector which is going to be projected on vector_b
-   * @param vector_b The projection vector of vector_a
-   * @return The projection of vector_a on vector_b
-   */
-  inline Tensor<1, 3>
-  find_projection(const Tensor<1, 3> &vector_a, const Tensor<1, 3> &vector_b)
-  {
-    Tensor<1, 3> vector_c;
-    vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
-
-    return vector_c;
-  }
 
   double triangulation_radius;
   double effective_radius;

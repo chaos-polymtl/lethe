@@ -1117,6 +1117,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   double alpha = this->simulation_parameters.particlesParameters->alpha;
   this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
   ib_dem.update_particles(particles, time);
+
   double density    = this->simulation_parameters.particlesParameters->density;
   particle_residual = 0;
   if (this->simulation_parameters.particlesParameters->integrate_motion)
@@ -1148,7 +1149,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             ib_dem.dem_particles[p].contact_impulsion;
           particles[p].omega_contact_impulsion =
             ib_dem.dem_particles[p].omega_contact_impulsion;
-
           // Time stepping information
           const auto method = this->simulation_control->get_assembly_method();
           std::vector<double> time_steps_vector =
@@ -1170,7 +1170,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             }
           residual_velocity +=
             (particles[p].impulsion) / particles[p].mass / dt;
-
           // Approximate a diagonal Jacobian with a secant methods.
           Tensor<2, dim> jac_velocity;
           if (particles[p].impulsion_iter.norm() == 0)
@@ -1225,7 +1224,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               Tensor<1,dim> dv_temp;
               auto inv_jac=invert(jac_velocity);
               for(unsigned int i =0; i<dim; ++i){
-                  for(unsigned int j =0; j<dim; ++i){
+                  for(unsigned int j =0; j<dim; ++j){
                       dv_temp[i]+=inv_jac[i][j]*residual_velocity[i];
                     }
                 }
@@ -1289,9 +1288,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               // new position directly with the new velocity found.
               if (particles[p].contact_impulsion.norm() < 1e-12)
                 {
+                  particles[p].position.clear();
                   for(unsigned int d=0; d<dim;++d)
                     {
-                      particles[p].position.clear();
+
                       for (unsigned int i = 1;
                            i < number_of_previous_solutions(method) + 1;
                            ++i)
@@ -1303,6 +1303,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                         }
                       particles[p].position[d] +=
                         particles[p].velocity[d] / bdf_coefs[0];
+
                     }
                 }
               else

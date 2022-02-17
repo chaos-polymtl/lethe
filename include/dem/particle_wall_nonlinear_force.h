@@ -107,10 +107,10 @@ public:
   virtual void
   calculate_IB_particle_wall_contact_force(
     particle_wall_contact_info_struct<dim> &contact_info,
-    Tensor<1, dim> &                        normal_force,
-    Tensor<1, dim> &                        tangential_force,
-    Tensor<1, dim> &                        tangential_torque,
-    Tensor<1, dim> &                        rolling_resistance_torque,
+    Tensor<1, 3> &                        normal_force,
+    Tensor<1, 3> &                        tangential_force,
+    Tensor<1, 3> &                        tangential_torque,
+    Tensor<1, 3> &                        rolling_resistance_torque,
     IBParticle<dim> &                       particle,
     const double &                          wall_youngs_modulus,
     const double &                          wall_poisson_ratio,

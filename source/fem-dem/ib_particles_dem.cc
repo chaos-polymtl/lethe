@@ -6,6 +6,7 @@
 #include <dem/particle_wall_nonlinear_force.h>
 #include <dem/particle_particle_linear_force.h>
 #include <dem/particle_particle_nonlinear_force.h>
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <fem-dem/ib_particles_dem.h>
 
 template <int dim>
@@ -90,11 +91,11 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
               if (normal_overlap > 0)
                 // This means that the adjacent particles are in contact
                 {
-                  Tensor<1, dim> normal_force;
-                  Tensor<1, dim> tangential_force;
-                  Tensor<1, dim> particle_one_tangential_torque;
-                  Tensor<1, dim> particle_two_tangential_torque;
-                  Tensor<1, dim> rolling_resistance_torque;
+                  Tensor<1, 3> normal_force;
+                  Tensor<1, 3> tangential_force;
+                  Tensor<1, 3> particle_one_tangential_torque;
+                  Tensor<1, 3> particle_two_tangential_torque;
+                  Tensor<1, 3> rolling_resistance_torque;
 
                   particle_particle_contact_force_object
                     ->calculate_IB_particle_particle_contact_force(
@@ -261,7 +262,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 contact_info;
             }
 
-          auto normal_vector     = boundary_cell_information.normal_vector;
+          Tensor<1,3> normal_vector     = copy_2d_tensor_in_3d(boundary_cell_information.normal_vector);
           auto point_on_boundary = boundary_cell_information.point_on_boundary;
 
           Tensor<1, 3> normal;
@@ -281,13 +282,17 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           // center of particle to the point_on_boundary. This vector will then
           // be projected on the normal vector of the boundary to obtain the
           // particle-wall distance
-          Tensor<1, dim> point_to_particle_vector =
-            particle.position - point_on_boundary;
+
+          Point<3> particle_position_3d=copy_2d_point_in_3d(particle.position);
+          Point<3> point_on_boundary_3d=copy_2d_point_in_3d(point_on_boundary);
+
+          Tensor<1, 3> point_to_particle_vector =
+            particle_position_3d - point_on_boundary_3d;
 
           // Finding the projected vector on the normal vector of the boundary.
           // Here we have used the private function find_projection. Using this
           // projected vector, the particle-wall distance is calculated
-          Tensor<1, dim> projected_vector =
+          Tensor<1, 3> projected_vector =
             particle_wall_contact_force_object->find_projection(
               point_to_particle_vector, normal_vector);
 
@@ -297,10 +302,14 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
             {
               contact_info.normal_overlap = normal_overlap;
 
-              Tensor<1, dim> normal_force;
-              Tensor<1, dim> tangential_force;
-              Tensor<1, dim> tangential_torque;
-              Tensor<1, dim> rolling_resistance_torque;
+              Tensor<1, 3> normal_force;
+              Tensor<1, 3> tangential_force;
+              Tensor<1, 3> tangential_torque;
+              Tensor<1, 3> rolling_resistance_torque;
+
+              pw_contact_map[particle.particle_id][boundary_index].normal_overlap = normal_overlap;
+              pw_contact_map[particle.particle_id][boundary_index].normal_vector = normal_vector;
+              pw_contact_map[particle.particle_id][boundary_index].boundary_id  = 0;
 
               particle_wall_contact_force_object
                 ->calculate_IB_particle_wall_contact_force(
@@ -317,7 +326,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   wall_rolling_friction_coefficient,
                   dt_dem);
 
-
+              std::cout<<"normal force "<<normal_force<<std::endl;
               // Updating the force of particles in the particle handler
               contact_force[particle.particle_id] +=
                 normal_force + tangential_force;
@@ -360,10 +369,10 @@ IBParticlesDEM<dim>::particles_dem(double &dt)
   // Local time for the dem step.
   double t = 0;
   // The gravitational acceleration.
-  Tensor<1, dim> g;
+  Tensor<1, 3> g;
   this->parameters->f_gravity->set_time(cfd_time);
   // The gravitational force on the particle.
-  Tensor<1, dim> gravity;
+  Tensor<1, 3> gravity;
   // Initialized the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
@@ -478,9 +487,11 @@ IBParticlesDEM<dim>::particles_dem(double &dt)
             dt_dem;
           dem_particles[p_i].omega_contact_impulsion +=
             (contact_torque_temp + contact_wall_torque_temp) * dt_dem;
+          std::cout<<dem_particles[p_i].position<<std::endl;
         }
       t += dt_dem;
     }
+  std::cout<<" hello"<<std::endl;
 }
 
 

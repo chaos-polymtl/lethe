@@ -267,6 +267,7 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
      normal_damping_constant * contact_info.normal_relative_velocity) *
     contact_info.normal_vector;
 
+  std::cout<<"spring " << normal_damping_constant << "   dashpot " <<contact_info.normal_relative_velocity << std::endl;
   // Calculation of tangential force
   Tensor<1, 3> tangential_force =
     tangential_spring_constant * contact_info.tangential_overlap;
@@ -313,10 +314,10 @@ template <int dim>
 void
 ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   particle_wall_contact_info_struct<dim> &contact_info,
-  Tensor<1, dim> &                        normal_force,
-  Tensor<1, dim> &                        tangential_force,
-  Tensor<1, dim> &                        tangential_torque,
-  Tensor<1, dim> &                        rolling_resistance_torque,
+  Tensor<1, 3> &                        normal_force,
+  Tensor<1, 3> &                        tangential_force,
+  Tensor<1, 3> &                        tangential_torque,
+  Tensor<1, 3> &                        rolling_resistance_torque,
   IBParticle<dim> &                       particle,
   const double &                          wall_youngs_modulus,
   const double &                          wall_poisson_ratio,
@@ -365,12 +366,15 @@ ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
     (particle.rolling_friction_coefficient + wall_rolling_friction_coefficient +
      DBL_MIN);
 
+
   this->update_contact_information(contact_info, particle_properties, dt);
+
+
 
   // This tuple (forces and torques) contains four elements which
   // are: 1, normal force, 2, tangential force, 3, tangential torque
   // and 4, rolling resistance torque, respectively
-  std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+  std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
     forces_and_torques =
       calculate_nonlinear_contact_force_and_torque(contact_info,
                                                    particle_properties);

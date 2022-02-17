@@ -103,7 +103,7 @@ IBParticle<dim>::get_properties_name()
   properties[PropertiesIndex::fx] = std::make_pair("Force", 3);
   properties[PropertiesIndex::fy] = std::make_pair("Force", 1);
   properties[PropertiesIndex::fz] = std::make_pair("Force", 1);
-  properties[PropertiesIndex::m]  = std::make_pair("Mass", 1);
+  properties[PropertiesIndex::mass]  = std::make_pair("Mass", 1);
   properties[PropertiesIndex::ox] = std::make_pair("Omega", 3);
   properties[PropertiesIndex::oy] = std::make_pair("Omega", 1);
   properties[PropertiesIndex::oz] = std::make_pair("Omega", 1);

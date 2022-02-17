@@ -357,17 +357,34 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
   calculate_IB_particle_particle_contact_force(
     const double &                              normal_overlap,
     particle_particle_contact_info_struct<dim> &contact_info,
-    Tensor<1, dim> &                            normal_force,
-    Tensor<1, dim> &                            tangential_force,
-    Tensor<1, dim> &                            particle_one_tangential_torque,
-    Tensor<1, dim> &                            particle_two_tangential_torque,
-    Tensor<1, dim> &                            rolling_resistance_torque,
+    Tensor<1, 3> &                            normal_force,
+    Tensor<1, 3> &                            tangential_force,
+    Tensor<1, 3> &                            particle_one_tangential_torque,
+    Tensor<1, 3> &                            particle_two_tangential_torque,
+    Tensor<1, 3> &                            rolling_resistance_torque,
     IBParticle<dim> &                           particle_one,
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
     const double &                              dt)
 {
+  Point<3> particle_one_location_3d;
+  Point<3> particle_two_location_3d;
+
+  if constexpr (dim == 3)
+    {
+      particle_one_location_3d = particle_one_location;
+      particle_two_location_3d = particle_two_location;
+    }
+
+  if constexpr (dim == 2)
+    {
+      particle_one_location_3d =
+        copy_2d_point_in_3d(particle_one_location);
+      particle_two_location_3d =
+        copy_2d_point_in_3d(particle_two_location);
+    }
+
   const ArrayView<const double> particle_one_properties =
     particle_one.get_properties();
   const ArrayView<const double> particle_two_properties =
@@ -431,8 +448,8 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                                    normal_unit_vector,
                                    particle_one_properties,
                                    particle_two_properties,
-                                   particle_one_location,
-                                   particle_two_location,
+                                   particle_one_location_3d,
+                                   particle_two_location_3d,
                                    dt);
 
   calculate_hertz_mindlin_limit_overlap_contact(contact_info,
@@ -931,17 +948,34 @@ ParticleParticleHertzMindlinLimitForce<dim>::
   calculate_IB_particle_particle_contact_force(
     const double &                              normal_overlap,
     particle_particle_contact_info_struct<dim> &contact_info,
-    Tensor<1, dim> &                            normal_force,
-    Tensor<1, dim> &                            tangential_force,
-    Tensor<1, dim> &                            particle_one_tangential_torque,
-    Tensor<1, dim> &                            particle_two_tangential_torque,
-    Tensor<1, dim> &                            rolling_resistance_torque,
+    Tensor<1, 3> &                            normal_force,
+    Tensor<1, 3> &                            tangential_force,
+    Tensor<1, 3> &                            particle_one_tangential_torque,
+    Tensor<1, 3> &                            particle_two_tangential_torque,
+    Tensor<1, 3> &                            rolling_resistance_torque,
     IBParticle<dim> &                           particle_one,
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
     const double &                              dt)
 {
+  Point<3> particle_one_location_3d;
+  Point<3> particle_two_location_3d;
+
+  if constexpr (dim == 3)
+    {
+      particle_one_location_3d = particle_one_location;
+      particle_two_location_3d = particle_two_location;
+    }
+
+  if constexpr (dim == 2)
+    {
+      particle_one_location_3d =
+        copy_2d_point_in_3d(particle_one_location);
+      particle_two_location_3d =
+        copy_2d_point_in_3d(particle_two_location);
+    }
+
   const ArrayView<const double> particle_one_properties =
     particle_one.get_properties();
   const ArrayView<const double> particle_two_properties =
@@ -1005,8 +1039,8 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                                    normal_unit_vector,
                                    particle_one_properties,
                                    particle_two_properties,
-                                   particle_one_location,
-                                   particle_two_location,
+                                   particle_one_location_3d,
+                                   particle_two_location_3d,
                                    dt);
 
   calculate_hertz_mindlin_limit_force_contact(contact_info,
@@ -1492,17 +1526,34 @@ void
 ParticleParticleHertz<dim>::calculate_IB_particle_particle_contact_force(
   const double &                              normal_overlap,
   particle_particle_contact_info_struct<dim> &contact_info,
-  Tensor<1, dim> &                            normal_force,
-  Tensor<1, dim> &                            tangential_force,
-  Tensor<1, dim> &                            particle_one_tangential_torque,
-  Tensor<1, dim> &                            particle_two_tangential_torque,
-  Tensor<1, dim> &                            rolling_resistance_torque,
+  Tensor<1, 3> &                            normal_force,
+  Tensor<1, 3> &                            tangential_force,
+  Tensor<1, 3> &                            particle_one_tangential_torque,
+  Tensor<1, 3> &                            particle_two_tangential_torque,
+  Tensor<1, 3> &                            rolling_resistance_torque,
   IBParticle<dim> &                           particle_one,
   IBParticle<dim> &                           particle_two,
   const Point<dim> &                          particle_one_location,
   const Point<dim> &                          particle_two_location,
   const double &                              dt)
 {
+  Point<3> particle_one_location_3d;
+  Point<3> particle_two_location_3d;
+
+  if constexpr (dim == 3)
+    {
+      particle_one_location_3d = particle_one_location;
+      particle_two_location_3d = particle_two_location;
+    }
+
+  if constexpr (dim == 2)
+    {
+      particle_one_location_3d =
+        copy_2d_point_in_3d(particle_one_location);
+      particle_two_location_3d =
+        copy_2d_point_in_3d(particle_two_location);
+    }
+
   const ArrayView<const double> particle_one_properties =
     particle_one.get_properties();
   const ArrayView<const double> particle_two_properties =
@@ -1566,8 +1617,8 @@ ParticleParticleHertz<dim>::calculate_IB_particle_particle_contact_force(
                                    normal_unit_vector,
                                    particle_one_properties,
                                    particle_two_properties,
-                                   particle_one_location,
-                                   particle_two_location,
+                                   particle_one_location_3d,
+                                   particle_two_location_3d,
                                    dt);
 
   calculate_hertz_contact(contact_info,
