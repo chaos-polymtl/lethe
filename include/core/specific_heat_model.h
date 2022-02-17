@@ -128,7 +128,10 @@ public:
   PhaseChangeSpecificHeat(
     const Parameters::PhaseChange p_phase_change_parameters)
     : param(p_phase_change_parameters)
-  {}
+  {
+    this->model_depends_on[field::temperature]          = true;
+    this->model_depends_on[field::previous_temperature] = true;
+  }
 
   /**
    * @brief value Calculates the value of the phase change specific heat.

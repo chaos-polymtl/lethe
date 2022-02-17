@@ -102,7 +102,8 @@ test()
                                             pcout);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
-    deallog << "Active physics (expected: none)" << std::endl;
+    deallog << "Active physics (expected: fluid, which should always be on)"
+            << std::endl;
     for (const auto &iphys : active_physics)
       {
         deallog << int(iphys) << std::endl;
