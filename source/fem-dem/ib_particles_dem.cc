@@ -52,8 +52,8 @@ template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pp_contact_force(
   const double &               dt_dem,
-  std::vector<Tensor<1, dim>> &contact_force,
-  std::vector<Tensor<1, dim>> &contact_torque)
+  std::vector<Tensor<1, 3>> &contact_force,
+  std::vector<Tensor<1, 3>> &contact_torque)
 {
   for (auto &particle_one : dem_particles)
     {
@@ -209,8 +209,8 @@ template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pw_contact_force(
   const double &               dt_dem,
-  std::vector<Tensor<1, dim>> &contact_force,
-  std::vector<Tensor<1, dim>> &contact_torque)
+  std::vector<Tensor<1, 3>> &contact_force,
+  std::vector<Tensor<1, 3>> &contact_torque)
 {
   double wall_youngs_modulus = parameters->wall_youngs_modulus;
   double wall_poisson_ratio  = parameters->wall_poisson_ratio;
@@ -346,15 +346,15 @@ IBParticlesDEM<dim>::particles_dem(double &dt)
   double rho    = parameters->density;
   double dt_dem = dt / parameters->coupling_frequency;
 
-  std::vector<Tensor<1, dim>> contact_force(dem_particles.size());
-  std::vector<Tensor<1, dim>> contact_wall_force(dem_particles.size());
-  std::vector<Tensor<1, dim>> contact_torque(dem_particles.size());
-  std::vector<Tensor<1, dim>> contact_wall_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> contact_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> contact_wall_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> contact_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> contact_wall_torque(dem_particles.size());
 
-  std::vector<Tensor<1, dim>> current_fluid_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> current_fluid_force(dem_particles.size());
   std::vector<Tensor<1, 3>>   current_fluid_torque(dem_particles.size());
 
-  std::vector<Tensor<1, dim>> velocity(dem_particles.size());
+  std::vector<Tensor<1, 3>> velocity(dem_particles.size());
   std::vector<Point<dim>>     position(dem_particles.size());
 
   // Local time for the dem step.
@@ -435,9 +435,12 @@ IBParticlesDEM<dim>::particles_dem(double &dt)
              contact_wall_force[p_i] + gravity) *
               dt_dem / dem_particles[p_i].mass;
 
-
-          dem_particles[p_i].position =
-            dem_particles[p_i].position + dem_particles[p_i].velocity * dt_dem;
+          for(unsigned int d=0 ; d<dim ;++d)
+            {
+              dem_particles[p_i].position[d] =
+                dem_particles[p_i].position[d] +
+                dem_particles[p_i].velocity[d] * dt_dem;
+            }
 
           // The following line is temporary. After correction of
           // two-dimensional DEM solver, we will correct this section as well.

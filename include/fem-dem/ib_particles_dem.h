@@ -89,8 +89,8 @@ public:
    */
   void
   calculate_pp_contact_force(const double &               dt_dem,
-                             std::vector<Tensor<1, dim>> &contact_force,
-                             std::vector<Tensor<1, dim>> &contact_torque);
+                             std::vector<Tensor<1, 3>> &contact_force,
+                             std::vector<Tensor<1, 3>> &contact_torque);
 
 
   /**
@@ -104,8 +104,8 @@ public:
    */
   void
   calculate_pw_contact_force(const double &               dt_dem,
-                             std::vector<Tensor<1, dim>> &contact_force,
-                             std::vector<Tensor<1, dim>> &contact_torque);
+                             std::vector<Tensor<1, 3>> &contact_force,
+                             std::vector<Tensor<1, 3>> &contact_torque);
 
   /**
    * @brief  Updates the boundary cells that are contact candidates for each of the particles.
