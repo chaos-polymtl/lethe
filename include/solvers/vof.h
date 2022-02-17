@@ -433,7 +433,7 @@ private:
    * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy
    * error likelihood in apply_peeling_wetting.
    *
-   * @param type a char stating the needed change ("w" or "p")
+   * @param type a string stating the needed change ("w" or "p")
    *
    * @param new_phase the new phase value for the cell (0 or 1)
    *
@@ -443,8 +443,8 @@ private:
    */
   void
   change_cell_phase(
-    const char                                  type,
-    const unsigned int                          new_phase,
+    const std::string &                         type,
+    const unsigned int &                        new_phase,
     TrilinosWrappers::MPI::Vector &             solution_pw,
     const std::vector<types::global_dof_index> &dof_indices_vof);
 

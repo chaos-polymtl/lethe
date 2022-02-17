@@ -1217,7 +1217,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                               // if enough quadrature points meet the condition
                               if (nb_q_wet > n_q_points / 2)
                                 {
-                                  change_cell_phase("wetting",
+                                  change_cell_phase("w",
                                                     1,
                                                     solution_pw,
                                                     dof_indices_vof);
@@ -1232,7 +1232,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                               // if enough quadrature points meet the condition
                               if (nb_q_wet > n_q_points / 2)
                                 {
-                                  change_cell_phase("wetting",
+                                  change_cell_phase("w",
                                                     0,
                                                     solution_pw,
                                                     dof_indices_vof);
@@ -1252,7 +1252,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                               // if enough quadrature points meet the condition
                               if (nb_q_peeled > n_q_points / 2)
                                 {
-                                  change_cell_phase("peeling",
+                                  change_cell_phase("p",
                                                     0,
                                                     solution_pw,
                                                     dof_indices_vof);
@@ -1267,7 +1267,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                               // if enough quadrature points meet the condition
                               if (nb_q_peeled > n_q_points / 2)
                                 {
-                                  change_cell_phase("peeling",
+                                  change_cell_phase("p",
                                                     1,
                                                     solution_pw,
                                                     dof_indices_vof);
@@ -1306,12 +1306,12 @@ VolumeOfFluid<3>::apply_peeling_wetting<TrilinosWrappers::MPI::BlockVector>(
 template <int dim>
 void
 VolumeOfFluid<dim>::change_cell_phase(
-  const std::string                           type,
-  const unsigned int                          new_phase,
+  const std::string &                         type,
+  const unsigned int &                        new_phase,
   TrilinosWrappers::MPI::Vector &             solution_pw,
   const std::vector<types::global_dof_index> &dof_indices_vof)
 {
-  if (type == "wetting")
+  if (type == "w")
     {
       for (unsigned int k = 0; k < fe->dofs_per_cell; ++k)
         {
@@ -1319,7 +1319,7 @@ VolumeOfFluid<dim>::change_cell_phase(
           solution_pw[dof_indices_vof[k]] = new_phase;
         }
     }
-  else if (type == "peeling")
+  else if (type == "p")
     {
       for (unsigned int k = 0; k < fe->dofs_per_cell; ++k)
         {
