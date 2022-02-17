@@ -108,10 +108,6 @@ public:
         << std::endl
         << "The interface sharpness value should be set between 1 and 2"
         << std::endl;
-
-    //    // Init marker_pw, used to mark peeled and wet cells
-    //    marker_pw.reinit(this->locally_owned_dofs,
-    //                     triangulation->get_communicator());
   }
 
   /**
@@ -437,7 +433,7 @@ private:
    * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy
    * error likelihood in apply_peeling_wetting.
    *
-   * @param type a string stating the needed change ("wetting" or "peeling")
+   * @param type a char stating the needed change ("w" or "p")
    *
    * @param new_phase the new phase value for the cell (0 or 1)
    *
@@ -447,7 +443,7 @@ private:
    */
   void
   change_cell_phase(
-    const std::string                           type,
+    const char                                  type,
     const unsigned int                          new_phase,
     TrilinosWrappers::MPI::Vector &             solution_pw,
     const std::vector<types::global_dof_index> &dof_indices_vof);
@@ -484,6 +480,7 @@ private:
   AffineConstraints<double>      bounding_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
+  TrilinosWrappers::MPI::Vector  solution_pw;
 
 
   // Previous solutions vectors

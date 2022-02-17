@@ -1129,10 +1129,10 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
   // Initializations
   locally_owned_dofs = dof_handler.locally_owned_dofs();
   std::vector<types::global_dof_index> dof_indices_vof(
-    fe->dofs_per_cell); //  Local connectivity
+    fe->dofs_per_cell); //  local connectivity
 
-
-  TrilinosWrappers::MPI::Vector solution_pw(present_solution);
+  solution_pw.reinit(locally_owned_dofs, triangulation->get_communicator());
+  solution_pw = present_solution;
 
   FEFaceValues<dim> fe_face_values_vof(*this->fs_mapping,
                                        *this->fe,
