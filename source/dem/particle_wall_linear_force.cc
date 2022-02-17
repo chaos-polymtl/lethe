@@ -310,7 +310,9 @@ ParticleWallLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   const double &                          /*wall_restitution_coefficient*/,
   const double &                          /*wall_friction_coefficient*/,
   const double &                          /*wall_rolling_friction_coefficient*/,
-  const double &                          /*dt*/)
+  const double &                          /*dt*/,
+  const double &   ,
+  const double &   )
 {}
 
 template class ParticleWallLinearForce<2>;

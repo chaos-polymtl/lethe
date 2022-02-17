@@ -117,7 +117,9 @@ public:
     const double &                          wall_restitution_coefficient,
     const double &                          wall_friction_coefficient,
     const double &                          wall_rolling_friction_coefficient,
-    const double &                          dt) override;
+    const double &                          dt,
+    const double & mass,
+    const double & radius) override;
 
 private:
   /**

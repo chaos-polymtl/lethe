@@ -267,7 +267,7 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
      normal_damping_constant * contact_info.normal_relative_velocity) *
     contact_info.normal_vector;
 
-  std::cout<<"spring " << normal_damping_constant << "   dashpot " <<contact_info.normal_relative_velocity << std::endl;
+  std::cout<<"beta " << model_parameter_beta << "   sn " <<model_parameter_sn  << "  mass " << particle_properties[DEM::PropertiesIndex::mass]<< std::endl;
   // Calculation of tangential force
   Tensor<1, 3> tangential_force =
     tangential_spring_constant * contact_info.tangential_overlap;
@@ -324,9 +324,14 @@ ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   const double &                          wall_restitution_coefficient,
   const double &                          wall_friction_coefficient,
   const double &                          wall_rolling_friction_coefficient,
-  const double &                          dt)
+  const double &                          dt,
+  const double &  mass,
+  const double & radius)
 {
-  const ArrayView<const double> particle_properties = particle.get_properties();
+  auto particle_properties = particle.get_properties();
+ particle_properties[DEM::PropertiesIndex::mass]=mass;
+  particle_properties[DEM::PropertiesIndex::type] = 0 ;
+ particle_properties[DEM::PropertiesIndex::dp]=2*radius;
 
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and

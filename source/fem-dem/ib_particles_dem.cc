@@ -324,7 +324,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   wall_restitution_coefficient,
                   wall_friction_coefficient,
                   wall_rolling_friction_coefficient,
-                  dt_dem);
+                  dt_dem,particle.mass,particle.radius);
 
               std::cout<<"normal force "<<normal_force<<std::endl;
               // Updating the force of particles in the particle handler

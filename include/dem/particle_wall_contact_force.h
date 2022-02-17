@@ -111,7 +111,9 @@ public:
     const double &                          wall_restitution_coefficient,
     const double &                          wall_friction_coefficient,
     const double &                          wall_rolling_friction_coefficient,
-    const double &                          dt) = 0;
+    const double &                          dt,
+    const double & mass,
+    const double & radius) = 0;
 
   /** This function is used to find the projection of vector_a on
    * vector_b
