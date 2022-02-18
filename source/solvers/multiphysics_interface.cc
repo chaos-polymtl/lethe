@@ -15,7 +15,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   , pcout(p_pcout)
 {
   // Fluid dynamics is always considered active
-  // since it's DofHandler is required at all time by
+  // since its DofHandler is required at all time by
   // the other physics. Consequently, disabling it only
   // prevents solving it, but not allocating it.
   {

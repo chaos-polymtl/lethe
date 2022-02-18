@@ -2,7 +2,7 @@
 Stefan problem : melting of a solid
 ====================================
 
-This example simulates the stefan problemdam break experiments of `Stefan`_ following the approach taken by `Blais & Ilinca (2018)`_
+This example simulates the `Stefan`_ problem following the approach taken by `Blais & Ilinca (2018)`_
 
 .. _Stefan: https://en.wikipedia.org/wiki/Stefan_problem
 .. _Blais & Ilinca (2018): https://doi.org/10.1016/j.compfluid.2018.03.037
@@ -12,7 +12,7 @@ Features
 ----------------------------------
 - Solver: ``gls_navier_stokes_2d`` 
 - Heat transfer pĥysics
-- Unsteady problem handled by a BF1 time-stepping scheme
+- Unsteady problem handled by a BDF1 time-stepping scheme
 - Phase change specific heat model
 
 
@@ -45,12 +45,12 @@ with :math:`\alpha = \frac{k}{\rho C_p}` the thermal diffusivity, :math:`k` the 
 .. math::
     \beta \exp^{\beta^2} erf \beta = \frac{St}{\sqrt{\pi}}
 
-with :math:`St` the Stefan number which is defined as :
+with :math:`St` is the Stefan number which is defined as:
 
 .. math::
     St = \frac{C_p \left ( T_{W}-T_{S}\right)}{h_l}
 
-where :math:`C_p` is the specific heat (which is the same for the liquid and the solid phase) and :math:`h_l` is the latent heat. 
+where :math:`C_p` is the specific heat (which is the same for the liquid and the solid phase) and :math:`h_l` is the latent heat of fusion. 
 
 In this example, this equation is solved using the SciPy package and Python. The displacement of the solid–liquid (the dashed lined in Fig. 1) is given by:
 
@@ -59,11 +59,11 @@ In this example, this equation is solved using the SciPy package and Python. The
   \delta (t) = 2 \beta \sqrt{\alpha t}
 
 
-the diffusivity coefficient in the liquid phase and :math:`\delta (t)` the melting front displacement. In this example, we will consider the case where :math:`\alpha=1`, :math:`h_l=100`, :math:`T_W=1` and :math:`T_S=0`. This corresponds to :math:`St=100`. However, the model within Lethe is sufficient robust to manage any values of the Stefan number.
+the diffusivity coefficient in the liquid phase and :math:`\delta (t)` the melting front displacement. In this example, we will consider the case where :math:`\alpha=1`, :math:`h_l=100`, :math:`T_W=1` and :math:`T_S=0`. This corresponds to :math:`St=100`. However, the model within Lethe is sufficiently robust to manage any values of the Stefan number.
 
-Although simple, this problem can be challenging to solve numerically because of the sharp impact of the phase change on the specific heat within the solidification interval. Even if this problem is inherently a 1D problem, we analyse it in 2D by generating structured quadrilateral meshes on a [0, 0]X[1, 0.1] domain. The number of nodes in the y direction is ketp at 2 (one cell), but it is adjusted to 101 in the x direction which is the direction in which the heat transfer occurs and in which the interface displaces. 
+Although simple, this problem can be challenging to solve numerically because of the sharp impact of the phase change on the specific heat within the solidification interval. Even if this problem is inherently a 1D problem, we analyse it in 2D by generating structured quadrilateral meshes on a [0, 0]X[1, 0.1] domain. The number of nodes in the y direction is kept at 2 (one cell), but it is adjusted to 101 in the x direction which is the direction in which the heat transfer occurs and in which the interface displaces. 
 
-Lethe uses a specific specific heat phase change model to solve this type of problem. This model is quasi-identical to the one described by `Blais & Ilinca (2018)`_. It is also described in the :doc:`../../../parameters/cfd/physical_properties` section of the documentation.
+Lethe uses a specific heat phase change model to solve this type of problem. This model is quasi-identical to the one described by `Blais & Ilinca (2018)`_. It is also described in the :doc:`../../../parameters/cfd/physical_properties` section of the documentation.
 
 
 --------------
@@ -84,7 +84,7 @@ We first define the geometry in which the simulation is carried out using the me
            set initial refinement = 0
    end
 
-We use the ``dealii`` GridGenerator to generate a ``subdivided_hyper_rectangle``. This rectangle contains 100 cells in the x direction and 1 in the y direction. It is created from two points, :math:`(0,0)` and :math:`(1,0.1)`. Finally, we give a different id to each boundaries of the domain, hence the colorize option is set to true.
+We use the ``dealii`` GridGenerator to generate a ``subdivided_hyper_rectangle``. This rectangle contains 100 cells in the x direction and 1 in the y direction. It is created from two points, :math:`(0,0)` and :math:`(1,0.1)`. Finally, we give a different id to each boundary of the domain, hence the colorize option is set to true.
 
 The next step is establishing the boundary conditions:
 
@@ -138,7 +138,7 @@ Next, we define the physical properties:
     end
   end
 
-This subsection defines the various parameter of the specific heat model for phase change. A key parameter to note is the solidus and liquidus temperature. These parameter define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, but infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02, which is sufficient to garantee a high degree of accuracy while maintaining numerical stability. The impact of this paramter on the stability and the accuracy of the model has been studied in depth by `Blais & Ilinca (2018)`_.
+This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by `Blais & Ilinca (2018)`_.
 
 Finally, the only remaining section is the simulation control, which controls the flow of the simulation. We simulate until a :math:`t=5` using a time step of :math:`\Delta t=0.02` using a BDF1 (implicit Euler) time integration scheme and we output the solution at every iteration.
 
@@ -162,23 +162,24 @@ Finally, the only remaining section is the simulation control, which controls th
 Results
 -------
 
-The following image compares the results obtained with Lethe with the analytical solution for the Stefan problem at :math:`t=5`. This data is extracted through the use of a python script in the folder of the example. We see that a quasi perfect agreement can be obtained with the analytical solution of the Stefan problem. 
+The following image compares the results obtained with Lethe with the analytical solution for the Stefan problem at :math:`t=5`. This data is extracted through the use of a python script available in the folder of the example. We see that a quasi perfect agreement can be obtained with the analytical solution of the Stefan problem. 
 
 .. image:: images/lethe_stefan_comparison.png
     :alt: comparison_analytical_solution
     :align: center
 
-Refining the mesh, decreasing the time step and decreasing the phase change interval (by decreasing ``liquidus temperature``) would increase the accuracy of the solution since the analytical solution of the Stefan problem is defined for a pure fluid (for which the liquid and the solidus temperature are equal).
+Refining the mesh, decreasing the time step and decreasing the phase change interval (by decreasing ``liquidus temperature``) would increase the accuracy of the solution since the analytical solution of the Stefan problem is defined for a pure fluid (for which the liquid and the solidus temperatures are equal).
 
 
 Possibilities for extension
 ----------------------------
 
-- **Consider different Stefan number:** The solver in Lethe is sufficiently robust to simulate a large range of Stefan number. You can try to simulate the problem with different Stefan number and see how the value of the Stefan number affects the solution.
+- **Consider different Stefan numbers:** The solver in Lethe is sufficiently robust to simulate a large range of Stefan numbers. You can try to simulate the problem with different Stefan number and see how the value of the Stefan number affects the solution.
 
-- **Simulate a more complex geometry:** The phase change model can be readily used in any sort of geometry using, for example, a simplex mesh. It is an easy extension of this problem to consider any 2D or 3D geometry.
+- **Simulate a more complex geometry:** The phase change model can be readily used in any sort of geometry using, for example, a simplex mesh. An easy extension of this problem is to consider any 2D or 3D geometry.
 
-Bibliography
+----------------------------
+References
 ----------------------------
 
 [1] aus der Wiesche, Stefan. "Numerical heat transfer and thermal engineering of AdBlue (SCR) tanks for combustion engine emission reduction." Applied Thermal Engineering 27.11-12 (2007): 1790-1798.

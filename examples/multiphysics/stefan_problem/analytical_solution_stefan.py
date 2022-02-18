@@ -19,7 +19,7 @@ t=5
 def stefan(beta):
    return beta * np.exp(beta**2) * erf(beta) - St / np.sqrt(np.pi)
 
-# From there we can derive teh position of the interface
+# From there we can derive the position of the interface
 beta = fsolve(stefan, [0.1],xtol=1e-12)
 print("Beta value is : ", beta)
 delta = 2 * beta * np.sqrt(t)

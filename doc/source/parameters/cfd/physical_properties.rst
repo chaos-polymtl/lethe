@@ -211,7 +211,7 @@ where :math:`k_{A,0}` and :math:`k_{A,1}` are constants and :math:`T` is the tem
 Specific heat models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Lethe supports two type of specific heat models. Setting ``specific heat=constant`` sets a constant specific heat. Lethe also supports a ``phase_change`` specific heat model. This model can simulate the melting and solidification of material. The model follows the work of Blais & Ilinca [1]. This approach defines the specific heat :math:`C_p` as:
+Lethe supports two types of specific heat models. Setting ``specific heat=constant`` sets a constant specific heat. Lethe also supports a ``phase_change`` specific heat model. This model can simulate the melting and solidification of a material. The model follows the work of Blais & Ilinca [1]. This approach defines the specific heat :math:`C_p` as:
 
 .. math::
 
@@ -232,9 +232,9 @@ where :math:`H_0` is a reference enthalpy, taken to be 0, and :math:`c^{*}_p` is
               C_{p,l}
               \end{cases}
 
-where :math:`C_{p,s}` and :math:`C_{p,l}` are the solid and liquid specific heat, respectively. :math:`h_l` is the latent enthalpy (enthalpy realted to the phase change), :math:`T_l` and :math:`T_s` are the liquidus and solidus temperature. The underlying hypothesis of this model is that that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_s` and :math:`T_l` and solidifcation will occur between :math:`T_l` and :math:`T_s`.
+where :math:`C_{p,s}` and :math:`C_{p,l}` are the solid and liquid specific heat, respectively. :math:`h_l` is the latent enthalpy (enthalpy related to the phase change), :math:`T_l` and :math:`T_s` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_s` and :math:`T_l` and solidification will occur between :math:`T_l` and :math:`T_s`.
 
-This model is parametrized using the following section:
+This model is parameterized using the following section:
 
 .. code-block:: text
 
