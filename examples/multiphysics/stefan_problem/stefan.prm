@@ -79,10 +79,6 @@ end
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-subsection boundary conditions
-  set number                  = 4
-end
-
 subsection boundary conditions heat transfer
   set number                  = 1
     subsection bc 0
