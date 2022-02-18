@@ -111,7 +111,11 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                       particle_two,
                       particle_one_location,
                       particle_two_location,
-                      dt_dem);
+                      dt_dem,
+                      particle_one.radius,
+                      particle_two.radius,
+                      particle_one.mass,
+                      particle_two.mass);
 
 
 
@@ -325,8 +329,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   wall_friction_coefficient,
                   wall_rolling_friction_coefficient,
                   dt_dem,particle.mass,particle.radius);
-
-              std::cout<<"normal force "<<normal_force<<std::endl;
               // Updating the force of particles in the particle handler
               contact_force[particle.particle_id] +=
                 normal_force + tangential_force;
@@ -487,11 +489,10 @@ IBParticlesDEM<dim>::particles_dem(double &dt)
             dt_dem;
           dem_particles[p_i].omega_contact_impulsion +=
             (contact_torque_temp + contact_wall_torque_temp) * dt_dem;
-          std::cout<<dem_particles[p_i].position<<std::endl;
+
         }
       t += dt_dem;
     }
-  std::cout<<" hello"<<std::endl;
 }
 
 

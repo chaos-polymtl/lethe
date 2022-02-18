@@ -267,7 +267,6 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
      normal_damping_constant * contact_info.normal_relative_velocity) *
     contact_info.normal_vector;
 
-  std::cout<<"beta " << model_parameter_beta << "   sn " <<model_parameter_sn  << "  mass " << particle_properties[DEM::PropertiesIndex::mass]<< std::endl;
   // Calculation of tangential force
   Tensor<1, 3> tangential_force =
     tangential_spring_constant * contact_info.tangential_overlap;

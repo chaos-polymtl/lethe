@@ -111,7 +111,11 @@ public:
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
-    const double &                              dt) override;
+    const double &                              dt,
+    const double &  particle_one_radius,
+    const double &  particle_two_radius,
+    const double &  particle_one_mass,
+    const double &  particle_two_mass) override;
 
 private:
   /**
@@ -242,7 +246,11 @@ public:
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
-    const double &                              dt) override;
+    const double &                              dt,
+    const double &  particle_one_radius,
+    const double &  particle_two_radius,
+    const double &  particle_one_mass,
+    const double &  particle_two_mass) override;
 
 
 private:
@@ -374,7 +382,11 @@ public:
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
-    const double &                              dt) override;
+    const double &                              dt,
+    const double &  particle_one_radius,
+    const double &  particle_two_radius,
+    const double &  particle_one_mass,
+    const double &  particle_two_mass) override;
 
 
 private:

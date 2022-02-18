@@ -109,7 +109,11 @@ public:
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
-    const double &                              dt) = 0;
+    const double &                              dt,
+    const double &  particle_one_radius,
+    const double &  particle_two_radius,
+    const double &  particle_one_mass,
+    const double &  particle_two_mass) = 0;
 
 protected:
   /**

@@ -346,8 +346,13 @@ ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
   IBParticle<dim> &                           particle_two,
   const Point<dim> &                          particle_one_location,
   const Point<dim> &                          particle_two_location,
-  const double &                              dt)
+  const double &                              dt,
+  const double &  particle_one_radius,
+  const double &  particle_two_radius,
+  const double &  particle_one_mass,
+  const double &  particle_two_mass)
 {
+
 
   Point<3> particle_one_location_3d;
   Point<3> particle_two_location_3d;
@@ -365,11 +370,15 @@ ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
       particle_two_location_3d =
         copy_2d_point_in_3d(particle_two_location);
     }
-  const ArrayView<const double> particle_one_properties =
-    particle_one.get_properties();
-  const ArrayView<const double> particle_two_properties =
-    particle_two.get_properties();
+  auto particle_one_properties = particle_one.get_properties();
+  particle_one_properties[DEM::PropertiesIndex::mass]=particle_one_mass;
+  particle_one_properties[DEM::PropertiesIndex::type] = 0 ;
+  particle_one_properties[DEM::PropertiesIndex::dp]=2*particle_one_radius;
 
+  auto particle_two_properties = particle_one.get_properties();
+  particle_two_properties[DEM::PropertiesIndex::mass]=particle_two_mass;
+  particle_two_properties[DEM::PropertiesIndex::type] = 0 ;
+  particle_two_properties[DEM::PropertiesIndex::dp]=2*particle_two_radius;
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and
   // torque calculations, we need pair-wise properties (such as effective
@@ -380,6 +389,8 @@ ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
     particle_one_properties[DEM::PropertiesIndex::type];
   const unsigned int particle_two_type =
     particle_two_properties[DEM::PropertiesIndex::type];
+
+
 
   this->effective_youngs_modulus[particle_one_type][particle_two_type] =
     (particle_one.youngs_modulus * particle_two.youngs_modulus) /
