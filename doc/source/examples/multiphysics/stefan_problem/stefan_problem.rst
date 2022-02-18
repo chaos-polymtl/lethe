@@ -59,7 +59,7 @@ In this example, this equation is solved using the SciPy package and Python. The
   \delta (t) = 2 \beta \sqrt{\alpha t}
 
 
-the diffusivity coefficient in the liquid phase and :math:`\delta (t)` the melting front displacement. In this example, we will consider the case where :math:`\alpha=1`, :math:`h_l=100`, :math:`T_W=1` and :math:`T_S=0`. This corresponds to :math:`St=100`. However, the model within Lethe is sufficiently robust to manage any values of the Stefan number.
+the diffusivity coefficient in the liquid phase and :math:`\delta (t)` the melting front displacement. In this example, we consider the case where :math:`\alpha=1`, :math:`h_l=100`, :math:`T_W=1` and :math:`T_S=0`. This corresponds to :math:`St=100`. However, the model within Lethe is sufficiently robust to manage any values of the Stefan number.
 
 Although simple, this problem can be challenging to solve numerically because of the sharp impact of the phase change on the specific heat within the solidification interval. Even if this problem is inherently a 1D problem, we analyse it in 2D by generating structured quadrilateral meshes on a [0, 0]X[1, 0.1] domain. The number of nodes in the y direction is kept at 2 (one cell), but it is adjusted to 101 in the x direction which is the direction in which the heat transfer occurs and in which the interface displaces. 
 
@@ -138,9 +138,9 @@ Next, we define the physical properties:
     end
   end
 
-This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by `Blais & Ilinca (2018)`_.
+This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02C, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by `Blais & Ilinca (2018)`_.
 
-Finally, the only remaining section is the simulation control, which controls the flow of the simulation. We simulate until a :math:`t=5` using a time step of :math:`\Delta t=0.02` using a BDF1 (implicit Euler) time integration scheme and we output the solution at every iteration.
+Finally, the only remaining section is the simulation control, which controls the flow of the simulation. We simulate until a :math:`t=5s` using a time step of :math:`\Delta t=0.02s` using a BDF1 (implicit Euler) time integration scheme and we output the solution at every iteration.
 
 .. code-block:: text
 
