@@ -100,20 +100,20 @@ public:
   calculate_IB_particle_particle_contact_force(
     const double &                              normal_overlap,
     particle_particle_contact_info_struct<dim> &contact_info,
-    Tensor<1, 3> &                            normal_force,
-    Tensor<1, 3> &                            tangential_force,
-    Tensor<1, 3> &                            particle_one_tangential_torque,
-    Tensor<1, 3> &                            particle_two_tangential_torque,
-    Tensor<1, 3> &                            rolling_resistance_torque,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque,
     IBParticle<dim> &                           particle_one,
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
     const double &                              dt,
-    const double &  particle_one_radius,
-    const double &  particle_two_radius,
-    const double &  particle_one_mass,
-    const double &  particle_two_mass) = 0;
+    const double &                              particle_one_radius,
+    const double &                              particle_two_radius,
+    const double &                              particle_one_mass,
+    const double &                              particle_two_mass) = 0;
 
 protected:
   /**

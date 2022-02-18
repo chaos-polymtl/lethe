@@ -88,7 +88,7 @@ public:
    * @param contact_force a vector containing the contact torques between particles
    */
   void
-  calculate_pp_contact_force(const double &               dt_dem,
+  calculate_pp_contact_force(const double &             dt_dem,
                              std::vector<Tensor<1, 3>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
 
@@ -103,7 +103,7 @@ public:
    * @param contact_force a vector containing the contact torques between particles
    */
   void
-  calculate_pw_contact_force(const double &               dt_dem,
+  calculate_pw_contact_force(const double &             dt_dem,
                              std::vector<Tensor<1, 3>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
 
@@ -149,7 +149,7 @@ private:
   };
 
   std::shared_ptr<Parameters::IBParticles<dim>> parameters;
-  DEMSolverParameters<dim> dem_parameters{};
+  DEMSolverParameters<dim>                      dem_parameters{};
   MPI_Comm                                      mpi_communicator;
 
   std::shared_ptr<ParticleParticleContactForce<dim>>

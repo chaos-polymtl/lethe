@@ -1,12 +1,12 @@
 //
 // Created by lucka on 2021-10-11.
 //
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_wall_linear_force.h>
-#include <dem/particle_wall_nonlinear_force.h>
 #include <dem/particle_particle_linear_force.h>
 #include <dem/particle_particle_nonlinear_force.h>
-#include <dem/copy_2d_tensor_in_3d.h>
+#include <dem/particle_wall_linear_force.h>
+#include <dem/particle_wall_nonlinear_force.h>
 #include <fem-dem/ib_particles_dem.h>
 
 template <int dim>
@@ -21,17 +21,17 @@ IBParticlesDEM<dim>::initialize(
   dem_particles    = particles;
   boundary_cells.resize(dem_particles.size());
 
-  dem_parameters.model_parameters
-      .particle_particle_contact_force_method =
-    Parameters::Lagrangian::ModelParameters::
-      ParticleParticleContactForceModel::hertz;
+  dem_parameters.model_parameters.particle_particle_contact_force_method =
+    Parameters::Lagrangian::ModelParameters::ParticleParticleContactForceModel::
+      hertz;
   dem_parameters.model_parameters.particle_wall_contact_force_method =
-    Parameters::Lagrangian::ModelParameters::
-      ParticleWallContactForceModel::nonlinear;
+    Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
+      nonlinear;
   particle_particle_contact_force_object =
     std::make_shared<ParticleParticleHertz<dim>>(dem_parameters);
   std::vector<types::boundary_id> boundary_index(0);
-  particle_wall_contact_force_object =std::make_shared<ParticleWallNonLinearForce<dim>>(
+  particle_wall_contact_force_object =
+    std::make_shared<ParticleWallNonLinearForce<dim>>(
       dem_parameters.boundary_conditions.boundary_translational_velocity,
       dem_parameters.boundary_conditions.boundary_rotational_speed,
       dem_parameters.boundary_conditions.boundary_rotational_vector,
@@ -52,7 +52,7 @@ IBParticlesDEM<dim>::update_particles(std::vector<IBParticle<dim>> particles,
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pp_contact_force(
-  const double &               dt_dem,
+  const double &             dt_dem,
   std::vector<Tensor<1, 3>> &contact_force,
   std::vector<Tensor<1, 3>> &contact_torque)
 {
@@ -213,7 +213,7 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pw_contact_force(
-  const double &               dt_dem,
+  const double &             dt_dem,
   std::vector<Tensor<1, 3>> &contact_force,
   std::vector<Tensor<1, 3>> &contact_torque)
 {
@@ -266,7 +266,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 contact_info;
             }
 
-          Tensor<1,3> normal_vector     = copy_2d_tensor_in_3d(boundary_cell_information.normal_vector);
+          Tensor<1, 3> normal_vector =
+            copy_2d_tensor_in_3d(boundary_cell_information.normal_vector);
           auto point_on_boundary = boundary_cell_information.point_on_boundary;
 
           Tensor<1, 3> normal;
@@ -287,8 +288,10 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           // be projected on the normal vector of the boundary to obtain the
           // particle-wall distance
 
-          Point<3> particle_position_3d=copy_2d_point_in_3d(particle.position);
-          Point<3> point_on_boundary_3d=copy_2d_point_in_3d(point_on_boundary);
+          Point<3> particle_position_3d =
+            copy_2d_point_in_3d(particle.position);
+          Point<3> point_on_boundary_3d =
+            copy_2d_point_in_3d(point_on_boundary);
 
           Tensor<1, 3> point_to_particle_vector =
             particle_position_3d - point_on_boundary_3d;
@@ -311,9 +314,12 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               Tensor<1, 3> tangential_torque;
               Tensor<1, 3> rolling_resistance_torque;
 
-              pw_contact_map[particle.particle_id][boundary_index].normal_overlap = normal_overlap;
-              pw_contact_map[particle.particle_id][boundary_index].normal_vector = normal_vector;
-              pw_contact_map[particle.particle_id][boundary_index].boundary_id  = 0;
+              pw_contact_map[particle.particle_id][boundary_index]
+                .normal_overlap = normal_overlap;
+              pw_contact_map[particle.particle_id][boundary_index]
+                .normal_vector = normal_vector;
+              pw_contact_map[particle.particle_id][boundary_index].boundary_id =
+                0;
 
               particle_wall_contact_force_object
                 ->calculate_IB_particle_wall_contact_force(
@@ -328,7 +334,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   wall_restitution_coefficient,
                   wall_friction_coefficient,
                   wall_rolling_friction_coefficient,
-                  dt_dem,particle.mass,particle.radius);
+                  dt_dem,
+                  particle.mass,
+                  particle.radius);
               // Updating the force of particles in the particle handler
               contact_force[particle.particle_id] +=
                 normal_force + tangential_force;
@@ -363,10 +371,10 @@ IBParticlesDEM<dim>::particles_dem(double &dt)
   std::vector<Tensor<1, 3>> contact_wall_torque(dem_particles.size());
 
   std::vector<Tensor<1, 3>> current_fluid_force(dem_particles.size());
-  std::vector<Tensor<1, 3>>   current_fluid_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> current_fluid_torque(dem_particles.size());
 
   std::vector<Tensor<1, 3>> velocity(dem_particles.size());
-  std::vector<Point<dim>>     position(dem_particles.size());
+  std::vector<Point<dim>>   position(dem_particles.size());
 
   // Local time for the dem step.
   double t = 0;
@@ -446,7 +454,7 @@ IBParticlesDEM<dim>::particles_dem(double &dt)
              contact_wall_force[p_i] + gravity) *
               dt_dem / dem_particles[p_i].mass;
 
-          for(unsigned int d=0 ; d<dim ;++d)
+          for (unsigned int d = 0; d < dim; ++d)
             {
               dem_particles[p_i].position[d] =
                 dem_particles[p_i].position[d] +
@@ -489,7 +497,6 @@ IBParticlesDEM<dim>::particles_dem(double &dt)
             dt_dem;
           dem_particles[p_i].omega_contact_impulsion +=
             (contact_torque_temp + contact_wall_torque_temp) * dt_dem;
-
         }
       t += dt_dem;
     }

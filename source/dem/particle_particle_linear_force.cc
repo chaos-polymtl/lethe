@@ -337,23 +337,21 @@ void
 ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
   const double &                              normal_overlap,
   particle_particle_contact_info_struct<dim> &contact_info,
-  Tensor<1, 3> &                            normal_force,
-  Tensor<1, 3> &                            tangential_force,
-  Tensor<1, 3> &                            particle_one_tangential_torque,
-  Tensor<1, 3> &                            particle_two_tangential_torque,
-  Tensor<1, 3> &                            rolling_resistance_torque,
+  Tensor<1, 3> &                              normal_force,
+  Tensor<1, 3> &                              tangential_force,
+  Tensor<1, 3> &                              particle_one_tangential_torque,
+  Tensor<1, 3> &                              particle_two_tangential_torque,
+  Tensor<1, 3> &                              rolling_resistance_torque,
   IBParticle<dim> &                           particle_one,
   IBParticle<dim> &                           particle_two,
   const Point<dim> &                          particle_one_location,
   const Point<dim> &                          particle_two_location,
   const double &                              dt,
-  const double &  particle_one_radius,
-  const double &  particle_two_radius,
-  const double &  particle_one_mass,
-  const double &  particle_two_mass)
+  const double &                              particle_one_radius,
+  const double &                              particle_two_radius,
+  const double &                              particle_one_mass,
+  const double &                              particle_two_mass)
 {
-
-
   Point<3> particle_one_location_3d;
   Point<3> particle_two_location_3d;
 
@@ -365,20 +363,18 @@ ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
 
   if constexpr (dim == 2)
     {
-      particle_one_location_3d =
-        copy_2d_point_in_3d(particle_one_location);
-      particle_two_location_3d =
-        copy_2d_point_in_3d(particle_two_location);
+      particle_one_location_3d = copy_2d_point_in_3d(particle_one_location);
+      particle_two_location_3d = copy_2d_point_in_3d(particle_two_location);
     }
   auto particle_one_properties = particle_one.get_properties();
-  particle_one_properties[DEM::PropertiesIndex::mass]=particle_one_mass;
-  particle_one_properties[DEM::PropertiesIndex::type] = 0 ;
-  particle_one_properties[DEM::PropertiesIndex::dp]=2*particle_one_radius;
+  particle_one_properties[DEM::PropertiesIndex::mass] = particle_one_mass;
+  particle_one_properties[DEM::PropertiesIndex::type] = 0;
+  particle_one_properties[DEM::PropertiesIndex::dp]   = 2 * particle_one_radius;
 
   auto particle_two_properties = particle_one.get_properties();
-  particle_two_properties[DEM::PropertiesIndex::mass]=particle_two_mass;
-  particle_two_properties[DEM::PropertiesIndex::type] = 0 ;
-  particle_two_properties[DEM::PropertiesIndex::dp]=2*particle_two_radius;
+  particle_two_properties[DEM::PropertiesIndex::mass] = particle_two_mass;
+  particle_two_properties[DEM::PropertiesIndex::type] = 0;
+  particle_two_properties[DEM::PropertiesIndex::dp]   = 2 * particle_two_radius;
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and
   // torque calculations, we need pair-wise properties (such as effective

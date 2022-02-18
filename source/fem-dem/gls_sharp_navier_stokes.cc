@@ -24,11 +24,11 @@
 #include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-#include <dem/copy_2d_tensor_in_3d.h>
 
 #include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/postprocessing_cfd.h>
 
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <fem-dem/gls_sharp_navier_stokes.h>
 
 #include <deal.II/base/work_stream.h>
@@ -667,7 +667,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               // Add the local contribution of this surface
                               // cell.
 
-                              particles[p].fluid_forces += copy_2d_tensor_in_3d(force);
+                              particles[p].fluid_forces +=
+                                copy_2d_tensor_in_3d(force);
 
                               auto distance =
                                 q_points[q] - particles[p].position;
@@ -1221,14 +1222,16 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           try
             {
               // Define the correction vector.
-              Tensor<1,dim> dv_temp;
-              auto inv_jac=invert(jac_velocity);
-              for(unsigned int i =0; i<dim; ++i){
-                  for(unsigned int j =0; j<dim; ++j){
-                      dv_temp[i]+=inv_jac[i][j]*residual_velocity[i];
+              Tensor<1, dim> dv_temp;
+              auto           inv_jac = invert(jac_velocity);
+              for (unsigned int i = 0; i < dim; ++i)
+                {
+                  for (unsigned int j = 0; j < dim; ++j)
+                    {
+                      dv_temp[i] += inv_jac[i][j] * residual_velocity[i];
                     }
                 }
-              auto dv= copy_2d_tensor_in_3d(dv_temp);
+              auto dv = copy_2d_tensor_in_3d(dv_temp);
               // Evaluate a relaxation parameter. Here we try to orthogonalize
               // the update as much as possible.
               if ((particles[p].velocity - particles[p].velocity_iter).norm() >
@@ -1289,9 +1292,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               if (particles[p].contact_impulsion.norm() < 1e-12)
                 {
                   particles[p].position.clear();
-                  for(unsigned int d=0; d<dim;++d)
+                  for (unsigned int d = 0; d < dim; ++d)
                     {
-
                       for (unsigned int i = 1;
                            i < number_of_previous_solutions(method) + 1;
                            ++i)
@@ -1303,7 +1305,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                         }
                       particles[p].position[d] +=
                         particles[p].velocity[d] / bdf_coefs[0];
-
                     }
                 }
               else

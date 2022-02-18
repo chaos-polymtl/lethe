@@ -101,10 +101,10 @@ public:
   virtual void
   calculate_IB_particle_wall_contact_force(
     particle_wall_contact_info_struct<dim> &contact_info,
-    Tensor<1, 3> &                        normal_force,
-    Tensor<1, 3> &                        tangential_force,
-    Tensor<1, 3> &                        tangential_torque,
-    Tensor<1, 3> &                        rolling_resistance_torque,
+    Tensor<1, 3> &                          normal_force,
+    Tensor<1, 3> &                          tangential_force,
+    Tensor<1, 3> &                          tangential_torque,
+    Tensor<1, 3> &                          rolling_resistance_torque,
     IBParticle<dim> &                       particle,
     const double &                          wall_youngs_modulus,
     const double &                          wall_poisson_ratio,
@@ -112,8 +112,8 @@ public:
     const double &                          wall_friction_coefficient,
     const double &                          wall_rolling_friction_coefficient,
     const double &                          dt,
-    const double & mass,
-    const double & radius) = 0;
+    const double &                          mass,
+    const double &                          radius) = 0;
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -165,7 +165,7 @@ protected:
     Tensor<1, 3> &particle_torque,
     Tensor<1, 3> &particle_force,
     Point<3> &    point_on_boundary,
-    int           boundary_id       = 0)
+    int           boundary_id = 0)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling

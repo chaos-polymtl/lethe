@@ -313,10 +313,10 @@ template <int dim>
 void
 ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   particle_wall_contact_info_struct<dim> &contact_info,
-  Tensor<1, 3> &                        normal_force,
-  Tensor<1, 3> &                        tangential_force,
-  Tensor<1, 3> &                        tangential_torque,
-  Tensor<1, 3> &                        rolling_resistance_torque,
+  Tensor<1, 3> &                          normal_force,
+  Tensor<1, 3> &                          tangential_force,
+  Tensor<1, 3> &                          tangential_torque,
+  Tensor<1, 3> &                          rolling_resistance_torque,
   IBParticle<dim> &                       particle,
   const double &                          wall_youngs_modulus,
   const double &                          wall_poisson_ratio,
@@ -324,13 +324,13 @@ ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   const double &                          wall_friction_coefficient,
   const double &                          wall_rolling_friction_coefficient,
   const double &                          dt,
-  const double &  mass,
-  const double & radius)
+  const double &                          mass,
+  const double &                          radius)
 {
-  auto particle_properties = particle.get_properties();
- particle_properties[DEM::PropertiesIndex::mass]=mass;
-  particle_properties[DEM::PropertiesIndex::type] = 0 ;
- particle_properties[DEM::PropertiesIndex::dp]=2*radius;
+  auto particle_properties                        = particle.get_properties();
+  particle_properties[DEM::PropertiesIndex::mass] = mass;
+  particle_properties[DEM::PropertiesIndex::type] = 0;
+  particle_properties[DEM::PropertiesIndex::dp]   = 2 * radius;
 
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and
