@@ -104,8 +104,6 @@ public:
   assemble_rhs(VOFScratchData<dim> &      scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
-  const bool DCDD = true;
-
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::FEM                    fem_parameters;
 };

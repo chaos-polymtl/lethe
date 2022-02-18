@@ -71,7 +71,7 @@ public:
       {
         // for simplex meshes
         fe              = std::make_shared<FE_SimplexP<dim>>(1);
-        fs_mapping      = std::make_shared<MappingFE<dim>>(*fe);
+        mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
@@ -80,8 +80,8 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        fe         = std::make_shared<FE_Q<dim>>(1);
-        fs_mapping = std::make_shared<MappingQ<dim>>(
+        fe      = std::make_shared<FE_Q<dim>>(1);
+        mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
@@ -150,11 +150,11 @@ public:
   calculate_L2_error();
 
   /**
-   * @brief Calculates the volume for the fluid phase with given monitor_fluid_id.
+   * @brief Calculates the volume for the fluid phase with given id_fluid_monitored.
    * Used for conservation monitoring.
    */
   double
-  calculate_volume(int monitor_fluid_id);
+  calculate_volume(int id_fluid_monitored);
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -436,7 +436,7 @@ private:
   ConvergenceTable                    error_table;
 
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>        fs_mapping;
+  std::shared_ptr<Mapping<dim>>        mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;
@@ -455,23 +455,9 @@ private:
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
 
-
   // Previous solutions vectors
-  TrilinosWrappers::SparseMatrix             system_matrix_phase_fraction;
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
   std::vector<TrilinosWrappers::MPI::Vector> solution_stages;
-  TrilinosWrappers::SparseMatrix complete_system_matrix_phase_fraction;
-  TrilinosWrappers::MPI::Vector  system_rhs_phase_fraction;
-  TrilinosWrappers::MPI::Vector  complete_system_rhs_phase_fraction;
-  IndexSet                       active_set;
-  TrilinosWrappers::SparseMatrix mass_matrix;
-
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-
-
-  // Lower and upper bounds of phase fraction
-  const double vof_upper_bound = 1.0;
-  const double vof_lower_bound = 0.0;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
@@ -480,11 +466,19 @@ private:
     parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
     previous_solutions_transfer;
 
-  // Conservation Analysis
-  TableHandler volume_table_fs;
+  // Phase fraction matrices for interface sharpening
+  TrilinosWrappers::SparseMatrix system_matrix_phase_fraction;
+  TrilinosWrappers::SparseMatrix complete_system_matrix_phase_fraction;
+  TrilinosWrappers::MPI::Vector  system_rhs_phase_fraction;
+  TrilinosWrappers::MPI::Vector  complete_system_rhs_phase_fraction;
+  TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
 
-  // Enable DCDD shock capturing scheme
-  const bool DCDD = true;
+  // Lower and upper bounds of phase fraction
+  const double phase_upper_bound = 1.0;
+  const double phase_lower_bound = 0.0;
+
+  // Conservation Analysis
+  TableHandler table_monitoring_vof;
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;

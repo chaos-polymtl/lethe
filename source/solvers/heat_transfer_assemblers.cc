@@ -54,11 +54,11 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
 
-      const auto velocity = scratch_data.velocity_values[q];
+      const auto velocity_fd = scratch_data.velocity_values_fd[q];
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      const double u_mag = std::max(velocity_fd.norm(), 1e-12);
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
@@ -91,11 +91,11 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
               // mu*(grad(u)+transpose(grad(u)).transpose(grad(u))
               local_matrix(i, j) +=
                 (thermal_conductivity[q] * grad_phi_T_i * grad_phi_T_j +
-                 rho_cp * phi_T_i * velocity * grad_phi_T_j) *
+                 rho_cp * phi_T_i * velocity_fd * grad_phi_T_j) *
                 JxW;
 
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
-                                    (grad_phi_T_i * velocity) * JxW;
+                                    (grad_phi_T_i * velocity_fd) * JxW;
             }
         }
 
@@ -145,11 +145,11 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
 
-      const auto velocity = scratch_data.velocity_values[q];
+      const auto velocity_fd = scratch_data.velocity_values_fd[q];
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      const double u_mag = std::max(velocity_fd.norm(), 1e-12);
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
@@ -164,7 +164,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
                       9 * std::pow(4 * alpha / (h * h), 2));
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual_vec[q] += rho_cp * velocity * temperature_gradient -
+      strong_residual_vec[q] += rho_cp * velocity_fd * temperature_gradient -
                                 thermal_conductivity[q] * temperature_laplacian;
 
 
@@ -177,12 +177,12 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
           // -grad(u)*grad(u) = 0
           local_rhs(i) -=
             (thermal_conductivity[q] * grad_phi_T_i * temperature_gradient +
-             rho_cp * phi_T_i * velocity * temperature_gradient -
+             rho_cp * phi_T_i * velocity_fd * temperature_gradient -
              scratch_data.source[q] * phi_T_i) *
             JxW;
 
           local_rhs(i) -=
-            tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
+            tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity_fd)) * JxW;
         }
 
     } // end loop on quadrature points
@@ -496,18 +496,19 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
 
-      const auto velocity_gradient = scratch_data.velocity_gradient_values[q];
+      const auto velocity_gradient_fd =
+        scratch_data.velocity_gradient_values_fd[q];
 
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_T_i = scratch_data.phi_T[q][i];
 
-          local_rhs(i) -=
-            (-dynamic_viscosity * phi_T_i *
-             scalar_product(velocity_gradient + transpose(velocity_gradient),
-                            transpose(velocity_gradient))) *
-            JxW;
+          local_rhs(i) -= (-dynamic_viscosity * phi_T_i *
+                           scalar_product(velocity_gradient_fd +
+                                            transpose(velocity_gradient_fd),
+                                          transpose(velocity_gradient_fd))) *
+                          JxW;
         }
     }
 }

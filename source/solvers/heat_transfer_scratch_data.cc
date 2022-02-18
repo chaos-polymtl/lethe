@@ -22,9 +22,9 @@ HeatTransferScratchData<dim>::allocate()
   // Initialize arrays related to velocity and pressure
   this->velocities.first_vector_component = 0;
   // Velocity
-  this->velocity_values          = std::vector<Tensor<1, dim>>(n_q_points);
-  this->velocity_gradient_values = std::vector<Tensor<2, dim>>(n_q_points);
-  this->shear_rate_values        = std::vector<double>(n_q_points);
+  this->velocity_values_fd          = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_gradient_values_fd = std::vector<Tensor<2, dim>>(n_q_points);
+  this->shear_rate_values           = std::vector<double>(n_q_points);
 
 
   // Initialize arrays related to temperature
@@ -127,8 +127,8 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
         {
           // Calculate shear rate (at each q)
           const Tensor<2, dim> shear_rate_tensor =
-            velocity_gradient_values[q] +
-            transpose(velocity_gradient_values[q]);
+            velocity_gradient_values_fd[q] +
+            transpose(velocity_gradient_values_fd[q]);
 
           // Calculate the shear rate magnitude
           shear_rate_values[q] =
