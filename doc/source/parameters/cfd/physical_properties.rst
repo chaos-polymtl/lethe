@@ -207,3 +207,63 @@ Constant and linear thermal conductivities are supported in Lethe. Constant ther
   k = k_{A,0}+ k_{A,1} T 
 
 where :math:`k_{A,0}` and :math:`k_{A,1}` are constants and :math:`T` is the temperature. This enables a linear variation of the thermal conductivity as a function of the temperature.
+
+Specific heat models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Lethe supports two types of specific heat models. Setting ``specific heat=constant`` sets a constant specific heat. Lethe also supports a ``phase_change`` specific heat model. This model can simulate the melting and solidification of a material. The model follows the work of Blais & Ilinca [1]. This approach defines the specific heat :math:`C_p` as:
+
+.. math::
+
+  C_p = \frac{H(T)-H(T_0)}{T-T_0}
+
+
+where :math:`T` is the temperature, :math:`T_0` is the temperature at the previous time and :math:`H(T)` is the enthalpy, as a function of the temperature, to be:
+
+.. math::
+  H(T) = H_0 + \int_{T_0}^{T} c^{*}_p (T^*) dT
+
+
+where :math:`H_0` is a reference enthalpy, taken to be 0, and :math:`c^{*}_p` is:
+
+.. math::
+  c^{*}_p  = \begin{cases} C_{p,s}\\
+              \frac{C_{p,s}+C_{p,l}}{2}+\frac{h_l}{T_l-T_s}\\
+              C_{p,l}
+              \end{cases}
+
+where :math:`C_{p,s}` and :math:`C_{p,l}` are the solid and liquid specific heat, respectively. :math:`h_l` is the latent enthalpy (enthalpy related to the phase change), :math:`T_l` and :math:`T_s` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_s` and :math:`T_l` and solidification will occur between :math:`T_l` and :math:`T_s`.
+
+This model is parameterized using the following section:
+
+.. code-block:: text
+
+  subsection phase change
+    # Enthalpy of the phase change
+    set latent enthalpy      = 1
+  
+    # Temperature of the liquidus
+    set liquidus temperature = 1
+  
+    # Temperature of the solidus
+    set solidus temperature  = 0
+  
+    # Specific heat of the liquid phase
+    set specific heat liquid = 1
+  
+    # Specific heat of the solid phase
+    set specific heat solid  = 1
+  end
+
+* The ``latent enthalpy`` is the latent enthalpy of the phase change: :math:`h_l`
+
+* The ``liquidus temperature`` is :math:`T_l`
+
+* The ``solidus temperature`` is :math:`T_s`
+
+* The ``specific heat liquid`` is :math:`C_{p,l}`
+
+* The ``specific heat solid`` is :math:`C_{p,s}`
+
+
+[1] Blais, Bruno, and Florin Ilinca. "Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection." Computers & Fluids 172 (2018): 564-581.
