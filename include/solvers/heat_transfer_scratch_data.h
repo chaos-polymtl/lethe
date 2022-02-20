@@ -364,6 +364,7 @@ public:
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  specific_heat;
+  std::vector<double>                  grad_specific_heat_temperature;
   std::vector<double>                  thermal_conductivity;
   std::vector<double>                  density;
   std::vector<double>                  viscosity;
