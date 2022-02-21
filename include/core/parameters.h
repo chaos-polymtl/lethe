@@ -180,6 +180,12 @@ namespace Parameters
     // Specific heat solid - Units in J/(kg*K)
     double cp_s;
 
+    // kinematic viscosity liquid - Units in m^2/(s)
+    double viscosity_l;
+
+    // kinematic viscosity solid - Units in in m^2/(s)
+    double viscosity_s;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -281,7 +287,8 @@ namespace Parameters
     {
       powerlaw,
       carreau,
-      newtonian
+      newtonian,
+      phase_change
     } rheological_model;
     NonNewtonian non_newtonian_parameters;
 
