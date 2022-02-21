@@ -367,6 +367,10 @@ public:
   std::vector<double>                  thermal_conductivity;
   std::vector<double>                  density;
   std::vector<double>                  viscosity;
+  // Gradient of the specific heat with respect to the temperature
+  // This is calculated by deriving the specific heat by the temperature
+  // (dCp/dT)
+  std::vector<double> grad_specific_heat_temperature;
 
   // Auxiliary property vector for VOF simulations
   std::vector<double> specific_heat_0;

@@ -33,10 +33,11 @@ HeatTransferScratchData<dim>::allocate()
   this->present_temperature_laplacians = std::vector<double>(n_q_points);
 
   // Initial arrays for physical properties
-  this->specific_heat        = std::vector<double>(n_q_points);
-  this->thermal_conductivity = std::vector<double>(n_q_points);
-  this->density              = std::vector<double>(n_q_points);
-  this->viscosity            = std::vector<double>(n_q_points);
+  this->specific_heat                  = std::vector<double>(n_q_points);
+  this->grad_specific_heat_temperature = std::vector<double>(n_q_points);
+  this->thermal_conductivity           = std::vector<double>(n_q_points);
+  this->density                        = std::vector<double>(n_q_points);
+  this->viscosity                      = std::vector<double>(n_q_points);
 
   // Velocity for BDF schemes
   this->previous_temperature_values =
@@ -152,6 +153,9 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
 
           density_model->vector_value(fields, density);
           specific_heat_model->vector_value(fields, specific_heat);
+          specific_heat_model->vector_jacobian(fields,
+                                               field::temperature,
+                                               grad_specific_heat_temperature);
           thermal_conductivity_model->vector_value(fields,
                                                    thermal_conductivity);
           rheology_model->vector_value(fields, viscosity);
