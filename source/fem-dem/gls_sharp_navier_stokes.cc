@@ -1644,8 +1644,17 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
         {
           this->pcout << "particule " << p << " position "
                       << particles[p].position << std::endl;
-          this->pcout << "particule " << p << " velocity "
-                      << particles[p].velocity << std::endl;
+          if (dim == 2)
+            {
+              this->pcout << "particule " << p << " velocity "
+                          << copy_3d_tensor_in_2d(particles[p].velocity)
+                          << std::endl;
+            }
+          else
+            {
+              this->pcout << "particule " << p << " velocity "
+                          << particles[p].velocity << std::endl;
+            }
         }
       table_p[p].add_value("particle_ID", p);
       if (this->simulation_parameters.simulation_control.method !=
