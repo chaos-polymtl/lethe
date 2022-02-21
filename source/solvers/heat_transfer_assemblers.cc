@@ -204,6 +204,8 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
 
   const std::vector<double> &density       = scratch_data.density;
   const std::vector<double> &specific_heat = scratch_data.specific_heat;
+  const std::vector<double> &grad_specific_heat_temperature =
+    scratch_data.grad_specific_heat_temperature;
 
   // Copy data elements
   auto &strong_residual = copy_data.strong_residual;
@@ -229,7 +231,9 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      const double rho_cp = density[q] * specific_heat[q];
+      const double rho    = density[q];
+      const double rho_cp = rho * specific_heat[q];
+      double       dT_dt  = 0;
 
       temperature[0] = scratch_data.present_temperature_values[q];
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
@@ -239,6 +243,7 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
            ++p)
         {
           strong_residual[q] += rho_cp * bdf_coefs[p] * temperature[p];
+          dT_dt += bdf_coefs[p] * temperature[p];
         }
 
       for (unsigned int j = 0; j < n_dofs; ++j)
@@ -263,6 +268,9 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
 
               local_matrix(i, j) +=
                 rho_cp * phi_T_j * phi_T_i * bdf_coefs[0] * JxW[q];
+
+              local_matrix(i, j) += rho * grad_specific_heat_temperature[q] *
+                                    phi_T_j * phi_T_i * dT_dt * JxW[q];
 
 
               if (GGLS)
