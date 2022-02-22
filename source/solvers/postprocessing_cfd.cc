@@ -425,21 +425,17 @@ calculate_kinetic_energy<3, TrilinosWrappers::MPI::BlockVector>(
 
 template <int dim, typename VectorType>
 double
-calculate_apparent_viscosity(
-  const DoFHandler<dim> &               dof_handler,
-  const VectorType &                    evaluation_point,
-  const Quadrature<dim> &               quadrature_formula,
-  const Mapping<dim> &                  mapping,
-  const Parameters::PhysicalProperties &physical_properties)
+calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
+                             const VectorType &         evaluation_point,
+                             const Quadrature<dim> &    quadrature_formula,
+                             const Mapping<dim> &       mapping,
+                             PhysicalPropertiesManager &properties_manager)
 {
-  double integral_viscosity_x_shear_rate = 0;
-  double integral_shear_rate             = 0;
-  double shear_rate_magnitude;
-  double viscosity;
-  // Cast rheological model to either a Newtonian model or one of the
-  // non Newtonian models according to the physical properties
-  std::shared_ptr<RheologicalModel> rheological_model =
-    RheologicalModel::model_cast(physical_properties);
+  double     integral_viscosity_x_shear_rate = 0;
+  double     integral_shear_rate             = 0;
+  double     shear_rate_magnitude;
+  double     viscosity;
+  const auto rheological_model = properties_manager.get_rheology();
 
   const FESystem<dim, dim> fe = dof_handler.get_fe();
   FEValues<dim>            fe_values(mapping,
@@ -490,19 +486,19 @@ calculate_apparent_viscosity(
 
 template double
 calculate_apparent_viscosity<2, TrilinosWrappers::MPI::Vector>(
-  const DoFHandler<2> &                 dof_handler,
-  const TrilinosWrappers::MPI::Vector & evaluation_point,
-  const Quadrature<2> &                 quadrature_formula,
-  const Mapping<2> &                    mapping,
-  const Parameters::PhysicalProperties &physical_properties);
+  const DoFHandler<2> &                dof_handler,
+  const TrilinosWrappers::MPI::Vector &evaluation_point,
+  const Quadrature<2> &                quadrature_formula,
+  const Mapping<2> &                   mapping,
+  PhysicalPropertiesManager &          properties_manager);
 
 template double
 calculate_apparent_viscosity<3, TrilinosWrappers::MPI::Vector>(
-  const DoFHandler<3> &                 dof_handler,
-  const TrilinosWrappers::MPI::Vector & evaluation_point,
-  const Quadrature<3> &                 quadrature_formula,
-  const Mapping<3> &                    mapping,
-  const Parameters::PhysicalProperties &physical_properties);
+  const DoFHandler<3> &                dof_handler,
+  const TrilinosWrappers::MPI::Vector &evaluation_point,
+  const Quadrature<3> &                quadrature_formula,
+  const Mapping<3> &                   mapping,
+  PhysicalPropertiesManager &          properties_manager);
 
 template double
 calculate_apparent_viscosity<2, TrilinosWrappers::MPI::BlockVector>(
@@ -510,7 +506,7 @@ calculate_apparent_viscosity<2, TrilinosWrappers::MPI::BlockVector>(
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Quadrature<2> &                     quadrature_formula,
   const Mapping<2> &                        mapping,
-  const Parameters::PhysicalProperties &    physical_properties);
+  PhysicalPropertiesManager &               properties_manager);
 
 template double
 calculate_apparent_viscosity<3, TrilinosWrappers::MPI::BlockVector>(
@@ -518,14 +514,14 @@ calculate_apparent_viscosity<3, TrilinosWrappers::MPI::BlockVector>(
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Quadrature<3> &                     quadrature_formula,
   const Mapping<3> &                        mapping,
-  const Parameters::PhysicalProperties &    physical_properties);
+  PhysicalPropertiesManager &               properties_manager);
 
 template <int dim, typename VectorType>
 std::vector<Tensor<1, dim>>
 calculate_forces(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
-  const Parameters::PhysicalProperties &               physical_properties,
+  PhysicalPropertiesManager &                          properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping)
@@ -533,11 +529,8 @@ calculate_forces(
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
   // Rheological model for viscosity properties
-  double viscosity;
-  // Cast rheological model to either a Newtonian model or one of the
-  // non Newtonian models according to the physical properties
-  std::shared_ptr<RheologicalModel> rheological_model =
-    RheologicalModel::model_cast(physical_properties);
+  double     viscosity;
+  const auto rheological_model = properties_manager.get_rheology();
 
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
@@ -623,7 +616,7 @@ template std::vector<Tensor<1, 2>>
 calculate_forces<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
-  const Parameters::PhysicalProperties &             physical_properties,
+  PhysicalPropertiesManager &                        properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
@@ -631,7 +624,7 @@ template std::vector<Tensor<1, 3>>
 calculate_forces<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
-  const Parameters::PhysicalProperties &             physical_properties,
+  PhysicalPropertiesManager &                        properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);
@@ -640,7 +633,7 @@ template std::vector<Tensor<1, 2>>
 calculate_forces<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
-  const Parameters::PhysicalProperties &             physical_properties,
+  PhysicalPropertiesManager &                        properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
@@ -649,7 +642,7 @@ template std::vector<Tensor<1, 3>>
 calculate_forces<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
-  const Parameters::PhysicalProperties &             physical_properties,
+  PhysicalPropertiesManager &                        properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);
@@ -660,7 +653,7 @@ std::vector<Tensor<1, 3>>
 calculate_torques(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
-  const Parameters::PhysicalProperties &               physical_properties,
+  PhysicalPropertiesManager &                          properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping)
@@ -668,11 +661,8 @@ calculate_torques(
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
   // Rheological model for viscosity properties
-  double viscosity;
-  // Cast rheological model to either a Newtonian model or one of the
-  // non Newtonian models according to the physical properties
-  std::shared_ptr<RheologicalModel> rheological_model =
-    RheologicalModel::model_cast(physical_properties);
+  double     viscosity;
+  const auto rheological_model = properties_manager.get_rheology();
 
 
   const unsigned int               n_q_points = face_quadrature_formula.size();
@@ -775,7 +765,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
-  const Parameters::PhysicalProperties &             physical_properties,
+  PhysicalPropertiesManager &                        properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
@@ -783,7 +773,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
-  const Parameters::PhysicalProperties &             physical_properties,
+  PhysicalPropertiesManager &                        properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);
@@ -792,7 +782,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
-  const Parameters::PhysicalProperties &             physical_properties,
+  PhysicalPropertiesManager &                        properties_manager,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
@@ -801,7 +791,7 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
-  const Parameters::PhysicalProperties &             physical_properties,
+  PhysicalPropertiesManager &                        properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);

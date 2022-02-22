@@ -16,7 +16,7 @@ test()
   std::map<field, double> field_values;
 
 
-  SpecificHeatConstant specific_heat_model(5);
+  ConstantSpecificHeat specific_heat_model(5);
 
   deallog << "Testing specific heat" << std::endl;
 

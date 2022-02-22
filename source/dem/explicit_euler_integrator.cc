@@ -1,3 +1,4 @@
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <dem/dem_properties.h>
 #include <dem/explicit_euler_integrator.h>
 
@@ -8,10 +9,10 @@ template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate_half_step_location(
   Particles::ParticleHandler<dim> & /*particle_handler*/,
-  const Tensor<1, dim> & /*body_force*/,
+  const Tensor<1, 3> & /*body_force*/,
   const double /*time_step*/,
-  const std::vector<Tensor<1, dim>> & /*momentum*/,
-  const std::vector<Tensor<1, dim>> & /*force*/,
+  const std::vector<Tensor<1, 3>> & /*torque*/,
+  const std::vector<Tensor<1, 3>> & /*force*/,
   const std::vector<double> & /*MOI*/)
 {}
 
@@ -19,10 +20,10 @@ template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
-  const Tensor<1, dim> &           g,
+  const Tensor<1, 3> &             g,
   const double                     dt,
-  std::vector<Tensor<1, dim>> &    momentum,
-  std::vector<Tensor<1, dim>> &    force,
+  std::vector<Tensor<1, 3>> &      torque,
+  std::vector<Tensor<1, 3>> &      force,
   const std::vector<double> &      MOI)
 {
   for (auto particle = particle_handler.begin();
@@ -36,35 +37,52 @@ ExplicitEulerIntegrator<dim>::integrate(
 #else
       types::particle_index particle_id = particle->get_id();
 #endif
-      auto            particle_properties = particle->get_properties();
-      Tensor<1, dim> &particle_momentum   = momentum[particle_id];
-      Tensor<1, dim> &particle_force      = force[particle_id];
-      auto            particle_position   = particle->get_location();
+
+      auto          particle_properties = particle->get_properties();
+      Tensor<1, 3> &particle_torque     = torque[particle_id];
+      Tensor<1, 3> &particle_force      = force[particle_id];
+      Point<3>      particle_position;
       double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
       double MOI_inverse  = 1 / MOI[particle_id];
 
 
-      for (int d = 0; d < dim; ++d)
+      if constexpr (dim == 3)
+        particle_position = particle->get_location();
+
+      if constexpr (dim == 2)
+        particle_position = copy_2d_point_in_3d(particle->get_location());
+
+      for (int d = 0; d < 3; ++d)
         {
           acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;
 
           // Velocity integration:
           particle_properties[PropertiesIndex::v_x + d] += dt * acceleration[d];
 
-          // Reinitializing force
-          particle_force[d] = 0;
-
           // Position integration
           particle_position[d] +=
             dt * particle_properties[PropertiesIndex::v_x + d];
 
           particle_properties[PropertiesIndex::omega_x + d] +=
-            dt * (particle_momentum[d] * MOI_inverse);
-
-          // Reinitializing torque
-          particle_momentum[d] = 0;
+            dt * (particle_torque[d] * MOI_inverse);
         }
-      particle->set_location(particle_position);
+
+      // Reinitialize force
+      particle_force = 0;
+
+      // Reinitialize torque
+      particle_torque = 0;
+
+      if constexpr (dim == 3)
+        particle->set_location(particle_position);
+
+      if constexpr (dim == 2)
+        {
+          Point<2> position_2d;
+          position_2d[0] = particle_position[0];
+          position_2d[1] = particle_position[1];
+          particle->set_location(position_2d);
+        }
     }
 }
 

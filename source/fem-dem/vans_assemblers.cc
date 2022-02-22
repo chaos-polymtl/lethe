@@ -12,8 +12,8 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Scheme and physical properties
-  const double viscosity = physical_properties.fluids[0].viscosity;
+  // Viscosity at Gauss points
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -36,7 +36,8 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const double         viscosity = viscosity_vector[q];
+      const Tensor<1, dim> velocity  = scratch_data.velocity_values[q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
@@ -176,7 +177,7 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.fluids[0].viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -197,6 +198,9 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical property
+      const double viscosity = viscosity_vector[q];
+
       // Velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
@@ -315,7 +319,7 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.fluids[0].viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -340,6 +344,9 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> velocity_gradient =
@@ -481,7 +488,7 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.fluids[0].viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -502,6 +509,9 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
       // Velocity
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
@@ -683,9 +693,10 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
-  const double viscosity = physical_properties.fluids[0].viscosity;
+  // Physical properties
+  const std::vector<double> &viscosity = scratch_data.viscosity;
 
+  // Loop and quadrature informations
   const double       h          = scratch_data.cell_size;
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -725,7 +736,7 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
 
       // Grad-div weight factor used to be constant 0.1
       const double u_mag = std::max(velocity[0].norm(), 1e-12);
-      const double gamma = viscosity + u_mag * h;
+      const double gamma = viscosity[q] + u_mag * h;
 
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -777,6 +788,20 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
   const auto pic  = scratch_data.pic;
   beta_drag       = 0;
   particle_number = 0;
@@ -796,7 +821,7 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
       // Particle's Reynolds number
       double re = 1e-1 + relative_velocity.norm() *
                            particle_properties[DEM::PropertiesIndex::dp] /
-                           physical_properties.fluids[0].viscosity;
+                           (viscosity + DBL_MIN);
 
       // Di Felice Drag Model CD Calculation
       c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
@@ -810,8 +835,7 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = this->physical_properties.fluids[0].density *
-                   momentum_transfer_coefficient * relative_velocity;
+      drag_force = density * momentum_transfer_coefficient * relative_velocity;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -841,6 +865,17 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
+  // Physical Properties
+  Assert(!scratch_data.properties_manager.is_non_newtonian(),
+         RequiresConstantViscosity(
+           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
   const auto pic  = scratch_data.pic;
   beta_drag       = 0;
   particle_number = 0;
@@ -860,7 +895,7 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
       // Particle's Reynolds number
       double re = 1e-1 + relative_velocity.norm() *
                            particle_properties[DEM::PropertiesIndex::dp] /
-                           physical_properties.fluids[0].viscosity;
+                           (viscosity + DBL_MIN);
 
       // Rong Drag Model CD Calculation
       c_d =
@@ -877,8 +912,7 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = this->physical_properties.fluids[0].density *
-                   momentum_transfer_coefficient * relative_velocity;
+      drag_force = density * momentum_transfer_coefficient * relative_velocity;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -908,6 +942,19 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
   const auto pic  = scratch_data.pic;
   beta_drag       = 0;
   particle_number = 0;
@@ -924,7 +971,7 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
       // Particle's Reynolds number
       double re = 1e-1 + relative_velocity.norm() *
                            particle_properties[DEM::PropertiesIndex::dp] /
-                           physical_properties.fluids[0].viscosity;
+                           (viscosity + DBL_MIN);
 
       // Dallavalle Drag Model CD Calculation
       c_d = pow((0.63 + 4.8 / sqrt(re)), 2);
@@ -936,8 +983,7 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = this->physical_properties.fluids[0].density *
-                   momentum_transfer_coefficient * relative_velocity;
+      drag_force = density * momentum_transfer_coefficient * relative_velocity;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -960,8 +1006,16 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  const auto     pic = scratch_data.pic;
-  Tensor<1, dim> buoyancy_force;
+  const auto   pic = scratch_data.pic;
+  Tensor<1, 3> buoyancy_force;
+
+  // Physical Properties
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
+
+  const double density = scratch_data.properties_manager.density_scale;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -976,7 +1030,7 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            buoyancy_force[d] * physical_properties.fluids[0].density;
+            buoyancy_force[d] * density;
         }
     }
 }
@@ -999,6 +1053,14 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
 
   particle_number = 0;
 
+  // Physical Properties
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerPressureForc<dim>::calculate_particle_fluid_interactions"));
+
+
+  const double density = scratch_data.properties_manager.density_scale;
   // Loop over particles in cell
   for (auto &particle : pic)
     {
@@ -1013,7 +1075,7 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            pressure_force[d] * physical_properties.fluids[0].density;
+            pressure_force[d] * density;
 
           // Only apply pressure force to the particle if we are solving model A
           // of the VANS
@@ -1046,8 +1108,20 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
 
   particle_number = 0;
 
-  // Viscosity
-  const double viscosity = physical_properties.fluids[0].viscosity;
+  // Viscosity and density are currently assumed constant from the particle
+  // point of view.
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1063,7 +1137,7 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            shear_force[d] * physical_properties.fluids[0].density;
+            shear_force[d] * density;
           undisturbed_flow_force[d] +=
             shear_force[d] / scratch_data.cell_volume;
         }

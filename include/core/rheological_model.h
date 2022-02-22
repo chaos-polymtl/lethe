@@ -45,7 +45,7 @@ public:
    * Newtonian flow
    */
   static std::shared_ptr<RheologicalModel>
-  model_cast(const Parameters::PhysicalProperties &physical_properties);
+  model_cast(const Parameters::Fluid &fluid_properties);
 };
 
 class Newtonian : public RheologicalModel
@@ -129,7 +129,7 @@ public:
     , n(n)
     , shear_rate_min(shear_rate_min)
   {
-    this->model_depends_on[shear_rate] = false;
+    this->model_depends_on[shear_rate] = true;
   }
 
   /**
@@ -220,7 +220,7 @@ public:
     , a(a)
     , n(n)
   {
-    this->model_depends_on[shear_rate] = false;
+    this->model_depends_on[shear_rate] = true;
   }
 
   /**

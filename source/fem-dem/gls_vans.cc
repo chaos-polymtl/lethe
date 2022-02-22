@@ -527,9 +527,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // DiFelice Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDiFelice<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_parameters
-                .physical_properties));
+            std::make_shared<GLSVansAssemblerDiFelice<dim>>());
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -537,9 +535,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerRong<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_parameters
-                .physical_properties));
+            std::make_shared<GLSVansAssemblerRong<dim>>());
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -547,9 +543,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDallavalle<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_parameters
-                .physical_properties));
+            std::make_shared<GLSVansAssemblerDallavalle<dim>>());
         }
     }
 
@@ -557,7 +551,6 @@ GLSVANSSolver<dim>::setup_assemblers()
     // Buoyancy Force Assembler
     particle_fluid_assemblers.push_back(
       std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
@@ -565,23 +558,18 @@ GLSVANSSolver<dim>::setup_assemblers()
     // Pressure Force
     particle_fluid_assemblers.push_back(
       std::make_shared<GLSVansAssemblerPressureForce<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
         this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
     // Shear Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerShearForce<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_parameters
-          .physical_properties));
+      std::make_shared<GLSVansAssemblerShearForce<dim>>());
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.push_back(std::make_shared<GLSVansAssemblerBDF<dim>>(
-        this->simulation_control,
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-        this->cfd_dem_simulation_parameters.cfd_dem));
+        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
     }
 
   //  Fluid_Particle Interactions Assembler
@@ -595,17 +583,13 @@ GLSVANSSolver<dim>::setup_assemblers()
       Parameters::VANSModel::modelA)
     this->assemblers.push_back(
       std::make_shared<GLSVansAssemblerCoreModelA<dim>>(
-        this->simulation_control,
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-        this->cfd_dem_simulation_parameters.cfd_dem));
+        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
       Parameters::VANSModel::modelB)
     this->assemblers.push_back(
       std::make_shared<GLSVansAssemblerCoreModelB<dim>>(
-        this->simulation_control,
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-        this->cfd_dem_simulation_parameters.cfd_dem));
+        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 }
 
 template <int dim>
@@ -617,10 +601,12 @@ GLSVANSSolver<dim>::assemble_system_matrix()
 
   setup_assemblers();
 
-  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->mapping,
-                                                   *this->face_quadrature);
+  auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    *this->face_quadrature);
 
   scratch_data.enable_void_fraction(fe_void_fraction,
                                     *this->cell_quadrature,
@@ -681,6 +667,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
                                                   particle_handler,
                                                   this->dof_handler,
                                                   void_fraction_dof_handler);
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
@@ -721,10 +708,12 @@ GLSVANSSolver<dim>::assemble_system_rhs()
 
   setup_assemblers();
 
-  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->mapping,
-                                                   *this->face_quadrature);
+  auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    *this->face_quadrature);
 
 
   scratch_data.enable_void_fraction(fe_void_fraction,
@@ -790,6 +779,7 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
                                                   this->dof_handler,
                                                   void_fraction_dof_handler);
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
@@ -998,6 +988,10 @@ GLSVANSSolver<dim>::post_processing()
 
   QGauss<dim>     cell_quadrature_formula(this->number_quadrature_points);
   QGauss<dim - 1> face_quadrature_formula(this->number_quadrature_points);
+
+  Assert(this->cfd_dem_simulation_parameters.cfd_parameters
+           .physical_properties_manager.density_is_constant(),
+         RequiresConstantDensity("Pressure drop calculation"));
   pressure_drop =
     calculate_pressure_drop(
       this->dof_handler,
@@ -1007,9 +1001,8 @@ GLSVANSSolver<dim>::post_processing()
       face_quadrature_formula,
       this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
       this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
-    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties
-      .fluids[0]
-      .density;
+    this->cfd_dem_simulation_parameters.cfd_parameters
+      .physical_properties_manager.density_scale;
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
   this->pcout << "Max Local Mass Source: " << max_local_mass_source << " s^-1"

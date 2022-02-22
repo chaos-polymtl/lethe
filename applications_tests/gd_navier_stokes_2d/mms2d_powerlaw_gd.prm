@@ -15,9 +15,9 @@ end
 subsection physical properties
 set number of fluids = 1
   subsection fluid 0
-    set non newtonian flow	= true
+   	set rheological model	= power-law
+
     subsection non newtonian
-    	set model 		= power-law
     	subsection power-law
 	    	set K 		   = 1.0
 	    	set n 		   = 0.7

@@ -14,10 +14,13 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   , verbosity(nsparam.non_linear_solver.verbosity)
   , pcout(p_pcout)
 {
-  if (multiphysics_parameters.fluid_dynamics)
-    {
-      active_physics.push_back(PhysicsID::fluid_dynamics);
-    }
+  // Fluid dynamics is always considered active
+  // since its DofHandler is required at all time by
+  // the other physics. Consequently, disabling it only
+  // prevents solving it, but not allocating it.
+  {
+    active_physics.push_back(PhysicsID::fluid_dynamics);
+  }
   if (multiphysics_parameters.heat_transfer)
     {
       active_physics.push_back(PhysicsID::heat_transfer);

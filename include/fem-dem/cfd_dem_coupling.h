@@ -198,19 +198,19 @@ private:
   postprocess_fd(bool first_iteration) override;
 
 
-  unsigned int                coupling_frequency;
-  bool                        contact_detection_step;
-  bool                        checkpoint_step;
-  bool                        load_balance_step;
-  std::vector<Tensor<1, dim>> momentum;
-  std::vector<Tensor<1, dim>> force;
-  std::vector<double>         displacement;
-  std::vector<double>         MOI;
-  double                      neighborhood_threshold_squared;
-  double                      maximum_particle_diameter;
-  double                      standard_deviation_multiplier;
-  double                      smallest_contact_search_criterion;
-  double                      triangulation_cell_diameter;
+  unsigned int              coupling_frequency;
+  bool                      contact_detection_step;
+  bool                      checkpoint_step;
+  bool                      load_balance_step;
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<Tensor<1, 3>> force;
+  std::vector<double>       displacement;
+  std::vector<double>       MOI;
+  double                    neighborhood_threshold_squared;
+  double                    maximum_particle_diameter;
+  double                    standard_deviation_multiplier;
+  double                    smallest_contact_search_criterion;
+  double                    triangulation_cell_diameter;
 
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_local_neighbor_list;
@@ -265,9 +265,9 @@ private:
     particle_container;
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     ghost_particle_container;
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
+  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
     forces_boundary_information;
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
+  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
     torques_boundary_information;
 
 

@@ -33,10 +33,11 @@ We simulate the same case as the regular Taylor-Couette flow where the inner cyl
 while the outer cylinder is fixed. 
 The following figure shows the geometry of this problem and the corresponding boundary conditions. 
 
-.. image:: images/taylor_couette.png
+.. image:: images/taylor_couette.svg
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry
+    :height: 10cm
 
 Parameter file
 --------------
@@ -70,7 +71,7 @@ The last parameter specifies the ``initial refinement`` of the grid.
     :alt: The fluid mesh
     :align: center
     :name: fluid
-
+    :height: 10cm
 
 Nitsche mesh
 ~~~~~~~~~~~~
@@ -110,7 +111,7 @@ The following figure illustrates the background mesh as well as the particles us
     :alt: The background mesh and the embedded particles
     :align: center
     :name: nitsche_particles
-
+    :height: 10cm
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -329,7 +330,7 @@ Using Paraview, the steady-state velocity profile can be visualized for the adap
 .. image:: images/taylor_couette_with_nitsche_velocity_adapt.png
     :alt: velocity distribution
     :align: center
-
+    :height: 10cm
 
 The end of the simulation log provides the following information about the convergence of the error:
 

@@ -1,3 +1,4 @@
+#include <dem/copy_2d_tensor_in_3d.h>
 #include <dem/particle_wall_fine_search.h>
 
 #include <boost/math/special_functions/sign.hpp>
@@ -43,22 +44,30 @@ void ParticleWallFineSearch<dim>::particle_wall_fine_search(
 
           // Setting tangential overlap of the new particle-wall contact
           // pair equal to zero
-          Tensor<1, dim> tangential_overlap;
-          tangential_overlap[0] = 0.0;
-          tangential_overlap[1] = 0.0;
-          if (dim == 3)
-            {
-              tangential_overlap[2] = 0.0;
-            }
+          Tensor<1, 3> tangential_overlap({0, 0, 0});
+
+          Tensor<1, 3> normal_vector_3d;
+          if constexpr (dim == 3)
+            normal_vector_3d = normal_vector;
+
+          if constexpr (dim == 2)
+            normal_vector_3d = copy_2d_tensor_in_3d(normal_vector);
+
+          Point<3> point_on_boundary_3d;
+          if constexpr (dim == 3)
+            point_on_boundary_3d = point_on_boundary;
+
+          if constexpr (dim == 2)
+            point_on_boundary_3d = copy_2d_point_in_3d(point_on_boundary);
 
           // Adding contact info to the sample to
           // particle_wall_contact_info_struct
           particle_wall_contact_info_struct<dim> contact_info;
           contact_info.particle                 = particle;
-          contact_info.normal_vector            = normal_vector;
+          contact_info.normal_vector            = normal_vector_3d;
           contact_info.normal_overlap           = .0;
           contact_info.normal_relative_velocity = .0;
-          contact_info.point_on_boundary        = point_on_boundary;
+          contact_info.point_on_boundary        = point_on_boundary_3d;
           contact_info.boundary_id =
             std::get<3>(particle_pair_candidate_content);
           contact_info.tangential_overlap           = tangential_overlap;
@@ -120,6 +129,14 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
               Point<dim> point_on_floating_wall =
                 point_on_wall[floating_wall_id];
 
+              Point<3> point_on_floating_wall_3d;
+              if constexpr (dim == 3)
+                point_on_floating_wall_3d = point_on_floating_wall;
+
+              if constexpr (dim == 2)
+                point_on_floating_wall_3d =
+                  copy_2d_point_in_3d(point_on_floating_wall);
+
               // Check to see on which side of the wall the particle is located:
 
               // Finding connecting vector from defined point on the boundary
@@ -136,24 +153,25 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
                   normal_vector = -1 * normal_vector;
                 }
 
+              Tensor<1, 3> normal_vector_3d;
+              if constexpr (dim == 3)
+                normal_vector_3d = normal_vector;
+
+              if constexpr (dim == 2)
+                normal_vector_3d = copy_2d_tensor_in_3d(normal_vector);
+
               // Setting tangential overlap of the new particle-floating wall
               // contact pair equal to zero
-              Tensor<1, dim> tangential_overlap;
-              tangential_overlap[0] = 0.0;
-              tangential_overlap[1] = 0.0;
-              if (dim == 3)
-                {
-                  tangential_overlap[2] = 0.0;
-                }
+              Tensor<1, 3> tangential_overlap({0.0, 0.0, 0.0});
 
               // Creating a sample from the particle_wall_contact_info_struct
               // and adding contact info to the sample
               particle_wall_contact_info_struct<dim> contact_info;
               contact_info.particle                 = particle;
-              contact_info.normal_vector            = normal_vector;
+              contact_info.normal_vector            = normal_vector_3d;
               contact_info.normal_overlap           = .0;
               contact_info.normal_relative_velocity = .0;
-              contact_info.point_on_boundary        = point_on_floating_wall;
+              contact_info.point_on_boundary        = point_on_floating_wall_3d;
               // The boundary ID of floating walls is set to 100, it should be
               // modified after adding motion of floating walls
               contact_info.boundary_id                  = 100;

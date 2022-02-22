@@ -62,26 +62,24 @@ public:
    * necessary memory for all member variables. However, it does not do any
    * evalution, since this needs to be done at the cell level.
    *
-   * @param fe The FESystem used to solve the VOF equations
+   * @param fe_vof The FESystem used to solve the VOF equations
    *
    * @param quadrature The quadrature to use for the assembly
    *
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  VOFScratchData(const FiniteElement<dim> &fe_fs,
+  VOFScratchData(const FiniteElement<dim> &fe_vof,
                  const Quadrature<dim> &   quadrature,
                  const Mapping<dim> &      mapping,
-                 const FiniteElement<dim> &fe_navier_stokes)
-    : fe_values_fs(mapping,
-                   fe_fs,
-                   quadrature,
-                   update_values | update_gradients | update_quadrature_points |
-                     update_hessians | update_JxW_values)
-    , fe_values_navier_stokes(mapping,
-                              fe_navier_stokes,
-                              quadrature,
-                              update_values | update_gradients)
+                 const FiniteElement<dim> &fe_fd)
+    : fe_values_vof(mapping,
+                    fe_vof,
+                    quadrature,
+                    update_values | update_gradients |
+                      update_quadrature_points | update_hessians |
+                      update_JxW_values)
+    , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
   {
     allocate();
   }
@@ -100,15 +98,16 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    */
   VOFScratchData(const VOFScratchData<dim> &sd)
-    : fe_values_fs(sd.fe_values_fs.get_mapping(),
-                   sd.fe_values_fs.get_fe(),
-                   sd.fe_values_fs.get_quadrature(),
-                   update_values | update_gradients | update_quadrature_points |
-                     update_hessians | update_JxW_values)
-    , fe_values_navier_stokes(sd.fe_values_navier_stokes.get_mapping(),
-                              sd.fe_values_navier_stokes.get_fe(),
-                              sd.fe_values_navier_stokes.get_quadrature(),
-                              update_values | update_gradients)
+    : fe_values_vof(sd.fe_values_vof.get_mapping(),
+                    sd.fe_values_vof.get_fe(),
+                    sd.fe_values_vof.get_quadrature(),
+                    update_values | update_gradients |
+                      update_quadrature_points | update_hessians |
+                      update_JxW_values)
+    , fe_values_fd(sd.fe_values_fd.get_mapping(),
+                   sd.fe_values_fd.get_fe(),
+                   sd.fe_values_fd.get_quadrature(),
+                   update_values | update_gradients)
   {
     allocate();
   }
@@ -136,8 +135,6 @@ public:
    *
    * @param solution_stages The solution at the intermediary stages (for SDIRK methods)
    *
-   * @param source_function The function describing the VOF source term
-   *
    */
 
   template <typename VectorType>
@@ -147,48 +144,49 @@ public:
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages)
   {
-    this->fe_values_fs.reinit(cell);
-    quadrature_points = this->fe_values_fs.get_quadrature_points();
-    auto &fe_fs       = this->fe_values_fs.get_fe();
+    fe_values_vof.reinit(cell);
+    this->quadrature_points = fe_values_vof.get_quadrature_points();
+    auto &fe_vof            = fe_values_vof.get_fe();
 
     if (dim == 2)
-      this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe_fs.degree;
+      this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe_vof.degree;
     else if (dim == 3)
-      this->cell_size = pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_fs.degree;
+      this->cell_size =
+        pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_vof.degree;
 
-    this->fe_values_fs.get_function_values(current_solution,
-                                           this->present_phase_values);
-    this->fe_values_fs.get_function_gradients(current_solution,
-                                              this->phase_gradients);
-    this->fe_values_fs.get_function_laplacians(current_solution,
-                                               this->phase_laplacians);
+    fe_values_vof.get_function_values(current_solution,
+                                      this->present_phase_values);
+    fe_values_vof.get_function_gradients(current_solution,
+                                         this->phase_gradients);
+    fe_values_vof.get_function_laplacians(current_solution,
+                                          this->phase_laplacians);
 
 
     // Gather previous fs values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_fs.get_function_values(previous_solutions[p],
-                                               previous_phase_values[p]);
+        fe_values_vof.get_function_values(previous_solutions[p],
+                                          this->previous_phase_values[p]);
       }
 
     // Gather fs stages
     for (unsigned int s = 0; s < solution_stages.size(); ++s)
       {
-        this->fe_values_fs.get_function_values(solution_stages[s],
-                                               stages_phase_values[s]);
+        fe_values_vof.get_function_values(solution_stages[s],
+                                          this->stages_phase_values[s]);
       }
 
 
-    for (unsigned int q = 0; q < n_q_points; ++q)
+    for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
-        this->JxW[q] = this->fe_values_fs.JxW(q);
+        this->JxW[q] = fe_values_vof.JxW(q);
 
-        for (unsigned int k = 0; k < n_dofs; ++k)
+        for (unsigned int k = 0; k < this->n_dofs; ++k)
           {
             // Shape function
-            this->phi[q][k]           = this->fe_values_fs.shape_value(k, q);
-            this->grad_phi[q][k]      = this->fe_values_fs.shape_grad(k, q);
-            this->hess_phi[q][k]      = this->fe_values_fs.shape_hessian(k, q);
+            this->phi[q][k]           = fe_values_vof.shape_value(k, q);
+            this->grad_phi[q][k]      = fe_values_vof.shape_grad(k, q);
+            this->hess_phi[q][k]      = fe_values_vof.shape_hessian(k, q);
             this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
           }
       }
@@ -199,16 +197,16 @@ public:
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
                   const VectorType &current_solution)
   {
-    this->fe_values_navier_stokes.reinit(cell);
+    fe_values_fd.reinit(cell);
 
-    this->fe_values_navier_stokes[velocities].get_function_values(
-      current_solution, velocity_values);
-    this->fe_values_navier_stokes[velocities].get_function_gradients(
+    fe_values_fd[velocities_fd].get_function_values(current_solution,
+                                                    velocity_values);
+    fe_values_fd[velocities_fd].get_function_gradients(
       current_solution, velocity_gradient_values);
   }
 
   // FEValues for the VOF problem
-  FEValues<dim> fe_values_fs;
+  FEValues<dim> fe_values_vof;
   unsigned int  n_dofs;
   unsigned int  n_q_points;
   double        cell_size;
@@ -224,9 +222,6 @@ public:
   std::vector<std::vector<double>> previous_phase_values;
   std::vector<std::vector<double>> stages_phase_values;
 
-  // Source term
-  std::vector<double> source;
-
   // Shape functions
   std::vector<std::vector<double>>         phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
@@ -237,9 +232,9 @@ public:
   /**
    * Scratch component for the Navier-Stokes component
    */
-  FEValues<dim> fe_values_navier_stokes;
+  FEValues<dim> fe_values_fd;
 
-  FEValuesExtractors::Vector velocities;
+  FEValuesExtractors::Vector velocities_fd;
   // This FEValues must mandatorily be instantiated for the velocity
   std::vector<Tensor<1, dim>> velocity_values;
   std::vector<Tensor<2, dim>> velocity_gradient_values;

@@ -28,19 +28,27 @@
 class ThermalConductivityModel : public PhysicalPropertyModel
 {
 public:
+  /**
+   * @brief Instantiates and returns a pointer to a ThermalConductivityModel object by casting it to
+   * the proper child class
+   *
+   * @param physical_properties Parameters for a single fluid
+   */
+  static std::shared_ptr<ThermalConductivityModel>
+  model_cast(const Parameters::Fluid &fluid_properties);
 };
 
 
 /**
  * @brief Constant thermal conductivity.
  */
-class ThermalConductivityConstant : public ThermalConductivityModel
+class ConstantThermalConductivity : public ThermalConductivityModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  ThermalConductivityConstant(const double p_thermal_conductivity)
+  ConstantThermalConductivity(const double p_thermal_conductivity)
     : thermal_conductivity(p_thermal_conductivity)
   {}
 

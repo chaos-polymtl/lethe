@@ -308,11 +308,6 @@ namespace Parameters
   {
     prm.enter_subsection("non newtonian");
     {
-      prm.declare_entry("model",
-                        "carreau",
-                        Patterns::Selection("power-law|carreau"),
-                        "Non newtonian model "
-                        "Choices are <power-law|carreau>.");
       powerlaw_parameters.declare_parameters(prm);
       carreau_parameters.declare_parameters(prm);
     }
@@ -324,17 +319,8 @@ namespace Parameters
   {
     prm.enter_subsection("non newtonian");
     {
-      const std::string op = prm.get("model");
-      if (op == "power-law")
-        {
-          model = Model::powerlaw;
-          powerlaw_parameters.parse_parameters(prm);
-        }
-      else if (op == "carreau")
-        {
-          model = Model::carreau;
-          carreau_parameters.parse_parameters(prm);
-        }
+      powerlaw_parameters.parse_parameters(prm);
+      carreau_parameters.parse_parameters(prm);
     }
     prm.leave_subsection();
   }
@@ -459,16 +445,11 @@ namespace Parameters
                         Patterns::Integer(),
                         "Number of fluids");
 
-      prm.declare_entry("enable phase change",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable melting/freezing of fluids");
-      phase_change_parameters.declare_parameters(prm);
+
 
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
         {
-          fluids[i_fluid] = Fluid();
           fluids[i_fluid].declare_parameters(prm, i_fluid);
         }
     }
@@ -480,10 +461,6 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-      // Management of phase_change
-      enable_phase_change = prm.get_bool("enable phase change");
-      phase_change_parameters.parse_parameters(prm);
-
       // Multiphasic simulations parameters definition
       number_of_fluids = prm.get_integer("number of fluids");
       Assert(number_of_fluids == 1 || number_of_fluids == 2,
@@ -538,11 +515,45 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-      prm.declare_entry("non newtonian flow",
-                        "false",
-                        Patterns::Bool(),
-                        "Non Newtonian flow");
+      prm.declare_entry("rheological model",
+                        "newtonian",
+                        Patterns::Selection("newtonian|power-law|carreau"),
+                        "Rheological model "
+                        "Choices are <newtonian|power-law|carreau>.");
+
       non_newtonian_parameters.declare_parameters(prm);
+
+
+      prm.declare_entry("density model",
+                        "constant",
+                        Patterns::Selection("constant"),
+                        "Model used for the calculation of the density"
+                        "Choices are <constant>.");
+
+      prm.declare_entry("specific heat model",
+                        "constant",
+                        Patterns::Selection("constant|phase_change"),
+                        "Model used for the calculation of the specific heat"
+                        "Choices are <constant|phase_change>.");
+
+      phase_change_parameters.declare_parameters(prm);
+
+      prm.declare_entry(
+        "thermal conductivity model",
+        "constant",
+        Patterns::Selection("constant|linear"),
+        "Model used for the calculation of the thermal conductivity"
+        "Choices are <constant|linear>.");
+
+      prm.declare_entry("k_A0",
+                        "0",
+                        Patterns::Double(),
+                        "k_A0 parameter for linear conductivity model");
+
+      prm.declare_entry("k_A1",
+                        "0",
+                        Patterns::Double(),
+                        "k_A1 parameter for linear conductivity model");
     }
     prm.leave_subsection();
   }
@@ -558,7 +569,50 @@ namespace Parameters
       thermal_conductivity = prm.get_double("thermal conductivity");
       thermal_expansion    = prm.get_double("thermal expansion");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
-      non_newtonian_flow   = prm.get_bool("non newtonian flow");
+
+
+      // Parse models for the physical properties
+      std::string op;
+
+      // Density
+      op = prm.get("density model");
+      if (op == "constant")
+        density_model = DensityModel::constant;
+
+      // Thermal conductivity
+      op = prm.get("thermal conductivity model");
+      if (op == "constant")
+        thermal_conductivity_model = ThermalConductivityModel::constant;
+      else if (op == "linear")
+        thermal_conductivity_model = ThermalConductivityModel::linear;
+
+      // Linear conductivity model parameters
+      k_A0 = prm.get_double("k_A0");
+      k_A1 = prm.get_double("k_A1");
+
+      // Specific heat
+      op = prm.get("specific heat model");
+      if (op == "constant")
+        specific_heat_model = SpecificHeatModel::constant;
+      else if (op == "phase_change")
+        specific_heat_model = SpecificHeatModel::phase_change;
+
+      phase_change_parameters.parse_parameters(prm);
+
+      // Rheology
+      op = prm.get("rheological model");
+      if (op == "power-law")
+        {
+          rheological_model = RheologicalModel::powerlaw;
+        }
+      else if (op == "carreau")
+        {
+          rheological_model = RheologicalModel::carreau;
+        }
+      else if (op == "newtonian")
+        {
+          rheological_model = RheologicalModel::newtonian;
+        }
       non_newtonian_parameters.parse_parameters(prm);
     }
     prm.leave_subsection();

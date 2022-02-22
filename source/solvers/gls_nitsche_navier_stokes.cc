@@ -67,9 +67,13 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 {
   TimerOutput::Scope t(this->computing_timer, "assemble Nitsche restriction");
 
+  Assert(
+    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity("assemble_nitsche_restriction"));
+
   // Viscosity for stabilization constant
   const double viscosity =
-    this->simulation_parameters.physical_properties.fluids[0].viscosity;
+    this->simulation_parameters.physical_properties_manager.viscosity_scale;
 
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
@@ -94,7 +98,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
       Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
 
       // Penalization terms
-      const double beta = this->simulation_parameters.nitsche->beta;
+      const double beta =
+        this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
 
       // Loop over all local particles
       auto particle = solid_ph->begin();
@@ -249,8 +254,14 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
   Tensor<2, 3> fluid_pressure;
   Tensor<1, 3> force; // to be changed for a vector of tensors when
   // allowing multiple solids
+
+
+  Assert(
+    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity("assemble_nitsche_restriction"));
+
   const double viscosity =
-    this->simulation_parameters.physical_properties.fluids[0].viscosity;
+    this->simulation_parameters.physical_properties_manager.viscosity_scale;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();
@@ -331,7 +342,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
 
   // Penalization terms
-  const double        beta = this->simulation_parameters.nitsche->beta;
+  const double beta =
+    this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
   Tensor<1, spacedim> velocity;
   Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
   Tensor<1, spacedim> force;
@@ -412,7 +424,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
 
   // Penalization terms
-  const double        beta = this->simulation_parameters.nitsche->beta;
+  const double beta =
+    this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
   Tensor<1, spacedim> velocity;
   Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
 

@@ -11,8 +11,9 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
                                           StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
-  const double diffusivity = physical_properties.fluids[0].tracer_diffusivity;
-  const auto   method      = this->simulation_control->get_assembly_method();
+  const std::vector<double> &diffusivity_vector =
+    scratch_data.tracer_diffusivity;
+  const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -35,6 +36,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
+      const double         diffusivity     = diffusivity_vector[q];
       const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
       const Tensor<1, dim> velocity        = scratch_data.velocity_values[q];
 
@@ -129,8 +131,9 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
-  const double diffusivity = physical_properties.fluids[0].tracer_diffusivity;
-  const auto   method      = this->simulation_control->get_assembly_method();
+  const std::vector<double> &diffusivity_vector =
+    scratch_data.tracer_diffusivity;
+  const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -152,6 +155,7 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
+      const double         diffusivity      = diffusivity_vector[q];
       const Tensor<1, dim> tracer_gradient  = scratch_data.tracer_gradients[q];
       const double         tracer_laplacian = scratch_data.tracer_laplacians[q];
       const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];

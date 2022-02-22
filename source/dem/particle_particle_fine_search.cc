@@ -96,11 +96,9 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
               auto particle_one_contact_list =
                 &local_adjacent_particles[particle_one_id];
 
-              Tensor<1, dim> tangential_overlap;
-              for (int d = 0; d < dim; ++d)
-                {
-                  tangential_overlap[d] = 0;
-                }
+              Tensor<1, 3> tangential_overlap;
+              tangential_overlap = 0;
+
 
               // Adding the elements to contact info
               particle_particle_contact_info_struct<dim> contact_info;
@@ -181,11 +179,9 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
                 &ghost_adjacent_particles[particle_one->get_id()];
               unsigned int particle_two_id = particle_two->get_id();
 
-              Tensor<1, dim> tangential_overlap;
-              for (int d = 0; d < dim; ++d)
-                {
-                  tangential_overlap[d] = 0;
-                }
+              Tensor<1, 3> tangential_overlap;
+              tangential_overlap = 0;
+
 
               // Adding elements to contact info
               particle_particle_contact_info_struct<dim> contact_info;
