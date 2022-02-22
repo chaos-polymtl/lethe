@@ -383,6 +383,60 @@ namespace Parameters
   }
 
   void
+  SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("surface tension force");
+    {
+      prm.declare_entry("output auxiliary fields",
+                        "false",
+                        Patterns::Bool(),
+                        "Output the phase fraction gradient and curvature");
+
+      prm.declare_entry(
+        "phase fraction gradient filter",
+        "0.5",
+        Patterns::Double(),
+        "The filter value for phase fraction gradient calculations to damp high-frequency errors");
+
+      prm.declare_entry(
+        "curvature filter",
+        "0.5",
+        Patterns::Double(),
+        "The filter value for curvature calculations to damp high-frequency errors");
+
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the surface tension force calculations should be printed "
+        "Choices are <quiet|verbose>.");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("surface tension force");
+    {
+      phase_fraction_gradient_filter_value =
+        prm.get_double("phase fraction gradient filter");
+      curvature_filter_value = prm.get_double("curvature filter");
+
+      output_VOF_auxiliary_fields = prm.get_bool("output auxiliary fields");
+
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Parameters::Verbosity::verbose;
+      else if (op == "quiet")
+        verbosity = Parameters::Verbosity::quiet;
+      else
+        throw(std::runtime_error("Invalid verbosity level"));
+    }
+    prm.leave_subsection();
+  }
+
+  void
   PhaseChange::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("phase change");
@@ -445,7 +499,10 @@ namespace Parameters
                         Patterns::Integer(),
                         "Number of fluids");
 
-
+      prm.declare_entry("surface tension coefficient",
+                        "0.0",
+                        Patterns::Double(),
+                        "Surface tension coefficient");
 
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
@@ -461,6 +518,9 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
+      // Surface tension coefficient
+      surface_tension_coef = prm.get_double("surface tension coefficient");
+
       // Multiphasic simulations parameters definition
       number_of_fluids = prm.get_integer("number of fluids");
       Assert(number_of_fluids == 1 || number_of_fluids == 2,

@@ -40,6 +40,7 @@ namespace Parameters
     bool VOF;
     bool interface_sharpening;
     bool buoyancy_force;
+    bool continuum_surface_force;
 
     // subparameter for heat_transfer
     bool viscous_dissipation;
