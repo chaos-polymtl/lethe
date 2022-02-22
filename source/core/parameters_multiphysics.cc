@@ -79,7 +79,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
 
     // subparameter for free_surface
     conservation_monitoring = prm.get_bool("conservation monitoring");
-    monitor_fluid_id        = prm.get_integer("fluid monitored");
+    id_fluid_monitored      = prm.get_integer("fluid monitored");
   }
   prm.leave_subsection();
 }

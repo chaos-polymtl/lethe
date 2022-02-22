@@ -95,8 +95,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
       const double dynamic_viscosity_eq = density_eq * viscosity_eq;
 
-
-
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
@@ -177,7 +175,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
               // PSPG GLS term
               local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
 
-
               // Jacobian is currently incomplete
               if (SUPG)
                 {
@@ -228,7 +225,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   const double density_ratio      = 2;
   double       phase_force_cutoff = 0;
 
-
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
@@ -246,7 +242,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // gravity not will be applied for phase > phase_force_cutoff
       phase_force_cutoff = 1 - 1e-6;
     }
-
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)

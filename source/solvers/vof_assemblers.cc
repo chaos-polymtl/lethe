@@ -107,6 +107,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
           // stabilization
           strong_jacobian_vec[q][j] += velocity * grad_phi_phase_j;
 
+          // DCDD shock capturing
           if (DCDD)
             strong_jacobian_vec[q][j] += -vdcdd * laplacian_phi_phase_j;
         }
@@ -131,6 +132,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
                                     (grad_phi_phase_i * velocity) * JxW;
 
+              // DCDD shock capturing
               if (DCDD)
                 {
                   local_matrix(i, j) +=
@@ -184,8 +186,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
       const double JxW = JxW_vec[q];
 
       // Shock capturing viscosity term
-      const double order = scratch_data.fe_values_fs.get_fe().degree;
-
+      const double order = scratch_data.fe_values_vof.get_fe().degree;
 
       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
                            pow(phase_gradient.norm() * h, order);
@@ -213,14 +214,12 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
           h / (2. * u_mag) :
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt, 2));
 
-
-
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] += velocity * phase_gradient;
 
+      // DCDD shock capturing
       if (DCDD)
         strong_residual_vec[q] += -vdcdd * phase_laplacians;
-
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -236,6 +235,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
             tau * (strong_residual_vec[q] * (grad_phi_phase_i * velocity)) *
             JxW;
 
+          // DCDD shock capturing
           if (DCDD)
             {
               local_rhs(i) +=
