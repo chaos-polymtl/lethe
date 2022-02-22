@@ -1,7 +1,8 @@
 //
 // Created by lucka on 2021-10-11.
 //
-#include <dem/copy_2d_tensor_in_3d.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_particle_linear_force.h>
 #include <dem/particle_particle_nonlinear_force.h>
@@ -267,7 +268,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
             }
 
           Tensor<1, 3> normal_vector =
-            copy_2d_tensor_in_3d(boundary_cell_information.normal_vector);
+            tensor_nd_to_3d(boundary_cell_information.normal_vector);
           auto point_on_boundary = boundary_cell_information.point_on_boundary;
 
           Tensor<1, 3> normal;
@@ -288,10 +289,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           // be projected on the normal vector of the boundary to obtain the
           // particle-wall distance
 
-          Point<3> particle_position_3d =
-            copy_2d_point_in_3d(particle.position);
-          Point<3> point_on_boundary_3d =
-            copy_2d_point_in_3d(point_on_boundary);
+          Point<3> particle_position_3d = point_nd_to_3d(particle.position);
+          Point<3> point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
 
           Tensor<1, 3> point_to_particle_vector =
             particle_position_3d - point_on_boundary_3d;

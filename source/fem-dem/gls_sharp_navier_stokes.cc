@@ -22,13 +22,13 @@
 #include <core/lethegridtools.h>
 #include <core/sdirk.h>
 #include <core/solutions_output.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
 #include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/postprocessing_cfd.h>
 
-#include <dem/copy_2d_tensor_in_3d.h>
 #include <fem-dem/gls_sharp_navier_stokes.h>
 
 #include <deal.II/base/work_stream.h>
@@ -668,7 +668,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               // cell.
 
                               particles[p].fluid_forces +=
-                                copy_2d_tensor_in_3d(force);
+                                tensor_nd_to_3d(force);
 
                               auto distance =
                                 q_points[q] - particles[p].position;
@@ -1231,7 +1231,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                       dv_temp[i] += inv_jac[i][j] * residual_velocity[i];
                     }
                 }
-              auto dv = copy_2d_tensor_in_3d(dv_temp);
+              auto dv = tensor_nd_to_3d(dv_temp);
               // Evaluate a relaxation parameter. Here we try to orthogonalize
               // the update as much as possible.
               if ((particles[p].velocity - particles[p].velocity_iter).norm() >
@@ -1647,7 +1647,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           if (dim == 2)
             {
               this->pcout << "particule " << p << " velocity "
-                          << copy_3d_tensor_in_2d(particles[p].velocity)
+                          << tensor_nd_to_2d(particles[p].velocity)
                           << std::endl;
             }
           else
