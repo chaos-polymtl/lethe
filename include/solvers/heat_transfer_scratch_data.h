@@ -285,7 +285,7 @@ public:
     this->fe_values_fd.reinit(cell);
 
     this->fe_values_fd[velocities].get_function_values(current_solution,
-                                                       velocity_values_fd);
+                                                       velocity_values);
   }
 
   template <typename VectorType>
@@ -293,7 +293,7 @@ public:
   reinit_velocity_gradient(const VectorType &current_solution)
   {
     this->fe_values_fd[velocities].get_function_gradients(
-      current_solution, velocity_gradient_values_fd);
+      current_solution, velocity_gradient_values);
   }
 
 
@@ -425,8 +425,8 @@ public:
   FEValuesExtractors::Vector velocities;
   // This FEValues must mandatorily be instantiated for the velocity
   FEValues<dim>               fe_values_fd;
-  std::vector<Tensor<1, dim>> velocity_values_fd;
-  std::vector<Tensor<2, dim>> velocity_gradient_values_fd;
+  std::vector<Tensor<1, dim>> velocity_values;
+  std::vector<Tensor<2, dim>> velocity_gradient_values;
   std::vector<double>         shear_rate_values;
 
   // Scratch for the face boundary condition

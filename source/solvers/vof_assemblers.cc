@@ -35,7 +35,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values_fd[q];
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -108,7 +108,8 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
           strong_jacobian_vec[q][j] += velocity * grad_phi_phase_j;
 
           // DCDD shock capturing
-          strong_jacobian_vec[q][j] += -vdcdd * laplacian_phi_phase_j;
+          if (DCDD)
+            strong_jacobian_vec[q][j] += -vdcdd * laplacian_phi_phase_j;
         }
 
 
@@ -132,13 +133,16 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
                                     (grad_phi_phase_i * velocity) * JxW;
 
               // DCDD shock capturing
-              local_matrix(i, j) +=
-                (vdcdd * scalar_product(grad_phi_phase_j,
-                                        dcdd_factor * grad_phi_phase_i) +
-                 d_vdcdd * grad_phi_phase_j.norm() *
-                   scalar_product(phase_gradient,
-                                  dcdd_factor * grad_phi_phase_i)) *
-                JxW;
+              if (DCDD)
+                {
+                  local_matrix(i, j) +=
+                    (vdcdd * scalar_product(grad_phi_phase_j,
+                                            dcdd_factor * grad_phi_phase_i) +
+                     d_vdcdd * grad_phi_phase_j.norm() *
+                       scalar_product(phase_gradient,
+                                      dcdd_factor * grad_phi_phase_i)) *
+                    JxW;
+                }
             }
         }
     } // end loop on quadrature points
@@ -176,14 +180,13 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
       // Gather into local variables the relevant fields
       const Tensor<1, dim> phase_gradient   = scratch_data.phase_gradients[q];
       const double         phase_laplacians = scratch_data.phase_laplacians[q];
-      const Tensor<1, dim> velocity = scratch_data.velocity_values_fd[q];
+      const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
       // Shock capturing viscosity term
       const double order = scratch_data.fe_values_vof.get_fe().degree;
-
 
       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
                            pow(phase_gradient.norm() * h, order);
@@ -211,14 +214,12 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
           h / (2. * u_mag) :
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt, 2));
 
-
-
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] += velocity * phase_gradient;
 
       // DCDD shock capturing
-      strong_residual_vec[q] += -vdcdd * phase_laplacians;
-
+      if (DCDD)
+        strong_residual_vec[q] += -vdcdd * phase_laplacians;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -235,10 +236,13 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
             JxW;
 
           // DCDD shock capturing
-          local_rhs(i) +=
-            -vdcdd *
-            scalar_product(phase_gradient, dcdd_factor * grad_phi_phase_i) *
-            JxW;
+          if (DCDD)
+            {
+              local_rhs(i) +=
+                -vdcdd *
+                scalar_product(phase_gradient, dcdd_factor * grad_phi_phase_i) *
+                JxW;
+            }
         }
     }
 }

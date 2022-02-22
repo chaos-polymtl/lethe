@@ -200,9 +200,9 @@ public:
     fe_values_fd.reinit(cell);
 
     fe_values_fd[velocities_fd].get_function_values(current_solution,
-                                                    velocity_values_fd);
+                                                    velocity_values);
     fe_values_fd[velocities_fd].get_function_gradients(
-      current_solution, velocity_gradient_values_fd);
+      current_solution, velocity_gradient_values);
   }
 
   // FEValues for the VOF problem
@@ -236,8 +236,8 @@ public:
 
   FEValuesExtractors::Vector velocities_fd;
   // This FEValues must mandatorily be instantiated for the velocity
-  std::vector<Tensor<1, dim>> velocity_values_fd;
-  std::vector<Tensor<2, dim>> velocity_gradient_values_fd;
+  std::vector<Tensor<1, dim>> velocity_values;
+  std::vector<Tensor<2, dim>> velocity_gradient_values;
 };
 
 #endif

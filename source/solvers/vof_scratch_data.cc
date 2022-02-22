@@ -17,8 +17,8 @@ VOFScratchData<dim>::allocate()
   // Initialize arrays related to velocity and pressure
   this->velocities_fd.first_vector_component = 0;
   // Velocity
-  this->velocity_values_fd = std::vector<Tensor<1, dim>>(this->n_q_points);
-  this->velocity_gradient_values_fd =
+  this->velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  this->velocity_gradient_values =
     std::vector<Tensor<2, dim>>(this->n_q_points);
 
   this->present_phase_values = std::vector<double>(this->n_q_points);
