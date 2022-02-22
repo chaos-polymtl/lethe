@@ -81,17 +81,14 @@ public:
                     const FiniteElement<dim> &       fe_tracer,
                     const Quadrature<dim> &          quadrature,
                     const Mapping<dim> &             mapping,
-                    const FiniteElement<dim> &       fe_navier_stokes)
+                    const FiniteElement<dim> &       fe_fd)
     : properties_manager(properties_manager)
     , fe_values_tracer(mapping,
                        fe_tracer,
                        quadrature,
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
-    , fe_values_navier_stokes(mapping,
-                              fe_navier_stokes,
-                              quadrature,
-                              update_values)
+    , fe_values_fd(mapping, fe_fd, quadrature, update_values)
   {
     allocate();
   }
@@ -116,10 +113,10 @@ public:
                        sd.fe_values_tracer.get_quadrature(),
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
-    , fe_values_navier_stokes(sd.fe_values_navier_stokes.get_mapping(),
-                              sd.fe_values_navier_stokes.get_fe(),
-                              sd.fe_values_navier_stokes.get_quadrature(),
-                              update_values)
+    , fe_values_fd(sd.fe_values_fd.get_mapping(),
+                   sd.fe_values_fd.get_fe(),
+                   sd.fe_values_fd.get_quadrature(),
+                   update_values)
   {
     allocate();
   }
@@ -216,10 +213,10 @@ public:
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
                   const VectorType &current_solution)
   {
-    this->fe_values_navier_stokes.reinit(cell);
+    this->fe_values_fd.reinit(cell);
 
-    this->fe_values_navier_stokes[velocities].get_function_values(
-      current_solution, velocity_values);
+    this->fe_values_fd[velocities].get_function_values(current_solution,
+                                                       velocity_values);
   }
 
   /** @brief Calculates the physical properties. This function calculates the physical properties
@@ -270,7 +267,7 @@ public:
    */
   FEValuesExtractors::Vector velocities;
   // This FEValues must mandatorily be instantiated for the velocity
-  FEValues<dim>               fe_values_navier_stokes;
+  FEValues<dim>               fe_values_fd;
   std::vector<Tensor<1, dim>> velocity_values;
 };
 

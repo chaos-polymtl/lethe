@@ -46,7 +46,7 @@ namespace Parameters
 
     // subparameter for free_surface
     bool conservation_monitoring;
-    int  monitor_fluid_id;
+    int  id_fluid_monitored;
 
     static void
     declare_parameters(ParameterHandler &prm);

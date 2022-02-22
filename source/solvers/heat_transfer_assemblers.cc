@@ -504,18 +504,19 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
 
-      const auto velocity_gradient = scratch_data.velocity_gradient_values[q];
+      const auto velocity_gradient_fd =
+        scratch_data.velocity_gradient_values[q];
 
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_T_i = scratch_data.phi_T[q][i];
 
-          local_rhs(i) -=
-            (-dynamic_viscosity * phi_T_i *
-             scalar_product(velocity_gradient + transpose(velocity_gradient),
-                            transpose(velocity_gradient))) *
-            JxW;
+          local_rhs(i) -= (-dynamic_viscosity * phi_T_i *
+                           scalar_product(velocity_gradient_fd +
+                                            transpose(velocity_gradient_fd),
+                                          transpose(velocity_gradient_fd))) *
+                          JxW;
         }
     }
 }
