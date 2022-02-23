@@ -13,8 +13,8 @@ RheologicalModel::model_cast(const Parameters::Fluid &fluid_properties)
       fluid_properties.non_newtonian_parameters.powerlaw_parameters.n,
       fluid_properties.non_newtonian_parameters.powerlaw_parameters
         .shear_rate_min);
-  else // if (physical_properties.fluid[0].non_newtonian_parameters.model ==
-       //  Parameters::NonNewtonian::Model::carreau)
+  else if (fluid_properties.rheological_model ==
+           Parameters::Fluid::RheologicalModel::carreau)
     return std::make_shared<Carreau>(
       fluid_properties.non_newtonian_parameters.carreau_parameters.viscosity_0,
       fluid_properties.non_newtonian_parameters.carreau_parameters
@@ -22,6 +22,11 @@ RheologicalModel::model_cast(const Parameters::Fluid &fluid_properties)
       fluid_properties.non_newtonian_parameters.carreau_parameters.lambda,
       fluid_properties.non_newtonian_parameters.carreau_parameters.a,
       fluid_properties.non_newtonian_parameters.carreau_parameters.n);
+
+  else // (fluid_properties.rheological_model ==
+       //    Parameters::Fluid::RheologicalModel::phase_change)
+    return std::make_shared<PhaseChangeRheology>(
+      fluid_properties.phase_change_parameters);
 }
 
 double
@@ -115,4 +120,47 @@ Carreau::vector_jacobian(
                                     jacobian_vector);
   else
     std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+}
+
+
+
+double
+PhaseChangeRheology::value(const std::map<field, double> &field_values)
+{
+  const double temperature = field_values.at(field::temperature);
+
+  return viscosity(temperature);
+}
+
+void
+PhaseChangeRheology::vector_value(
+  const std::map<field, std::vector<double>> &field_vectors,
+  std::vector<double> &                       property_vector)
+{
+  const std::vector<double> &temperature_vec =
+    field_vectors.at(field::temperature);
+
+  for (unsigned int i = 0; i < temperature_vec.size(); ++i)
+    {
+      property_vector[i] = viscosity(temperature_vec[i]);
+    }
+}
+
+double
+PhaseChangeRheology::jacobian(const std::map<field, double> &field_values,
+                              const field                    id)
+{
+  if (id == field::temperature)
+    return this->numerical_jacobian(field_values, field::temperature);
+  else
+    return 0;
+}
+
+void
+PhaseChangeRheology::vector_jacobian(
+  const std::map<field, std::vector<double>> &field_vectors,
+  const field                                 id,
+  std::vector<double> &                       jacobian_vector)
+{
+  vector_numerical_jacobian(field_vectors, id, jacobian_vector);
 }
