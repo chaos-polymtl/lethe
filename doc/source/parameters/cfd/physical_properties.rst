@@ -186,7 +186,7 @@ When using the Power-Law model, the default values are:
     end
   end
 
-* The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity is it were Newtonian.
+* The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity if it were Newtonian.
 
 * The ``n`` parameter is the flow behavior index. low  It sets the slope in the log-log :math:`\eta = f(\dot{\gamma})` graph.
 
