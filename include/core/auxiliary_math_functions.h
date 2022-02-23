@@ -17,7 +17,7 @@
 
 
 #ifndef LETHE_AUXILIARY_MATH_FUNCTIONS_H
-#define LETHE_AUXILIARY_MATH_FUNCTIONS_H
+#  define LETHE_AUXILIARY_MATH_FUNCTIONS_H
 
 /**
  * Carries out the calculation of the harmonic mean of two values.
