@@ -2,7 +2,7 @@ Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 5508
    Volume of triangulation:      16
-Starts the 1 initial box refinement
+Initial refinement in box - Step  1 of 1
    Number of active cells:       4552
    Number of degrees of freedom: 22172
    Volume of triangulation:      16

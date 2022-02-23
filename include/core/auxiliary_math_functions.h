@@ -13,6 +13,8 @@
  *
  * ---------------------------------------------------------------------
  */
+#include "core/parameters.h"
+
 
 #ifndef LETHE_AUXILIARY_MATH_FUNCTIONS_H
 #define LETHE_AUXILIARY_MATH_FUNCTIONS_H

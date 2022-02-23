@@ -2,7 +2,7 @@ Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 5508
    Volume of triangulation:      16
-Starts the 1 initial box refinement
+Initial refinement in box - Step  1 of 1
    Number of active cells:       4552
    Number of degrees of freedom: 22172
    Volume of triangulation:      16
@@ -13,7 +13,7 @@ Transient iteration : 1        Time : 0.05     Time step : 0.05     CFL : 0
 div u : 2.9365148811625573e-13
 error at the weak BC : 0.0001260783820535668
 L2 error velocity : 0.0015987112627390062 L2 error pressure: 0.039133563139561983
-particule 0 position 0.99743758980326847 3.2006319414502364e-08 3.3159769121805121e-08
+particule 0 position 0.99743758980326847 3.2006319414502357e-08 3.3159769121805121e-08
 particule 0 velocity -0.051248203934630893 6.4012638829004719e-07 6.6319538243610236e-07
 +------------------------------------------+
 |  Force  summary particle 0               |
@@ -27,7 +27,7 @@ Transient iteration : 2        Time : 0.125    Time step : 0.074999999999999997 
 div u : 1.9363160712261069e-13
 error at the weak BC : 0.00059177089011587969
 L2 error velocity : 0.0041046827157745231 L2 error pressure: 0.12720223270766259
-particule 0 position 0.98998862372383578 9.9123978112794409e-08 1.0173753159567802e-07
+particule 0 position 0.98998862372383578 9.9123978112794409e-08 1.0173753159567804e-07
 particule 0 velocity -0.12816235400044951 1.0477675525895355e-06 1.0650750366476275e-06
 +------------------------------------------+
 |  Force  summary particle 0               |
