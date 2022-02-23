@@ -1,5 +1,9 @@
 #include <core/ib_stencil.h>
 
+#include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/vector.h>
+
+
 
 template <int dim>
 unsigned int
