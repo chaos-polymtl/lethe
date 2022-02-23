@@ -59,7 +59,7 @@ public:
   value(const std::map<field, double> & /*fields_value*/) override
   {
     return density;
-  };
+  }
 
   /**
    * @brief vector_value Calculates the vector of density.
@@ -86,7 +86,7 @@ public:
            field /*id*/) override
   {
     return 0;
-  };
+  }
 
   /**
    * @brief vector_jacobian Calculates the derivative of the density with respect to a field.
@@ -102,7 +102,7 @@ public:
     std::vector<double> &jacobian_vector) override
   {
     std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
-  };
+  }
 
 private:
   const double density;

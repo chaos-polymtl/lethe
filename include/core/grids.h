@@ -24,15 +24,7 @@
 #include <core/manifolds.h>
 #include <core/parameters.h>
 
-#include <deal.II/distributed/tria.h>
 #include <deal.II/distributed/tria_base.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_in.h>
-#include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/tria.h>
-
-
 
 using namespace dealii;
 

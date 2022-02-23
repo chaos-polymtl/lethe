@@ -4,7 +4,7 @@
 #include <fstream>
 
 
-SimulationControl::SimulationControl(Parameters::SimulationControl param)
+SimulationControl::SimulationControl(const Parameters::SimulationControl param)
   : method(param.method)
   , assembly_method(param.method)
   , current_time(0)
