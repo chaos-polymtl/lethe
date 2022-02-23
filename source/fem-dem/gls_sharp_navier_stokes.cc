@@ -2866,8 +2866,8 @@ GLSSharpNavierStokesSolver<dim>::solve()
            this->simulation_parameters.particlesParameters->initial_refinement;
            ++i)
         {
-          this->pcout << "Starts the " << i + 1
-                      << " initial refinement around IB particles" << std::endl;
+          this->pcout << "Initial refinement around IB particles - Step : " << i + 1
+                      << " of " << this->simulation_parameters.particlesParameters->initial_refinement << std::endl;
 
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::

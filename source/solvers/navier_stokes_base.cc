@@ -690,7 +690,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 
       // Time monitoring
       TimerOutput::Scope t(this->computing_timer, "box refine");
-      this->pcout << "Starts the " << i + 1 << " initial box refinement"
+      this->pcout << "Initial refinement in box - Step  " << i + 1 << " of " << this->simulation_parameters.mesh_box_refinement->initial_refinement
                   << std::endl;
 
 

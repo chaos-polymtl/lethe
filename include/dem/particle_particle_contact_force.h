@@ -223,6 +223,7 @@ protected:
 
   /**
    * Carries out the calculation of the harmonic mean of two values.
+   * The harmonic mean of x and y is defined by 2*x*y/(x+y)
    *
    * @param value_one
    * @param value_two
