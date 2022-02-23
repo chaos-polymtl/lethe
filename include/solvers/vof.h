@@ -555,9 +555,7 @@ private:
   TrilinosWrappers::MPI::Vector nodal_pfg_owned;
 
   TrilinosWrappers::SparseMatrix system_matrix_pfg;
-  TrilinosWrappers::SparseMatrix complete_system_matrix_pfg;
   TrilinosWrappers::MPI::Vector  system_rhs_pfg;
-  TrilinosWrappers::MPI::Vector  complete_system_rhs_pfg;
 
   // Filtered curvature solution
   TrilinosWrappers::MPI::Vector present_curvature_solution;
@@ -571,9 +569,7 @@ private:
   std::vector<double>         curvature_values;
 
   TrilinosWrappers::SparseMatrix system_matrix_curvature;
-  TrilinosWrappers::SparseMatrix complete_system_matrix_curvature;
   TrilinosWrappers::MPI::Vector  system_rhs_curvature;
-  TrilinosWrappers::MPI::Vector  complete_system_rhs_curvature;
 
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 

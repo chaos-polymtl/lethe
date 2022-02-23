@@ -247,7 +247,7 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         pfg_component_interpretation(
-          dim + 1, DataComponentInterpretation::component_is_scalar);
+          dim, DataComponentInterpretation::component_is_scalar);
       for (unsigned int i = 0; i < dim; ++i)
         pfg_component_interpretation[i] =
           DataComponentInterpretation::component_is_part_of_vector;
@@ -554,6 +554,7 @@ void
 VolumeOfFluid<dim>::assemble_pfg_matrix_and_rhs(
   TrilinosWrappers::MPI::Vector &solution)
 {
+  // Get fe values of VOF phase fraction and phase fraction gradient (pfg)
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
                                          *this->fe,
                                          *this->cell_quadrature,
@@ -586,7 +587,7 @@ VolumeOfFluid<dim>::assemble_pfg_matrix_and_rhs(
   std::vector<Tensor<1, dim>> pfg_values(n_q_points);
   std::vector<Tensor<2, dim>> pfg_gradient_values(n_q_points);
 
-
+  // Reinitialize system matrix and rhs for the pfg
   system_rhs_pfg    = 0;
   system_matrix_pfg = 0;
 
@@ -594,6 +595,7 @@ VolumeOfFluid<dim>::assemble_pfg_matrix_and_rhs(
     {
       if (pfg_cell->is_locally_owned())
         {
+          // Gather the active cell iterator related to the VOF phase fraction
           typename DoFHandler<dim>::active_cell_iterator cell(
             &(*this->triangulation),
             pfg_cell->level(),
@@ -606,6 +608,7 @@ VolumeOfFluid<dim>::assemble_pfg_matrix_and_rhs(
           local_matrix_pfg = 0;
           local_rhs_pfg    = 0;
 
+          // Get phase fraction values, pfg values and gradients
           fe_values_phase_fraction.get_function_gradients(
             solution, phase_gradient_values);
 
@@ -717,6 +720,7 @@ void
 VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   TrilinosWrappers::MPI::Vector &present_pfg_solution)
 {
+  // Get fe values of phase fraction gradient (pfg) and curvature
   FEValues<dim> fe_values_curvature(*this->curvature_mapping,
                                     *this->fe_curvature,
                                     *this->cell_quadrature,
@@ -744,6 +748,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   std::vector<Tensor<1, dim>>      curvature_gradient_values(n_q_points);
   const FEValuesExtractors::Vector pfg(0);
 
+  // Reinitialize system matrix and rhs for the curvature
   system_rhs_curvature    = 0;
   system_matrix_curvature = 0;
 
@@ -752,6 +757,8 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
     {
       if (curvature_cell->is_locally_owned())
         {
+          // Gather the active cell iterator related to the phase fraction
+          // gradient (pfg)
           typename DoFHandler<dim>::active_cell_iterator pfg_cell(
             &(*this->triangulation),
             curvature_cell->level(),
@@ -764,6 +771,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
           local_matrix_curvature = 0;
           local_rhs_curvature    = 0;
 
+          // Get pfg values, curvature values and gradients
           fe_values_pfg[pfg].get_function_values(present_pfg_solution,
                                                  pfg_values);
 
@@ -1028,14 +1036,7 @@ VolumeOfFluid<dim>::setup_dofs()
                            dsp_pfg,
                            mpi_communicator);
 
-  complete_system_matrix_pfg.reinit(locally_owned_dofs_pfg,
-                                    locally_owned_dofs_pfg,
-                                    dsp_pfg,
-                                    mpi_communicator);
-
   system_rhs_pfg.reinit(locally_owned_dofs_pfg, mpi_communicator);
-
-  complete_system_rhs_pfg.reinit(locally_owned_dofs_pfg, mpi_communicator);
 
   present_pfg_solution.reinit(locally_owned_dofs_pfg,
                               locally_relevant_dofs_pfg,
@@ -1082,15 +1083,7 @@ VolumeOfFluid<dim>::setup_dofs()
                                  dsp_curvature,
                                  mpi_communicator);
 
-  complete_system_matrix_curvature.reinit(locally_owned_dofs_curvature,
-                                          locally_owned_dofs_curvature,
-                                          dsp_curvature,
-                                          mpi_communicator);
-
   system_rhs_curvature.reinit(locally_owned_dofs_curvature, mpi_communicator);
-
-  complete_system_rhs_curvature.reinit(locally_owned_dofs_curvature,
-                                       mpi_communicator);
 
   present_curvature_solution.reinit(locally_owned_dofs_curvature,
                                     locally_relevant_dofs_curvature,
