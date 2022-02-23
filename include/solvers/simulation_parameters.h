@@ -31,9 +31,6 @@
 #include <solvers/physical_properties_manager.h>
 #include <solvers/source_terms.h>
 
-#include <dem/dem_solver_parameters.h>
-#include <fem-dem/parameters_cfd_dem.h>
-
 template <int dim>
 class SimulationParameters
 {

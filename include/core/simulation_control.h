@@ -146,13 +146,15 @@ public:
    *
    **/
 
-  SimulationControl(Parameters::SimulationControl param);
+  SimulationControl(const Parameters::SimulationControl param);
 
   /**
    * @brief Pure virtual function to control the progression of the simulation.
    * As long as integrate returns true, a simulation should proceed. The
    * criteria used to stop/continue the simulation in iterate is a property of
-   * each individual time stepping control.
+   * each individual time stepping control. For example, steady-state simulation
+   * will proceed until the number of required mesh adaptation has been
+   *performed.
    **/
   virtual bool
   integrate() = 0;
@@ -201,7 +203,7 @@ public:
 
   /**
    * @brief Calculates the next value of the time step. The base function returns
-   * the value of the time step, but derived class implement adaptative time
+   * the value of the time step, but derived class may implement adaptative time
    * stepping
    */
   virtual double
@@ -234,7 +236,7 @@ public:
   get_output_boundaries()
   {
     return output_boundaries;
-  };
+  }
 
   /**
    * @brief Check if the present iteration is a verbose iteration where
@@ -254,7 +256,7 @@ public:
     bool return_value = first_assembly;
     first_assembly    = false;
     return return_value;
-  };
+  }
 
   /**
    * @brief Define the assembly method to use while integrating. Use to start bdf 2 and bdf 3 scheme.
@@ -324,68 +326,68 @@ public:
   }
 
   std::string
-  get_output_name()
+  get_output_name() const
   {
     return output_name;
   }
 
   std::string
-  get_output_path()
+  get_output_path() const
   {
     return output_path;
   }
 
   unsigned int
-  get_group_files()
+  get_group_files() const
   {
     return group_files;
   }
 
   unsigned int
-  get_log_precision()
+  get_log_precision() const
   {
     return log_precision;
   }
 
   double
-  get_current_time()
+  get_current_time() const
   {
     return current_time;
   }
 
   double
-  get_previous_time()
+  get_previous_time() const
   {
     return previous_time;
   }
 
 
   std::vector<double>
-  get_time_steps_vector()
+  get_time_steps_vector() const
   {
     return time_step_vector;
   }
 
   double
-  get_CFL()
+  get_CFL() const
   {
     return CFL;
   }
 
   unsigned int
-  get_step_number()
+  get_step_number() const
   {
     return iteration_number;
   }
 
   unsigned int
-  get_number_subdivision()
+  get_number_subdivision() const
   {
     return subdivision;
   }
 
   Parameters::SimulationControl::TimeSteppingMethod
-  get_assembly_method()
+  get_assembly_method() const
   {
     return assembly_method;
   }

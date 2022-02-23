@@ -20,13 +20,7 @@
 #ifndef lethe_manifolds_h
 #define lethe_manifolds_h
 
-#include <deal.II/base/data_out_base.h>
 #include <deal.II/base/parameter_handler.h>
-
-#include <deal.II/distributed/tria.h>
-#include <deal.II/distributed/tria_base.h>
-
-#include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/numerics/data_postprocessor.h>
 

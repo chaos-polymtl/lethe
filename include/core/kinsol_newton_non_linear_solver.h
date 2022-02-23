@@ -17,7 +17,6 @@
 #ifndef kinsol_non_linear_solver_h
 #define kinsol_non_linear_solver_h
 
-#include <core/multiphysics.h>
 #include <core/non_linear_solver.h>
 #include <core/parameters.h>
 
