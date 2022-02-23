@@ -92,7 +92,7 @@ For two phases, the properties are defined for each fluid. Default values are:
 * ``subsection fluid 0`` indicates the properties of fluid where the phase indicator = 0 (Volume of Fluid method), as defined when initializing the free surface (see the :doc:`initial_conditions` subsection), and correspondingly ``fluid 1`` is located where the phase indicator = 1.
 
 .. warning:: 
-  Lethe now supports the use of physical properties model that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.
+  Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.
 
 
 .. _rheological_models:
@@ -100,7 +100,7 @@ For two phases, the properties are defined for each fluid. Default values are:
 Rheological models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Two families of rheological models are supported in Lethe. The first one are generalized non Newtonian rheologies (for shear thinning and shear thickening flows). In these models, the viscosity depends on the shear rate. The second family of rheological model possess a viscosity that is independent of the shear rate, but that may depend on other fields such as the temperature.
+Two families of rheological models are supported in Lethe. The first one are generalized non Newtonian rheologies (for shear thinning and shear thickening flows). In these models, the viscosity depends on the shear rate. The second family of rheological models possess a viscosity that is independent of the shear rate, but that may depend on other fields such as the temperature.
 
 Default values for a non Newtonian fluid are
 
@@ -116,12 +116,13 @@ Default values for a non Newtonian fluid are
     end
     
 * The ``rheological model`` parameter sets which rheological model you are using. The available options are:
+    * ``newtonian``
     * ``carreau``
     * ``power-law`` 
     * ``phase_change``
 
 
-The Carreau model is in reality the five parameter Carreau model :
+The Carreau model is in reality the five parameter Carreau model:
 
 .. math::
 
@@ -202,7 +203,7 @@ The phase change model is a simple rheological model in which the viscosity depe
               \nu_l \; \text{if} \; T>T_{l}
               \end{cases}
 
-where math:`T_l` and :math:`T_s` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_s` and :math:`T_l` and solidification will occur between :math:`T_l` and :math:`T_s`.
+where :math:`T_l` and :math:`T_s` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_s` and :math:`T_l` and solidification will occur between :math:`T_l` and :math:`T_s`.
 
 This model is parameterized using the ``phase change`` subsection
 

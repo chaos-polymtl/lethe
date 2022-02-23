@@ -313,7 +313,7 @@ public:
   /**
    * @brief Parameter constructor
    *
-   * @param viscosity The constant newtonian viscosity
+   * @param p_phase_change parameters The parameters needed by the phase change rheology
    */
   PhaseChangeRheology(const Parameters::PhaseChange p_phase_change_parameters)
     : param(p_phase_change_parameters)
