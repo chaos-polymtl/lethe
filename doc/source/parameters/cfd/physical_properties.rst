@@ -33,8 +33,8 @@ Physical Properties
        set tracer diffusivity   = 0
      end
   end
-
-* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law`` and ``carreau``. For more details on the rheological model, see  `rheological_models`_ .
+ 
+* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological model, see  `rheological_models`_ .
 
 * The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonain fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
 
@@ -92,7 +92,7 @@ For two phases, the properties are defined for each fluid. Default values are:
 * ``subsection fluid 0`` indicates the properties of fluid where the phase indicator = 0 (Volume of Fluid method), as defined when initializing the free surface (see the :doc:`initial_conditions` subsection), and correspondingly ``fluid 1`` is located where the phase indicator = 1.
 
 .. warning:: 
-  Lethe now supports the use of physical properties model that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results.
+  Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.
 
 
 .. _rheological_models:
@@ -100,11 +100,8 @@ For two phases, the properties are defined for each fluid. Default values are:
 Rheological models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Generalized non Newtonian rheologies (for shear thinning and shear thickening flows) are supported in Lethe. 
+Two families of rheological models are supported in Lethe. The first one are generalized non Newtonian rheologies (for shear thinning and shear thickening flows). In these models, the viscosity depends on the shear rate. The second family of rheological models possess a viscosity that is independent of the shear rate, but that may depend on other fields such as the temperature.
 
-.. note:: 
-  Currently, non Newtonian flow simulations are only supported using one single fluid. A possibility for multiple Newtonian/non Newtonian fluids is upcoming!
-  
 Default values for a non Newtonian fluid are
 
 .. code-block:: text
@@ -112,19 +109,20 @@ Default values for a non Newtonian fluid are
     subsection physical properties
       set number of fluids		= 1
       subsection fluid 0
+        set rheological model = carreau
         subsection non newtonian
-          set model 		= carreau
         end
       end
     end
     
-* The ``non newtonian flow`` parameter has to be set to ``true`` to use a rheological model.
-
-* The ``model`` parameter sets which rheological model you are using. The available options are:
+* The ``rheological model`` parameter sets which rheological model you are using. The available options are:
+    * ``newtonian``
     * ``carreau``
     * ``power-law`` 
+    * ``phase_change``
 
-The Carreau model is in reality the five parameter Carreau model :
+
+The Carreau model is in reality the five parameter Carreau model:
 
 .. math::
 
@@ -139,8 +137,8 @@ The parameters for the Carreau model are defined by the ``carreau`` subsection. 
   subsection physical properties
     set number of fluids		= 1
     subsection fluid 0
+      set rheological model = carreau
       subsection non newtonian
-        set model 		= carreau
         subsection carreau
           set viscosity_0	= 1.0
           set viscosity_inf = 1.0
@@ -178,8 +176,8 @@ When using the Power-Law model, the default values are:
   subsection physical properties
     set number of fluids		= 1
     subsection fluid 0
+      set rheological model = power-law
       subsection non newtonian
-        set model 		= power-law
         subsection power-law
           set K = 1.0
           set n = 0.5
@@ -189,11 +187,53 @@ When using the Power-Law model, the default values are:
     end
   end
 
-* The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity is it were Newtonian.
+* The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity if it were Newtonian.
 
 * The ``n`` parameter is the flow behavior index. low  It sets the slope in the log-log :math:`\eta = f(\dot{\gamma})` graph.
 
 * The ``shear rate min`` parameter yields the magnitude of the shear rate tensor for which the viscosity is calculated. Since the model uses a power operation, a nul shear rate magnitude leads to an invalid viscosity. To ensure numerical stability, the shear rate cannot go below this threshold when the viscosity  calculated.
+
+
+The phase change model is a simple rheological model in which the viscosity depends on the temperature. This model is used to model melting and freezing of components. The kinematic viscosity :math:`\nu` is given by :
+
+.. math::
+
+  \nu =   c^{*}_p  = \begin{cases} \nu_s \; \text{if} \; T<T_{s} \\
+              \frac{T-T_s}{T_l-T_s} \nu_l + (1-\frac{T-T_s}{T_l-T_s}) \nu_s \; \text{if} \; T_{l}>T>T_{s}\\
+              \nu_l \; \text{if} \; T>T_{l}
+              \end{cases}
+
+where :math:`T_l` and :math:`T_s` are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between :math:`T_s` and :math:`T_l` and solidification will occur between :math:`T_l` and :math:`T_s`.
+
+This model is parameterized using the ``phase change`` subsection
+
+.. code-block:: text
+
+  subsection phase change
+    # Temperature of the liquidus
+    set liquidus temperature = 1
+  
+    # Temperature of the solidus
+    set solidus temperature  = 0
+
+    # Specific heat of the liquid phase
+    set viscosity liquid = 1
+  
+    # viscosity of the solid phase
+    set viscosity solid  = 1
+  end
+
+
+* The ``liquidus temperature`` is :math:`T_l`
+
+* The ``solidus temperature`` is :math:`T_s`
+
+* The ``specific heat liquid`` is :math:`\nu_{l}`
+
+* The ``specific heat solid`` is :math:`\nu_{s}`
+
+.. note::
+  The phase change subsection is used to parametrize *both* ``rheological model = phase_change`` *and* ``specific heat model = phase_change``. This prevents parameter duplication.
 
 
 .. _thermal_conductivity_models:

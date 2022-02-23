@@ -81,7 +81,9 @@ PhysicalPropertiesManager::initialize(
       establish_fields_required_by_model(*thermal_expansion[f]);
 
       if (physical_properties.fluids[f].rheological_model !=
-          Parameters::Fluid::RheologicalModel::newtonian)
+            Parameters::Fluid::RheologicalModel::newtonian &&
+          physical_properties.fluids[f].rheological_model !=
+            Parameters::Fluid::RheologicalModel::phase_change)
         non_newtonian_flow = true;
     }
 }

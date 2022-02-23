@@ -217,6 +217,15 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
+  if (this->simulation_parameters.multiphysics.heat_transfer)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
+    }
+
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
@@ -271,7 +280,7 @@ GDNavierStokesSolver<dim>::assemble_system_rhs()
                               *this->mapping);
     }
 
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  if (this->simulation_parameters.multiphysics.heat_transfer)
     {
       const DoFHandler<dim> *dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
@@ -337,7 +346,7 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  if (this->simulation_parameters.multiphysics.heat_transfer)
     {
       const DoFHandler<dim> *dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);

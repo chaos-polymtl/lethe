@@ -446,6 +446,8 @@ namespace Parameters
       latent_enthalpy = prm.get_double("latent enthalpy");
       cp_l            = prm.get_double("specific heat liquid");
       cp_s            = prm.get_double("specific heat solid");
+      viscosity_l     = prm.get_double("viscosity liquid");
+      viscosity_s     = prm.get_double("viscosity solid");
     }
 
     Assert(T_liquidus > T_solidus,
@@ -482,6 +484,16 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Specific heat of the solid phase");
+
+      prm.declare_entry("viscosity liquid",
+                        "1",
+                        Patterns::Double(),
+                        "Viscosity of the liquid phase");
+
+      prm.declare_entry("viscosity solid",
+                        "1",
+                        Patterns::Double(),
+                        "Viscosity of the solid phase");
     }
     prm.leave_subsection();
   }
@@ -577,7 +589,8 @@ namespace Parameters
 
       prm.declare_entry("rheological model",
                         "newtonian",
-                        Patterns::Selection("newtonian|power-law|carreau"),
+                        Patterns::Selection(
+                          "newtonian|power-law|carreau|phase_change"),
                         "Rheological model "
                         "Choices are <newtonian|power-law|carreau>.");
 
@@ -673,6 +686,11 @@ namespace Parameters
         {
           rheological_model = RheologicalModel::newtonian;
         }
+      else if (op == "phase_change")
+        {
+          rheological_model = RheologicalModel::phase_change;
+        }
+
       non_newtonian_parameters.parse_parameters(prm);
     }
     prm.leave_subsection();

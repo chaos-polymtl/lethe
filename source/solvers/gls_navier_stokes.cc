@@ -476,6 +476,15 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
                               *this->mapping);
     }
 
+  if (this->simulation_parameters.multiphysics.heat_transfer)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
+    }
+
   WorkStream::run(
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
@@ -523,6 +532,22 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
                               *this->multiphysics->get_solution(PhysicsID::VOF),
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+  if (this->simulation_parameters.multiphysics.heat_transfer)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+      typename DoFHandler<dim>::active_cell_iterator temperature_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_ht);
+
+      scratch_data.reinit_heat_transfer(temperature_cell,
+                                        *this->multiphysics->get_solution(
+                                          PhysicsID::heat_transfer));
     }
 
   scratch_data.calculate_physical_properties();
@@ -579,7 +604,7 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                               *this->mapping);
     }
 
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  if (this->simulation_parameters.multiphysics.heat_transfer)
     {
       const DoFHandler<dim> *dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
@@ -644,7 +669,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  if (this->simulation_parameters.multiphysics.heat_transfer)
     {
       const DoFHandler<dim> *dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
@@ -1280,6 +1305,8 @@ GLSNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
+
+
 
   while (this->simulation_control->integrate())
     {
