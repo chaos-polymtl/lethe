@@ -58,7 +58,7 @@ public:
    * Initialize the IBParticlesDEM object with the parameters, the mpi
    * communicator and the particles.
    *
-   * @param p_nsparam The parameters' object of the simulation.
+   * @param p_nsparam The parameters for the immersed boundary particles
    * @param dem_parameters
    * @param mpi_communicator_input The mpi communicator of the simulation.
    *
