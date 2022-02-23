@@ -29,6 +29,8 @@ class IBParticle
 {
 public:
   // Function to initialise the value associated with each particle.
+
+  // Properties Index is necessary to interface with some DEM functions and simplify the creation of vtu output file.
   enum PropertiesIndex : int
   {
     id           = 0,
