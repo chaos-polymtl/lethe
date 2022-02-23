@@ -65,9 +65,9 @@ public:
    * @param particles The particles vector containing all the IB particles.
    */
   void
-  initialize(std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
-             MPI_Comm &                   mpi_communicator_input,
-             std::vector<IBParticle<dim>> particles);
+  initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
+             const MPI_Comm &                   mpi_communicator_input,
+             const std::vector<IBParticle<dim>>& particles);
 
 
   /**
@@ -80,7 +80,7 @@ public:
    * @param time The current CFD time.
    */
   void
-  update_particles(std::vector<IBParticle<dim>> particles, double &time);
+  update_particles(const std::vector<IBParticle<dim>>& particles, double time);
 
 
   /**
@@ -91,7 +91,7 @@ public:
    *
    */
   void
-  particles_dem(double &dt);
+  integrate_particles_motion(const double dt);
 
   /**
    * @brief Calculates non-linear (Hertzian) particle-particle contact force
@@ -103,7 +103,7 @@ public:
    * @param contact_force a vector containing the contact torques between particles
    */
   void
-  calculate_pp_contact_force(const double &             dt_dem,
+  calculate_pp_contact_force(const double               dt_dem,
                              std::vector<Tensor<1, 3>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
 
@@ -118,7 +118,7 @@ public:
    * @param contact_force a vector containing the contact torques between particles
    */
   void
-  calculate_pw_contact_force(const double &             dt_dem,
+  calculate_pw_contact_force(const double               dt_dem,
                              std::vector<Tensor<1, 3>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
 
@@ -136,8 +136,8 @@ public:
 
   void
   update_particles_boundary_contact(
-    std::vector<IBParticle<dim>> &particles,
-    DoFHandler<dim> &             dof_handler,
+    const std::vector<IBParticle<dim>> &particles,
+    const DoFHandler<dim> &             dof_handler,
     const Quadrature<dim - 1> &   face_quadrature_formula,
     const Mapping<dim> &          mapping);
 

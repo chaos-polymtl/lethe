@@ -22,6 +22,7 @@
 #include <dem/particle_particle_contact_info_struct.h>
 #include <dem/rolling_resistance_torque_models.h>
 
+#include <core/auxiliary_math_functions.h>
 #include <deal.II/particles/particle_handler.h>
 
 #include <boost/range/adaptor/map.hpp>
@@ -221,16 +222,6 @@ protected:
     const ArrayView<const double> &particle_one_properties,
     const ArrayView<const double> &particle_two_properties);
 
-  /**
-   * Carries out the calculation of the harmonic mean of two values.
-   * The harmonic mean of x and y is defined by 2*x*y/(x+y)
-   *
-   * @param value_one
-   * @param value_two
-   * @return harmonic mean of value_one and value_two
-   */
-  double
-  harmonic_mean(const double &value_one, const double &value_two);
 
   std::map<int, std::map<int, double>> effective_youngs_modulus;
   std::map<int, std::map<int, double>> effective_shear_modulus;

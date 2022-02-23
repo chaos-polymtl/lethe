@@ -356,20 +356,11 @@ ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
       (1 + wall_poisson_ratio)) +
      DBL_MIN);
 
-  this->effective_coefficient_of_restitution[particle_type] =
-    2 * particle.restitution_coefficient * wall_restitution_coefficient /
-    (particle.restitution_coefficient + wall_restitution_coefficient + DBL_MIN);
+  this->effective_coefficient_of_restitution[particle_type] = harmonic_mean(particle.restitution_coefficient,wall_restitution_coefficient);
 
-  this->effective_coefficient_of_friction[particle_type] =
-    2 * particle.friction_coefficient * wall_friction_coefficient /
-    (particle.friction_coefficient + wall_friction_coefficient + DBL_MIN);
+  this->effective_coefficient_of_friction[particle_type] = harmonic_mean(particle.friction_coefficient,wall_friction_coefficient);
 
-  this->effective_coefficient_of_rolling_friction[particle_type] =
-    2 * particle.rolling_friction_coefficient *
-    wall_rolling_friction_coefficient /
-    (particle.rolling_friction_coefficient + wall_rolling_friction_coefficient +
-     DBL_MIN);
-
+  this->effective_coefficient_of_rolling_friction[particle_type] = harmonic_mean(particle.rolling_friction_coefficient,wall_rolling_friction_coefficient);
 
   this->update_contact_information(contact_info, particle_properties, dt);
 

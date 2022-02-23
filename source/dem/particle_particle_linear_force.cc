@@ -64,14 +64,14 @@ ParticleParticleLinearForce<dim>::ParticleParticleLinearForce(
              DBL_MIN);
 
           this->effective_coefficient_of_restitution[i][j] =
-            this->harmonic_mean(restitution_coefficient_i,
+            harmonic_mean(restitution_coefficient_i,
                                 restitution_coefficient_j);
 
           this->effective_coefficient_of_friction[i][j] =
-            this->harmonic_mean(friction_coefficient_i, friction_coefficient_j);
+            harmonic_mean(friction_coefficient_i, friction_coefficient_j);
 
           this->effective_coefficient_of_rolling_friction[i][j] =
-            this->harmonic_mean(rolling_friction_coefficient_i,
+            harmonic_mean(rolling_friction_coefficient_i,
                                 rolling_friction_coefficient_j);
         }
     }
@@ -407,15 +407,15 @@ ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
 
   this->effective_coefficient_of_restitution[particle_one_type]
                                             [particle_two_type] =
-    this->harmonic_mean(particle_one.restitution_coefficient,
+    harmonic_mean(particle_one.restitution_coefficient,
                         particle_two.restitution_coefficient);
   this
     ->effective_coefficient_of_friction[particle_one_type][particle_two_type] =
-    this->harmonic_mean(particle_one.friction_coefficient,
+    harmonic_mean(particle_one.friction_coefficient,
                         particle_two.friction_coefficient);
   this->effective_coefficient_of_rolling_friction[particle_one_type]
                                                  [particle_two_type] =
-    this->harmonic_mean(particle_one.rolling_friction_coefficient,
+    harmonic_mean(particle_one.rolling_friction_coefficient,
                         particle_two.rolling_friction_coefficient);
 
   // Since the normal overlap is already calculated we update

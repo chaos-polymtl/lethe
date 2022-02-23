@@ -389,7 +389,6 @@ protected:
   void
   write_output_torques();
 
-
   // Member variables
 protected:
   DofsType locally_owned_dofs;
