@@ -68,17 +68,15 @@ ParticleParticleHertzMindlinLimitOverlap<
           this->effective_coefficient_of_restitution[i].insert(
             {j,
              harmonic_mean(restitution_coefficient_i,
-                                 restitution_coefficient_j)});
+                           restitution_coefficient_j)});
 
           this->effective_coefficient_of_friction[i].insert(
-            {j,
-             harmonic_mean(friction_coefficient_i,
-                                 friction_coefficient_j)});
+            {j, harmonic_mean(friction_coefficient_i, friction_coefficient_j)});
 
           this->effective_coefficient_of_rolling_friction[i].insert(
             {j,
              harmonic_mean(rolling_friction_coefficient_i,
-                                 rolling_friction_coefficient_j)});
+                           rolling_friction_coefficient_j)});
 
           double restitution_coefficient_particle_log =
             std::log(this->effective_coefficient_of_restitution[i][j]);
@@ -428,15 +426,15 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
   this->effective_coefficient_of_restitution[particle_one_type]
                                             [particle_two_type] =
     harmonic_mean(particle_one.restitution_coefficient,
-                        particle_two.restitution_coefficient);
+                  particle_two.restitution_coefficient);
   this
     ->effective_coefficient_of_friction[particle_one_type][particle_two_type] =
     harmonic_mean(particle_one.friction_coefficient,
-                        particle_two.friction_coefficient);
+                  particle_two.friction_coefficient);
   this->effective_coefficient_of_rolling_friction[particle_one_type]
                                                  [particle_two_type] =
     harmonic_mean(particle_one.rolling_friction_coefficient,
-                        particle_two.rolling_friction_coefficient);
+                  particle_two.rolling_friction_coefficient);
 
   const double restitution_coefficient_particle_log =
     std::log(this->effective_coefficient_of_restitution[particle_one_type]
@@ -669,17 +667,15 @@ ParticleParticleHertzMindlinLimitForce<
           this->effective_coefficient_of_restitution[i].insert(
             {j,
              harmonic_mean(restitution_coefficient_i,
-                                 restitution_coefficient_j)});
+                           restitution_coefficient_j)});
 
           this->effective_coefficient_of_friction[i].insert(
-            {j,
-             harmonic_mean(friction_coefficient_i,
-                                 friction_coefficient_j)});
+            {j, harmonic_mean(friction_coefficient_i, friction_coefficient_j)});
 
           this->effective_coefficient_of_rolling_friction[i].insert(
             {j,
              harmonic_mean(rolling_friction_coefficient_i,
-                                 rolling_friction_coefficient_j)});
+                           rolling_friction_coefficient_j)});
 
           double restitution_coefficient_particle_log =
             std::log(this->effective_coefficient_of_restitution[i][j]);
@@ -1026,15 +1022,15 @@ ParticleParticleHertzMindlinLimitForce<dim>::
   this->effective_coefficient_of_restitution[particle_one_type]
                                             [particle_two_type] =
     harmonic_mean(particle_one.restitution_coefficient,
-                        particle_two.restitution_coefficient);
+                  particle_two.restitution_coefficient);
   this
     ->effective_coefficient_of_friction[particle_one_type][particle_two_type] =
     harmonic_mean(particle_one.friction_coefficient,
-                        particle_two.friction_coefficient);
+                  particle_two.friction_coefficient);
   this->effective_coefficient_of_rolling_friction[particle_one_type]
                                                  [particle_two_type] =
     harmonic_mean(particle_one.rolling_friction_coefficient,
-                        particle_two.rolling_friction_coefficient);
+                  particle_two.rolling_friction_coefficient);
 
   const double restitution_coefficient_particle_log =
     std::log(this->effective_coefficient_of_restitution[particle_one_type]
@@ -1258,17 +1254,15 @@ ParticleParticleHertz<dim>::ParticleParticleHertz(
           this->effective_coefficient_of_restitution[i].insert(
             {j,
              harmonic_mean(restitution_coefficient_i,
-                                 restitution_coefficient_j)});
+                           restitution_coefficient_j)});
 
           this->effective_coefficient_of_friction[i].insert(
-            {j,
-             harmonic_mean(friction_coefficient_i,
-                                 friction_coefficient_j)});
+            {j, harmonic_mean(friction_coefficient_i, friction_coefficient_j)});
 
           this->effective_coefficient_of_rolling_friction[i].insert(
             {j,
              harmonic_mean(rolling_friction_coefficient_i,
-                                 rolling_friction_coefficient_j)});
+                           rolling_friction_coefficient_j)});
 
           double restitution_coefficient_particle_log =
             std::log(this->effective_coefficient_of_restitution[i][j]);
@@ -1611,15 +1605,15 @@ ParticleParticleHertz<dim>::calculate_IB_particle_particle_contact_force(
   this->effective_coefficient_of_restitution[particle_one_type]
                                             [particle_two_type] =
     harmonic_mean(particle_one.restitution_coefficient,
-                        particle_two.restitution_coefficient);
+                  particle_two.restitution_coefficient);
   this
     ->effective_coefficient_of_friction[particle_one_type][particle_two_type] =
     harmonic_mean(particle_one.friction_coefficient,
-                        particle_two.friction_coefficient);
+                  particle_two.friction_coefficient);
   this->effective_coefficient_of_rolling_friction[particle_one_type]
                                                  [particle_two_type] =
     harmonic_mean(particle_one.rolling_friction_coefficient,
-                        particle_two.rolling_friction_coefficient);
+                  particle_two.rolling_friction_coefficient);
 
   const double restitution_coefficient_particle_log =
     std::log(this->effective_coefficient_of_restitution[particle_one_type]

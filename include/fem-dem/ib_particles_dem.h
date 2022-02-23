@@ -14,7 +14,8 @@
 * ---------------------------------------------------------------------
 
 *
-* Author: Lucka Barbeau, Shahab Golshan, Bruno Blais Polytechnique Montreal, 2021
+* Author: Lucka Barbeau, Shahab Golshan, Bruno Blais Polytechnique Montreal,
+2021
 */
 
 #ifndef LETHE_IB_PARTICLES_DEM_H
@@ -41,7 +42,8 @@ using namespace dealii;
 /**
  * A solver class for the DEM used in conjunction with IB particles and
  * gls_sharp_navier_stokes. This class defines and uses some functions of the
- * DEM class that have been modified and simplified to be compatible with IB_particles.
+ * DEM class that have been modified and simplified to be compatible with
+ * IB_particles.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
@@ -66,8 +68,8 @@ public:
    */
   void
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
-             const MPI_Comm &                   mpi_communicator_input,
-             const std::vector<IBParticle<dim>>& particles);
+             const MPI_Comm &                    mpi_communicator_input,
+             const std::vector<IBParticle<dim>> &particles);
 
 
   /**
@@ -80,7 +82,7 @@ public:
    * @param time The current CFD time.
    */
   void
-  update_particles(const std::vector<IBParticle<dim>>& particles, double time);
+  update_particles(const std::vector<IBParticle<dim>> &particles, double time);
 
 
   /**
@@ -138,8 +140,8 @@ public:
   update_particles_boundary_contact(
     const std::vector<IBParticle<dim>> &particles,
     const DoFHandler<dim> &             dof_handler,
-    const Quadrature<dim - 1> &   face_quadrature_formula,
-    const Mapping<dim> &          mapping);
+    const Quadrature<dim - 1> &         face_quadrature_formula,
+    const Mapping<dim> &                mapping);
 
 
   std::vector<IBParticle<dim>> dem_particles;

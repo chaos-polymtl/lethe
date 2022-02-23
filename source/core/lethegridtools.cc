@@ -138,9 +138,10 @@ LetheGridTools::find_cell_around_point_with_tree(
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
-LetheGridTools::find_boundary_cells_in_sphere(const DoFHandler<dim> &dof_handler,
-                                             const Point<dim> &     center,
-                                             double                 radius)
+LetheGridTools::find_boundary_cells_in_sphere(
+  const DoFHandler<dim> &dof_handler,
+  const Point<dim> &     center,
+  double                 radius)
 {
   MappingQ1<dim> mapping;
   const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
@@ -979,9 +980,9 @@ LetheGridTools::cell_pierced_by_edge<3>(
 
 template std::vector<typename DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_boundary_cells_in_sphere(const DoFHandler<2> &dof_handler,
-                                             const Point<2> &     center,
-                                             double               radius);
+                                              const Point<2> &     center,
+                                              double               radius);
 template std::vector<typename DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_boundary_cells_in_sphere(const DoFHandler<3> &dof_handler,
-                                             const Point<3> &     center,
-                                             double               radius);
+                                              const Point<3> &     center,
+                                              double               radius);

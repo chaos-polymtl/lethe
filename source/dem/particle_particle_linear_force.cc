@@ -64,15 +64,14 @@ ParticleParticleLinearForce<dim>::ParticleParticleLinearForce(
              DBL_MIN);
 
           this->effective_coefficient_of_restitution[i][j] =
-            harmonic_mean(restitution_coefficient_i,
-                                restitution_coefficient_j);
+            harmonic_mean(restitution_coefficient_i, restitution_coefficient_j);
 
           this->effective_coefficient_of_friction[i][j] =
             harmonic_mean(friction_coefficient_i, friction_coefficient_j);
 
           this->effective_coefficient_of_rolling_friction[i][j] =
             harmonic_mean(rolling_friction_coefficient_i,
-                                rolling_friction_coefficient_j);
+                          rolling_friction_coefficient_j);
         }
     }
   if (dem_parameters.model_parameters.rolling_resistance_method ==
@@ -408,15 +407,15 @@ ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
   this->effective_coefficient_of_restitution[particle_one_type]
                                             [particle_two_type] =
     harmonic_mean(particle_one.restitution_coefficient,
-                        particle_two.restitution_coefficient);
+                  particle_two.restitution_coefficient);
   this
     ->effective_coefficient_of_friction[particle_one_type][particle_two_type] =
     harmonic_mean(particle_one.friction_coefficient,
-                        particle_two.friction_coefficient);
+                  particle_two.friction_coefficient);
   this->effective_coefficient_of_rolling_friction[particle_one_type]
                                                  [particle_two_type] =
     harmonic_mean(particle_one.rolling_friction_coefficient,
-                        particle_two.rolling_friction_coefficient);
+                  particle_two.rolling_friction_coefficient);
 
   // Since the normal overlap is already calculated we update
   // this element of the container here. The rest of information

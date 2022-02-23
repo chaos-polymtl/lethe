@@ -14,7 +14,8 @@
 * ---------------------------------------------------------------------
 
 *
-* Author: Lucka Barbeau, Shahab Golshan, Bruno Blais Polytechnique Montreal, 2021
+* Author: Lucka Barbeau, Shahab Golshan, Bruno Blais Polytechnique Montreal,
+2021
 */
 
 #include <core/tensors_and_points_dimension_manipulation.h>
@@ -31,7 +32,7 @@ void
 IBParticlesDEM<dim>::initialize(
   const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
   const MPI_Comm &                                     mpi_communicator_input,
-  const std::vector<IBParticle<dim>>    &               particles)
+  const std::vector<IBParticle<dim>> &                 particles)
 {
   parameters       = p_nsparam;
   mpi_communicator = mpi_communicator_input;
@@ -58,8 +59,9 @@ IBParticlesDEM<dim>::initialize(
 }
 template <int dim>
 void
-IBParticlesDEM<dim>::update_particles(const std::vector<IBParticle<dim>>& particles,
-                                      double                     time)
+IBParticlesDEM<dim>::update_particles(
+  const std::vector<IBParticle<dim>> &particles,
+  double                              time)
 {
   dem_particles = particles;
   cfd_time      = time;
@@ -69,7 +71,7 @@ IBParticlesDEM<dim>::update_particles(const std::vector<IBParticle<dim>>& partic
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pp_contact_force(
-  const double              dt_dem,
+  const double               dt_dem,
   std::vector<Tensor<1, 3>> &contact_force,
   std::vector<Tensor<1, 3>> &contact_torque)
 {
@@ -84,8 +86,9 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
               const Point<dim> particle_two_location = particle_two.position;
               particle_particle_contact_info_struct<dim> contact_info;
 
-              // Check if there is already information on the contact of these to particles.
-              // If not initialize it in the contact map with 0 values.
+              // Check if there is already information on the contact of these
+              // to particles. If not initialize it in the contact map with 0
+              // values.
               try
                 {
                   contact_info = pp_contact_map[particle_one.particle_id]
@@ -171,8 +174,8 @@ void
 IBParticlesDEM<dim>::update_particles_boundary_contact(
   const std::vector<IBParticle<dim>> &particles,
   const DoFHandler<dim> &             dof_handler,
-  const Quadrature<dim - 1> &   face_quadrature_formula,
-  const Mapping<dim> &          mapping)
+  const Quadrature<dim - 1> &         face_quadrature_formula,
+  const Mapping<dim> &                mapping)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
@@ -180,7 +183,8 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
       // Clear the last boundary cell candidates.
       boundary_cells[p_i].clear();
 
-      // Find the new cells that are at a boundary and in proximity of the particle.
+      // Find the new cells that are at a boundary and in proximity of the
+      // particle.
       auto cells_at_boundary = LetheGridTools::find_boundary_cells_in_sphere(
         dof_handler, particles[p_i].position, particles[p_i].radius * 1.5);
 
@@ -203,7 +207,9 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
               if (cells_at_boundary[i]->face(face_id)->at_boundary())
                 {
                   fe_face_values.reinit(cells_at_boundary[i], face_id);
-                  // Loop over the quadrature point of the face at the boundary to store information about the location and normals of the boundary.
+                  // Loop over the quadrature point of the face at the boundary
+                  // to store information about the location and normals of the
+                  // boundary.
                   for (unsigned int f_q_point = 0; f_q_point < n_face_q_points;
                        ++f_q_point)
                     {
@@ -236,7 +242,7 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pw_contact_force(
-  const double              dt_dem,
+  const double               dt_dem,
   std::vector<Tensor<1, 3>> &contact_force,
   std::vector<Tensor<1, 3>> &contact_torque)
 {
@@ -248,13 +254,14 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
   double wall_restitution_coefficient =
     parameters->wall_restitution_coefficient;
 
-  //Loop over the particles
+  // Loop over the particles
   for (auto &particle : dem_particles)
     {
       unsigned int boundary_index = 0;
       double       best_dist      = DBL_MAX;
       unsigned int best_index;
-      //For each particle loop over the point and normal identified as potential contact candidate.
+      // For each particle loop over the point and normal identified as
+      // potential contact candidate.
       for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
         {
           // find the best candidate (the closest point).
@@ -276,8 +283,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           auto boundary_cell_information = boundary_cell;
           particle_wall_contact_info_struct<dim> contact_info;
 
-          // Check if there is already information on the contact between this particle and this boundary contact point.
-          // If not initialize the contact history with 0 values.
+          // Check if there is already information on the contact between this
+          // particle and this boundary contact point. If not initialize the
+          // contact history with 0 values.
           try
             {
               contact_info =
@@ -362,7 +370,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
             }
           else
             {
-              // Set to 0 the tangential overlap if the particle is not in contact with the wall anymore.
+              // Set to 0 the tangential overlap if the particle is not in
+              // contact with the wall anymore.
               for (int d = 0; d < dim; ++d)
                 {
                   contact_info.tangential_overlap[d] = 0;
@@ -417,7 +426,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
     }
 
   // Integrate with the sub_time_step
-  while (t + 0.5*dt_dem  < dt)
+  while (t + 0.5 * dt_dem < dt)
     {
       current_fluid_force.clear();
       current_fluid_force.resize(dem_particles.size());

@@ -152,18 +152,20 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
               Tensor<1, dim> r;
               r[0] = particles[p].radius;
 
-              // Check if a point on the random point on the IB is contained in that cell.
-              // If the particle is much smaller than the
-              // cell, all its vertices may be outside of the particle. In that case the cell won't be refined.
-              // To prevent that, we check if a random point on the boundary is contained in the cell.
+              // Check if a point on the random point on the IB is contained in
+              // that cell. If the particle is much smaller than the cell, all
+              // its vertices may be outside of the particle. In that case the
+              // cell won't be refined. To prevent that, we check if a random
+              // point on the boundary is contained in the cell.
               bool cell_as_ib_inside =
                 cell->point_inside(particles[p].position + r);
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
-                  // Count the number of DOFs that fall in the refinement zone around the particle.
-                  // To fall in the zone, the radius of the DOFs to the center of the particle must
-                  // be bigger than the inside radius of the refinement zone and smaller
-                  // than the outside radius of the refinement zone.
+                  // Count the number of DOFs that fall in the refinement zone
+                  // around the particle. To fall in the zone, the radius of the
+                  // DOFs to the center of the particle must be bigger than the
+                  // inside radius of the refinement zone and smaller than the
+                  // outside radius of the refinement zone.
 
                   if (((support_points[local_dof_indices[j]] - center_immersed)
                            .norm() <=
@@ -1180,15 +1182,16 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               // residual.
               for (unsigned int d = 0; d < dim; ++d)
                 {
-                  //This formula comes from the virtual mass force of a single spherical particle with a virtual mass coefficient of 0.5.
+                  // This formula comes from the virtual mass force of a single
+                  // spherical particle with a virtual mass coefficient of 0.5.
                   jac_velocity[d][d] = -bdf_coefs[0] - 0.5 * volume * density /
                                                          particles[p].mass / dt;
                 }
             }
           else
             {
-              // If we are here, it is because this is not the first-newton step.
-              // We can use the secant method directly.
+              // If we are here, it is because this is not the first-newton
+              // step. We can use the secant method directly.
               for (unsigned int d = 0; d < dim; ++d)
                 {
                   // Here we define the Jacobian diagonal base on the secant
@@ -1344,9 +1347,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             {
               for (unsigned int d = 0; d < 3; ++d)
                 {
-                  // This formula aim at relaxing the equation for the first iteration an
-                  // approximation that was found is to apply the same logique as virtual
-                  // mass but take the rotational inertia of the fluid displaced by the particle.
+                  // This formula aim at relaxing the equation for the first
+                  // iteration an approximation that was found is to apply the
+                  // same logique as virtual mass but take the rotational
+                  // inertia of the fluid displaced by the particle.
                   jac_omega[d][d] =
                     -bdf_coefs[0] -
                     0.5 * 2. / 5 * volume * density * particles[p].radius *
@@ -1937,7 +1941,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
         {
           cell->get_dof_indices(local_dof_indices);
           double sum_line = 0;
-          double volume = 0;
+          double volume   = 0;
           fe_values.reinit(cell);
           std::vector<int> set_pressure_cell;
           set_pressure_cell.resize(particles.size());
@@ -2867,8 +2871,11 @@ GLSSharpNavierStokesSolver<dim>::solve()
            this->simulation_parameters.particlesParameters->initial_refinement;
            ++i)
         {
-          this->pcout << "Initial refinement around IB particles - Step : " << i + 1
-                      << " of " << this->simulation_parameters.particlesParameters->initial_refinement << std::endl;
+          this->pcout << "Initial refinement around IB particles - Step : "
+                      << i + 1 << " of "
+                      << this->simulation_parameters.particlesParameters
+                           ->initial_refinement
+                      << std::endl;
 
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::

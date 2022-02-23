@@ -16,10 +16,12 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <core/auxiliary_math_functions.h>
+
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_info_struct.h>
-#include <core/auxiliary_math_functions.h>
+
 #include <boost/math/special_functions.hpp>
 #include <boost/range/adaptor/map.hpp>
 
