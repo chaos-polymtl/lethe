@@ -5,9 +5,10 @@
 #include <core/periodic_hills_grid.h>
 
 // Deal.II includes
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
-
 
 // Std
 #include <fstream>
@@ -72,7 +73,8 @@ attach_grid_to_triangulation(
             mesh_parameters.grid_arguments);
 
           // initial refinement
-          const int initial_refinement = mesh_parameters.initial_refinement;
+          const unsigned int initial_refinement =
+            mesh_parameters.initial_refinement;
           temporary_quad_triangulation.refine_global(initial_refinement);
 
           // flatten the triangulation

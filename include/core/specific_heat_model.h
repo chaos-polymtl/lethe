@@ -47,13 +47,13 @@ public:
  * @brief Constant specific heat. Returns a constant specific
  * heat for a fluid
  */
-class SpecificHeatConstant : public SpecificHeatModel
+class ConstantSpecificHeat : public SpecificHeatModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  SpecificHeatConstant(const double p_specific_heat)
+  ConstantSpecificHeat(const double p_specific_heat)
     : specific_heat(p_specific_heat)
   {}
 
@@ -128,7 +128,10 @@ public:
   PhaseChangeSpecificHeat(
     const Parameters::PhaseChange p_phase_change_parameters)
     : param(p_phase_change_parameters)
-  {}
+  {
+    this->model_depends_on[field::temperature]          = true;
+    this->model_depends_on[field::previous_temperature] = true;
+  }
 
   /**
    * @brief value Calculates the value of the phase change specific heat.
@@ -143,12 +146,12 @@ public:
     if (temperature > previous_temperature)
       {
         const double dT = std::max(temperature - previous_temperature, 1e-6);
-        return (enthalpy(temperature) - enthalpy(previous_temperature)) / dT;
+        return (enthalpy(temperature) - enthalpy(temperature - dT)) / dT;
       }
     else
       {
         const double dT = std::max(previous_temperature - temperature, 1e-6);
-        return (enthalpy(previous_temperature) - enthalpy(temperature)) / dT;
+        return (enthalpy(temperature + dT) - enthalpy(temperature)) / dT;
       }
   }
 
@@ -183,14 +186,14 @@ public:
             const double dT =
               std::max(temperature - previous_temperature, 1e-6);
             property_vector[i] =
-              (enthalpy(temperature) - enthalpy(previous_temperature)) / dT;
+              (enthalpy(temperature) - enthalpy(temperature - dT)) / dT;
           }
         else
           {
             const double dT =
               std::max(previous_temperature - temperature, 1e-6);
             property_vector[i] =
-              (enthalpy(previous_temperature) - enthalpy(temperature)) / dT;
+              (enthalpy(temperature + dT) - enthalpy(temperature)) / dT;
           }
       }
   }

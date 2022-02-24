@@ -364,7 +364,6 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
       this->assemblers.push_back(
         std::make_shared<WeakDirichletBoundaryCondition<dim>>(
           this->simulation_control,
-          this->simulation_parameters.physical_properties,
           this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
@@ -372,7 +371,6 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
       this->assemblers.push_back(
         std::make_shared<PressureBoundaryCondition<dim>>(
           this->simulation_control,
-          this->simulation_parameters.physical_properties,
           this->simulation_parameters.boundary_conditions));
     }
   if (this->simulation_parameters.multiphysics.VOF)
@@ -382,15 +380,13 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         {
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties));
+              this->simulation_control));
         }
 
       // Core assembler
       this->assemblers.push_back(
         std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-          this->simulation_control,
-          this->simulation_parameters.physical_properties));
+          this->simulation_control));
     }
   else
     {
@@ -420,27 +416,24 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
       // Buoyant force
       if (this->simulation_parameters.multiphysics.buoyancy_force)
         {
-          this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
-            this->simulation_control,
-            this->simulation_parameters.physical_properties));
+          this->assemblers.push_back(
+            std::make_shared<BuoyancyAssembly<dim>>(this->simulation_control));
         }
 
-      if (this->simulation_parameters.physical_properties.fluids[0]
-            .non_newtonian_flow)
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerNonNewtonianCore<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties));
+              this->simulation_control));
         }
       else
         {
           // Core assembler
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties));
+              this->simulation_control));
         }
     }
 }
@@ -467,10 +460,12 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
   this->system_matrix = 0;
   setup_assemblers();
 
-  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->mapping,
-                                                   *this->face_quadrature);
+  auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -480,9 +475,15 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
                               *this->cell_quadrature,
                               *this->mapping);
     }
-  if (this->simulation_parameters.physical_properties.fluids[0]
-        .non_newtonian_flow)
-    scratch_data.enable_hessian();
+
+  if (this->simulation_parameters.multiphysics.heat_transfer)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
+    }
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -533,6 +534,24 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
+  if (this->simulation_parameters.multiphysics.heat_transfer)
+    {
+      const DoFHandler<dim> *dof_handler_ht =
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+
+      typename DoFHandler<dim>::active_cell_iterator temperature_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_ht);
+
+      scratch_data.reinit_heat_transfer(temperature_cell,
+                                        *this->multiphysics->get_solution(
+                                          PhysicsID::heat_transfer));
+    }
+
+  scratch_data.calculate_physical_properties();
+
   copy_data.reset();
 
 
@@ -569,10 +588,12 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
   this->system_rhs = 0;
   setup_assemblers();
 
-  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->mapping,
-                                                   *this->face_quadrature);
+  auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    *this->face_quadrature);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -583,7 +604,7 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                               *this->mapping);
     }
 
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  if (this->simulation_parameters.multiphysics.heat_transfer)
     {
       const DoFHandler<dim> *dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
@@ -591,11 +612,6 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                                         *this->cell_quadrature,
                                         *this->mapping);
     }
-
-  if (this->simulation_parameters.physical_properties.fluids[0]
-        .non_newtonian_flow)
-    scratch_data.enable_hessian();
-
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -653,7 +669,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  if (this->simulation_parameters.multiphysics.heat_transfer)
     {
       const DoFHandler<dim> *dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
@@ -668,6 +684,8 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
                                         *this->multiphysics->get_solution(
                                           PhysicsID::heat_transfer));
     }
+
+  scratch_data.calculate_physical_properties();
 
   copy_data.reset();
 
@@ -730,17 +748,26 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
       this->set_nodal_values();
-      double viscosity =
-        this->simulation_parameters.physical_properties.fluids[0].viscosity;
-      this->simulation_parameters.physical_properties.fluids[0].viscosity =
-        this->simulation_parameters.initial_condition->viscosity;
+      std::shared_ptr<RheologicalModel> original_viscosity_model =
+        this->simulation_parameters.physical_properties_manager.get_rheology();
+
+      // Temporarily set the rheology to be newtonian with predefined viscosity
+      std::shared_ptr<Newtonian> temporary_rheology =
+        std::make_shared<Newtonian>(
+          this->simulation_parameters.initial_condition->viscosity);
+
+      this->simulation_parameters.physical_properties_manager.set_rheology(
+        temporary_rheology);
+
+
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         false);
       this->finish_time_step_fd();
-      this->simulation_parameters.physical_properties.fluids[0].viscosity =
-        viscosity;
+
+      this->simulation_parameters.physical_properties_manager.set_rheology(
+        original_viscosity_model);
     }
   else
     {
@@ -1278,6 +1305,8 @@ GLSNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
+
+
 
   while (this->simulation_control->integrate())
     {

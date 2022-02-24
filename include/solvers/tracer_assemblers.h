@@ -78,10 +78,8 @@ template <int dim>
 class TracerAssemblerCore : public TracerAssemblerBase<dim>
 {
 public:
-  TracerAssemblerCore(std::shared_ptr<SimulationControl> simulation_control,
-                      Parameters::PhysicalProperties     physical_properties)
+  TracerAssemblerCore(std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
   {}
 
   /**
@@ -106,7 +104,6 @@ public:
   const bool DCDD = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
 };
 
 /**

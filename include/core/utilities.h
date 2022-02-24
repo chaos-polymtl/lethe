@@ -25,14 +25,7 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/fe/mapping_manifold.h>
-#include <deal.II/fe/mapping_q1.h>
-
 using namespace dealii;
-
-
-// Utility function to create tables from vectors of scalars/tensors as
-// dependent or independent variables.
 
 
 
@@ -155,7 +148,7 @@ calculate_point_property(const double phase,
  */
 void
 fill_table_from_file(TableHandler &    table,
-                     std::string       file,
+                     const std::string file_name,
                      const std::string delimiter = " ");
 
 /**
@@ -170,7 +163,7 @@ fill_table_from_file(TableHandler &    table,
  */
 void
 fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
-                       std::string                                 file,
+                       const std::string                           file_name,
                        const std::string delimiter = " ");
 
 

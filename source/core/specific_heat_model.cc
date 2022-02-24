@@ -25,6 +25,6 @@ SpecificHeatModel::model_cast(const Parameters::Fluid &fluid_properties)
       fluid_properties.phase_change_parameters);
 
   else
-    return std::make_shared<SpecificHeatConstant>(
+    return std::make_shared<ConstantSpecificHeat>(
       fluid_properties.specific_heat);
 }

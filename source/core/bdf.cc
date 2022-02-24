@@ -16,30 +16,11 @@
 
 #include "core/bdf.h"
 
-Vector<double>
-delta(unsigned int p, unsigned int n, unsigned int j, Vector<double> times)
-{
-  if (j == 0)
-    {
-      Vector<double> arr(p + 1);
-      arr    = 0.;
-      arr[n] = 1;
-      return arr;
-    }
-  else
-    {
-      Vector<double> delta_1 = delta(p, n, j - 1, times);
-      Vector<double> delta_2 = delta(p, n + 1, j - 1, times);
-      Vector<double> delta_sol(p + 1);
-      for (unsigned int i_del = 0; i_del < p + 1; ++i_del)
-        delta_sol[i_del] =
-          (delta_1[i_del] - delta_2[i_del]) / (times[n] - times[n + j]);
-      return delta_sol;
-    }
-}
+#include <deal.II/lac/vector.h>
+
 
 Vector<double>
-bdf_coefficients(unsigned int p, const std::vector<double> dt)
+bdf_coefficients(const unsigned int p, const std::vector<double> dt)
 {
   // There should be at least p time steps
   assert(dt.size() >= p);
@@ -71,8 +52,8 @@ bdf_coefficients(unsigned int p, const std::vector<double> dt)
 }
 
 Vector<double>
-bdf_coefficients(Parameters::SimulationControl::TimeSteppingMethod method,
-                 const std::vector<double>                         dt)
+bdf_coefficients(const Parameters::SimulationControl::TimeSteppingMethod method,
+                 const std::vector<double>                               dt)
 {
   switch (method)
     {
@@ -88,5 +69,30 @@ bdf_coefficients(Parameters::SimulationControl::TimeSteppingMethod method,
         throw(std::runtime_error(
           "BDF coefficients were requested without a BDF method"));
         break;
+    }
+}
+
+Vector<double>
+delta(const unsigned int   p,
+      const unsigned int   n,
+      const unsigned int   j,
+      const Vector<double> times)
+{
+  if (j == 0)
+    {
+      Vector<double> arr(p + 1);
+      arr    = 0.;
+      arr[n] = 1;
+      return arr;
+    }
+  else
+    {
+      Vector<double> delta_1 = delta(p, n, j - 1, times);
+      Vector<double> delta_2 = delta(p, n + 1, j - 1, times);
+      Vector<double> delta_sol(p + 1);
+      for (unsigned int i_del = 0; i_del < p + 1; ++i_del)
+        delta_sol[i_del] =
+          (delta_1[i_del] - delta_2[i_del]) / (times[n] - times[n + j]);
+      return delta_sol;
     }
 }

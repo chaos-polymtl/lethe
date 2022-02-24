@@ -15,7 +15,12 @@
  */
 
 #include <core/bdf.h>
+#include <core/density_model.h>
 #include <core/parameters.h>
+#include <core/physical_property_model.h>
+#include <core/rheological_model.h>
+
+#include <solvers/physical_properties_manager.h>
 
 #include <dem/dem.h>
 #include <dem/dem_properties.h>
@@ -32,6 +37,7 @@
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
+
 
 
 #ifndef lethe_navier_stokes_scratch_data_h
@@ -79,11 +85,13 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  NavierStokesScratchData(const FESystem<dim> &      fe,
+  NavierStokesScratchData(PhysicalPropertiesManager &properties_manager,
+                          const FESystem<dim> &      fe,
                           const Quadrature<dim> &    quadrature,
                           const Mapping<dim> &       mapping,
                           const Quadrature<dim - 1> &face_quadrature)
-    : fe_values(mapping,
+    : properties_manager(properties_manager)
+    , fe_values(mapping,
                 fe,
                 quadrature,
                 update_values | update_quadrature_points | update_JxW_values |
@@ -103,7 +111,7 @@ public:
     gather_void_fraction         = false;
     gather_particles_information = false;
     gather_temperature           = false;
-    gather_hessian               = false;
+    gather_hessian               = properties_manager.is_non_newtonian();
   }
 
   /**
@@ -120,7 +128,8 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    */
   NavierStokesScratchData(const NavierStokesScratchData<dim> &sd)
-    : fe_values(sd.fe_values.get_mapping(),
+    : properties_manager(sd.properties_manager)
+    , fe_values(sd.fe_values.get_mapping(),
                 sd.fe_values.get_fe(),
                 sd.fe_values.get_quadrature(),
                 update_values | update_quadrature_points | update_JxW_values |
@@ -132,6 +141,11 @@ public:
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
   {
+    gather_VOF                   = false;
+    gather_void_fraction         = false;
+    gather_particles_information = false;
+    gather_temperature           = false;
+
     allocate();
     if (sd.gather_VOF)
       enable_VOF(sd.fe_values_VOF->get_fe(),
@@ -720,12 +734,28 @@ public:
                                                      this->temperature_values);
   }
 
-  /**
-   * @brief enable_hessian Enables the collection of the hesian tensor when it's a non Newtonian flow
+  /** @brief Calculates the physical properties. This function calculates the physical properties
+   * that may be required by the fluid dynamics problem. Namely the kinematic
+   * viscosity and, when required, the density.
+   *
    */
-
   void
-  enable_hessian();
+  calculate_physical_properties();
+
+  // Physical properties
+  PhysicalPropertiesManager            properties_manager;
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  density;
+  std::vector<double>                  viscosity;
+  std::vector<double>                  thermal_expansion;
+  std::vector<double>                  grad_viscosity_shear_rate;
+  std::vector<std::vector<double>>     previous_density;
+
+  // For VOF simulations. Present properties for fluid 0 and 1.
+  std::vector<double> density_0;
+  std::vector<double> density_1;
+  std::vector<double> viscosity_0;
+  std::vector<double> viscosity_1;
 
 
   // FEValues for the Navier-Stokes problem
@@ -751,6 +781,7 @@ public:
   std::vector<Tensor<2, dim>>              velocity_gradients;
   std::vector<Tensor<1, dim>>              velocity_laplacians;
   std::vector<Tensor<3, dim>>              velocity_hessians;
+  std::vector<double>                      shear_rate;
   std::vector<double>                      pressure_values;
   std::vector<Tensor<1, dim>>              pressure_gradients;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;

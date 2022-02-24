@@ -47,7 +47,8 @@ test()
   physical_properties.fluids[0].thermal_conductivity = 3;
   physical_properties.fluids[0].specific_heat        = 2;
 
-  PhysicalPropertiesManager physical_properties_manager(physical_properties);
+  PhysicalPropertiesManager physical_properties_manager;
+  physical_properties_manager.initialize(physical_properties);
 
   std::map<field, double> dummy_fields;
 

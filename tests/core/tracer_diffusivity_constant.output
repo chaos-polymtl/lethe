@@ -1,0 +1,6 @@
+
+DEAL::Beggining
+DEAL::Testing tracer diffusivity
+DEAL:: T = 1    , tracer diffusivity = 5.00000
+DEAL:: T = 2    , tracer diffusivity = 5.00000
+DEAL::OK

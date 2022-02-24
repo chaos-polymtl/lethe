@@ -19,6 +19,8 @@
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/point.h>
 
+#include <vector>
+
 #ifndef lethe_ib_particle_h
 #  define lethe_ib_particle_h
 

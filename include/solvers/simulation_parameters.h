@@ -28,10 +28,8 @@
 
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
+#include <solvers/physical_properties_manager.h>
 #include <solvers/source_terms.h>
-
-#include <dem/dem_solver_parameters.h>
-#include <fem-dem/parameters_cfd_dem.h>
 
 template <int dim>
 class SimulationParameters
@@ -44,7 +42,6 @@ public:
   Parameters::Mesh                                  mesh;
   std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
-  Parameters::PhysicalProperties                    physical_properties;
   Parameters::SimulationControl                     simulation_control;
   Parameters::Timer                                 timer;
   Parameters::FEM                                   fem_parameters;
@@ -62,7 +59,10 @@ public:
   std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
   Parameters::InterfaceSharpening                   interface_sharpening;
+  Parameters::SurfaceTensionForce                   surface_tension_force;
   Parameters::Multiphysics                          multiphysics;
+
+  PhysicalPropertiesManager physical_properties_manager;
 
   void
   declare(ParameterHandler &prm)
@@ -97,6 +97,7 @@ public:
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
     interface_sharpening.declare_parameters(prm);
+    surface_tension_force.declare_parameters(prm);
 
     analytical_solution = new AnalyticalSolutions::AnalyticalSolution<dim>;
     analytical_solution->declare_parameters(prm);
@@ -127,6 +128,7 @@ public:
     post_processing.parse_parameters(prm);
     flow_control.parse_parameters(prm);
     interface_sharpening.parse_parameters(prm);
+    surface_tension_force.parse_parameters(prm);
     restart_parameters.parse_parameters(prm);
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);
@@ -141,6 +143,8 @@ public:
 
     multiphysics.parse_parameters(prm);
 
+    physical_properties_manager.initialize(physical_properties);
+
     // Check consistency of parameters parsed in different subsections
     if (multiphysics.VOF && physical_properties.number_of_fluids != 2)
       {
@@ -148,6 +152,9 @@ public:
           "Inconsistency in .prm!\n with VOF = true\n use: number of fluids = 2");
       }
   }
+
+private:
+  Parameters::PhysicalProperties physical_properties;
 };
 
 #endif
