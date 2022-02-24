@@ -229,7 +229,7 @@ namespace LetheGridTools
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
   find_boundary_cells_in_sphere(const DoFHandler<dim> &dof_handler,
                                 const Point<dim> &     center,
-                                double                 radius);
+                                const double                 radius);
 
   /**
    * @brief

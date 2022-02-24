@@ -99,6 +99,8 @@ public:
    * @param wall_friction_coefficient
    * @param wall_rolling_friction_coefficient
    * @param dt Time-step.
+   * @param mass particle mass.
+   * @param radius particle radius.
    */
   virtual void
   calculate_IB_particle_wall_contact_force(

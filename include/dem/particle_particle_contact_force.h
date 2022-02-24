@@ -97,6 +97,10 @@ public:
    * @param particle_one_location Location of particle one.
    * @param particle_two_location Location of particle two.
    * @param dt Time-step.
+   * @param particle_one_radius radius of particle one.
+   * @param particle_two_radius radius of particle two.
+   * @param particle_one_mass mass of particle two.
+   * @param particle_two_mass mass of particle two.
    */
   virtual void
   calculate_IB_particle_particle_contact_force(
