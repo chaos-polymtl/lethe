@@ -62,7 +62,7 @@ tensor_nd_to_3d(const Tensor<1, dim> &tensor)
  */
 template <int dim>
 inline Tensor<1, 2>
-tensor_nd_to_2d(const Tensor<1, dim> tensor)
+tensor_nd_to_2d(const Tensor<1, dim> &tensor)
 {
   Tensor<1, 2> tensor_2d;
   tensor_2d[0] = tensor[0];
