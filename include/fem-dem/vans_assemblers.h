@@ -280,9 +280,29 @@ public:
 };
 
 /**
- * @brief Class that assembles the drag force using a constant model for the
+ * @brief Class that assembles the drag force using the Koch and Hill drag model for the
  * VANS equations where the momentum exchange coefficient
- *  beta = constant * particle_volume
+ *  beta =   ((18 * mu * cell_void_fraction^2 *
+          (1 - cell_void_fraction)) / pow(dp, 2)) *
+        (f0 + 0.5 * f3 * cell_void_fraction * re) *
+        Vp /(1 - cell_void_fraction) where f0 and f3 are functions given by:
+      if ((1 - cell_void_fraction) < 0.4)
+        {
+          f0 = (1 + 3 * sqrt((1 - cell_void_fraction) / 2) +
+                (135.0 / 64) * (1 - cell_void_fraction) *
+                  log(1 - cell_void_fraction) +
+                16.14 * (1 - cell_void_fraction)) /
+               (1 + 0.681 * (1 - cell_void_fraction) -
+                8.48 * (1 - cell_void_fraction)^2 +
+                8.14 * (1 - cell_void_fraction)^3);
+        }
+      else if ((1 - cell_void_fraction) >= 0.4)
+        {
+          f0 = 10 * (1 - cell_void_fraction) / cell_void_fraction^3;
+        }
+
+      f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
+           0.0232 / pow(cell_void_fraction, 5);
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers
