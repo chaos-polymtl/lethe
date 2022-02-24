@@ -36,7 +36,7 @@ using namespace dealii;
 
 template <int dim>
 inline Tensor<1, 3>
-tensor_nd_to_3d(const Tensor<1, dim> tensor)
+tensor_nd_to_3d(const Tensor<1, dim> &tensor)
 {
   Tensor<1, 3> tensor_3d;
   tensor_3d[0] = tensor[0];
