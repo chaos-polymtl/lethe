@@ -452,15 +452,19 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               this->table_monitoring_vof.add_value(
                 "time", this->simulation_control->get_current_time());
             }
-          this->table_monitoring_vof.add_value("fluid_volume", volume);
-          this->table_monitoring_vof.set_scientific("fluid_volume", true);
+
+          std::string fluid_id =
+            "fluid_" +
+            Utilities::int_to_string(
+              this->simulation_parameters.multiphysics.id_fluid_monitored, 1);
+
+          this->table_monitoring_vof.add_value("volume_" + fluid_id, volume);
+          this->table_monitoring_vof.set_scientific("volume_" + fluid_id, true);
 
           // Save table to .dat
           std::string filename =
-            "VOF_monitoring_fluid_" +
-            Utilities::int_to_string(
-              simulation_parameters.multiphysics.id_fluid_monitored, 1) +
-            ".dat";
+            this->simulation_parameters.simulation_control.output_folder +
+            "VOF_monitoring_" + fluid_id + ".dat";
           std::ofstream output(filename.c_str());
           this->table_monitoring_vof.write_text(output);
         }
@@ -1179,7 +1183,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
 
   std::vector<double> density_0(n_q_points);
   std::vector<double> density_1(n_q_points);
-  int                 id_denser_fluid;
+  int                 id_denser_fluid(0);
 
   // Useful definitions for readability
   const double wetting_threshold =
