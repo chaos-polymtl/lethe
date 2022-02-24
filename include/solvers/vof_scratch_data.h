@@ -16,6 +16,10 @@
  * Scratch data for the VOF auxiliary physics
  */
 
+#include <core/multiphysics.h>
+
+#include <solvers/multiphysics_interface.h>
+
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -26,9 +30,6 @@
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <core/multiphysics.h>
-#include <solvers/multiphysics_interface.h>
 
 #ifndef lethe_VOF_scratch_data_h
 #  define lethe_VOF_scratch_data_h
