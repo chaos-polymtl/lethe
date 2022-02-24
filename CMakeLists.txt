@@ -8,6 +8,9 @@ add_compile_options(-pedantic-errors)
 add_compile_options(-Wextra)
 add_compile_options(-Wunused-variable)
 add_compile_options(-Wdisabled-optimization)
+add_compile_options(-Wall)
+
+
 # Disabled by default, used to be necessary on the Cedar cluster of Compute Canada
 #add_compile_options(-fext-numeric-literals)
 
@@ -41,6 +44,8 @@ ENDIF()
 
 #set(PROTOTYPES "FALSE" CACHE BOOL)
 option(PROTOTYPES "Enable prototypes applications" OFF)
+option(MARCH_NATIVE "Enable prototypes applications" OFF)
+
 
 Project(lethe)
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
@@ -53,6 +58,11 @@ IF(PROTOTYPES)
     MESSAGE("Adding prototypes")
     ADD_SUBDIRECTORY(prototypes)
  ENDIF()
+ IF(MARCH_NATIVE)
+    MESSAGE("  Enabling -march=native flag. This may cause some tests to break.")
+    add_compile_options(-march=native)
+ ENDIF()
+
 
 set(missing_dealii_features)
 

@@ -18,6 +18,8 @@
 
 #include <core/multiphysics.h>
 
+#include <solvers/physical_properties_manager.h>
+
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -75,19 +77,18 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  TracerScratchData(const FiniteElement<dim> &fe_tracer,
-                    const Quadrature<dim> &   quadrature,
-                    const Mapping<dim> &      mapping,
-                    const FiniteElement<dim> &fe_navier_stokes)
-    : fe_values_tracer(mapping,
+  TracerScratchData(const PhysicalPropertiesManager &properties_manager,
+                    const FiniteElement<dim> &       fe_tracer,
+                    const Quadrature<dim> &          quadrature,
+                    const Mapping<dim> &             mapping,
+                    const FiniteElement<dim> &       fe_fd)
+    : properties_manager(properties_manager)
+    , fe_values_tracer(mapping,
                        fe_tracer,
                        quadrature,
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
-    , fe_values_navier_stokes(mapping,
-                              fe_navier_stokes,
-                              quadrature,
-                              update_values)
+    , fe_values_fd(mapping, fe_fd, quadrature, update_values)
   {
     allocate();
   }
@@ -106,15 +107,16 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    */
   TracerScratchData(const TracerScratchData<dim> &sd)
-    : fe_values_tracer(sd.fe_values_tracer.get_mapping(),
+    : properties_manager(sd.properties_manager)
+    , fe_values_tracer(sd.fe_values_tracer.get_mapping(),
                        sd.fe_values_tracer.get_fe(),
                        sd.fe_values_tracer.get_quadrature(),
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
-    , fe_values_navier_stokes(sd.fe_values_navier_stokes.get_mapping(),
-                              sd.fe_values_navier_stokes.get_fe(),
-                              sd.fe_values_navier_stokes.get_quadrature(),
-                              update_values)
+    , fe_values_fd(sd.fe_values_fd.get_mapping(),
+                   sd.fe_values_fd.get_fe(),
+                   sd.fe_values_fd.get_quadrature(),
+                   update_values)
   {
     allocate();
   }
@@ -211,11 +213,26 @@ public:
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
                   const VectorType &current_solution)
   {
-    this->fe_values_navier_stokes.reinit(cell);
+    this->fe_values_fd.reinit(cell);
 
-    this->fe_values_navier_stokes[velocities].get_function_values(
-      current_solution, velocity_values);
+    this->fe_values_fd[velocities].get_function_values(current_solution,
+                                                       velocity_values);
   }
+
+  /** @brief Calculates the physical properties. This function calculates the physical properties
+   * that may be required by the tracer. Namely the diffusivity.
+   *
+   */
+  void
+  calculate_physical_properties();
+
+  // Physical properties
+  PhysicalPropertiesManager            properties_manager;
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  tracer_diffusivity;
+  std::vector<double>                  tracer_diffusivity_0;
+  std::vector<double>                  tracer_diffusivity_1;
+
 
 
   // FEValues for the Tracer problem
@@ -250,7 +267,7 @@ public:
    */
   FEValuesExtractors::Vector velocities;
   // This FEValues must mandatorily be instantiated for the velocity
-  FEValues<dim>               fe_values_navier_stokes;
+  FEValues<dim>               fe_values_fd;
   std::vector<Tensor<1, dim>> velocity_values;
 };
 

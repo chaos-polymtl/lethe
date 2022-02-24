@@ -1,5 +1,6 @@
 #include <core/bdf.h>
 #include <core/sdirk.h>
+#include <core/utilities.h>
 
 #include <solvers/navier_stokes_scratch_data.h>
 
@@ -33,6 +34,7 @@ NavierStokesScratchData<dim>::allocate()
   this->velocity_gradients   = std::vector<Tensor<2, dim>>(n_q_points);
   this->velocity_laplacians  = std::vector<Tensor<1, dim>>(n_q_points);
   this->velocity_hessians    = std::vector<Tensor<3, dim>>(n_q_points);
+  this->shear_rate           = std::vector<double>(n_q_points);
 
   // Velocity for BDF schemes
   this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
@@ -67,6 +69,28 @@ NavierStokesScratchData<dim>::allocate()
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
   this->grad_phi_p = std::vector<std::vector<Tensor<1, dim>>>(
     n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
+
+  // Physical properties
+
+  // Allocate memory for the physical properties
+
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
+
+  density                   = std::vector<double>(n_q_points);
+  viscosity                 = std::vector<double>(n_q_points);
+  thermal_expansion         = std::vector<double>(n_q_points);
+  grad_viscosity_shear_rate = std::vector<double>(n_q_points);
+
+
+  density_0   = std::vector<double>(n_q_points);
+  density_1   = std::vector<double>(n_q_points);
+  viscosity_0 = std::vector<double>(n_q_points);
+  viscosity_1 = std::vector<double>(n_q_points);
+
+  previous_density =
+    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
+                                     std::vector<double>(this->n_q_points));
 }
 
 template <int dim>
@@ -136,15 +160,107 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
     std::make_shared<FEValues<dim>>(mapping, fe, quadrature, update_values);
 
   temperature_values = std::vector<double>(this->n_q_points);
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::temperature, n_q_points));
 }
+
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_hessian()
+NavierStokesScratchData<dim>::calculate_physical_properties()
 {
-  gather_hessian = true;
-}
+  if (properties_manager.field_is_required(field::temperature) &&
+      gather_temperature)
+    {
+      set_field_vector(field::temperature,
+                       this->temperature_values,
+                       this->fields);
+    }
 
+  if (properties_manager.field_is_required(field::shear_rate))
+    {
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          // Calculate shear rate (at each q)
+          const Tensor<2, dim> shear_rate_tensor =
+            velocity_gradients[q] + transpose(velocity_gradients[q]);
+
+          // Calculate the shear rate magnitude
+          shear_rate[q] = calculate_shear_rate_magnitude(shear_rate_tensor);
+        }
+
+      set_field_vector(field::shear_rate, shear_rate, this->fields);
+    }
+
+  // Case where you have one fluid
+  if (properties_manager.get_number_of_fluids() == 1)
+    {
+      // In this case, only viscosity is the required property
+      const auto rheology_model = properties_manager.get_rheology();
+      rheology_model->vector_value(fields, viscosity);
+
+      const auto density_model = properties_manager.get_density();
+      density_model->vector_value(fields, density);
+
+
+      if (properties_manager.is_non_newtonian())
+        {
+          // Calculate derivative of viscosity with respect to shear rate
+          rheology_model->vector_jacobian(fields,
+                                          field::shear_rate,
+                                          grad_viscosity_shear_rate);
+        }
+
+      if (gather_temperature)
+        {
+          const auto thermal_expansion_model =
+            properties_manager.get_thermal_expansion();
+          thermal_expansion_model->vector_value(fields, thermal_expansion);
+        }
+    }
+  else // properties_manager.get_number_of_fluids() == 2
+    {
+      // In this case,  we need both density and viscosity
+      const auto density_model_0  = properties_manager.get_density(0);
+      const auto rheology_model_0 = properties_manager.get_rheology(0);
+      const auto density_model_1  = properties_manager.get_density(1);
+      const auto rheology_model_1 = properties_manager.get_rheology(1);
+
+      density_model_0->vector_value(fields, density_0);
+      rheology_model_0->vector_value(fields, viscosity_0);
+
+      density_model_1->vector_value(fields, density_1);
+      rheology_model_1->vector_value(fields, viscosity_1);
+
+      // Blend the physical properties using the VOF field
+      for (unsigned int q = 0; q < this->n_q_points; ++q)
+        {
+          density[q] = calculate_point_property(this->phase_values[q],
+                                                this->density_0[q],
+                                                this->density_1[q]);
+
+          viscosity[q] = calculate_point_property(this->phase_values[q],
+                                                  this->viscosity_0[q],
+                                                  this->viscosity_1[q]);
+        }
+
+
+
+      for (unsigned p = 0; p < previous_phase_values.size(); ++p)
+        {
+          // Blend the physical properties using the VOF field
+          for (unsigned int q = 0; q < this->n_q_points; ++q)
+            {
+              // Calculate previous density (right now assumes constant density
+              // model per phase)
+              previous_density[p][q] =
+                calculate_point_property(this->previous_phase_values[p][q],
+                                         this->density_0[q],
+                                         this->density_1[q]);
+            }
+        }
+    }
+}
 
 template class NavierStokesScratchData<2>;
 template class NavierStokesScratchData<3>;

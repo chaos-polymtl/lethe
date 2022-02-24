@@ -40,13 +40,14 @@ namespace Parameters
     bool VOF;
     bool interface_sharpening;
     bool buoyancy_force;
+    bool continuum_surface_force;
 
     // subparameter for heat_transfer
     bool viscous_dissipation;
 
     // subparameter for free_surface
     bool conservation_monitoring;
-    int  monitor_fluid_id;
+    int  id_fluid_monitored;
 
     static void
     declare_parameters(ParameterHandler &prm);

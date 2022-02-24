@@ -42,13 +42,13 @@ public:
 /**
  * @brief Constant thermal conductivity.
  */
-class ThermalConductivityConstant : public ThermalConductivityModel
+class ConstantThermalConductivity : public ThermalConductivityModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  ThermalConductivityConstant(const double p_thermal_conductivity)
+  ConstantThermalConductivity(const double p_thermal_conductivity)
     : thermal_conductivity(p_thermal_conductivity)
   {}
 

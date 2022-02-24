@@ -248,12 +248,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
 
   // Rheological model for viscosity properties
-  double viscosity;
-  // Cast rheological model to either a Newtonian model or one of the
-  // non Newtonian models according to the physical properties
-  std::shared_ptr<RheologicalModel> rheological_model =
-    RheologicalModel::model_cast(
-      this->simulation_parameters.physical_properties.fluids[0]);
+  double     viscosity;
+  const auto rheological_model =
+    this->simulation_parameters.physical_properties_manager.get_rheology();
 
   const unsigned int vertices_per_face = GeometryInfo<dim>::vertices_per_face;
   const unsigned int n_q_points_face   = this->face_quadrature->size();
@@ -2395,7 +2392,6 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
       this->assemblers.push_back(
         std::make_shared<WeakDirichletBoundaryCondition<dim>>(
           this->simulation_control,
-          this->simulation_parameters.physical_properties,
           this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
@@ -2403,7 +2399,6 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
       this->assemblers.push_back(
         std::make_shared<PressureBoundaryCondition<dim>>(
           this->simulation_control,
-          this->simulation_parameters.physical_properties,
           this->simulation_parameters.boundary_conditions));
     }
   if (this->simulation_parameters.multiphysics.VOF)
@@ -2413,14 +2408,12 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
         {
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties));
+              this->simulation_control));
         }
       // Core assembler
       this->assemblers.push_back(
         std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-          this->simulation_control,
-          this->simulation_parameters.physical_properties));
+          this->simulation_control));
     }
   else
     {
@@ -2448,27 +2441,25 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
         }
 
       // Core assemblers
-      if (this->simulation_parameters.physical_properties.fluids[0]
-            .non_newtonian_flow)
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerNonNewtonianCore<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties));
+              this->simulation_control));
         }
       else
         {
           // Core assembler
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties));
+              this->simulation_control));
         }
     }
 
-  assemblers_inside_ib.push_back(std::make_shared<LaplaceAssembly<dim>>(
-    this->simulation_control, this->simulation_parameters.physical_properties));
+  assemblers_inside_ib.push_back(
+    std::make_shared<LaplaceAssembly<dim>>(this->simulation_control));
 }
 
 
@@ -2523,6 +2514,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   // check if we assemble the NS eqaution inside the particle or the Laplacien
@@ -2616,6 +2608,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   // check if we assemble the NS eqaution inside the particle or the Laplacien

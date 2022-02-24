@@ -383,6 +383,60 @@ namespace Parameters
   }
 
   void
+  SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("surface tension force");
+    {
+      prm.declare_entry("output auxiliary fields",
+                        "false",
+                        Patterns::Bool(),
+                        "Output the phase fraction gradient and curvature");
+
+      prm.declare_entry(
+        "phase fraction gradient filter",
+        "0.5",
+        Patterns::Double(),
+        "The filter value for phase fraction gradient calculations to damp high-frequency errors");
+
+      prm.declare_entry(
+        "curvature filter",
+        "0.5",
+        Patterns::Double(),
+        "The filter value for curvature calculations to damp high-frequency errors");
+
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the surface tension force calculations should be printed "
+        "Choices are <quiet|verbose>.");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("surface tension force");
+    {
+      phase_fraction_gradient_filter_value =
+        prm.get_double("phase fraction gradient filter");
+      curvature_filter_value = prm.get_double("curvature filter");
+
+      output_VOF_auxiliary_fields = prm.get_bool("output auxiliary fields");
+
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Parameters::Verbosity::verbose;
+      else if (op == "quiet")
+        verbosity = Parameters::Verbosity::quiet;
+      else
+        throw(std::runtime_error("Invalid verbosity level"));
+    }
+    prm.leave_subsection();
+  }
+
+  void
   PhaseChange::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("phase change");
@@ -392,6 +446,8 @@ namespace Parameters
       latent_enthalpy = prm.get_double("latent enthalpy");
       cp_l            = prm.get_double("specific heat liquid");
       cp_s            = prm.get_double("specific heat solid");
+      viscosity_l     = prm.get_double("viscosity liquid");
+      viscosity_s     = prm.get_double("viscosity solid");
     }
 
     Assert(T_liquidus > T_solidus,
@@ -428,6 +484,16 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Specific heat of the solid phase");
+
+      prm.declare_entry("viscosity liquid",
+                        "1",
+                        Patterns::Double(),
+                        "Viscosity of the liquid phase");
+
+      prm.declare_entry("viscosity solid",
+                        "1",
+                        Patterns::Double(),
+                        "Viscosity of the solid phase");
     }
     prm.leave_subsection();
   }
@@ -445,7 +511,10 @@ namespace Parameters
                         Patterns::Integer(),
                         "Number of fluids");
 
-
+      prm.declare_entry("surface tension coefficient",
+                        "0.0",
+                        Patterns::Double(),
+                        "Surface tension coefficient");
 
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
@@ -461,6 +530,9 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
+      // Surface tension coefficient
+      surface_tension_coef = prm.get_double("surface tension coefficient");
+
       // Multiphasic simulations parameters definition
       number_of_fluids = prm.get_integer("number of fluids");
       Assert(number_of_fluids == 1 || number_of_fluids == 2,
@@ -515,14 +587,10 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-      prm.declare_entry("non newtonian flow",
-                        "false",
-                        Patterns::Bool(),
-                        "Non Newtonian flow");
-
       prm.declare_entry("rheological model",
                         "newtonian",
-                        Patterns::Selection("newtonian|power-law|carreau"),
+                        Patterns::Selection(
+                          "newtonian|power-law|carreau|phase_change"),
                         "Rheological model "
                         "Choices are <newtonian|power-law|carreau>.");
 
@@ -605,20 +673,24 @@ namespace Parameters
       phase_change_parameters.parse_parameters(prm);
 
       // Rheology
-      non_newtonian_flow = prm.get_bool("non newtonian flow");
-      op                 = prm.get("rheological model");
+      op = prm.get("rheological model");
       if (op == "power-law")
         {
-          rheology_model = RheologyModel::powerlaw;
+          rheological_model = RheologicalModel::powerlaw;
         }
       else if (op == "carreau")
         {
-          rheology_model = RheologyModel::carreau;
+          rheological_model = RheologicalModel::carreau;
         }
       else if (op == "newtonian")
         {
-          rheology_model = RheologyModel::newtonian;
+          rheological_model = RheologicalModel::newtonian;
         }
+      else if (op == "phase_change")
+        {
+          rheological_model = RheologicalModel::phase_change;
+        }
+
       non_newtonian_parameters.parse_parameters(prm);
     }
     prm.leave_subsection();
