@@ -96,7 +96,7 @@ public:
   unsigned int particle_id;
   // The particle radius.
   double radius;
-  // The particle Youngs modulus. Used in case of contact.
+  // The particle Young's modulus. Used in case of contact.
   double youngs_modulus;
   // The particle restitution coefficient. Used in case of contact.
   double restitution_coefficient;
