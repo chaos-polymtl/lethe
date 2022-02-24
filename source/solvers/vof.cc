@@ -552,7 +552,7 @@ VolumeOfFluid<dim>::sharpen_interface()
         this->simulation_parameters.interface_sharpening.sharpening_frequency ==
       0)
     {
-      if (simulation_parameters.linear_solver.verbosity ==
+      if (simulation_parameters.non_linear_solver.verbosity ==
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Sharpening interface at step "
@@ -1284,7 +1284,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->simulation_parameters.linear_solver.verbosity !=
+  if (this->simulation_parameters.non_linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
@@ -1322,7 +1322,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
                this->system_rhs,
                ilu_preconditioner);
 
-  if (simulation_parameters.linear_solver.verbosity !=
+  if (simulation_parameters.non_linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
@@ -1768,7 +1768,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
 
   present_solution = solution_pw;
 
-  if (this->simulation_parameters.linear_solver.verbosity !=
+  if (this->simulation_parameters.non_linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << "Peeling/wetting correction at step "
