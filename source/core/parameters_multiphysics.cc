@@ -89,7 +89,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
 
     // subparameters for VOF
     interface_sharpening    = prm.get_bool("interface sharpening");
-    continuum_surface_force = prm.get_bool("continuum surface force");    
+    continuum_surface_force = prm.get_bool("continuum surface force");
     conservation_monitoring = prm.get_bool("conservation monitoring");
     id_fluid_monitored      = prm.get_integer("fluid monitored");
     peeling_wetting         = prm.get_bool("peeling wetting");
