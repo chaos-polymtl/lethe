@@ -1064,7 +1064,7 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
         }
 
       double f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
-           0.0232 / pow(cell_void_fraction, 5);
+                  0.0232 / pow(cell_void_fraction, 5);
 
       double momentum_transfer_coefficient =
         ((18 * viscosity * pow(cell_void_fraction, 2) *
@@ -1172,8 +1172,9 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
             pressure_force[d] * density;
 
           // Apply pressure force to the particles only, when we are solving
-          // model A of the VANS. When are solving Model B, apply the pressure
-          // force back on the fluid by lumping it in the undisturbed_flow_force.
+          // model A of the VANS. When we are solving Model B, apply the
+          // pressure force back on the fluid by lumping it in the
+          // undisturbed_flow_force.
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               undisturbed_flow_force[d] +=
@@ -1235,8 +1236,9 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
             shear_force[d] * density;
 
           // Apply shear force to the particles only, when we are solving
-          // model A of the VANS. When are solving Model B, apply the shear
-          // force back on the fluid by lumping it in the undisturbed_flow_force.
+          // model A of the VANS. When we are solving Model B, apply the shear
+          // force back on the fluid by lumping it in the
+          // undisturbed_flow_force.
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               undisturbed_flow_force[d] +=
