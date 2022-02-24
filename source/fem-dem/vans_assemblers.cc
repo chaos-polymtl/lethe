@@ -1063,7 +1063,7 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
           f0 = 10 * (1 - cell_void_fraction) / pow(cell_void_fraction, 3);
         }
 
-      f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
+      double f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
            0.0232 / pow(cell_void_fraction, 5);
 
       double momentum_transfer_coefficient =
