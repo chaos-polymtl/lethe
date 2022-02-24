@@ -307,4 +307,84 @@ calculate_shear_rate_magnitude(const Tensor<2, dim> shear_rate)
 }
 
 
+class PhaseChangeRheology : public RheologicalModel
+{
+public:
+  /**
+   * @brief Parameter constructor
+   *
+   * @param p_phase_change parameters The parameters needed by the phase change rheology
+   */
+  PhaseChangeRheology(const Parameters::PhaseChange p_phase_change_parameters)
+    : param(p_phase_change_parameters)
+  {
+    this->model_depends_on[temperature] = true;
+  }
+
+  /**
+   * @brief Returns the viscosity.
+   *
+   * @param field_values Values of the field on which the viscosity may depend on.
+   * For the constant viscosity, the viscosity does not depend on anything.
+   */
+  double
+  value(const std::map<field, double> & /*field_values*/) override;
+
+  /**
+   * @brief vector_value Calculates the vector values of the viscosity.
+   * @param field_vectors Values of the field on which the viscosity may depend on. These are not used for the constant viscosity
+   */
+  void
+  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+               std::vector<double> &property_vector) override;
+
+  /**
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the viscosity
+   * with respect to a field
+   * @param field_values Value of the various fields on which the property may depend. The constant viscosity does not depend on anything
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated
+   * @return value of the partial derivative of the viscosity with respect to the field.
+   */
+
+  double
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override;
+
+  /**
+   * @brief vector_jacobian Calculate the derivative of the with respect to a field
+   * @param field_vectors Vector for the values of the fields used to evaluate the property
+   * @param id Identifier of the field with respect to which a derivative should be calculated
+   * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
+   */
+
+  void
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field /*id*/,
+    std::vector<double> &jacobian_vector) override;
+
+private:
+  /**
+   * @brief viscosity Calculates the viscosity from the temperature using the liquid fraction
+   *
+   * @param T value of the temperature
+   * @return value of the viscosity
+   *
+   */
+  inline double
+  viscosity(const double T)
+  {
+    const double l_frac =
+      std::min(std::max((T - param.T_solidus) /
+                          (param.T_liquidus - param.T_solidus),
+                        0.),
+               1.);
+
+    return param.viscosity_l * l_frac + param.viscosity_s * (1. - l_frac);
+  }
+
+  Parameters::PhaseChange param;
+};
+
 #endif

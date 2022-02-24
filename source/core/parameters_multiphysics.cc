@@ -47,6 +47,11 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "Interface sharpening <true|false>");
 
+    prm.declare_entry("continuum surface force",
+                      "false",
+                      Patterns::Bool(),
+                      "Continuum surface force calculation <true|false>");
+
     prm.declare_entry(
       "conservation monitoring",
       "false",
@@ -78,12 +83,13 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     tracer         = prm.get_bool("tracer");
     VOF            = prm.get_bool("VOF");
 
-    // subparameters for heat_transfer
+    // subparameter for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
     buoyancy_force      = prm.get_bool("buoyancy force");
 
     // subparameters for VOF
     interface_sharpening    = prm.get_bool("interface sharpening");
+    continuum_surface_force = prm.get_bool("continuum surface force");    
     conservation_monitoring = prm.get_bool("conservation monitoring");
     id_fluid_monitored      = prm.get_integer("fluid monitored");
     peeling_wetting         = prm.get_bool("peeling wetting");

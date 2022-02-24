@@ -61,8 +61,8 @@ bdf_coefficients(unsigned int order, const std::vector<double> time_steps);
  * dt_2.
  */
 Vector<double>
-bdf_coefficients(Parameters::SimulationControl::TimeSteppingMethod method,
-                 const std::vector<double>                         time_steps);
+bdf_coefficients(const Parameters::SimulationControl::TimeSteppingMethod method,
+                 const std::vector<double> time_steps);
 
 
 /**
@@ -79,7 +79,10 @@ bdf_coefficients(Parameters::SimulationControl::TimeSteppingMethod method,
  * t, t-dt_1 and t-dt_2.
  */
 Vector<double>
-delta(unsigned int order, unsigned int n, unsigned int j, Vector<double> times);
+delta(const unsigned int   order,
+      const unsigned int   n,
+      const unsigned int   j,
+      const Vector<double> times);
 
 
 

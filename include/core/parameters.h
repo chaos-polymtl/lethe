@@ -180,6 +180,12 @@ namespace Parameters
     // Specific heat solid - Units in J/(kg*K)
     double cp_s;
 
+    // kinematic viscosity liquid - Units in m^2/(s)
+    double viscosity_l;
+
+    // kinematic viscosity solid - Units in in m^2/(s)
+    double viscosity_s;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -281,7 +287,8 @@ namespace Parameters
     {
       powerlaw,
       carreau,
-      newtonian
+      newtonian,
+      phase_change
     } rheological_model;
     NonNewtonian non_newtonian_parameters;
 
@@ -339,6 +346,26 @@ namespace Parameters
   };
 
   /**
+   * @brief SurfaceTensionForce - Defines the parameters for
+   * the calculation of surface tension force in the VOF solver.
+   */
+  struct SurfaceTensionForce
+  {
+    double phase_fraction_gradient_filter_value;
+    double curvature_filter_value;
+
+    bool output_VOF_auxiliary_fields;
+
+    // Type of verbosity for the surface tension force calculation
+    Verbosity verbosity;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief PhysicalProperties - Define the possible physical properties.
    * All continuum equations share the same physical properties object but only
    * take the subset of properties they require
@@ -355,6 +382,9 @@ namespace Parameters
     std::vector<Fluid>        fluids;
     unsigned int              number_of_fluids;
     static const unsigned int max_fluids = 2;
+
+    // Surface tension coefficient
+    double surface_tension_coef;
 
     void
     declare_parameters(ParameterHandler &prm);

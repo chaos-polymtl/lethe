@@ -65,6 +65,8 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
+    , pfg_dof_handler(*triangulation)
+    , curvature_dof_handler(*triangulation)
     , solution_transfer(dof_handler)
   {
     if (simulation_parameters.mesh.simplex)
@@ -83,6 +85,13 @@ public:
         fe      = std::make_shared<FE_Q<dim>>(1);
         mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
+        fe_pfg = std::make_shared<FESystem<dim>>(FE_Q<dim>(fe->degree), dim);
+        fe_curvature = std::make_shared<FE_Q<dim>>(1);
+        pfg_mapping  = std::make_shared<MappingQ<dim>>(
+          fe_pfg->degree, simulation_parameters.fem_parameters.qmapping_all);
+        curvature_mapping = std::make_shared<MappingQ<dim>>(
+          fe_curvature->degree,
+          simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
         error_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 2);
@@ -457,6 +466,65 @@ private:
     TrilinosWrappers::MPI::Vector &             solution_pw,
     const std::vector<types::global_dof_index> &dof_indices_vof);
 
+  /**
+   * @brief Carries out interface sharpening. It is called in the modify solution function.
+   */
+  void
+  sharpen_interface();
+
+  /**
+   * @brief Carries out finding the gradients of phase fraction. Obtained gradients of phase
+   * fraction is used in find_filtered_interface_curvature to find interface
+   * curvature (k).
+   */
+  void
+  find_filtered_pfg();
+
+  /**
+   * @brief Carries out finding the interface curvature.
+   */
+  void
+  find_filtered_interface_curvature();
+
+  /**
+   * @brief Assembles the matrix and rhs for calculation of filtered phase gradient (fpg).
+   *
+   * Solves:
+   * $$ v . \psi + \eta * \nabla v . \nabla \psi = v . \nabla \phi $$
+   * where $$v$$, $$\psi$$, $$\eta$$, and $$\phi$$ are test function, fpg,
+   * filter value, and phase fraction.
+   *
+   * @param solution VOF solution (phase fraction)
+   */
+  void
+  assemble_pfg_matrix_and_rhs(TrilinosWrappers::MPI::Vector &solution);
+
+  /**
+   * @brief Solves phase fraction gradient system.
+   */
+  void
+  solve_pfg();
+
+  /**
+   * @brief Assembles the matrix and rhs for calculation of the curvature.
+   *
+   * Solves:
+   * $$ v * k + \eta * \nabla v . \nabla k = \nabla v . (\psi / |\psi|) $$
+   * where $$v$$, $$psi$$, $$eta$$, and $$k$$ are test function, fpg, filter
+   * value, and curvature.
+   *
+   * @param present_pfg_solution
+   */
+  void
+  assemble_curvature_matrix_and_rhs(
+    TrilinosWrappers::MPI::Vector &present_pfg_solution);
+
+  /**
+   * @brief Solves curvature system.
+   */
+  void
+  solve_curvature();
+
   TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
 
   MultiphysicsInterface<dim> *     multiphysics;
@@ -464,14 +532,19 @@ private:
 
   // Core elements for the VOF simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  std::shared_ptr<SimulationControl> simulation_control;
-  DoFHandler<dim>                    dof_handler;
-
+  std::shared_ptr<SimulationControl>  simulation_control;
+  DoFHandler<dim>                     dof_handler;
+  DoFHandler<dim>                     pfg_dof_handler;
+  DoFHandler<dim>                     curvature_dof_handler;
   std::shared_ptr<FiniteElement<dim>> fe;
+  std::shared_ptr<FESystem<dim>>      fe_pfg;
+  std::shared_ptr<FiniteElement<dim>> fe_curvature;
   ConvergenceTable                    error_table;
 
   // Mapping and Quadrature
   std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<Mapping<dim>>        pfg_mapping;
+  std::shared_ptr<Mapping<dim>>        curvature_mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;
@@ -511,6 +584,33 @@ private:
 
   // Peeling/Wetting analysis
   TrilinosWrappers::MPI::Vector marker_pw;
+
+  // Filtered phase fraction gradient (pfg) solution
+  TrilinosWrappers::MPI::Vector present_pfg_solution;
+  IndexSet                      locally_owned_dofs_pfg;
+  IndexSet                      locally_relevant_dofs_pfg;
+  AffineConstraints<double>     pfg_constraints;
+  TrilinosWrappers::MPI::Vector nodal_pfg_relevant;
+  TrilinosWrappers::MPI::Vector nodal_pfg_owned;
+
+  TrilinosWrappers::SparseMatrix system_matrix_pfg;
+  TrilinosWrappers::MPI::Vector  system_rhs_pfg;
+
+  // Filtered curvature solution
+  TrilinosWrappers::MPI::Vector present_curvature_solution;
+  IndexSet                      locally_owned_dofs_curvature;
+  IndexSet                      locally_relevant_dofs_curvature;
+  AffineConstraints<double>     curvature_constraints;
+  TrilinosWrappers::MPI::Vector nodal_curvature_relevant;
+  TrilinosWrappers::MPI::Vector nodal_curvature_owned;
+
+  std::vector<Tensor<1, dim>> pfg_values;
+  std::vector<double>         curvature_values;
+
+  TrilinosWrappers::SparseMatrix system_matrix_curvature;
+  TrilinosWrappers::MPI::Vector  system_rhs_curvature;
+
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
   // Lower and upper bounds of phase fraction
   const double phase_upper_bound = 1.0;

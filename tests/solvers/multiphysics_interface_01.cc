@@ -22,6 +22,9 @@
  */
 
 // Deal.II includes
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/grid/tria.h>
 // Lethe
 #include <core/multiphysics.h>
 #include <core/parameters.h>

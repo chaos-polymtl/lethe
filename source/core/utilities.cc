@@ -96,11 +96,11 @@ make_table_tensors_scalars(
 
 void
 fill_table_from_file(TableHandler &    table,
-                     std::string       file,
+                     const std::string file_name,
                      const std::string delimiter)
 {
   table.clear();
-  std::ifstream myfile(file);
+  std::ifstream myfile(file_name);
   // open the file
   if (myfile.is_open())
     {
