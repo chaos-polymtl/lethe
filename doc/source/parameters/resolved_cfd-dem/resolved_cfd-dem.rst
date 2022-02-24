@@ -127,7 +127,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``restitution coefficient`` parameter is the restitution coefficient of the particles' material. This parameter is used to define the effective restitution coefficient for the impact of a particle and the wall.
 
-* The ``rolling friction coefficient`` parameter is the sliding friction coefficient of the particle. This parameter is used to define the effection friction coefficient between the wall and the particles when their surfaces are sliding relative to each other. The effective coefficient is calculated using a harmonic mean of the properties of the particles and the other objects it impacts.
+* The ``rolling friction coefficient`` parameter is the rolling friction coefficient of the particle. This parameter is used to define the effective rolling friction coefficient between the wall and the particles. The effective coefficient is calculated using a harmonic mean of the properties of the particles and the other objects it impacts.
 
 * The ``youngs modulus`` parameter is the young modulus of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
 
