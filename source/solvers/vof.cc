@@ -1,12 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -23,6 +14,14 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 void
@@ -72,10 +71,12 @@ VolumeOfFluid<dim>::assemble_system_matrix()
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  auto scratch_data = VOFScratchData<dim>(*this->fe,
-                                          *this->cell_quadrature,
-                                          *this->mapping,
-                                          dof_handler_fd->get_fe());
+  auto scratch_data =
+    VOFScratchData<dim>(this->simulation_parameters.physical_properties_manager,
+                        *this->fe,
+                        *this->cell_quadrature,
+                        *this->mapping,
+                        dof_handler_fd->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -123,6 +124,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
       scratch_data.reinit_velocity(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
+
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -159,10 +161,12 @@ VolumeOfFluid<dim>::assemble_system_rhs()
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  auto scratch_data = VOFScratchData<dim>(*this->fe,
-                                          *this->cell_quadrature,
-                                          *this->mapping,
-                                          dof_handler_fd->get_fe());
+  auto scratch_data =
+    VOFScratchData<dim>(this->simulation_parameters.physical_properties_manager,
+                        *this->fe,
+                        *this->cell_quadrature,
+                        *this->mapping,
+                        dof_handler_fd->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -1136,13 +1140,13 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
   solution_pw.reinit(locally_owned_dofs, triangulation->get_communicator());
   solution_pw = present_solution;
 
-  FEFaceValues<dim> fe_face_values_vof(*this->fs_mapping,
+  FEFaceValues<dim> fe_face_values_vof(*this->mapping,
                                        *this->fe,
                                        *this->face_quadrature,
                                        update_values |
                                          update_quadrature_points);
 
-  FEFaceValues<dim> fe_face_values_cfd(*this->fs_mapping,
+  FEFaceValues<dim> fe_face_values_cfd(*this->mapping,
                                        dof_handler_cfd->get_fe(),
                                        *this->face_quadrature,
                                        update_values |
@@ -1157,14 +1161,19 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
   unsigned int boundary_id =
     this->simulation_parameters.boundary_conditions.id[i_bc];
 
+  // Physical properties
+  const auto density_models =
+    this->simulation_parameters.physical_properties_manager
+      .get_density_vector();
+  std::map<field, std::vector<double>> fields;
+
+  density_0 = std::vector<double>(n_q_points);
+  density_1 = std::vector<double>(n_q_points);
+
   // Useful definitions for readability
-  const unsigned int density_fluid_0 =
-    this->simulation_parameters.physical_properties.fluids[0].density;
-  const unsigned int density_fluid_1 =
-    this->simulation_parameters.physical_properties.fluids[1].density;
-  const unsigned int wetting_threshold =
+  const double wetting_threshold =
     this->simulation_parameters.boundary_conditions_vof.wetting_threshold[i_bc];
-  const unsigned int peeling_threshold =
+  const double peeling_threshold =
     this->simulation_parameters.boundary_conditions_vof.peeling_threshold[i_bc];
 
   // Loop on cell_vof
@@ -1207,10 +1216,14 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
 
                   for (unsigned int q = 0; q < n_q_points; q++)
                     {
+                      // Calculate physical properties
+                      density_models[0]->vector_value(fields, density_0);
+                      density_models[1]->vector_value(fields, density_1);
+
                       if (pressure_values[q] > wetting_threshold)
                         {
                           // wetting of lowest density fluid
-                          if ((density_fluid_1 > density_fluid_0) &&
+                          if ((density_1[q] > density_0[q]) &&
                               (phase_values[q] < 0.5))
                             {
                               // increment cell count
@@ -1225,7 +1238,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                                                     dof_indices_vof);
                                 }
                             }
-                          else if ((density_fluid_0 > density_fluid_1) &&
+                          else if ((density_0[q] > density_1[q]) &&
                                    (phase_values[q] > 0.5))
                             {
                               // increment cell count
@@ -1245,7 +1258,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                       else if (pressure_values[q] < peeling_threshold)
                         {
                           // peeling of highest density fluid
-                          if ((density_fluid_1 > density_fluid_0) &&
+                          if ((density_1[q] > density_0[q]) &&
                               (phase_values[q] > 0.5))
                             {
                               // increment cell count
@@ -1260,7 +1273,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                                                     dof_indices_vof);
                                 }
                             }
-                          else if ((density_fluid_0 > density_fluid_1) &&
+                          else if ((density_0[q] > density_1[q]) &&
                                    (phase_values[q] < 0.5))
                             {
                               // increment cell count

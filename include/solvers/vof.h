@@ -17,14 +17,6 @@
 #ifndef lethe_VOF_h
 #define lethe_VOF_h
 
-#include <core/bdf.h>
-#include <core/simulation_control.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/multiphysics_interface.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/table_handler.h>
@@ -43,6 +35,13 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/error_estimator.h>
+
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 class VolumeOfFluid
@@ -420,6 +419,8 @@ private:
   /**
    * @brief Modification of the solution
    *
+   * @tparam VectorType The Vector type used for the solvers
+   *
    * @param i_bc peeling-wetting boundary index
    *
    * @param current_solution_cfd current solution for the fluid dynamics
@@ -502,6 +503,10 @@ private:
 
   // Peeling/Wetting analysis
   TrilinosWrappers::MPI::Vector marker_pw;
+
+  // Physical properties used in peeling/wetting
+  std::vector<double> density_0;
+  std::vector<double> density_1;
 
   // Lower and upper bounds of phase fraction
   const double phase_upper_bound = 1.0;
