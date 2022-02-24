@@ -1235,7 +1235,8 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
             shear_force[d] * density;
 
           // Apply shear force to the particles only, when we are solving
-          // model A of the VANS
+          // model A of the VANS. When are solving Model B, apply the shear
+          // force back on the fluid by lumping it in the undisturbed_flow_force.
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               undisturbed_flow_force[d] +=
