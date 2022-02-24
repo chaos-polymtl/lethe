@@ -1172,7 +1172,8 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
             pressure_force[d] * density;
 
           // Apply pressure force to the particles only, when we are solving
-          // model A of the VANS
+          // model A of the VANS. When are solving Model B, apply the pressure
+          // force back on the fluid by lumping it in the undisturbed_flow_force.
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               undisturbed_flow_force[d] +=
