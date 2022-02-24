@@ -246,8 +246,11 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
-  // Peeling/wetting output
-  data_out.add_data_vector(this->dof_handler, this->marker_pw, "marker_pw");
+  if (this->simulation_parameters.multiphysics.peeling_wetting)
+    {
+      // Peeling/wetting output
+      data_out.add_data_vector(this->dof_handler, this->marker_pw, "marker_pw");
+    }
 }
 
 template <int dim>
@@ -345,6 +348,9 @@ VolumeOfFluid<dim>::calculate_volume(int id_fluid_monitored)
                         volume += fe_values_vof.JxW(q) * q_scalar_values[q];
                       break;
                     }
+                  default:
+                    throw std::runtime_error(
+                      "Unsupported number of fluids (>2)");
                 }
             }
         }
@@ -466,33 +472,36 @@ void
 VolumeOfFluid<dim>::modify_solution()
 {
   // Peeling/wetting
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_vof.size;
-       ++i_bc)
+  if (this->simulation_parameters.multiphysics.peeling_wetting)
     {
-      if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
-          BoundaryConditions::BoundaryType::pw)
+      for (unsigned int i_bc = 0;
+           i_bc < this->simulation_parameters.boundary_conditions_vof.size;
+           ++i_bc)
         {
-          // Parse fluid present solution to apply_peeling_wetting method
-          if (multiphysics->fluid_dynamics_is_block())
+          if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
+              BoundaryConditions::BoundaryType::pw)
             {
-              const TrilinosWrappers::MPI::BlockVector current_solution_cfd(
-                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
-              // apply_peeling_wetting is templated with current_solution_cfd
-              // VectorType
-              apply_peeling_wetting(i_bc, current_solution_cfd);
-            }
-          else
-            {
-              const TrilinosWrappers::MPI::Vector current_solution_cfd(
-                *multiphysics->get_solution(PhysicsID::fluid_dynamics));
-              // apply_peeling_wetting is templated with current_solution_cfd
-              // VectorType
-              apply_peeling_wetting(i_bc, current_solution_cfd);
+              // Parse fluid present solution to apply_peeling_wetting method
+              if (multiphysics->fluid_dynamics_is_block())
+                {
+                  const TrilinosWrappers::MPI::BlockVector current_solution_cfd(
+                    *multiphysics->get_block_solution(
+                      PhysicsID::fluid_dynamics));
+                  // apply_peeling_wetting is templated with
+                  // current_solution_cfd VectorType
+                  apply_peeling_wetting(i_bc, current_solution_cfd);
+                }
+              else
+                {
+                  const TrilinosWrappers::MPI::Vector current_solution_cfd(
+                    *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+                  // apply_peeling_wetting is templated with
+                  // current_solution_cfd VectorType
+                  apply_peeling_wetting(i_bc, current_solution_cfd);
+                }
             }
         }
     }
-
   // Interface sharpening
   if (this->simulation_parameters.multiphysics.interface_sharpening)
     {
@@ -1168,8 +1177,9 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
       .get_density_vector();
   std::map<field, std::vector<double>> fields;
 
-  density_0 = std::vector<double>(n_q_points);
-  density_1 = std::vector<double>(n_q_points);
+  std::vector<double> density_0(n_q_points);
+  std::vector<double> density_1(n_q_points);
+  int                 id_denser_fluid;
 
   // Useful definitions for readability
   const double wetting_threshold =
@@ -1187,7 +1197,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
               if (cell_vof->face(face)->at_boundary() &&
                   cell_vof->face(face)->boundary_id() == boundary_id)
                 {
-                  // Equivalent dof_handler for CFD
+                  // Get fluid dynamics active cell iterator
                   typename DoFHandler<dim>::active_cell_iterator cell_cfd(
                     &(*(this->triangulation)),
                     cell_vof->level(),
@@ -1215,17 +1225,22 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                   // Local index (see deal.II step 4)
                   cell_vof->get_dof_indices(dof_indices_vof);
 
+                  // Calculate physical properties for the cell
+                  density_models[0]->vector_value(fields, density_0);
+                  density_models[1]->vector_value(fields, density_1);
+
                   for (unsigned int q = 0; q < n_q_points; q++)
                     {
-                      // Calculate physical properties
-                      density_models[0]->vector_value(fields, density_0);
-                      density_models[1]->vector_value(fields, density_1);
-
                       if (pressure_values[q] > wetting_threshold)
                         {
-                          // wetting of lowest density fluid
-                          if ((density_1[q] > density_0[q]) &&
-                              (phase_values[q] < 0.5))
+                          // Get denser fluid id
+                          if (density_1[q] > density_0[q])
+                            id_denser_fluid = 1;
+                          else
+                            id_denser_fluid = 0;
+
+                          // wetting of lower density fluid
+                          if (id_denser_fluid == 1 && phase_values[q] < 0.5)
                             {
                               // increment cell count
                               nb_q_wet++;
@@ -1233,14 +1248,14 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                               // if enough quadrature points meet the condition
                               if (nb_q_wet > n_q_points / 2)
                                 {
-                                  change_cell_phase("w",
+                                  change_cell_phase(PhaseChange::wetting,
                                                     1,
                                                     solution_pw,
                                                     dof_indices_vof);
                                 }
                             }
-                          else if ((density_0[q] > density_1[q]) &&
-                                   (phase_values[q] > 0.5))
+                          else if (id_denser_fluid == 0 &&
+                                   phase_values[q] > 0.5)
                             {
                               // increment cell count
                               nb_q_wet++;
@@ -1248,7 +1263,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                               // if enough quadrature points meet the condition
                               if (nb_q_wet > n_q_points / 2)
                                 {
-                                  change_cell_phase("w",
+                                  change_cell_phase(PhaseChange::wetting,
                                                     0,
                                                     solution_pw,
                                                     dof_indices_vof);
@@ -1258,9 +1273,8 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
 
                       else if (pressure_values[q] < peeling_threshold)
                         {
-                          // peeling of highest density fluid
-                          if ((density_1[q] > density_0[q]) &&
-                              (phase_values[q] > 0.5))
+                          // peeling of higher density fluid
+                          if (id_denser_fluid == 1 && phase_values[q] > 0.5)
                             {
                               // increment cell count
                               nb_q_peeled++;
@@ -1268,14 +1282,14 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                               // if enough quadrature points meet the condition
                               if (nb_q_peeled > n_q_points / 2)
                                 {
-                                  change_cell_phase("p",
+                                  change_cell_phase(PhaseChange::peeling,
                                                     0,
                                                     solution_pw,
                                                     dof_indices_vof);
                                 }
                             }
-                          else if ((density_0[q] > density_1[q]) &&
-                                   (phase_values[q] < 0.5))
+                          else if (id_denser_fluid == 0 &&
+                                   phase_values[q] < 0.5)
                             {
                               // increment cell count
                               nb_q_peeled++;
@@ -1283,7 +1297,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                               // if enough quadrature points meet the condition
                               if (nb_q_peeled > n_q_points / 2)
                                 {
-                                  change_cell_phase("p",
+                                  change_cell_phase(PhaseChange::peeling,
                                                     1,
                                                     solution_pw,
                                                     dof_indices_vof);
@@ -1322,12 +1336,12 @@ VolumeOfFluid<3>::apply_peeling_wetting<TrilinosWrappers::MPI::BlockVector>(
 template <int dim>
 void
 VolumeOfFluid<dim>::change_cell_phase(
-  const std::string &                         type,
+  const PhaseChange &                         type,
   const unsigned int &                        new_phase,
   TrilinosWrappers::MPI::Vector &             solution_pw,
   const std::vector<types::global_dof_index> &dof_indices_vof)
 {
-  if (type == "w")
+  if (type == PhaseChange::wetting)
     {
       for (unsigned int k = 0; k < fe->dofs_per_cell; ++k)
         {
@@ -1335,7 +1349,7 @@ VolumeOfFluid<dim>::change_cell_phase(
           solution_pw[dof_indices_vof[k]] = new_phase;
         }
     }
-  else if (type == "p")
+  else if (type == PhaseChange::peeling)
     {
       for (unsigned int k = 0; k < fe->dofs_per_cell; ++k)
         {

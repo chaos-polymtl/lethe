@@ -684,10 +684,14 @@ namespace BoundaryConditions
   /**
    * @brief This class manages the boundary conditions for VOF solver
    * It introduces the boundary functions and declares the boundary conditions
-   * coherently. (TODO update)
-   * The members ... contain double used for bc calculation :
-   *  - if bc type is "..." (... condition), "..." is the
-   * double passed to the deal.ii ConstantFunction
+   * coherently.
+   *
+   *  - if bc type is "pw", peeling/wetting of the free surface will applied
+   * where the pressure condition met the peeling_threshold and
+   * wetting_threshold set for this boundary.
+   * See vof.cc for further implementation details.
+   *
+   * - if bc type is "none", nothing happens
    */
 
   template <int dim>

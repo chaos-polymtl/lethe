@@ -296,6 +296,13 @@ public:
     return nonzero_constraints;
   }
 
+  // enum class used for peeling/wetting
+  enum class PhaseChange
+  {
+    peeling,
+    wetting
+  };
+
 private:
   /**
    *  @brief Assembles the matrix associated with the solver
@@ -435,7 +442,7 @@ private:
    * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy
    * error likelihood in apply_peeling_wetting.
    *
-   * @param type a string stating the needed change ("w" or "p")
+   * @param type a parameter of class PhaseChange (see below) stating the needed change
    *
    * @param new_phase the new phase value for the cell (0 or 1)
    *
@@ -445,7 +452,7 @@ private:
    */
   void
   change_cell_phase(
-    const std::string &                         type,
+    const PhaseChange &                         type,
     const unsigned int &                        new_phase,
     TrilinosWrappers::MPI::Vector &             solution_pw,
     const std::vector<types::global_dof_index> &dof_indices_vof);
@@ -504,10 +511,6 @@ private:
 
   // Peeling/Wetting analysis
   TrilinosWrappers::MPI::Vector marker_pw;
-
-  // Physical properties used in peeling/wetting
-  std::vector<double> density_0;
-  std::vector<double> density_1;
 
   // Lower and upper bounds of phase fraction
   const double phase_upper_bound = 1.0;
