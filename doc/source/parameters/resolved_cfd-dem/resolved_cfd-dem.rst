@@ -123,7 +123,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``friction coefficient`` parameter is the coefficient of friction of the particle. This parameter is used to define the effective coefficient of friction between the wall and the particles.
 
-* The ``poisson ratio`` parameter is the Poisson ratio of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
+* The ``poisson ratio`` parameter is the Poisson's ratio of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
 
 * The ``restitution coefficient`` parameter is the restitution coefficient of the particles' material. This parameter is used to define the effective restitution coefficient for the impact of a particle and the wall.
 
