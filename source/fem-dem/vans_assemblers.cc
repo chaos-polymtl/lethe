@@ -1029,7 +1029,6 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
   particle_number = 0;
 
   double f0 = 0;
-  double f3 = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
