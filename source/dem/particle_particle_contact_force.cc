@@ -116,6 +116,5 @@ ParticleParticleContactForce<dim>::find_effective_radius_and_mass(
                            particle_two_properties[DEM::PropertiesIndex::dp]));
 }
 
-
 template class ParticleParticleContactForce<2>;
 template class ParticleParticleContactForce<3>;
