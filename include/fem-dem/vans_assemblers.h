@@ -402,8 +402,8 @@ template <int dim>
 class GLSVansAssemblerShearForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerShearForce()
-
+  GLSVansAssemblerShearForce(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -414,6 +414,8 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**

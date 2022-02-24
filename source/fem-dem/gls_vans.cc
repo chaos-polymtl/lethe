@@ -571,7 +571,8 @@ GLSVANSSolver<dim>::setup_assemblers()
   if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
     // Shear Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerShearForce<dim>>());
+      std::make_shared<GLSVansAssemblerShearForce<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_dem));
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))

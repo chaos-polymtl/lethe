@@ -1172,8 +1172,8 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
             pressure_force[d] * density;
 
-          // Only apply pressure force to the particle if we are solving model A
-          // of the VANS
+          // Apply pressure force to the particles only, when we are solving
+          // model A of the VANS
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               undisturbed_flow_force[d] +=
@@ -1233,8 +1233,14 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
             shear_force[d] * density;
-          undisturbed_flow_force[d] +=
-            shear_force[d] / scratch_data.cell_volume;
+
+          // Apply shear force to the particles only, when we are solving
+          // model A of the VANS
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+            {
+              undisturbed_flow_force[d] +=
+                shear_force[d] / scratch_data.cell_volume;
+            }
         }
 
       particle_number += 1;
