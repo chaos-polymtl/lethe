@@ -129,7 +129,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``rolling friction coefficient`` parameter is the rolling friction coefficient of the particle. This parameter is used to define the effective rolling friction coefficient between the wall and the particles. The effective coefficient is calculated using a harmonic mean of the properties of the particles and the other objects it impacts.
 
-* The ``youngs modulus`` parameter is the young modulus of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
+* The ``youngs modulus`` parameter is the Young's modulus of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
 
 
 
