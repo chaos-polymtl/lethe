@@ -106,7 +106,7 @@ point_nd_to_3d(const Point<dim> point)
  */
 template <int dim>
 inline Point<2>
-point_nd_to_2d(const Point<dim> point)
+point_nd_to_2d(const Point<dim> &point)
 {
   Point<2> point_2d;
   point_2d[0] = point[0];
