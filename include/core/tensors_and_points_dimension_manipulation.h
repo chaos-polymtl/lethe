@@ -81,7 +81,7 @@ tensor_nd_to_2d(const Tensor<1, dim> tensor)
  */
 template <int dim>
 inline Point<3>
-point_nd_to_3d(const Point<dim> point)
+point_nd_to_3d(const Point<dim> &point)
 {
   Point<3> point_3d;
   point_3d[0] = point[0];
