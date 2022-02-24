@@ -316,7 +316,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @brief calculate_particle_fluid_interactions  calculates the solid-fluid interaction of the Koch-Hill drag model.
    * @param scratch_data (see base class)
    */
   virtual void
