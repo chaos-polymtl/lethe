@@ -100,7 +100,7 @@ public:
   double youngs_modulus;
   // The particle restitution coefficient. Used in case of contact.
   double restitution_coefficient;
-  // The particle poisson ratio. Used in case of contact.
+  // The particle Poisson's ratio. Used in case of contact.
   double poisson_ratio;
   // The particle friction coefficient. Used in case of contact.
   double friction_coefficient;
