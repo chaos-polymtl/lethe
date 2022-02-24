@@ -99,7 +99,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``wall rolling friction coefficient`` parameter is the sliding friction coefficient of the wall. This parameter is used to define the effection friction coefficient between the wall and the particles when their surfaces are sliding relative to each other. At This point in time, all the walls have the same properties.
 
-* The ``wall youngs modulus`` parameter is the young modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At This point in time, all the walls have the same properties.
+* The ``wall youngs modulus`` parameter is the Young's modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At This point in time, all the walls have the same properties.
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
 
