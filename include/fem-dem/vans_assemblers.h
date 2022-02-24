@@ -318,7 +318,6 @@ public:
   /**
    * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
