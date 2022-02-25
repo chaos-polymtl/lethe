@@ -18,6 +18,8 @@
 
 #include <core/multiphysics.h>
 
+#include <solvers/multiphysics_interface.h>
+
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -28,7 +30,6 @@
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
 
 #ifndef lethe_VOF_scratch_data_h
 #  define lethe_VOF_scratch_data_h
@@ -41,15 +42,16 @@ using namespace dealii;
  * stores the information required by the assembly procedure
  * for a VOF free surface equation. Consequently, this class
  * calculates the phase values (values, gradients, laplacians) and the shape
- * function (values, gradients, laplacians) at all the gauss points for all
+ * method (values, gradients, laplacians) at all the gauss points for all
  * degrees of freedom and stores it into arrays.
- * This class serves as a seperation between the evaluation at the gauss point
- *of the variables of interest and their use in the assembly, which is carried
- *out by the assembler functions.
+ * This class serves as a separation between the evaluation at the gauss point
+ * of the variables of interest and their use in the assembly, which is carried
+ * out by the assembler methods.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
- *  @ingroup solvers
+ *
+ * @ingroup solvers
  **/
 
 template <int dim>
@@ -62,18 +64,24 @@ public:
    * necessary memory for all member variables. However, it does not do any
    * evalution, since this needs to be done at the cell level.
    *
+   * @param properties_manager The physical properties Manager (see physical_properties_manager.h)
+   *
    * @param fe_vof The FESystem used to solve the VOF equations
    *
    * @param quadrature The quadrature to use for the assembly
    *
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
+   * @param fe_fd The FESystem used to solve the Fluid Dynamics equations
+   *
    */
-  VOFScratchData(const FiniteElement<dim> &fe_vof,
-                 const Quadrature<dim> &   quadrature,
-                 const Mapping<dim> &      mapping,
-                 const FiniteElement<dim> &fe_fd)
-    : fe_values_vof(mapping,
+  VOFScratchData(const PhysicalPropertiesManager properties_manager,
+                 const FiniteElement<dim> &      fe_vof,
+                 const Quadrature<dim> &         quadrature,
+                 const Mapping<dim> &            mapping,
+                 const FiniteElement<dim> &      fe_fd)
+    : properties_manager(properties_manager)
+    , fe_values_vof(mapping,
                     fe_vof,
                     quadrature,
                     update_values | update_gradients |
@@ -86,16 +94,12 @@ public:
 
   /**
    * @brief Copy Constructor. Same as the main constructor.
-   *  This constructor only uses the other scratch to build the FeValues, it
+   * This constructor only uses the other scratch to build the FeValues, it
    * does not copy the content of the other scratch into itself since, by
    * definition of the WorkStream mechanism it is assumed that the content of
    * the scratch will be reset on a cell basis.
    *
-   * @param fe The FESystem used to solve the VOF equations
-   *
-   * @param quadrature The quadrature to use for the assembly
-   *
-   * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   * @param sd The scratch data
    */
   VOFScratchData(const VOFScratchData<dim> &sd)
     : fe_values_vof(sd.fe_values_vof.get_mapping(),
@@ -115,7 +119,7 @@ public:
 
   /** @brief Allocates the memory for the scratch
    *
-   * This function allocates the necessary memory for all members of the scratch
+   * This method allocates the necessary memory for all members of the scratch
    *
    */
   void
@@ -125,6 +129,8 @@ public:
    *
    * Using the FeValues and the content of the solutions, previous solutions and
    * solutions stages, fills all of the class member of the scratch
+   *
+   * @tparam VectorType The Vector type used for the solvers
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the fe which is used to fill the FeValues
@@ -192,6 +198,17 @@ public:
       }
   }
 
+  /** @brief Reinitialize the velocity, calculated by the Fluid Dynamics
+   *
+   * @tparam VectorType The Vector type used for the solvers
+   *
+   * @param cell The cell for which the velocity is reinitialized
+   * This cell must be compatible with the Fluid Dynamics FE
+   *
+   * @param current_solution The present value of the solution for [u,p]
+   *
+   */
+
   template <typename VectorType>
   void
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -204,6 +221,20 @@ public:
     fe_values_fd[velocities_fd].get_function_gradients(
       current_solution, velocity_gradient_values);
   }
+
+  /** @brief Calculates the physical properties. This method calculates the physical properties
+   * that may be required by the VOF problem. Namely the density to apply
+   * peeling/wetting.
+   *
+   */
+  void
+  calculate_physical_properties();
+
+  // Physical properties
+  PhysicalPropertiesManager            properties_manager;
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  density_0;
+  std::vector<double>                  density_1;
 
   // FEValues for the VOF problem
   FEValues<dim> fe_values_vof;

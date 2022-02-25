@@ -197,11 +197,6 @@ public:
    * physics. It does not concern the output of the solution using the
    * DataOutObject, which is accomplished through the attach_solution_to_output
    * function
-   *
-   * @param scratch_data The scratch data which is used to store
-   * the calculated finite element information at the gauss point.
-   * See the documentation for VOFScratchData for more
-   * information
    */
   void
   postprocess(bool first_iteration) override;
@@ -309,6 +304,13 @@ public:
   {
     return nonzero_constraints;
   }
+
+  // enum class used for peeling/wetting
+  enum class PhaseChange
+  {
+    peeling,
+    wetting
+  };
 
 private:
   /**
@@ -432,6 +434,39 @@ private:
   assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
 
   /**
+   * @brief Modification of the solution
+   *
+   * @tparam VectorType The Vector type used for the solvers
+   *
+   * @param i_bc peeling-wetting boundary index
+   *
+   * @param current_solution_cfd current solution for the fluid dynamics
+   */
+  template <typename VectorType>
+  void
+  apply_peeling_wetting(const unsigned int i_bc,
+                        const VectorType & current_solution_cfd);
+
+  /**
+   * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy
+   * error likelihood in apply_peeling_wetting.
+   *
+   * @param type a parameter of class PhaseChange (see below) stating the needed change
+   *
+   * @param new_phase the new phase value for the cell (0 or 1)
+   *
+   * @param solution_pw VOF solution after peeling and wetting corrections are applied
+   *
+   * @param dof_indices_vof local index for the VOF solution
+   */
+  void
+  change_cell_phase(
+    const PhaseChange &                         type,
+    const unsigned int &                        new_phase,
+    TrilinosWrappers::MPI::Vector &             solution_pw,
+    const std::vector<types::global_dof_index> &dof_indices_vof);
+
+  /**
    * @brief Carries out interface sharpening. It is called in the modify solution function.
    */
   void
@@ -527,6 +562,7 @@ private:
   AffineConstraints<double>      bounding_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
+  TrilinosWrappers::MPI::Vector  solution_pw;
 
   // Previous solutions vectors
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
@@ -545,6 +581,9 @@ private:
   TrilinosWrappers::MPI::Vector  system_rhs_phase_fraction;
   TrilinosWrappers::MPI::Vector  complete_system_rhs_phase_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
+
+  // Peeling/Wetting analysis
+  TrilinosWrappers::MPI::Vector marker_pw;
 
   // Filtered phase fraction gradient (pfg) solution
   TrilinosWrappers::MPI::Vector present_pfg_solution;

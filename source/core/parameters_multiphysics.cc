@@ -30,28 +30,28 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "VOF calculation <true|false>");
 
-    prm.declare_entry("interface sharpening",
+    // subparameters for heat_transfer
+    prm.declare_entry("viscous dissipation",
                       "false",
                       Patterns::Bool(),
-                      "Interface sharpening <true|false>");
+                      "Viscous dissipation in heat equation <true|false>");
 
     prm.declare_entry("buoyancy force",
                       "false",
                       Patterns::Bool(),
                       "Buoyant force calculation <true|false>");
 
+    // subparameters for VOF
+    prm.declare_entry("interface sharpening",
+                      "false",
+                      Patterns::Bool(),
+                      "Interface sharpening <true|false>");
+
     prm.declare_entry("continuum surface force",
                       "false",
                       Patterns::Bool(),
                       "Continuum surface force calculation <true|false>");
 
-    // subparameter for heat_transfer
-    prm.declare_entry("viscous dissipation",
-                      "false",
-                      Patterns::Bool(),
-                      "Viscous dissipation in heat equation <true|false>");
-
-    // subparameter for free_surface
     prm.declare_entry(
       "conservation monitoring",
       "false",
@@ -63,6 +63,12 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
       "1",
       Patterns::Integer(),
       "Index of the fluid which conservation is monitored <0|1>");
+
+    prm.declare_entry(
+      "peeling wetting",
+      "false",
+      Patterns::Bool(),
+      "Enable peeling/wetting in free surface calculation <true|false>");
   }
   prm.leave_subsection();
 }
@@ -72,20 +78,21 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("multiphysics");
   {
-    fluid_dynamics          = prm.get_bool("fluid dynamics");
-    heat_transfer           = prm.get_bool("heat transfer");
-    tracer                  = prm.get_bool("tracer");
-    VOF                     = prm.get_bool("VOF");
-    interface_sharpening    = prm.get_bool("interface sharpening");
-    buoyancy_force          = prm.get_bool("buoyancy force");
-    continuum_surface_force = prm.get_bool("continuum surface force");
+    fluid_dynamics = prm.get_bool("fluid dynamics");
+    heat_transfer  = prm.get_bool("heat transfer");
+    tracer         = prm.get_bool("tracer");
+    VOF            = prm.get_bool("VOF");
 
     // subparameter for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
+    buoyancy_force      = prm.get_bool("buoyancy force");
 
-    // subparameter for free_surface
+    // subparameters for VOF
+    interface_sharpening    = prm.get_bool("interface sharpening");
+    continuum_surface_force = prm.get_bool("continuum surface force");
     conservation_monitoring = prm.get_bool("conservation monitoring");
     id_fluid_monitored      = prm.get_integer("fluid monitored");
+    peeling_wetting         = prm.get_bool("peeling wetting");
   }
   prm.leave_subsection();
 }
