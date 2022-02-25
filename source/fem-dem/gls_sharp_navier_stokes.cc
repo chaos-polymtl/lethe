@@ -1118,7 +1118,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
   double density    = this->simulation_parameters.particlesParameters->density;
   particle_residual = 0;
-  if (this->simulation_parameters.particlesParameters->integrate_motion)
+  if (this->simulation_parameters.particlesParameters->integrate_motion &&
+      time > 0)
     {
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
@@ -2040,9 +2041,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // loops on the dof that are for vx or vy separately
                       // loops on all the dof of the cell that represent
                       // a specific component
-
-
-
                       // Define which dof is going to be redefined
 
                       // Clear the current line of this dof
@@ -2223,6 +2221,51 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         particles[ib_particle_id],
                         support_points[local_dof_indices[i]],
                         component_i);
+
+                      //  If the pressure is imposed trough IB inside the
+                      //  particle we use an approximation of the pressure
+                      //  outside of the IB in this cell.
+                      if (component_i == dim)
+                        {
+                          double max_pressure_abs = 0;
+                          double max_pressure     = 0;
+                          for (unsigned int k = 0; k < local_dof_indices.size();
+                               ++k)
+                            {
+                              // Check if the dof is inside or outside of the
+                              // particle.
+                              bool dof_is_inside_p =
+                                (support_points[local_dof_indices[k]] -
+                                 particles[ib_particle_id].position)
+                                  .norm() < particles[ib_particle_id].radius;
+                              const unsigned int component_k =
+                                this->fe->system_to_component_index(k).first;
+                              if (component_k == dim &&
+                                  dof_is_inside_p == false)
+                                {
+                                  v_ib = this->evaluation_point(
+                                    local_dof_indices[k]);
+                                  try
+                                    {
+                                      this->system_matrix.add(
+                                        global_index_overwrite,
+                                        local_dof_indices[k],
+                                        -1 * sum_line);
+                                    }
+                                  catch (...)
+                                    {
+                                      //  If we are here, an error happens when
+                                      //  trying to fill the line in the matrix.
+                                      // For example, this can occur if a
+                                      // particle is close to a wall and we are
+                                      // trying to impose the equation on a DOF
+                                      // that as a boundary condition applied to
+                                      // it. As such, we discard these errors.
+                                    }
+                                  break;
+                                }
+                            }
+                        }
 
                       for (unsigned int k = 0; k < ib_coef.size(); ++k)
                         {
