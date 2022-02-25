@@ -2,12 +2,15 @@ Running on 1 MPI rank(s)...
    Number of active cells:       125
    Number of degrees of freedom: 864
    Volume of triangulation:      64
+Initial refinement in box - Step  1 of 3
    Number of active cells:       314
    Number of degrees of freedom: 1980
    Volume of triangulation:      64
+Initial refinement in box - Step  2 of 3
    Number of active cells:       762
    Number of degrees of freedom: 4396
    Volume of triangulation:      64
+Initial refinement in box - Step  3 of 3
    Number of active cells:       6096
    Number of degrees of freedom: 29476
    Volume of triangulation:      64

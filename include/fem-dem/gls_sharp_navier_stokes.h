@@ -1,4 +1,4 @@
-﻿/* ---------------------------------------------------------------------
+/* ---------------------------------------------------------------------
  *
  * Copyright (C) 2019 - 2019 by the Lethe authors
  *
@@ -24,6 +24,8 @@
 #include <core/ib_stencil.h>
 
 #include <solvers/gls_navier_stokes.h>
+
+#include <fem-dem/ib_particles_dem.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
@@ -67,6 +69,7 @@ public:
   assemble_system_rhs()
   {
     assemble_rhs();
+    sharp_edge();
   }
 
 
@@ -168,11 +171,10 @@ private:
       }
     // this->simulation_control->set_assembly_method(this->time_stepping_method);
     {
-      TimerOutput::Scope t(this->computing_timer, "assemble_system");
       this->GLSNavierStokesSolver<
         dim>::assemble_system_matrix_without_preconditioner();
-      this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
     }
+
     sharp_edge();
 
     // Assemble the preconditioner
@@ -193,18 +195,8 @@ private:
   virtual void
   assemble_rhs()
   {
-    TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-    // this->simulation_control->set_assembly_method(this->time_stepping_method);
-
     this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
-    sharp_edge();
   }
-
-
-
-  // BB - TODO This explanation needs to be made clearer. Adjacent, Adjacent_2
-  // and Adjacent_3 needs to be renamed if possible to a clearer notation
-
 
   /**
    * @brief
@@ -248,8 +240,7 @@ private:
   /**
    * @brief
    * Write in a specifique file for each of the paticles its forces, velocity,
-   * position at each time step. LB - TODO refactor the output format of the
-   * file
+   * position at each time step.
    */
   void
   write_force_ib();
@@ -357,19 +348,16 @@ private:
 
 
   /**
-   * @brief
-   * Return the cell around a point based on a initial guess of a closed cell
-   * (look in the neighbors of this cell)
-   *
-   * @param cell , The initial cell. We suspect the point of being in one of the neighbours of this cell.
-   *
-   * @param point, The point that we want to find the cell that contains it
+   * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
    */
-  typename DoFHandler<dim>::active_cell_iterator
-  find_cell_around_point_with_neighbors(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    Point<dim>                                            point);
 
+  virtual void
+  write_checkpoint() override;
+  /*
+   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart
+   * */
+  virtual void
+  read_checkpoint() override;
 
   /**
 * @brief
@@ -397,15 +385,6 @@ Return a bool that describes  if a cell contains a specific point
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
   }
 
-  /**
-   * @brief
-   *Return a vector of cells around a cell including vertex neighbors
-   *
-   * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
-   */
-  std::vector<typename DoFHandler<dim>::active_cell_iterator>
-  find_cells_around_cell(
-    const typename DoFHandler<dim>::active_cell_iterator &cell);
 
 
   /**
@@ -479,22 +458,9 @@ Return a bool that describes  if a cell contains a specific point
 
 
   /**
-   * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
-   */
-
-  virtual void
-  write_checkpoint() override;
-
-  /**
-   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart
-   */
-
-  virtual void
-  read_checkpoint() override;
-
-  /**
    * Members
    */
+
 private:
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
@@ -524,13 +490,15 @@ private:
 
   PVDHandler ib_particles_pvdhandler;
 
-  const bool                   SUPG        = true;
-  const bool                   PSPG        = true;
-  const double                 GLS_u_scale = 1;
+
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
 
   std::vector<TableHandler> table_p;
+
+  // Object used to sub-time step the particle dynamics to allow contact between
+  // particles.
+  IBParticlesDEM<dim> ib_dem;
 };
 
 

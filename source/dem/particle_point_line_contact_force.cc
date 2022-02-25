@@ -1,4 +1,5 @@
-#include <dem/copy_2d_tensor_in_3d.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <dem/particle_point_line_contact_force.h>
 
 using namespace dealii;
@@ -40,7 +41,7 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
         particle_location_3d = particle->get_location();
 
       if constexpr (dim == 2)
-        particle_location_3d = copy_2d_point_in_3d(particle->get_location());
+        particle_location_3d = point_nd_to_3d(particle->get_location());
 
       const Point<3> point = contact_information->point_one;
       double         normal_overlap =
@@ -163,7 +164,7 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
         particle_location_3d = particle->get_location();
 
       if constexpr (dim == 2)
-        particle_location_3d = copy_2d_point_in_3d(particle->get_location());
+        particle_location_3d = point_nd_to_3d(particle->get_location());
 
       Point<3> point_one = contact_information->point_one;
       Point<3> point_two = contact_information->point_two;

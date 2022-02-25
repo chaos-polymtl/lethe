@@ -694,6 +694,11 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 
       // Time monitoring
       TimerOutput::Scope t(this->computing_timer, "box refine");
+      this->pcout
+        << "Initial refinement in box - Step  " << i + 1 << " of "
+        << this->simulation_parameters.mesh_box_refinement->initial_refinement
+        << std::endl;
+
 
       Vector<float> estimated_error_per_cell(tria.n_active_cells());
       const FEValuesExtractors::Vector velocity(0);

@@ -1,4 +1,5 @@
-#include <dem/copy_2d_tensor_in_3d.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <dem/particle_wall_nonlinear_force.h>
 
 using namespace dealii;
@@ -158,8 +159,7 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
             particle_location_3d = particle->get_location();
 
           if constexpr (dim == 2)
-            particle_location_3d =
-              copy_2d_point_in_3d(particle->get_location());
+            particle_location_3d = point_nd_to_3d(particle->get_location());
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -307,6 +307,82 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
                          tangential_force,
                          tangential_torque,
                          rolling_resistance_torque);
+}
+
+template <int dim>
+void
+ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
+  particle_wall_contact_info_struct<dim> &contact_info,
+  Tensor<1, 3> &                          normal_force,
+  Tensor<1, 3> &                          tangential_force,
+  Tensor<1, 3> &                          tangential_torque,
+  Tensor<1, 3> &                          rolling_resistance_torque,
+  IBParticle<dim> &                       particle,
+  const double &                          wall_youngs_modulus,
+  const double &                          wall_poisson_ratio,
+  const double &                          wall_restitution_coefficient,
+  const double &                          wall_friction_coefficient,
+  const double &                          wall_rolling_friction_coefficient,
+  const double &                          dt,
+  const double &                          mass,
+  const double &                          radius)
+{
+  auto particle_properties                        = particle.get_properties();
+  particle_properties[DEM::PropertiesIndex::mass] = mass;
+  particle_properties[DEM::PropertiesIndex::type] = 0;
+  particle_properties[DEM::PropertiesIndex::dp]   = 2 * radius;
+
+  // DEM::PropertiesIndex::type is the first (0) property of particles in the
+  // DEM solver. For the IB particles, the first property is ID. For force and
+  // torque calculations, we need pair-wise properties (such as effective
+  // Young's modulus, effective coefficient of restitution, etc.) We rewrite
+  // these pair-wise properties by using the ID of IB particles (using
+  // DEM::PropertiesIndex::type) and use them in force calculations.
+  const unsigned int particle_type =
+    particle_properties[DEM::PropertiesIndex::type];
+
+  this->effective_youngs_modulus[particle_type] =
+    (particle.youngs_modulus * wall_youngs_modulus) /
+    (wall_youngs_modulus *
+       (1 - particle.poisson_ratio * particle.poisson_ratio) +
+     particle.youngs_modulus * (1 - wall_poisson_ratio * wall_poisson_ratio) +
+     DBL_MIN);
+
+  this->effective_shear_modulus[particle_type] =
+    (particle.youngs_modulus * wall_youngs_modulus) /
+    ((2 * wall_youngs_modulus * (2 - particle.poisson_ratio) *
+      (1 + particle.poisson_ratio)) +
+     (2 * particle.youngs_modulus * (2 - wall_poisson_ratio) *
+      (1 + wall_poisson_ratio)) +
+     DBL_MIN);
+
+  this->effective_coefficient_of_restitution[particle_type] =
+    harmonic_mean(particle.restitution_coefficient,
+                  wall_restitution_coefficient);
+
+  this->effective_coefficient_of_friction[particle_type] =
+    harmonic_mean(particle.friction_coefficient, wall_friction_coefficient);
+
+  this->effective_coefficient_of_rolling_friction[particle_type] =
+    harmonic_mean(particle.rolling_friction_coefficient,
+                  wall_rolling_friction_coefficient);
+
+  this->update_contact_information(contact_info, particle_properties, dt);
+
+
+
+  // This tuple (forces and torques) contains four elements which
+  // are: 1, normal force, 2, tangential force, 3, tangential torque
+  // and 4, rolling resistance torque, respectively
+  std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
+    forces_and_torques =
+      calculate_nonlinear_contact_force_and_torque(contact_info,
+                                                   particle_properties);
+
+  normal_force              = std::get<0>(forces_and_torques);
+  tangential_force          = std::get<1>(forces_and_torques);
+  tangential_torque         = std::get<2>(forces_and_torques);
+  rolling_resistance_torque = std::get<3>(forces_and_torques);
 }
 
 template class ParticleWallNonLinearForce<2>;

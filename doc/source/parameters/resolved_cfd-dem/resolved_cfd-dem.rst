@@ -19,11 +19,19 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set refine mesh outside radius factor       = 1.5
 		set integrate motion                        = false
 		set particle nonlinear tolerance            = 1e-6
+		set DEM coupling frequency                  = 1000
 		set alpha                                   = 1
 		set fluid density                           = 1
 		subsection gravity
 			set Function expression =0;0;0
 		end
+		
+		set wall friction coefficient               = 0
+		set wall poisson ratio                      = 0.3
+		set wall restitution coefficient            = 1
+		set wall rolling friction coefficient       = 0
+		set wall youngs modulus                     = 100000000
+		
 		subsection particle info 0
 			set density    = 1
 			subsection position
@@ -40,6 +48,11 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		    	set pressure y = 0
 		    	set pressure z = 0
 		    	set radius     = 0.2
+		    	set friction coefficient         = 0
+		    	set poisson ratio                = 0.3
+		    	set restitution coefficient      = 1
+		    	set rolling friction coefficient = 0
+		    	set youngs modulus               = 100000000
 		end
 	end
 	
@@ -65,17 +78,34 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles remain static.  If ``ìntegrate motion=true`` the position and the velocity will be defined by the particles' position and velocity function.
 
+* The ``DEM coupling frequency`` parameter controls the number of iterations done on the DEM side for each CFD time step. It's necessary to use a much smaller time step for the particle dynamics than for the fluid in case of contact between the particles. The particle collision happens at a much smaller time-scale than the fluid dynamics.
+
 * The ``particle nonlinear tolerance`` parameter controls particle dynamics' nonlinear tolerance. The nonlinear solver won't have converged until the residual on the dynamics equations of all the particles is smaller than this threshold.
 
 * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
+
 
 * The ``fluid density`` parameter is the fluid density used in the force calculation of the resolved CFD-DEM. This parameter is redundant with others in the solver and will be removed in the upcoming code modification.
 
 * The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 
-* The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id 0. For each particle with the index ``n``, a new subsection name ``particle info n`` should be defined with relevant information.
+The following properties are used if the particle impact one of the boundaries of the domain. The effective properties used for calculating the impact force are calculated using a harmonic mean of the properties of the wall and the particle.
+
+* The ``wall friction coefficient`` parameter is the coefficient of friction of the wall. This parameter is used to define the effective coefficient of friction between the wall and the particles. At This point in time, all the walls have the same properties.
+
+* The ``wall poisson ratio`` parameter is the Poisson's ratio of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At This point in time, all the walls have the same properties.
+
+* The ``wall restitution coefficient`` parameter is the restitution coefficient of the wall's material. This parameter is used to define the effective restitution coefficient for the impact of a particle and the wall. At This point in time, all the walls have the same properties.
+
+* The ``wall rolling friction coefficient`` parameter is the rolling friction coefficient of the wall. This parameter is used to define the effective rolling friction coefficient between the wall and the particles. At This point in time, all the walls have the same properties.
+
+* The ``wall youngs modulus`` parameter is the Young's modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At This point in time, all the walls have the same properties.
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
+
+* The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id 0. For each particle with the index ``n``, a new subsection name ``particle info n`` should be defined with relevant information.
+
+
 
 * The subsection ``position`` defines the initial value of the particle position if the parameter ``integrate motion=true``. Otherwise, it defines the particle's position at all points in time. This position is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of coordinate X, Y, and Z. 
 
@@ -88,5 +118,18 @@ The following parameter and subsection are all inside the subsection ``particle 
 * The ``pressure x``, ``pressure y``, and ``pressure z`` parameters are used to define the X, Y, and Z coordinate offset of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to true to define the pressure reference point.
 
 * The ``radius`` parameter is used to define the radius of this particle.
+
+The following properties are used if the particle impact one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are calculated using a harmonic mean of the properties of the particle and the object it impacts.
+
+* The ``friction coefficient`` parameter is the coefficient of friction of the particle. This parameter is used to define the effective coefficient of friction between the wall and the particles.
+
+* The ``poisson ratio`` parameter is the Poisson's ratio of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
+
+* The ``restitution coefficient`` parameter is the restitution coefficient of the particles' material. This parameter is used to define the effective restitution coefficient for the impact of a particle and the wall.
+
+* The ``rolling friction coefficient`` parameter is the rolling friction coefficient of the particle. This parameter is used to define the effective rolling friction coefficient between the wall and the particles. The effective coefficient is calculated using a harmonic mean of the properties of the particles and the other objects it impacts.
+
+* The ``youngs modulus`` parameter is the Young's modulus of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
+
 
 

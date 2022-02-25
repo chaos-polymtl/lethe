@@ -28,7 +28,7 @@ INCLUDE_DIRECTORIES(
   )
 ADD_EXECUTABLE(gls_sharp_navier_stokes_2d gls_sharp_navier_stokes_2d.cc)
 DEAL_II_SETUP_TARGET(gls_sharp_navier_stokes_2d)
-TARGET_LINK_LIBRARIES(gls_sharp_navier_stokes_2d lethe-core lethe-solvers)
+TARGET_LINK_LIBRARIES(gls_sharp_navier_stokes_2d lethe-core lethe-solvers lethe-dem lethe-fem-dem)
 
 install(TARGETS gls_sharp_navier_stokes_2d RUNTIME DESTINATION bin)
 

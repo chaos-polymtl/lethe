@@ -1,4 +1,5 @@
-#include <dem/copy_2d_tensor_in_3d.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <dem/particle_wall_linear_force.h>
 
 using namespace dealii;
@@ -150,8 +151,7 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
             particle_location_3d = particle->get_location();
 
           if constexpr (dim == 2)
-            particle_location_3d =
-              copy_2d_point_in_3d(particle->get_location());
+            particle_location_3d = point_nd_to_3d(particle->get_location());
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -295,6 +295,25 @@ ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
                          tangential_torque,
                          rolling_resistance_torque);
 }
+
+template <int dim>
+void
+ParticleWallLinearForce<dim>::calculate_IB_particle_wall_contact_force(
+  particle_wall_contact_info_struct<dim> & /*contact_info*/,
+  Tensor<1, 3> & /*normal_force*/,
+  Tensor<1, 3> & /*tangential_force*/,
+  Tensor<1, 3> & /*tangential_torque*/,
+  Tensor<1, 3> & /*rolling_resistance_torque*/,
+  IBParticle<dim> & /*particle*/,
+  const double & /*wall_youngs_modulus*/,
+  const double & /*wall_poisson_ratio*/,
+  const double & /*wall_restitution_coefficient*/,
+  const double & /*wall_friction_coefficient*/,
+  const double & /*wall_rolling_friction_coefficient*/,
+  const double & /*dt*/,
+  const double &,
+  const double &)
+{}
 
 template class ParticleWallLinearForce<2>;
 template class ParticleWallLinearForce<3>;
