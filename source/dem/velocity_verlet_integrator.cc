@@ -1,4 +1,5 @@
-#include <dem/copy_2d_tensor_in_3d.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <dem/dem_properties.h>
 #include <dem/velocity_verlet_integrator.h>
 
@@ -83,7 +84,7 @@ VelocityVerletIntegrator<dim>::integrate(
         particle_position = particle.get_location();
 
       if constexpr (dim == 2)
-        particle_position = copy_2d_point_in_3d(particle.get_location());
+        particle_position = point_nd_to_3d(particle.get_location());
 
       for (int d = 0; d < 3; ++d)
         {

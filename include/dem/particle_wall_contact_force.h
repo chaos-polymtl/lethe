@@ -16,6 +16,8 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <core/auxiliary_math_functions.h>
+
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_info_struct.h>
@@ -80,6 +82,58 @@ public:
     return torque_on_walls;
   }
 
+  /**
+   * Carries out the calculation of the contact force for IB particles. This
+   * function is used in fem-dem/ib_particles_dem.
+   *
+   * @param contact_info Contact history including tangential overlap and relative
+   * velocity.
+   * @param normal_force Contact normal force.
+   * @param tangential_force Contact tangential force.
+   * @param tangential_torque
+   * @param rolling_resistance_torque Contact rolling resistance torque.
+   * @param particle
+   * @param wall_youngs_modulus
+   * @param wall_poisson_ratio
+   * @param wall_restitution_coefficient
+   * @param wall_friction_coefficient
+   * @param wall_rolling_friction_coefficient
+   * @param dt Time-step.
+   * @param mass particle mass.
+   * @param radius particle radius.
+   */
+  virtual void
+  calculate_IB_particle_wall_contact_force(
+    particle_wall_contact_info_struct<dim> &contact_info,
+    Tensor<1, 3> &                          normal_force,
+    Tensor<1, 3> &                          tangential_force,
+    Tensor<1, 3> &                          tangential_torque,
+    Tensor<1, 3> &                          rolling_resistance_torque,
+    IBParticle<dim> &                       particle,
+    const double &                          wall_youngs_modulus,
+    const double &                          wall_poisson_ratio,
+    const double &                          wall_restitution_coefficient,
+    const double &                          wall_friction_coefficient,
+    const double &                          wall_rolling_friction_coefficient,
+    const double &                          dt,
+    const double &                          mass,
+    const double &                          radius) = 0;
+
+  /** This function is used to find the projection of vector_a on
+   * vector_b
+   * @param vector_a A vector which is going to be projected on vector_b
+   * @param vector_b The projection vector of vector_a
+   * @return The projection of vector_a on vector_b
+   */
+  inline Tensor<1, 3>
+  find_projection(const Tensor<1, 3> &vector_a, const Tensor<1, 3> &vector_b)
+  {
+    Tensor<1, 3> vector_c;
+    vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
+
+    return vector_c;
+  }
+
 protected:
   /**
    * Carries out updating the contact pair information for both non-linear and
@@ -114,8 +168,8 @@ protected:
       &           forces_and_torques,
     Tensor<1, 3> &particle_torque,
     Tensor<1, 3> &particle_force,
-    Point<3> &    point_on_boundary = 0,
-    int           boundary_id       = 0)
+    Point<3> &    point_on_boundary,
+    int           boundary_id = 0)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling
@@ -158,21 +212,6 @@ protected:
    */
   void
   mpi_correction_over_calculation_of_forces_and_torques();
-
-  /** This function is used to find the projection of vector_a on
-   * vector_b
-   * @param vector_a A vector which is going to be projected on vector_b
-   * @param vector_b The projection vector of vector_a
-   * @return The projection of vector_a on vector_b
-   */
-  inline Tensor<1, 3>
-  find_projection(const Tensor<1, 3> &vector_a, const Tensor<1, 3> &vector_b)
-  {
-    Tensor<1, 3> vector_c;
-    vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
-
-    return vector_c;
-  }
 
   double triangulation_radius;
   double effective_radius;

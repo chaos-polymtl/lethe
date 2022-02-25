@@ -10,6 +10,8 @@
 #include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
 #include <dem/post_processing.h>
+#include <dem/set_particle_particle_contact_force_model.h>
+#include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
 
@@ -780,8 +782,12 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   // Setting chosen contact force, insertion and integration methods
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
-    set_particle_particle_contact_force();
-  particle_wall_contact_force_object = set_particle_wall_contact_force();
+    set_particle_particle_contact_force_model(
+      this->cfd_dem_simulation_parameters.dem_parameters);
+  particle_wall_contact_force_object = set_particle_wall_contact_force_model(
+    this->cfd_dem_simulation_parameters.dem_parameters,
+    *parallel_triangulation,
+    triangulation_cell_diameter);
 
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -857,91 +863,6 @@ CFDDEMSolver<dim>::set_integrator_type()
       throw "The chosen integration method is invalid";
     }
   return integrator_object;
-}
-
-template <int dim>
-std::shared_ptr<ParticleParticleContactForce<dim>>
-CFDDEMSolver<dim>::set_particle_particle_contact_force()
-
-{
-  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-        .particle_particle_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::
-        ParticleParticleContactForceModel::linear)
-    {
-      particle_particle_contact_force_object =
-        std::make_shared<ParticleParticleLinearForce<dim>>(dem_parameters);
-    }
-  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .particle_particle_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleParticleContactForceModel::hertz_mindlin_limit_overlap)
-    {
-      particle_particle_contact_force_object =
-        std::make_shared<ParticleParticleHertzMindlinLimitOverlap<dim>>(
-          dem_parameters);
-    }
-  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .particle_particle_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleParticleContactForceModel::hertz_mindlin_limit_force)
-    {
-      particle_particle_contact_force_object =
-        std::make_shared<ParticleParticleHertzMindlinLimitForce<dim>>(
-          dem_parameters);
-    }
-  else if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-             .particle_particle_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleParticleContactForceModel::hertz)
-    particle_particle_contact_force_object =
-      std::make_shared<ParticleParticleHertz<dim>>(dem_parameters);
-  else
-    {
-      throw "The chosen particle-particle contact force model is invalid";
-    }
-  return particle_particle_contact_force_object;
-}
-
-template <int dim>
-std::shared_ptr<ParticleWallContactForce<dim>>
-CFDDEMSolver<dim>::set_particle_wall_contact_force()
-{
-  std::vector<types::boundary_id> boundary_index =
-    this->triangulation->get_boundary_ids();
-
-  if (this->cfd_dem_simulation_parameters.dem_parameters.model_parameters
-        .particle_wall_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
-        linear)
-    {
-      particle_wall_contact_force_object =
-        std::make_shared<ParticleWallLinearForce<dim>>(
-          dem_parameters.boundary_conditions.boundary_translational_velocity,
-          dem_parameters.boundary_conditions.boundary_rotational_speed,
-          dem_parameters.boundary_conditions.boundary_rotational_vector,
-          triangulation_cell_diameter,
-          dem_parameters,
-          boundary_index);
-    }
-  else if (dem_parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleWallContactForceModel::nonlinear)
-    {
-      particle_wall_contact_force_object =
-        std::make_shared<ParticleWallNonLinearForce<dim>>(
-          dem_parameters.boundary_conditions.boundary_translational_velocity,
-          dem_parameters.boundary_conditions.boundary_rotational_speed,
-          dem_parameters.boundary_conditions.boundary_rotational_vector,
-          triangulation_cell_diameter,
-          dem_parameters,
-          boundary_index);
-    }
-  else
-    {
-      throw "The chosen particle-wall contact force model is invalid";
-    }
-  return particle_wall_contact_force_object;
 }
 
 template <int dim>

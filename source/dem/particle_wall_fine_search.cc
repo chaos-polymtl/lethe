@@ -1,4 +1,5 @@
-#include <dem/copy_2d_tensor_in_3d.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <dem/particle_wall_fine_search.h>
 
 #include <boost/math/special_functions/sign.hpp>
@@ -51,14 +52,14 @@ void ParticleWallFineSearch<dim>::particle_wall_fine_search(
             normal_vector_3d = normal_vector;
 
           if constexpr (dim == 2)
-            normal_vector_3d = copy_2d_tensor_in_3d(normal_vector);
+            normal_vector_3d = tensor_nd_to_3d(normal_vector);
 
           Point<3> point_on_boundary_3d;
           if constexpr (dim == 3)
             point_on_boundary_3d = point_on_boundary;
 
           if constexpr (dim == 2)
-            point_on_boundary_3d = copy_2d_point_in_3d(point_on_boundary);
+            point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
 
           // Adding contact info to the sample to
           // particle_wall_contact_info_struct
@@ -135,7 +136,7 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
 
               if constexpr (dim == 2)
                 point_on_floating_wall_3d =
-                  copy_2d_point_in_3d(point_on_floating_wall);
+                  point_nd_to_3d(point_on_floating_wall);
 
               // Check to see on which side of the wall the particle is located:
 
@@ -158,7 +159,7 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
                 normal_vector_3d = normal_vector;
 
               if constexpr (dim == 2)
-                normal_vector_3d = copy_2d_tensor_in_3d(normal_vector);
+                normal_vector_3d = tensor_nd_to_3d(normal_vector);
 
               // Setting tangential overlap of the new particle-floating wall
               // contact pair equal to zero

@@ -1,4 +1,5 @@
-#include <dem/copy_2d_tensor_in_3d.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <dem/dem_properties.h>
 #include <dem/explicit_euler_integrator.h>
 
@@ -50,7 +51,7 @@ ExplicitEulerIntegrator<dim>::integrate(
         particle_position = particle->get_location();
 
       if constexpr (dim == 2)
-        particle_position = copy_2d_point_in_3d(particle->get_location());
+        particle_position = point_nd_to_3d(particle->get_location());
 
       for (int d = 0; d < 3; ++d)
         {

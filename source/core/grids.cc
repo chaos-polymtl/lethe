@@ -76,6 +76,7 @@ attach_grid_to_triangulation(
           const unsigned int initial_refinement =
             mesh_parameters.initial_refinement;
           temporary_quad_triangulation.refine_global(initial_refinement);
+
           // flatten the triangulation
           Triangulation<dim, spacedim> flat_temp_quad_triangulation;
           GridGenerator::flatten_triangulation(temporary_quad_triangulation,

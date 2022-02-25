@@ -905,6 +905,14 @@ namespace Parameters
     bool                         assemble_navier_stokes_inside;
     std::string                  ib_force_output_file;
     double                       density;
+    Tensor<1, dim>               gravity;
+    double                       particle_nonlinear_tol;
+    double                       wall_youngs_modulus;
+    double                       wall_poisson_ratio;
+    double                       wall_rolling_friction_coefficient;
+    double                       wall_friction_coefficient;
+    double                       wall_restitution_coefficient;
+    unsigned int                 coupling_frequency;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 

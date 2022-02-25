@@ -17,6 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/auxiliary_math_functions.h>
+
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_particle_contact_info_struct.h>
@@ -76,6 +78,48 @@ public:
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
+
+  /**
+   * Carries out the calculation of the contact force for IB particles. This
+   * function is used in fem-dem/ib_particles_dem.
+   *
+   * @param normal_overlap Contact normal overlap. This is already calculated and
+   * will be used here to calculate contact force.
+   * @param contact_info Contact history including tangential overlap and relative
+   * velocity.
+   * @param normal_force Contact normal force.
+   * @param tangential_force Contact tangential force.
+   * @param particle_one_tangential_torque
+   * @param particle_two_tangential_torque
+   * @param rolling_resistance_torque Contact rolling resistance torque.
+   * @param particle_one
+   * @param particle_two
+   * @param particle_one_location Location of particle one.
+   * @param particle_two_location Location of particle two.
+   * @param dt Time-step.
+   * @param particle_one_radius radius of particle one.
+   * @param particle_two_radius radius of particle two.
+   * @param particle_one_mass mass of particle two.
+   * @param particle_two_mass mass of particle two.
+   */
+  virtual void
+  calculate_IB_particle_particle_contact_force(
+    const double &                              normal_overlap,
+    particle_particle_contact_info_struct<dim> &contact_info,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque,
+    IBParticle<dim> &                           particle_one,
+    IBParticle<dim> &                           particle_two,
+    const Point<dim> &                          particle_one_location,
+    const Point<dim> &                          particle_two_location,
+    const double &                              dt,
+    const double &                              particle_one_radius,
+    const double &                              particle_two_radius,
+    const double &                              particle_one_mass,
+    const double &                              particle_two_mass) = 0;
 
 protected:
   /**
@@ -182,6 +226,7 @@ protected:
   find_effective_radius_and_mass(
     const ArrayView<const double> &particle_one_properties,
     const ArrayView<const double> &particle_two_properties);
+
 
   std::map<int, std::map<int, double>> effective_youngs_modulus;
   std::map<int, std::map<int, double>> effective_shear_modulus;

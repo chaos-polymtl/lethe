@@ -17,7 +17,7 @@
 * Author: Bruno Blais, Polytechnique Montreal, 2019-
 */
 
-#include "solvers/gls_sharp_navier_stokes.h"
+#include "fem-dem/gls_sharp_navier_stokes.h"
 
 int
 main(int argc, char *argv[])

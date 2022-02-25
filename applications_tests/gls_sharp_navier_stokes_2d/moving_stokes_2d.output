@@ -11,18 +11,18 @@ error at the weak BC : 0.00206288
 L2 error velocity : 0.0398486 L2 error pressure: 1.5449
 
 *****************************************************************
-Transient iteration : 2        Time : 2        Time step : 1        CFL : 5.96587 
+Transient iteration : 2        Time : 2        Time step : 1        CFL : 5.965873949802913
 *****************************************************************
-div u : 3.48646e-06
-error at the weak BC : 0.00345113
-L2 error velocity : 0.03886 L2 error pressure: 1.87087
+div u : 3.4864640001178734e-06
+error at the weak BC : 0.0034511316439698671
+L2 error velocity : 0.038859985599828027 L2 error pressure: 1.8708672174000602
 
 *****************************************************************
-Transient iteration : 3        Time : 3        Time step : 1        CFL : 6.44675 
+Transient iteration : 3        Time : 3        Time step : 1        CFL : 6.4467509031826289
 *****************************************************************
-div u : -1.01858e-06
-error at the weak BC : 0.0004696
-L2 error velocity : 0.00661858 L2 error pressure: 0.238988
+div u : -1.0185782548186419e-06
+error at the weak BC : 0.00046960001943900583
+L2 error velocity : 0.0066185811940553795 L2 error pressure: 0.23898811314283042
  time  error_velocity error_pressure 
 1.0000 3.984865e-02   1.5449         
 2.0000 3.885999e-02   1.8709         
