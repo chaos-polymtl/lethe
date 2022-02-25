@@ -56,17 +56,18 @@ using namespace dealii;
  * degrees of freedom and stores it into arrays. Additionnaly, the user can
  * request that this class gathers additional fields for physics which are
  * coupled to the heat transfer equation, such as the velocity which is
- *required. This class serves as a seperation between the evaluation at the
- *gauss point of the variables of interest and their use in the assembly, which
- *is carried out by the assembler functions. For more information on this
- *design, the reader can consult deal.II step-9
+ * required. This class serves as a seperation between the evaluation at the
+ * gauss point of the variables of interest and their use in the assembly, which
+ * is carried out by the assembler methods. For more information on this
+ * design, the reader can consult deal.II step-9
  * "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter
  * example, the scratch is a struct instead of a templated class because of the
  * simplicity of step-9.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
- *  @ingroup solvers
+ *
+ * @ingroup solvers
  **/
 
 template <int dim>
@@ -79,11 +80,17 @@ public:
    * necessary memory for all member variables. However, it does not do any
    * evalution, since this needs to be done at the cell level.
    *
-   * @param fe The FESystem used to solve the Navier-Stokes equations
+   * @param properties_manager The physical properties Manager (see physical_properties_manager.h)
+   *
+   * @param fe_ht The FESystem used to solve the Heat Transfer equations
    *
    * @param quadrature The quadrature to use for the assembly
    *
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   *
+   * @param fe_fd The FESystem used to solve the Fluid Dynamics equations
+   *
+   * @param face_quadrature_formula The face quadrature formula
    *
    */
   HeatTransferScratchData(const PhysicalPropertiesManager properties_manager,
@@ -111,16 +118,12 @@ public:
 
   /**
    * @brief Copy Constructor. Same as the main constructor.
-   *  This constructor only uses the other scratch to build the FeValues, it
+   * This constructor only uses the other scratch to build the FeValues, it
    * does not copy the content of the other scratch into itself since, by
-   * definition of the WorkStream mechanism it is assumed that the content of
+   * definition of the WorkStream mechanism, it is assumed that the content of
    * the scratch will be reset on a cell basis.
    *
-   * @param fe The FESystem used to solve the Navier-Stokes equations
-   *
-   * @param quadrature The quadrature to use for the assembly
-   *
-   * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   * @param sd The scratch data
    */
   HeatTransferScratchData(const HeatTransferScratchData<dim> &sd)
     : properties_manager(sd.properties_manager)
@@ -146,7 +149,7 @@ public:
 
   /** @brief Allocates the memory for the scratch
    *
-   * This function allocates the necessary memory for all members of the scratch
+   * This method allocates the necessary memory for all members of the scratch
    *
    */
   void
@@ -154,17 +157,21 @@ public:
 
   /** @brief Reinitialize the content of the scratch
    *
-   * Using the FeValues and the content ofthe solutions, previous solutions and
+   * Using the FeValues and the content of the solutions, previous solutions and
    * solutions stages, fills all of the class member of the scratch
+   *
+   * @tparam VectorType The Vector type used for the solvers
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the fe which is used to fill the FeValues
    *
-   * @param current_solution The present value of the solution for [u,p]
+   * @param current_solution The present value of the solution for the Heat Transfer
    *
    * @param previous_solutions The solutions at the previous time steps
    *
+   * @param solution_stages The solution at the intermediary stages (for SDIRK methods)
    *
+   * @param source_function The function describing the Heat Transfer source term
    */
 
   template <typename VectorType>
@@ -275,7 +282,16 @@ public:
       }
   }
 
-
+  /** @brief Reinitialize the velocity, calculated by the Fluid Dynamics
+   *
+   * @tparam VectorType The Vector type used for the solvers
+   *
+   * @param cell The cell for which the velocity is reinitialized
+   * This cell must be compatible with the Fluid Dynamics FE
+   *
+   * @param current_solution The present value of the solution for [u,p]
+   *
+   */
 
   template <typename VectorType>
   void
@@ -287,6 +303,14 @@ public:
     this->fe_values_fd[velocities].get_function_values(current_solution,
                                                        velocity_values);
   }
+
+  /** @brief Reinitialize the velocity gradient, calculated by the Fluid Dynamics
+   *
+   * @tparam VectorType The Vector type used for the solvers
+   *
+   * @param current_solution The present value of the solution for [u,p]
+   *
+   */
 
   template <typename VectorType>
   void
@@ -314,9 +338,11 @@ public:
 
   /** @brief Reinitialize the content of the scratch for VOF.
    *
+   * @tparam VectorType The Vector type used for the solvers
+   *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the VOF FE and not the
-   * Navier-Stokes FE
+   * Fluid Dynamics FE
    *
    * @param current_solution The present value of the solution for [alpha]
    *
@@ -347,7 +373,7 @@ public:
   }
 
 
-  /** @brief Calculates the physical properties. This function calculates the physical properties
+  /** @brief Calculates the physical properties. This method calculates the physical properties
    * that may be required by the heat transfer problem. Namely the density,
    * specific heat, thermal conductivity and viscosity (for viscous
    * dissipation).
