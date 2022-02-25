@@ -641,14 +641,8 @@ VolumeOfFluid<dim>::assemble_pfg_matrix_and_rhs(
                     }
 
                   // rhs
-                  local_rhs_pfg(i) -=
-                    (phi_pfg[i] * pfg_values[q] +
-                     simulation_parameters.surface_tension_force
-                         .phase_fraction_gradient_filter_value *
-                       scalar_product(phi_pfg_gradient[i],
-                                      pfg_gradient_values[q]) -
-                     phi_pfg[i] * phase_gradient_values[q]) *
-                    fe_values_pfg.JxW(q);
+                  local_rhs_pfg(i) += phi_pfg[i] * phase_gradient_values[q] *
+                                      fe_values_pfg.JxW(q);
                 }
             }
 
@@ -803,14 +797,9 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
                         fe_values_curvature.JxW(q);
                     }
                   // rhs
-                  local_rhs_curvature(i) -=
-                    (phi_curvature[i] * curvature_values[q] +
-                     simulation_parameters.surface_tension_force
-                         .curvature_filter_value *
-                       scalar_product(phi_curvature_gradient[i],
-                                      curvature_gradient_values[q]) -
-                     phi_curvature_gradient[i] *
-                       (pfg_values[q] / (pfg_values[q].norm() + DBL_MIN))) *
+                  local_rhs_curvature(i) +=
+                    phi_curvature_gradient[i] *
+                    (pfg_values[q] / (pfg_values[q].norm() + DBL_MIN)) *
                     fe_values_curvature.JxW(q);
                 }
             }
