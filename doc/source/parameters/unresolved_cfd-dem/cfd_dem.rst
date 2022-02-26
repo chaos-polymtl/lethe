@@ -23,7 +23,7 @@ This subsection includes parameters related to multiphase flow simulations using
 * The ``grad div`` parameter allows the enabling of the grad div stabilization for the Volume Averaged Navier Stokes equations [1]. This allows for a much better mass conservation of the system.
 * The ``void fraction time derivative`` parameters allows us to choose whether or not we want to account for the time derivative of the void fraction or take it equal to zero.
 * The ``drag force``, ``buoyancy force``, ``shear force``, and ``pressure force`` parameters allow us to enable or disable the respective forces in a cfd-dem simulation.
-* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time of writing are: Difelice [2], Rong [3], and Dallavalle [4].
+* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time of writing are: Difelice [2], Rong [3], Dallavalle [4], and Koch and Hill [5].
 * The ``post processing`` parameter, when enabled, allows the calculation of the pressure drop, void fraction in the packed region, and the mass conservation in a packed bed at each time step.
 * The ``coupling frequency`` parameter is only applicable for the cfd-dem solver and it determines the number of DEM iterations per 1 CFD iteration.
 
@@ -42,3 +42,5 @@ This subsection includes parameters related to multiphase flow simulations using
 [3] L. Rong, K. Dong, A. Yu, Lattice-boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity, Chemical engineering science 99 (2013) 44–58.
 
 [4] Sobieski, Wojciech. (2011). Drag Coefficient in Solid–Fluid System Modeling with the Eulerian Multiphase Model. Drying Technology. 29. 111-125. 10.1080/07373937.2010.482714. 
+
+[5]  D. Jajcevic, E. Siegmann, C. Radeke, J. G. Khinast, Large-scale cfd–dem simulations of fluidized granular systems, Chemical Engineering Science 98 (2013) 298–310

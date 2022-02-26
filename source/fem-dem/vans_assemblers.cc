@@ -1002,6 +1002,100 @@ template class GLSVansAssemblerDallavalle<3>;
 
 template <int dim>
 void
+GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+{
+  unsigned int particle_number;
+  auto &       beta_drag = scratch_data.beta_drag;
+
+  Tensor<1, dim> relative_velocity;
+  Tensor<1, dim> drag_force;
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
+  const auto pic  = scratch_data.pic;
+  beta_drag       = 0;
+  particle_number = 0;
+
+  double f0 = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      relative_velocity =
+        scratch_data.fluid_velocity_at_particle_location[particle_number] -
+        scratch_data.particle_velocity[particle_number];
+
+      double cell_void_fraction =
+        scratch_data.cell_void_fraction[particle_number];
+
+      // Particle's Reynolds number
+      double re = 1e-1 + relative_velocity.norm() *
+                           particle_properties[DEM::PropertiesIndex::dp] /
+                           viscosity;
+
+      // Koch and Hill Drag Model Calculation
+      if ((1 - cell_void_fraction) < 0.4)
+        {
+          f0 = (1 + 3 * sqrt((1 - cell_void_fraction) / 2) +
+                (135.0 / 64) * (1 - cell_void_fraction) *
+                  log(1 - cell_void_fraction) +
+                16.14 * (1 - cell_void_fraction)) /
+               (1 + 0.681 * (1 - cell_void_fraction) -
+                8.48 * pow(1 - cell_void_fraction, 2) +
+                8.14 * pow(1 - cell_void_fraction, 3));
+        }
+      else if ((1 - cell_void_fraction) >= 0.4)
+        {
+          f0 = 10 * (1 - cell_void_fraction) / pow(cell_void_fraction, 3);
+        }
+
+      double f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
+                  0.0232 / pow(cell_void_fraction, 5);
+
+      double momentum_transfer_coefficient =
+        ((18 * viscosity * pow(cell_void_fraction, 2) *
+          (1 - cell_void_fraction)) /
+         pow(particle_properties[DEM::PropertiesIndex::dp], 2)) *
+        (f0 + 0.5 * f3 * cell_void_fraction * re) *
+        (M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+         (2 * dim)) /
+        (1 - cell_void_fraction);
+
+      beta_drag += momentum_transfer_coefficient;
+
+      drag_force = density * momentum_transfer_coefficient * relative_velocity;
+
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
+        }
+
+      particle_number += 1;
+    }
+
+  beta_drag = beta_drag / scratch_data.cell_volume;
+}
+
+template class GLSVansAssemblerKochHill<2>;
+template class GLSVansAssemblerKochHill<3>;
+
+template <int dim>
+void
 GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
@@ -1077,8 +1171,10 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
             pressure_force[d] * density;
 
-          // Only apply pressure force to the particle if we are solving model A
-          // of the VANS
+          // Apply pressure force to the particles only, when we are solving
+          // model A of the VANS. When we are solving Model B, apply the
+          // pressure force back on the fluid by lumping it in the
+          // undisturbed_flow_force.
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               undisturbed_flow_force[d] +=
@@ -1138,8 +1234,16 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
             shear_force[d] * density;
-          undisturbed_flow_force[d] +=
-            shear_force[d] / scratch_data.cell_volume;
+
+          // Apply shear force to the particles only, when we are solving
+          // model A of the VANS. When we are solving Model B, apply the shear
+          // force back on the fluid by lumping it in the
+          // undisturbed_flow_force.
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+            {
+              undisturbed_flow_force[d] +=
+                shear_force[d] / scratch_data.cell_volume;
+            }
         }
 
       particle_number += 1;
