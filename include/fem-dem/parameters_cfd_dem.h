@@ -50,7 +50,8 @@ namespace Parameters
   {
     difelice,
     rong,
-    dallavalle
+    dallavalle,
+    kochhill
   };
 
   enum class VANSModel

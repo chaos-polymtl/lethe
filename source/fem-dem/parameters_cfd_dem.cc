@@ -98,7 +98,7 @@ namespace Parameters
                       "Choose whether or not to apply pressure force");
     prm.declare_entry("drag model",
                       "difelice",
-                      Patterns::Selection("difelice|rong|dallavalle"),
+                      Patterns::Selection("difelice|rong|dallavalle|kochhill"),
                       "The drag model used to determine the drag coefficient");
     prm.declare_entry("post processing",
                       "false",
@@ -146,6 +146,8 @@ namespace Parameters
       drag_model = Parameters::DragModel::rong;
     else if (op == "dallavalle")
       drag_model = Parameters::DragModel::dallavalle;
+    else if (op == "kochhill")
+      drag_model = Parameters::DragModel::kochhill;
     else
       throw(std::runtime_error("Invalid drag model"));
 
