@@ -2227,8 +2227,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       //  outside of the IB in this cell.
                       if (component_i == dim)
                         {
-                          double max_pressure_abs = 0;
-                          double max_pressure     = 0;
                           for (unsigned int k = 0; k < local_dof_indices.size();
                                ++k)
                             {

@@ -152,7 +152,7 @@ private:
   {
     template <class Archive>
     void
-    serialize(Archive &ar, const unsigned int version)
+    serialize(Archive &ar, const unsigned int /*version*/)
     {
       for (unsigned int i = 0; i < dim; ++i)
         {
