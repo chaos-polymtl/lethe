@@ -259,7 +259,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
     {
       unsigned int boundary_index = 0;
       double       best_dist      = DBL_MAX;
-      unsigned int best_index;
+      // BB FIX
+      unsigned int best_index = UINT_MAX;
       // For each particle loop over the point and normal identified as
       // potential contact candidate.
       for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
@@ -298,6 +299,14 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   contact_info.tangential_overlap[d]           = 0;
                   contact_info.tangential_relative_velocity[d] = 0;
                 }
+
+              // BB temporary fix for unused variables
+              contact_info.global_face_id           = 0;
+              contact_info.boundary_id              = 0;
+              contact_info.normal_overlap           = 0;
+              contact_info.normal_relative_velocity = 0;
+              // End BB
+
               pw_contact_map[particle.particle_id][boundary_index] =
                 contact_info;
             }
