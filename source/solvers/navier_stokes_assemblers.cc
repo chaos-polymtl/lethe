@@ -37,19 +37,19 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const double         viscosity = viscosity_vector[q];
-      const Tensor<1, dim> velocity  = scratch_data.velocity_values[q];
-      const Tensor<2, dim> velocity_gradient =
+      const double          viscosity = viscosity_vector[q];
+      const Tensor<1, dim> &velocity  = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> velocity_laplacian =
+      const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
 
-      const Tensor<1, dim> pressure_gradient =
+      const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
 
       // Forcing term
-      const Tensor<1, dim> force       = scratch_data.force[q];
-      double               mass_source = scratch_data.mass_source[q];
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
@@ -185,21 +185,21 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
       const double viscosity = viscosity_vector[q];
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> velocity_laplacian =
+      const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
 
       // Pressure
-      const double         pressure = scratch_data.pressure_values[q];
-      const Tensor<1, dim> pressure_gradient =
+      const double          pressure = scratch_data.pressure_values[q];
+      const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
 
       // Forcing term
-      const Tensor<1, dim> force       = scratch_data.force[q];
-      double               mass_source = scratch_data.mass_source[q];
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
@@ -228,11 +228,11 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i      = scratch_data.phi_u[q][i];
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto phi_p_i      = scratch_data.phi_p[q][i];
-          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
-          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
           double local_rhs_i = 0;
 
@@ -299,13 +299,14 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Gather into local variables the relevant fields
       const double viscosity = viscosity_vector[q];
 
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> velocity_laplacian =
+      const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<3, dim> velocity_hessian = scratch_data.velocity_hessians[q];
-      const Tensor<1, dim> pressure_gradient =
+      const Tensor<3, dim> &velocity_hessian =
+        scratch_data.velocity_hessians[q];
+      const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
 
       // Calculate shear rate (at each q)
@@ -473,13 +474,14 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double viscosity = viscosity_vector[q];
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> velocity_laplacian =
+      const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<3, dim> velocity_hessian = scratch_data.velocity_hessians[q];
+      const Tensor<3, dim> &velocity_hessian =
+        scratch_data.velocity_hessians[q];
 
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
@@ -535,11 +537,11 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i      = scratch_data.phi_u[q][i];
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto phi_p_i      = scratch_data.phi_p[q][i];
-          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
-          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
           double local_rhs_i = 0;
 
@@ -1010,19 +1012,21 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   // Copy data elementscd ../
   auto &local_matrix = copy_data.local_matrix;
 
+  // Local variables to reuse multiplications
+  std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+  std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
-      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
 
       // We loop over the column first to prevent recalculation
@@ -1098,9 +1102,9 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double viscosity = viscosity_vector[q];
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Calculate shear rate (at each q)
@@ -1111,7 +1115,7 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double pressure = scratch_data.pressure_values[q];
 
       // Forcing term
-      const Tensor<1, dim> force = scratch_data.force[q];
+      const Tensor<1, dim> &force = scratch_data.force[q];
 
       // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
@@ -1164,6 +1168,10 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
   // Copy data elements
   auto &local_matrix = copy_data.local_matrix;
 
+  // Local variables to reuse multiplications
+  std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+  std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1172,16 +1180,12 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
 
 
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
-
-      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
-      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
-
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -1253,16 +1257,16 @@ GDNavierStokesAssemblerCore<dim>::assemble_rhs(
 
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Pressure
       const double pressure = scratch_data.pressure_values[q];
 
       // Forcing term
-      const Tensor<1, dim> force = scratch_data.force[q];
+      const Tensor<1, dim> &force = scratch_data.force[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -1270,10 +1274,10 @@ GDNavierStokesAssemblerCore<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i      = scratch_data.phi_u[q][i];
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto phi_p_i      = scratch_data.phi_p[q][i];
-          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
           double local_rhs_i = 0;
 
@@ -1381,12 +1385,11 @@ LaplaceAssembly<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Velocity
-
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Pressure
-      const Tensor<1, dim> pressure_gradient =
+      const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
 
       // Store JxW in local variable for faster access;
@@ -1396,8 +1399,8 @@ LaplaceAssembly<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
 
           double local_rhs_i = 0;
@@ -1446,7 +1449,7 @@ BuoyancyAssembly<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Forcing term (gravity)
-      const Tensor<1, dim> force = scratch_data.force[q];
+      const Tensor<1, dim> &force = scratch_data.force[q];
 
       const double thermal_expansion = scratch_data.thermal_expansion[q];
 
@@ -1581,8 +1584,7 @@ PressureBoundaryCondition<dim>::assemble_rhs(
   prescribed_pressure_values = std::vector<std::vector<double>>(
     scratch_data.n_faces, std::vector<double>(scratch_data.n_faces_q_points));
 
-  std::vector<std::vector<Tensor<1, dim>>> gn_bc;
-  gn_bc =
+  std::vector<std::vector<Tensor<1, dim>>> gn_bc =
     std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_faces_q_points));
@@ -1768,8 +1770,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
     {
       identity[d][d] = 1;
     }
-  std::vector<std::vector<Tensor<1, dim>>> prescribed_velocity_values;
-  prescribed_velocity_values =
+  std::vector<std::vector<Tensor<1, dim>>> prescribed_velocity_values =
     std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_faces_q_points));
