@@ -1114,6 +1114,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   double time  = this->simulation_control->get_current_time();
   double alpha = this->simulation_parameters.particlesParameters->alpha;
   this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
+  double dr = GridTools::minimal_cell_diameter(*this->triangulation) / sqrt(2);
   ib_dem.update_particles(particles, time);
 
   double density    = this->simulation_parameters.particlesParameters->density;
@@ -1123,7 +1124,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
     {
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
-      ib_dem.integrate_particles_motion(dt);
+      ib_dem.integrate_particles_motion(dt,dr*2);
       unsigned int worst_residual_particle_id;
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
@@ -1230,6 +1231,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                     }
                 }
               auto dv = tensor_nd_to_3d(dv_temp);
+              dv=-residual_velocity*dv.norm()/residual_velocity.norm();
               // Evaluate a relaxation parameter. Here we try to orthogonalize
               // the update as much as possible.
               if ((particles[p].velocity - particles[p].velocity_iter).norm() >

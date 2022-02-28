@@ -93,7 +93,7 @@ public:
    *
    */
   void
-  integrate_particles_motion(const double dt);
+  integrate_particles_motion(const double dt,const double h);
 
   /**
    * @brief Calculates non-linear (Hertzian) particle-particle contact force
@@ -123,6 +123,37 @@ public:
   calculate_pw_contact_force(const double               dt_dem,
                              std::vector<Tensor<1, 3>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
+
+
+  /**
+   * @brief Calculates non-linear (Hertzian) particle-particle contact force
+   *
+   * @param dt_dem The sub time stepping time step.
+   *
+   * @param contact_force a vector containing the contact force between particles
+   *
+   * @param contact_force a vector containing the contact torques between particles
+   */
+  void
+  calculate_pp_lubrification_force(const double               dt_dem,const double h,
+                             std::vector<Tensor<1, 3>> &lubrification_force,
+                             std::vector<Tensor<1, 3>> &lubrification_torque);
+
+
+  /**
+   * @brief Calculates non-linear (Hertzian) particle-wall contact force
+   *
+   * @param dt_dem The sub time stepping time step.
+   *
+   * @param contact_force a vector containing the contact force between particles
+   *
+   * @param contact_force a vector containing the contact torques between particles
+   */
+  void
+  calculate_pw_lubrification_force(const double               dt_dem,
+                                   const double h,
+                             std::vector<Tensor<1, 3>> &lubrification_force,
+                             std::vector<Tensor<1, 3>> &lubrification_torque);
 
   /**
    * @brief  Updates the boundary cells that are contact candidates for each of the particles.

@@ -169,6 +169,74 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
         }
     }
 }
+
+template <int dim>
+void
+IBParticlesDEM<dim>::calculate_pp_lubrification_force(
+  const double               dt_dem,
+  const double h,
+  std::vector<Tensor<1, 3>> &lubrification_force,
+  std::vector<Tensor<1, 3>> &lubrification_torque)
+{
+  using numbers::PI;
+
+  double mu=0.001;
+  for (auto &particle_one : dem_particles)
+    {
+      for (auto &particle_two : dem_particles)
+        {
+          if (particle_one.particle_id != particle_two.particle_id and
+              particle_one.particle_id < particle_two.particle_id)
+            {
+              const Point<dim> particle_one_location = particle_one.position;
+              const Point<dim> particle_two_location = particle_two.position;
+              Tensor<1, 3> raidal_vector;
+              double radial_volecity;
+              Tensor<1,3> f_lub;
+
+              // Calculation of normal overlap
+              double gap =particle_one_location.distance(particle_two_location)-(particle_one.radius + particle_two.radius);
+              raidal_vector=tensor_nd_to_3d(particle_one.position-particle_two.position);
+              if (gap < h)
+                // This means that the adjacent particles are very close
+                {
+                  if(gap<0.0001*particle_one.radius)
+                    {
+                      gap = 0.0001 * particle_one.radius;
+                    }
+
+                  radial_volecity= scalar_product(-raidal_vector,particle_one.velocity)+scalar_product(raidal_vector,particle_two.velocity);
+                  f_lub=3/2*PI*mu*(particle_one.radius*2*particle_two.radius*2/(particle_one.radius*2+particle_two.radius*2))*(particle_one.radius*2*particle_two.radius*2/(particle_one.radius*2+particle_two.radius*2))/gap*radial_volecity*raidal_vector/raidal_vector.norm();
+
+                }
+              Tensor<1,3> f_fluid_p1_parallel=(scalar_product(particle_one.fluid_forces,raidal_vector/raidal_vector.norm()))*raidal_vector/raidal_vector.norm();
+              Tensor<1,3> f_fluid_p2_parallel=(scalar_product(particle_two.fluid_forces,raidal_vector/raidal_vector.norm()))*raidal_vector/raidal_vector.norm();
+              Tensor<1,3> f_fluid_p1_orto= particle_one.fluid_forces- f_fluid_p1_parallel;
+              Tensor<1,3> f_fluid_p2_orto= particle_two.fluid_forces- f_fluid_p2_parallel;
+
+              Tensor<1,3> f_lub_max_p1;
+              Tensor<1,3> f_lub_max_p2;
+
+              if(f_fluid_p1_parallel.norm()>f_lub.norm()){
+                  f_lub_max_p1=0;
+              }
+              else{
+                  f_lub_max_p1=f_lub-f_lub_max_p1;
+                }
+              if(f_fluid_p2_parallel.norm()>f_lub.norm()){
+                  f_lub_max_p2=0;
+                }
+              else{
+                  f_lub_max_p2=-f_lub-f_lub_max_p1;
+                }
+
+              lubrification_force[particle_one.particle_id]=f_lub_max_p1;
+              lubrification_force[particle_two.particle_id]=f_lub_max_p2;
+            }
+        }
+    }
+}
+
 template <int dim>
 void
 IBParticlesDEM<dim>::update_particles_boundary_contact(
@@ -389,9 +457,119 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
         }
     }
 }
+
+
 template <int dim>
 void
-IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
+IBParticlesDEM<dim>::calculate_pw_lubrification_force(
+  const double               dt_dem,
+  const double h,
+  std::vector<Tensor<1, 3>> &lubrification_force,
+  std::vector<Tensor<1, 3>> &lubrification_torque)
+{
+  using numbers::PI;
+
+  double mu=0.001;
+  // Loop over the particles
+  for (auto &particle : dem_particles)
+    {
+      unsigned int boundary_index = 0;
+      double       best_dist      = DBL_MAX;
+      unsigned int best_index;
+      // For each particle loop over the point and normal identified as
+      // potential contact candidate.
+      for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
+        {
+          // find the best candidate (the closest point).
+          double dist =
+            (boundary_cell_iter.point_on_boundary - particle.position).norm();
+          if (dist < best_dist)
+            {
+              best_dist  = dist;
+              best_index = boundary_index;
+            }
+          boundary_index += 1;
+        }
+      // Do the particle wall contact calculation with the best candidate.
+      if (boundary_cells[particle.particle_id].size() > 0)
+        {
+          auto &boundary_cell =
+            boundary_cells[particle.particle_id][best_index];
+
+          auto boundary_cell_information = boundary_cell;
+          Tensor<1, 3> normal =
+            tensor_nd_to_3d(boundary_cell_information.normal_vector);
+          auto point_on_boundary = boundary_cell_information.point_on_boundary;
+          const Point<dim> particle_one_location = particle.position;
+
+          // Calculation of normal overlap
+          Point<3> particle_position_3d = point_nd_to_3d(particle.position);
+          Point<3> point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
+
+          Tensor<1, 3> point_to_particle_vector =
+            particle_position_3d - point_on_boundary_3d;
+
+          // Finding the projected vector on the normal vector of the boundary.
+          // Here we have used the private function find_projection. Using this
+          // projected vector, the particle-wall distance is calculated
+          Tensor<1, 3> projected_vector =
+            particle_wall_contact_force_object->find_projection(
+              point_to_particle_vector, normal);
+
+          // Find the normal overlap
+          double gap = (projected_vector.norm())-particle.radius;
+
+          Tensor<1, 3>     raidal_vector;
+          double           radial_volecity;
+          Tensor<1, 3>     f_lub;
+
+
+          raidal_vector =projected_vector;
+          if (gap < h)
+            // This means that the adjacent particles are very close
+            {
+              if (gap < 0.0001 * particle.radius)
+                {
+                  gap = 0.0001 * particle.radius;
+                }
+              radial_volecity =
+                scalar_product(-raidal_vector, particle.velocity) ;
+              f_lub = 3 / 2 * PI * mu *
+                      (particle.radius) *
+                      (particle.radius) /
+                      gap * radial_volecity * raidal_vector /
+                      raidal_vector.norm();
+              //std::cout<<"f_lub "<<f_lub <<std::endl;
+            }
+          Tensor<1, 3> f_fluid_p1_parallel =
+            (scalar_product(particle.fluid_forces,
+                            raidal_vector / raidal_vector.norm())) *
+            raidal_vector / raidal_vector.norm();
+
+          Tensor<1, 3> f_fluid_p1_orto =
+            particle.fluid_forces - f_fluid_p1_parallel;
+
+          Tensor<1, 3> f_lub_max_p1;
+
+          if (f_fluid_p1_parallel.norm() > f_lub.norm())
+            {
+              f_lub_max_p1 = 0;
+            }
+          else
+            {
+              f_lub_max_p1 = f_lub - f_lub_max_p1;
+            }
+
+          lubrification_force[particle.particle_id] = f_lub_max_p1;
+
+        }
+    }
+
+}
+
+template <int dim>
+void
+IBParticlesDEM<dim>::integrate_particles_motion(const double dt,const double h)
 {
   // Initialize local containers and physical variables
   using numbers::PI;
@@ -402,9 +580,12 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
   std::vector<Tensor<1, 3>> contact_wall_force(dem_particles.size());
   std::vector<Tensor<1, 3>> contact_torque(dem_particles.size());
   std::vector<Tensor<1, 3>> contact_wall_torque(dem_particles.size());
-
   std::vector<Tensor<1, 3>> current_fluid_force(dem_particles.size());
   std::vector<Tensor<1, 3>> current_fluid_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrification_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrification_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrification_wall_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrification_wall_torque(dem_particles.size());
 
   std::vector<Tensor<1, 3>> velocity(dem_particles.size());
   std::vector<Point<dim>>   position(dem_particles.size());
@@ -416,6 +597,14 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
   this->parameters->f_gravity->set_time(cfd_time);
   // The gravitational force on the particle.
   Tensor<1, 3> gravity;
+  lubrification_force.clear();
+  lubrification_force.resize(dem_particles.size());
+  lubrification_torque.clear();
+  lubrification_torque.resize(dem_particles.size());
+  lubrification_wall_force.clear();
+  lubrification_wall_force.resize(dem_particles.size());
+  lubrification_wall_torque.clear();
+  lubrification_wall_torque.resize(dem_particles.size());
   // Initialize the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
@@ -450,11 +639,14 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
       contact_wall_torque.clear();
       contact_wall_torque.resize(dem_particles.size());
 
+
       // Calculate particle-particle and particle-wall contact force
       calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
       calculate_pw_contact_force(dt_dem,
                                  contact_wall_force,
                                  contact_wall_torque);
+      calculate_pp_lubrification_force(dt_dem,h,lubrification_force,lubrification_torque);
+      calculate_pw_lubrification_force(dt_dem,h,lubrification_wall_force,lubrification_wall_torque);
 
 
       for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
@@ -484,7 +676,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
           dem_particles[p_i].velocity =
             dem_particles[p_i].velocity +
             (current_fluid_force[p_i] + contact_force[p_i] +
-             contact_wall_force[p_i] + gravity) *
+             contact_wall_force[p_i] + gravity+lubrification_force[p_i]+lubrification_wall_force[p_i]) *
               dt_dem / dem_particles[p_i].mass;
 
           for (unsigned int d = 0; d < dim; ++d)
@@ -506,7 +698,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
           // particle.
           dem_particles[p_i].impulsion +=
             (current_fluid_force[p_i] + gravity + contact_wall_force[p_i] +
-             contact_force[p_i]) *
+             contact_force[p_i]+lubrification_force[p_i]+lubrification_wall_force[p_i]) *
             dt_dem;
           dem_particles[p_i].contact_impulsion +=
             (contact_wall_force[p_i] + contact_force[p_i]) * dt_dem;
