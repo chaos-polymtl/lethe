@@ -735,7 +735,14 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
            Parameters::InitialConditionType::L2projection)
     {
       assemble_L2_projection();
-      solve_system_GMRES(true, 1e-15, 1e-15);
+      setup_preconditioner();
+
+      if (this->simulation_parameters.linear_solver.solver ==
+          Parameters::LinearSolver::SolverType::amg)
+        solve_system_AMG(true, 1e-15, 1e-15);
+      else
+        solve_system_GMRES(true, 1e-15, 1e-15);
+
       this->present_solution = this->newton_update;
       this->finish_time_step_fd();
     }
