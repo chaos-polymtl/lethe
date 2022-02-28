@@ -202,7 +202,8 @@ template <int dim>
 class GLSVansAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDiFelice()
+  GLSVansAssemblerDiFelice(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -213,6 +214,7 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -236,7 +238,8 @@ template <int dim>
 class GLSVansAssemblerRong : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerRong()
+  GLSVansAssemblerRong(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -247,6 +250,7 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -266,7 +270,8 @@ template <int dim>
 class GLSVansAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDallavalle()
+  GLSVansAssemblerDallavalle(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -277,6 +282,7 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -312,7 +318,8 @@ template <int dim>
 class GLSVansAssemblerKochHill : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerKochHill()
+  GLSVansAssemblerKochHill(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -322,6 +329,8 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::CFDDEM cfd_dem;
 };
 
 

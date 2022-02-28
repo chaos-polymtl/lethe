@@ -166,15 +166,6 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   dem_parameters.simulation_control =
     this->cfd_dem_simulation_parameters.dem_parameters.simulation_control;
 
-  // In the case the simulation is being restarted from a checkpoint file, the
-  // checkpoint_step parameter is set to true. This allows to perform all
-  // operations related to restarting a simulation. Once all operations have
-  // been performed, this checkpoint_step is reset to false. It is only set once
-  // and reset once since restarting only occurs once.
-  if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-        .restart == true)
-    checkpoint_step = true;
-
   maximum_particle_diameter =
     find_maximum_particle_size(dem_parameters.lagrangian_physical_properties,
                                standard_deviation_multiplier);
@@ -290,8 +281,18 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
 
   // Initilize contact detection step
   contact_detection_step = false;
-  checkpoint_step        = false;
   load_balance_step      = false;
+
+  // In the case the simulation is being restarted from a checkpoint file, the
+  // checkpoint_step parameter is set to true. This allows to perform all
+  // operations related to restarting a simulation. Once all operations have
+  // been performed, this checkpoint_step is reset to false. It is only set once
+  // and reset once since restarting only occurs once.
+  if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+        .restart == true)
+    checkpoint_step = true;
+  else
+    checkpoint_step = false;
 }
 
 template <int dim>
