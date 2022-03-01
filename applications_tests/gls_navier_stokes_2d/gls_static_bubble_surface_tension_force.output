@@ -1,0 +1,118 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       4096
+   Number of degrees of freedom: 12675
+   Volume of triangulation:      0.0064
+   Number of VOF degrees of freedom: 4225
+
+*****************************************************************
+Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0       
+*****************************************************************
+Newton iteration: 0  - Residual:  0
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 0 steps 
+		alpha = 1      res = 0
+-----------------------
+VOF
+-------------
+Newton iteration: 0  - Residual:  0
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 0 steps 
+		alpha = 1      res = 0
+L2 error velocity : 0
+L2 error phase : 0.00137841
+
+*****************************************************************
+Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0       
+*****************************************************************
+Newton iteration: 0  - Residual:  0.0126108
+  -Tolerance of iterative solver is : 1.26108e-05
+  -Iterative solver took : 7 steps 
+		alpha = 1      res = 1.181e-05
+Newton iteration: 1  - Residual:  1.181e-05
+  -Tolerance of iterative solver is : 1.181e-08
+  -Iterative solver took : 11 steps 
+		alpha = 1      res = 7.244e-09
+-----------------------
+VOF
+-------------
+Newton iteration: 0  - Residual:  1.451e-07
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 1 steps 
+		alpha = 1      res = 6.51e-16
+L2 error velocity : 6.67418e-07
+L2 error phase : 0.00137841
+
+*****************************************************************
+Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 4.01596e-05
+*****************************************************************
+Newton iteration: 0  - Residual:  0.000289063
+  -Tolerance of iterative solver is : 2.89063e-07
+  -Iterative solver took : 7 steps 
+		alpha = 1      res = 2.821e-07
+Newton iteration: 1  - Residual:  2.821e-07
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 6 steps 
+		alpha = 1      res = 8.506e-09
+-----------------------
+VOF
+-------------
+Newton iteration: 0  - Residual:  1.535e-07
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 1 steps 
+		alpha = 1      res = 6.534e-16
+L2 error velocity : 7.37479e-07
+L2 error phase : 0.00137841
+
+*****************************************************************
+Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 4.59316e-05
+*****************************************************************
+Newton iteration: 0  - Residual:  6.43414e-05
+  -Tolerance of iterative solver is : 6.43414e-08
+  -Iterative solver took : 7 steps 
+		alpha = 1      res = 4.551e-08
+Newton iteration: 1  - Residual:  4.551e-08
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 4 steps 
+		alpha = 1      res = 8.56e-09
+-----------------------
+VOF
+-------------
+Newton iteration: 0  - Residual:  1.565e-07
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 1 steps 
+		alpha = 1      res = 6.442e-16
+L2 error velocity : 7.67037e-07
+L2 error phase : 0.00137841
+
+*****************************************************************
+Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 4.80614e-05
+*****************************************************************
+Newton iteration: 0  - Residual:  3.46592e-05
+  -Tolerance of iterative solver is : 3.46592e-08
+  -Iterative solver took : 7 steps 
+		alpha = 1      res = 3.112e-08
+Newton iteration: 1  - Residual:  3.112e-08
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 4 steps 
+		alpha = 1      res = 6.114e-09
+-----------------------
+VOF
+-------------
+Newton iteration: 0  - Residual:  1.58e-07
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 1 steps 
+		alpha = 1      res = 6.358e-16
+L2 error velocity : 7.83192e-07
+L2 error phase : 0.00137841
+ time  error_velocity error_pressure 
+0.0010 0.000000e+00   0.0000         
+0.0020 6.674182e-07   0.0665         
+0.0030 7.374788e-07   0.0677         
+0.0040 7.670366e-07   0.0677         
+0.0050 7.831921e-07   0.0677         
+ time  error_phase  
+0.0010 1.378414e-03 
+0.0020 1.378412e-03 
+0.0030 1.378410e-03 
+0.0040 1.378409e-03 
+0.0050 1.378407e-03 

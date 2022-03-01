@@ -482,17 +482,20 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
                               *this->cell_quadrature,
                               *this->mapping);
 
-      const DoFHandler<dim> *pfg_dof_handler =
-        this->multiphysics->get_pfg_dof_handler();
-      const DoFHandler<dim> *curvature_dof_handler =
-        this->multiphysics->get_curvature_dof_handler();
+      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+        {
+          const DoFHandler<dim> *pfg_dof_handler =
+            this->multiphysics->get_pfg_dof_handler();
+          const DoFHandler<dim> *curvature_dof_handler =
+            this->multiphysics->get_curvature_dof_handler();
 
-      scratch_data.enable_pfg(pfg_dof_handler->get_fe(),
-                              *this->cell_quadrature,
-                              *this->mapping);
-      scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
-                                    *this->cell_quadrature,
-                                    *this->mapping);
+          scratch_data.enable_pfg(pfg_dof_handler->get_fe(),
+                                  *this->cell_quadrature,
+                                  *this->mapping);
+          scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
+        }
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -552,28 +555,31 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
 
-      const DoFHandler<dim> *pfg_dof_handler =
-        this->multiphysics->get_pfg_dof_handler();
+      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+        {
+          const DoFHandler<dim> *pfg_dof_handler =
+            this->multiphysics->get_pfg_dof_handler();
 
-      typename DoFHandler<dim>::active_cell_iterator pfg_cell(
-        &(*(this->triangulation)),
-        cell->level(),
-        cell->index(),
-        pfg_dof_handler);
-      scratch_data.reinit_pfg(pfg_cell,
-                              *this->multiphysics->get_pfg_solution());
+          typename DoFHandler<dim>::active_cell_iterator pfg_cell(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            pfg_dof_handler);
+          scratch_data.reinit_pfg(pfg_cell,
+                                  *this->multiphysics->get_pfg_solution());
 
 
 
-      const DoFHandler<dim> *curvature_dof_handler =
-        this->multiphysics->get_curvature_dof_handler();
-      typename DoFHandler<dim>::active_cell_iterator curvature_cell(
-        &(*(this->triangulation)),
-        cell->level(),
-        cell->index(),
-        curvature_dof_handler);
-      scratch_data.reinit_curvature(
-        curvature_cell, *this->multiphysics->get_curvature_solution());
+          const DoFHandler<dim> *curvature_dof_handler =
+            this->multiphysics->get_curvature_dof_handler();
+          typename DoFHandler<dim>::active_cell_iterator curvature_cell(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            curvature_dof_handler);
+          scratch_data.reinit_curvature(
+            curvature_cell, *this->multiphysics->get_curvature_solution());
+        }
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -645,17 +651,20 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                               *this->cell_quadrature,
                               *this->mapping);
 
-      const DoFHandler<dim> *pfg_dof_handler =
-        this->multiphysics->get_pfg_dof_handler();
-      const DoFHandler<dim> *curvature_dof_handler =
-        this->multiphysics->get_curvature_dof_handler();
+      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+        {
+          const DoFHandler<dim> *pfg_dof_handler =
+            this->multiphysics->get_pfg_dof_handler();
+          const DoFHandler<dim> *curvature_dof_handler =
+            this->multiphysics->get_curvature_dof_handler();
 
-      scratch_data.enable_pfg(pfg_dof_handler->get_fe(),
-                              *this->cell_quadrature,
-                              *this->mapping);
-      scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
-                                    *this->cell_quadrature,
-                                    *this->mapping);
+          scratch_data.enable_pfg(pfg_dof_handler->get_fe(),
+                                  *this->cell_quadrature,
+                                  *this->mapping);
+          scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
+        }
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -722,25 +731,28 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
 
-      const DoFHandler<dim> *pfg_dof_handler =
-        this->multiphysics->get_pfg_dof_handler();
-      typename DoFHandler<dim>::active_cell_iterator pfg_cell(
-        &(*(this->triangulation)),
-        cell->level(),
-        cell->index(),
-        pfg_dof_handler);
-      scratch_data.reinit_pfg(pfg_cell,
-                              *this->multiphysics->get_pfg_solution());
+      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+        {
+          const DoFHandler<dim> *pfg_dof_handler =
+            this->multiphysics->get_pfg_dof_handler();
+          typename DoFHandler<dim>::active_cell_iterator pfg_cell(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            pfg_dof_handler);
+          scratch_data.reinit_pfg(pfg_cell,
+                                  *this->multiphysics->get_pfg_solution());
 
-      const DoFHandler<dim> *curvature_dof_handler =
-        this->multiphysics->get_curvature_dof_handler();
-      typename DoFHandler<dim>::active_cell_iterator curvature_cell(
-        &(*(this->triangulation)),
-        cell->level(),
-        cell->index(),
-        curvature_dof_handler);
-      scratch_data.reinit_curvature(
-        curvature_cell, *this->multiphysics->get_curvature_solution());
+          const DoFHandler<dim> *curvature_dof_handler =
+            this->multiphysics->get_curvature_dof_handler();
+          typename DoFHandler<dim>::active_cell_iterator curvature_cell(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            curvature_dof_handler);
+          scratch_data.reinit_curvature(
+            curvature_cell, *this->multiphysics->get_curvature_solution());
+        }
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)

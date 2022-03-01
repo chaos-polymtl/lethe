@@ -1,0 +1,156 @@
+# Listing of Parameters
+# ---------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  		= bdf1
+  set time end                		= 0.005
+  set time step               		= 0.001
+  set adapt 		      		= false
+  set number mesh adapt       		= 0
+  set output name             		= static_bubble
+  set output frequency        		= 5
+  set subdivision             		= 1
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+subsection multiphysics
+    set VOF = true
+    set continuum surface force = true
+end
+
+#---------------------------------------------------
+# Surface tension force
+#---------------------------------------------------
+subsection surface tension force
+    set surface tension coefficient = 0.023
+    set phase fraction gradient filter = 0.000001
+    set curvature filter		= 0.000001
+    set output auxiliary fields = true
+end
+
+#---------------------------------------------------
+# Interphase sharpening
+#---------------------------------------------------
+subsection interface sharpening
+  set sharpening threshold              = 0.5
+  set interface sharpness               = 1.4
+  set sharpening frequency      	= 10
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+subsection initial conditions
+    set type = nodal
+    subsection uvwp
+        set Function expression = 0; 0; 0
+    end
+    subsection VOF
+        set Function expression = if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , 1, if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.023 * 0.023 , 7.67 - 333.33 * sqrt((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04)) , 0))
+    end
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+subsection analytical solution
+  set enable                 = true
+  set verbosity = verbose
+    subsection uvwp
+    	    set Function constants = sigma=0.023, R=0.022
+    	    
+            set Function expression =  0 ; 0 ; 2 * sigma/R
+    end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+subsection source term
+    set enable = false
+    subsection xyz
+        set Function expression = 0; 0; 0
+    end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+  set number of fluids     = 2
+  subsection fluid 0
+    set density              = 100
+    set kinematic viscosity  = 0.01
+  end
+    subsection fluid 1
+    set density              = 1000
+    set kinematic viscosity  = 0.01
+    end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+        set type = dealii
+        set grid type = subdivided_hyper_rectangle
+        set grid arguments = 1, 1: 0, 0 : 0.08, 0.08 : true
+        set initial refinement = 6
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                  = 4
+    subsection bc 0
+        set id = 0
+        set type              = noslip
+    end
+    subsection bc 1
+        set id = 1
+        set type              = noslip
+    end
+    subsection bc 2
+        set id = 2
+        set type              = noslip
+    end
+    subsection bc 3
+        set id = 3
+        set type              = noslip
+    end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order            = 1
+    set pressure order            = 1
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set tolerance               = 1e-8
+  set max iterations          = 100
+  set verbosity               = verbose 
+end
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set verbosity               		     = verbose
+  set method                                 = gmres
+  set max iters                              = 8000
+  set relative residual                      = 1e-3
+  set minimum residual                       = 1e-8
+  set ilu preconditioner fill                = 1
+  set ilu preconditioner absolute tolerance  = 1e-12
+  set ilu preconditioner relative tolerance  = 1.00
+  set max krylov vectors                     = 200
+end

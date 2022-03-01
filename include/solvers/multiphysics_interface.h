@@ -478,8 +478,6 @@ public:
     return physics_dof_handler[physics_id];
   }
 
-
-
   /**
    * @brief Request the present solution of a given physics
    *
@@ -496,12 +494,35 @@ public:
   }
 
   /**
-   * @brief Request the present solution of the filtered phase fraction gradient (pfg)
+   * @brief Sets the reference to the solution of the filtered phase fraction
+   * gradient (PFG) in the VOF solver
+   *
+   * @param solution_vector The reference to the filtered PFG solution vector
+   */
+  void
+  set_pfg_solution(TrilinosWrappers::MPI::Vector *solution_vector)
+  {
+    pfg_solution = solution_vector;
+  }
+
+  /**
+   * @brief Request the present solution of the filtered phase fraction gradient (PFG)
    */
   TrilinosWrappers::MPI::Vector *
   get_pfg_solution()
   {
     return pfg_solution;
+  }
+
+  /**
+   * @brief Sets the reference to the solution of the filtered curvature
+   *
+   * @param solution_vector The reference to the PFG solution vector
+   */
+  void
+  set_curvature_solution(TrilinosWrappers::MPI::Vector *solution_vector)
+  {
+    curvature_solution = solution_vector;
   }
 
   /**
@@ -514,20 +535,19 @@ public:
   }
 
   /**
-   * @brief Request the filtered phase fraction gradient (pfg) DOF handler
+   * @brief Sets the reference to the DOFHandler of the filtered curvature
+   * in the VOF solver
    *
-   * @param physics_id The physics of the DOF handler being requested
+   * @param dof_handler The curvature dof handler
    */
-  DoFHandler<dim> *
-  get_pfg_dof_handler()
+  void
+  set_curvature_dof_handler(DoFHandler<dim> *dof_handler)
   {
-    return pfg_dof_handler;
+    curvature_dof_handler = dof_handler;
   }
 
   /**
    * @brief Request the filtered curvature DOF handler
-   *
-   * @param physics_id The physics of the DOF handler being requested
    */
   DoFHandler<dim> *
   get_curvature_dof_handler()
@@ -535,31 +555,26 @@ public:
     return curvature_dof_handler;
   }
 
-
+  /**
+   * @brief Sets the reference to the solution of phase fraction gradient (PFG)
+   * in the VOF solver
+   *
+   * @param dof_handler The PFG dof handler
+   */
   void
   set_pfg_dof_handler(DoFHandler<dim> *dof_handler)
   {
     pfg_dof_handler = dof_handler;
   }
 
-  void
-  set_curvature_dof_handler(DoFHandler<dim> *dof_handler)
+  /**
+   * @brief Request the filtered phase fraction gradient (pfg) DOF handler
+   */
+  DoFHandler<dim> *
+  get_pfg_dof_handler()
   {
-    curvature_dof_handler = dof_handler;
+    return pfg_dof_handler;
   }
-
-  void
-  set_pfg_solution(TrilinosWrappers::MPI::Vector *solution_vector)
-  {
-    pfg_solution = solution_vector;
-  }
-
-  void
-  set_curvature_solution(TrilinosWrappers::MPI::Vector *solution_vector)
-  {
-    curvature_solution = solution_vector;
-  }
-
 
   /**
    * @brief Request the present block solution of a given physics
