@@ -493,10 +493,7 @@ GLSNavierStokesVOFAssemblerCSF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  const double density_fluid_one = scratch_data.density_0[0];
-  const double density_fluid_two = scratch_data.density_1[0];
-  const double denominator_inverse =
-    1.0 / (0.5 * (density_fluid_one + density_fluid_two));
+  // Surface tension coefficient
   const double surface_tension_coef = STF_properties.surface_tension_coef;
 
   // Loop and quadrature informations
@@ -508,55 +505,25 @@ GLSNavierStokesVOFAssemblerCSF<dim>::assemble_rhs(
   auto &strong_residual = copy_data.strong_residual;
   auto &local_rhs       = copy_data.local_rhs;
 
-  // Time stepping information
-  const auto          method = this->simulation_control->get_assembly_method();
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
-  // Vector for the BDF coefficients
-  // Vector<double>      bdf_coefs = bdf_coefficients(method,
-  // time_steps_vector); std::vector<double> phase_value(1 +
-  // number_of_previous_solutions(method));
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // Phase values, their gradient, hessian, and laplacian
-      const double &        phase_value     = scratch_data.phase_values[q];
+      // Gather pfg and curvature values
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &pfg_value       = scratch_data.pfg_values[q];
-
-      const Tensor<1, dim> &phase_gradient =
-        scratch_data.phase_gradient_values[q];
-      const double phase_gradient_norm = phase_gradient.norm();
-
-
-      // phase_value[0] = scratch_data.phase_values[q];
-
-      double density = calculate_point_property(phase_value,
-                                                density_fluid_one,
-                                                density_fluid_two);
+      const double          JxW_value       = JxW[q];
 
       strong_residual[q] +=
         -2.0 * surface_tension_coef * curvature_value * pfg_value;
-      // strong_residual[q] += -2.0 * surface_tension_coef * curvature_value *
-      // phase_gradient;
-
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto phi_u_i      = scratch_data.phi_u[q][i];
-          double     local_rhs_i  = 0;
-
-
-
-          //  local_rhs_i -= -2.0 * surface_tension_coef * curvature_value *
-          //  phase_gradient * phi_u_i ; local_rhs(i) += local_rhs_i * JxW[q];
+          const auto phi_u_i     = scratch_data.phi_u[q][i];
+          double     local_rhs_i = 0;
 
           local_rhs_i -=
             -2.0 * surface_tension_coef * curvature_value * pfg_value * phi_u_i;
-          local_rhs(i) += local_rhs_i * JxW[q];
+          local_rhs(i) += local_rhs_i * JxW_value;
         }
     }
 }

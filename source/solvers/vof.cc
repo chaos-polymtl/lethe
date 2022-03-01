@@ -1063,103 +1063,110 @@ VolumeOfFluid<dim>::setup_dofs()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
-  pfg_dof_handler.distribute_dofs(*fe_pfg);
+  if (this->simulation_parameters.multiphysics.continuum_surface_force)
+    {
+      pfg_dof_handler.distribute_dofs(*fe_pfg);
 
-  locally_owned_dofs_pfg = pfg_dof_handler.locally_owned_dofs();
+      locally_owned_dofs_pfg = pfg_dof_handler.locally_owned_dofs();
 
-  DoFTools::extract_locally_relevant_dofs(pfg_dof_handler,
-                                          locally_relevant_dofs_pfg);
+      DoFTools::extract_locally_relevant_dofs(pfg_dof_handler,
+                                              locally_relevant_dofs_pfg);
 
-  pfg_constraints.clear();
-  pfg_constraints.reinit(locally_relevant_dofs_pfg);
-  DoFTools::make_hanging_node_constraints(pfg_dof_handler, pfg_constraints);
-  pfg_constraints.close();
+      pfg_constraints.clear();
+      pfg_constraints.reinit(locally_relevant_dofs_pfg);
+      DoFTools::make_hanging_node_constraints(pfg_dof_handler, pfg_constraints);
+      pfg_constraints.close();
 
-  nodal_pfg_relevant.reinit(locally_owned_dofs_pfg,
-                            locally_relevant_dofs_pfg,
-                            mpi_communicator);
+      nodal_pfg_relevant.reinit(locally_owned_dofs_pfg,
+                                locally_relevant_dofs_pfg,
+                                mpi_communicator);
 
-  nodal_pfg_owned.reinit(locally_owned_dofs_pfg, mpi_communicator);
-
-
-
-  DynamicSparsityPattern dsp_pfg(locally_relevant_dofs_pfg);
-  DoFTools::make_sparsity_pattern(pfg_dof_handler,
-                                  dsp_pfg,
-                                  pfg_constraints,
-                                  false);
-
-  SparsityTools::distribute_sparsity_pattern(dsp_pfg,
-                                             locally_owned_dofs_pfg,
-                                             mpi_communicator,
-                                             locally_relevant_dofs_pfg);
+      nodal_pfg_owned.reinit(locally_owned_dofs_pfg, mpi_communicator);
 
 
-  // Initialization of phase fraction gradient matrice and rhs for the
-  // calculation surface tension force
-  system_matrix_pfg.reinit(locally_owned_dofs_pfg,
-                           locally_owned_dofs_pfg,
-                           dsp_pfg,
-                           mpi_communicator);
 
-  system_rhs_pfg.reinit(locally_owned_dofs_pfg, mpi_communicator);
+      DynamicSparsityPattern dsp_pfg(locally_relevant_dofs_pfg);
+      DoFTools::make_sparsity_pattern(pfg_dof_handler,
+                                      dsp_pfg,
+                                      pfg_constraints,
+                                      false);
 
-  present_pfg_solution.reinit(locally_owned_dofs_pfg,
-                              locally_relevant_dofs_pfg,
-                              mpi_communicator);
+      SparsityTools::distribute_sparsity_pattern(dsp_pfg,
+                                                 locally_owned_dofs_pfg,
+                                                 mpi_communicator,
+                                                 locally_relevant_dofs_pfg);
 
-  // Curvature
-  curvature_dof_handler.distribute_dofs(*fe_curvature);
 
-  locally_owned_dofs_curvature = curvature_dof_handler.locally_owned_dofs();
+      // Initialization of phase fraction gradient matrice and rhs for the
+      // calculation surface tension force
+      system_matrix_pfg.reinit(locally_owned_dofs_pfg,
+                               locally_owned_dofs_pfg,
+                               dsp_pfg,
+                               mpi_communicator);
 
-  DoFTools::extract_locally_relevant_dofs(curvature_dof_handler,
-                                          locally_relevant_dofs_curvature);
+      system_rhs_pfg.reinit(locally_owned_dofs_pfg, mpi_communicator);
 
-  curvature_constraints.clear();
-  curvature_constraints.reinit(locally_relevant_dofs_curvature);
-  DoFTools::make_hanging_node_constraints(curvature_dof_handler,
-                                          curvature_constraints);
-  curvature_constraints.close();
-
-  nodal_curvature_relevant.reinit(locally_owned_dofs_curvature,
-                                  locally_relevant_dofs_curvature,
+      present_pfg_solution.reinit(locally_owned_dofs_pfg,
+                                  locally_relevant_dofs_pfg,
                                   mpi_communicator);
 
-  nodal_curvature_owned.reinit(locally_owned_dofs_curvature, mpi_communicator);
+      // Curvature
+      curvature_dof_handler.distribute_dofs(*fe_curvature);
+
+      locally_owned_dofs_curvature = curvature_dof_handler.locally_owned_dofs();
+
+      DoFTools::extract_locally_relevant_dofs(curvature_dof_handler,
+                                              locally_relevant_dofs_curvature);
+
+      curvature_constraints.clear();
+      curvature_constraints.reinit(locally_relevant_dofs_curvature);
+      DoFTools::make_hanging_node_constraints(curvature_dof_handler,
+                                              curvature_constraints);
+      curvature_constraints.close();
+
+      nodal_curvature_relevant.reinit(locally_owned_dofs_curvature,
+                                      locally_relevant_dofs_curvature,
+                                      mpi_communicator);
+
+      nodal_curvature_owned.reinit(locally_owned_dofs_curvature,
+                                   mpi_communicator);
 
 
 
-  DynamicSparsityPattern dsp_curvature(locally_relevant_dofs_curvature);
-  DoFTools::make_sparsity_pattern(curvature_dof_handler,
-                                  dsp_curvature,
-                                  curvature_constraints,
-                                  false);
+      DynamicSparsityPattern dsp_curvature(locally_relevant_dofs_curvature);
+      DoFTools::make_sparsity_pattern(curvature_dof_handler,
+                                      dsp_curvature,
+                                      curvature_constraints,
+                                      false);
 
-  SparsityTools::distribute_sparsity_pattern(dsp_curvature,
-                                             locally_owned_dofs_curvature,
-                                             mpi_communicator,
-                                             locally_relevant_dofs_curvature);
+      SparsityTools::distribute_sparsity_pattern(
+        dsp_curvature,
+        locally_owned_dofs_curvature,
+        mpi_communicator,
+        locally_relevant_dofs_curvature);
 
 
-  // Initialization of curvature matrice and rhs for the
-  // calculation surface tension force
-  system_matrix_curvature.reinit(locally_owned_dofs_curvature,
-                                 locally_owned_dofs_curvature,
-                                 dsp_curvature,
-                                 mpi_communicator);
+      // Initialization of curvature matrice and rhs for the
+      // calculation surface tension force
+      system_matrix_curvature.reinit(locally_owned_dofs_curvature,
+                                     locally_owned_dofs_curvature,
+                                     dsp_curvature,
+                                     mpi_communicator);
 
-  system_rhs_curvature.reinit(locally_owned_dofs_curvature, mpi_communicator);
+      system_rhs_curvature.reinit(locally_owned_dofs_curvature,
+                                  mpi_communicator);
 
-  present_curvature_solution.reinit(locally_owned_dofs_curvature,
-                                    locally_relevant_dofs_curvature,
-                                    mpi_communicator);
+      present_curvature_solution.reinit(locally_owned_dofs_curvature,
+                                        locally_relevant_dofs_curvature,
+                                        mpi_communicator);
 
-  multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
-  multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
+      multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
+      multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
 
-  multiphysics->set_pfg_solution(&present_pfg_solution);
-  multiphysics->set_curvature_solution(&present_curvature_solution);
+      multiphysics->set_pfg_solution(&present_pfg_solution);
+      multiphysics->set_curvature_solution(&present_curvature_solution);
+    }
+
 
   this->dof_handler.distribute_dofs(*this->fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
