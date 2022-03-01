@@ -61,8 +61,7 @@ subsection analytical solution
   set verbosity = verbose
     subsection uvwp
     	    set Function constants = sigma=0.023, R=0.022
-    	    
-            set Function expression =  0 ; 0 ; 2 * sigma/R
+            set Function expression = 0; 0; if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , 2 * sigma / R , 0)
     end
 end
 
