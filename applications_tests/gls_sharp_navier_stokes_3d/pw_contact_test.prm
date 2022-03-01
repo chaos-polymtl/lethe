@@ -91,6 +91,7 @@ subsection particles
 	set integrate motion = true
 	set alpha =1
 	set assemble Navier-Stokes inside particles = false
+	set lubrication range max=0
 	subsection gravity
         set Function expression =0;-981;0
     end
