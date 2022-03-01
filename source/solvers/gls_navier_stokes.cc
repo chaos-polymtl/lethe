@@ -388,10 +388,10 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
           this->simulation_control));
 
-      // Continuum Surface Force (CSF)
+      // Surface tension force (STF)
       if (this->simulation_parameters.multiphysics.continuum_surface_force)
         this->assemblers.push_back(
-          std::make_shared<GLSNavierStokesVOFAssemblerCSF<dim>>(
+          std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
             this->simulation_control,
             this->simulation_parameters.surface_tension_force));
     }

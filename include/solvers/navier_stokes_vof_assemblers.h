@@ -110,7 +110,7 @@ public:
 };
 
 /**
- * @brief Class that assembles the Continuum Surface Force (CSF) for the
+ * @brief Class that assembles the Surface Tension Force (STF) for the
  * Navier-Stokes equations. The following equation is assembled
  *
  * $$\mathbf{F_{CSV}}=\sigma \rho k \nabla \phi
@@ -120,10 +120,10 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class GLSNavierStokesVOFAssemblerCSF : public NavierStokesAssemblerBase<dim>
+class GLSNavierStokesVOFAssemblerSTF : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSNavierStokesVOFAssemblerCSF(
+  GLSNavierStokesVOFAssemblerSTF(
     std::shared_ptr<SimulationControl> p_simulation_control,
     Parameters::SurfaceTensionForce    p_STF_properties)
     : simulation_control(p_simulation_control)

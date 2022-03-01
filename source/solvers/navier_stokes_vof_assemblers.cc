@@ -482,14 +482,14 @@ template class GLSNavierStokesVOFAssemblerBDF<3>;
 
 template <int dim>
 void
-GLSNavierStokesVOFAssemblerCSF<dim>::assemble_matrix(
+GLSNavierStokesVOFAssemblerSTF<dim>::assemble_matrix(
   NavierStokesScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
 {}
 
 template <int dim>
 void
-GLSNavierStokesVOFAssemblerCSF<dim>::assemble_rhs(
+GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -512,21 +512,21 @@ GLSNavierStokesVOFAssemblerCSF<dim>::assemble_rhs(
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &pfg_value       = scratch_data.pfg_values[q];
       const double          JxW_value       = JxW[q];
-
-      strong_residual[q] +=
+      const Tensor<1, dim>  temp_STF =
         -2.0 * surface_tension_coef * curvature_value * pfg_value;
+
+      strong_residual[q] += temp_STF;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           double     local_rhs_i = 0;
 
-          local_rhs_i -=
-            -2.0 * surface_tension_coef * curvature_value * pfg_value * phi_u_i;
+          local_rhs_i -= temp_STF * phi_u_i;
           local_rhs(i) += local_rhs_i * JxW_value;
         }
     }
 }
 
-template class GLSNavierStokesVOFAssemblerCSF<2>;
-template class GLSNavierStokesVOFAssemblerCSF<3>;
+template class GLSNavierStokesVOFAssemblerSTF<2>;
+template class GLSNavierStokesVOFAssemblerSTF<3>;
