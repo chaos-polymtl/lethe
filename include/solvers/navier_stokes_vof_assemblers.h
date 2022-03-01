@@ -124,8 +124,10 @@ class GLSNavierStokesVOFAssemblerCSF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerCSF(
-    std::shared_ptr<SimulationControl> p_simulation_control)
+    std::shared_ptr<SimulationControl> p_simulation_control,
+    Parameters::SurfaceTensionForce    p_STF_properties)
     : simulation_control(p_simulation_control)
+    , STF_properties(p_STF_properties)
   {}
 
   /**
@@ -147,7 +149,8 @@ public:
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  std::shared_ptr<SimulationControl>    simulation_control;
+  const Parameters::SurfaceTensionForce STF_properties;
 };
 
 #endif

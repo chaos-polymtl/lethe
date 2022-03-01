@@ -375,12 +375,6 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
     }
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      // Continuum Surface Force (CSF)
-      if (this->simulation_parameters.multiphysics.continuum_surface_force)
-        this->assemblers.push_back(
-          std::make_shared<GLSNavierStokesVOFAssemblerCSF<dim>>(
-            this->simulation_control));
-
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
@@ -393,6 +387,13 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
       this->assemblers.push_back(
         std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
           this->simulation_control));
+
+      // Continuum Surface Force (CSF)
+      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+        this->assemblers.push_back(
+          std::make_shared<GLSNavierStokesVOFAssemblerCSF<dim>>(
+            this->simulation_control,
+            this->simulation_parameters.surface_tension_force));
     }
   else
     {

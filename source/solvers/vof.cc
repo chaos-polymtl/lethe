@@ -536,11 +536,11 @@ VolumeOfFluid<dim>::modify_solution()
       find_filtered_pfg();
       find_filtered_interface_curvature();
 
-      // multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
-      // multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
+      multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
+      multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
 
-      //  multiphysics->set_pfg_solution(&present_pfg_solution);
-      //  multiphysics->set_curvature_solution(&present_curvature_solution);
+      multiphysics->set_pfg_solution(&present_pfg_solution);
+      multiphysics->set_curvature_solution(&present_curvature_solution);
     }
 }
 
@@ -971,6 +971,19 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
       this->previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       this->nonzero_constraints.distribute(tmp_previous_solution);
       this->previous_solutions[i] = tmp_previous_solution;
+    }
+
+  // PFG and curvature
+  if (this->simulation_parameters.multiphysics.continuum_surface_force)
+    {
+      find_filtered_pfg();
+      find_filtered_interface_curvature();
+
+      multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
+      multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
+
+      multiphysics->set_pfg_solution(&present_pfg_solution);
+      multiphysics->set_curvature_solution(&present_curvature_solution);
     }
 }
 

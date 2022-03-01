@@ -497,7 +497,7 @@ GLSNavierStokesVOFAssemblerCSF<dim>::assemble_rhs(
   const double density_fluid_two = scratch_data.density_1[0];
   const double denominator_inverse =
     1.0 / (0.5 * (density_fluid_one + density_fluid_two));
-  const double surface_tension_coef = 22.3;
+  const double surface_tension_coef = STF_properties.surface_tension_coef;
 
   // Loop and quadrature informations
   const auto &       JxW        = scratch_data.JxW;
@@ -513,7 +513,6 @@ GLSNavierStokesVOFAssemblerCSF<dim>::assemble_rhs(
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
 
-
   // Vector for the BDF coefficients
   // Vector<double>      bdf_coefs = bdf_coefficients(method,
   // time_steps_vector); std::vector<double> phase_value(1 +
@@ -526,7 +525,6 @@ GLSNavierStokesVOFAssemblerCSF<dim>::assemble_rhs(
       const double &        phase_value     = scratch_data.phase_values[q];
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &pfg_value       = scratch_data.pfg_values[q];
-
 
       const Tensor<1, dim> &phase_gradient =
         scratch_data.phase_gradient_values[q];
