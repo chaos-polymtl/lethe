@@ -535,12 +535,6 @@ VolumeOfFluid<dim>::modify_solution()
     {
       find_filtered_pfg();
       find_filtered_interface_curvature();
-
-      multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
-      multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
-
-      multiphysics->set_pfg_solution(&present_pfg_solution);
-      multiphysics->set_curvature_solution(&present_curvature_solution);
     }
 }
 
@@ -761,9 +755,6 @@ VolumeOfFluid<dim>::solve_pfg()
   pfg_constraints.distribute(completely_distributed_pfg_solution);
 
   present_pfg_solution = completely_distributed_pfg_solution;
-
-  multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
-  multiphysics->set_pfg_solution(&present_pfg_solution);
 }
 
 template <int dim>
@@ -926,9 +917,6 @@ VolumeOfFluid<dim>::solve_curvature()
   curvature_constraints.distribute(completely_distributed_curvature_solution);
 
   present_curvature_solution = completely_distributed_curvature_solution;
-
-  multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
-  multiphysics->set_curvature_solution(&present_curvature_solution);
 }
 
 template <int dim>
@@ -978,12 +966,6 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
     {
       find_filtered_pfg();
       find_filtered_interface_curvature();
-
-      multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
-      multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
-
-      multiphysics->set_pfg_solution(&present_pfg_solution);
-      multiphysics->set_curvature_solution(&present_curvature_solution);
     }
 }
 
@@ -1159,12 +1141,6 @@ VolumeOfFluid<dim>::setup_dofs()
       present_curvature_solution.reinit(locally_owned_dofs_curvature,
                                         locally_relevant_dofs_curvature,
                                         mpi_communicator);
-
-      multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
-      multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
-
-      multiphysics->set_pfg_solution(&present_pfg_solution);
-      multiphysics->set_curvature_solution(&present_curvature_solution);
     }
 
 

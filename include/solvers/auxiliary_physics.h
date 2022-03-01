@@ -110,6 +110,30 @@ public:
   modify_solution(){};
 
   /**
+   * @brief
+   */
+  virtual TrilinosWrappers::MPI::Vector *
+  get_pfg_solution(){};
+
+  /**
+   * @brief
+   */
+  virtual TrilinosWrappers::MPI::Vector *
+  get_curvature_solution(){};
+
+  /**
+   * @brief
+   */
+  virtual DoFHandler<dim> *
+  get_pfg_dof_handler(){};
+
+  /**
+   * @brief
+   */
+  virtual DoFHandler<dim> *
+  get_curvature_dof_handler(){};
+
+  /**
    * @brief Provide the dof handler associated with an auxiliary physics
    * TODO : delete as the auxiliary physics are supposed to pass their
    * dof_handler to the multiphysics_interface directly
