@@ -517,7 +517,7 @@ private:
    */
   void
   assemble_curvature_matrix_and_rhs(
-    TrilinosWrappers::MPI::Vector &present_pfg_solution);
+    TrilinosWrappers::MPI::Vector &present_solution);
 
   /**
    * @brief Solves curvature system.
@@ -607,9 +607,8 @@ private:
   std::vector<Tensor<1, dim>> pfg_values;
   std::vector<double>         curvature_values;
 
-  TrilinosWrappers::SparseMatrix system_matrix_curvature;
-  TrilinosWrappers::MPI::Vector  system_rhs_curvature;
-
+  TrilinosWrappers::SparseMatrix                     system_matrix_curvature;
+  TrilinosWrappers::MPI::Vector                      system_rhs_curvature;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
   // Lower and upper bounds of phase fraction

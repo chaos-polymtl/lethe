@@ -495,6 +495,71 @@ public:
     return physics_solutions[physics_id];
   }
 
+  /**
+   * @brief Request the present solution of the filtered phase fraction gradient (pfg)
+   */
+  TrilinosWrappers::MPI::Vector *
+  get_pfg_solution()
+  {
+    return pfg_solution;
+  }
+
+  /**
+   * @brief Request the present solution of the curvature
+   */
+  TrilinosWrappers::MPI::Vector *
+  get_curvature_solution()
+  {
+    return curvature_solution;
+  }
+
+  /**
+   * @brief Request the filtered phase fraction gradient (pfg) DOF handler
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   */
+  DoFHandler<dim> *
+  get_pfg_dof_handler()
+  {
+    return pfg_dof_handler;
+  }
+
+  /**
+   * @brief Request the filtered curvature DOF handler
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   */
+  DoFHandler<dim> *
+  get_curvature_dof_handler()
+  {
+    return curvature_dof_handler;
+  }
+
+
+  void
+  set_pfg_dof_handler(DoFHandler<dim> *dof_handler)
+  {
+    pfg_dof_handler = dof_handler;
+  }
+
+  void
+  set_curvature_dof_handler(DoFHandler<dim> *dof_handler)
+  {
+    curvature_dof_handler = dof_handler;
+  }
+
+  void
+  set_pfg_solution(TrilinosWrappers::MPI::Vector *solution_vector)
+  {
+    pfg_solution = solution_vector;
+  }
+
+  void
+  set_curvature_solution(TrilinosWrappers::MPI::Vector *solution_vector)
+  {
+    curvature_solution = solution_vector;
+  }
+
 
   /**
    * @brief Request the present block solution of a given physics
@@ -722,6 +787,11 @@ private:
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions_m1;
   std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
     block_physics_solutions_m1;
+
+  TrilinosWrappers::MPI::Vector *pfg_solution;
+  TrilinosWrappers::MPI::Vector *curvature_solution;
+  DoFHandler<dim> *              pfg_dof_handler;
+  DoFHandler<dim> *              curvature_dof_handler;
 };
 
 

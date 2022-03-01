@@ -109,4 +109,45 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
+/**
+ * @brief Class that assembles the Continuum Surface Force (CSF) for the Navier-Stokes equations. The following equation is assembled
+ *
+ * // *****************
+ * $$\mathbf{F_{CSV}}=\frac{\sigma \rho k \nabla \alpha}{0.5(\rho_1+\rho_2)}
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class GLSNavierStokesVOFAssemblerCSF : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSNavierStokesVOFAssemblerCSF(
+    std::shared_ptr<SimulationControl> p_simulation_control)
+    : simulation_control(p_simulation_control)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+};
+
 #endif

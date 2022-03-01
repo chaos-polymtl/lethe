@@ -535,6 +535,12 @@ VolumeOfFluid<dim>::modify_solution()
     {
       find_filtered_pfg();
       find_filtered_interface_curvature();
+
+      // multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
+      // multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
+
+      //  multiphysics->set_pfg_solution(&present_pfg_solution);
+      //  multiphysics->set_curvature_solution(&present_curvature_solution);
     }
 }
 
@@ -712,7 +718,7 @@ void
 VolumeOfFluid<dim>::solve_pfg()
 {
   // Solve the L2 projection system
-  const double linear_solver_tolerance = 1e-10;
+  const double linear_solver_tolerance = 1e-13;
 
   TrilinosWrappers::MPI::Vector completely_distributed_pfg_solution(
     this->locally_owned_dofs_pfg, triangulation->get_communicator());
@@ -755,6 +761,9 @@ VolumeOfFluid<dim>::solve_pfg()
   pfg_constraints.distribute(completely_distributed_pfg_solution);
 
   present_pfg_solution = completely_distributed_pfg_solution;
+
+  multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
+  multiphysics->set_pfg_solution(&present_pfg_solution);
 }
 
 template <int dim>
@@ -833,22 +842,26 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
                 }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
-                  // Matrix assembly
-                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                  if (pfg_values[q].norm() > DBL_MIN)
                     {
-                      local_matrix_curvature(i, j) +=
-                        (phi_curvature[j] * phi_curvature[i] +
-                         simulation_parameters.surface_tension_force
-                             .curvature_filter_value *
-                           scalar_product(phi_curvature_gradient[i],
-                                          phi_curvature_gradient[j])) *
+                      // Matrix assembly
+                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                        {
+                          local_matrix_curvature(i, j) +=
+                            (phi_curvature[j] * phi_curvature[i] +
+                             simulation_parameters.surface_tension_force
+                                 .curvature_filter_value *
+                               scalar_product(phi_curvature_gradient[i],
+                                              phi_curvature_gradient[j])) *
+                            fe_values_curvature.JxW(q);
+                        }
+                      // rhs
+
+                      local_rhs_curvature(i) +=
+                        phi_curvature_gradient[i] *
+                        (pfg_values[q] / pfg_values[q].norm()) *
                         fe_values_curvature.JxW(q);
                     }
-                  // rhs
-                  local_rhs_curvature(i) +=
-                    phi_curvature_gradient[i] *
-                    (pfg_values[q] / (pfg_values[q].norm() + DBL_MIN)) *
-                    fe_values_curvature.JxW(q);
                 }
             }
 
@@ -869,7 +882,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::solve_curvature()
 {
-  const double linear_solver_tolerance = 1e-10;
+  const double linear_solver_tolerance = 1e-13;
 
   TrilinosWrappers::MPI::Vector completely_distributed_curvature_solution(
     this->locally_owned_dofs_curvature, triangulation->get_communicator());
@@ -913,6 +926,9 @@ VolumeOfFluid<dim>::solve_curvature()
   curvature_constraints.distribute(completely_distributed_curvature_solution);
 
   present_curvature_solution = completely_distributed_curvature_solution;
+
+  multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
+  multiphysics->set_curvature_solution(&present_curvature_solution);
 }
 
 template <int dim>
@@ -1125,6 +1141,12 @@ VolumeOfFluid<dim>::setup_dofs()
   present_curvature_solution.reinit(locally_owned_dofs_curvature,
                                     locally_relevant_dofs_curvature,
                                     mpi_communicator);
+
+  multiphysics->set_pfg_dof_handler(&pfg_dof_handler);
+  multiphysics->set_curvature_dof_handler(&curvature_dof_handler);
+
+  multiphysics->set_pfg_solution(&present_pfg_solution);
+  multiphysics->set_curvature_solution(&present_curvature_solution);
 
   this->dof_handler.distribute_dofs(*this->fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);

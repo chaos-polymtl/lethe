@@ -108,6 +108,8 @@ public:
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
     gather_vof                   = false;
+    gather_pfg                   = false;
+    gather_curvature             = false;
     gather_void_fraction         = false;
     gather_particles_information = false;
     gather_temperature           = false;
@@ -146,6 +148,14 @@ public:
       enable_vof(sd.fe_values_vof->get_fe(),
                  sd.fe_values_vof->get_quadrature(),
                  sd.fe_values_vof->get_mapping());
+    if (sd.gather_pfg)
+      enable_pfg(sd.fe_values_pfg->get_fe(),
+                 sd.fe_values_pfg->get_quadrature(),
+                 sd.fe_values_pfg->get_mapping());
+    if (sd.gather_curvature)
+      enable_curvature(sd.fe_values_curvature->get_fe(),
+                       sd.fe_values_curvature->get_quadrature(),
+                       sd.fe_values_curvature->get_mapping());
 
     if (sd.gather_void_fraction)
       enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
@@ -442,6 +452,16 @@ public:
              const Quadrature<dim> &   quadrature,
              const Mapping<dim> &      mapping);
 
+  void
+  enable_pfg(const FiniteElement<dim> &fe_pfg,
+             const Quadrature<dim> &   quadrature,
+             const Mapping<dim> &      mapping);
+
+  void
+  enable_curvature(const FiniteElement<dim> &fe_curvature,
+                   const Quadrature<dim> &   quadrature,
+                   const Mapping<dim> &      mapping);
+
   /** @brief Reinitialize the content of the scratch for the vof
    *
    * @param cell The cell over which the assembly is being carried.
@@ -476,6 +496,32 @@ public:
         this->fe_values_vof->get_function_values(previous_solutions[p],
                                                  previous_phase_values[p]);
       }
+  }
+
+  template <typename VectorType>
+  void
+  reinit_pfg(const typename DoFHandler<dim>::active_cell_iterator &pfg_cell,
+             const VectorType &current_pfg_solution)
+  {
+    this->fe_values_pfg->reinit(pfg_cell);
+
+    FEValuesExtractors::Vector pfg(0);
+    // Gather phase fraction gradient
+    (*fe_values_pfg)[pfg].get_function_values(current_pfg_solution,
+                                              this->pfg_values);
+  }
+
+  template <typename VectorType>
+  void
+  reinit_curvature(
+    const typename DoFHandler<dim>::active_cell_iterator &curvature_cell,
+    const VectorType &current_curvature_solution)
+  {
+    this->fe_values_curvature->reinit(curvature_cell);
+
+    // Gather phase fraction gradient
+    this->fe_values_curvature->get_function_values(current_curvature_solution,
+                                                   this->curvature_values);
   }
 
   /**
@@ -803,6 +849,12 @@ public:
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_vof;
 
+  bool                           gather_pfg;
+  bool                           gather_curvature;
+  std::shared_ptr<FEValues<dim>> fe_values_pfg;
+  std::shared_ptr<FEValues<dim>> fe_values_curvature;
+  std::vector<Tensor<1, dim>>    pfg_values;
+  std::vector<double>            curvature_values;
 
   /**
    * Scratch component for the void fractoin auxiliary physics
