@@ -914,6 +914,8 @@ namespace Parameters
     double                       wall_friction_coefficient;
     double                       wall_restitution_coefficient;
     unsigned int                 coupling_frequency;
+    double                       lubrication_range_max;
+    double                       lubrication_range_min;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 

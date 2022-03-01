@@ -93,7 +93,10 @@ public:
    *
    */
   void
-  integrate_particles_motion(const double dt,const double h);
+  integrate_particles_motion(const double dt,
+                             const double h_max,
+                             const double h_min,
+                             const double mu);
 
   /**
    * @brief Calculates non-linear (Hertzian) particle-particle contact force
@@ -135,9 +138,13 @@ public:
    * @param contact_force a vector containing the contact torques between particles
    */
   void
-  calculate_pp_lubrification_force(const double               dt_dem,const double h,
-                             std::vector<Tensor<1, 3>> &lubrification_force,
-                             std::vector<Tensor<1, 3>> &lubrification_torque);
+  calculate_pp_lubrication_force(
+    const double               dt_dem,
+    const double               h_max,
+    const double               h_min,
+    const double               mu,
+    std::vector<Tensor<1, 3>> &lubrification_force,
+    std::vector<Tensor<1, 3>> &lubrification_torque);
 
 
   /**
@@ -150,10 +157,13 @@ public:
    * @param contact_force a vector containing the contact torques between particles
    */
   void
-  calculate_pw_lubrification_force(const double               dt_dem,
-                                   const double h,
-                             std::vector<Tensor<1, 3>> &lubrification_force,
-                             std::vector<Tensor<1, 3>> &lubrification_torque);
+  calculate_pw_lubrication_force(
+    const double               dt_dem,
+    const double               h_max,
+    const double               h_min,
+    const double               mu,
+    std::vector<Tensor<1, 3>> &lubrification_force,
+    std::vector<Tensor<1, 3>> &lubrification_torque);
 
   /**
    * @brief  Updates the boundary cells that are contact candidates for each of the particles.

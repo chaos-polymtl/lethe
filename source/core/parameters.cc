@@ -1776,6 +1776,18 @@ namespace Parameters
                         "relaxation parameter");
 
       prm.declare_entry(
+        "lubrication range max",
+        "2",
+        Patterns::Double(),
+        "Gap require to consider the lubrification force. This value is multiply the smallest cell size");
+
+      prm.declare_entry(
+        "lubrication range min",
+        "0.01",
+        Patterns::Double(),
+        "Smallest gap consider for the lubrification force calculation. This value is multiply the smallest cell size");
+
+      prm.declare_entry(
         "wall youngs modulus",
         "100000000",
         Patterns::Double(),
@@ -1866,7 +1878,9 @@ namespace Parameters
       wall_friction_coefficient = prm.get_double("wall friction coefficient");
       wall_restitution_coefficient =
         prm.get_double("wall restitution coefficient");
-      coupling_frequency = prm.get_double("DEM coupling frequency");
+      coupling_frequency    = prm.get_double("DEM coupling frequency");
+      lubrication_range_max = prm.get_double("lubrication range max");
+      lubrication_range_min = prm.get_double("lubrication range min");
 
 
 
