@@ -60,8 +60,12 @@ subsection analytical solution
   set enable                 = true
   set verbosity = verbose
     subsection uvwp
-    	    set Function constants = sigma=0.023, R=0.022
-            set Function expression = 0; 0; if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , 2 * sigma / R , 0)
+    	set Function constants = sigma=0.023, R=0.022
+    	set Function expression = 0; 0; if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , 2 * sigma / R , 0)
+    end
+    subsection phase
+    	set Function constants = sigma=0.023, R=0.022
+    	set Function expression = if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , 1, if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.023 * 0.023 , 7.67 - 333.33 * sqrt((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04)) , 0))
     end
 end
 

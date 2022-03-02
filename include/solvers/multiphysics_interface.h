@@ -497,7 +497,7 @@ public:
    * @brief Request the present solution of the filtered phase fraction gradient (PFG)
    */
   TrilinosWrappers::MPI::Vector *
-  get_pfg_solution();
+  get_filtered_phase_fraction_gradient_solution();
 
   /**
    * @brief Request the present solution of the curvature
@@ -515,7 +515,7 @@ public:
    * @brief Request the filtered phase fraction gradient (pfg) DOF handler
    */
   DoFHandler<dim> *
-  get_pfg_dof_handler();
+  get_filtered_phase_fraction_gradient_dof_handler();
 
   /**
    * @brief Request the present block solution of a given physics

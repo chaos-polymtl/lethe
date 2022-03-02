@@ -510,10 +510,12 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
     {
       // Gather pfg and curvature values
       const double &        curvature_value = scratch_data.curvature_values[q];
-      const Tensor<1, dim> &pfg_value       = scratch_data.pfg_values[q];
-      const double          JxW_value       = JxW[q];
-      const Tensor<1, dim>  temp_STF =
-        -2.0 * surface_tension_coef * curvature_value * pfg_value;
+      const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
+        scratch_data.filtered_phase_fraction_gradient_values[q];
+      const double         JxW_value = JxW[q];
+      const Tensor<1, dim> temp_STF  = -2.0 * surface_tension_coef *
+                                      curvature_value *
+                                      filtered_phase_fraction_gradient_value;
 
       strong_residual[q] += temp_STF;
 

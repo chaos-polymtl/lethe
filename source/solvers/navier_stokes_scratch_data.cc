@@ -113,16 +113,21 @@ NavierStokesScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_pfg(const FiniteElement<dim> &fe_pfg,
-                                         const Quadrature<dim> &   quadrature,
-                                         const Mapping<dim> &      mapping)
+NavierStokesScratchData<dim>::enable_filtered_phase_fraction_gradient(
+  const FiniteElement<dim> &fe_filtered_phase_fraction_gradient,
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
 {
-  gather_pfg    = true;
-  fe_values_pfg = std::make_shared<FEValues<dim>>(
-    mapping, fe_pfg, quadrature, update_values | update_gradients);
+  gather_filtered_phase_fraction_gradient = true;
+  fe_values_filtered_phase_fraction_gradient =
+    std::make_shared<FEValues<dim>>(mapping,
+                                    fe_filtered_phase_fraction_gradient,
+                                    quadrature,
+                                    update_values | update_gradients);
 
   // PFG
-  pfg_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  filtered_phase_fraction_gradient_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
 }
 
 template <int dim>

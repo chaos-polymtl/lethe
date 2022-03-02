@@ -148,10 +148,11 @@ public:
       enable_vof(sd.fe_values_vof->get_fe(),
                  sd.fe_values_vof->get_quadrature(),
                  sd.fe_values_vof->get_mapping());
-    if (sd.gather_pfg)
-      enable_pfg(sd.fe_values_pfg->get_fe(),
-                 sd.fe_values_pfg->get_quadrature(),
-                 sd.fe_values_pfg->get_mapping());
+    if (sd.gather_filtered_phase_fraction_gradient)
+      enable_filtered_phase_fraction_gradient(
+        sd.fe_values_filtered_phase_fraction_gradient->get_fe(),
+        sd.fe_values_filtered_phase_fraction_gradient->get_quadrature(),
+        sd.fe_values_filtered_phase_fraction_gradient->get_mapping());
     if (sd.gather_curvature)
       enable_curvature(sd.fe_values_curvature->get_fe(),
                        sd.fe_values_curvature->get_quadrature(),
@@ -453,9 +454,10 @@ public:
              const Mapping<dim> &      mapping);
 
   void
-  enable_pfg(const FiniteElement<dim> &fe_pfg,
-             const Quadrature<dim> &   quadrature,
-             const Mapping<dim> &      mapping);
+  enable_filtered_phase_fraction_gradient(
+    const FiniteElement<dim> &fe_filtered_phase_fraction_gradient,
+    const Quadrature<dim> &   quadrature,
+    const Mapping<dim> &      mapping);
 
   void
   enable_curvature(const FiniteElement<dim> &fe_curvature,
@@ -500,15 +502,19 @@ public:
 
   template <typename VectorType>
   void
-  reinit_pfg(const typename DoFHandler<dim>::active_cell_iterator &pfg_cell,
-             const VectorType &current_pfg_solution)
+  reinit_filtered_phase_fraction_gradient(
+    const typename DoFHandler<dim>::active_cell_iterator
+      &               filtered_phase_fraction_gradient_cell,
+    const VectorType &current_filtered_phase_fraction_gradient_solution)
   {
-    this->fe_values_pfg->reinit(pfg_cell);
+    this->fe_values_filtered_phase_fraction_gradient->reinit(
+      filtered_phase_fraction_gradient_cell);
 
     FEValuesExtractors::Vector pfg(0);
     // Gather phase fraction gradient
-    (*fe_values_pfg)[pfg].get_function_values(current_pfg_solution,
-                                              this->pfg_values);
+    (*fe_values_filtered_phase_fraction_gradient)[pfg].get_function_values(
+      current_filtered_phase_fraction_gradient_solution,
+      this->filtered_phase_fraction_gradient_values);
   }
 
   template <typename VectorType>
@@ -849,11 +855,11 @@ public:
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_vof;
 
-  bool                           gather_pfg;
+  bool                           gather_filtered_phase_fraction_gradient;
   bool                           gather_curvature;
-  std::shared_ptr<FEValues<dim>> fe_values_pfg;
+  std::shared_ptr<FEValues<dim>> fe_values_filtered_phase_fraction_gradient;
   std::shared_ptr<FEValues<dim>> fe_values_curvature;
-  std::vector<Tensor<1, dim>>    pfg_values;
+  std::vector<Tensor<1, dim>>    filtered_phase_fraction_gradient_values;
   std::vector<double>            curvature_values;
 
   /**

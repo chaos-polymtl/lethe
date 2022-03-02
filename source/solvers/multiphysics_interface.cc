@@ -43,16 +43,30 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 
 template <int dim>
 TrilinosWrappers::MPI::Vector *
-MultiphysicsInterface<dim>::get_pfg_solution()
+MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_solution()
 {
+  AssertThrow((std::find(active_physics.begin(),
+                         active_physics.end(),
+                         PhysicsID::VOF) != active_physics.end()),
+              ExcInternalError());
+  AssertThrow((multiphysics_parameters.surface_tension_force),
+              ExcInternalError());
+
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
-    ->get_pfg_solution();
+    ->get_filtered_phase_fraction_gradient_solution();
 }
 
 template <int dim>
 TrilinosWrappers::MPI::Vector *
 MultiphysicsInterface<dim>::get_curvature_solution()
 {
+  AssertThrow((std::find(active_physics.begin(),
+                         active_physics.end(),
+                         PhysicsID::VOF) != active_physics.end()),
+              ExcInternalError());
+  AssertThrow((multiphysics_parameters.surface_tension_force),
+              ExcInternalError());
+
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
     ->get_curvature_solution();
 }
@@ -61,16 +75,30 @@ template <int dim>
 DoFHandler<dim> *
 MultiphysicsInterface<dim>::get_curvature_dof_handler()
 {
+  AssertThrow((std::find(active_physics.begin(),
+                         active_physics.end(),
+                         PhysicsID::VOF) != active_physics.end()),
+              ExcInternalError());
+  AssertThrow((multiphysics_parameters.surface_tension_force),
+              ExcInternalError());
+
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
     ->get_curvature_dof_handler();
 }
 
 template <int dim>
 DoFHandler<dim> *
-MultiphysicsInterface<dim>::get_pfg_dof_handler()
+MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_dof_handler()
 {
+  AssertThrow((std::find(active_physics.begin(),
+                         active_physics.end(),
+                         PhysicsID::VOF) != active_physics.end()),
+              ExcInternalError());
+  AssertThrow((multiphysics_parameters.surface_tension_force),
+              ExcInternalError());
+
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
-    ->get_pfg_dof_handler();
+    ->get_filtered_phase_fraction_gradient_dof_handler();
 }
 
 template class MultiphysicsInterface<2>;
