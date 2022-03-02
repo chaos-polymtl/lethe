@@ -1326,20 +1326,28 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
         }
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual[q] += // Drag Force
-        (beta_drag * (velocity - average_particles_velocity) +
-         undisturbed_flow_force);
+      if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+        {
+          strong_residual[q] += // Drag Force
+            (beta_drag * (velocity - average_particles_velocity) +
+             undisturbed_flow_force);
+        }
+      else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+        {
+          strong_residual[q] += // Drag Force
+            beta_drag * (velocity - average_particles_velocity);
+        }
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           const auto &phi_u_j = scratch_data.phi_u[q][j];
-
           strong_jacobian[q][j] +=
             // Drag Force
             beta_drag * phi_u_j;
         }
+
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -1392,9 +1400,17 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
         }
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual[q] += // Drag Force
-        (beta_drag * (velocity - average_particles_velocity) +
-         undisturbed_flow_force);
+      if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+        {
+          strong_residual[q] += // Drag Force
+            (beta_drag * (velocity - average_particles_velocity) +
+             undisturbed_flow_force);
+        }
+      else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+        {
+          strong_residual[q] += // Drag Force
+            beta_drag * (velocity - average_particles_velocity);
+        }
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)

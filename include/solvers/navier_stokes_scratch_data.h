@@ -686,10 +686,10 @@ public:
     fe_values_local_particles.reinit(cell);
 
     fe_values_local_particles[velocities].get_function_laplacians(
-      current_solution, fluid_velocity_laplacian_at_particle_location);
+      previous_solution, fluid_velocity_laplacian_at_particle_location);
 
     fe_values_local_particles[pressure].get_function_gradients(
-      current_solution, fluid_pressure_gradients_at_particle_location);
+      previous_solution, fluid_pressure_gradients_at_particle_location);
   }
 
 
