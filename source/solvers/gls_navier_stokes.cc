@@ -389,7 +389,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
           this->simulation_control));
 
       // Surface tension force (STF)
-      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
         this->assemblers.push_back(
           std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
             this->simulation_control,
@@ -482,7 +482,7 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
                               *this->cell_quadrature,
                               *this->mapping);
 
-      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
         {
           const DoFHandler<dim> *pfg_dof_handler =
             this->multiphysics->get_pfg_dof_handler();
@@ -555,7 +555,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
 
-      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
         {
           const DoFHandler<dim> *pfg_dof_handler =
             this->multiphysics->get_pfg_dof_handler();
@@ -651,7 +651,7 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                               *this->cell_quadrature,
                               *this->mapping);
 
-      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
         {
           const DoFHandler<dim> *pfg_dof_handler =
             this->multiphysics->get_pfg_dof_handler();
@@ -731,7 +731,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
 
-      if (this->simulation_parameters.multiphysics.continuum_surface_force)
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
         {
           const DoFHandler<dim> *pfg_dof_handler =
             this->multiphysics->get_pfg_dof_handler();

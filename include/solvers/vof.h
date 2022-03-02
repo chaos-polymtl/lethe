@@ -305,22 +305,22 @@ public:
     return nonzero_constraints;
   }
   DoFHandler<dim> *
-  get_pfg_dof_handler() override
+  get_pfg_dof_handler()
   {
     return &pfg_dof_handler;
   }
   DoFHandler<dim> *
-  get_curvature_dof_handler() override
+  get_curvature_dof_handler()
   {
     return &curvature_dof_handler;
   }
   TrilinosWrappers::MPI::Vector *
-  get_pfg_solution() override
+  get_pfg_solution()
   {
     return &present_pfg_solution;
   }
   TrilinosWrappers::MPI::Vector *
-  get_curvature_solution() override
+  get_curvature_solution()
   {
     return &present_curvature_solution;
   }

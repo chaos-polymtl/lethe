@@ -246,13 +246,15 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
+
   if (this->simulation_parameters.multiphysics.peeling_wetting)
     {
       // Peeling/wetting output
       data_out.add_data_vector(this->dof_handler, this->marker_pw, "marker_pw");
     }
-  if (this->simulation_parameters.multiphysics.continuum_surface_force &&
-      simulation_parameters.surface_tension_force.output_vof_auxiliary_fields)
+
+  if (this->simulation_parameters.multiphysics.surface_tension_force &&
+      simulation_parameters.surface_tension_force.output_VOF_auxiliary_fields)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         pfg_component_interpretation(
@@ -531,7 +533,7 @@ VolumeOfFluid<dim>::modify_solution()
   if (this->simulation_parameters.multiphysics.interface_sharpening)
     sharpen_interface();
 
-  if (this->simulation_parameters.multiphysics.continuum_surface_force)
+  if (this->simulation_parameters.multiphysics.surface_tension_force)
     {
       find_filtered_pfg();
       find_filtered_interface_curvature();
@@ -962,7 +964,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
     }
 
   // PFG and curvature
-  if (this->simulation_parameters.multiphysics.continuum_surface_force)
+  if (this->simulation_parameters.multiphysics.surface_tension_force)
     {
       find_filtered_pfg();
       find_filtered_interface_curvature();
@@ -1045,7 +1047,7 @@ VolumeOfFluid<dim>::setup_dofs()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
-  if (this->simulation_parameters.multiphysics.continuum_surface_force)
+  if (this->simulation_parameters.multiphysics.surface_tension_force)
     {
       pfg_dof_handler.distribute_dofs(*fe_pfg);
 

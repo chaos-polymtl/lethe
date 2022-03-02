@@ -41,5 +41,37 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     }
 }
 
+template <int dim>
+TrilinosWrappers::MPI::Vector *
+MultiphysicsInterface<dim>::get_pfg_solution()
+{
+  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
+    ->get_pfg_solution();
+}
+
+template <int dim>
+TrilinosWrappers::MPI::Vector *
+MultiphysicsInterface<dim>::get_curvature_solution()
+{
+  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
+    ->get_curvature_solution();
+}
+
+template <int dim>
+DoFHandler<dim> *
+MultiphysicsInterface<dim>::get_curvature_dof_handler()
+{
+  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
+    ->get_curvature_dof_handler();
+}
+
+template <int dim>
+DoFHandler<dim> *
+MultiphysicsInterface<dim>::get_pfg_dof_handler()
+{
+  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
+    ->get_pfg_dof_handler();
+}
+
 template class MultiphysicsInterface<2>;
 template class MultiphysicsInterface<3>;

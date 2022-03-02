@@ -18,7 +18,7 @@ end
 #---------------------------------------------------
 subsection multiphysics
     set VOF = true
-    set continuum surface force = true
+    set surface tension force = true
 end
 
 #---------------------------------------------------
