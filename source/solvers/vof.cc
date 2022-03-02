@@ -252,7 +252,7 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
       data_out.add_data_vector(this->dof_handler, this->marker_pw, "marker_pw");
     }
   if (this->simulation_parameters.multiphysics.continuum_surface_force &&
-      simulation_parameters.surface_tension_force.output_VOF_auxiliary_fields)
+      simulation_parameters.surface_tension_force.output_vof_auxiliary_fields)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         pfg_component_interpretation(
@@ -509,20 +509,20 @@ VolumeOfFluid<dim>::modify_solution()
               // Parse fluid present solution to apply_peeling_wetting method
               if (multiphysics->fluid_dynamics_is_block())
                 {
-                  const TrilinosWrappers::MPI::BlockVector current_solution_cfd(
+                  const TrilinosWrappers::MPI::BlockVector current_solution_fd(
                     *multiphysics->get_block_solution(
                       PhysicsID::fluid_dynamics));
                   // apply_peeling_wetting is templated with
-                  // current_solution_cfd VectorType
-                  apply_peeling_wetting(i_bc, current_solution_cfd);
+                  // current_solution_fd VectorType
+                  apply_peeling_wetting(i_bc, current_solution_fd);
                 }
               else
                 {
-                  const TrilinosWrappers::MPI::Vector current_solution_cfd(
+                  const TrilinosWrappers::MPI::Vector current_solution_fd(
                     *multiphysics->get_solution(PhysicsID::fluid_dynamics));
                   // apply_peeling_wetting is templated with
-                  // current_solution_cfd VectorType
-                  apply_peeling_wetting(i_bc, current_solution_cfd);
+                  // current_solution_fd VectorType
+                  apply_peeling_wetting(i_bc, current_solution_fd);
                 }
             }
         }
@@ -1606,11 +1606,10 @@ VolumeOfFluid<dim>::assemble_mass_matrix_diagonal(
 template <int dim>
 template <typename VectorType>
 void
-VolumeOfFluid<dim>::apply_peeling_wetting(
-  const unsigned int i_bc,
-  const VectorType & current_solution_cfd)
+VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
+                                          const VectorType &current_solution_fd)
 {
-  const DoFHandler<dim> *dof_handler_cfd =
+  const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   // Initializations
@@ -1627,11 +1626,10 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                                        update_values |
                                          update_quadrature_points);
 
-  FEFaceValues<dim> fe_face_values_cfd(*this->mapping,
-                                       dof_handler_cfd->get_fe(),
-                                       *this->face_quadrature,
-                                       update_values |
-                                         update_quadrature_points);
+  FEFaceValues<dim> fe_face_values_fd(*this->mapping,
+                                      dof_handler_fd->get_fe(),
+                                      *this->face_quadrature,
+                                      update_values | update_quadrature_points);
 
   const unsigned int n_q_points = this->cell_quadrature->size();
 
@@ -1673,19 +1671,19 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
                   cell_vof->face(face)->boundary_id() == boundary_id)
                 {
                   // Get fluid dynamics active cell iterator
-                  typename DoFHandler<dim>::active_cell_iterator cell_cfd(
+                  typename DoFHandler<dim>::active_cell_iterator cell_fd(
                     &(*(this->triangulation)),
                     cell_vof->level(),
                     cell_vof->index(),
-                    dof_handler_cfd);
+                    dof_handler_fd);
 
                   // Reinit fe_face_values for CFD and VOF
                   fe_face_values_vof.reinit(cell_vof, face);
-                  fe_face_values_cfd.reinit(cell_cfd, face);
+                  fe_face_values_fd.reinit(cell_fd, face);
 
                   // Get pressure values
-                  fe_face_values_cfd[pressure].get_function_values(
-                    current_solution_cfd, pressure_values);
+                  fe_face_values_fd[pressure].get_function_values(
+                    current_solution_fd, pressure_values);
 
                   // Get phase values
                   fe_face_values_vof.get_function_values(present_solution,
@@ -1782,22 +1780,22 @@ VolumeOfFluid<dim>::apply_peeling_wetting(
 template void
 VolumeOfFluid<2>::apply_peeling_wetting<TrilinosWrappers::MPI::Vector>(
   const unsigned int                   i_bc,
-  const TrilinosWrappers::MPI::Vector &current_solution_cfd);
+  const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
 VolumeOfFluid<3>::apply_peeling_wetting<TrilinosWrappers::MPI::Vector>(
   const unsigned int                   i_bc,
-  const TrilinosWrappers::MPI::Vector &current_solution_cfd);
+  const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
 VolumeOfFluid<2>::apply_peeling_wetting<TrilinosWrappers::MPI::BlockVector>(
   const unsigned int                        i_bc,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_cfd);
+  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 template void
 VolumeOfFluid<3>::apply_peeling_wetting<TrilinosWrappers::MPI::BlockVector>(
   const unsigned int                        i_bc,
-  const TrilinosWrappers::MPI::BlockVector &current_solution_cfd);
+  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 template <int dim>
 void
