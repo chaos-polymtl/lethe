@@ -129,9 +129,17 @@ public:
 
 
   /**
-   * @brief Calculates non-linear (Hertzian) particle-particle contact force
+   *  @brief Calculates particle-particle lubrication force. The force is based on the formula from
+   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;
+   * Karrila, Seppo J. ISBN 13: 9780750691734
    *
    * @param dt_dem The sub time stepping time step.
+   *
+   * @param h_max The gap between particle and the wall below which we evaluate the force.
+   *
+   * @param h_min The minimal gap distance consider in the force calculation to avoid the singularity of the model.
+   *
+   * @param mu The fluid viscosity.
    *
    * @param contact_force a vector containing the contact force between particles
    *
@@ -148,9 +156,15 @@ public:
 
 
   /**
-   * @brief Calculates non-linear (Hertzian) particle-wall contact force
+   * @brief Calculates particle-wall lubrication force
    *
    * @param dt_dem The sub time stepping time step.
+   *
+   * @param h_max The gap between particle and the wall below which we evaluate the force.
+   *
+   * @param h_min The minimal gap distance consider in the force calculation to avoid the singularity of the model.
+   *
+   * @param mu The fluid viscosity.
    *
    * @param contact_force a vector containing the contact force between particles
    *
@@ -166,7 +180,9 @@ public:
     std::vector<Tensor<1, 3>> &lubrification_torque);
 
   /**
-   * @brief  Updates the boundary cells that are contact candidates for each of the particles.
+   * @brief  Updates the boundary cells that are contact candidates for each of the particles.The force is based on the formula from
+   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;
+   * Karrila, Seppo J. ISBN 13: 9780750691734
    *
    * @param particles The particles vector containing all the IB particles.
    *

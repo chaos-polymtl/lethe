@@ -181,7 +181,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   std::vector<Tensor<1, 3>> &lubrification_torque)
 {
   using numbers::PI;
-
+  // loop over all particles to find pair of close partilces
   for (auto &particle_one : dem_particles)
     {
       for (auto &particle_two : dem_particles)
@@ -191,44 +191,51 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
             {
               const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
-              Tensor<1, 3>     raidal_vector;
-              double           radial_volecity;
+              Tensor<1, 3>     radial_vector;
+              double           radial_velocity;
               Tensor<1, 3>     f_lub;
 
               // Calculation of normal overlap
               double gap =
                 particle_one_location.distance(particle_two_location) -
                 (particle_one.radius + particle_two.radius);
-              raidal_vector =
+              radial_vector =
                 tensor_nd_to_3d(particle_one.position - particle_two.position);
               if (gap > 0 and gap < h_max)
-                // This means that the adjacent particles are very close
+                // This means that the adjacent particles are very close but not
+                // in contact
                 {
+                  // Limit the smallest gap calculated
                   if (gap < h_min)
                     {
                       gap = h_min;
                     }
 
-                  radial_volecity =
-                    scalar_product(-raidal_vector, particle_one.velocity) +
-                    scalar_product(raidal_vector, particle_two.velocity);
+                  // Evaluate the force
+                  radial_velocity =
+                    scalar_product(-radial_vector, particle_one.velocity) +
+                    scalar_product(radial_vector, particle_two.velocity);
                   f_lub =
                     3 / 2 * PI * mu *
                     (particle_one.radius * 2 * particle_two.radius * 2 /
                      (particle_one.radius * 2 + particle_two.radius * 2)) *
                     (particle_one.radius * 2 * particle_two.radius * 2 /
                      (particle_one.radius * 2 + particle_two.radius * 2)) /
-                    gap * radial_volecity * raidal_vector /
-                    raidal_vector.norm();
+                    gap * radial_velocity * radial_vector /
+                    radial_vector.norm();
                 }
+
+              // Decompose the fluid force from the simulation into its
+              // component in the same direction as the lubrication force and
+              // the rest of the force.
               Tensor<1, 3> f_fluid_p1_parallel =
                 (scalar_product(particle_one.fluid_forces,
-                                raidal_vector / raidal_vector.norm())) *
-                raidal_vector / raidal_vector.norm();
+                                radial_vector / radial_vector.norm())) *
+                radial_vector / radial_vector.norm();
               Tensor<1, 3> f_fluid_p2_parallel =
                 (scalar_product(particle_two.fluid_forces,
-                                raidal_vector / raidal_vector.norm())) *
-                raidal_vector / raidal_vector.norm();
+                                radial_vector / radial_vector.norm())) *
+                radial_vector / radial_vector.norm();
               Tensor<1, 3> f_fluid_p1_orto =
                 particle_one.fluid_forces - f_fluid_p1_parallel;
               Tensor<1, 3> f_fluid_p2_orto =
@@ -237,13 +244,15 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
               Tensor<1, 3> f_lub_max_p1;
               Tensor<1, 3> f_lub_max_p2;
 
+              // Compare the lubrication force vs the simulated force takes the
+              // vector with the maximum norm.
               if (f_fluid_p1_parallel.norm() > f_lub.norm())
                 {
                   f_lub_max_p1 = 0;
                 }
               else
                 {
-                  f_lub_max_p1 = f_lub - f_lub_max_p1;
+                  f_lub_max_p1 = f_lub - f_fluid_p1_parallel;
                 }
               if (f_fluid_p2_parallel.norm() > f_lub.norm())
                 {
@@ -251,7 +260,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
                 }
               else
                 {
-                  f_lub_max_p2 = -f_lub - f_lub_max_p1;
+                  f_lub_max_p2 = -f_lub - f_fluid_p2_parallel;
                 }
 
               lubrification_force[particle_one.particle_id] = f_lub_max_p1;
@@ -494,7 +503,6 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
   std::vector<Tensor<1, 3>> &lubrification_torque)
 {
   using numbers::PI;
-  // std::cout<<"gap"<< h<<std::endl;
 
   // Loop over the particles
   for (auto &particle : dem_particles)
@@ -516,7 +524,7 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
             }
           boundary_index += 1;
         }
-      // Do the particle wall contact calculation with the best candidate.
+      // Do the particle wall lubrication calculation with the best candidate.
       if (boundary_cells[particle.particle_id].size() > 0)
         {
           auto &boundary_cell =
@@ -528,7 +536,7 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
           auto point_on_boundary = boundary_cell_information.point_on_boundary;
           const Point<dim> particle_one_location = particle.position;
 
-          // Calculation of normal overlap
+          // Calculation of gap
           Point<3> particle_position_3d = point_nd_to_3d(particle.position);
           Point<3> point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
 
@@ -542,39 +550,45 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
             particle_wall_contact_force_object->find_projection(
               point_to_particle_vector, normal);
 
-          // Find the normal overlap
+
           double gap = (projected_vector.norm()) - particle.radius;
 
-          Tensor<1, 3> raidal_vector;
-          double       radial_volecity;
+          Tensor<1, 3> radial_vector;
+          double       radial_velocity;
           Tensor<1, 3> f_lub;
 
 
-          raidal_vector = projected_vector;
+          radial_vector = projected_vector;
           if (gap > 0 and gap < h_max)
-            // This means that the adjacent particles are very close
+            // This means that the particles is very close to the wall but not
+            // in contact
             {
+              // Limit the smallest gap calculated
               if (gap < h_min)
                 {
                   gap = h_min;
                 }
-              radial_volecity =
-                scalar_product(-raidal_vector, particle.velocity);
+              // Evaluate the force
+              radial_velocity =
+                scalar_product(-radial_vector, particle.velocity);
               f_lub = 3 / 2 * PI * mu * (particle.radius) * (particle.radius) /
-                      gap * radial_volecity * raidal_vector /
-                      raidal_vector.norm();
-              // std::cout<<"f_lub "<<f_lub <<std::endl;
+                      gap * radial_velocity * radial_vector /
+                      radial_vector.norm();
             }
+          // Decompose the fluid force from the simulation into its component in
+          // the same direction as the lubrication force and the rest of the
+          // force.
           Tensor<1, 3> f_fluid_p1_parallel =
             (scalar_product(particle.fluid_forces,
-                            raidal_vector / raidal_vector.norm())) *
-            raidal_vector / raidal_vector.norm();
+                            radial_vector / radial_vector.norm())) *
+            radial_vector / radial_vector.norm();
 
           Tensor<1, 3> f_fluid_p1_orto =
             particle.fluid_forces - f_fluid_p1_parallel;
 
           Tensor<1, 3> f_lub_max_p1;
-
+          // Compare the lubrication force vs the simulated force takes the
+          // vector with the maximum norm.
           if (f_fluid_p1_parallel.norm() > f_lub.norm())
             {
               f_lub_max_p1 = 0;
