@@ -1,0 +1,232 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = bdf1
+  set time step               = 0.0025 # Time step
+  set time end                = 0.0025 # End time of simulation
+  set output name             = out # Prefix for VTU outputs
+  set output frequency        = 1       # Frequency of simulation output
+  set subdivision             = 1       # Mesh subdivision when outputend
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity            = 0.604166666666667
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+    set type    = none
+end
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order        = 1
+    set pressure order        = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = dealii
+    set grid type            = subdivided_hyper_rectangle
+    set grid arguments       = 5,8,5: 0,0,0 : 10 , 16 ,10 : true
+    set initial refinement   = 1
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+set number                  = 5
+    subsection bc 0
+	set id = 0
+        set type              = noslip
+    end
+    subsection bc 1
+	set id = 1
+        set type              = noslip
+    end
+
+    subsection bc 2
+	set id = 2
+        set type              = noslip
+    end
+  #  subsection bc 3
+#	set id = 3
+#        set type              = slip
+#    end
+    subsection bc 4
+	set id = 4
+        set type              = noslip
+    end
+    subsection bc 5
+	set id = 5
+        set type              = noslip
+    end
+
+end
+
+# --------------------------------------------------
+# IB particules
+#---------------------------------------------------
+subsection particles
+	set number of particles = 1
+	set stencil order = 6
+	set refine mesh inside radius factor = 0.5
+	set refine mesh outside radius factor = 1.5
+	set initial refinement = 3
+	set fluid density =0.001
+	set integrate motion = true
+	set alpha =1
+	set assemble Navier-Stokes inside particles = false
+	set lubrication range max=2
+	subsection gravity
+        set Function expression =0;-981;0
+    end
+
+    subsection particle info 0 
+        subsection position
+            set Function expression =5;0.82;5
+        end
+        subsection velocity
+            set Function expression =0;-12;0
+        end
+	    subsection omega
+            set Function expression =0;0;0
+        end
+	    set pressure x =0.00001
+	    set pressure y =0.00001
+	    set pressure z =0.00001
+	    set radius = 0.75
+	    set density = 0.0011
+    end
+end
+
+
+
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+   # Fraction of coarsened elements
+  set fraction coarsening  = 0.4
+
+  # Fraction of refined elements
+  set fraction refinement  = 0.05
+
+  # How the fraction of refinement/coarsening are interepretedChoices are
+  # <number|fraction>.
+  set fraction type        = number
+
+  # Frequency of the mesh refinement
+  set frequency            = 1
+
+  # Maximum number of elements
+  set max number elements  = 75000
+
+  # Maximum refinement level
+  set max refinement level = 3
+ # minimum refinement level
+  set min refinement level =0
+
+  # Type of mesh adaptationChoices are <none|uniform|kelly>.
+  set type                 = kelly
+
+  # Variable for kelly estimationChoices are <velocity|pressure>.
+  set variable             = velocity
+end
+
+# --------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
+  set type      = nodal
+
+  # viscosity for viscous initial conditions
+  set viscosity = 0.05
+
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set tolerance               = 1e-8
+  set max iterations          = 5
+  set residual precision      = 5
+  set verbosity               = quiet
+  set force rhs calculation   = true
+end
+
+# --------------------------------------------------
+# Forces
+#---------------------------------------------------
+subsection forces
+
+  set verbosity               = verbose
+
+
+end
+
+# --------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+	set type = none 
+end
+# --------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection restart
+  # Enable checkpointing. Checkpointing creates a restartpoint from which the
+  # simulation can be restarted from.
+  set checkpoint = false
+ 
+  # Prefix for the filename of checkpoints
+  set filename   = check_point
+
+  # Frequency for checkpointing
+  set frequency  = 1
+
+  # Frequency for
+  set restart    = false
+ 
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set method                                 = gmres
+  set max iters                              = 1000
+  set relative residual                      = 1e-3
+  set minimum residual                       = 1e-11
+  set ilu preconditioner fill                = 0
+  set ilu preconditioner absolute tolerance  = 1e-20
+  set ilu preconditioner relative tolerance  = 1.00
+  set amg aggregation threshold                 = 1e-20
+  set amg n cycles                              = 1
+  set amg preconditioner ilu absolute tolerance = 1e-20
+  set amg preconditioner ilu fill               = 0
+  set amg preconditioner ilu relative tolerance = 1.00
+  set amg smoother overlap                      = 1
+  set amg smoother sweeps                       = 2
+  set amg w cycles                              = false
+  set verbosity               = quiet
+  set max krylov vectors = 1000
+end

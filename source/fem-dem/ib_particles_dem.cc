@@ -595,7 +595,7 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
             }
           else
             {
-              f_lub_max_p1 = f_lub - f_lub_max_p1;
+              f_lub_max_p1 = f_lub - f_fluid_p1_parallel;
             }
 
           lubrification_force[particle.particle_id] = f_lub_max_p1;

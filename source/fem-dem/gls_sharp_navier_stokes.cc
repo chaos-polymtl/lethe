@@ -1122,8 +1122,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   std::map<field, double> field_values;
   field_values[field::shear_rate] = 1;
 
-  double viscosity  = rheological_model->value(field_values);
+
   double density    = this->simulation_parameters.particlesParameters->density;
+  double viscosity  = rheological_model->value(field_values) * density;
   particle_residual = 0;
   if (this->simulation_parameters.particlesParameters->integrate_motion &&
       time > 0)
