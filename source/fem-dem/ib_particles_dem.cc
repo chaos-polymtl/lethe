@@ -217,54 +217,24 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
                     scalar_product(radial_vector, particle_two.velocity);
                   f_lub =
                     3 / 2 * PI * mu *
-                    (particle_one.radius * 2 * particle_two.radius * 2 /
-                     (particle_one.radius * 2 + particle_two.radius * 2)) *
-                    (particle_one.radius * 2 * particle_two.radius * 2 /
-                     (particle_one.radius * 2 + particle_two.radius * 2)) /
-                    gap * radial_velocity * radial_vector /
-                    radial_vector.norm();
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) /
+                      gap * radial_velocity * radial_vector /
+                      radial_vector.norm() -
+                    3 / 2 * PI * mu *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) /
+                      h_max * radial_velocity * radial_vector /
+                      radial_vector.norm();
+                  ;
                 }
 
-              // Decompose the fluid force from the simulation into its
-              // component in the same direction as the lubrication force and
-              // the rest of the force.
-              Tensor<1, 3> f_fluid_p1_parallel =
-                (scalar_product(particle_one.fluid_forces,
-                                radial_vector / radial_vector.norm())) *
-                radial_vector / radial_vector.norm();
-              Tensor<1, 3> f_fluid_p2_parallel =
-                (scalar_product(particle_two.fluid_forces,
-                                radial_vector / radial_vector.norm())) *
-                radial_vector / radial_vector.norm();
-              Tensor<1, 3> f_fluid_p1_orto =
-                particle_one.fluid_forces - f_fluid_p1_parallel;
-              Tensor<1, 3> f_fluid_p2_orto =
-                particle_two.fluid_forces - f_fluid_p2_parallel;
-
-              Tensor<1, 3> f_lub_max_p1;
-              Tensor<1, 3> f_lub_max_p2;
-
-              // Compare the lubrication force vs the simulated force takes the
-              // vector with the maximum norm.
-              if (f_fluid_p1_parallel.norm() > f_lub.norm())
-                {
-                  f_lub_max_p1 = 0;
-                }
-              else
-                {
-                  f_lub_max_p1 = f_lub - f_fluid_p1_parallel;
-                }
-              if (f_fluid_p2_parallel.norm() > f_lub.norm())
-                {
-                  f_lub_max_p2 = 0;
-                }
-              else
-                {
-                  f_lub_max_p2 = -f_lub - f_fluid_p2_parallel;
-                }
-
-              lubrification_force[particle_one.particle_id] = f_lub_max_p1;
-              lubrification_force[particle_two.particle_id] = f_lub_max_p2;
+              lubrification_force[particle_one.particle_id] = f_lub;
+              lubrification_force[particle_two.particle_id] = -f_lub;
             }
         }
     }
@@ -572,33 +542,13 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
               radial_velocity =
                 scalar_product(-radial_vector, particle.velocity);
               f_lub = 3 / 2 * PI * mu * (particle.radius) * (particle.radius) /
-                      gap * radial_velocity * radial_vector /
-                      radial_vector.norm();
+                        gap * radial_velocity * radial_vector /
+                        radial_vector.norm() -
+                      3 / 2 * PI * mu * (particle.radius) * (particle.radius) /
+                        h_max * radial_velocity * radial_vector /
+                        radial_vector.norm();
             }
-          // Decompose the fluid force from the simulation into its component in
-          // the same direction as the lubrication force and the rest of the
-          // force.
-          Tensor<1, 3> f_fluid_p1_parallel =
-            (scalar_product(particle.fluid_forces,
-                            radial_vector / radial_vector.norm())) *
-            radial_vector / radial_vector.norm();
-
-          Tensor<1, 3> f_fluid_p1_orto =
-            particle.fluid_forces - f_fluid_p1_parallel;
-
-          Tensor<1, 3> f_lub_max_p1;
-          // Compare the lubrication force vs the simulated force takes the
-          // vector with the maximum norm.
-          if (f_fluid_p1_parallel.norm() > f_lub.norm())
-            {
-              f_lub_max_p1 = 0;
-            }
-          else
-            {
-              f_lub_max_p1 = f_lub - f_fluid_p1_parallel;
-            }
-
-          lubrification_force[particle.particle_id] = f_lub_max_p1;
+          lubrification_force[particle.particle_id] = f_lub;
         }
     }
 }
