@@ -527,7 +527,8 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // DiFelice Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDiFelice<dim>>());
+            std::make_shared<GLSVansAssemblerDiFelice<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -535,7 +536,8 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerRong<dim>>());
+            std::make_shared<GLSVansAssemblerRong<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -543,7 +545,8 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDallavalle<dim>>());
+            std::make_shared<GLSVansAssemblerDallavalle<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -551,7 +554,8 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Koch and Hill Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerKochHill<dim>>());
+            std::make_shared<GLSVansAssemblerKochHill<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
     }
 
