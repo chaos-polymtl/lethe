@@ -502,7 +502,7 @@ private:
    * curvature (k).
    */
   void
-  find_filtered_filtered_phase_fraction_gradient();
+  find_filtered_phase_fraction_gradient();
 
   /**
    * @brief Carries out finding the interface curvature.

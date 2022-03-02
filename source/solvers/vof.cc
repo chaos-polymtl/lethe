@@ -536,7 +536,7 @@ VolumeOfFluid<dim>::modify_solution()
 
   if (this->simulation_parameters.multiphysics.surface_tension_force)
     {
-      find_filtered_filtered_phase_fraction_gradient();
+      find_filtered_phase_fraction_gradient();
       find_filtered_interface_curvature();
     }
 }
@@ -586,7 +586,7 @@ VolumeOfFluid<dim>::sharpen_interface()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::find_filtered_filtered_phase_fraction_gradient()
+VolumeOfFluid<dim>::find_filtered_phase_fraction_gradient()
 {
   assemble_filtered_phase_fraction_gradient_matrix_and_rhs(present_solution);
   solve_filtered_phase_fraction_gradient();
@@ -1005,7 +1005,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   // PFG and curvature
   if (this->simulation_parameters.multiphysics.surface_tension_force)
     {
-      find_filtered_filtered_phase_fraction_gradient();
+      find_filtered_phase_fraction_gradient();
       find_filtered_interface_curvature();
     }
 }

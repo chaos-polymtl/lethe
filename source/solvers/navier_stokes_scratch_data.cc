@@ -125,7 +125,7 @@ NavierStokesScratchData<dim>::enable_filtered_phase_fraction_gradient(
                                     quadrature,
                                     update_values | update_gradients);
 
-  // PFG
+  // phase fraction gradient (PFG)
   filtered_phase_fraction_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 }

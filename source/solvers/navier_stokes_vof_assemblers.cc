@@ -513,18 +513,18 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
       const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
         scratch_data.filtered_phase_fraction_gradient_values[q];
       const double         JxW_value = JxW[q];
-      const Tensor<1, dim> temp_STF  = -2.0 * surface_tension_coef *
-                                      curvature_value *
-                                      filtered_phase_fraction_gradient_value;
+      const Tensor<1, dim> tmp_STF   = -2.0 * surface_tension_coef *
+                                     curvature_value *
+                                     filtered_phase_fraction_gradient_value;
 
-      strong_residual[q] += temp_STF;
+      strong_residual[q] += tmp_STF;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           double     local_rhs_i = 0;
 
-          local_rhs_i -= temp_STF * phi_u_i;
+          local_rhs_i -= tmp_STF * phi_u_i;
           local_rhs(i) += local_rhs_i * JxW_value;
         }
     }

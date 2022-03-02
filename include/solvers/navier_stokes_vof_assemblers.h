@@ -148,7 +148,9 @@ public:
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl>    simulation_control;
+  std::shared_ptr<SimulationControl> simulation_control;
+
+  // Surface tension force (STF)
   const Parameters::SurfaceTensionForce STF_properties;
 };
 
