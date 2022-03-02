@@ -22,6 +22,8 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set DEM coupling frequency                  = 1000
 		set alpha                                   = 1
 		set fluid density                           = 1
+
+		
 		subsection gravity
 			set Function expression =0;0;0
 		end
@@ -31,6 +33,8 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set wall restitution coefficient            = 1
 		set wall rolling friction coefficient       = 0
 		set wall youngs modulus                     = 100000000
+		set lubrication range max		    = 2
+		set lubrication range min		    = 0.01
 		
 		subsection particle info 0
 			set density    = 1
@@ -100,6 +104,10 @@ The following properties are used if the particle impact one of the boundaries o
 * The ``wall rolling friction coefficient`` parameter is the rolling friction coefficient of the wall. This parameter is used to define the effective rolling friction coefficient between the wall and the particles. At This point in time, all the walls have the same properties.
 
 * The ``wall youngs modulus`` parameter is the Young's modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At This point in time, all the walls have the same properties.
+
+* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to model the fluid between them. The distance is expressed as a multiple of the smallest cells. To deactivate this force, simply put this parameter to 0.
+
+* The ``lubrication range min`` parameter defines the minimal distance used in the lubrication force calculation. The range is defined as a multiple of the smallest cell. This limits the force that can be applied on a particle since the lubrification force has a singularity when the distance between 2 particles is 0. We use this parameter to define a lower bound on the distance between 2 particles for the force calculation to avoid this singularity. Physically this distance can be seen as the surface roughness of the particles.
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
 
