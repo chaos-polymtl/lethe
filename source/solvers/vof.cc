@@ -263,7 +263,7 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
         pfg_component_interpretation[i] =
           DataComponentInterpretation::component_is_part_of_vector;
 
-      std::vector<std::string> solution_names(dim, "phase fraction gradient");
+      std::vector<std::string> solution_names(dim, "phase_fraction_gradient");
 
       data_out.add_data_vector(pfg_dof_handler,
                                present_pfg_solution,
