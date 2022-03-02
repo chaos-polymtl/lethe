@@ -135,24 +135,23 @@ public:
    *
    * @param dt_dem The sub time stepping time step.
    *
-   * @param h_max The gap between particle and the wall below which we evaluate the force.
+   * @param h_max The gap between the two particle.
    *
-   * @param h_min The minimal gap distance consider in the force calculation to avoid the singularity of the model.
+   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
    *
    * @param mu The fluid viscosity.
    *
-   * @param contact_force a vector containing the contact force between particles
+   * @param lubrication_force a vector containing the lubrication force on the particles.
    *
-   * @param contact_force a vector containing the contact torques between particles
+   * @param lubrication_torque a vector containing the lubrication torques on the particles.
    */
   void
-  calculate_pp_lubrication_force(
-    const double               dt_dem,
-    const double               h_max,
-    const double               h_min,
-    const double               mu,
-    std::vector<Tensor<1, 3>> &lubrification_force,
-    std::vector<Tensor<1, 3>> &lubrification_torque);
+  calculate_pp_lubrication_force(const double               dt_dem,
+                                 const double               h_max,
+                                 const double               h_min,
+                                 const double               mu,
+                                 std::vector<Tensor<1, 3>> &lubrication_force,
+                                 std::vector<Tensor<1, 3>> &lubrication_torque);
 
 
   /**
@@ -162,22 +161,21 @@ public:
    *
    * @param h_max The gap between particle and the wall below which we evaluate the force.
    *
-   * @param h_min The minimal gap distance consider in the force calculation to avoid the singularity of the model.
+   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
    *
    * @param mu The fluid viscosity.
    *
-   * @param contact_force a vector containing the contact force between particles
+   * @param lubrication_force a vector containing the lubrication force on the particles.
    *
-   * @param contact_force a vector containing the contact torques between particles
+   * @param lubrication_torque a vector containing the lubrication torques on the particles.
    */
   void
-  calculate_pw_lubrication_force(
-    const double               dt_dem,
-    const double               h_max,
-    const double               h_min,
-    const double               mu,
-    std::vector<Tensor<1, 3>> &lubrification_force,
-    std::vector<Tensor<1, 3>> &lubrification_torque);
+  calculate_pw_lubrication_force(const double               dt_dem,
+                                 const double               h_max,
+                                 const double               h_min,
+                                 const double               mu,
+                                 std::vector<Tensor<1, 3>> &lubrication_force,
+                                 std::vector<Tensor<1, 3>> &lubrication_torque);
 
   /**
    * @brief  Updates the boundary cells that are contact candidates for each of the particles.The force is based on the formula from

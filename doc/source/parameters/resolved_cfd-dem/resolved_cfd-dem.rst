@@ -105,9 +105,16 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``wall youngs modulus`` parameter is the Young's modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At This point in time, all the walls have the same properties.
 
-* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to model the fluid between them. The distance is expressed as a multiple of the smallest cells. To deactivate this force, simply put this parameter to 0.
+* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.  To deactivate this force, simply put this parameter to 0. When using a non newtonian fluid, the lubrication force will be automaticly desactivated.
 
-* The ``lubrication range min`` parameter defines the minimal distance used in the lubrication force calculation. The range is defined as a multiple of the smallest cell. This limits the force that can be applied on a particle since the lubrification force has a singularity when the distance between 2 particles is 0. We use this parameter to define a lower bound on the distance between 2 particles for the force calculation to avoid this singularity. Physically this distance can be seen as the surface roughness of the particles.
+.. note::
+	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
+
+* The ``lubrication range min`` parameter defines the minimal distance used in the lubrication force calculation. The range is defined as a multiple of the smallest cell. This limits the force that can be applied on a particle since the lubrification force has a singularity when the distance between 2 particles is 0. We use this parameter to define a lower bound on the distance between 2 particles for the force calculation to avoid this singularity. Physically, this distance can be interpreted as the surface roughness of the particles.
+
+.. note::
+    The lubrication force between two particles is expressed by the equation :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`. Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter of the first particle, :math:`d_{p_j}` of the diameter of the second particle, :math:`y` the gap between the two particle, :math:`\mathbf{v_{ij}}` the relative velocity of the two particles, :math:`\mathbf{e_{ij}}` the unit vector along the line that joint the centroide of the two particle. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity `[1] <https://doi.org/10.1002/aic.690400418>`_. 
+    This model requires a constant viscosity of the fluid. When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
 
@@ -139,5 +146,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``youngs modulus`` parameter is the Young's modulus of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
 
-
+Reference
+---------------
+[1] Kim, Sangtae, and Seppo J. Karrila. Microhydrodynamics: principles and selected applications. Courier Corporation, 2013. `DOI <https://doi.org/10.1002/aic.690400418>`_.
 

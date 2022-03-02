@@ -1779,13 +1779,13 @@ namespace Parameters
         "lubrication range max",
         "2",
         Patterns::Double(),
-        "Gap require to consider the lubrification force. This value is multiply the smallest cell size");
+        "Gap require to consider the lubrication force. This value is multiplied the smallest cell size");
 
       prm.declare_entry(
         "lubrication range min",
         "0.01",
         Patterns::Double(),
-        "Smallest gap consider for the lubrification force calculation. This value is multiply the smallest cell size");
+        "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
 
       prm.declare_entry(
         "wall youngs modulus",

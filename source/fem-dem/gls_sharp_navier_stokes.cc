@@ -1123,21 +1123,26 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   field_values[field::shear_rate] = 1;
 
 
-  double density    = this->simulation_parameters.particlesParameters->density;
-  double viscosity  = rheological_model->value(field_values) * density;
+  double density   = this->simulation_parameters.particlesParameters->density;
+  double viscosity = rheological_model->value(field_values) * density;
+  double h_min =
+    dr * this->simulation_parameters.particlesParameters->lubrication_range_min;
+  double h_max =
+    dr * this->simulation_parameters.particlesParameters->lubrication_range_max;
+  // Deactivated the lubrication force if the flui is Non-newtonian.
+  if (this->simulation_parameters.physical_properties_manager
+        .is_non_newtonian())
+    {
+      h_max = 0;
+    }
+
   particle_residual = 0;
   if (this->simulation_parameters.particlesParameters->integrate_motion &&
       time > 0)
     {
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
-      ib_dem.integrate_particles_motion(
-        dt,
-        dr * this->simulation_parameters.particlesParameters
-               ->lubrication_range_max,
-        dr * this->simulation_parameters.particlesParameters
-               ->lubrication_range_min,
-        viscosity);
+      ib_dem.integrate_particles_motion(dt, h_max, h_min, viscosity);
       unsigned int worst_residual_particle_id;
 
       for (unsigned int p = 0; p < particles.size(); ++p)

@@ -177,8 +177,8 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   const double               h_max,
   const double               h_min,
   const double               mu,
-  std::vector<Tensor<1, 3>> &lubrification_force,
-  std::vector<Tensor<1, 3>> &lubrification_torque)
+  std::vector<Tensor<1, 3>> &lubrication_force,
+  std::vector<Tensor<1, 3>> &lubrication_torque)
 {
   using numbers::PI;
   // loop over all particles to find pair of close partilces
@@ -233,8 +233,8 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
                   ;
                 }
 
-              lubrification_force[particle_one.particle_id] = f_lub;
-              lubrification_force[particle_two.particle_id] = -f_lub;
+              lubrication_force[particle_one.particle_id] = f_lub;
+              lubrication_force[particle_two.particle_id] = -f_lub;
             }
         }
     }
@@ -469,8 +469,8 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
   const double               h_max,
   const double               h_min,
   const double               mu,
-  std::vector<Tensor<1, 3>> &lubrification_force,
-  std::vector<Tensor<1, 3>> &lubrification_torque)
+  std::vector<Tensor<1, 3>> &lubrication_force,
+  std::vector<Tensor<1, 3>> &lubrication_torque)
 {
   using numbers::PI;
 
