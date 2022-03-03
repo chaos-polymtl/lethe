@@ -193,5 +193,5 @@ subsection linear solver
   set ilu preconditioner absolute tolerance  = 1e-20
   set ilu preconditioner relative tolerance  = 1.00
   set verbosity               =verbose
-  set max krylov vectors = 1000
+  set max krylov vectors = 100
 end
