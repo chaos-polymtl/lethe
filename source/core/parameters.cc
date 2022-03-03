@@ -387,6 +387,11 @@ namespace Parameters
   {
     prm.enter_subsection("surface tension force");
     {
+      prm.declare_entry("surface tension coefficient",
+                        "0.0",
+                        Patterns::Double(),
+                        "Surface tension coefficient");
+
       prm.declare_entry("output auxiliary fields",
                         "false",
                         Patterns::Bool(),
@@ -419,6 +424,8 @@ namespace Parameters
   {
     prm.enter_subsection("surface tension force");
     {
+      // Surface tension coefficient
+      surface_tension_coef = prm.get_double("surface tension coefficient");
       phase_fraction_gradient_filter_value =
         prm.get_double("phase fraction gradient filter");
       curvature_filter_value = prm.get_double("curvature filter");
@@ -511,11 +518,6 @@ namespace Parameters
                         Patterns::Integer(),
                         "Number of fluids");
 
-      prm.declare_entry("surface tension coefficient",
-                        "0.0",
-                        Patterns::Double(),
-                        "Surface tension coefficient");
-
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
         {
@@ -530,9 +532,6 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-      // Surface tension coefficient
-      surface_tension_coef = prm.get_double("surface tension coefficient");
-
       // Multiphasic simulations parameters definition
       number_of_fluids = prm.get_integer("number of fluids");
       Assert(number_of_fluids == 1 || number_of_fluids == 2,

@@ -45,10 +45,10 @@ namespace Parameters
 
     // subparameters for VOF
     bool interface_sharpening;
+    bool surface_tension_force;
     bool conservation_monitoring;
     int  id_fluid_monitored;
     bool peeling_wetting;
-    bool continuum_surface_force;
 
     static void
     declare_parameters(ParameterHandler &prm);

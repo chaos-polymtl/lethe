@@ -478,8 +478,6 @@ public:
     return physics_dof_handler[physics_id];
   }
 
-
-
   /**
    * @brief Request the present solution of a given physics
    *
@@ -495,6 +493,29 @@ public:
     return physics_solutions[physics_id];
   }
 
+  /**
+   * @brief Request the present solution of the filtered phase fraction gradient (PFG)
+   */
+  TrilinosWrappers::MPI::Vector *
+  get_filtered_phase_fraction_gradient_solution();
+
+  /**
+   * @brief Request the present solution of the curvature
+   */
+  TrilinosWrappers::MPI::Vector *
+  get_curvature_solution();
+
+  /**
+   * @brief Request the filtered curvature DOF handler
+   */
+  DoFHandler<dim> *
+  get_curvature_dof_handler();
+
+  /**
+   * @brief Request the filtered phase fraction gradient (pfg) DOF handler
+   */
+  DoFHandler<dim> *
+  get_filtered_phase_fraction_gradient_dof_handler();
 
   /**
    * @brief Request the present block solution of a given physics
