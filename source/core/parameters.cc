@@ -1771,11 +1771,10 @@ namespace Parameters
                         Patterns::Double(),
                         "relaxation parameter");
 
-      prm.declare_entry(
-        "enable lubrication force",
-        "true",
-        Patterns::Bool(),
-        "Bool to enable or disable the lubrication force");
+      prm.declare_entry("enable lubrication force",
+                        "true",
+                        Patterns::Bool(),
+                        "Bool to enable or disable the lubrication force");
       prm.declare_entry(
         "lubrication range max",
         "2",
@@ -1876,10 +1875,10 @@ namespace Parameters
       wall_friction_coefficient = prm.get_double("wall friction coefficient");
       wall_restitution_coefficient =
         prm.get_double("wall restitution coefficient");
-      coupling_frequency    = prm.get_double("DEM coupling frequency");
-      enable_lubrication_force= prm.get_bool("enable lubrication force");
-      lubrication_range_max = prm.get_double("lubrication range max");
-      lubrication_range_min = prm.get_double("lubrication range min");
+      coupling_frequency       = prm.get_double("DEM coupling frequency");
+      enable_lubrication_force = prm.get_bool("enable lubrication force");
+      lubrication_range_max    = prm.get_double("lubrication range max");
+      lubrication_range_min    = prm.get_double("lubrication range min");
 
 
 
