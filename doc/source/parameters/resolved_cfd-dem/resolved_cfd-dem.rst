@@ -21,7 +21,6 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set particle nonlinear tolerance            = 1e-6
 		set DEM coupling frequency                  = 1000
 		set alpha                                   = 1
-		set fluid density                           = 1
 
 		
 		subsection gravity
@@ -87,9 +86,6 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 * The ``particle nonlinear tolerance`` parameter controls particle dynamics' nonlinear tolerance. The nonlinear solver won't have converged until the residual on the dynamics equations of all the particles is smaller than this threshold.
 
 * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
-
-
-* The ``fluid density`` parameter is the fluid density used in the force calculation of the resolved CFD-DEM. This parameter is redundant with others in the solver and will be removed in the upcoming code modification.
 
 * The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 

@@ -905,7 +905,6 @@ namespace Parameters
     bool                         calculate_force_ib;
     bool                         assemble_navier_stokes_inside;
     std::string                  ib_force_output_file;
-    double                       density;
     Tensor<1, dim>               gravity;
     double                       particle_nonlinear_tol;
     double                       wall_youngs_modulus;
@@ -914,6 +913,7 @@ namespace Parameters
     double                       wall_friction_coefficient;
     double                       wall_restitution_coefficient;
     unsigned int                 coupling_frequency;
+    bool                         enable_lubrication_force;
     double                       lubrication_range_max;
     double                       lubrication_range_min;
 

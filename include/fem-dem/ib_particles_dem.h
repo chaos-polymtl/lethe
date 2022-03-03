@@ -89,13 +89,23 @@ public:
    * @brief
    * Integrates the dynamics of the IB_particle taking into account the contact
    * between particles and between particles and walls.
+   *
    * @param dt The CFD time step.
+   *
+   * @param h_max The gap between the two particle.
+   *
+   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
+   *
+   * @param rho The fluid density.
+   *
+   * @param mu The fluid viscosity.
    *
    */
   void
   integrate_particles_motion(const double dt,
                              const double h_max,
                              const double h_min,
+                             const double rho,
                              const double mu);
 
   /**

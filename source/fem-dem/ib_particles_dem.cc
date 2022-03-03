@@ -558,11 +558,11 @@ void
 IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                                 const double h_max,
                                                 const double h_min,
+                                                const double rho,
                                                 const double mu)
 {
   // Initialize local containers and physical variables
   using numbers::PI;
-  double rho    = parameters->density;
   double dt_dem = dt / parameters->coupling_frequency;
 
   std::vector<Tensor<1, 3>> contact_force(dem_particles.size());
