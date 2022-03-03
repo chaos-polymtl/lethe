@@ -243,7 +243,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   Assert(
     !this->simulation_parameters.physical_properties_manager
        .density_is_constant(),
-    "You are trying to evaluate the force on an IB particle will using a non-constant density. This is not supported.");
+    RequiresConstantDensity(
+      "GLSSharpNavierStokesSolver<dim>::force_on_ib"));
 
   int  order = this->simulation_parameters.particlesParameters->order;
   auto density_model =
@@ -1141,7 +1142,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
     this->simulation_parameters.particlesParameters->enable_lubrication_force;
   Assert(
     !incompatible_parameter_choices,
-    "You are trying to use the lubrication model with a non-Newtonian fluid. This is not supported");
+    RequiresConstantViscosity(
+      "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
   double h_min =
     dr * this->simulation_parameters.particlesParameters->lubrication_range_min;
   double h_max =
@@ -1160,7 +1162,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       Assert(
         !this->simulation_parameters.physical_properties_manager
            .density_is_constant(),
-        "You are trying to integrate the particle dynamics will using a non-constant density. This is not supported");
+        RequiresConstantDensity(
+          "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
       this->simulation_parameters.physical_properties_manager.get_density(0);
       auto density_model =
         this->simulation_parameters.physical_properties_manager.get_density(0);
