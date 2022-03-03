@@ -109,4 +109,49 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
+/**
+ * @brief Class that assembles the Surface Tension Force (STF) for the
+ * Navier-Stokes equations. The following equation is assembled
+ *
+ * $$\mathbf{F_{CSV}}=\sigma \rho k \nabla \phi
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class GLSNavierStokesVOFAssemblerSTF : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSNavierStokesVOFAssemblerSTF(
+    std::shared_ptr<SimulationControl> p_simulation_control,
+    Parameters::SurfaceTensionForce    p_STF_properties)
+    : simulation_control(p_simulation_control)
+    , STF_properties(p_STF_properties)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+
+  // Surface tension force (STF)
+  const Parameters::SurfaceTensionForce STF_properties;
+};
+
 #endif

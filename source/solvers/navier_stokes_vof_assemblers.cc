@@ -478,3 +478,57 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
 
 template class GLSNavierStokesVOFAssemblerBDF<2>;
 template class GLSNavierStokesVOFAssemblerBDF<3>;
+
+
+template <int dim>
+void
+GLSNavierStokesVOFAssemblerSTF<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> & /*scratch_data*/,
+  StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
+{}
+
+template <int dim>
+void
+GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Surface tension coefficient
+  const double surface_tension_coef = STF_properties.surface_tension_coef;
+
+  // Loop and quadrature informations
+  const auto &       JxW        = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual = copy_data.strong_residual;
+  auto &local_rhs       = copy_data.local_rhs;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather pfg and curvature values
+      const double &        curvature_value = scratch_data.curvature_values[q];
+      const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
+        scratch_data.filtered_phase_fraction_gradient_values[q];
+      const double         JxW_value = JxW[q];
+      const Tensor<1, dim> tmp_STF   = -2.0 * surface_tension_coef *
+                                     curvature_value *
+                                     filtered_phase_fraction_gradient_value;
+
+      strong_residual[q] += tmp_STF;
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i     = scratch_data.phi_u[q][i];
+          double     local_rhs_i = 0;
+
+          local_rhs_i -= tmp_STF * phi_u_i;
+          local_rhs(i) += local_rhs_i * JxW_value;
+        }
+    }
+}
+
+template class GLSNavierStokesVOFAssemblerSTF<2>;
+template class GLSNavierStokesVOFAssemblerSTF<3>;

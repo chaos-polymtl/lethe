@@ -351,6 +351,10 @@ namespace Parameters
    */
   struct SurfaceTensionForce
   {
+    // Surface tension coefficient.
+    // This will be moved to the property manager in another PR.
+    double surface_tension_coef;
+
     double phase_fraction_gradient_filter_value;
     double curvature_filter_value;
 
@@ -382,9 +386,6 @@ namespace Parameters
     std::vector<Fluid>        fluids;
     unsigned int              number_of_fluids;
     static const unsigned int max_fluids = 2;
-
-    // Surface tension coefficient
-    double surface_tension_coef;
 
     void
     declare_parameters(ParameterHandler &prm);
