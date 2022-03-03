@@ -548,7 +548,7 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                         h_max * radial_velocity * radial_vector /
                         radial_vector.norm();
             }
-          lubrification_force[particle.particle_id] = f_lub;
+          lubrication_force[particle.particle_id] = f_lub;
         }
     }
 }
