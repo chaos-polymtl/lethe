@@ -423,7 +423,7 @@ namespace Parameters
         prm.get_double("phase fraction gradient filter");
       curvature_filter_value = prm.get_double("curvature filter");
 
-      output_VOF_auxiliary_fields = prm.get_bool("output auxiliary fields");
+      output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
 
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
