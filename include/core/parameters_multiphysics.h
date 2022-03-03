@@ -38,9 +38,6 @@ namespace Parameters
     bool heat_transfer;
     bool tracer;
     bool VOF;
-    bool interface_sharpening;
-    bool buoyancy_force;
-    bool surface_tension_force;
 
     // subparameters for heat_transfer
     bool viscous_dissipation;
@@ -48,10 +45,10 @@ namespace Parameters
 
     // subparameters for VOF
     bool interface_sharpening;
+    bool surface_tension_force;
     bool conservation_monitoring;
     int  id_fluid_monitored;
     bool peeling_wetting;
-    bool continuum_surface_force;
 
     static void
     declare_parameters(ParameterHandler &prm);

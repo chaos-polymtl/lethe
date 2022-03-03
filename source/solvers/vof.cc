@@ -254,7 +254,7 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
     }
 
   if (this->simulation_parameters.multiphysics.surface_tension_force &&
-      simulation_parameters.surface_tension_force.output_VOF_auxiliary_fields)
+      simulation_parameters.surface_tension_force.output_vof_auxiliary_fields)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         filtered_phase_fraction_gradient_component_interpretation(
