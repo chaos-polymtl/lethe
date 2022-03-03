@@ -2537,19 +2537,19 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->beta);
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_fs);
+        dof_handler_vof);
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
         *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
-      scratch_data.reinit_VOF(phase_cell,
+      scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
@@ -2630,20 +2630,20 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_fs);
+        dof_handler_vof);
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
         *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
 
-      scratch_data.reinit_VOF(phase_cell,
+      scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());

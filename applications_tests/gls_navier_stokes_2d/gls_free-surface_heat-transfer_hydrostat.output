@@ -1,0 +1,39 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      1
+   Number of VOF degrees of freedom: 1089
+   Number of thermal degrees of freedom: 1089
+
+*****************************************************************
+Transient iteration : 1        Time : 0.02     Time step : 0.02     CFL : 0       
+*****************************************************************
+L2 error velocity : 3.07121e-05
+L2 error phase : 0.00369306
+L2 error temperature : 0
+
+*****************************************************************
+Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 8.8806e-05
+*****************************************************************
+L2 error velocity : 6.37551e-05
+L2 error phase : 0.00369372
+L2 error temperature : 0
+
+*****************************************************************
+Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 0.000119786
+*****************************************************************
+L2 error velocity : 4.05131e-05
+L2 error phase : 0.00369437
+L2 error temperature : 0
+ time  error_velocity error_pressure 
+0.0200 3.071207e-05   0.0541         
+0.0400 6.375508e-05   0.0349         
+0.0600 4.051310e-05   0.0236         
+ time  error_phase  
+0.0200 3.693057e-03 
+0.0400 3.693720e-03 
+0.0600 3.694369e-03 
+cells error_temperature 
+1024  0.000000e+00      
+1024  0.000000e+00      
+1024  0.000000e+00 

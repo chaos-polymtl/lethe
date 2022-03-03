@@ -440,12 +440,12 @@ private:
    *
    * @param i_bc peeling-wetting boundary index
    *
-   * @param current_solution_cfd current solution for the fluid dynamics
+   * @param current_solution_fd current solution for the fluid dynamics
    */
   template <typename VectorType>
   void
   apply_peeling_wetting(const unsigned int i_bc,
-                        const VectorType & current_solution_cfd);
+                        const VectorType & current_solution_fd);
 
   /**
    * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy

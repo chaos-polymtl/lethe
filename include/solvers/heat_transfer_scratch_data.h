@@ -113,6 +113,7 @@ public:
                           update_JxW_values)
   {
     gather_vof = false;
+
     allocate();
   }
 
@@ -144,6 +145,10 @@ public:
   {
     gather_vof = sd.gather_vof;
     allocate();
+    if (sd.gather_vof)
+      enable_vof(sd.fe_values_vof->get_fe(),
+                 sd.fe_values_vof->get_quadrature(),
+                 sd.fe_values_vof->get_mapping());
   }
 
 

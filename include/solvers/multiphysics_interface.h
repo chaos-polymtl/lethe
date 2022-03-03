@@ -122,11 +122,13 @@ public:
         else
           {
             pcout
-              << "Solution order is not specified for this auxiliary physic :"
+              << "Solution order is not specified for this auxiliary physic "
               << std::endl
               << "will be solved after the fluid dynamics by default."
               << std::endl
-              << "For clarity, please specify a solution order in the map solve_pre_fluid defined in multiphysics_interface.h"
+              << "For clarity, please specify a solution order for this physic "
+              << std::endl
+              << "in the map solve_pre_fluid, member of multiphysics_interface.h"
               << std::endl
               << "-------------" << std::endl;
           }
@@ -692,9 +694,9 @@ private:
 
   // Map that states if the physics are solved before the fluid dynamics
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
+                                            {VOF, false},
                                             {heat_transfer, false},
-                                            {tracer, false},
-                                            {VOF, false}};
+                                            {tracer, false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.

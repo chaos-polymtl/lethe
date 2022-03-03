@@ -95,12 +95,12 @@ NavierStokesScratchData<dim>::allocate()
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_VOF(const FiniteElement<dim> &fe,
+NavierStokesScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
                                          const Quadrature<dim> &   quadrature,
                                          const Mapping<dim> &      mapping)
 {
-  gather_VOF    = true;
-  fe_values_VOF = std::make_shared<FEValues<dim>>(
+  gather_vof    = true;
+  fe_values_vof = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
   // VOF
@@ -192,73 +192,79 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
       set_field_vector(field::shear_rate, shear_rate, this->fields);
     }
 
-  // Case where you have one fluid
-  if (properties_manager.get_number_of_fluids() == 1)
+  switch (properties_manager.get_number_of_fluids())
     {
-      // In this case, only viscosity is the required property
-      const auto rheology_model = properties_manager.get_rheology();
-      rheology_model->vector_value(fields, viscosity);
-
-      const auto density_model = properties_manager.get_density();
-      density_model->vector_value(fields, density);
-
-
-      if (properties_manager.is_non_newtonian())
+      case 1:
         {
-          // Calculate derivative of viscosity with respect to shear rate
-          rheology_model->vector_jacobian(fields,
-                                          field::shear_rate,
-                                          grad_viscosity_shear_rate);
+          // In this case, only viscosity is the required property
+          const auto rheology_model = properties_manager.get_rheology();
+          rheology_model->vector_value(fields, viscosity);
+
+          const auto density_model = properties_manager.get_density();
+          density_model->vector_value(fields, density);
+
+
+          if (properties_manager.is_non_newtonian())
+            {
+              // Calculate derivative of viscosity with respect to shear rate
+              rheology_model->vector_jacobian(fields,
+                                              field::shear_rate,
+                                              grad_viscosity_shear_rate);
+            }
+
+          if (gather_temperature)
+            {
+              const auto thermal_expansion_model =
+                properties_manager.get_thermal_expansion();
+              thermal_expansion_model->vector_value(fields, thermal_expansion);
+            }
+          break;
         }
-
-      if (gather_temperature)
+      case 2:
         {
-          const auto thermal_expansion_model =
-            properties_manager.get_thermal_expansion();
-          thermal_expansion_model->vector_value(fields, thermal_expansion);
-        }
-    }
-  else // properties_manager.get_number_of_fluids() == 2
-    {
-      // In this case,  we need both density and viscosity
-      const auto density_model_0  = properties_manager.get_density(0);
-      const auto rheology_model_0 = properties_manager.get_rheology(0);
-      const auto density_model_1  = properties_manager.get_density(1);
-      const auto rheology_model_1 = properties_manager.get_rheology(1);
+          // In this case,  we need both density and viscosity
+          const auto density_model_0  = properties_manager.get_density(0);
+          const auto rheology_model_0 = properties_manager.get_rheology(0);
+          const auto density_model_1  = properties_manager.get_density(1);
+          const auto rheology_model_1 = properties_manager.get_rheology(1);
 
-      density_model_0->vector_value(fields, density_0);
-      rheology_model_0->vector_value(fields, viscosity_0);
+          density_model_0->vector_value(fields, density_0);
+          rheology_model_0->vector_value(fields, viscosity_0);
 
-      density_model_1->vector_value(fields, density_1);
-      rheology_model_1->vector_value(fields, viscosity_1);
+          density_model_1->vector_value(fields, density_1);
+          rheology_model_1->vector_value(fields, viscosity_1);
 
-      // Blend the physical properties using the VOF field
-      for (unsigned int q = 0; q < this->n_q_points; ++q)
-        {
-          density[q] = calculate_point_property(this->phase_values[q],
-                                                this->density_0[q],
-                                                this->density_1[q]);
-
-          viscosity[q] = calculate_point_property(this->phase_values[q],
-                                                  this->viscosity_0[q],
-                                                  this->viscosity_1[q]);
-        }
-
-
-
-      for (unsigned p = 0; p < previous_phase_values.size(); ++p)
-        {
           // Blend the physical properties using the VOF field
           for (unsigned int q = 0; q < this->n_q_points; ++q)
             {
-              // Calculate previous density (right now assumes constant density
-              // model per phase)
-              previous_density[p][q] =
-                calculate_point_property(this->previous_phase_values[p][q],
-                                         this->density_0[q],
-                                         this->density_1[q]);
+              density[q] = calculate_point_property(this->phase_values[q],
+                                                    this->density_0[q],
+                                                    this->density_1[q]);
+
+              viscosity[q] = calculate_point_property(this->phase_values[q],
+                                                      this->viscosity_0[q],
+                                                      this->viscosity_1[q]);
             }
+
+
+
+          for (unsigned p = 0; p < previous_phase_values.size(); ++p)
+            {
+              // Blend the physical properties using the VOF field
+              for (unsigned int q = 0; q < this->n_q_points; ++q)
+                {
+                  // Calculate previous density (right now assumes constant
+                  // density model per phase)
+                  previous_density[p][q] =
+                    calculate_point_property(this->previous_phase_values[p][q],
+                                             this->density_0[q],
+                                             this->density_1[q]);
+                }
+            }
+          break;
         }
+      default:
+        throw std::runtime_error("Unsupported number of fluids (>2)");
     }
 }
 
