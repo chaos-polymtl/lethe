@@ -107,13 +107,13 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_vof                   = false;
-    gather_filtered_phase_fraction_gradient                  = false;
-    gather_curvature             = false;
-    gather_void_fraction         = false;
-    gather_particles_information = false;
-    gather_temperature           = false;
-    gather_hessian               = properties_manager.is_non_newtonian();
+    gather_vof                              = false;
+    gather_filtered_phase_fraction_gradient = false;
+    gather_curvature                        = false;
+    gather_void_fraction                    = false;
+    gather_particles_information            = false;
+    gather_temperature                      = false;
+    gather_hessian = properties_manager.is_non_newtonian();
   }
 
   /**
