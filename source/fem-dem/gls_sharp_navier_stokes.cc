@@ -240,11 +240,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
-  Assert(
-    !this->simulation_parameters.physical_properties_manager
-       .density_is_constant(),
-    RequiresConstantDensity(
-      "GLSSharpNavierStokesSolver<dim>::force_on_ib"));
+  Assert(!this->simulation_parameters.physical_properties_manager
+            .density_is_constant(),
+         RequiresConstantDensity(
+           "GLSSharpNavierStokesSolver<dim>::force_on_ib"));
 
   int  order = this->simulation_parameters.particlesParameters->order;
   auto density_model =
@@ -1140,10 +1139,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
     this->simulation_parameters.physical_properties_manager
       .is_non_newtonian() and
     this->simulation_parameters.particlesParameters->enable_lubrication_force;
-  Assert(
-    !incompatible_parameter_choices,
-    RequiresConstantViscosity(
-      "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
+  Assert(!incompatible_parameter_choices,
+         RequiresConstantViscosity(
+           "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
   double h_min =
     dr * this->simulation_parameters.particlesParameters->lubrication_range_min;
   double h_max =
@@ -1159,11 +1157,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   if (this->simulation_parameters.particlesParameters->integrate_motion &&
       time > 0)
     {
-      Assert(
-        !this->simulation_parameters.physical_properties_manager
-           .density_is_constant(),
-        RequiresConstantDensity(
-          "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
+      Assert(!this->simulation_parameters.physical_properties_manager
+                .density_is_constant(),
+             RequiresConstantDensity(
+               "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
       this->simulation_parameters.physical_properties_manager.get_density(0);
       auto density_model =
         this->simulation_parameters.physical_properties_manager.get_density(0);
