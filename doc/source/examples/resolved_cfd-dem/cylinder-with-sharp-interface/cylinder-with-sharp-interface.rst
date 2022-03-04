@@ -11,7 +11,7 @@ Features
 Location of the example
 ------------------------
 
-- Parameter file: ``/examples/incompressible_flow/2d_flow_around_cylinder/cylinder.prm``
+- Parameter file: ``/examples/resolved_cfd-dem/cylinder_with_sharp_interface/cylinder_with_sharp_interface.prm``
 
 
 Description of the case
