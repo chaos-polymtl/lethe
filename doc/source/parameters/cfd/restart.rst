@@ -1,30 +1,47 @@
-Finite element interpolation (FEM)
+Restart
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This subsection controls the restart and checkpointing of the simulation. 
-This feature is used to restart a time-dependent simulation using the data written on the last checkpoint before the simulation stopped or crashed.
+This subsection controls the checkpointing and restarting of time-dependent simulations.
+
+This feature is used both to write data at checkpoints (`checkpointing`) and restart a simulation (`restarting`) using data from the last checkpoint.
+
+.. tip::
+  It is highly advised to use it if you fear you might either run out of memory/simulation time during the simulation.
+
 The default parameters are:
 
 .. code-block:: text
 
   subsection restart
+    # Checkpointing parameters
     set checkpoint = false
-    set restart    = false
-    set filename   = restart
     set frequency  = 1
+
+    # Output/input files
+    set filename   = restart
+
+    # Restarting parameters
+    set restart    = false
   end
 
-* The ``checkpoint`` option enables creating a checkpoint of the simulation when it is set to ``true``. 
+* ``checkpoint``: controls if a checkpoint of the simulation is created. All the files needed to restart the simulation from this checkpoint (such as ``.pvdhandler``, ``.triangulation``) will be written.
+
+* ``frequency``: number of iteration before the first checkpoint, and between each subsequent checkpoint. 
 
 .. tip::
-  You may want to enable it when launching a time-dependent simulation if you fear you might either run out of memory/simulation time during the simulation.
-
-* The ``restart`` option controls if the simulation will be restarted from a previous checkpoint. Turn this parameter to ``false`` for the first checkpoint creation. The simulation will start from the last checkpoint when the parameter is set to ``true`` and will finish at the provided time end (see `Simulation Control <https://lethe-cfd.github.io/lethe/parameters/cfd/simulation_control.html>`_).
-
-* The ``filename`` parameter fixes the prefix of all the checkpointing files. 
+  Checkpointing is very intensive from an I/O point of view, consequently it should not be done at every iteration. The checkpointing frequency is in accordance to the number of ``time step`` (see :doc:`simulation_control`).
 
 .. warning::
+  Each checkpoint erases the previous one, so a simulation can only be restarted from the last check-point.
 
-  Restart files are searched for in the output path specified in subsection simulation control.
+* ``filename``: prefix for the files. This parameter is used to output checkpoint files as well as to load files during a restart.
 
-* The ``frequency`` parameter controls the checkpointing frequency. Checkpointing is very intensive from an I/O point of view, consequently it should not be done at every iteration. The checkpointing frequency is is accordance to the number of ``time step`` (see `Simulation Control <https://lethe-cfd.github.io/lethe/parameters/cfd/simulation_control.html>`_).
+.. warning::
+  Files are saved (when checkpointing) and searched for (when restarting) in the ``output path`` specified in subsection :doc:`simulation_control`.
+
+* ``restart``: controls if the simulation is to be restarted from a previous checkpoint. 
+   * ``set restart = false``: for the first checkpoint creation. 
+   * ``set restart = true``: the simulation will start from the last checkpoint and will finish at the provided ``time end`` (see :doc:`simulation_control`).
+
+
+
