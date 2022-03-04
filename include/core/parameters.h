@@ -617,6 +617,9 @@ namespace Parameters
     // Carry jacobian matrix over to the new non-linear problem
     bool reuse_matrix;
 
+    // Abort solver if non-linear solution has not reached tolerance
+    bool abort_at_convergence_failure;
+
 
     static void
     declare_parameters(ParameterHandler &prm);

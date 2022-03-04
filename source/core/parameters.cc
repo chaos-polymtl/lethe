@@ -1019,6 +1019,12 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Reuse the last jacobian matrix for the next non-linear problem solution");
+
+      prm.declare_entry(
+        "abort at convergence failure",
+        "false",
+        Patterns::Bool(),
+        "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
     }
     prm.leave_subsection();
   }
@@ -1064,6 +1070,8 @@ namespace Parameters
       display_precision     = prm.get_integer("residual precision");
       force_rhs_calculation = prm.get_bool("force rhs calculation");
       reuse_matrix          = prm.get_bool("reuse matrix");
+      abort_at_convergence_failure =
+        prm.get_bool("abort at convergence failure");
     }
     prm.leave_subsection();
   }
