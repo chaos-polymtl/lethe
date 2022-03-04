@@ -32,6 +32,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set wall restitution coefficient            = 1
 		set wall rolling friction coefficient       = 0
 		set wall youngs modulus                     = 100000000
+		set enable lubrication force		    = true
 		set lubrication range max		    = 2
 		set lubrication range min		    = 0.01
 		
@@ -101,7 +102,9 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``wall youngs modulus`` parameter is the Young's modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At This point in time, all the walls have the same properties.
 
-* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.  To deactivate this force, simply put this parameter to 0. When using a non newtonian fluid, the lubrication force will be automaticly desactivated.
+* The ``enable lubrication force`` parameter to enable or disable the use of lubrication force. This parameter must be set to ``false`` when using non-newtonian fluid.
+
+* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.
 
 .. note::
 	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
