@@ -15,13 +15,15 @@ The default parameters of each are shown:
     subsection boundary conditions heat transfer
     set number                  = 2
         subsection bc 0
+	    set id 		= 0
             set type	        = temperature
             set value	        = 0
         end
         subsection bc 1
-            set type		    = convection
-            set h 		    = 0
-            set Tinf	   	    = 0
+	    set id 		= 1
+            set type		= convection
+            set h 		= 0
+            set Tinf	   	= 0
         end
     end
 
@@ -29,6 +31,8 @@ The default parameters of each are shown:
 
 .. warning::
     The number of boundary conditions must be specified explicitly as the ParameterHandler is not able to deduce the number of boundary conditions from the number of ``bc`` subsections. This is often a source of error.
+
+* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
 * ``type``: This is the type of boundary condition been imposed. At the moment, choices are
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary 
@@ -51,7 +55,8 @@ For tracer boundary conditions, the defaults parameters are:
     subsection boundary conditions tracer
     set number                  = 1
         subsection bc 0
-                set type              = dirichlet
+	        set id 		= 0
+                set type        = dirichlet
                 subsection dirichlet
                     set Function expression = 0
                 end
@@ -59,6 +64,8 @@ For tracer boundary conditions, the defaults parameters are:
     end
 
 * ``number``: This is the number of boundary conditions of the problem. 
+
+* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
 * ``type``: This is the type of boundary condition been imposed. At the moment, only dirichlet boundary conditions can be imposed for tracer.
 
