@@ -283,6 +283,7 @@ SimulationControlTransientDynamicOutput::
   SimulationControlTransientDynamicOutput(Parameters::SimulationControl param)
   : SimulationControlTransient(param)
   , time_step_forced_output(false)
+  // To be fixed for restarts
   , last_output_time(0.)
 {}
 
