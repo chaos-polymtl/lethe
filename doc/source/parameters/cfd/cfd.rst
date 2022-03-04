@@ -26,3 +26,4 @@ General, CFD and Multiphysics
    restart
    dynamic_flow_control
    interface_sharpening
+   surface_tension_force
