@@ -286,6 +286,12 @@ contains the simulation results. In post-processing, the maximum and minimum axi
     :align: center
     :width: 400
 
+Animation of the rising bubble example:
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/h5aRpA4chXE" frameborder="0" allowfullscreen></iframe>
+
 
 -----------
 References
