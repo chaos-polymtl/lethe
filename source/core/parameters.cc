@@ -193,6 +193,7 @@ namespace Parameters
       output_folder     = prm.get("output path");
       output_name       = prm.get("output name");
       output_frequency  = prm.get_integer("output frequency");
+      output_time       = prm.get_double("output time");
       output_boundaries = prm.get_bool("output boundaries");
 
       subdivision   = prm.get_integer("subdivision");
