@@ -240,8 +240,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
-  Assert(!this->simulation_parameters.physical_properties_manager
-            .density_is_constant(),
+  Assert(this->simulation_parameters.physical_properties_manager
+           .density_is_constant(),
          RequiresConstantDensity(
            "GLSSharpNavierStokesSolver<dim>::force_on_ib"));
 
@@ -1135,10 +1135,14 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   // Check if the parameters' combination is compatible. This is temporary and
   // will be moved to a new class that tests the parameter combination in the
   // parameter initialization.
+
   bool incompatible_parameter_choices =
     this->simulation_parameters.physical_properties_manager
       .is_non_newtonian() and
-    this->simulation_parameters.particlesParameters->enable_lubrication_force;
+    this->simulation_parameters.particlesParameters
+      ->enable_lubrication_force and
+    this->simulation_parameters.particlesParameters->integrate_motion;
+
   Assert(!incompatible_parameter_choices,
          RequiresConstantViscosity(
            "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
@@ -1157,8 +1161,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   if (this->simulation_parameters.particlesParameters->integrate_motion &&
       time > 0)
     {
-      Assert(!this->simulation_parameters.physical_properties_manager
-                .density_is_constant(),
+      Assert(this->simulation_parameters.physical_properties_manager
+               .density_is_constant(),
              RequiresConstantDensity(
                "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
       this->simulation_parameters.physical_properties_manager.get_density(0);
