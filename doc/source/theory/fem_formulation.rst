@@ -11,4 +11,7 @@ Starting from the incompressible Navier-Stokes equations:
 
     \partial_i+ u_i \partial_i u_j = -\frac{1}{p} \partial_i p + \nu \partial_j \partial_j u_i
 
+We multiply by two test functions :math:`q` and :math:`\mathbf{v}=v_i` for pressure and velocity respectively and integrate over the domain :math:`\Omega`. The resulting set of equation is:
 
+.. math::
+    asd
