@@ -1771,6 +1771,8 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                                                     dof_indices_vof);
                                   // increment cells count
                                   this->nb_cells_wet++;
+                                  // stop searching as soon as condition is met
+                                  break;
                                 }
                             }
                         } // end wetting
@@ -1794,6 +1796,9 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
 
                                   // increment cells count
                                   this->nb_cells_peeled++;
+
+                                  // stop searching as soon as condition is met
+                                  break;
                                 }
                             }
                         } // end peeling
