@@ -22,45 +22,48 @@ This theory guide is divided into four core sections:
 Computational Fluid Dynamics
 =============================
 
-
-Fluid dynamics
-----------------
-
-
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
     :glob:
     :titlesonly:
 
-    navier-stokes
-    fem_formulation
-    rheology
+    fluid_dynamics/fluid_dynamics
 
 Heat transfer
 ----------------
 
+**Under construction**
 
 
 Advection-diffusion of a passive tracer
 ----------------------------------------
+**Under construction**
 
 
 Volume-of-Fluid method for two-phase flows
 -------------------------------------------
+**Under construction**
 
 
 Discrete Element Method
 =============================
+**Under construction**
+
+
 
 
 
 Unresolved CFD-DEM
 =============================
+**Under construction**
+
+
 
 
 
 Resolved CFD-DEM
 =============================
+**Under construction**
 
 
 References
