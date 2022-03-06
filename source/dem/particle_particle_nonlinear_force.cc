@@ -861,12 +861,6 @@ ParticleParticleHertzMindlinLimitForce<dim>::
               auto     particle_one_properties = particle_one->get_properties();
               auto     particle_two_properties = particle_two->get_properties();
 
-              // Calculation of normal overlap
-              double normal_overlap =
-                0.5 * (particle_one_properties[PropertiesIndex::dp] +
-                       particle_two_properties[PropertiesIndex::dp]) -
-                particle_one_location.distance(particle_two_location);
-
               if constexpr (dim == 3)
                 {
                   particle_one_location = particle_one->get_location();
@@ -880,6 +874,12 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                   particle_two_location =
                     point_nd_to_3d(particle_two->get_location());
                 }
+
+              // Calculation of normal overlap
+              double normal_overlap =
+                0.5 * (particle_one_properties[PropertiesIndex::dp] +
+                       particle_two_properties[PropertiesIndex::dp]) -
+                particle_one_location.distance(particle_two_location);
 
               if (normal_overlap > 0)
                 {
