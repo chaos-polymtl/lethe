@@ -182,6 +182,16 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
       last_res         = current_res;
       ++outer_iteration;
     }
+
+  // If the non-linear solver has not converged abort simulation if
+  // abort_at_convergence_failure=true
+  if ((global_res > this->params.tolerance) &&
+      outer_iteration >= this->params.max_iterations &&
+      this->params.abort_at_convergence_failure)
+    {
+      throw(std::runtime_error(
+        "Stopping simulation because the non-linear solver has failed to converge"));
+    }
 }
 
 #endif
