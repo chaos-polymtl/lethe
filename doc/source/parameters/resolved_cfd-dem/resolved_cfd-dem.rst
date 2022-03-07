@@ -34,7 +34,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set wall youngs modulus                     = 100000000
 		set enable lubrication force		    = true
 		set lubrication range max		    = 2
-		set lubrication range min		    = 0.01
+		set lubrication range min		    = 0.1
 		
 		subsection particle info 0
 			set density    = 1
