@@ -102,7 +102,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``wall youngs modulus`` parameter is the Young's modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At This point in time, all the walls have the same properties.
 
-* The ``enable lubrication force`` parameter to enable or disable the use of lubrication forces. This parameter must be set to ``false`` when using non-newtonian fluid.
+* The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using non-newtonian fluid.
 
 * The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.
 
