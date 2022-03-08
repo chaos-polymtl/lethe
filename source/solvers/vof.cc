@@ -531,13 +531,8 @@ VolumeOfFluid<dim>::modify_solution()
         } // end loop on boundary_conditions_vof
 
       // Output total of peeled/wet cells in the entire domain
-      auto         mpi_communicator = this->triangulation->get_communicator();
-      unsigned int this_mpi_process(
-        Utilities::MPI::this_mpi_process(mpi_communicator));
-
-      if (this_mpi_process == 0 &&
-          this->simulation_parameters.non_linear_solver.verbosity !=
-            Parameters::Verbosity::quiet)
+      if (this->simulation_parameters.non_linear_solver.verbosity !=
+          Parameters::Verbosity::quiet)
         {
           this->pcout << "Peeling/wetting correction at step "
                       << this->simulation_control->get_step_number()

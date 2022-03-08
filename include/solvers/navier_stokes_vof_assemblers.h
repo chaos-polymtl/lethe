@@ -70,7 +70,7 @@ public:
 /**
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Navier-Stokes equation with
- * free surface using VOF modeling.. For example, if a BDF1 scheme is
+ * free surface using VOF modeling. For example, if a BDF1 scheme is
  * chosen, the following is assembled
  * $$\frac{(\rho \mathbf{u})^{t+\Delta t}-(\rho \mathbf{u})^{t}{\Delta t}
  *

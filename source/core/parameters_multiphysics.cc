@@ -69,6 +69,18 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
       "false",
       Patterns::Bool(),
       "Enable peeling/wetting in free surface calculation <true|false>");
+
+    prm.declare_entry(
+      "skip mass conservation in fluid 0",
+      "false",
+      Patterns::Bool(),
+      "Enable skipping mass conservation in fluid 0 <true|false>");
+
+    prm.declare_entry(
+      "skip mass conservation in fluid 1",
+      "false",
+      Patterns::Bool(),
+      "Enable skipping mass conservation in fluid 1 <true|false>");
   }
   prm.leave_subsection();
 }
@@ -93,6 +105,10 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     conservation_monitoring = prm.get_bool("conservation monitoring");
     id_fluid_monitored      = prm.get_integer("fluid monitored");
     peeling_wetting         = prm.get_bool("peeling wetting");
+    skip_mass_conservation_fluid_0 =
+      prm.get_bool("skip mass conservation in fluid 0");
+    skip_mass_conservation_fluid_1 =
+      prm.get_bool("skip mass conservation in fluid 1");
   }
   prm.leave_subsection();
 }

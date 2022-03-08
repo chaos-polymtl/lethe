@@ -49,6 +49,8 @@ namespace Parameters
     int  id_fluid_monitored;
     bool peeling_wetting;
     bool continuum_surface_force;
+    bool skip_mass_conservation_fluid_0;
+    bool skip_mass_conservation_fluid_1;
 
     static void
     declare_parameters(ParameterHandler &prm);

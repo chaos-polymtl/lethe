@@ -29,12 +29,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  // Phase values and limiters
   std::vector<double> &phase_values = scratch_data.phase_values;
-  // std::vector<double> &phase_values_m1 =
-  // scratch_data.previous_phase_values[0];
-  // std::vector<Tensor<1, dim>> &phase_gradient_values =
-  // scratch_data.phase_gradient_values;
 
   // Limit force application : not applied if cell density is below
   // density_ratio of the maximum density (e.g. when one of the fluids is air)
@@ -75,9 +70,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
+      // Determine where gravity is not applied
       if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
         force = 0;
-      // Gravity not applied on phase 1
       if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
         force = 0;
 
@@ -167,10 +162,10 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
                 dynamic_viscosity_eq *
                   scalar_product(grad_phi_u_j, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
-                density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
-                div_phi_u_i * phi_p_j +
-                // Continuity
-                phi_p_i * div_phi_u_j;
+                density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i;
+
+              // Continuity
+              local_matrix_ij += -div_phi_u_i * phi_p_j + phi_p_i * div_phi_u_j;
 
               // PSPG GLS term
               local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
@@ -212,13 +207,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-
-  // Phase values and limiters
   std::vector<double> &phase_values = scratch_data.phase_values;
-  // std::vector<double> &phase_values_m1 =
-  // scratch_data.previous_phase_values[0];
-  // std::vector<Tensor<1, dim>> &phase_gradient_values =
-  // scratch_data.phase_gradient_values;
 
   // Limit force application : not applied if cell density is below
   // density_ratio of the maximum density (e.g. when one of the fluids is air)
@@ -312,16 +301,15 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
 
           // Navier-Stokes Residual
+          // Momentum
           local_rhs(i) +=
-            (
-              // Momentum
-              -dynamic_viscosity_eq *
-                scalar_product(velocity_gradient, grad_phi_u_i) -
-              density_eq * velocity_gradient * velocity * phi_u_i +
-              pressure * div_phi_u_i + density_eq * force * phi_u_i -
-              // Continuity
-              velocity_divergence * phi_p_i) *
+            (-dynamic_viscosity_eq *
+               scalar_product(velocity_gradient, grad_phi_u_i) -
+             density_eq * velocity_gradient * velocity * phi_u_i +
+             pressure * div_phi_u_i + density_eq * force * phi_u_i) *
             JxW;
+          // Continuity
+          local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
 
           // PSPG GLS term
           local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
