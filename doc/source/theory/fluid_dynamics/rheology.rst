@@ -5,9 +5,9 @@ For numerous flows that we encounter in chemical engineering, Newton's equation 
 
 .. math::
     \partial_j u_j &= 0  \\
-    \partial_i+ u_i \partial_i u_j &= -\frac{1}{p} \partial_i p  -  \partial_j \mathbf{\tau}_{ji}
+    \partial_i+ u_i \partial_i u_j &= -\frac{1}{\rho} \partial_i p  -  \partial_j \mathbf{\tau}_{ji} + f_i
 
-where :math:`\mathbf{\tau}_ji` is the deviatoric stress tensor 
+where :math:`\mathbf{\tau}_{ji}` is the deviatoric stress tensor 
 
 .. math::
     \mathbf{\tau}_{ji} = - \eta \left( \partial_j u_i + \partial_i u_j \right)

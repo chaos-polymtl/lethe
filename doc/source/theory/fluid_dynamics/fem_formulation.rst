@@ -1,7 +1,7 @@
 Origin of the finite element formulation
 ##########################################
 
-This section describes the FEM formulation used within Lethe. Starting from the strong form of the equations, we obtain describe the weak-form. We then discuss briefly the challenges associated with solving the Navier-Stokes equations before we introduce the two approaches that are available in Lethe to solve them
+This section describes the FEM formulation used within Lethe. Starting from the strong form of the equations, we obtain the weak-form. We then briefly discuss the challenges associated with solving the Navier-Stokes equations before we introduce the two approaches that are available in Lethe to solve them
 
 
 Starting from the incompressible Navier-Stokes equations:
@@ -9,7 +9,7 @@ Starting from the incompressible Navier-Stokes equations:
 .. math::
     \partial_l u_l &= 0 
 
-    \partial_t u_k + u_l \partial_l u_k &= -\frac{1}{p} \partial_k p + \nu \partial_l \partial_l u_k + f_k
+    \partial_t u_k + u_l \partial_l u_k &= -\frac{1}{\rho} \partial_k p + \nu \partial_l \partial_l u_k + f_k
 
 We consider a domain :math:`\Omega` of contour :math:`\Gamma`. Without loss of generality, we assume Dirichlet boundary conditions or zero stress  conditions 
 on :math:`\Gamma`. We multiply by two test functions :math:`q` and :math:`\mathbf{v}=v_k` for pressure and velocity respectively and integrate over the domain :math:`\Omega`. The resulting set of equation is:
@@ -43,7 +43,7 @@ on :math:`\Gamma`, this term may be discarded. Thus, when no boundary condition 
 
     \int_{\Gamma} \left( v_k \right) \left( \partial_l u_k  +\delta_{lk} p \right) n_l \mathrm{d}\Gamma=0
 
-which can be seen as an outlet boundary condition where the normal stress is zero. In essence, this can be used to approximatively imposed an outlet boundary condition with a zero average pressure.
+which can be seen as an outlet boundary condition where the normal stress is zero. In essence, this can be used to approximatively impose an outlet boundary condition with a zero average pressure.
 This weak form is non-linear because of :math:`u_l \partial_l u_k` term. 
 
 
