@@ -1,7 +1,7 @@
 Origin of the finite element formulation
 ##########################################
 
-This section describes the FEM formulation used within Lethe. Starting from the strong form of the equations, we obtain the weak-form. We then briefly discuss the challenges associated with solving the Navier-Stokes equations before we introduce the two approaches that are available in Lethe to solve them
+This section describes the FEM formulation used within Lethe. Starting from the strong form of the equations, we obtain the weak-form. We then briefly discuss the challenges associated with solving the Navier-Stokes equations before we introduce the two approaches that are available in Lethe to solve them.
 
 
 Starting from the incompressible Navier-Stokes equations:
@@ -28,7 +28,7 @@ Because we want the pressure to be in :math:`\mathcal{L}^2` and the velocity to 
 
   &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega =0 
   \\
-  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - \nu \partial_l \partial_l u_k - f_k \right) \mathrm{d}\Omega 
+  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega 
   \\
   &  - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  
  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  
@@ -36,14 +36,14 @@ Because we want the pressure to be in :math:`\mathcal{L}^2` and the velocity to 
   &  + \int_{\Gamma} \left( v_k \right) \left( \partial_l u_k  +\delta_{lk} p \right) n_l \mathrm{d}\Gamma
    =0
 
-where :math:`\delta_{lk}` is the Kronecker delta and :math:`n_j` is the outward poiting normal vector to a surface. Since we assume Dirichlet boundary conditions or zero stress  conditions 
+where :math:`\delta_{lk}` is the Kronecker delta and :math:`n_j` is the outward pointing normal vector to a surface. Since we assume Dirichlet boundary conditions or zero stress  conditions 
 on :math:`\Gamma`, this term may be discarded. Thus, when no boundary condition is applied, the boundary condition applied is:
 
 .. math::
 
     \int_{\Gamma} \left( v_k \right) \left( \partial_l u_k  +\delta_{lk} p \right) n_l \mathrm{d}\Gamma=0
 
-which can be seen as an outlet boundary condition where the normal stress is zero. In essence, this can be used to approximatively impose an outlet boundary condition with a zero average pressure.
+which can be seen as an outlet boundary condition where the normal stress is zero. In essence, this can be used to approximately impose an outlet boundary condition with a zero average pressure.
 This weak form is non-linear because of :math:`u_l \partial_l u_k` term. 
 
 
@@ -52,7 +52,7 @@ This weak form is non-linear because of :math:`u_l \partial_l u_k` term.
 Solving the non-linear problem
 ----------------------------------
 
-To solve non-linear problem, Lethe uses `Newton-Raphson method <https://en.wikipedia.org/wiki/Newton%27s_method>`_. This method proceeds by solving recurrently for the correction vector :math:`\mathbf{\delta x}` which is obtained by solving the following system:
+To solve non-linear problem, Lethe uses the `Newton-Raphson method <https://en.wikipedia.org/wiki/Newton%27s_method>`_. This method proceeds by solving recurrently for the correction vector :math:`\mathbf{\delta x}` which is obtained by solving the following system:
 
 .. math::
 

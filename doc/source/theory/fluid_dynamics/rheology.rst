@@ -1,7 +1,7 @@
 Rheology and non-Newtonian fluids
 ----------------------------------------
 
-For numerous flows that we encounter in chemical engineering, Newton's equation for viscosity is insufficient to describe the rheological behavior of the fluids. For these problems, the viscosity is not constant anymore. Lethe supports the simulation of non-Newtonian fluids by using generalized newtonian models. In these models, the viscosity depends on the magnitude of the shear-rate tensor :math:`\dot{\gamma}`. In this case, the viscosity cannot be assumed to be constant anymore and the incompressible Navier-Stokes equations take the following form:
+For numerous flows that we encounter in chemical engineering, Newton's equation for viscosity is insufficient to describe the rheological behavior of the fluids. For these problems, the viscosity is not constant anymore. Lethe supports the simulation of non-Newtonian fluids by using generalized Newtonian models. In these models, the viscosity depends on the magnitude of the shear-rate tensor :math:`\dot{\gamma}`. In this case, the viscosity cannot be assumed to be constant anymore and the incompressible Navier-Stokes equations take the following form:
 
 .. math::
     \partial_j u_j &= 0  \\
