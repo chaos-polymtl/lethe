@@ -384,7 +384,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
-
+      shear_rate_magnitude =
+        shear_rate_magnitude > 1e-3 ? shear_rate_magnitude : 1e-3;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -415,7 +416,11 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
               double local_matrix_ij =
                 viscosity *
                   scalar_product(grad_phi_u_j_non_newtonian, grad_phi_u_i) +
-                velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                scratch_data.grad_viscosity_shear_rate[q] /
+                  shear_rate_magnitude *
+                  scalar_product(grad_phi_u_j_non_newtonian, shear_rate) *
+                  scalar_product(velocity_gradient, grad_phi_u_i) +
+                velocity_gradient_x_phi_u_j[j] * 0.5 * phi_u_i +
                 grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j +
                 mass_source * phi_u_j * phi_u_i +
                 // Continuity
