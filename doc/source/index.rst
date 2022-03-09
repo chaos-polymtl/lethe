@@ -48,6 +48,7 @@ Contents
    first_simulation
    parameters/parameters
    examples/examples
+   theory/theory
    contributing
 
 Installation
