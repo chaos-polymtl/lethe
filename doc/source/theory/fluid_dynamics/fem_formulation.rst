@@ -62,7 +62,7 @@ For the incompressible Navier-Stokes equation, this leads to a saddle point prob
 
 .. math::
     
-  \mathbf{\mathcal{L}} &= \left[ \begin{matrix} 	A & B^T  \\[0.3em]	B & 0 \end{matrix} \right] \\
+  \mathbf{\mathcal{J}} &= \left[ \begin{matrix} 	A & B^T  \\[0.3em]	B & 0 \end{matrix} \right] \\
   \mathbf{\mathcal{R}} &=  \left[ \begin{matrix} \mathbf{\mathcal{R}}_v   \\[0.3em]		\mathbf{\mathcal{R}}_q  \end{matrix} \right]
   
   
