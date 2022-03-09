@@ -240,8 +240,17 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
-  int    order   = this->simulation_parameters.particlesParameters->order;
-  double density = this->simulation_parameters.particlesParameters->density;
+  Assert(this->simulation_parameters.physical_properties_manager
+           .density_is_constant(),
+         RequiresConstantDensity(
+           "GLSSharpNavierStokesSolver<dim>::force_on_ib"));
+
+  int  order = this->simulation_parameters.particlesParameters->order;
+  auto density_model =
+    this->simulation_parameters.physical_properties_manager.get_density(0);
+  std::map<field, double> field_values;
+  field_values[field::temperature] = 0;
+  double density                   = density_model->value(field_values);
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
   IBStencil<dim>      stencil;
@@ -1114,17 +1123,59 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   double time  = this->simulation_control->get_current_time();
   double alpha = this->simulation_parameters.particlesParameters->alpha;
   this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
-  ib_dem.update_particles(particles, time);
+  double dr = GridTools::minimal_cell_diameter(*this->triangulation) / sqrt(2);
 
-  double density    = this->simulation_parameters.particlesParameters->density;
+  const auto rheological_model =
+    this->simulation_parameters.physical_properties_manager.get_rheology();
+  ib_dem.update_particles(particles, time);
+  std::map<field, double> field_values;
+  field_values[field::shear_rate]  = 1;
+  field_values[field::temperature] = 1;
+
+  // Check if the parameters' combination is compatible. This is temporary and
+  // will be moved to a new class that tests the parameter combination in the
+  // parameter initialization.
+
+  bool incompatible_parameter_choices =
+    this->simulation_parameters.physical_properties_manager
+      .is_non_newtonian() and
+    this->simulation_parameters.particlesParameters
+      ->enable_lubrication_force and
+    this->simulation_parameters.particlesParameters->integrate_motion;
+
+  Assert(!incompatible_parameter_choices,
+         RequiresConstantViscosity(
+           "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
+  double h_min =
+    dr * this->simulation_parameters.particlesParameters->lubrication_range_min;
+  double h_max =
+    dr * this->simulation_parameters.particlesParameters->lubrication_range_max;
+  // Deactivated the lubrication force if the flui is Non-newtonian.
+  if (this->simulation_parameters.particlesParameters
+        ->enable_lubrication_force == false)
+    {
+      h_max = 0;
+    }
+
   particle_residual = 0;
   if (this->simulation_parameters.particlesParameters->integrate_motion &&
       time > 0)
     {
+      Assert(this->simulation_parameters.physical_properties_manager
+               .density_is_constant(),
+             RequiresConstantDensity(
+               "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
+      this->simulation_parameters.physical_properties_manager.get_density(0);
+      auto density_model =
+        this->simulation_parameters.physical_properties_manager.get_density(0);
+      double density   = density_model->value(field_values);
+      double viscosity = rheological_model->value(field_values) * density;
+
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
-      ib_dem.integrate_particles_motion(dt);
+      ib_dem.integrate_particles_motion(dt, h_max, h_min, density, viscosity);
       unsigned int worst_residual_particle_id;
+
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
           // calculate the volume of fluid displaced by the particle.
@@ -1170,46 +1221,17 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           residual_velocity +=
             (particles[p].impulsion) / particles[p].mass / dt;
           // Approximate a diagonal Jacobian with a secant methods.
-          Tensor<2, dim> jac_velocity;
-          if (particles[p].impulsion_iter.norm() == 0)
-            {
-              // If we are here, it is because this is the first-newton step.
-              // We cannot use the secant method directly.
-              // For the first step, we use an approximate guess:
-              // the effect of the virtual mass controls the Jacobian of the
-              // residual.
-              for (unsigned int d = 0; d < dim; ++d)
-                {
-                  // This formula comes from the virtual mass force of a single
-                  // spherical particle with a virtual mass coefficient of 0.5.
-                  jac_velocity[d][d] = -bdf_coefs[0] - 0.5 * volume * density /
-                                                         particles[p].mass / dt;
-                }
-            }
-          else
-            {
-              // If we are here, it is because this is not the first-newton
-              // step. We can use the secant method directly.
-              for (unsigned int d = 0; d < dim; ++d)
-                {
-                  // Here we define the Jacobian diagonal base on the secant
-                  // approach.
-                  if ((particles[p].velocity[d] -
-                       particles[p].velocity_iter[d]) != 0)
-                    jac_velocity[d][d] =
-                      -bdf_coefs[0] + (particles[p].impulsion[d] -
-                                       particles[p].impulsion_iter[d]) /
-                                        (particles[p].velocity[d] -
-                                         particles[p].velocity_iter[d]) /
-                                        particles[p].mass / dt;
-                  else
 
-                    jac_velocity[d][d] =
-                      -bdf_coefs[0] -
-                      0.5 * volume * density / particles[p].mass / dt;
-                }
+          double d_residual_dv =
+            -bdf_coefs[0] - 0.5 * volume * density / particles[p].mass / dt;
+          if ((particles[p].velocity - particles[p].velocity_iter).norm() != 0)
+            {
+              d_residual_dv =
+                -bdf_coefs[0] -
+                (particles[p].impulsion - particles[p].impulsion_iter).norm() /
+                  (particles[p].velocity - particles[p].velocity_iter).norm() /
+                  particles[p].mass / dt;
             }
-
           // Relaxation parameter for the particle dynamics.
           double local_alpha = 1;
           // We keep in memory the state of the particle before the update in
@@ -1220,69 +1242,18 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           try
             {
               // Define the correction vector.
-              Tensor<1, dim> dv_temp;
-              auto           inv_jac = invert(jac_velocity);
-              for (unsigned int i = 0; i < dim; ++i)
-                {
-                  for (unsigned int j = 0; j < dim; ++j)
-                    {
-                      dv_temp[i] += inv_jac[i][j] * residual_velocity[i];
-                    }
-                }
-              auto dv = tensor_nd_to_3d(dv_temp);
-              // Evaluate a relaxation parameter. Here we try to orthogonalize
-              // the update as much as possible.
-              if ((particles[p].velocity - particles[p].velocity_iter).norm() >
-                  0)
-                {
-                  double matrix_alpha = 0;
-                  double rhs_alpha    = 0;
-                  for (unsigned int d = 0; d < dim; ++d)
-                    {
-                      matrix_alpha +=
-                        (-dv[d] * particles[p].previous_d_velocity[d] *
-                           particles[p].previous_local_alpha_velocity +
-                         particles[p].previous_d_velocity[d] *
-                           particles[p].previous_d_velocity[d] *
-                           particles[p].previous_local_alpha_velocity *
-                           particles[p].previous_local_alpha_velocity);
-                      rhs_alpha += particles[p].previous_d_velocity[d] *
-                                   particles[p].previous_d_velocity[d] *
-                                   particles[p].previous_local_alpha_velocity *
-                                   particles[p].previous_local_alpha_velocity;
-                    }
-                  if (matrix_alpha != 0)
-                    {
-                      local_alpha = abs(rhs_alpha / (matrix_alpha));
-                      local_alpha =
-                        (local_alpha - 1) *
-                        particles[p].previous_d_velocity.norm() *
-                        particles[p].previous_local_alpha_velocity *
-                        particles[p].previous_d_velocity.norm() *
-                        particles[p].previous_local_alpha_velocity /
-                        scalar_product(
-                          dv,
-                          particles[p].previous_d_velocity *
-                            particles[p].previous_local_alpha_velocity);
-                    }
-                  else
-                    local_alpha = 1;
-                }
-              // limits the range of the relaxation parameter.
-              if (local_alpha > 1)
-                local_alpha = 1;
-              if (local_alpha < 0)
-                local_alpha = 0;
-              if (isnan(local_alpha))
-                local_alpha = 1;
+              Tensor<1, 3> dv = residual_velocity * 1 / d_residual_dv;
+
               // Update the particle state and keep in memory the last iteration
               // information.
+
               particles[p].velocity_iter = particles[p].velocity;
               particles[p].velocity =
                 particles[p].velocity_iter - dv * alpha * local_alpha;
               particles[p].impulsion_iter      = particles[p].impulsion;
               particles[p].previous_d_velocity = dv;
               particles[p].previous_local_alpha_velocity = local_alpha;
+
 
               // If the particles have impacted a wall or another particle, we
               // want to use the sub-time step position. Otherwise, we solve the
@@ -1339,90 +1310,33 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             }
           residual_omega += inv_inertia * (particles[p].omega_impulsion) / dt;
 
+          double d_residual_domega =
+            -bdf_coefs[0] - 0.5 * 2. / 5 * volume * density *
+                              particles[p].radius * particles[p].radius *
+                              inv_inertia.norm() / dt;
 
-          Tensor<2, 3> jac_omega;
-          if (particles[p].omega_impulsion.norm() == 0)
+          if ((particles[p].omega - particles[p].omega_iter).norm() != 0)
             {
-              for (unsigned int d = 0; d < 3; ++d)
-                {
-                  // This formula aim at relaxing the equation for the first
-                  // iteration an approximation that was found is to apply the
-                  // same logique as virtual mass but take the rotational
-                  // inertia of the fluid displaced by the particle.
-                  jac_omega[d][d] =
-                    -bdf_coefs[0] -
-                    0.5 * 2. / 5 * volume * density * particles[p].radius *
-                      particles[p].radius * inv_inertia[d][d] / dt;
-                }
+              d_residual_domega =
+                -bdf_coefs[0] -
+                (particles[p].omega_impulsion -
+                 particles[p].omega_impulsion_iter)
+                    .norm() /
+                  (particles[p].omega - particles[p].omega_iter).norm() *
+                  inv_inertia.norm() / dt;
+              ;
             }
-          else
-            {
-              for (unsigned int d = 0; d < 3; ++d)
-                {
-                  if ((particles[p].omega[d] - particles[p].omega_iter[d]) != 0)
-                    jac_omega[d][d] =
-                      -bdf_coefs[0] +
-                      (particles[p].omega_impulsion[d] -
-                       particles[p].omega_impulsion_iter[d]) /
-                        (particles[p].omega[d] - particles[p].omega_iter[d]) *
-                        inv_inertia[d][d] / dt;
-                  else
-                    jac_omega[d][d] =
-                      -bdf_coefs[0] -
-                      0.5 * 2. / 5 * volume * density * particles[p].radius *
-                        particles[p].radius * inv_inertia[d][d] / dt;
-                }
-            }
-          auto d_omega = invert(jac_omega) * residual_omega;
-          local_alpha  = 1;
-          if ((particles[p].omega - particles[p].omega_iter).norm() > 0)
-            {
-              double matrix_alpha = 0;
-              double rhs_alpha    = 0;
-              for (unsigned int d = 0; d < 3; ++d)
-                {
-                  matrix_alpha +=
-                    (-d_omega[d] * particles[p].previous_d_omega[d] *
-                       particles[p].previous_local_alpha_omega +
-                     particles[p].previous_d_omega[d] *
-                       particles[p].previous_d_omega[d] *
-                       particles[p].previous_local_alpha_omega *
-                       particles[p].previous_local_alpha_omega);
-                  rhs_alpha += particles[p].previous_d_omega[d] *
-                               particles[p].previous_d_omega[d] *
-                               particles[p].previous_local_alpha_omega *
-                               particles[p].previous_local_alpha_omega;
-                }
-              if (matrix_alpha != 0)
-                {
-                  local_alpha = abs(rhs_alpha / (matrix_alpha));
-                  local_alpha =
-                    (local_alpha - 1) * particles[p].previous_d_omega.norm() *
-                    particles[p].previous_d_omega.norm() *
-                    particles[p].previous_local_alpha_omega *
-                    particles[p].previous_local_alpha_omega /
-                    scalar_product(d_omega,
-                                   particles[p].previous_d_omega *
-                                     particles[p].previous_local_alpha_omega);
-                }
-              else
-                local_alpha = 1;
-            }
+          // Define the correction vector.
+          Tensor<1, 3> d_omega = residual_omega * 1 / d_residual_domega;
 
-          if (local_alpha > 1)
-            local_alpha = 1;
-          if (local_alpha < 0)
-            local_alpha = 0;
-          if (isnan(local_alpha))
-            local_alpha = 1;
+          double local_alpha_omega = 1;
 
           particles[p].omega_iter = particles[p].omega;
-          particles[p].omega = particles[p].omega_iter - invert(jac_omega) *
-                                                           residual_omega *
-                                                           alpha * local_alpha;
+          particles[p].omega =
+            particles[p].omega_iter - d_omega * alpha * local_alpha_omega;
           particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
           particles[p].previous_d_omega     = d_omega;
-          particles[p].previous_local_alpha_omega = local_alpha;
+          particles[p].previous_local_alpha_omega = local_alpha_omega;
 
 
           // If something went wrong during the update, the particle state would
@@ -1447,6 +1361,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               worst_residual_particle_id = p;
             }
         }
+
 
       if (this->simulation_parameters.non_linear_solver.verbosity !=
           Parameters::Verbosity::quiet)
@@ -1519,7 +1434,7 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(
       const unsigned components_number = properties_iterator->second;
 
       // Check to see if the property is a vector
-      if (components_number == dim)
+      if (components_number == 3)
         {
           vector_datasets.push_back(std::make_tuple(
             field_position,
@@ -1532,7 +1447,6 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(
 
   // Building the patch data
   patches.resize(particles.size());
-
 
   // Looping over particle to get the properties from the particle_handler
   for (unsigned int p = 0; p < particles.size(); ++p)
@@ -2746,6 +2660,7 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
                 "v_z", particles[i_particle].velocity[2]);
               particles_information_table.set_precision("v_z", 12);
             }
+
 
           particles_information_table.add_value(
             "f_x", particles[i_particle].fluid_forces[0]);

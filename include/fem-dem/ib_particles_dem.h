@@ -89,11 +89,24 @@ public:
    * @brief
    * Integrates the dynamics of the IB_particle taking into account the contact
    * between particles and between particles and walls.
+   *
    * @param dt The CFD time step.
+   *
+   * @param h_max The gap between the two particle.
+   *
+   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
+   *
+   * @param rho The fluid density.
+   *
+   * @param mu The fluid viscosity.
    *
    */
   void
-  integrate_particles_motion(const double dt);
+  integrate_particles_motion(const double dt,
+                             const double h_max,
+                             const double h_min,
+                             const double rho,
+                             const double mu);
 
   /**
    * @brief Calculates non-linear (Hertzian) particle-particle contact force
@@ -124,8 +137,60 @@ public:
                              std::vector<Tensor<1, 3>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
 
+
   /**
-   * @brief  Updates the boundary cells that are contact candidates for each of the particles.
+   *  @brief Calculates particle-particle lubrication force. The force is based on the formula from
+   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;
+   * Karrila, Seppo J. ISBN 13: 9780750691734
+   *
+   * @param dt_dem The sub time stepping time step.
+   *
+   * @param h_max The gap between the two particle.
+   *
+   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
+   *
+   * @param mu The fluid viscosity.
+   *
+   * @param lubrication_force a vector containing the lubrication force on the particles.
+   *
+   * @param lubrication_torque a vector containing the lubrication torques on the particles.
+   */
+  void
+  calculate_pp_lubrication_force(const double               dt_dem,
+                                 const double               h_max,
+                                 const double               h_min,
+                                 const double               mu,
+                                 std::vector<Tensor<1, 3>> &lubrication_force,
+                                 std::vector<Tensor<1, 3>> &lubrication_torque);
+
+
+  /**
+   * @brief Calculates particle-wall lubrication force
+   *
+   * @param dt_dem The sub time stepping time step.
+   *
+   * @param h_max The gap between particle and the wall below which we evaluate the force.
+   *
+   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
+   *
+   * @param mu The fluid viscosity.
+   *
+   * @param lubrication_force a vector containing the lubrication force on the particles.
+   *
+   * @param lubrication_torque a vector containing the lubrication torques on the particles.
+   */
+  void
+  calculate_pw_lubrication_force(const double               dt_dem,
+                                 const double               h_max,
+                                 const double               h_min,
+                                 const double               mu,
+                                 std::vector<Tensor<1, 3>> &lubrication_force,
+                                 std::vector<Tensor<1, 3>> &lubrication_torque);
+
+  /**
+   * @brief  Updates the boundary cells that are contact candidates for each of the particles.The force is based on the formula from
+   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;
+   * Karrila, Seppo J. ISBN 13: 9780750691734
    *
    * @param particles The particles vector containing all the IB particles.
    *

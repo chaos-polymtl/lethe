@@ -20,6 +20,7 @@ end
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity            = 1
+    set density =1
   end
 end
 
@@ -155,7 +156,6 @@ subsection particles
 	set refine mesh inside radius factor = 0
 	set refine mesh outside radius factor = 2
 	set initial refinement = 0
-	set fluid density =1
 	set integrate motion = false
 	set assemble Navier-Stokes inside particles = false
 

@@ -1775,15 +1775,25 @@ namespace Parameters
                         "1000",
                         Patterns::Integer(),
                         "The number of DEM time steps per CFD time step");
-      prm.declare_entry("fluid density",
-                        "1",
-                        Patterns::Double(),
-                        "density of the fluid");
       prm.declare_entry("alpha",
                         "1",
                         Patterns::Double(),
                         "relaxation parameter");
 
+      prm.declare_entry("enable lubrication force",
+                        "true",
+                        Patterns::Bool(),
+                        "Bool to enable or disable the lubrication force");
+      prm.declare_entry(
+        "lubrication range max",
+        "2",
+        Patterns::Double(),
+        "Gap require to consider the lubrication force. This value is multiplied the smallest cell size");
+      prm.declare_entry(
+        "lubrication range min",
+        "0.1",
+        Patterns::Double(),
+        "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
       prm.declare_entry(
         "wall youngs modulus",
         "100000000",
@@ -1852,7 +1862,6 @@ namespace Parameters
       outside_radius     = prm.get_double("refine mesh outside radius factor");
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
-      density              = prm.get_double("fluid density");
       integrate_motion     = prm.get_bool("integrate motion");
       alpha                = prm.get_double("alpha");
 
@@ -1875,7 +1884,10 @@ namespace Parameters
       wall_friction_coefficient = prm.get_double("wall friction coefficient");
       wall_restitution_coefficient =
         prm.get_double("wall restitution coefficient");
-      coupling_frequency = prm.get_double("DEM coupling frequency");
+      coupling_frequency       = prm.get_double("DEM coupling frequency");
+      enable_lubrication_force = prm.get_bool("enable lubrication force");
+      lubrication_range_max    = prm.get_double("lubrication range max");
+      lubrication_range_min    = prm.get_double("lubrication range min");
 
 
 
@@ -1912,7 +1924,6 @@ namespace Parameters
             particles[i].f_omega->value(particles[i].position, 1);
           particles[i].omega[2] =
             particles[i].f_omega->value(particles[i].position, 2);
-
 
           particles[i].particle_id          = i;
           particles[i].radius               = prm.get_double("radius");
