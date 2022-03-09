@@ -6,7 +6,7 @@
 subsection simulation control
   set method                  = bdf1
   set time step               = 0.025 # Time step
-  set time end                = 0.125  # End time of simulation
+  set time end                = 0.075 # End time of simulation
   set output name             = out # Prefix for VTU outputs
   set output frequency        = 1       # Frequency of simulation output
   set subdivision             = 1       # Mesh subdivision when outputend
@@ -89,17 +89,12 @@ subsection particles
 	set refine mesh outside radius factor = 2
 	set initial refinement = 3
 	set integrate motion = true
-	
 	set assemble Navier-Stokes inside particles = false
-	set enable lubrication force =false
-
+	set enable lubrication force =true
+	set lubrication range max=2
 	subsection gravity
-        	set Function expression =0;-981;0
-    	end
-    	
-	subsection gravity
-        	set Function expression =0;-981;0
-    	end
+        set Function expression =0;-981;0
+    end
 
     subsection particle info 0 
         subsection position

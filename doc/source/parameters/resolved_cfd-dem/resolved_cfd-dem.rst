@@ -21,7 +21,8 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set particle nonlinear tolerance            = 1e-6
 		set DEM coupling frequency                  = 1000
 		set alpha                                   = 1
-		set fluid density                           = 1
+
+		
 		subsection gravity
 			set Function expression =0;0;0
 		end
@@ -31,6 +32,9 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set wall restitution coefficient            = 1
 		set wall rolling friction coefficient       = 0
 		set wall youngs modulus                     = 100000000
+		set enable lubrication force		    = true
+		set lubrication range max		    = 2
+		set lubrication range min		    = 0.1
 		
 		subsection particle info 0
 			set density    = 1
@@ -84,9 +88,6 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
 
-
-* The ``fluid density`` parameter is the fluid density used in the force calculation of the resolved CFD-DEM. This parameter is redundant with others in the solver and will be removed in the upcoming code modification.
-
 * The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 
 The following properties are used if the particle impact one of the boundaries of the domain. The effective properties used for calculating the impact force are calculated using a harmonic mean of the properties of the wall and the particle.
@@ -100,6 +101,19 @@ The following properties are used if the particle impact one of the boundaries o
 * The ``wall rolling friction coefficient`` parameter is the rolling friction coefficient of the wall. This parameter is used to define the effective rolling friction coefficient between the wall and the particles. At This point in time, all the walls have the same properties.
 
 * The ``wall youngs modulus`` parameter is the Young's modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At This point in time, all the walls have the same properties.
+
+* The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using non-newtonian fluid.
+
+* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.
+
+.. note::
+	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
+
+* The ``lubrication range min`` parameter defines the minimal distance used in the lubrication force calculation. The range is defined as a multiple of the smallest cell. This limits the force that can be applied on a particle since the lubrification force has a singularity when the distance between 2 particles is 0. We use this parameter to define a lower bound on the distance between 2 particles for the force calculation to avoid this singularity. Physically, this distance can be interpreted as the surface roughness of the particles.
+
+.. note::
+    The lubrication force between two particles is expressed by the equation :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`. Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter of the first particle, :math:`d_{p_j}` the diameter of the second particle, :math:`y` the gap between the two particles, :math:`\mathbf{v_{ij}}` the relative velocity of the two particles, :math:`\mathbf{e_{ij}}` the unit vector along the line that joint the centroide of the two particles. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity `[1] <https://doi.org/10.1002/aic.690400418>`_. 
+    This model requires a constant viscosity and density of the fluid.
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
 
@@ -131,5 +145,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``youngs modulus`` parameter is the Young's modulus of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
 
-
+Reference
+---------------
+[1] Kim, Sangtae, and Seppo J. Karrila. Microhydrodynamics: principles and selected applications. Courier Corporation, 2013. `DOI <https://doi.org/10.1002/aic.690400418>`_.
 

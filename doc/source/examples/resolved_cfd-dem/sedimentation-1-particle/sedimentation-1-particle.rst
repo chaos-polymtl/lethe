@@ -67,6 +67,7 @@ Physical Properties
 	subsection physical properties
 	  subsection fluid 0
 	    set kinematic viscosity            =0.6041666666666
+	    set density =0.000960
 	  end
 	end
 
@@ -261,7 +262,6 @@ IB particles
 		set refine mesh inside radius factor = 0.8
 		set refine mesh outside radius factor = 1.3
 		set initial refinement = 6
-		set fluid density =0.000960
 		set integrate motion = true
 		set assemble Navier-Stokes inside particles = false
 		set length ratio = 2
