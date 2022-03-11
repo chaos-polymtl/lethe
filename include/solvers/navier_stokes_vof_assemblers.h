@@ -16,6 +16,7 @@
 
 #include <core/simulation_control.h>
 
+#include <solvers/auxiliary_physics.h>
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
@@ -40,8 +41,10 @@ class GLSNavierStokesVOFAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control)
+    std::shared_ptr<SimulationControl> simulation_control,
+    const SimulationParameters<dim> &  nsparam)
     : simulation_control(simulation_control)
+    , multiphysics_parameters(nsparam.multiphysics)
   {}
 
   /**
@@ -65,6 +68,7 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::Multiphysics     multiphysics_parameters;
 };
 
 /**

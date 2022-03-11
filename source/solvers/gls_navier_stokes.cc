@@ -386,7 +386,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
       // Core assembler
       this->assemblers.push_back(
         std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-          this->simulation_control));
+          this->simulation_control, this->simulation_parameters));
     }
   else
     {

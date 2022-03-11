@@ -33,25 +33,24 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
   // Limit force application : not applied if cell density is below
   // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio      = 2;
-  double       phase_force_cutoff = 0;
+  const double density_ratio = 2;
+  double       phase_cutoff  = 0;
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
       "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
+  // Phase cut-off for gravity application and continuity condition
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
       scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
-      // gravity not will be applied for phase < phase_force_cutoff
-      phase_force_cutoff = 1e-6;
+      phase_cutoff = 1e-6;
     }
   if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
       scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
-      // gravity not will be applied for phase > phase_force_cutoff
-      phase_force_cutoff = 1 - 1e-6;
+      phase_cutoff = 1 - 1e-6;
     }
 
   // Loop over the quadrature points
@@ -70,11 +69,21 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
+      bool solve_continuity(true);
+
       // Determine where gravity is not applied
-      if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
+      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
         force = 0;
-      if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
+      else if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
         force = 0;
+
+      // Determine whether continuity condition (mass conservation) is skipped
+      //      if (Parameters::Multiphysics::skip_mass_conservation_fluid_0 &&
+      //          phase_values[q] < phase_cutoff)
+      //        solve_continuity = false;
+      //      if (Parameters::Multiphysics::skip_mass_conservation_fluid_1 &&
+      //          phase_values[q] > phase_cutoff)
+      //        solve_continuity = false;
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
