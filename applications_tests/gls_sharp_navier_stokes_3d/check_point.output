@@ -15,8 +15,8 @@ Transient iteration : 2        Time : 0.005    Time step : 0.0025   CFL : 0.0037
    Number of active cells:       6815
    Number of degrees of freedom: 33652
    Volume of triangulation:      1600
-particule 0 position 5.0000000002297176 12.748575038953348 4.9999989615995073
-particule 0 velocity 2.8468721358995696e-07 -0.45253827986132661 -0.00033909299713432149
+particule 0 position 5 12.7486 5
+particule 0 velocity 2.84687e-07 -0.452538 -0.000339093
 +------------------------------------------+
 |  Force  summary particle 0               |
 +------------------------------------------+
