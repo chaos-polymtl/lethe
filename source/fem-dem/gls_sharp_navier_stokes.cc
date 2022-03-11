@@ -717,9 +717,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         density;
     }
 
-
   total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
-  this->pcout << std::setprecision(17);
 }
 
 template <int dim>
