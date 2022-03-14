@@ -630,9 +630,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const double JxW = JxW_vec[q];
 
       // Calculation of the equivalent properties at the quadrature point
-      double       density_eq           = scratch_data.density[q];
-      double       viscosity_eq         = scratch_data.viscosity[q];
-      const double dynamic_viscosity_eq = density_eq * viscosity_eq;
+      double               density_eq           = scratch_data.density[q];
+      double               viscosity_eq         = scratch_data.viscosity[q];
+      const double         dynamic_viscosity_eq = density_eq * viscosity_eq;
+      const Tensor<1, dim> dynamic_viscosity_gradient =
+        density_eq * viscosity_gradient;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -650,7 +652,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
-                             density_eq * shear_rate * viscosity_gradient -
+                             shear_rate * dynamic_viscosity_gradient -
                              dynamic_viscosity_eq * velocity_laplacian -
                              density_eq * force + strong_residual_vec[q];
 
@@ -672,10 +674,10 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
             grad_phi_u_j + transpose(grad_phi_u_j);
 
           strong_jacobian_vec[q][j] +=
-            (density_eq * velocity_gradient * phi_u_j +
-             density_eq * grad_phi_u_j * velocity + grad_phi_p_j -
-             dynamic_viscosity_eq * laplacian_phi_u_j -
-             grad_phi_u_j_non_newtonian * viscosity_gradient);
+            density_eq * velocity_gradient * phi_u_j +
+            density_eq * grad_phi_u_j * velocity + grad_phi_p_j -
+            dynamic_viscosity_eq * laplacian_phi_u_j -
+            grad_phi_u_j_non_newtonian * dynamic_viscosity_gradient;
 
           // Store these temporary products in auxiliary variables for speed
           grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
@@ -848,9 +850,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double JxW = JxW_vec[q];
 
       // Calculation of the equivalent properties at the quadrature point
-      double       density_eq           = scratch_data.density[q];
-      double       viscosity_eq         = scratch_data.viscosity[q];
-      const double dynamic_viscosity_eq = density_eq * viscosity_eq;
+      double               density_eq           = scratch_data.density[q];
+      double               viscosity_eq         = scratch_data.viscosity[q];
+      const double         dynamic_viscosity_eq = density_eq * viscosity_eq;
+      const Tensor<1, dim> dynamic_viscosity_gradient =
+        density_eq * viscosity_gradient;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -869,7 +873,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
-                             shear_rate * viscosity_gradient -
+                             shear_rate * dynamic_viscosity_gradient -
                              dynamic_viscosity_eq * velocity_laplacian -
                              density_eq * force + strong_residual_vec[q];
 
