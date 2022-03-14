@@ -62,7 +62,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 	
 * The ``number of particles`` is the number of particles simulated by the sharp-edge IB.
 
-* The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of the underlying FEM scheme.
+* The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of the underlying FEM scheme. We suggest using same order as the velocity field in most cases since it lowers the condition number of the matrix.
 
 * The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial. The length ratio should be kept as small as possible and above 1. A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme. For example, for Q1 elements with an average aspect ratio of one, the length ratio should be set to 2.
 
@@ -76,9 +76,15 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``initial refinement`` parameter controls how many time the refinement zone around each of the particle is applied before the simulation starts. Each application of the refinement zone reduces the size of the elements by a factor two.
 
-* The ``refine mesh inside radius factor`` parameter defines the inside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. 
+.. note::
+	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
 
-* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. 
+* The ``refine mesh inside radius factor`` parameter defines the inside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6. 
+
+* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3. 
+
+.. warning::
+	When you want to use the hypershell refinement zone around particles, the mesh adaptation type used needs to be ``kelly``, otherwise no hypershell refinement will happen. :doc:`../cfd/mesh_adaptation_control`
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles remain static.  If ``ìntegrate motion=true`` the position and the velocity will be defined by the particles' position and velocity function.
 
