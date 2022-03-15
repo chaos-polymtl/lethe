@@ -18,7 +18,7 @@ This example simulates a `two-dimensional rising bubble`_.
 
 .. _two-dimensional rising bubble: https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643
 
-A circular bubble with density of 100 and kinematic viscosity of 0.01 (all the units in this example are dimensionles) is defined at an initial location (0.5, 0.5) in a rectangular column filled with a denser fluid (with a density of 1000 and kinematic viscosity of 0.01). At :math:`t = 0` the bubble is released to rise inside the denser fluid column. The corresponding parameter file is 
+A circular bubble with density of 100 and kinematic viscosity of 0.01 (all the units in this example are dimensionless) is defined at an initial location (0.5, 0.5) in a rectangular column filled with a denser fluid (with a density of 1000 and kinematic viscosity of 0.01). At :math:`t = 0` the bubble is released to rise inside the denser fluid column. The corresponding parameter file is 
 ``rising_bubble_VOF.prm``.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
@@ -47,7 +47,7 @@ time step of :math:`0.001` seconds.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-steps are modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output control = time``, and ``output time = 0.03`` the simulation results are written every 0.03 s.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output control = time``, and ``output time = 0.03`` the simulation results are written every 0.03 s.
 
 .. code-block:: text
 
@@ -66,12 +66,12 @@ time step of :math:`0.001` seconds.
         set output name                    = rising_bubble_VOF
         set output control                 = time
         set output time                    = 0.03
-        set output path                    = ./Output/
+        set output path                    = ./output/
         set subdivision                    = 1      
     end
 
 .. warning::
-    Make sure to create a directory named ``Output`` in the same directory 
+    Make sure to create a directory named ``output`` in the same directory 
     you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will break.
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
@@ -165,7 +165,7 @@ properties`` subsection, their physical properties should be defined:
 
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
 In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
-Similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
+A similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
 
 
 """"""""""""""""""""""""""""""""
@@ -173,7 +173,7 @@ Surface Tension Force
 """"""""""""""""""""""""""""""""
 
 
-In Lethe, surface tension force (:math:`{\bf{F_{\sigma}}}`) is calculated using the following equation [1, 2]:
+In Lethe, the surface tension force (:math:`{\bf{F_{\sigma}}}`) is calculated using the following equation [1, 2]:
 
     .. math::
         {\bf{F_{\sigma}}} = 2 \sigma k {\bf{\psi}}
@@ -192,7 +192,7 @@ where :math:`v`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, :math:`\phi`, :math:`
 
 .. tip::
 
-  Phase fraction gradient filter value (:math:`\eta_n`) and curvature filter value (:math:`\eta_k`) must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters: 1, Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields 2, Choose a small value for :math:`\eta = h/10`, where :math:`h` is the smallest mesh size 3, Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation 4, If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\eta` to a larger value (:math:`\eta = h/5`, for example), and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
+  Phase fraction gradient filter value (:math:`\eta_n`) and curvature filter value (:math:`\eta_k`) must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters: 1) Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields, 2) Choose a small value for :math:`\eta = h/10`, where :math:`h` is the smallest mesh size, 3) Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation, and 4) If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\eta` to a larger value (:math:`\eta = h/5`, for example), and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
 
 .. code-block:: text
 
@@ -209,7 +209,7 @@ where :math:`v`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, :math:`\phi`, :math:`
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
 :math:`[1,2]`. The first :math:`1,2` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
-This makes it so our initial mesh is composed of perfect squares. We proceed then to redefine the mesh globally four times by setting
+This makes it so our initial mesh is composed of perfect squares. We proceed then to redefine the mesh globally eight times by setting
 ``set initial refinement=8``. 
 
 .. code-block:: text
@@ -225,7 +225,7 @@ This makes it so our initial mesh is composed of perfect squares. We proceed the
     end
     
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
-defined for ``phase``. ``min refinement level`` and ``max refinement level`` are 6 and 8, respectively.
+defined for ``phase``. ``min refinement level`` and ``max refinement level`` are 6 and 8, respectively. Since the bubble rises and changes its location, we choose a rather large ``fraction refinement`` (0.97) and moderate ``fraction coarsening`` (0.02).
 
 .. code-block:: text
 
@@ -240,7 +240,7 @@ defined for ``phase``. ``min refinement level`` and ``max refinement level`` are
         set min refinement level    = 6
         set frequency               = 1
         set fraction refinement     = 0.97
-        set fraction coarsening     = 0.1
+        set fraction coarsening     = 0.02
     end
 
 
@@ -254,7 +254,8 @@ to run the simulation using eight CPU cores. Feel free to use more.
 
 .. warning:: 
     Make sure to compile lethe in `Release` mode and 
-    run in parallel using mpirun 
+    run in parallel using mpirun. This simulation takes
+    :math:`\approx` 20 mins on 8 processes.
 
 
 
@@ -272,9 +273,9 @@ The following image shows the shape and dimensions of the bubble after 3 seconds
 
 A python post-processing code `(rising_bubble.py)` 
 is added to the example folder to post-process the results.
-Run ``python3 ./rising_bubble.py ./Output`` to execute this 
-post-processing code, where ``./Output`` is the directory that 
-contains the simulation results. In post-processing, the maximum and minimum axial positions of the light phase (bubble) are tracked to monitor the location of the bubble center as a function of time. Then, the bubble rise velocity is calculated as the derivation of the bubble axial position. These results are compared with the simulations of Zahedi, Kronbichler, and Kreiss [2]. The following images shows the results of these comparisons. The oscillations in the bubble rise velocity are attributed to the different methods used for finding the centroid of the bubble, first order derivation, and smoothing of the bubble location and rise velocity.
+Run ``python3 ./rising_bubble.py ./output`` to execute this 
+post-processing code, where ``./output`` is the directory that 
+contains the simulation results. In post-processing, the maximum and minimum axial positions of the light phase (bubble) are tracked to monitor the location of the center of the bubble as a function of time. Then, the bubble rise velocity is calculated as the derivation of the bubble axial position. These results are compared with the simulations of Zahedi, Kronbichler, and Kreiss [2]. The following images show the results of these comparisons. The oscillations in the bubble rise velocity are attributed to the different methods used for finding the centroid of the bubble, first order derivation, and smoothing of the bubble location and rise velocity.
 
 .. image:: images/ymean_t.png
     :alt: ymean_t

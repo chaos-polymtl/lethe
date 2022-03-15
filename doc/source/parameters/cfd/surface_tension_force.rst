@@ -1,5 +1,5 @@
 Surface tension force
---------------------
+-----------------------------
 
 Surface tension is the tendency of a liquid to maintain the minimum possible surface area.
 
@@ -22,10 +22,13 @@ This subsection includes parameters related to the surface tension force.
    
 * ``surface tension coefficient``: surface tension coefficient in :math:`Nm^{-1}`.
 
+
 * ``phase fraction gradient filter``: this parameter (:math:`\eta_n \geq 0`) applies a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_) to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`).
     .. math:: 
         \int_\Omega {\bf{v}} . {\bf{\psi}} + \eta_n \nabla {\bf{v}} . \nabla {\bf{\psi}} d\Omega = \int_\Omega {\bf{v}} . \nabla {\phi} d\Omega
+
 where :math:`\bf{v}`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, and :math:`\phi` denote a piecewise continuous vector-valued test function, filtered phase fraction gradient, phase fraction gradient filter value, and phase fraction, respectively.
+
 
 .. tip::
 
@@ -34,6 +37,7 @@ where :math:`\bf{v}`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, and :math:`\phi`
 * ``curvature filter``: this parameter (:math:`\eta_k`) applies a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_) to damp high frequency errors, that are magnified by differentiation, in the curvature (:math:`k`).
     .. math:: 
         \int_\Omega v k + \eta_k \nabla v . \nabla k d\Omega = \int_\Omega \nabla v . \frac{\bf{\psi}}{|\bf{\psi}|} d\Omega
+
 where :math:`v`, :math:`k`, and :math:`\eta_k \geq 0` denote a test function, filtered curvature, and curvature filter value, respectively.
 
 .. tip::

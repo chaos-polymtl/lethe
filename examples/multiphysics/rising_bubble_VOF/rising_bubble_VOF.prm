@@ -14,7 +14,7 @@ subsection simulation control
   set output name             		= rising_bubble_VOF
   set output control               	= time
   set output time                  	= 0.03
-  set output path                  	= ./Output/
+  set output path                  	= ./output/
   set subdivision             		= 1
 end
 
@@ -107,7 +107,7 @@ subsection mesh adaptation
   set min refinement level    	= 6
   set frequency               	= 1
  set fraction refinement     	= 0.97
-  set fraction coarsening     	= 0.1
+  set fraction coarsening     	= 0.02
 end
 
 #---------------------------------------------------
