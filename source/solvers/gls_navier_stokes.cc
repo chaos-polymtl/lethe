@@ -383,10 +383,21 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_control));
         }
 
-      // Core assembler
-      this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-          this->simulation_control));
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
+        {
+          // Core assembler with Non newtonian viscosity
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
+              this->simulation_control));
+        }
+      else
+        {
+          // Core assembler
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+              this->simulation_control));
+        }
 
       // Surface tension force (STF)
       if (this->simulation_parameters.multiphysics.surface_tension_force)
