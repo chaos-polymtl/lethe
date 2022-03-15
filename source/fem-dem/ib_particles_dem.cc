@@ -173,12 +173,12 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pp_lubrication_force(
-  const double               dt_dem,
+  const double /*dt_dem*/,
   const double               h_max,
   const double               h_min,
   const double               mu,
   std::vector<Tensor<1, 3>> &lubrication_force,
-  std::vector<Tensor<1, 3>> &lubrication_torque)
+  std::vector<Tensor<1, 3>> & /*lubrication_torque*/)
 {
   using numbers::PI;
   // loop over all particles to find pair of close partilces
@@ -330,8 +330,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
     {
       unsigned int boundary_index = 0;
       double       best_dist      = DBL_MAX;
-      // BB FIX
-      unsigned int best_index = UINT_MAX;
+      unsigned int best_index     = UINT_MAX;
       // For each particle loop over the point and normal identified as
       // potential contact candidate.
       for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
@@ -465,12 +464,12 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pw_lubrication_force(
-  const double               dt_dem,
+  const double /*dt_dem*/,
   const double               h_max,
   const double               h_min,
   const double               mu,
   std::vector<Tensor<1, 3>> &lubrication_force,
-  std::vector<Tensor<1, 3>> &lubrication_torque)
+  std::vector<Tensor<1, 3>> & /*lubrication_torque*/)
 {
   using numbers::PI;
 
@@ -479,7 +478,7 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
     {
       unsigned int boundary_index = 0;
       double       best_dist      = DBL_MAX;
-      unsigned int best_index;
+      unsigned int best_index     = UINT_MAX;
       // For each particle loop over the point and normal identified as
       // potential contact candidate.
       for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
@@ -504,7 +503,6 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
           Tensor<1, 3> normal =
             tensor_nd_to_3d(boundary_cell_information.normal_vector);
           auto point_on_boundary = boundary_cell_information.point_on_boundary;
-          const Point<dim> particle_one_location = particle.position;
 
           // Calculation of gap
           Point<3> particle_position_3d = point_nd_to_3d(particle.position);
