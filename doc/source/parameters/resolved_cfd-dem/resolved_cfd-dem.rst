@@ -154,13 +154,13 @@ The following properties are used if the particle impact one of the boundaries o
 
 Box refinement
 ---------------------
-For a particle to be accounted for in the fluid mesh, the particle has to overlap one or more quadrature points of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls.
+For a particle to be accounted for in the fluid mesh, the particle has to overlap one or more degrees of freedom (dof) on a wall of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls.
 To avoid this, you can specify a region in the fluid domain where you want the mesh to be finer. To do so, a box refinement can be added with the following example parameters:
 
 .. code-block:: text
 
 	subsection  box refinement
-		subsection mesh
+		subsection 
 			set type                 = dealii
 			set grid type            = subdivided_hyper_rectangle
 			set grid arguments       = 2,2,2: -1,-1,-1 : 1,1,1 : true
@@ -169,7 +169,7 @@ To avoid this, you can specify a region in the fluid domain where you want the m
 		set initial refinement   = 3
 	end
 
-* The ``mesh`` subsection is necessary to define the region in which the fluid mesh needs to be refined. A cell in the fluid mesh will be refined if at least one of its quadrature points is located within the outer boundaries of the box. Therefore, in this example, for every cell of the fluid mesh that has at least one of its quadrature points located in the cube located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. 
+* The ``mesh`` subsection is necessary to define the region in which the fluid mesh needs to be refined. A cell in the fluid mesh will be refined if at least one of its dofs is located within the outer boundaries of the box. Therefore, in this example, for every cell of the fluid mesh that has at least one of its dofs located in the cube located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. 
 
 .. note::
 	The initial refinement of the ``subdivided_hyper_rectangle`` will not have any impact on the refinement of the fluid mesh, since only its shape and outer walls location are taken into account.
