@@ -1134,11 +1134,11 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   // will be moved to a new class that tests the parameter combination in the
   // parameter initialization.
 
-  Assert(!this->simulation_parameters.physical_properties_manager
+  Assert(!(this->simulation_parameters.physical_properties_manager
              .is_non_newtonian() and
            this->simulation_parameters.particlesParameters
              ->enable_lubrication_force and
-           this->simulation_parameters.particlesParameters->integrate_motion,
+           this->simulation_parameters.particlesParameters->integrate_motion),
          RequiresConstantViscosity(
            "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
 
