@@ -169,7 +169,11 @@ To avoid this, you can specify a region in the fluid domain where you want the m
 		set initial refinement   = 3
 	end
 
-* The ``mesh`` subsection is necessary to define the region in which the fluid mesh needs to be refined. A cell in the fluid mesh will be refined if at least one of its quadrature points is located within the outer boundaries of the box. Therefore, in this example, for every cell of the fluid mesh that has at least one of its quadrature points located in the cube located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. The initial refinement of the ``subdivided_hyper_rectangle`` will not have any impact on the refinement of the fluid mesh, since only its shape and outer walls location are taken into account.
+* The ``mesh`` subsection is necessary to define the region in which the fluid mesh needs to be refined. A cell in the fluid mesh will be refined if at least one of its quadrature points is located within the outer boundaries of the box. Therefore, in this example, for every cell of the fluid mesh that has at least one of its quadrature points located in the cube located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. 
+
+.. note::
+	The initial refinement of the ``subdivided_hyper_rectangle`` will not have any impact on the refinement of the fluid mesh, since only its shape and outer walls location are taken into account.
+
 * The ``initial refinement`` parameter in the ``box refinement`` subsection will dictate the number of times the fluid mesh cells inside the box will be refined. 
 
 Reference
