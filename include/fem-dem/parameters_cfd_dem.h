@@ -20,11 +20,11 @@
 #ifndef lethe_parameters_cfd_dem_h
 #define lethe_parameters_cfd_dem_h
 
-#include <core/parameters.h>
-#include <core/parameters_lagrangian.h>
-
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+
+#include <core/parameters.h>
+#include <core/parameters_lagrangian.h>
 
 
 using namespace dealii;
@@ -101,6 +101,8 @@ namespace Parameters
     bool         shear_force;
     bool         pressure_force;
     bool         void_fraction_time_derivative;
+    double       cstar;
+    bool         implicit_stabilization;
 
     static void
     declare_parameters(ParameterHandler &prm);

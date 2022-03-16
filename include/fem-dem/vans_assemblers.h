@@ -14,15 +14,13 @@
  * ---------------------------------------------------------------------*/
 
 
-#include <core/simulation_control.h>
+#include <deal.II/particles/particle_handler.h>
 
+#include <core/simulation_control.h>
+#include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
-
-#include <fem-dem/cfd_dem_simulation_parameters.h>
-
-#include <deal.II/particles/particle_handler.h>
 
 #ifndef lethe_vans_assemblers_h
 #  define lethe_vans_assemblers_h
@@ -465,5 +463,10 @@ public:
   Parameters::CFDDEM cfd_dem;
 };
 
+inline double
+calculate_gamma(double velocity, double viscosity, double /*h*/, double c_star)
+{
+  return viscosity + c_star * velocity;
+}
 
 #endif

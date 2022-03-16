@@ -120,6 +120,16 @@ namespace Parameters
                       "modelB",
                       Patterns::Selection("modelA|modelB"),
                       "The volume averaged Navier Stokes model to be solved.");
+    prm.declare_entry(
+      "grad-div length scale",
+      "1",
+      Patterns::Double(),
+      "Constant cs for the calculation of the grad-div stabilization (gamma = viscosity + cs * velocity)");
+    prm.declare_entry(
+      "implicit stabilization",
+      "false",
+      Patterns::Bool(),
+      "Choose whether or not to use implicit or explicit stabilization");
     prm.leave_subsection();
   }
 
@@ -131,14 +141,17 @@ namespace Parameters
     grad_div = prm.get_bool("grad div");
     void_fraction_time_derivative =
       prm.get_bool("void fraction time derivative");
-    drag_force           = prm.get_bool("drag force");
-    buoyancy_force       = prm.get_bool("buoyancy force");
-    shear_force          = prm.get_bool("shear force");
-    pressure_force       = prm.get_bool("pressure force");
-    post_processing      = prm.get_bool("post processing");
-    inlet_boundary_id    = prm.get_integer("inlet boundary id");
-    outlet_boundary_id   = prm.get_integer("outlet boundary id");
-    coupling_frequency   = prm.get_integer("coupling frequency");
+    drag_force             = prm.get_bool("drag force");
+    buoyancy_force         = prm.get_bool("buoyancy force");
+    shear_force            = prm.get_bool("shear force");
+    pressure_force         = prm.get_bool("pressure force");
+    post_processing        = prm.get_bool("post processing");
+    inlet_boundary_id      = prm.get_integer("inlet boundary id");
+    outlet_boundary_id     = prm.get_integer("outlet boundary id");
+    coupling_frequency     = prm.get_integer("coupling frequency");
+    cstar                  = prm.get_double("grad-div length scale");
+    implicit_stabilization = prm.get_bool("implicit stabilization");
+
     const std::string op = prm.get("drag model");
     if (op == "difelice")
       drag_model = Parameters::DragModel::difelice;

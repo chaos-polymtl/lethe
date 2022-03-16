@@ -3,7 +3,6 @@
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-
 #include <fem-dem/vans_assemblers.h>
 
 template <int dim>
@@ -38,6 +37,8 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
       // Gather into local variables the relevant fields
       const double         viscosity = viscosity_vector[q];
       const Tensor<1, dim> velocity  = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
@@ -54,13 +55,22 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
       const Tensor<1, dim> force       = scratch_data.force[q];
       double               mass_source = scratch_data.mass_source[q];
 
-
+      double u_mag = 0;
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
 
-      // Grad-div weight factor used to be constant 0.1
-      const double gamma = viscosity + u_mag * h;
+      // Grad-div weight factor
+      const double gamma = calculate_gamma(u_mag, viscosity, h, cfd_dem.cstar);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -202,7 +212,9 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
       const double viscosity = viscosity_vector[q];
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
@@ -223,9 +235,22 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
       const Tensor<1, dim> force       = scratch_data.force[q];
       double               mass_source = scratch_data.mass_source[q];
 
+      double u_mag = 0;
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma = calculate_gamma(u_mag, viscosity, h, cfd_dem.cstar);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -241,10 +266,6 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
                          9 * std::pow(4 * viscosity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * viscosity / (h * h), 2));
-
-      // Grad-div weight factor used to be constant 0.1
-      const double gamma = viscosity + u_mag * h;
-
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity * void_fraction +
@@ -339,7 +360,6 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
   const double sdt = 1. / dt;
 
   // Grad-div weight factor
-  const double gamma = 0.1;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -347,8 +367,11 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
       // Physical properties
       const double viscosity = viscosity_vector[q];
 
+
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
@@ -365,10 +388,22 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
       const Tensor<1, dim> force       = scratch_data.force[q];
       double               mass_source = scratch_data.mass_source[q];
 
-
+      double u_mag = 0;
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma = calculate_gamma(u_mag, viscosity, h, cfd_dem.cstar);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -513,7 +548,9 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
       const double viscosity = viscosity_vector[q];
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
@@ -534,9 +571,22 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
       const Tensor<1, dim> force       = scratch_data.force[q];
       double               mass_source = scratch_data.mass_source[q];
 
+      double u_mag = 0;
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma = calculate_gamma(u_mag, viscosity, h, cfd_dem.cstar);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -552,9 +602,6 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
                          9 * std::pow(4 * viscosity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * viscosity / (h * h), 2));
-
-      // Grad-div weight factor
-      const double gamma = 0.1;
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity * void_fraction +
@@ -733,10 +780,23 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
         {
           strong_residual[q] += bdf_coefs[p] * velocity[p] * void_fraction[0];
         }
+      double u_mag = 0;
 
-      // Grad-div weight factor used to be constant 0.1
-      const double u_mag = std::max(velocity[0].norm(), 1e-12);
-      const double gamma = viscosity[q] + u_mag * h;
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity[0].norm(), 1e-12);
+      else
+        {
+          // Grad-div weight factor used to be constant 0.1
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity[0].norm(), 1e-12);
+          else
+            u_mag = std::max(velocity[1].norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma =
+        calculate_gamma(u_mag, viscosity[q], h, cfd_dem.cstar);
 
 
       for (unsigned int i = 0; i < n_dofs; ++i)
