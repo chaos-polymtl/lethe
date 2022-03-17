@@ -121,7 +121,7 @@ namespace BoundaryConditions
   {
   public:
     // Functions for (u,v,w) for all boundaries
-    NSBoundaryFunctions<dim>         *bcFunctions;
+    NSBoundaryFunctions<dim> *        bcFunctions;
     NSPressureBoundaryFunctions<dim> *bcPressureFunction;
 
     void
@@ -886,7 +886,7 @@ public:
  */
 template <int dim>
 double
-NavierStokesFunctionDefined<dim>::value(const Point<dim>  &p,
+NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
                                         const unsigned int component) const
 {
   Assert(component < this->n_components,
@@ -935,7 +935,7 @@ public:
 template <int dim>
 double
 NavierStokesPressureFunctionDefined<dim>::value(
-  const Point<dim>  &point,
+  const Point<dim> & point,
   const unsigned int component) const
 {
   if (component == dim)
