@@ -2352,6 +2352,12 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+    {
+      this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.boundary_conditions));
+    }
   if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
