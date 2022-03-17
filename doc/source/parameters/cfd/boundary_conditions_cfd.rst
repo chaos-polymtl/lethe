@@ -28,7 +28,6 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
    subsection boundary conditions
      set number                  = 2
      set time dependent          = false
-     set beta                    = 0
      subsection bc 0
            set id                = 0
            set type              = function
@@ -51,6 +50,7 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
            end
         set periodic_id         = 1
         set periodic_direction  = 0
+        set beta                = 0
      end
      subsection bc 1
            set type              = noslip
@@ -64,8 +64,6 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
 
 * ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false```). By default, this parameter is set to ``false``. This is there to improve the computational efficiency for transient cases in which the boundary conditions do not change. 
 
-* ``beta`` is a penalization paramter that is used for both the ``outlet`` and the ``function weak`` boundary conditions. For the outlet boundary conditions, ``beta`` should be close to unity whereas values of ``beta`` for 10 or a 100 can be appropriate for the ``function weak`` boundary condition.
-
 * Each fluid dynamics boundary condition is stored in a ``bc no`` subsection :
     * ``id``  is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc. 
     
@@ -74,4 +72,8 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
     * The subsections ``u``, ``v`` and ``w`` are used to specify the individual components of the velocity at the boundary using function expressions. These functions can depend on position (:math:`x,y,z`) and on time (:math:`t`).
 
     * The ``center of rotation`` subsection is only necessary when calculating the torque applied on a boundary. See  See :doc:`force_and_torque` for more information.
+
     * ``periodic id`` and ``periodic_direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``ìd=0``, ``periodic_id=1`` and ``periodic_direction=0``.
+
+    * ``beta`` is a penalization paramter that is used for both the ``outlet`` and the ``function weak`` boundary conditions. For the outlet boundary conditions, ``beta`` should be close to unity whereas values of ``beta`` of 10 or a 100 can be appropriate for the ``function weak`` boundary condition.
+
