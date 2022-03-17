@@ -122,7 +122,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
-  auto &                 nonzero_constraints = this->get_nonzero_constraints();
+  auto                  &nonzero_constraints = this->get_nonzero_constraints();
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
@@ -337,6 +337,11 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
         {
           /*do nothing*/
         }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::outlet)
+        {
+          /*do nothing*/
+        }
       else
         {
           VectorTools::interpolate_boundary_values(
@@ -365,6 +370,13 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         std::make_shared<WeakDirichletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+    {
+      this->pcout << " Pushing back boundary assembler " << std::endl;
+      // this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
+      //   this->simulation_control,
+      //   this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
     {
@@ -536,8 +548,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -716,8 +728,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -1064,8 +1076,8 @@ GLSNavierStokesSolver<dim>::setup_AMG()
   const unsigned int smoother_overlap =
     this->simulation_parameters.linear_solver.amg_smoother_overlap;
   const bool                                        output_details = false;
-  const char *                                      smoother_type  = "ILU";
-  const char *                                      coarse_type    = "ILU";
+  const char                                       *smoother_type  = "ILU";
+  const char                                       *coarse_type    = "ILU";
   TrilinosWrappers::PreconditionAMG::AdditionalData preconditionerOptions(
     elliptic,
     higher_order_elements,

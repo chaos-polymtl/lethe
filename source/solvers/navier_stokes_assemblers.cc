@@ -9,14 +9,14 @@
 template <int dim>
 void
 GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -156,14 +156,14 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -269,14 +269,14 @@ template class GLSNavierStokesAssemblerCore<3>;
 template <int dim>
 void
 GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -450,14 +450,14 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -582,11 +582,11 @@ template class GLSNavierStokesAssemblerNonNewtonianCore<3>;
 template <int dim>
 void
 GLSNavierStokesAssemblerSRF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -670,12 +670,12 @@ GLSNavierStokesAssemblerSRF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesAssemblerSRF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW               = scratch_data.JxW;
-  const auto &       quadrature_points = scratch_data.quadrature_points;
+  const auto        &JxW               = scratch_data.JxW;
+  const auto        &quadrature_points = scratch_data.quadrature_points;
   const unsigned int n_q_points        = scratch_data.n_q_points;
   const unsigned int n_dofs            = scratch_data.n_dofs;
 
@@ -758,11 +758,11 @@ template class GLSNavierStokesAssemblerSRF<3>;
 template <int dim>
 void
 GLSNavierStokesAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -816,11 +816,11 @@ GLSNavierStokesAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -873,11 +873,11 @@ template class GLSNavierStokesAssemblerBDF<3>;
 template <int dim>
 void
 GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -941,11 +941,11 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -1003,14 +1003,14 @@ template class GLSNavierStokesAssemblerSDIRK<3>;
 template <int dim>
 void
 GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -1086,14 +1086,14 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 template <int dim>
 void
 GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -1159,14 +1159,14 @@ template class GDNavierStokesAssemblerNonNewtonianCore<3>;
 template <int dim>
 void
 GDNavierStokesAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -1240,14 +1240,14 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GDNavierStokesAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -1311,11 +1311,11 @@ template class GDNavierStokesAssemblerCore<3>;
 template <int dim>
 void
 LaplaceAssembly<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -1370,11 +1370,11 @@ LaplaceAssembly<dim>::assemble_matrix(
 template <int dim>
 void
 LaplaceAssembly<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -1438,11 +1438,11 @@ BuoyancyAssembly<dim>::assemble_matrix(
 template <int dim>
 void
 BuoyancyAssembly<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -1485,7 +1485,7 @@ template class BuoyancyAssembly<3>;
 template <int dim>
 void
 PressureBoundaryCondition<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
@@ -1570,7 +1570,7 @@ PressureBoundaryCondition<dim>::assemble_matrix(
 template <int dim>
 void
 PressureBoundaryCondition<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
@@ -1654,7 +1654,7 @@ template class PressureBoundaryCondition<3>;
 template <int dim>
 void
 WeakDirichletBoundaryCondition<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
@@ -1678,7 +1678,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
 
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
-  auto & local_matrix = copy_data.local_matrix;
+  auto  &local_matrix = copy_data.local_matrix;
   double beta         = boundary_conditions.beta;
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
@@ -1760,7 +1760,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
 template <int dim>
 void
 WeakDirichletBoundaryCondition<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
@@ -1784,7 +1784,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
 
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
-  auto & local_rhs = copy_data.local_rhs;
+  auto  &local_rhs = copy_data.local_rhs;
   double beta      = boundary_conditions.beta;
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
@@ -1862,3 +1862,159 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
 
 template class WeakDirichletBoundaryCondition<2>;
 template class WeakDirichletBoundaryCondition<3>;
+
+
+template <int dim>
+void
+OutletBoundaryCondition<dim>::assemble_matrix(
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto  &local_matrix = copy_data.local_matrix;
+  double beta         = boundary_conditions.beta;
+  // Loop over the BCs
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      // Check if this BC is a pressure BC.
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::outlet)
+        {
+          // Loop over the faces of the cell.
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              // Check if the face is on a boundary
+              if (scratch_data.is_boundary_face[f])
+                {
+                  // Check if the face is part of the boundary that as a
+                  // pressure BC.
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      // Assemble the matrix of the BC
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              double normal_outflux = std::min(
+                                0.,
+                                scratch_data.face_velocity_values[f][q] *
+                                  scratch_data.face_normal[f][q]);
+
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  for (const unsigned int j :
+                                       scratch_data.fe_face_values
+                                         .dof_indices())
+                                    {
+                                      const auto comp_j =
+                                        fe.system_to_component_index(j).first;
+                                      if (comp_i == comp_j)
+                                        {
+                                          double beta_terms =
+                                            penalty_parameter * beta *
+                                            normal_outflux *
+                                            (scratch_data
+                                               .face_phi_u[f][q][j][comp_i]) *
+                                            scratch_data
+                                              .face_phi_u[f][q][i][comp_i] *
+                                            JxW;
+
+                                          local_matrix(i, j) += +beta_terms;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+OutletBoundaryCondition<dim>::assemble_rhs(
+  NavierStokesScratchData<dim>         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto  &local_rhs = copy_data.local_rhs;
+  double beta      = boundary_conditions.beta;
+  // Loop over the BCs
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      // Check if this BC is a weakly imposed Dirichlet BC
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::outlet)
+        {
+          // Loop over the faces of the cell.
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              // Check if the face is on a boundary
+              if (scratch_data.is_boundary_face[f])
+                {
+                  // Check if the face is part of the boundary that has a
+                  // weakly imposed Dirichlet BC.
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              // Calculate beta term depending on the
+                              // value of  u*n. If it is positive (outgoing
+                              // flow) then
+                              double normal_outflux = std::min(
+                                0.,
+                                (scratch_data.face_velocity_values[f][q] *
+                                 scratch_data.face_normal[f][q]));
+
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  double beta_terms =
+                                    penalty_parameter * beta * normal_outflux *
+                                    (scratch_data
+                                       .face_velocity_values[f][q][comp_i] *
+                                     scratch_data.face_phi_u[f][q][i][comp_i]) *
+                                    JxW;
+
+                                  local_rhs(i) += -beta_terms;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template class OutletBoundaryCondition<2>;
+template class OutletBoundaryCondition<3>;

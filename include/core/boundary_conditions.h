@@ -36,6 +36,7 @@ namespace BoundaryConditions
     function_weak,
     periodic,
     pressure,
+    outlet,
     // for heat transfer
     temperature,      // - Dirichlet
     convection,       // - Robin
@@ -120,7 +121,7 @@ namespace BoundaryConditions
   {
   public:
     // Functions for (u,v,w) for all boundaries
-    NSBoundaryFunctions<dim> *        bcFunctions;
+    NSBoundaryFunctions<dim>         *bcFunctions;
     NSPressureBoundaryFunctions<dim> *bcPressureFunction;
 
     void
@@ -167,9 +168,9 @@ namespace BoundaryConditions
       "type",
       "noslip",
       Patterns::Selection(
-        "noslip|slip|function|periodic|pressure|function weak"),
+        "noslip|slip|function|periodic|pressure|function weak|outlet"),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|function weak>.");
+      "Choices are <noslip|slip|function|periodic|pressure|function weak|outlet>.");
 
 
     prm.declare_entry("id",
@@ -278,6 +279,10 @@ namespace BoundaryConditions
         this->periodic_id[i_bc]        = prm.get_integer("periodic_id");
         this->periodic_direction[i_bc] = prm.get_integer("periodic_direction");
       }
+    if (op == "outlet")
+      {
+        this->type[i_bc] = BoundaryType::outlet;
+      }
 
     this->id[i_bc] = prm.get_integer("id");
   }
@@ -309,7 +314,7 @@ namespace BoundaryConditions
         "beta",
         "0",
         Patterns::Double(),
-        "penalty parameter for weak boundary condition imposed through Nitsche's method");
+        "penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
       this->id.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
@@ -881,7 +886,7 @@ public:
  */
 template <int dim>
 double
-NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
+NavierStokesFunctionDefined<dim>::value(const Point<dim>  &p,
                                         const unsigned int component) const
 {
   Assert(component < this->n_components,
@@ -930,7 +935,7 @@ public:
 template <int dim>
 double
 NavierStokesPressureFunctionDefined<dim>::value(
-  const Point<dim> & point,
+  const Point<dim>  &point,
   const unsigned int component) const
 {
   if (component == dim)
