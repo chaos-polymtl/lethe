@@ -373,10 +373,9 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
     }
   if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
     {
-      this->pcout << " Pushing back boundary assembler " << std::endl;
-      // this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
-      //   this->simulation_control,
-      //   this->simulation_parameters.boundary_conditions));
+      this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
     {

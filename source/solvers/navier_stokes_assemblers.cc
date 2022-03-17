@@ -1927,12 +1927,14 @@ OutletBoundaryCondition<dim>::assemble_matrix(
                                             penalty_parameter * beta *
                                             normal_outflux *
                                             (scratch_data
-                                               .face_phi_u[f][q][j][comp_i]) *
-                                            scratch_data
-                                              .face_phi_u[f][q][i][comp_i] *
+                                               .face_phi_u[f][q][j][comp_i] *
+                                             scratch_data
+                                               .face_phi_u[f][q][i][comp_i]) *
                                             JxW;
 
-                                          local_matrix(i, j) += +beta_terms;
+                                          local_matrix(i, j) += -beta_terms;
+                                          //+beta_terms first try;
+                                          //-beta_terms second try;
                                         }
                                     }
                                 }
@@ -2005,7 +2007,9 @@ OutletBoundaryCondition<dim>::assemble_rhs(
                                      scratch_data.face_phi_u[f][q][i][comp_i]) *
                                     JxW;
 
-                                  local_rhs(i) += -beta_terms;
+                                  local_rhs(i) += +beta_terms;
+                                  //-beta_terms first try;
+                                  //+beta_terms second try;
                                 }
                             }
                         }
