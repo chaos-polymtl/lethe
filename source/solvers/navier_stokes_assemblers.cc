@@ -1678,12 +1678,11 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
 
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
-  auto & local_matrix = copy_data.local_matrix;
-  double beta         = boundary_conditions.beta;
+  auto &local_matrix = copy_data.local_matrix;
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
-      // Check if this BC is a pressure BC.
+      const double beta = boundary_conditions.beta[i_bc];
       if (this->boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::function_weak)
         {
@@ -1784,12 +1783,11 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
 
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
-  auto & local_rhs = copy_data.local_rhs;
-  double beta      = boundary_conditions.beta;
+  auto &local_rhs = copy_data.local_rhs;
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
-      // Check if this BC is a weakly imposed Dirichlet BC
+      const double beta = boundary_conditions.beta[i_bc];
       if (this->boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::function_weak)
         {
@@ -1862,3 +1860,157 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
 
 template class WeakDirichletBoundaryCondition<2>;
 template class WeakDirichletBoundaryCondition<3>;
+
+
+template <int dim>
+void
+OutletBoundaryCondition<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto &local_matrix = copy_data.local_matrix;
+  // Loop over the BCs
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      const double beta = boundary_conditions.beta[i_bc];
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::outlet)
+        {
+          // Loop over the faces of the cell.
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              // Check if the face is on a boundary
+              if (scratch_data.is_boundary_face[f])
+                {
+                  // Check if the face is part of the boundary that as a
+                  // pressure BC.
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      // Assemble the matrix of the BC
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              double normal_outflux = std::min(
+                                0.,
+                                scratch_data.face_velocity_values[f][q] *
+                                  scratch_data.face_normal[f][q]);
+
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  for (const unsigned int j :
+                                       scratch_data.fe_face_values
+                                         .dof_indices())
+                                    {
+                                      const auto comp_j =
+                                        fe.system_to_component_index(j).first;
+                                      if (comp_i == comp_j)
+                                        {
+                                          double beta_terms =
+                                            penalty_parameter * beta *
+                                            normal_outflux *
+                                            (scratch_data
+                                               .face_phi_u[f][q][j][comp_i] *
+                                             scratch_data
+                                               .face_phi_u[f][q][i][comp_i]) *
+                                            JxW;
+
+                                          local_matrix(i, j) += -beta_terms;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+OutletBoundaryCondition<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto &local_rhs = copy_data.local_rhs;
+  // Loop over the BCs
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      const double beta = boundary_conditions.beta[i_bc];
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::outlet)
+        {
+          // Loop over the faces of the cell.
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              // Check if the face is on a boundary
+              if (scratch_data.is_boundary_face[f])
+                {
+                  // Check if the face is part of the boundary that has a
+                  // weakly imposed Dirichlet BC.
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              // Calculate beta term depending on the
+                              // value of  u*n. If it is positive (outgoing
+                              // flow) then
+                              double normal_outflux = std::min(
+                                0.,
+                                (scratch_data.face_velocity_values[f][q] *
+                                 scratch_data.face_normal[f][q]));
+
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  double beta_terms =
+                                    penalty_parameter * beta * normal_outflux *
+                                    (scratch_data
+                                       .face_velocity_values[f][q][comp_i] *
+                                     scratch_data.face_phi_u[f][q][i][comp_i]) *
+                                    JxW;
+
+                                  local_rhs(i) += +beta_terms;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template class OutletBoundaryCondition<2>;
+template class OutletBoundaryCondition<3>;

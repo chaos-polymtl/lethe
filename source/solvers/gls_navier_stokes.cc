@@ -337,6 +337,11 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
         {
           /*do nothing*/
         }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::outlet)
+        {
+          /*do nothing*/
+        }
       else
         {
           VectorTools::interpolate_boundary_values(
@@ -366,6 +371,12 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+    {
+      this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.boundary_conditions));
+    }
   if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
     {
       this->assemblers.push_back(
@@ -383,10 +394,21 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_control));
         }
 
-      // Core assembler
-      this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-          this->simulation_control));
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
+        {
+          // Core assembler with Non newtonian viscosity
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
+              this->simulation_control));
+        }
+      else
+        {
+          // Core assembler
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+              this->simulation_control));
+        }
 
       // Surface tension force (STF)
       if (this->simulation_parameters.multiphysics.surface_tension_force)

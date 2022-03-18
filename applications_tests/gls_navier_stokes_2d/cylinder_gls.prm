@@ -74,7 +74,7 @@ end
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
-  set number                  = 3
+  set number                  = 4
     subsection bc 0
         set type              = noslip
     end
@@ -92,6 +92,10 @@ subsection boundary conditions
     end
     subsection bc 2
         set type              = slip
+    end
+    subsection bc 3
+        set beta = 1
+        set type = outlet
     end
 end
 

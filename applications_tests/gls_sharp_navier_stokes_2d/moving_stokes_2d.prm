@@ -48,7 +48,6 @@ end
 subsection boundary conditions
 set number                  =4
 set time dependent =true
-set beta =10000
     subsection bc 0
 	set id = 0
         set type              = function
@@ -91,6 +90,8 @@ set beta =10000
     subsection bc 3
 	set id = 1
         set type              = function weak
+        set beta =10000
+
         subsection u
             set Function expression =(-y^2*(0.375*(y^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + (x - cos(t))^2) - (y^2 + (x - cos(t))^2)^2) + (x - cos(t))^2*(-0.75*(y^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + (x - cos(t))^2) + (y^2 + (x - cos(t))^2)^2) - (y^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + (x - cos(t))^2)^3
         end

@@ -519,6 +519,28 @@ GLSVANSSolver<dim>::setup_assemblers()
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
 
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::function_weak))
+    {
+      this->assemblers.push_back(
+        std::make_shared<WeakDirichletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+    {
+      this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+    {
+      this->assemblers.push_back(
+        std::make_shared<PressureBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+
   if (this->cfd_dem_simulation_parameters.cfd_dem.drag_force == true)
     {
       // Particle_Fluid Interactions Assembler

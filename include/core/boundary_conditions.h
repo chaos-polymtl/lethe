@@ -36,6 +36,7 @@ namespace BoundaryConditions
     function_weak,
     periodic,
     pressure,
+    outlet,
     // for heat transfer
     temperature,      // - Dirichlet
     convection,       // - Robin
@@ -63,7 +64,8 @@ namespace BoundaryConditions
     // List of boundary type for each number
     std::vector<BoundaryType> type;
 
-    double beta;
+    // Penalization parameter for weak dirichlet BCs and outlets
+    std::vector<double> beta;
 
     // Number of boundary conditions
     unsigned int size;
@@ -148,6 +150,8 @@ namespace BoundaryConditions
     this->type.resize(1);
     this->type[0] = BoundaryType::noslip;
     this->size    = 1;
+    this->beta.resize(1);
+    this->beta[0] = 0;
   }
 
 
@@ -167,9 +171,9 @@ namespace BoundaryConditions
       "type",
       "noslip",
       Patterns::Selection(
-        "noslip|slip|function|periodic|pressure|function weak"),
+        "noslip|slip|function|periodic|pressure|function weak|outlet"),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|function weak>.");
+      "Choices are <noslip|slip|function|periodic|pressure|function weak|outlet>.");
 
 
     prm.declare_entry("id",
@@ -213,6 +217,13 @@ namespace BoundaryConditions
     prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
     prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
     prm.leave_subsection();
+
+    // Penalization parameter for weakly imposed dirichlet BCs and outlets
+    prm.declare_entry(
+      "beta",
+      "0",
+      Patterns::Double(),
+      "penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
   }
 
 
@@ -278,8 +289,13 @@ namespace BoundaryConditions
         this->periodic_id[i_bc]        = prm.get_integer("periodic_id");
         this->periodic_direction[i_bc] = prm.get_integer("periodic_direction");
       }
+    if (op == "outlet")
+      {
+        this->type[i_bc] = BoundaryType::outlet;
+      }
 
-    this->id[i_bc] = prm.get_integer("id");
+    this->id[i_bc]   = prm.get_integer("id");
+    this->beta[i_bc] = prm.get_double("beta");
   }
 
 
@@ -305,12 +321,9 @@ namespace BoundaryConditions
         "false",
         Patterns::Bool(),
         "Bool to define if the boundary condition is time dependent");
-      prm.declare_entry(
-        "beta",
-        "0",
-        Patterns::Double(),
-        "penalty parameter for weak boundary condition imposed through Nitsche's method");
+
       this->id.resize(this->max_size);
+      this->beta.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
       this->type.resize(this->max_size);
@@ -342,7 +355,6 @@ namespace BoundaryConditions
     {
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
-      this->beta           = prm.get_double("beta");
       this->type.resize(this->size);
       this->id.resize(this->size);
       this->periodic_direction.resize(this->size);

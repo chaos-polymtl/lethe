@@ -1134,16 +1134,14 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   // will be moved to a new class that tests the parameter combination in the
   // parameter initialization.
 
-  bool incompatible_parameter_choices =
-    this->simulation_parameters.physical_properties_manager
-      .is_non_newtonian() and
-    this->simulation_parameters.particlesParameters
-      ->enable_lubrication_force and
-    this->simulation_parameters.particlesParameters->integrate_motion;
-
-  Assert(!incompatible_parameter_choices,
+  Assert(!(this->simulation_parameters.physical_properties_manager
+             .is_non_newtonian() and
+           this->simulation_parameters.particlesParameters
+             ->enable_lubrication_force and
+           this->simulation_parameters.particlesParameters->integrate_motion),
          RequiresConstantViscosity(
            "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
+
   double h_min =
     dr * this->simulation_parameters.particlesParameters->lubrication_range_min;
   double h_max =
@@ -2354,6 +2352,12 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+    {
+      this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.boundary_conditions));
+    }
   if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
@@ -2363,10 +2367,22 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
             std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
         }
-      // Core assembler
-      this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-          this->simulation_control));
+      // Core assemblers
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
+        {
+          // Core assembler with Non newtonian viscosity
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
+              this->simulation_control));
+        }
+      else
+        {
+          // Core assembler
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+              this->simulation_control));
+        }
     }
   else
     {
