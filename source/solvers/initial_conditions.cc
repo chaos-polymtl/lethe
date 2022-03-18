@@ -21,6 +21,44 @@
 
 namespace Parameters
 {
+  void
+  Ramp_n::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("ramp n");
+    {
+      prm.declare_entry(
+        "n0",
+        "1.0",
+        Patterns::Double(),
+        "First n value with which to start the initial condition");
+
+      prm.declare_entry(
+        "n_iter",
+        "5",
+        Patterns::Double(),
+        "Number of iterations uses in the ramp before reaching the final n value");
+
+      prm.declare_entry("alpha",
+                        "0.5",
+                        Patterns::Double(),
+                        "Coefficient used for n-spacing.");
+    }
+    prm.leave_subsection();
+  }
+
+
+  void
+  Ramp_n::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("ramp n");
+    {
+      n0     = prm.get_double("n0");
+      n_iter = prm.get_double("n_iter");
+      alpha  = prm.get_double("alpha");
+    }
+    prm.leave_subsection();
+  }
+
   extern template class InitialConditions<2>;
   extern template class InitialConditions<3>;
 } // namespace Parameters

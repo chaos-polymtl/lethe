@@ -36,7 +36,20 @@ namespace Parameters
     none,
     L2projection,
     viscous,
-    nodal
+    nodal,
+    ramp_n
+  };
+
+  struct Ramp_n
+  {
+    double n0;
+    double n_iter;
+    double alpha;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
   };
 
   template <int dim>
@@ -63,6 +76,9 @@ namespace Parameters
 
     // VOF
     Functions::ParsedFunction<dim> VOF;
+
+    // Non-Newtonian
+    Ramp_n ramp_n;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -109,6 +125,10 @@ namespace Parameters
       VOF.declare_parameters(prm);
       prm.set("Function expression", "0");
       prm.leave_subsection();
+
+      prm.enter_subsection("ramp n");
+      ramp_n.declare_parameters(prm);
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -126,6 +146,8 @@ namespace Parameters
         type = InitialConditionType::viscous;
       else if (op == "nodal")
         type = InitialConditionType::nodal;
+      else if (op == "ramp n")
+        type = InitialConditionType::ramp_n;
 
       viscosity = prm.get_double("viscosity");
       prm.enter_subsection("uvwp");
@@ -142,6 +164,10 @@ namespace Parameters
 
       prm.enter_subsection("VOF");
       VOF.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("ramp n");
+      ramp_n.parse_parameters(prm);
       prm.leave_subsection();
     }
     prm.leave_subsection();
