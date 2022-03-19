@@ -8,7 +8,7 @@ subsection simulation control
   set time end                = 0.04
   set time step               = 0.01
   set output name             = dam-break_free_surface
-  set output frequency        = 1
+  set output frequency        = 0
 end
 
 #---------------------------------------------------

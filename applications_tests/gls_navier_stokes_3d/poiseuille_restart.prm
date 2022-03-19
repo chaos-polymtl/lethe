@@ -7,7 +7,7 @@ subsection simulation control
   set method                       = bdf1
   set output name                  = poiseuille_restart-output
   set time step                    = 0.1
-  set output frequency             = 1
+  set output frequency             = 0
   set time end                     = 2.0
 end
 

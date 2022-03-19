@@ -8,9 +8,8 @@
 subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
-  set output frequency        = 1
+  set output frequency        = 0
   set output name             = stefan
-  set output path = ./
   set time end = 10
   set time step = 2
 end

@@ -8,7 +8,7 @@
 subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
-  set output frequency        = 1
+  set output frequency        = 0
   set output name             = mms_conv_22
 end
 #---------------------------------------------------

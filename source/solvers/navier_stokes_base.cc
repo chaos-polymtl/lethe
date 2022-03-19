@@ -125,10 +125,12 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   struct stat buffer;
 
   // If output directory does not exist, create it
-  if (stat(output_dir_name.c_str(), &buffer) != 0 &&
-      Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
-      create_output_folder(output_dir_name);
+      if (stat(output_dir_name.c_str(), &buffer) != 0)
+        {
+          create_output_folder(output_dir_name);
+        }
     }
 
   if (simulation_parameters.simulation_control.method ==
