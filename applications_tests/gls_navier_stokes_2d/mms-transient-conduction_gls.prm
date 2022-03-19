@@ -10,7 +10,7 @@ subsection simulation control
   set time step               = 0.100    # Time step
     set number mesh adapt     = 0       # If steady, nb mesh adaptation
   set time end                = 1.00      # End time of simulation
-  set output path             =  # Path to where the output results are made
+  set output path             = ./ # Path to where the output results are made
   set output name             = mms-transient-conduction # Prefix for VTU outputs
   set output frequency        = 1       # Frequency of simulation output
   set subdivision             = 1       # Mesh subdivision when outputend
