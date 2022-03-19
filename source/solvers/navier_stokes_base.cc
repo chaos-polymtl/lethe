@@ -50,6 +50,8 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
+#include <sys/stat.h>
+
 
 /*
  * Constructor for the Navier-Stokes base class
@@ -116,6 +118,18 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
+
+  // Check if the output directory exists
+  std::string output_dir_name =
+    simulation_parameters.simulation_control.output_folder;
+  struct stat buffer;
+
+  // If output directory does not exist, create it
+  if (stat(output_dir_name.c_str(), &buffer) != 0 &&
+      Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      create_output_folder(output_dir_name);
+    }
 
   if (simulation_parameters.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::steady)
