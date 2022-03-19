@@ -18,6 +18,7 @@ This subsection includes parameters related to multiphase flow simulations using
       set inlet boundary id = 2
       set outlet boundary id = 3
       set implicit stabilization = false
+      set grad-div length scale = 1
    end
 
 
@@ -35,7 +36,8 @@ This subsection includes parameters related to multiphase flow simulations using
       \Delta t_{DEM} = \frac{\Delta t_{CFD}}{coupling frequency}
 
 * The ``inlet boundary`` and ``outlet boundary`` parameters allow us to specify the ID of the inlet and outlet for pressure drop calculations.
-* The implicit stabilization parameter deetermines wehether or not we calculate the :math:`\mathbf{\tau}` for the SUPG stabilization and the :math:`\mathbf{\gamma}` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization).
+* The implicit stabilization parameter determines wehether or not we calculate the :math:`\tau` for the SUPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization).
+* The grad-div length scale determines the value of the length scale constant :math:`c^*` in the calculation of :math:`\gamma = \nu + c^* \mathbf{u}`. 
 
 [1] B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, J. Chaouki, Lethe: An open-source parallel high- order adaptative cfd solver for incompressible flows, SoftwareX 12 (2020) 100579.
 
