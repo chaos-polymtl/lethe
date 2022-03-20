@@ -7,7 +7,7 @@ subsection simulation control
   set method                  = steady
   set number mesh adapt       = 0      # If steady, nb mesh adaptation
   set output name             = 3d_steady_sphere_couette # Prefix for VTU outputs
-  set output frequency        = 1       # Frequency of simulation output
+  set output frequency        = 0       # Frequency of simulation output
   set subdivision             = 1       # Mesh subdivision when outputend
 
 

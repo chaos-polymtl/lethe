@@ -10,7 +10,7 @@ subsection simulation control
   set number mesh adapt       = 0
   set time step               = 0.001
   set time end                = 0.01
-  set output frequency        = 1
+  set output frequency        = 0
   set output name             = mms_conv_22
 end
 #---------------------------------------------------
