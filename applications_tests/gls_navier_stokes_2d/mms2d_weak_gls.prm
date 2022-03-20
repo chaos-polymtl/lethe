@@ -6,7 +6,7 @@
 subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
-  set output frequency        = 10
+  set output frequency        = 0
   set output name              = mms2d_
 end
 

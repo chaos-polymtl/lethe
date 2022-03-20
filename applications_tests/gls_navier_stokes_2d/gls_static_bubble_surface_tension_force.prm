@@ -9,7 +9,7 @@ subsection simulation control
   set adapt 		      		= false
   set number mesh adapt       		= 0
   set output name             		= static_bubble
-  set output frequency        		= 5
+  set output frequency        		= 0
   set subdivision             		= 1
 end
 

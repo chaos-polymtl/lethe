@@ -8,7 +8,7 @@ subsection simulation control
   set time end                = 0.1
   set time step               = 0.02
   set output name             = hydrostat_VOF
-  set output frequency        = 1
+  set output frequency        = 0
 end
 
 #---------------------------------------------------

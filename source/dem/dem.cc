@@ -17,6 +17,7 @@
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
 #include <core/solutions_output.h>
+#include <core/utilities.h>
 
 #include <dem/dem.h>
 #include <dem/explicit_euler_integrator.h>
@@ -51,6 +52,8 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 
+#include <sys/stat.h>
+
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
@@ -76,6 +79,19 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
 {
+  // Check if the output directory exists
+  std::string output_dir_name = parameters.simulation_control.output_folder;
+  struct stat buffer;
+
+  // If output directory does not exist, create it
+  if (this_mpi_process == 0)
+    {
+      if (stat(output_dir_name.c_str(), &buffer) != 0)
+        {
+          create_output_folder(output_dir_name);
+        }
+    }
+
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
