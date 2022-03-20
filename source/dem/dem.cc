@@ -52,6 +52,8 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 
+#include <sys/stat.h>
+
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
