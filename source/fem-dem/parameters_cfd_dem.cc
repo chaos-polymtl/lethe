@@ -127,7 +127,7 @@ namespace Parameters
       "Constant cs for the calculation of the grad-div stabilization (gamma = viscosity + cs * velocity)");
     prm.declare_entry(
       "implicit stabilization",
-      "false",
+      "true",
       Patterns::Bool(),
       "Choose whether or not to use implicit or explicit stabilization");
     prm.leave_subsection();
