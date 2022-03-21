@@ -171,7 +171,7 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
  * * @param dirname Output directory name
  */
 void
-create_output_folder(const std::string &dirname);
+create_output_folder(const std::string /*&dirname*/);
 
 
 
