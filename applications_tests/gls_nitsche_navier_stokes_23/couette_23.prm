@@ -9,7 +9,7 @@ subsection simulation control
   set method                  = steady
   set number mesh adapt       = 1
   set output name             = noslip_23
-  set output frequency        = 1
+  set output frequency        = 0
   set subdivision             = 1
 end
 

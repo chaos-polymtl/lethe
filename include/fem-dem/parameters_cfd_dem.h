@@ -101,6 +101,8 @@ namespace Parameters
     bool         shear_force;
     bool         pressure_force;
     bool         void_fraction_time_derivative;
+    double       cstar;
+    bool         implicit_stabilization;
 
     static void
     declare_parameters(ParameterHandler &prm);

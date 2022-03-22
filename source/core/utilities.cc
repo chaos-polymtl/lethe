@@ -1,6 +1,7 @@
 
 #include <core/utilities.h>
 
+//#include <filesystem>
 
 template <int dim, typename T>
 TableHandler
@@ -200,6 +201,12 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
     }
   else
     std::cout << "Unable to open file";
+}
+
+void
+create_output_folder(const std::string /*&dirname*/)
+{
+  // std::filesystem::create_directory(dirname);
 }
 
 template TableHandler

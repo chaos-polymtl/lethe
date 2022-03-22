@@ -465,5 +465,10 @@ public:
   Parameters::CFDDEM cfd_dem;
 };
 
+inline double
+calculate_gamma(double velocity, double viscosity, double /*h*/, double c_star)
+{
+  return viscosity + c_star * velocity;
+}
 
 #endif
