@@ -37,14 +37,37 @@ namespace Parameters
     L2projection,
     viscous,
     nodal,
-    ramp_n
+    ramp
   };
 
   struct Ramp_n
   {
-    double n0;
-    double n_iter;
+    double n_init;
+    int    n_iter;
     double alpha;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  struct Ramp_viscosity
+  {
+    double viscosity_init;
+    int    n_iter;
+    double alpha;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  struct Ramp
+  {
+    Ramp_n         ramp_n;
+    Ramp_viscosity ramp_viscosity;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -78,7 +101,7 @@ namespace Parameters
     Functions::ParsedFunction<dim> VOF;
 
     // Non-Newtonian
-    Ramp_n ramp_n;
+    Ramp ramp;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -94,9 +117,9 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         "nodal",
-                        Patterns::Selection("L2projection|viscous|nodal"),
+                        Patterns::Selection("L2projection|viscous|nodal|ramp"),
                         "Type of initial condition"
-                        "Choices are <L2projection|viscous|nodal>.");
+                        "Choices are <L2projection|viscous|nodal|ramp>.");
       prm.enter_subsection("uvwp");
       uvwp.declare_parameters(prm, dim);
       if (dim == 2)
@@ -126,9 +149,7 @@ namespace Parameters
       prm.set("Function expression", "0");
       prm.leave_subsection();
 
-      prm.enter_subsection("ramp n");
-      ramp_n.declare_parameters(prm);
-      prm.leave_subsection();
+      ramp.declare_parameters(prm);
     }
     prm.leave_subsection();
   }
@@ -146,8 +167,8 @@ namespace Parameters
         type = InitialConditionType::viscous;
       else if (op == "nodal")
         type = InitialConditionType::nodal;
-      else if (op == "ramp n")
-        type = InitialConditionType::ramp_n;
+      else if (op == "ramp")
+        type = InitialConditionType::ramp;
 
       viscosity = prm.get_double("viscosity");
       prm.enter_subsection("uvwp");
@@ -166,9 +187,7 @@ namespace Parameters
       VOF.parse_parameters(prm);
       prm.leave_subsection();
 
-      prm.enter_subsection("ramp n");
-      ramp_n.parse_parameters(prm);
-      prm.leave_subsection();
+      ramp.parse_parameters(prm);
     }
     prm.leave_subsection();
   }
