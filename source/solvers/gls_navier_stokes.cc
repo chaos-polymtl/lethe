@@ -896,6 +896,89 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
       this->simulation_parameters.physical_properties_manager.set_rheology(
         original_viscosity_model);
     }
+  else if (initial_condition_type == Parameters::InitialConditionType::ramp)
+    {
+      this->pcout << "*********************************" << std::endl;
+      this->pcout << " Initial condition using ramp " << std::endl;
+      this->pcout << "*********************************" << std::endl;
+
+      this->set_nodal_values();
+
+      // Create a pointer to the current viscosity model
+      std::shared_ptr<RheologicalModel> viscosity_model =
+        this->simulation_parameters.physical_properties_manager.get_rheology();
+
+      // Gather n and viscosity final paramerters
+      const double n_end         = viscosity_model->get_n();
+      const double viscosity_end = viscosity_model->get_viscosity();
+
+      // n ramp parameters
+      double n =
+        this->simulation_parameters.initial_condition->ramp.ramp_n.n_init;
+      const int n_iter_n =
+        this->simulation_parameters.initial_condition->ramp.ramp_n.n_iter;
+      const double alpha_n =
+        this->simulation_parameters.initial_condition->ramp.ramp_n.alpha;
+
+      // viscosity ramp parameters
+      double viscosity = this->simulation_parameters.initial_condition->ramp
+                           .ramp_viscosity.viscosity_init;
+      const int n_iter_viscosity =
+        this->simulation_parameters.initial_condition->ramp.ramp_viscosity
+          .n_iter;
+      const double alpha_viscosity =
+        this->simulation_parameters.initial_condition->ramp.ramp_viscosity
+          .alpha;
+
+      if (n_iter_viscosity > 0)
+        viscosity_model->set_viscosity(viscosity);
+
+      // Ramp on n
+      for (int i = 0; i < n_iter_n; ++i)
+        {
+          this->pcout << std::setprecision(4)
+                      << "********* Solution for n = " + std::to_string(n) +
+                           " and viscosity = " + std::to_string(viscosity) +
+                           " *********"
+                      << std::endl;
+
+          viscosity_model->set_n(n);
+
+          this->simulation_control->set_assembly_method(
+            Parameters::SimulationControl::TimeSteppingMethod::steady);
+          PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+            false);
+          this->finish_time_step_fd();
+
+          n += alpha_n * (n_end - n);
+        }
+
+      // Reset n to simulation parameters
+      viscosity_model->set_n(n_end);
+
+      // Ramp on viscosity
+      for (int i = 0; i < n_iter_viscosity; ++i)
+        {
+          this->pcout << std::setprecision(4)
+                      << "********* Solution for n = " + std::to_string(n_end) +
+                           " and viscosity = " + std::to_string(viscosity) +
+                           " *********"
+                      << std::endl;
+
+          viscosity_model->set_viscosity(viscosity);
+
+          this->simulation_control->set_assembly_method(
+            Parameters::SimulationControl::TimeSteppingMethod::steady);
+          PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+            false);
+          this->finish_time_step_fd();
+
+          viscosity += alpha_viscosity * (viscosity_end - viscosity);
+        }
+
+      // Reset viscosity to simulation parameters
+      viscosity_model->set_viscosity(viscosity_end);
+    }
   else
     {
       throw std::runtime_error("GLSNS - Initial condition could not be set");
@@ -1433,7 +1516,7 @@ GLSNavierStokesSolver<dim>::solve()
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
 
-
+  std::cout << "Hey" << std::endl;
 
   while (this->simulation_control->integrate())
     {
