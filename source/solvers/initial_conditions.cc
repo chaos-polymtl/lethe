@@ -76,7 +76,7 @@ namespace Parameters
         "Number of iterations used in the ramp before reaching the final viscosity value");
 
       prm.declare_entry("alpha",
-                        "0.9",
+                        "0.5",
                         Patterns::Double(),
                         "Coefficient used for viscosity-spacing.");
     }
