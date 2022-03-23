@@ -268,31 +268,6 @@ DEMSolver<dim>::cell_weight(
         break;
     }
 
-  // This does not use adaptive refinement, therefore every cell
-  // should have the status CELL_PERSIST. However this function can also
-  // be used to distribute load during refinement, therefore we consider
-  // refined or coarsened cells as well.
-  // if (status == parallel::distributed::Triangulation<dim>::CELL_PERSIST ||
-  //     status == parallel::distributed::Triangulation<dim>::CELL_REFINE)
-  //   {
-  //     const unsigned int n_particles_in_cell =
-  //       particle_handler.n_particles_in_cell(cell);
-  //     return n_particles_in_cell * particle_weight;
-  //   }
-  // else if (status == parallel::distributed::Triangulation<dim>::CELL_COARSEN)
-  //   {
-  //     unsigned int n_particles_in_cell = 0;
-  //
-  //     for (unsigned int child_index = 0;
-  //          child_index < GeometryInfo<dim>::max_children_per_cell;
-  //          ++child_index)
-  //       n_particles_in_cell +=
-  //         particle_handler.n_particles_in_cell(cell->child(child_index));
-  //
-  //     return n_particles_in_cell * particle_weight;
-  //   }
-  //
-  // Assert(false, ExcInternalError());
   return 0;
 }
 
