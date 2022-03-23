@@ -267,7 +267,7 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
   auto particle = solid_ph->begin();
   while (particle != solid_ph->end())
     {
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       const auto &cell = particle->get_surrounding_cell(*this->triangulation);
 #else
       const auto &cell = particle->get_surrounding_cell();
@@ -283,7 +283,7 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
       // at the particle location
       auto &evaluation_point = this->evaluation_point;
 
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       Functions::
         FEFieldFunction<3, DoFHandler<3, 3>, TrilinosWrappers::MPI::Vector>
           fe_field(this->dof_handler, evaluation_point);
@@ -831,7 +831,7 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   const unsigned int i_solid)
 {
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   DataOut<dim, DoFHandler<dim, spacedim>> data_out;
 #else
   DataOut<dim, spacedim> data_out;
@@ -850,7 +850,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   TrilinosWrappers::MPI::Vector &displacement_vector =
     solid[i_solid]->get_displacement_vector();
 
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   data_out.add_data_vector(
     displacement_vector,
     solution_names,
