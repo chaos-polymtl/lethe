@@ -932,6 +932,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .alpha;
 
+      viscosity_model->set_viscosity(viscosity);
+
       // Ramp on n
       for (int i = 0; i < n_iter_n; ++i)
         {
