@@ -368,6 +368,7 @@ public:
     lagrangian_physical_properties;
 };
 
+
 /**
  * @brief Class that assembles the particle pressure force that will then
  * be added to particle_fluid_interactions
