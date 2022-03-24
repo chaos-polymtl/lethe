@@ -33,12 +33,12 @@ subsection initial conditions
     subsection ramp
     	subsection n
     		set initial n = 1.0
-    		set iterations = 2
+    		set iterations = 1
     		set alpha = 0.5
     	end
     	subsection viscosity
     		set initial viscosity = 1.0
-    		set iterations = 2
+    		set iterations = 1
     		set alpha = 0.5
     	end
     end
@@ -54,8 +54,8 @@ set number of fluids = 1
 
     subsection non newtonian
     	subsection power-law
-	    	set K 		   = 10
-	    	set n 		   = 0.5
+	    	set K 		   = 2
+	    	set n 		   = 0.8
 	    	set shear rate min = 1e-03
 	end
     end
@@ -68,7 +68,7 @@ end
 subsection mesh
     set type                 = dealii
     set grid type            = subdivided_hyper_rectangle
-    set grid arguments       = 2,1,1 : -18,-15,-15 : 42,15,15 : true
+    set grid arguments       = 1,1,1 : -15,-15,-15 : 15,15,15 : true
     set initial refinement   = 2
 end
 

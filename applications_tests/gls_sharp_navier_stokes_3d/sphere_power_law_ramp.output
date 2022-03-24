@@ -1,144 +1,98 @@
 Running on 1 MPI rank(s)...
-   Number of active cells:       128
-   Number of degrees of freedom: 900
-   Volume of triangulation:      54000
+   Number of active cells:       64
+   Number of degrees of freedom: 500
+   Volume of triangulation:      27000
 Initial refinement in box - Step  1 of 4
-   Number of active cells:       156
-   Number of degrees of freedom: 1128
-   Volume of triangulation:      54000
+   Number of active cells:       120
+   Number of degrees of freedom: 892
+   Volume of triangulation:      27000
 Initial refinement in box - Step  2 of 4
-   Number of active cells:       268
-   Number of degrees of freedom: 1848
-   Volume of triangulation:      54000
+   Number of active cells:       176
+   Number of degrees of freedom: 1284
+   Volume of triangulation:      27000
 Initial refinement in box - Step  3 of 4
-   Number of active cells:       1136
-   Number of degrees of freedom: 6504
-   Volume of triangulation:      54000
+   Number of active cells:       1408
+   Number of degrees of freedom: 7748
+   Volume of triangulation:      27000
 Initial refinement in box - Step  4 of 4
-   Number of active cells:       2620
-   Number of degrees of freedom: 13860
-   Volume of triangulation:      54000
+   Number of active cells:       2920
+   Number of degrees of freedom: 15164
+   Volume of triangulation:      27000
 Initial refinement around IB particles - Step : 1 of 2
-   Number of active cells:       3012
-   Number of degrees of freedom: 16056
-   Volume of triangulation:      54000
+   Number of active cells:       3312
+   Number of degrees of freedom: 17356
+   Volume of triangulation:      27000
 Initial refinement around IB particles - Step : 2 of 2
-   Number of active cells:       5392
-   Number of degrees of freedom: 27896
-   Volume of triangulation:      54000
+   Number of active cells:       5832
+   Number of degrees of freedom: 30004
+   Volume of triangulation:      27000
 *********************************
  Initial condition using ramp 
 *********************************
 ********* Solution for n = 1.000000 and viscosity = 1.000000 *********
-Newton iteration: 0  - Residual:  210.2
-  -Tolerance of iterative solver is : 0.2102
-  -Iterative solver took : 10 steps 
-		alpha =      1 res = 125.72
-Newton iteration: 1  - Residual:  125.72
-  -Tolerance of iterative solver is : 0.12572
-  -Iterative solver took : 10 steps 
-		alpha =      1 res = 0.66776
-Newton iteration: 2  - Residual:  0.66776
-  -Tolerance of iterative solver is : 0.00066776
-  -Iterative solver took : 10 steps 
-		alpha =      1 res = 0.0019977
-Newton iteration: 3  - Residual:  0.0019977
-  -Tolerance of iterative solver is : 1.9977e-06
-  -Iterative solver took : 14 steps 
-		alpha =      1 res = 3.0978e-05
-Newton iteration: 4  - Residual:  3.0978e-05
-  -Tolerance of iterative solver is : 3.0978e-08
-  -Iterative solver took : 15 steps 
-		alpha =      1 res = 5.6908e-07
-********* Solution for n = 0.750000 and viscosity = 1.000000 *********
-Newton iteration: 0  - Residual:  4.661
-  -Tolerance of iterative solver is : 0.004661
-  -Iterative solver took : 13 steps 
-		alpha =      1 res = 1.4514
-Newton iteration: 1  - Residual:  1.4514
-  -Tolerance of iterative solver is : 0.0014514
-  -Iterative solver took : 10 steps 
-		alpha =      1 res = 0.058436
-Newton iteration: 2  - Residual:  0.058436
-  -Tolerance of iterative solver is : 5.8436e-05
-  -Iterative solver took : 10 steps 
-		alpha =      1 res = 0.00074105
-Newton iteration: 3  - Residual:  0.00074105
-  -Tolerance of iterative solver is : 7.4105e-07
-  -Iterative solver took : 10 steps 
-		alpha =      1 res = 1.2045e-05
-Newton iteration: 4  - Residual:  1.2045e-05
-  -Tolerance of iterative solver is : 1.2045e-08
-  -Iterative solver took : 13 steps 
-		alpha =      1 res = 2.7898e-07
-********* Solution for n = 0.500000 and viscosity = 1.000000 *********
-Newton iteration: 0  - Residual:  8.519
-  -Tolerance of iterative solver is : 0.008519
-  -Iterative solver took : 14 steps 
-		alpha =      1 res = 6.0237
-Newton iteration: 1  - Residual:  6.0237
-  -Tolerance of iterative solver is : 0.0060237
+Newton iteration: 0  - Residual:  119.9
+  -Tolerance of iterative solver is : 0.1199
+  -Iterative solver took : 12 steps 
+		alpha =      1 res = 49.396
+Newton iteration: 1  - Residual:  49.396
+  -Tolerance of iterative solver is : 0.049396
   -Iterative solver took : 11 steps 
-		alpha =      1 res = 0.80022
-Newton iteration: 2  - Residual:  0.80022
-  -Tolerance of iterative solver is : 0.00080022
+		alpha =      1 res = 0.21674
+Newton iteration: 2  - Residual:  0.21674
+  -Tolerance of iterative solver is : 0.00021674
   -Iterative solver took : 12 steps 
-		alpha =      1 res = 0.035955
-Newton iteration: 3  - Residual:  0.035955
-  -Tolerance of iterative solver is : 3.5955e-05
-  -Iterative solver took : 11 steps 
-		alpha =      1 res = 0.00022397
-Newton iteration: 4  - Residual:  0.00022397
-  -Tolerance of iterative solver is : 2.2397e-07
-  -Iterative solver took : 13 steps 
-		alpha =      1 res = 1.3284e-05
-Newton iteration: 5  - Residual:  1.3284e-05
-  -Tolerance of iterative solver is : 1.3284e-08
-  -Iterative solver took : 13 steps 
-		alpha =      1 res = 1.0563e-06
-Newton iteration: 6  - Residual:  1.0563e-06
-  -Tolerance of iterative solver is : 1e-08
-  -Iterative solver took : 9 steps 
-		alpha =      1 res = 8.6729e-08
-********* Solution for n = 0.500000 and viscosity = 5.500000 *********
-Newton iteration: 0  - Residual:  17.26
-  -Tolerance of iterative solver is : 0.01726
-  -Iterative solver took : 12 steps 
-		alpha =      1 res = 0.085379
-Newton iteration: 1  - Residual:  0.085379
-  -Tolerance of iterative solver is : 8.5379e-05
-  -Iterative solver took : 12 steps 
-		alpha =      1 res = 0.00026135
-Newton iteration: 2  - Residual:  0.00026135
-  -Tolerance of iterative solver is : 2.6135e-07
+		alpha =      1 res = 0.00062553
+Newton iteration: 3  - Residual:  0.00062553
+  -Tolerance of iterative solver is : 6.2553e-07
   -Iterative solver took : 16 steps 
-		alpha =      1 res = 6.5651e-06
-Newton iteration: 3  - Residual:  6.5651e-06
-  -Tolerance of iterative solver is : 1e-08
+		alpha =      1 res = 1.1772e-05
+Newton iteration: 4  - Residual:  1.1772e-05
+  -Tolerance of iterative solver is : 1.1772e-08
   -Iterative solver took : 17 steps 
-		alpha =      1 res = 4.8106e-07
+		alpha =      1 res = 3.5232e-07
+********* Solution for n = 0.800000 and viscosity = 1.000000 *********
+Newton iteration: 0  - Residual:  1.727
+  -Tolerance of iterative solver is : 0.001727
+  -Iterative solver took : 14 steps 
+		alpha =      1 res = 0.14546
+Newton iteration: 1  - Residual:  0.14546
+  -Tolerance of iterative solver is : 0.00014546
+  -Iterative solver took : 14 steps 
+		alpha =      1 res = 0.0053565
+Newton iteration: 2  - Residual:  0.0053565
+  -Tolerance of iterative solver is : 5.3565e-06
+  -Iterative solver took : 15 steps 
+		alpha =      1 res = 8.2356e-05
+Newton iteration: 3  - Residual:  8.2356e-05
+  -Tolerance of iterative solver is : 8.2356e-08
+  -Iterative solver took : 16 steps 
+		alpha =      1 res = 2.9264e-06
+Newton iteration: 4  - Residual:  2.9264e-06
+  -Tolerance of iterative solver is : 1e-08
+  -Iterative solver took : 15 steps 
+		alpha =      1 res = 1.3705e-07
 
 *****************************************************************
 Steady iteration :        1/1
 *****************************************************************
-Newton iteration: 0  - Residual:  17.473
-  -Tolerance of iterative solver is : 0.017473
-  -Iterative solver took : 12 steps 
-		alpha =      1 res = 0.011285
-Newton iteration: 1  - Residual:  0.011285
-  -Tolerance of iterative solver is : 1.1285e-05
+Newton iteration: 0  - Residual:  1.7209
+  -Tolerance of iterative solver is : 0.0017209
   -Iterative solver took : 14 steps 
-		alpha =      1 res = 2.1183e-05
-Newton iteration: 2  - Residual:  2.1183e-05
-  -Tolerance of iterative solver is : 2.1183e-08
-  -Iterative solver took : 18 steps 
-		alpha =      1 res = 1.0315e-06
-Newton iteration: 3  - Residual:  1.0315e-06
+		alpha =      1 res = 0.041848
+Newton iteration: 1  - Residual:  0.041848
+  -Tolerance of iterative solver is : 4.1848e-05
+  -Iterative solver took : 13 steps 
+		alpha =      1 res = 0.00062817
+Newton iteration: 2  - Residual:  0.00062817
+  -Tolerance of iterative solver is : 6.2817e-07
+  -Iterative solver took : 16 steps 
+		alpha =      1 res = 7.8728e-06
+Newton iteration: 3  - Residual:  7.8728e-06
   -Tolerance of iterative solver is : 1e-08
-  -Iterative solver took : 15 steps 
-		alpha =      1 res = 7.4916e-08
+  -Iterative solver took : 18 steps 
+		alpha =      1 res = 1.6394e-07
 +------------------------------------------+
 |  Force  summary particle 0               |
 +------------------------------------------+
-particle_ID    T_x      T_y       T_z       f_x       f_y      f_z    
-          0 -0.000000 0.109423 -0.109423 109.041124 0.007615 0.007614 
+particle_ID   T_x      T_y       T_z       f_x      f_y      f_z    
+          0 0.000000 0.019580 -0.019580 18.847598 0.000859 0.000859 
