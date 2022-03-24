@@ -45,7 +45,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
    The ``Function expression`` can be used to establish an even more complex free surface initial geometry. For example, one can create a circle of fluid : ``if ( (x^2+y^2)<=(r)^2 ,1,0)``
 
 
-* The ``subsection ramp`` holds the parameters to operate a ramp on either or both the viscosity and the ``n`` parameter in rheological models (see :doc:`physical_properties` for nor information on this parameter). When ramping on the viscosity value, 
+* The ``subsection ramp`` holds the parameters to operate a ramp on either or both the viscosity and the ``n`` parameter in rheological models (see :doc:`physical_properties` for more information on this parameter). When ramping on the viscosity value, 
 
   * The ``initial viscosity`` is the viscosity with which the initial condition starts off. An initial viscosity of 1.0 is suggested.
   * The ``iterations`` parameter sets the number of viscosity iterations before reaching the simulation viscosity. 
