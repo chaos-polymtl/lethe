@@ -666,6 +666,14 @@ DEMSolver<dim>::write_output_results()
   const double       time        = simulation_control->get_current_time();
   const unsigned int group_files = parameters.simulation_control.group_files;
 
+  // Write floating grid
+  floating_grid_object->write(folder,
+                              std::string("floating_grid"),
+                              time,
+                              iter,
+                              group_files,
+                              mpi_communicator);
+
   // Write particles
   Visualization<dim> particle_data_out;
   particle_data_out.build_patches(particle_handler,
