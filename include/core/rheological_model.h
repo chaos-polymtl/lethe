@@ -46,6 +46,38 @@ public:
    */
   static std::shared_ptr<RheologicalModel>
   model_cast(const Parameters::Fluid &fluid_properties);
+
+  /**
+   * @brief Returns the value of the n parameters of the model, is the model has one.
+   */
+  virtual double
+  get_n() const
+  {
+    return 1.0;
+  }
+
+  /**
+   * @brief Sets a new value to the n parameter, if the models has one.
+   */
+  virtual void
+  set_n(const double &)
+  {}
+
+  /**
+   * @brief Returns the value of the viscosity, is the model has one.
+   */
+  virtual double
+  get_viscosity() const
+  {
+    return 1.0;
+  }
+
+  /**
+   * @brief Sets a new viscosity value, if the models has one.
+   */
+  virtual void
+  set_viscosity(const double &)
+  {}
 };
 
 class Newtonian : public RheologicalModel
@@ -110,6 +142,18 @@ public:
     std::vector<double> &jacobian_vector) override
   {
     std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+  }
+
+  double
+  get_viscosity() const
+  {
+    return viscosity;
+  }
+
+  void
+  set_viscosity(const double &p_viscosity)
+  {
+    viscosity = p_viscosity;
   }
 
 private:
@@ -178,6 +222,30 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override;
 
+  double
+  get_n() const
+  {
+    return n;
+  }
+
+  void
+  set_n(const double &p_n)
+  {
+    n = p_n;
+  }
+
+  double
+  get_viscosity() const
+  {
+    return K;
+  }
+
+  void
+  set_viscosity(const double &p_viscosity)
+  {
+    K = p_viscosity;
+  }
+
 private:
   inline double
   calculate_viscosity(const double shear_rate_magnitude)
@@ -195,9 +263,8 @@ private:
              0;
   }
 
-
-  const double K;
-  const double n;
+  double       K;
+  double       n;
   const double shear_rate_min;
 };
 
@@ -267,6 +334,18 @@ public:
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     const field /*id*/,
     std::vector<double> &jacobian_vector) override;
+
+  double
+  get_n() const
+  {
+    return n;
+  }
+
+  void
+  set_n(const double &p_n)
+  {
+    n = p_n;
+  }
 
 private:
   inline double

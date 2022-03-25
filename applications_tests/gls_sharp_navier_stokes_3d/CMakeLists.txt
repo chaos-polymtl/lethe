@@ -19,5 +19,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
        	set_tests_properties(gls_sharp_navier_stokes_3d/pp_lubrication_test.debug PROPERTIES TIMEOUT 2000) 
        	set_tests_properties(gls_sharp_navier_stokes_3d/coupled_moving_stokes.debug PROPERTIES TIMEOUT 2000) 
        	set_tests_properties(gls_sharp_navier_stokes_3d/pw_contact_test.debug PROPERTIES TIMEOUT 2000) 
+       	set_tests_properties(gls_sharp_navier_stokes_3d/sphere_power_law_ramp.debug PROPERTIES TIMEOUT 2000) 
 ENDIF()
 
