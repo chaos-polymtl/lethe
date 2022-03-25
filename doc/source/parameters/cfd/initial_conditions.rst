@@ -19,8 +19,21 @@ It is often necessary to set-up complex initial conditions when simulating trans
      set Function expression = if (x<0.5 & y<1, 1, 0)
    end
 
+   subsection ramp
+    subsection viscosity
+      set initial viscosity = 1.0
+      set iterations = 0
+      set alpha = 0.5
+    end
+    subsection n
+      set initial n = 1.0
+      set iterations = 0
+      set alpha = 0.5
+    end
+  end
 
-* The ``type`` parameter indicates which strategy is used to impose the initial conditions. The choices are : ``L2projection`` , ``viscous`` or ``nodal`` .
+
+* The ``type`` parameter indicates which strategy is used to impose the initial conditions. The choices are : ``L2projection``, ``viscous``, ``nodal`` or ``ramp``.
 
 * The ``viscosity`` parameter controls the viscosity that is  used to solve the Navier-Stokes equations when the viscous initial condition is chosen.
 
@@ -30,3 +43,22 @@ It is often necessary to set-up complex initial conditions when simulating trans
 
 .. note::
    The ``Function expression`` can be used to establish an even more complex free surface initial geometry. For example, one can create a circle of fluid : ``if ( (x^2+y^2)<=(r)^2 ,1,0)``
+
+
+* The ``subsection ramp`` holds the parameters to operate a ramp on either or both the viscosity and the ``n`` parameter in rheological models (see :doc:`physical_properties` for more information on this parameter). When ramping on the viscosity value, 
+
+  * The ``initial viscosity`` is the viscosity with which the initial condition starts off. An initial viscosity of 1.0 is suggested.
+  * The ``iterations`` parameter sets the number of viscosity iterations before reaching the simulation viscosity. 
+  * The ``alpha`` parameter sets the stepping length between viscosity iterations, as seen in the following equation, where :math:`\eta` is the viscosity and :math:`i` stands for the iteration number.
+
+.. math::
+  \eta_{i+1} = \eta_i + \alpha (\eta_{\text{end}} - \eta_i)
+
+
+Likewise, in the ``subection n``, the parameters for ramping on the ``n`` value are the following.
+  * The ``initial n`` is the :math:`n` value with which the initial condition starts off. An initial math:`n` of 1.0 is suggested.
+  * The ``iterations`` parameter sets the number of math:`n` iterations before reaching the simulation math:`n`. 
+  * The ``alpha`` parameter sets the stepping length between math:`n` iterations, as seen in the following equation, :math:`i` stands for the iteration number.
+
+.. math::
+  n_{i+1} = n_i + \alpha (n_{\text{end}} - n_i)
