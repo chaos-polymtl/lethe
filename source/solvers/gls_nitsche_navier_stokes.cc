@@ -669,14 +669,17 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques(
   solid_torques_table[i_solid].set_precision(
     "T_z", this->simulation_parameters.forces_parameters.output_precision);
 
-  std::string filename_torque =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.nitsche->nitsche_solids[i_solid]
-      ->torque_output_name +
-    "_" + Utilities::int_to_string(i_solid, 2) + ".dat";
-  std::ofstream output_torque(filename_torque.c_str());
+  if (this->this_mpi_process == 0)
+    {
+      std::string filename_torque =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+          ->torque_output_name +
+        "_" + Utilities::int_to_string(i_solid, 2) + ".dat";
+      std::ofstream output_torque(filename_torque.c_str());
 
-  solid_torques_table[i_solid].write_text(output_torque);
+      solid_torques_table[i_solid].write_text(output_torque);
+    }
 }
 
 template <int dim, int spacedim>

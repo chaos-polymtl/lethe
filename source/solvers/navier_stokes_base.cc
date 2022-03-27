@@ -1596,17 +1596,20 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_forces()
 {
   TimerOutput::Scope t(this->computing_timer, "output_forces");
-  for (unsigned int boundary_id = 0;
-       boundary_id < simulation_parameters.boundary_conditions.size;
-       ++boundary_id)
+  if (this->this_mpi_process == 0)
     {
-      std::string filename =
-        simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.forces_parameters.force_output_name + "." +
-        Utilities::int_to_string(boundary_id, 2) + ".dat";
-      std::ofstream output(filename.c_str());
+      for (unsigned int boundary_id = 0;
+           boundary_id < simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.forces_parameters.force_output_name + "." +
+            Utilities::int_to_string(boundary_id, 2) + ".dat";
+          std::ofstream output(filename.c_str());
 
-      forces_tables[boundary_id].write_text(output);
+          forces_tables[boundary_id].write_text(output);
+        }
     }
 }
 
@@ -1615,17 +1618,20 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_torques()
 {
   TimerOutput::Scope t(this->computing_timer, "output_torques");
-  for (unsigned int boundary_id = 0;
-       boundary_id < simulation_parameters.boundary_conditions.size;
-       ++boundary_id)
+  if (this->this_mpi_process == 0)
     {
-      std::string filename =
-        simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.forces_parameters.torque_output_name + "." +
-        Utilities::int_to_string(boundary_id, 2) + ".dat";
-      std::ofstream output(filename.c_str());
+      for (unsigned int boundary_id = 0;
+           boundary_id < simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.forces_parameters.torque_output_name + "." +
+            Utilities::int_to_string(boundary_id, 2) + ".dat";
+          std::ofstream output(filename.c_str());
 
-      this->torques_tables[boundary_id].write_text(output);
+          this->torques_tables[boundary_id].write_text(output);
+        }
     }
 }
 
