@@ -238,13 +238,13 @@ The simulation can be executed using the following command (assuming that the so
 
 .. code-block:: text
 
-	gls_navier_stokes_2d Backward_facing_step.prm
+	gls_navier_stokes_2d 2D_backward_facing_step_steady.prm
 	
 However, mpi can be used to lower calculation time by using several CPUs (especially useful for pseudo-steady simulations) :
 
 .. code-block:: text
 
-	mpirun -np j gls_navier_stokes_2d Backward_facing_step.prm
+	mpirun -np j gls_navier_stokes_2d 2D_backward_facing_step_steady.prm
 	
 where ``j`` is the number of CPUs used for the computations.
 
