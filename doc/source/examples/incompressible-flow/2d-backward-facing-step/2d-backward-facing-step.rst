@@ -24,7 +24,7 @@ In this example, a bidimensional flow goes past a backward-facing step. The flow
 
 .. image:: image/backward_facing_step_description.png
 
-The backward-facing step problem is a classical computationnal fluid dynamics problem. The fact that it features a non-trivial solution while maintaining simple geometry and boundary conditions makes this problem a good candidate for validation purposes as well as to test the robustness of a given CFD method. First, the basic parameters used to solve the backward-facing step problem will be exposed. A solution to several Reynolds numbers (from :math:`Re = 100` to :math:`Re =1000`) will then be presented and compared to experimental and numerical data. A mesh adaptation and numerical error analysis will be carried on. Lastly, some key features of *Lethe* and general FEA parameters will be compared and their impact on their respective results will be shown.
+The backward-facing step problem is a classical computational fluid dynamics problem. The fact that it features a non-trivial solution while maintaining simple geometry and boundary conditions makes this problem a good candidate for validation purposes as well as to test the robustness of a given CFD method. First, the basic parameters used to solve the backward-facing step problem will be exposed. A solution to several Reynolds numbers (from :math:`Re = 100` to :math:`Re =1000`) will then be presented and compared to experimental and numerical data. A mesh adaptation and numerical error analysis will be carried on.
 
 Parameter File
 --------------
@@ -49,7 +49,7 @@ For :math:`Re < 700`, the solution is stable enough to be computed in steady sta
 	
 A mesh refinement analysis can be done with ``set number mesh adapt = 10``. By starting from a very coarse mesh and by dynamically refining the mesh at least 10 times, asymptotic convergence can be clearly observed.
 
-However, for :math:`Re \geq 700`, convergence can be quite difficult to obtain while doing a steady state simulation. In fact, as the Reynolds number increases, the problem becomes progessively more stiff to a point where the ``steady`` solver ultimately fails. With that in mind, the case can be solved as a transient problem until the steady state solution is obtained. This can be acheived with the ``method = steady_bdf`` parameter.
+However, for :math:`Re \geq 700`, convergence can be quite difficult to obtain while doing a steady state simulation. In fact, as the Reynolds number increases, the problem becomes progressively stiffer to a point where the ``steady`` solver ultimately fails. With that in mind, the case can be solved as a transient problem until the steady state solution is obtained. This can be achieved with the ``method = steady_bdf`` parameter.
 
 .. code-block:: text
 
@@ -67,7 +67,7 @@ However, for :math:`Re \geq 700`, convergence can be quite difficult to obtain w
 	  set output boundaries = false
 	end
   
-``stop tolerance``, ``time step``, ``adapt``, ``max cfl`` and ``adaptative time step scaling`` are parameters that control the pseudo-steady simulation. Since this problem can be quite demanding, a relativly high tolerance has been chosen as an input for ``stop tolerance``. This choice is however not without its consequences : the :math:`x_r` parameter might be slightly underestimated. 
+``stop tolerance``, ``time step``, ``adapt``, ``max cfl`` and ``adaptive time step scaling`` are parameters that control the pseudo-steady simulation. Since this problem can be quite demanding, a relatively high tolerance has been chosen as an input for ``stop tolerance``. This choice is however not without its consequences : the :math:`x_r` parameter might be slightly underestimated. 
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -108,7 +108,7 @@ Mesh
 	  set file name = ../backward_facing_step.msh
 	end
 	
-The mesh features quad elements as well as unit step and inlet heights (:math:`h_{in}=h=1`). In that direction, the expansion ratio has been set to :math:`\beta=\frac{h_{out}}{h_{in}}=2` throughout the entirety of the simulations. Also, the inlet and outlet lengths should be long enough that they allow the formation of a fully developped flow and their respective end. Also, since a gmsh mesh file is used, the initial mesh should be as coarse, since these cells cannot be coarsened with the mesh adaptation algorithm.
+The mesh features quad elements as well as unit step and inlet heights (:math:`h_{in}=h=1`). In that direction, the expansion ratio has been set to :math:`\beta=\frac{h_{out}}{h_{in}}=2` throughout the entirety of the simulations. Also, the inlet and outlet lengths should be long enough that they allow the formation of a fully developed flow and their respective end. Also, since a gmsh mesh file is used, the initial mesh should be as coarse, since these cells cannot be coarsened with the mesh adaptation algorithm.
 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
@@ -126,7 +126,7 @@ In this example, the mesh adaptation algorithm is based on the Kelly error estim
 	
 For higher Reynolds number with adjoint time stepping, ``frequency = 5`` can be added to the above parameters in order to obtain a reasonable number of elements throughout the simulation. In this particular case, the mesh would be refined at every fifth time iteration.
 	
-Here is an example of mesh adaptation using Kelly error estimator for :math:`Re = 100` :
+Here is an example of mesh adaptation using the Kelly error estimator for :math:`Re = 100` :
 
 Initial coarse mesh :
 
@@ -179,12 +179,12 @@ As shown in the figure, three different boundary conditions (or boundary IDs) ar
 	  end
 	end
 	
-First, ``subsection bc 0`` represents a Dirichlet boundary condition (or ``noslip``) at each wall where :math:`\mathbf{u}=\mathbf{0}.` The boundary condition at the inlet is represented as a uniform unit flow such that :math:`[u,v,w] = [1,0,0]`. In that case, the parameter ``type = function`` is used in ``subsection bc 1``. With this parameter, :math:`u`, :math:`v` and :math:`w` can be set numerically and independantly. The outflow boundary condition is considered as a natural boundary condition (also known as the *do nothing* boundary condition), since we can consider the outlet very far from the step. In fact, this condtion specfies :math:`p \rightarrow 0` or that the traction on the fluid equals zero. In *Lethe*, this particular boundary condition is automatically loaded when nothing is assigned to a specific ID  (in our case, there is none at the outlet).
+First, ``subsection bc 0`` represents a Dirichlet boundary condition (or ``noslip``) at each wall where :math:`\mathbf{u}=\mathbf{0}.` The boundary condition at the inlet is represented as a uniform unit flow such that :math:`[u,v,w] = [1,0,0]`. In that case, the parameter ``type = function`` is used in ``subsection bc 1``. With this parameter, :math:`u`, :math:`v` and :math:`w` can be set numerically and independently. The outflow boundary condition is considered as a natural boundary condition (also known as the *do nothing* boundary condition), since we can consider the outlet very far from the step. In fact, this condtion specifies :math:`p \rightarrow 0` or that the traction on the fluid equals zero. In *Lethe*, this particular boundary condition is automatically loaded when nothing is assigned to a specific ID  (in our case, there is none at the outlet).
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-The ``newton`` non-linear solver is used with a medium ``tolerance``, since convergence can be hard to obtain at high Reynolds number.
+The ``newton`` non-linear solver is used with a medium ``tolerance``, since convergence can be hard to obtain for high Reynolds number.
 
 .. code-block:: text
 
@@ -229,12 +229,12 @@ For :math:`Re \geq 700`, however, it is often necessary to set ``ilu precondtion
 	end
 	
 .. tip::
-	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the non-linear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/parameters/cfd/linear_solver_control.html>`_ for more information.
+	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the nonlinear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/parameters/cfd/linear_solver_control.html>`_ for more information.
 	
 Running the Simulations
 -----------------------
 
-The simulation can be executed using the following command (assuming that the solver's location is in your PATH environement variable) :
+The simulation can be executed using the following command (assuming that the solver's location is in your PATH environment variable) :
 
 .. code-block:: text
 
@@ -280,13 +280,13 @@ The reference value used in the error analysis is taken from Erturk (2008).
 Higher Reynolds Number (:math:`Re=1000`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In a similar way as we did in the precedent subsection, the solution for :math:`Re = 1000` can be obtained.
+In a similar way as we did in the last subsection, the solution for :math:`Re = 1000` can be obtained.
 
 For :math:`Re = 1000` : 
 
 .. image:: image/Reynolds1000.png
 
-In the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentionned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" caracteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually and at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python algorithm as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
+On the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually and at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python algorithm as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
 
 
 Validation and Comparison
@@ -295,11 +295,11 @@ Validation and Comparison
 Reattachment Length
 ~~~~~~~~~~~~~~~~~~~
 
-In this section, the solutions obtained with *Lethe* are compared with data that can be found in the scientific litterature (Erturk (2008) [1], Armaly and al. (1983) [2], Velivelli and Bryden (2015) [3]). Several studies include datasets of :math:`x_r/h = f(Re)` (reattachment length) either experimentally or numerically. The next figure illustrates some of them in comparison with *Lethe*.
+In this section, the solutions obtained with *Lethe* are compared with data that can be found in the scientific literature (Erturk (2008) [1], Armaly and al. (1983) [2], Velivelli and Bryden (2015) [3]). Several studies include datasets of :math:`x_r/h = f(Re)` (reattachment length) either experimentally or numerically. The next figure illustrates some of them in comparison with *Lethe*.
 
 .. image:: image/xr_comparison.png
 
-First, the results provided by *Lethe* are identical or so to all of the three selected studies for low Reynolds numbers (:math:`Re \leq 400`). After that point, both results form *Lethe* and from Erturk (2008) [1] diverge from the experimental data of Armaly and al. (1983) [2]. According to [1], this error is due to 3D effects that are more potent as the flow becomes more and more turbulent. Furthermore, there is also a less signficant but clearly noticeable error between *Lethe* and Erturk [1] : the fact that certain tolerances have been set quite high in the parameter file might have underestimated the reattachment length. Also, first order elements have been used throughout the whole simulation process. Using second order elements for velocity, for instance, could yield better results for higher Reynolds number. The following table illustrates the error at :math:`Re = 600` for first and second order velocity elements.
+First, the results provided by *Lethe* are identical or so to all of the three selected studies for low Reynolds numbers (:math:`Re \leq 400`). After that point, both results form *Lethe* and from Erturk (2008) [1] diverge from the experimental data of Armaly and al. (1983) [2]. According to [1], this error is due to 3D effects that are more potent as the flow becomes more and more turbulent. Furthermore, there is also a less significant but clearly noticeable error between *Lethe* and Erturk [1] : the fact that certain tolerances have been set quite high in the parameter file might have underestimated the reattachment length. Also, first order elements have been used throughout the whole simulation process. Using second order elements for velocity, for instance, could yield better results for higher Reynolds numbers. The following table illustrates the error at :math:`Re = 600` for first and second order velocity elements.
 
 +---------------+----------------+----------------+
 | Order         | :math:`x_r/h`  | Error          |
@@ -314,7 +314,7 @@ First, the results provided by *Lethe* are identical or so to all of the three s
 Velocity distribution
 ~~~~~~~~~~~~~~~~~~~~~
 
-To validate the quality of the mesh/geometry as well as, it is interesting to compare the obtained velocity destributions with analytical data. The following figures illustrate the velocity distributions at the outlet (right wall) in comparison to the analytical solution.
+To validate the quality of the mesh/geometry as well as, it is interesting to compare the obtained velocity distributions with analytical data. The following figures illustrate the velocity distributions at the outlet (right wall) in comparison to the analytical solution.
 
 For :math:`Re = 100` :
 
@@ -324,14 +324,14 @@ For :math:`Re = 1000`:
 
 .. image:: image/Reynolds1000_poiseuille.png
 
-For :math:`Re = 1000`, an error on the velocity profile is visually noticeable. We can assume that the outlet is not long enough for the flow to be fully developped at its end, meaning that there is still traction on the fluid. Consequently, increasing this length is essential in order to be able to validate cases where :math:`Re \geq 1000`.
+For :math:`Re = 1000`, an error in the velocity profile is visually noticeable. We can assume that the outlet is not long enough for the flow to be fully developed at its end, meaning that there is still traction on the fluid. Consequently, increasing this length is essential in order to be able to validate cases where :math:`Re \geq 1000`.
 
 
 Possibilites for Extension
 --------------------------
 
 - **Validate with a 3D geometry/mesh** : Since experimental data takes into account 3D effects, it would be interesting to compare numerical data to experimental results.
-- **Use second order elements for higher Reynolds simulations** : Using second order elements can improve accuracy for more turbulent flows. Also, it can be very powerful in this particular example, since quadratric elements can theorically interpolate *Poiseuille* flows with genuinely no numerical error. Consequently, the method can yield incredibly precise results while maintaining a very coarse mesh far from the step. 
+- **Use second order elements for higher Reynolds simulations** : Using second order elements can improve accuracy for more turbulent flows. Also, it can be very powerful in this particular example, since quadratic elements can theoretically interpolate *Poiseuille* flows with genuinely no numerical error. Consequently, the method can yield incredibly precise results while maintaining a very coarse mesh far from the step. 
 - **Validate for even higher Reynolds numbers** : Some studies compute their simulations up to :math:`Re = 3000`. It would also be interesting to visualize the formation of more eddies further downstream of the step.
 
 References
