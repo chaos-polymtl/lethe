@@ -130,15 +130,15 @@ Here is an example of mesh adaptation using Kelly error estimator for :math:`Re 
 
 Initial coarse mesh :
 
-.. image:: 
+.. image:: image/0th_mesh.png
 
 After four refinement steps :
 
-.. image:: 
+.. image:: image/4th_mesh.png
 
-After six refinement steps :
+After eight refinement steps :
 
-.. image:: 
+.. image:: image/8th_mesh.png
 
 FEM
 ~~~
@@ -229,7 +229,7 @@ For :math:`Re \geq 700`, however, it is often necessary to set ``ilu precondtion
 	end
 	
 .. tip::
-	It is important to note that ``minimum residual`` of the linear solver is quite smaller than the ``tolerance`` of the non-linear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/parameters/cfd/linear_solver_control.html>`_ for more information.
+	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the non-linear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/parameters/cfd/linear_solver_control.html>`_ for more information.
 	
 Running the Simulations
 -----------------------
@@ -240,7 +240,7 @@ The simulation can be executed using the following command (assuming that the so
 
 	gls_navier_stokes_2d Backward_facing_step.prm
 	
-However, mpi can be used to lower calculation time by using several CPUs :
+However, mpi can be used to lower calculation time by using several CPUs (especially useful for pseudo-steady simulations) :
 
 .. code-block:: text
 
@@ -259,35 +259,34 @@ After opening the file ``backward_facing_step_output.pvd`` with Paraview, the fo
 
 For :math:`Re = 100` :
 
-.. image:: 
+.. image:: image/Reynolds100.png
 
-It is possible to notice that there seems to be a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations : the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. It is also visually noticeable that :math:`x_r \simeq 2.9` (:math:`x \simeq 12.9`). With the Python module Pyvista, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically. This can be calculated with the following equation. 
+It is possible to notice that there seems to be a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations : the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. It is also visually noticeable that :math:`x_r \simeq 2.9` (:math:`x \simeq 17.9`). With the Python module Pyvista, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically. This can be calculated with the following equation. 
 
 .. math::
 	\left[ \frac{du}{dy} \right]_{y=0} = 0
 
 which can be resolved with a bisection algorithm or with any other appropriate numerical approach. By doing this step for each successively refined mesh, a mesh refinement analysis can be achieved.
 
-.. image:: 
+.. image:: image/Reynolds100_mesh_refinement.png
 
-where the final value of :math:`x_r` is :math:`2.898`. We notice from the graph that convergence is obtained quite quickly : the following figure illustrates the evolution of the relative error as the number of elements increases.
+where the final value of :math:`x_r` is :math:`2.893`. We notice from the graph that convergence is obtained quite quickly : the following figure illustrates the evolution of the relative error as the number of elements increases.
 
-.. image:: i
+.. image:: image/Reynolds100_error_analysis.png
+
+The reference value used in the error analysis is taken from Erturk (2008).
 
 
 Higher Reynolds Number (:math:`Re=1000`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In a similar way as we did in the precedent subsection, the solution for :math:`Re = 800` and :math:`Re = 1000` can be obtained.
+In a similar way as we did in the precedent subsection, the solution for :math:`Re = 1000` can be obtained.
 
+For :math:`Re = 1000` : 
 
-and for :math:`Re = 1000` : 
+.. image:: image/Reynolds1000.png
 
-.. image:: 
-
-.. image:: 
-
-In the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentionned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [19,32]`. This "oscillating flow" caracteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually and at :math:`x_r \simeq 11.0` (:math:`x \simeq 21.0`).
+In the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentionned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" caracteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually and at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python algorithm as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
 
 
 Validation and Comparison
@@ -296,18 +295,18 @@ Validation and Comparison
 Reattachment Length
 ~~~~~~~~~~~~~~~~~~~
 
-In this section, the solutions obtained with *Lethe* will be compared with data that can be found in the scientific litterature (Erturk (2008) [1], Armaly and al. (1983) [2], Velivelli and Bryden (2015) [3]). Several studies include datasets of :math:`x_r = f(Re)` (reattachment length) either analytically or numerically. The next figure illustrates some of them.
+In this section, the solutions obtained with *Lethe* are compared with data that can be found in the scientific litterature (Erturk (2008) [1], Armaly and al. (1983) [2], Velivelli and Bryden (2015) [3]). Several studies include datasets of :math:`x_r/h = f(Re)` (reattachment length) either experimentally or numerically. The next figure illustrates some of them in comparison with *Lethe*.
 
-.. image:: 
+.. image:: image/xr_comparison.png
 
-First, the results provided by *Lethe* are identical or so to all of the three selected studies for low Reynolds numbers (:math:`Re \leq 400`). After that point, both results form *Lethe* and from Erturk (2008) [1] diverge from the experimental data of Armaly and al. (1983) [2]. According to [1], this error is due to 3D effects that are more potent as the flow becomes more and more turbulent. There is also a less signficant but clearly noticeable error between *Lethe* and Erturk [1] : the fact that the tolerances have been set quite high in the parameter file might have underestimated the reattachment length. Also, first order elements have been used throughout the whole simulation process. Using second order elements for velocity, for instance, could yield better results for higher Reynolds number. The following table illustrates the error at :math:`Re = 600` for first and second order velocity elements.
+First, the results provided by *Lethe* are identical or so to all of the three selected studies for low Reynolds numbers (:math:`Re \leq 400`). After that point, both results form *Lethe* and from Erturk (2008) [1] diverge from the experimental data of Armaly and al. (1983) [2]. According to [1], this error is due to 3D effects that are more potent as the flow becomes more and more turbulent. Furthermore, there is also a less signficant but clearly noticeable error between *Lethe* and Erturk [1] : the fact that certain tolerances have been set quite high in the parameter file might have underestimated the reattachment length. Also, first order elements have been used throughout the whole simulation process. Using second order elements for velocity, for instance, could yield better results for higher Reynolds number. The following table illustrates the error at :math:`Re = 600` for first and second order velocity elements.
 
 +---------------+----------------+----------------+
-| Order         | :math:`x_r`    | Error          |
+| Order         | :math:`x_r/h`  | Error          |
 +===============+================+================+
-| Order 1       | :math:`10.051` | :math:`2.88` % |
+| Order 1       | :math:`10.219` | :math:`1.26` % |
 +---------------+----------------+----------------+
-| Order 2       | :math:`10.125` | :math:`2.16` % |       
+| Order 2       | :math:`10.250` | :math:`0.96` % |       
 +---------------+----------------+----------------+
 | Erturk (2008) | :math:`10.349` | N/A            |
 +---------------+----------------+----------------+
@@ -315,22 +314,25 @@ First, the results provided by *Lethe* are identical or so to all of the three s
 Velocity distribution
 ~~~~~~~~~~~~~~~~~~~~~
 
-To validate the quality of the mesh/geometry as well as, it is interesting to compare the obtained velocity destributions with analytical data.
+To validate the quality of the mesh/geometry as well as, it is interesting to compare the obtained velocity destributions with analytical data. The following figures illustrate the velocity distributions at the outlet (right wall) in comparison to the analytical solution.
 
-Velocity at the step (:math:`x = 10`) :
+For :math:`Re = 100` :
 
-.. image:: 
+.. image:: image/Reynolds100_poiseuille.png
 
-Velocity at the outlet (:math:`x = 100`) :
+For :math:`Re = 1000`:
 
-.. image:: 
+.. image:: image/Reynolds1000_poiseuille.png
+
+For :math:`Re = 1000`, an error on the velocity profile is visually noticeable. We can assume that the outlet is not long enough for the flow to be fully developped at its end, meaning that there is still traction on the fluid. Consequently, increasing this length is essential in order to be able to validate cases where :math:`Re \geq 1000`.
+
 
 Possibilites for Extension
 --------------------------
 
 - **Validate with a 3D geometry/mesh** : Since experimental data takes into account 3D effects, it would be interesting to compare numerical data to experimental results.
-- **Use second order elements for higher Reynolds simulations** : Using second order elements can improve accuracy for more turbulent flows. Also, it can be very powerful in this particular example, since quadratric elements can theorically interpolate *Poiseuille* flows with genuinely no numerical error.
-- **Validate for even higher Reynolds numbers** : Some studies compute their simulations up to :math:`Re = 3000`. It would also be interesting to visualize the transition to a turbulent flow.
+- **Use second order elements for higher Reynolds simulations** : Using second order elements can improve accuracy for more turbulent flows. Also, it can be very powerful in this particular example, since quadratric elements can theorically interpolate *Poiseuille* flows with genuinely no numerical error. Consequently, the method can yield incredibly precise results while maintaining a very coarse mesh far from the step. 
+- **Validate for even higher Reynolds numbers** : Some studies compute their simulations up to :math:`Re = 3000`. It would also be interesting to visualize the formation of more eddies further downstream of the step.
 
 References
 ----------

@@ -42,8 +42,8 @@ Recombine Surface {2, 1};
 // Quad meshing (transfinite)
 Transfinite Surface {1} = {7, 2, 1, 4};
 Transfinite Surface {2} = {6, 7, 3, 5};
-Transfinite Curve {2, 8} = 51 Using Progression 1; // N-1 inlet cells
-Transfinite Curve {3, 6} = 181 Using Progression 1; // N-1 outlet cells
+Transfinite Curve {2, 8} = 26 Using Progression 1; // N-1 inlet cells
+Transfinite Curve {3, 6} = 76 Using Progression 1; // N-1 outlet cells
 Transfinite Curve {1, 9, 7, 4, 5} = 7 Using Progression 1; // N-1 vertical cells
 
 // Physical properties
