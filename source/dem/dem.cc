@@ -189,7 +189,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                pcout,
                                standard_deviation_multiplier);
 
-  // If the cylinder motion is enables and the inclined plane angle is not equal
+  // If the cylinder motion is enabled and the inclined plane angle is not equal
   // to zero, we modify the components of the gravity vector in y and z
   // directions
   if (dem_parameters.grid_motion.motion_type ==

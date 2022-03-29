@@ -70,7 +70,7 @@ void GridMotion<2>::move_grid_rotational(
   unsigned int count(0);
   for (unsigned int i = 0; i < 3; i++)
     {
-      if (rotation_angle[i] != 0)
+      if (rotation_angle[i] != 0.0)
         {
           count++;
           if (count > 1)
