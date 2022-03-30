@@ -10,8 +10,6 @@ from math import pi
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.tri as tri
-from matplotlib import cm
 import pyvista as pv
 from scipy.signal import savgol_filter
 
