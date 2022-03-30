@@ -39,7 +39,6 @@ end
 subsection mesh adaptation
   set variable = velocity
   set type = kelly
-  set fraction coarsening  = 0.1
   set fraction refinement  = 0.2
   set min refinement level = 0
   set max refinement level = 10
