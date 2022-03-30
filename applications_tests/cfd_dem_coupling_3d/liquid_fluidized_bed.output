@@ -16,30 +16,30 @@ Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0.0006
 Starting DEM iterations at step 1
 DEM contact search at dem step 0
 Finished 200 DEM iterations 
-Pressure drop: 98.66532572 Pa
-Mass Source: -5.684401948e-10 s^-1
-Max Local Mass Source: 8.819026597e-11 s^-1
+Pressure drop: 98.66498668 Pa
+Mass Source: -5.683817116e-10 s^-1
+Max Local Mass Source: 8.823005206e-11 s^-1
 Average Void Fraction in Bed: 0.439127128
-Total particles kinetic energy: 1.565420156e-07
+Total particles kinetic energy: 1.565422482e-07
 
 *****************************************************************
-Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.002396246242
+Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.002396586939
 *****************************************************************
 Starting DEM iterations at step 2
 Finished 200 DEM iterations 
-Pressure drop: 4.406643537 Pa
-Mass Source: 1.352820785e-09 s^-1
-Max Local Mass Source: 7.601207392e-11 s^-1
+Pressure drop: 2.01972449 Pa
+Mass Source: 9.612883732e-10 s^-1
+Max Local Mass Source: 5.77660008e-11 s^-1
 Average Void Fraction in Bed: 0.439127128
-Total particles kinetic energy: 5.110973119e-07
+Total particles kinetic energy: 2.623524717e-07
 
 *****************************************************************
-Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.002138125015
+Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.002072289955
 *****************************************************************
 Starting DEM iterations at step 3
 Finished 200 DEM iterations 
-Pressure drop: -0.4853675133 Pa
-Mass Source: 1.959652902e-09 s^-1
-Max Local Mass Source: 1.799013921e-10 s^-1
+Pressure drop: 1.413137963 Pa
+Mass Source: 1.239871637e-09 s^-1
+Max Local Mass Source: 7.053506942e-11 s^-1
 Average Void Fraction in Bed: 0.439127128
-Total particles kinetic energy: 3.381000949e-07
+Total particles kinetic energy: 2.613860544e-07
