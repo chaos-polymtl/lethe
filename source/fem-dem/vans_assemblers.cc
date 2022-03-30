@@ -1029,9 +1029,6 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
         scratch_data.fluid_velocity_at_particle_location[particle_number] -
         scratch_data.particle_velocity[particle_number];
 
-      double cell_void_fraction =
-        scratch_data.cell_void_fraction[particle_number];
-
       // Particle's Reynolds number
       double re = 1e-1 + relative_velocity.norm() *
                            particle_properties[DEM::PropertiesIndex::dp] /
