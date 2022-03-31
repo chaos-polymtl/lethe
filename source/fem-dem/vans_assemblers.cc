@@ -887,7 +887,7 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
       // Di Felice Drag Model CD Calculation
       c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
             pow(cell_void_fraction,
-                1 - (3.7 - 0.65 * exp(-pow((1.5 - log10(re)), 2) / 2)));
+                2 - (3.7 - 0.65 * exp(-pow((1.5 - log10(re)), 2) / 2)));
 
       double momentum_transfer_coefficient =
         (0.5 * c_d * M_PI *
@@ -900,16 +900,8 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 
       for (int d = 0; d < dim; ++d)
         {
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-            {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-                drag_force[d];
-            }
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-            {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-                drag_force[d] * cell_void_fraction;
-            }
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
         }
 
       particle_number += 1;
@@ -969,7 +961,7 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
       // Rong Drag Model CD Calculation
       c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
             pow(cell_void_fraction,
-                1 - (2.65 * (cell_void_fraction + 1) -
+                2 - (2.65 * (cell_void_fraction + 1) -
                      (5.3 - (3.5 * cell_void_fraction)) *
                        pow(cell_void_fraction, 2) *
                        exp(-pow(1.5 - log10(re), 2) / 2)));
@@ -985,16 +977,8 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
 
       for (int d = 0; d < dim; ++d)
         {
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-            {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-                drag_force[d];
-            }
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-            {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-                drag_force[d] * cell_void_fraction;
-            }
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
         }
 
       particle_number += 1;
@@ -1045,9 +1029,6 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
         scratch_data.fluid_velocity_at_particle_location[particle_number] -
         scratch_data.particle_velocity[particle_number];
 
-      double cell_void_fraction =
-        scratch_data.cell_void_fraction[particle_number];
-
       // Particle's Reynolds number
       double re = 1e-1 + relative_velocity.norm() *
                            particle_properties[DEM::PropertiesIndex::dp] /
@@ -1061,22 +1042,14 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
          pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
         relative_velocity.norm();
 
-      beta_drag += momentum_transfer_coefficient / cell_void_fraction;
+      beta_drag += momentum_transfer_coefficient;
 
       drag_force = density * momentum_transfer_coefficient * relative_velocity;
 
       for (int d = 0; d < dim; ++d)
         {
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-            {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-                drag_force[d];
-            }
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-            {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-                drag_force[d] * cell_void_fraction;
-            }
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
         }
 
       particle_number += 1;
@@ -1163,22 +1136,14 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
          (2 * dim)) /
         (1 - cell_void_fraction);
 
-      beta_drag += momentum_transfer_coefficient / cell_void_fraction;
+      beta_drag += momentum_transfer_coefficient;
 
       drag_force = density * momentum_transfer_coefficient * relative_velocity;
 
       for (int d = 0; d < dim; ++d)
         {
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-            {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-                drag_force[d];
-            }
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-            {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-                drag_force[d] * cell_void_fraction;
-            }
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
         }
 
       particle_number += 1;
@@ -1374,17 +1339,10 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity      = scratch_data.velocity_values[q];
-      double               void_fraction = scratch_data.void_fraction_values[q];
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
-
-      // Modify the drag coefficient if we are solving model A of the VANS
-      if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-        {
-          beta_drag = scratch_data.beta_drag * void_fraction;
-        }
 
       // Calculate the strong residual for GLS stabilization
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
@@ -1448,17 +1406,10 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Velocity
-      const Tensor<1, dim> velocity      = scratch_data.velocity_values[q];
-      double               void_fraction = scratch_data.void_fraction_values[q];
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
-
-      // Modify the drag coefficient if we are solving model A of the VANS
-      if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-        {
-          beta_drag = scratch_data.beta_drag * void_fraction;
-        }
 
       // Calculate the strong residual for GLS stabilization
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
