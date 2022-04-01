@@ -614,58 +614,47 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       last_position = std::vector<Point<dim>>(dem_particles.size());
       last_omega    = std::vector<Tensor<1, 3>>(dem_particles.size());
 
-      std::vector<std::vector<Tensor<1, 3>>>   k_velocity;
-      std::vector<std::vector<Tensor<1, dim>>> k_position;
-      std::vector<std::vector<Tensor<1, 3>>>   k_omega;
-      std::vector<std::vector<Tensor<1, 3>>>   k_impulsion;
-      std::vector<std::vector<Tensor<1, 3>>>   k_omega_impulsion;
-      std::vector<std::vector<Tensor<1, 3>>>   k_contact_impulsion;
-      std::vector<std::vector<Tensor<1, 3>>>   k_omega_contact_impulsion;
-
-      k_velocity =
+      std::vector<std::vector<Tensor<1, 3>>> k_velocity =
         std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
                                                std::vector<Tensor<1, 3>>(4));
-      k_position = std::vector<std::vector<Tensor<1, dim>>>(
-        dem_particles.size(), std::vector<Tensor<1, dim>>(4));
-      k_omega =
+      std::vector<std::vector<Tensor<1, dim>>> k_position =
+        std::vector<std::vector<Tensor<1, dim>>>(
+          dem_particles.size(), std::vector<Tensor<1, dim>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_omega =
         std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
                                                std::vector<Tensor<1, 3>>(4));
-      k_impulsion =
+      std::vector<std::vector<Tensor<1, 3>>> k_impulsion =
         std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
                                                std::vector<Tensor<1, 3>>(4));
-      k_omega_impulsion =
+      std::vector<std::vector<Tensor<1, 3>>> k_omega_impulsion =
         std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
                                                std::vector<Tensor<1, 3>>(4));
-      k_contact_impulsion =
+      std::vector<std::vector<Tensor<1, 3>>> k_contact_impulsion =
         std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
                                                std::vector<Tensor<1, 3>>(4));
-      k_omega_contact_impulsion =
+      std::vector<std::vector<Tensor<1, 3>>> k_omega_contact_impulsion =
         std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
                                                std::vector<Tensor<1, 3>>(4));
 
       // Solve each of the 4 step of the RK method
       for (unsigned int step = 0; step < 4; ++step)
         {
-          current_fluid_force.clear();
-          current_fluid_force.resize(dem_particles.size());
-          current_fluid_torque.clear();
-          current_fluid_torque.resize(dem_particles.size());
-          contact_torque.clear();
-          contact_torque.resize(dem_particles.size());
-          contact_force.clear();
-          contact_force.resize(dem_particles.size());
-          contact_wall_force.clear();
-          contact_wall_force.resize(dem_particles.size());
-          contact_wall_torque.clear();
-          contact_wall_torque.resize(dem_particles.size());
-          lubrication_force.clear();
-          lubrication_force.resize(dem_particles.size());
-          lubrication_torque.clear();
-          lubrication_torque.resize(dem_particles.size());
-          lubrication_wall_force.clear();
-          lubrication_wall_force.resize(dem_particles.size());
-          lubrication_wall_torque.clear();
-          lubrication_wall_torque.resize(dem_particles.size());
+          std::fill(current_fluid_force.begin(), current_fluid_force.end(), 0);
+          std::fill(current_fluid_torque.begin(),
+                    current_fluid_torque.end(),
+                    0);
+          std::fill(contact_torque.begin(), contact_torque.end(), 0);
+          std::fill(contact_force.begin(), contact_force.end(), 0);
+          std::fill(contact_wall_force.begin(), contact_wall_force.end(), 0);
+          std::fill(contact_wall_torque.begin(), contact_wall_torque.end(), 0);
+          std::fill(lubrication_force.begin(), lubrication_force.end(), 0);
+          std::fill(lubrication_torque.begin(), lubrication_torque.end(), 0);
+          std::fill(lubrication_wall_force.begin(),
+                    lubrication_wall_force.end(),
+                    0);
+          std::fill(lubrication_wall_torque.begin(),
+                    lubrication_wall_torque.end(),
+                    0);
 
           // Calculate particle-particle and particle-wall contact force
           calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
