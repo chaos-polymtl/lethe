@@ -3,7 +3,6 @@
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-
 #include <solvers/navier_stokes_vof_assemblers.h>
 
 template <int dim>
@@ -173,16 +172,21 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
                 dynamic_viscosity_eq *
                   scalar_product(grad_phi_u_j, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
-                density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i;
+                density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
+                div_phi_u_i * phi_p_j;
 
               if (solve_continuity)
                 {
                   // Continuity
-                  local_matrix_ij +=
-                    -div_phi_u_i * phi_p_j + phi_p_i * div_phi_u_j;
+                  local_matrix_ij += phi_p_i * div_phi_u_j;
 
                   // PSPG GLS term
                   local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                }
+              else
+                {
+                  // assemble Jacobian corresponding to p = 0
+                  local_matrix_ij += phi_p_i * phi_p_j;
                 }
 
               // Jacobian is currently incomplete
@@ -273,7 +277,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
         {
           force = 0;
-          if (multiphysics_parameters.skip_mass_conservation_fluid_0)
+          if (multiphysics_parameters
+                .skip_mass_conservation_fluid_0) // TODO et point sur boundary
+                                                 // (et wetting?)
             solve_continuity = false;
         }
       else if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
@@ -342,6 +348,11 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
               // PSPG GLS term
               local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
+            }
+          else
+            {
+              // assemble RHS for p = 0
+              local_rhs(i) += -phi_p_i * pressure;
             }
 
           // SUPG GLS term

@@ -1,12 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -23,6 +14,14 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 void
@@ -1670,6 +1669,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
   std::vector<double> density_1(n_q_points);
   int                 id_denser_fluid;
   int                 id_lighter_fluid;
+  //  const double        phase_threshold(0.2);
 
   // Useful definitions for readability
   const double wetting_threshold =
@@ -1683,7 +1683,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
       if (cell_vof->is_locally_owned() && cell_vof->at_boundary())
         {
           for (const auto face : cell_vof->face_indices())
-            {
+            { // TODO ajouter condition que soit sur la BC de pw
               if (cell_vof->face(face)->at_boundary() &&
                   cell_vof->face(face)->boundary_id() == boundary_id)
                 {
@@ -1748,16 +1748,20 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                         }
 
                       // Wetting of lower density fluid
-                      if ((pressure_values[q] > wetting_threshold) ||
-                          (pressure_gradients[q][1] > wetting_threshold))
+                      if ((pressure_values[q] > wetting_threshold)) // ||
+                        //                          (pressure_gradients[q][1] >
+                        //                          wetting_threshold))
                         {
-                          if ((id_denser_fluid == 1 && phase_values[q] < 0.5) ||
-                              (id_denser_fluid == 0 && phase_values[q] > 0.5))
+                          if ((id_denser_fluid ==
+                                 1 && // phase_values[q] < 0.5 &&
+                               phase_values[q] > 0.1) ||
+                              (id_denser_fluid == 0 && phase_values[q] > 0.5 &&
+                               phase_values[q] < 0.9))
                             {
                               nb_q_wet++;
 
                               // if enough quadrature points meet the condition
-                              if (nb_q_wet > n_q_points / 2)
+                              if (nb_q_wet >= n_q_points / 2)
                                 { // TODO appliquer le changement au niveau de
                                   // la cellule
                                   change_cell_phase(PhaseChange::wetting,
