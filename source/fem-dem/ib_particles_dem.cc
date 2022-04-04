@@ -686,10 +686,12 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                 }
               auto inv_inertia = invert(dem_particles[p_i].inertia);
               if (dim == 2)
-                gravity = g * (dem_particles[p_i].mass -
-                               dem_particles[p_i].radius *
-                                 dem_particles[p_i].radius * PI * rho);
-              if (dim == 3)
+                {
+                  gravity = g * (dem_particles[p_i].mass -
+                                 dem_particles[p_i].radius *
+                                   dem_particles[p_i].radius * PI * rho);
+                }
+              else
                 {
                   gravity = g * (dem_particles[p_i].mass -
                                  4.0 / 3.0 * dem_particles[p_i].radius *
