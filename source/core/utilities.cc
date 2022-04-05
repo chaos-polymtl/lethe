@@ -211,7 +211,7 @@ create_output_folder(const std::string &dirname)
 #if __GNUC__ > 7
   std::filesystem::create_directory(dirname);
 #else
-  mkdir(dirname.c_str(), 0755);
+  //mkdir(dirname.c_str(), 0755);
 #endif
 }
 
