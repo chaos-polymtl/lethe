@@ -1,7 +1,7 @@
 """
 Postprocessing code for 2D-backward-facing-step example
 Computes the reattachment length (x_r) for Re = 100
-for several meshes with a bissection algorithm
+for several meshes with a bisection algorithm
 
 Author : Charles Le Pailleur
 """
@@ -24,7 +24,7 @@ x_r_ref = 2.922              # Benchmark value for Re = 100 (Erturk 2008)
 							 #  x_r values)
 x_inf = 2.                   # Initial guesses
 x_sup = 3.
-tol = 1e-12                  # Bissection stop criterion
+tol = 1e-12                  # Bisection stop criterion
 
 # DATA EXTRACTION
 n = 11                       # Number of VTU files to be read
@@ -42,14 +42,14 @@ for i in range(0,n):
     data[i].set_active_vectors("velocity")
     N_elements[i] = data[i].GetNumberOfElements(0)
     
-# BISSECTION METHOD
+# BISECTION METHOD
 x_r = np.zeros(n)            # Reattachment length
 for i in range(0,n):
     # Initial guesses
     x1 = L_in + x_inf
     x2 = L_in + x_sup
     j = 0
-    # Bissection loop
+    # Bisection loop
     while abs(x2-x1)>tol and j<=20:
         xm = (x1+x2)/2
         # Profiles calculation
