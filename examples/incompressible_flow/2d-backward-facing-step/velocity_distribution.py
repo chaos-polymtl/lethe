@@ -33,12 +33,8 @@ file = list(range(0,n))
 data = list(range(0,n))
 N = np.zeros(n)
 for i in range(0,n):
-    if i<10:
-        file[i] = ('Reynolds100-600/backward_facing_step_output.000' 
-                   + str(i) + '.0000.vtu')
-    elif i>=10:
-        file[i] = ('Reynolds100-600/backward_facing_step_output.00' 
-                   + str(i) + '.0000.vtu')
+    file[i] = ('Reynolds100-600/backward_facing_step_output.' 
+               + f'{i:04d}' + '.0000.vtu')
     data[i] = pv.read(file[i])
     data[i].set_active_vectors("velocity")
 
@@ -76,6 +72,8 @@ plt.xlabel(r'$u_{in}$')
 plt.ylabel("y/h")
 plt.legend(fontsize=8)
 plt.axis([0, 2.5, 0, 1])
+plt.title(r'Velocity distribution $u(y)$ at the step')
+plt.savefig('velocity_step.png')
 
 ####################
 # Poiseuille Outlet
@@ -110,3 +108,5 @@ plt.xlabel(r'$u_{out}$')
 plt.ylabel("y/h")
 plt.legend(fontsize=8)
 plt.axis([0,1.5,0,2])
+plt.title(r'Velocity distribution $u(y)$ at the outlet')
+plt.savefig('velocity_outlet.png')

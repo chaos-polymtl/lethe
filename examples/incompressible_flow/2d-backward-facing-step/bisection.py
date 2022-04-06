@@ -20,8 +20,8 @@ import pyvista as pv
 # VARIABLES
 L_in = 15                    # Inlet length
 x_r_ref = 2.922              # Benchmark value for Re = 100 (Erturk 2008)
-							 # (see attached .txt file for other Reynolds
-							 #  x_r values)
+							  # (see attached .txt file for other Reynolds
+							  #  x_r values)
 x_inf = 2.                   # Initial guesses
 x_sup = 3.
 tol = 1e-12                  # Bisection stop criterion
@@ -32,12 +32,8 @@ file = list(range(0,n))
 data = list(range(0,n))
 N_elements = np.zeros(n)
 for i in range(0,n):
-    if i<10:
-        file[i] = ('Reynolds100-600/backward_facing_step_output.000' 
-                   + str(i) + '.0000.vtu')
-    elif i>=10:
-        file[i] = ('Reynolds100-600/backward_facing_step_output.00' 
-                   + str(i) + '.0000.vtu')
+    file[i] = ('Reynolds100-600/backward_facing_step_output.' 
+               + f'{i:04d}' + '.0000.vtu')
     data[i] = pv.read(file[i])
     data[i].set_active_vectors("velocity")
     N_elements[i] = data[i].GetNumberOfElements(0)
@@ -83,6 +79,8 @@ plt.grid()
 plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 plt.xlabel("Mesh refinement step")
 plt.ylabel(r'$x_r$/h')
+plt.title(r'Convergence of $x_r$ according to mesh refinement level')
+plt.savefig('xr_convergence.png')
 
 # RELATIVE ERROR
 e = abs(x_r_ref-x_r)/x_r_ref
@@ -91,6 +89,9 @@ e = abs(x_r_ref-x_r)/x_r_ref
 plt.figure()
 plt.loglog(N_elements[1:],e[1:])
 plt.grid(which='minor')
-plt.xlabel("Number of elements")
+plt.xlabel("Number of elements", fontsize=12)
 plt.ylabel(r'$\frac{x_r - \bar{x}_r}{x_r}$')
+plt.title('Evolution of the error with the number of elements')
+plt.tight_layout()
+plt.savefig('error_analysis.png')
 
