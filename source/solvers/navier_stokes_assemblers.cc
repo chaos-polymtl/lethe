@@ -1940,13 +1940,15 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
 
                                         double beta_terms_tangent =
                                           penalty_parameter * beta_tangent * 
-                                            (scratch_data.face_phi_u[f][q][j][comp_i] - 
-                                              (scratch_data.face_normal[f][q][comp_i] * 
-                                                scratch_data.face_phi_u[f][q][j][comp_i])) * 
-                                                  (scratch_data.face_phi_u[f][q][j][comp_i] -
-                                                    (scratch_data.face_normal[f][q][comp_i] * 
-                                                      scratch_data.face_phi_u[f][q][i][comp_i])) *
-                                                        JxW;
+                                            (scratch_data.face_phi_u[f][q][j][comp_i] -
+                                              scratch_data.face_normal[f][q][comp_i] * 
+                                                (scratch_data.face_normal[f][q][comp_i] * 
+                                                  scratch_data.face_phi_u[f][q][j][comp_i])) * 
+                                                    (scratch_data.face_phi_u[f][q][j][comp_i] -
+                                                      scratch_data.face_normal[f][q][comp_i] *
+                                                        (scratch_data.face_normal[f][q][comp_i] * 
+                                                          scratch_data.face_phi_u[f][q][i][comp_i])) *
+                                                            JxW;
 
 /*                                          double beta_terms =
                                             penalty_parameter * beta *
@@ -2072,11 +2074,12 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_rhs(
                                           scratch_data.face_normal[f][q][comp_i] * 
                                             (scratch_data.face_normal[f][q][comp_i] * 
                                               scratch_data.face_velocity_values[f][q][comp_i]) - 
-                                                prescribed_velocity_values[f][q][comp_i] - 
-                                                  (scratch_data.face_normal[f][q][comp_i] * 
-                                                    prescribed_velocity_values[f][q][comp_i])) *
-                                                      scratch_data.face_phi_u[f][q][i][comp_i] *
-                                                        JxW;
+                                                (prescribed_velocity_values[f][q][comp_i] -
+                                                  scratch_data.face_normal[f][q][comp_i] * 
+                                                    (scratch_data.face_normal[f][q][comp_i] * 
+                                                      prescribed_velocity_values[f][q][comp_i]))) *
+                                                        scratch_data.face_phi_u[f][q][i][comp_i] *
+                                                          JxW;
                                   
                                   /*double beta_terms =
                                     penalty_parameter * beta *
