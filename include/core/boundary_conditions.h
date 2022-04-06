@@ -34,6 +34,7 @@ namespace BoundaryConditions
     slip,
     function,
     function_weak,
+    slip_weak,
     periodic,
     pressure,
     outlet,
@@ -171,9 +172,9 @@ namespace BoundaryConditions
       "type",
       "noslip",
       Patterns::Selection(
-        "noslip|slip|function|periodic|pressure|function weak|outlet"),
+        "noslip|slip|function|periodic|pressure|function weak|slip weak|outlet"),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|function weak|outlet>.");
+      "Choices are <noslip|slip|function|periodic|pressure|function weak|slip weak|outlet>.");
 
 
     prm.declare_entry("id",
@@ -244,12 +245,14 @@ namespace BoundaryConditions
       this->type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
       this->type[i_bc] = BoundaryType::slip;
-    if (op == "function" || op == "function weak")
+    if (op == "function" || op == "function weak" || op == "slip weak")
       {
         if (op == "function")
           this->type[i_bc] = BoundaryType::function;
-        else
+        else if (op == "function weak")
           this->type[i_bc] = BoundaryType::function_weak;
+        else if (op == "slip weak")
+          this->type[i_bc] = BoundaryType::slip_weak;
         prm.enter_subsection("u");
         bcFunctions[i_bc].u.parse_parameters(prm);
         prm.leave_subsection();
@@ -265,6 +268,7 @@ namespace BoundaryConditions
         prm.enter_subsection("center of rotation");
         bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
         bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
+        
         if (dim == 3)
           bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
         prm.leave_subsection();

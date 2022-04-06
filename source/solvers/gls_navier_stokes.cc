@@ -338,6 +338,11 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
           /*do nothing*/
         }
       else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::slip_weak)
+        {
+          /*do nothing*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::outlet)
         {
           /*do nothing*/
@@ -368,6 +373,14 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
     {
       this->assemblers.push_back(
         std::make_shared<WeakDirichletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::slip_weak))
+    {
+      this->assemblers.push_back(
+        std::make_shared<WeakSlipDirichletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
