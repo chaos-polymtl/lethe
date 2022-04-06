@@ -1996,6 +1996,10 @@ namespace Parameters
                         "0",
                         Patterns::Double(),
                         "Beta coefficient value for the first step time");
+      prm.declare_entry("initial beta tangent",
+                        "0",
+                        Patterns::Double(),
+                        "Beta tangent coefficient value for the first step time");
     }
     prm.leave_subsection();
   }
@@ -2015,6 +2019,7 @@ namespace Parameters
       boundary_flow_id    = prm.get_integer("boundary id");
       flow_direction      = prm.get_integer("flow direction");
       beta_0              = prm.get_double("initial beta");
+      beta_tangent_0      = prm.get_double("initial beta tangent");
     }
     prm.leave_subsection();
   }

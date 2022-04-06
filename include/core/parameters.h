@@ -954,6 +954,9 @@ namespace Parameters
     // Initial beta
     double beta_0;
 
+    // Initial beta_tangent
+    double beta_tangent_0;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
