@@ -1950,14 +1950,7 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
                                                           scratch_data.face_phi_u[f][q][i][comp_i])) *
                                                             JxW;
 
-/*                                          double beta_terms =
-                                            penalty_parameter * beta *
-                                            (scratch_data
-                                               .face_phi_u[f][q][j][comp_i]) *
-                                            scratch_data
-                                              .face_phi_u[f][q][i][comp_i] *
-                                            JxW;
-                                          double grad_phi_terms =
+                                          /*double grad_phi_terms =
                                             ((viscosity *
                                               scratch_data
                                                 .face_phi_u[f][q][j]) *
@@ -1974,8 +1967,8 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
                                             JxW;*/
 
                                           local_matrix(i, j) +=
-                                            +beta_terms_normal + beta_terms_tangent; //- grad_phi_terms -
-                                           // surface_stress_term;
+                                            + beta_terms_normal + beta_terms_tangent;// - grad_phi_terms -
+                                            //surface_stress_term;
                                         }
                                     }
                                 }
@@ -2081,14 +2074,7 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_rhs(
                                                         scratch_data.face_phi_u[f][q][i][comp_i] *
                                                           JxW;
                                   
-                                  /*double beta_terms =
-                                    penalty_parameter * beta *
-                                    (scratch_data
-                                       .face_velocity_values[f][q][comp_i] -
-                                     prescribed_velocity_values[f][q][comp_i]) *
-                                    scratch_data.face_phi_u[f][q][i][comp_i] *
-                                    JxW;
-                                  double grad_phi_terms =
+                                  /*double grad_phi_terms =
                                     ((viscosity *
                                       (scratch_data.face_velocity_values[f][q] -
                                        prescribed_velocity_values[f][q])) *
@@ -2105,7 +2091,7 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_rhs(
 
                                   local_rhs(i) += -beta_terms_normal - 
                                     beta_terms_tangent;// + grad_phi_terms +
-                                                  //surface_stress_term;
+                                                 // surface_stress_term;
                                 }
                             }
                         }
