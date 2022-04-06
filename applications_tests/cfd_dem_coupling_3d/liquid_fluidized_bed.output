@@ -1,47 +1,69 @@
 Running on 1 MPI rank(s)...
-DEM time-step is 19.21374127% of Rayleigh time step
+DEM time-step is 2.186842813% of Rayleigh time step
 Reading DEM checkpoint 
 Finished reading DEM checkpoint 
-5000 particles are in the simulation 
-   Number of active cells:       8448
-   Number of degrees of freedom: 43092
-   Volume of triangulation:      1e-05
-Pressure drop: 0 Pa
+10000 particles are in the simulation 
+   Number of active cells:       4500
+   Number of degrees of freedom: 21504
+   Volume of triangulation:      0.001
+---------------------------------------------------------------
 Initializing DEM parameters 
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters 
-DEM time-step is 5e-06 s 
+DEM time-step is 1e-05 s 
 *****************************************************************
-Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0.0006009186152
+Transient iteration : 1        Time : 0.0001   Time step : 0.0001   CFL : 0.001049466372
 *****************************************************************
 Starting DEM iterations at step 1
 DEM contact search at dem step 0
-Finished 200 DEM iterations 
-Pressure drop: 98.66498668 Pa
-Mass Source: -5.683817116e-10 s^-1
-Max Local Mass Source: 8.823005206e-11 s^-1
-Average Void Fraction in Bed: 0.439127128
-Total particles kinetic energy: 1.565422482e-07
+Finished 10 DEM iterations 
+---------------------------------------------------------------
+Mass Source: 2.63080846e-12 s^-1
+Max Local Mass Source: 3.68624921e-07 s^-1
+Average Void Fraction in Bed: 0.7836727597
+Total particles kinetic energy: 0.0003405183563
 
 *****************************************************************
-Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.002396586939
+Transient iteration : 2        Time : 0.0002   Time step : 0.0001   CFL : 0.005073327133
 *****************************************************************
 Starting DEM iterations at step 2
-Finished 200 DEM iterations 
-Pressure drop: 2.01972449 Pa
-Mass Source: 9.612883732e-10 s^-1
-Max Local Mass Source: 5.77660008e-11 s^-1
-Average Void Fraction in Bed: 0.439127128
-Total particles kinetic energy: 2.623524717e-07
+Finished 10 DEM iterations 
+---------------------------------------------------------------
+Mass Source: 9.381279818e-12 s^-1
+Max Local Mass Source: 3.477494708e-07 s^-1
+Average Void Fraction in Bed: 0.7836727597
+Total particles kinetic energy: 0.01475158071
 
 *****************************************************************
-Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.002072289955
+Transient iteration : 3        Time : 0.0003   Time step : 0.0001   CFL : 0.004565034979
 *****************************************************************
 Starting DEM iterations at step 3
-Finished 200 DEM iterations 
-Pressure drop: 1.413137963 Pa
-Mass Source: 1.239871637e-09 s^-1
-Max Local Mass Source: 7.053506942e-11 s^-1
-Average Void Fraction in Bed: 0.439127128
-Total particles kinetic energy: 2.613860544e-07
+Finished 10 DEM iterations 
+---------------------------------------------------------------
+Mass Source: -2.498734422e-12 s^-1
+Max Local Mass Source: 3.327900916e-07 s^-1
+Average Void Fraction in Bed: 0.7836727597
+Total particles kinetic energy: 0.0237454011
+
+*****************************************************************
+Transient iteration : 4        Time : 0.0004   Time step : 0.0001   CFL : 0.004398671963
+*****************************************************************
+Starting DEM iterations at step 4
+Finished 10 DEM iterations 
+---------------------------------------------------------------
+Mass Source: 2.446593441e-14 s^-1
+Max Local Mass Source: 3.276963055e-07 s^-1
+Average Void Fraction in Bed: 0.7836727597
+Total particles kinetic energy: 0.02946120267
+
+*****************************************************************
+Transient iteration : 5        Time : 0.0005   Time step : 0.0001   CFL : 0.004282046614
+*****************************************************************
+Starting DEM iterations at step 5
+Finished 10 DEM iterations 
+---------------------------------------------------------------
+Mass Source: 8.283705012e-14 s^-1
+Max Local Mass Source: 3.261357746e-07 s^-1
+Average Void Fraction in Bed: 0.7836727597
+Total particles kinetic energy: 0.03317816653

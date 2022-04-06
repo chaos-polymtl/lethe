@@ -25,6 +25,7 @@ LagrangianPostProcessing<dim>::calculate_average_particles_velocity(
   velocity_average_x.reinit(triangulation.n_active_cells());
   velocity_average_y.reinit(triangulation.n_active_cells());
   velocity_average_z.reinit(triangulation.n_active_cells());
+  velocity_average_magnitude.reinit(triangulation.n_active_cells());
 
   // Iterating through the active cells in the trangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -38,9 +39,20 @@ LagrangianPostProcessing<dim>::calculate_average_particles_velocity(
             cell_velocity_average[0];
           velocity_average_y[cell->active_cell_index()] =
             cell_velocity_average[1];
-          if (dim == 3)
+
+          if constexpr (dim == 3)
             velocity_average_z[cell->active_cell_index()] =
               cell_velocity_average[2];
+
+          if constexpr (dim == 2)
+            velocity_average_magnitude[cell->active_cell_index()] =
+              sqrt(pow(cell_velocity_average[0], 2) +
+                   pow(cell_velocity_average[1], 2));
+          if constexpr (dim == 3)
+            velocity_average_magnitude[cell->active_cell_index()] =
+              sqrt(pow(cell_velocity_average[0], 2) +
+                   pow(cell_velocity_average[1], 2) +
+                   pow(cell_velocity_average[2], 2));
         }
     }
 }
@@ -176,9 +188,11 @@ LagrangianPostProcessing<dim>::write_average_particles_velocity(
 
   std::vector<std::string> average_solution_names(1, "average_velocity_x");
   average_solution_names.push_back("average_velocity_y");
-  if (dim == 3)
+  if constexpr (dim == 3)
     average_solution_names.push_back("average_velocity_z");
+  average_solution_names.push_back("average_velocity_magnitude");
 
+  average_solution_names.push_back("average_velocity_magnitude");
 
   data_out.add_data_vector(velocity_average_x,
                            average_solution_names[0],
@@ -186,9 +200,17 @@ LagrangianPostProcessing<dim>::write_average_particles_velocity(
   data_out.add_data_vector(velocity_average_y,
                            average_solution_names[1],
                            DataOut<dim>::type_cell_data);
-  if (dim == 3)
+  if constexpr (dim == 3)
     data_out.add_data_vector(velocity_average_z,
                              average_solution_names[2],
+                             DataOut<dim>::type_cell_data);
+  if constexpr (dim == 2)
+    data_out.add_data_vector(velocity_average_magnitude,
+                             average_solution_names[2],
+                             DataOut<dim>::type_cell_data);
+  if constexpr (dim == 3)
+    data_out.add_data_vector(velocity_average_magnitude,
+                             average_solution_names[3],
                              DataOut<dim>::type_cell_data);
 
   data_out.build_patches();

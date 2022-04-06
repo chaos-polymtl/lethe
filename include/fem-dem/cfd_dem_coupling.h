@@ -23,6 +23,7 @@
 #include <dem/dem.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>
+#include <dem/lagrangian_post_processing.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/gls_vans.h>
 
@@ -33,6 +34,7 @@
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_in.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
@@ -191,11 +193,20 @@ private:
   print_particles_summary();
 
   /**
+   * @brief dem_post_process_results
+   */
+  void
+  dem_post_process_results();
+
+  /**
    * @brief postprocess
    * Post-process fluid dynamics after an iteration
    */
   void
   postprocess_fd(bool first_iteration) override;
+
+  void
+  post_processing() override;
 
 
   unsigned int              coupling_frequency;
@@ -294,10 +305,11 @@ private:
   PVDHandler      grid_pvdhandler;
   PVDHandler      particles_pvdhandler;
 
-  DEMSolverParameters<dim> dem_parameters;
-  double                   dem_time_step;
-  const unsigned int       this_mpi_process;
-  const unsigned int       n_mpi_processes;
+  DEMSolverParameters<dim>      dem_parameters;
+  double                        dem_time_step;
+  const unsigned int            this_mpi_process;
+  const unsigned int            n_mpi_processes;
+  LagrangianPostProcessing<dim> dem_post_processing_object;
 
   Triangulation<dim> tria;
 };

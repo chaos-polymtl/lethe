@@ -78,7 +78,10 @@ private:
   update_solution_and_constraints();
 
   void
-  assemble_L2_projection_void_fraction();
+  particle_centered_method();
+
+  void
+  quadrature_centered_sphere_method();
 
   void
   solve_L2_system_void_fraction();
@@ -112,6 +115,9 @@ protected:
   calculate_void_fraction(const double time);
 
   void
+  vertices_cell_mapping();
+
+  virtual void
   post_processing();
 
   /**
@@ -236,12 +242,14 @@ protected:
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   AffineConstraints<double>                          void_fraction_constraints;
 
-  Parameters::SimulationControl::TimeSteppingMethod scheme;
-
   const bool   PSPG        = true;
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
   double       pressure_drop;
+
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_cell;
 
 protected:
   Particles::ParticleHandler<dim, dim> particle_handler;

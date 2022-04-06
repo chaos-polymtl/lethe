@@ -37,19 +37,20 @@ namespace DEM
 
   enum PropertiesIndex : int
   {
-    type         = 0,
-    dp           = 1,
-    v_x          = 2,
-    v_y          = 3,
-    v_z          = 4,
-    omega_x      = 5,
-    omega_y      = 6,
-    omega_z      = 7,
-    fem_force_x  = 8,
-    fem_force_y  = 9,
-    fem_force_z  = 10,
-    mass         = 11,
-    n_properties = 12,
+    type                    = 0,
+    dp                      = 1,
+    v_x                     = 2,
+    v_y                     = 3,
+    v_z                     = 4,
+    omega_x                 = 5,
+    omega_y                 = 6,
+    omega_z                 = 7,
+    fem_force_x             = 8,
+    fem_force_y             = 9,
+    fem_force_z             = 10,
+    volumetric_contribution = 11,
+    mass                    = 12,
+    n_properties            = 13,
   };
 
   unsigned int

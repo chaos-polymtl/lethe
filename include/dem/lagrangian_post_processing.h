@@ -138,6 +138,7 @@ private:
   Vector<double> velocity_average_x;
   Vector<double> velocity_average_y;
   Vector<double> velocity_average_z;
+  Vector<double> velocity_average_magnitude;
 
   Vector<double> granular_temperature_average;
 };
