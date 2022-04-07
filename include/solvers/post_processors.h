@@ -179,11 +179,11 @@ class NonNewtonianViscosityPostprocessor : public DataPostprocessorScalar<dim>
 {
 public:
   NonNewtonianViscosityPostprocessor(
-    Parameters::PhysicalProperties p_physical_properties)
+    std::shared_ptr<RheologicalModel> rheological_model)
     : DataPostprocessorScalar<dim>("viscosity", update_gradients)
-  {
-    rheological_model = RheologicalModel::model_cast(p_physical_properties);
-  }
+    , rheological_model(rheological_model)
+  {}
+
   virtual void
   evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
                         std::vector<Vector<double>> &computed_quantities) const

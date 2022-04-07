@@ -44,12 +44,8 @@ class HeatTransferAssemblerBase
 {
 public:
   HeatTransferAssemblerBase(
-    std::shared_ptr<SimulationControl>   p_simulation_control,
-    const Parameters::PhysicalProperties p_physical_properties,
-    const Parameters::Multiphysics &     p_multiphysics_parameters)
+    std::shared_ptr<SimulationControl> p_simulation_control)
     : simulation_control(p_simulation_control)
-    , physical_properties(p_physical_properties)
-    , multiphysics_parameters(p_multiphysics_parameters)
   {}
 
 
@@ -78,9 +74,7 @@ public:
                StabilizedMethodsCopyData &   copy_data) = 0;
 
 protected:
-  std::shared_ptr<SimulationControl>   simulation_control;
-  const Parameters::PhysicalProperties physical_properties;
-  const Parameters::Multiphysics &     multiphysics_parameters;
+  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
@@ -100,12 +94,8 @@ class HeatTransferAssemblerCore : public HeatTransferAssemblerBase<dim>
 {
 public:
   HeatTransferAssemblerCore(
-    std::shared_ptr<SimulationControl>   simulation_control,
-    const Parameters::PhysicalProperties physical_properties,
-    const Parameters::Multiphysics &     multiphysics_parameters)
-    : HeatTransferAssemblerBase<dim>(simulation_control,
-                                     physical_properties,
-                                     multiphysics_parameters)
+    std::shared_ptr<SimulationControl> simulation_control)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
   {}
 
   /**
@@ -141,12 +131,8 @@ class HeatTransferAssemblerBDF : public HeatTransferAssemblerBase<dim>
 {
 public:
   HeatTransferAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   multiphysics_parameters)
-    : HeatTransferAssemblerBase<dim>(simulation_control,
-                                     physical_properties,
-                                     multiphysics_parameters)
+    std::shared_ptr<SimulationControl> simulation_control)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
   {}
 
   /**
@@ -184,13 +170,9 @@ class HeatTransferAssemblerRobinBC : public HeatTransferAssemblerBase<dim>
 public:
   HeatTransferAssemblerRobinBC(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   multiphysics_parameters,
     const BoundaryConditions::HTBoundaryConditions<dim>
       &p_boundary_conditions_ht)
-    : HeatTransferAssemblerBase<dim>(simulation_control,
-                                     physical_properties,
-                                     multiphysics_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
     , boundary_conditions_ht(p_boundary_conditions_ht)
   {}
 
@@ -230,12 +212,8 @@ class HeatTransferAssemblerViscousDissipation
 {
 public:
   HeatTransferAssemblerViscousDissipation(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
-    const Parameters::Multiphysics &   multiphysics_parameters)
-    : HeatTransferAssemblerBase<dim>(simulation_control,
-                                     physical_properties,
-                                     multiphysics_parameters)
+    std::shared_ptr<SimulationControl> simulation_control)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
   {}
 
   virtual void

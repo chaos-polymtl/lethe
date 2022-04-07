@@ -47,19 +47,19 @@ using namespace dealii;
 template <int dim>
 class ParticleWallLinearForce : public ParticleWallContactForce<dim>
 {
-  using FuncPtrType = Tensor<1, dim> (ParticleWallLinearForce<dim>::*)(
+  using FuncPtrType = Tensor<1, 3> (ParticleWallLinearForce<dim>::*)(
     const ArrayView<const double> &,
     const double &,
     const double &,
-    const Tensor<1, dim> &);
+    const Tensor<1, 3> &);
   FuncPtrType calculate_rolling_resistance_torque;
 
 public:
   ParticleWallLinearForce<dim>(
-    const std::unordered_map<unsigned int, Tensor<1, dim>>
+    const std::unordered_map<unsigned int, Tensor<1, 3>>
                                                    boundary_translational_velocity,
     const std::unordered_map<unsigned int, double> boundary_rotational_speed,
-    const std::unordered_map<unsigned int, Tensor<1, dim>>
+    const std::unordered_map<unsigned int, Tensor<1, 3>>
                                           boundary_rotational_vector,
     const double                          triangulation_radius,
     const DEMSolverParameters<dim> &      dem_parameters,
@@ -73,7 +73,7 @@ public:
    * the particle-wall contact force. These information were obtained in
    * the fine search
    * @param dt DEM time step
-   * @param momentum An unordered_map of momentum of particles
+   * @param torque Torque acting on particle
    * @param force Force acting on particles
    */
   virtual void
@@ -81,10 +81,49 @@ public:
     std::unordered_map<
       types::particle_index,
       std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
-      &                          particle_wall_pairs_in_contact,
-    const double &               dt,
-    std::vector<Tensor<1, dim>> &momentum,
-    std::vector<Tensor<1, dim>> &force) override;
+      &                        particle_wall_pairs_in_contact,
+    const double &             dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force) override;
+
+  /**
+   * Carries out the calculation of the contact force for IB particles. This
+   * function is used in fem-dem/ib_particles_dem.
+   *
+   * TODO : At this point in time this function is not implemented and the
+   * function used for particle wall contact force is hardcoded. This will be
+   * modified in futur update
+   *
+   * @param contact_info Contact history including tangential overlap and relative
+   * velocity.
+   * @param normal_force Contact normal force.
+   * @param tangential_force Contact tangential force.
+   * @param tangential_torque
+   * @param rolling_resistance_torque Contact rolling resistance torque.
+   * @param particle
+   * @param wall_youngs_modulus
+   * @param wall_poisson_ratio
+   * @param wall_restitution_coefficient
+   * @param wall_friction_coefficient
+   * @param wall_rolling_friction_coefficient
+   * @param dt Time-step.
+   */
+  virtual void
+  calculate_IB_particle_wall_contact_force(
+    particle_wall_contact_info_struct<dim> &contact_info,
+    Tensor<1, 3> &                          normal_force,
+    Tensor<1, 3> &                          tangential_force,
+    Tensor<1, 3> &                          tangential_torque,
+    Tensor<1, 3> &                          rolling_resistance_torque,
+    IBParticle<dim> &                       particle,
+    const double &                          wall_youngs_modulus,
+    const double &                          wall_poisson_ratio,
+    const double &                          wall_restitution_coefficient,
+    const double &                          wall_friction_coefficient,
+    const double &                          wall_rolling_friction_coefficient,
+    const double &                          dt,
+    const double &                          mass,
+    const double &                          radius) override;
 
 private:
   /**
@@ -97,16 +136,13 @@ private:
    *
    * @return rolling resistance torque
    */
-  inline Tensor<1, dim>
+  inline Tensor<1, 3>
   no_resistance(const ArrayView<const double> & /*particle_properties*/,
                 const double & /*effective_rolling_friction_coefficient*/,
                 const double & /*normal_force_norm*/,
-                const Tensor<1, dim> & /*normal_contact_vector*/)
+                const Tensor<1, 3> & /*normal_contact_vector*/)
   {
-    Tensor<1, dim> rolling_resistance;
-    for (int d = 0; d < dim; ++d)
-      rolling_resistance[d] = 0;
-
+    Tensor<1, 3> rolling_resistance({0, 0, 0});
     return rolling_resistance;
   }
 
@@ -120,15 +156,15 @@ private:
    *
    * @return rolling resistance torque
    */
-  inline Tensor<1, dim>
+  inline Tensor<1, 3>
   constant_resistance(const ArrayView<const double> &particle_properties,
                       const double &effective_rolling_friction_coefficient,
                       const double &normal_force_norm,
-                      const Tensor<1, dim> & /*normal_contact_vector*/)
+                      const Tensor<1, 3> & /*normal_contact_vector*/)
   {
     // Getting the angular velocity of particle in the vector format
-    Tensor<1, dim> angular_velocity;
-    for (int d = 0; d < dim; ++d)
+    Tensor<1, 3> angular_velocity;
+    for (int d = 0; d < 3; ++d)
       {
         angular_velocity[d] =
           particle_properties[DEM::PropertiesIndex::omega_x + d];
@@ -136,11 +172,7 @@ private:
 
     // Calculation of particle-wall angular velocity (norm of the
     // particle angular velocity)
-    Tensor<1, dim> particle_wall_angular_velocity;
-    for (int d = 0; d < dim; ++d)
-      {
-        particle_wall_angular_velocity[d] = 0;
-      }
+    Tensor<1, 3> particle_wall_angular_velocity({0.0, 0.0, 0.0});
 
     double omega_value = angular_velocity.norm();
     if (omega_value != 0)
@@ -149,7 +181,7 @@ private:
       }
 
     // Calcualation of rolling resistance torque
-    Tensor<1, dim> rolling_resistance_torque =
+    Tensor<1, 3> rolling_resistance_torque =
       -effective_rolling_friction_coefficient *
       (particle_properties[DEM::PropertiesIndex::dp] * 0.5) *
       normal_force_norm * particle_wall_angular_velocity;
@@ -167,15 +199,15 @@ private:
    *
    * @return rolling resistance torque
    */
-  inline Tensor<1, dim>
+  inline Tensor<1, 3>
   viscous_resistance(const ArrayView<const double> &particle_properties,
-                     const double &effective_rolling_friction_coefficient,
-                     const double &normal_force_norm,
-                     const Tensor<1, dim> &normal_contact_vector)
+                     const double &      effective_rolling_friction_coefficient,
+                     const double &      normal_force_norm,
+                     const Tensor<1, 3> &normal_contact_vector)
   {
     // Getting the angular velocity of particle in the vector format
-    Tensor<1, dim> angular_velocity;
-    for (int d = 0; d < dim; ++d)
+    Tensor<1, 3> angular_velocity;
+    for (int d = 0; d < 3; ++d)
       {
         angular_velocity[d] =
           particle_properties[DEM::PropertiesIndex::omega_x + d];
@@ -183,11 +215,7 @@ private:
 
     // Calculation of particle-wall angular velocity (norm of the
     // particle angular velocity)
-    Tensor<1, dim> particle_wall_angular_velocity;
-    for (int d = 0; d < dim; ++d)
-      {
-        particle_wall_angular_velocity[d] = 0;
-      }
+    Tensor<1, 3> particle_wall_angular_velocity({0.0, 0.0, 0.0});
 
     double omega_value = angular_velocity.norm();
     if (omega_value != 0)
@@ -195,13 +223,13 @@ private:
         particle_wall_angular_velocity = angular_velocity / omega_value;
       }
 
-    Tensor<1, dim> v_omega =
+    Tensor<1, 3> v_omega =
       cross_product_3d(angular_velocity,
                        particle_properties[DEM::PropertiesIndex::dp] * 0.5 *
                          normal_contact_vector);
 
     // Calculation of rolling resistance torque
-    Tensor<1, dim> rolling_resistance_torque =
+    Tensor<1, 3> rolling_resistance_torque =
       -effective_rolling_friction_coefficient *
       particle_properties[DEM::PropertiesIndex::dp] * 0.5 * normal_force_norm *
       v_omega.norm() * particle_wall_angular_velocity;
@@ -220,7 +248,7 @@ private:
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
    */
-  std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+  std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
   calculate_linear_contact_force_and_torque(
     particle_wall_contact_info_struct<dim> &contact_info,
     const ArrayView<const double> &         particle_properties);

@@ -14,10 +14,13 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   , verbosity(nsparam.non_linear_solver.verbosity)
   , pcout(p_pcout)
 {
-  if (multiphysics_parameters.fluid_dynamics)
-    {
-      active_physics.push_back(PhysicsID::fluid_dynamics);
-    }
+  // Fluid dynamics is always considered active
+  // since its DofHandler is required at all time by
+  // the other physics. Consequently, disabling it only
+  // prevents solving it, but not allocating it.
+  {
+    active_physics.push_back(PhysicsID::fluid_dynamics);
+  }
   if (multiphysics_parameters.heat_transfer)
     {
       active_physics.push_back(PhysicsID::heat_transfer);
@@ -36,6 +39,74 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
       physics[PhysicsID::VOF] = std::make_shared<VolumeOfFluid<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
+}
+
+template <int dim>
+TrilinosWrappers::MPI::Vector *
+MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_solution()
+{
+  // Throw error if VOF is not enabled
+  AssertThrow((std::find(active_physics.begin(),
+                         active_physics.end(),
+                         PhysicsID::VOF) != active_physics.end()),
+              ExcInternalError());
+  // Throw error if surface tension force is not enabled
+  AssertThrow((multiphysics_parameters.surface_tension_force),
+              ExcInternalError());
+
+  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
+    ->get_filtered_phase_fraction_gradient_solution();
+}
+
+template <int dim>
+TrilinosWrappers::MPI::Vector *
+MultiphysicsInterface<dim>::get_curvature_solution()
+{
+  // Throw error if VOF is not enabled
+  AssertThrow((std::find(active_physics.begin(),
+                         active_physics.end(),
+                         PhysicsID::VOF) != active_physics.end()),
+              ExcInternalError());
+  // Throw error if surface tension force is not enabled
+  AssertThrow((multiphysics_parameters.surface_tension_force),
+              ExcInternalError());
+
+  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
+    ->get_curvature_solution();
+}
+
+template <int dim>
+DoFHandler<dim> *
+MultiphysicsInterface<dim>::get_curvature_dof_handler()
+{
+  // Throw error if VOF is not enabled
+  AssertThrow((std::find(active_physics.begin(),
+                         active_physics.end(),
+                         PhysicsID::VOF) != active_physics.end()),
+              ExcInternalError());
+  // Throw error if surface tension force is not enabled
+  AssertThrow((multiphysics_parameters.surface_tension_force),
+              ExcInternalError());
+
+  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
+    ->get_curvature_dof_handler();
+}
+
+template <int dim>
+DoFHandler<dim> *
+MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_dof_handler()
+{
+  // Throw error if VOF is not enabled
+  AssertThrow((std::find(active_physics.begin(),
+                         active_physics.end(),
+                         PhysicsID::VOF) != active_physics.end()),
+              ExcInternalError());
+  // Throw error if surface tension force is not enabled
+  AssertThrow((multiphysics_parameters.surface_tension_force),
+              ExcInternalError());
+
+  return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
+    ->get_filtered_phase_fraction_gradient_dof_handler();
 }
 
 template class MultiphysicsInterface<2>;

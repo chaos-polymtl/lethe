@@ -28,11 +28,11 @@ void
 ParticleParticleContactForce<dim>::update_contact_information(
   particle_particle_contact_info_struct<dim> &contact_info,
   double &                                    normal_relative_velocity_value,
-  Tensor<1, dim> &                            normal_unit_vector,
+  Tensor<1, 3> &                              normal_unit_vector,
   const ArrayView<const double> &             particle_one_properties,
   const ArrayView<const double> &             particle_two_properties,
-  const Point<dim> &                          particle_one_location,
-  const Point<dim> &                          particle_two_location,
+  const Point<3> &                            particle_one_location,
+  const Point<3> &                            particle_two_location,
   const double &                              dt)
 {
   // Calculation of the contact vector (vector from particle one to particle two
@@ -43,11 +43,11 @@ ParticleParticleContactForce<dim>::update_contact_information(
 
   // Defining velocities and angular velocities of particles one and
   // two as vectors
-  Tensor<1, dim> particle_one_velocity, particle_two_velocity,
-    particle_one_omega, particle_two_omega;
+  Tensor<1, 3> particle_one_velocity, particle_two_velocity, particle_one_omega,
+    particle_two_omega;
 
   // Defining relative contact velocity
-  Tensor<1, dim> contact_relative_velocity;
+  Tensor<1, 3> contact_relative_velocity;
 
   // Finding velocities and angular velocities of particles
   particle_one_velocity[0] = particle_one_properties[PropertiesIndex::v_x];
@@ -62,26 +62,19 @@ ParticleParticleContactForce<dim>::update_contact_information(
   particle_two_omega[0] = particle_two_properties[PropertiesIndex::omega_x];
   particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
 
-  if (dim == 3)
-    {
-      particle_one_velocity[2] = particle_one_properties[PropertiesIndex::v_z];
-      particle_two_velocity[2] = particle_two_properties[PropertiesIndex::v_z];
-      particle_one_omega[2] = particle_one_properties[PropertiesIndex::omega_z];
-      particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
+  particle_one_velocity[2] = particle_one_properties[PropertiesIndex::v_z];
+  particle_two_velocity[2] = particle_two_properties[PropertiesIndex::v_z];
+  particle_one_omega[2]    = particle_one_properties[PropertiesIndex::omega_z];
+  particle_two_omega[2]    = particle_two_properties[PropertiesIndex::omega_z];
 
-      // Calculation of contact relative velocity
-      contact_relative_velocity =
-        (particle_one_velocity - particle_two_velocity) +
-        (cross_product_3d(0.5 * (particle_one_properties[PropertiesIndex::dp] *
-                                   particle_one_omega +
-                                 particle_two_properties[PropertiesIndex::dp] *
-                                   particle_two_omega),
-                          normal_unit_vector));
-    }
-  else
-    {
-      contact_relative_velocity = particle_one_velocity - particle_two_velocity;
-    }
+  // Calculation of contact relative velocity
+  contact_relative_velocity =
+    (particle_one_velocity - particle_two_velocity) +
+    (cross_product_3d(
+      0.5 * (particle_one_properties[PropertiesIndex::dp] * particle_one_omega +
+             particle_two_properties[PropertiesIndex::dp] * particle_two_omega),
+      normal_unit_vector));
+
 
   // Calculation of normal relative velocity. Note that in the
   // following line the product acts as inner product since both

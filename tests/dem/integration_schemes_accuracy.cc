@@ -106,9 +106,9 @@ test()
   // Calling integrators
   ExplicitEulerIntegrator<dim> explicit_euler_object;
 
-  std::vector<Tensor<1, dim>> momentum;
-  std::vector<Tensor<1, dim>> force;
-  std::vector<double>         MOI;
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<Tensor<1, 3>> force;
+  std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if DEAL_II_VERSION_GTE(10, 0, 0)
@@ -121,7 +121,7 @@ test()
     force.resize(max_particle_id + 1);
   }
 #endif
-  momentum.resize(force.size());
+  torque.resize(force.size());
   MOI.resize(force.size());
   MOI[0] = 1.;
 
@@ -141,7 +141,7 @@ test()
           force[particle_iterator->get_id()] = force_tensor;
 #endif
           explicit_euler_object.integrate(
-            particle_handler, g, dt1, momentum, force, MOI);
+            particle_handler, g, dt1, torque, force, MOI);
 
           t += dt1;
         }
@@ -177,7 +177,7 @@ test()
     force.resize(max_particle_id + 1);
   }
 #endif
-  momentum.resize(force.size());
+  torque.resize(force.size());
   MOI.resize(force.size());
 
   for (auto particle_iterator = particle_handler.begin();
@@ -197,7 +197,7 @@ test()
           force[particle_iterator->get_id()] = force_tensor;
 #endif
           explicit_euler_object.integrate(
-            particle_handler, g, dt2, momentum, force, MOI);
+            particle_handler, g, dt2, torque, force, MOI);
           t += dt2;
         }
       // Output Analytical
@@ -236,7 +236,7 @@ test()
     force.resize(max_particle_id + 1);
   }
 #endif
-  momentum.resize(force.size());
+  torque.resize(force.size());
   MOI.resize(force.size());
 
   // Create Velocity Verlet integrator
@@ -256,7 +256,7 @@ test()
 #endif
 
       velocity_verlet_object.integrate_half_step_location(
-        particle_handler, g, dt1, momentum, force, MOI);
+        particle_handler, g, dt1, torque, force, MOI);
       t += dt1;
 
       while (t < t_final)
@@ -270,7 +270,7 @@ test()
           force[particle_iterator->get_id()] = force_tensor;
 #endif
           velocity_verlet_object.integrate(
-            particle_handler, g, dt1, momentum, force, MOI);
+            particle_handler, g, dt1, torque, force, MOI);
 
           t += dt1;
         }
@@ -304,7 +304,7 @@ test()
     force.resize(max_particle_id + 1);
   }
 #endif
-  momentum.resize(force.size());
+  torque.resize(force.size());
   MOI.resize(force.size());
 
   // Output Velocity Verlet
@@ -320,7 +320,7 @@ test()
       force[particle_iterator->get_id()][dim - 1] = -x0;
 #endif
       velocity_verlet_object.integrate_half_step_location(
-        particle_handler, g, dt2, momentum, force, MOI);
+        particle_handler, g, dt2, torque, force, MOI);
       t += dt2;
 
       while (t < t_final)
@@ -335,7 +335,7 @@ test()
 #endif
 
           velocity_verlet_object.integrate(
-            particle_handler, g, dt2, momentum, force, MOI);
+            particle_handler, g, dt2, torque, force, MOI);
           t += dt2;
         }
       // Output Analytical

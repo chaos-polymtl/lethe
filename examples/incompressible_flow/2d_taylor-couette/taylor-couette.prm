@@ -44,11 +44,11 @@ subsection analytical solution
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate torques     = true     # Enable torque calculation
+    set calculate torque      = true      # Enable torque calculation
 end
 #---------------------------------------------------
 # Mesh

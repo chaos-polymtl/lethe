@@ -16,23 +16,14 @@
  * Author: Lucka Barbeau, Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#ifndef lethe_ib_stencils_h
-#define lethe_ib_stencils_h
+#ifndef lethe_ib_stencil_h
+#define lethe_ib_stencil_h
 
 #include <core/ib_particle.h>
 
-#include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
-#include <deal.II/dofs/dof_handler.h>
-
-#include <deal.II/fe/fe.h>
-#include <deal.II/fe/mapping.h>
-#include <deal.II/fe/mapping_manifold.h>
-#include <deal.II/fe/mapping_q1.h>
-
-#include <deal.II/lac/trilinos_parallel_block_vector.h>
-#include <deal.II/lac/trilinos_vector.h>
+#include <vector>
 
 
 

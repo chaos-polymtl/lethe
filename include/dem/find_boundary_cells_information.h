@@ -63,7 +63,13 @@ public:
    * @param floating_wall_properties Properties of floating walls specified in
    * the parameter handler file
    * @param outlet_boundaries A vector which contains the outlet boundary IDs
-   * @param check_diamond_cells If true, the diamond shaped cells are found and added to the particle-wall contact search cells
+   * @param check_diamond_cells If true, the diamond shaped cells are found
+   * and added to the particle-wall contact search cells
+   * @param expand_particle_wall_contact_search If true, expands the
+   * particle-wall contact search by adding the contact search between
+   * particles in the boundary cells with the boundary neighbors of these
+   * boundary cells
+   *
    * @param pcout
    */
   void
@@ -72,7 +78,8 @@ public:
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const std::vector<unsigned int> &                 outlet_boundaries,
     const bool &                                      check_diamond_cells,
-    const ConditionalOStream &                        pcout);
+    const bool &              expand_particle_wall_contact_search,
+    const ConditionalOStream &pcout);
 
   void
   build(const parallel::distributed::Triangulation<dim> &triangulation,
@@ -121,7 +128,7 @@ public:
    */
   void
   update_boundary_info_after_grid_motion(
-    std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+    std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
       &updated_boundary_points_and_normal_vectors);
 
 private:
@@ -208,10 +215,31 @@ private:
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double &                                    maximum_cell_diameter);
 
+  /**
+   * Carries out adding new elements with the boundary cells (cells with
+   * boundary faces) and information (point and normal vector) of their neighbor
+   * boundary cells to the boundary_cells_information. By adding these
+   * elementes, the broad and fine searches will search for potential contacts
+   * of the particles in each boundary cell with the boundary neighbors of these
+   * cells. This function is used to solve the problem of late contact detection
+   * in triangulations with curved boundaries.
+   *
+   * @param boundary_cells_information A cotainer that contains the information
+   * of all the boundary cells with boundary faces
+   * @param global_boundary_cells_informationA vector that contains the geometrical
+   * information of all (global) boundary cells
+   */
+  void
+  add_boundary_neighbors_of_boundary_cells(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    std::map<int, boundary_cells_info_struct<dim>> & boundary_cells_information,
+    const std::map<int, boundary_cells_info_struct<dim>>
+      &global_boundary_cells_information);
+
   // Structure that contains the necessary information for boundaries
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
 
-  // A vector that contains geometrical information of all (global) boundary
+  // A vector that contains the geometrical information of all (global) boundary
   // cells. This vector is used in
   // add_cells_with_boundary_lines_to_boundary_cells function
   std::map<int, boundary_cells_info_struct<dim>>

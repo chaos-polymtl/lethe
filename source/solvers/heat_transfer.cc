@@ -49,18 +49,13 @@ HeatTransfer<dim>::setup_assemblers()
   // Robin boundary condition
   this->assemblers.push_back(
     std::make_shared<HeatTransferAssemblerRobinBC<dim>>(
-      this->simulation_control,
-      this->simulation_parameters.physical_properties,
-      this->simulation_parameters.multiphysics,
-      simulation_parameters.boundary_conditions_ht));
+      this->simulation_control, simulation_parameters.boundary_conditions_ht));
 
   if (this->simulation_parameters.multiphysics.viscous_dissipation)
     {
       this->assemblers.push_back(
         std::make_shared<HeatTransferAssemblerViscousDissipation<dim>>(
-          this->simulation_control,
-          this->simulation_parameters.physical_properties,
-          this->simulation_parameters.multiphysics));
+          this->simulation_control));
     }
 
   // Time-stepping schemes
@@ -68,16 +63,12 @@ HeatTransfer<dim>::setup_assemblers()
     {
       this->assemblers.push_back(
         std::make_shared<HeatTransferAssemblerBDF<dim>>(
-          this->simulation_control,
-          this->simulation_parameters.physical_properties,
-          this->simulation_parameters.multiphysics));
+          this->simulation_control));
     }
 
   // Core assembler
-  this->assemblers.push_back(std::make_shared<HeatTransferAssemblerCore<dim>>(
-    this->simulation_control,
-    this->simulation_parameters.physical_properties,
-    this->simulation_parameters.multiphysics));
+  this->assemblers.push_back(
+    std::make_shared<HeatTransferAssemblerCore<dim>>(this->simulation_control));
 }
 
 template <int dim>
@@ -91,12 +82,21 @@ HeatTransfer<dim>::assemble_system_matrix()
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = HeatTransferScratchData<dim>(
-    this->simulation_parameters.physical_properties,
+    this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
     *this->face_quadrature);
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      scratch_data.enable_vof(dof_handler_vof->get_fe(),
+                              *this->cell_quadrature,
+                              *this->temperature_mapping);
+    }
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -147,6 +147,29 @@ HeatTransfer<dim>::assemble_local_system_matrix(
       scratch_data.reinit_velocity(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_vof);
+
+      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+      previous_solutions.push_back(
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
+
+      scratch_data.reinit_vof(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+  scratch_data.calculate_physical_properties();
+
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
@@ -185,12 +208,21 @@ HeatTransfer<dim>::assemble_system_rhs()
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = HeatTransferScratchData<dim>(
-    this->simulation_parameters.physical_properties,
+    this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
     *this->face_quadrature);
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      scratch_data.enable_vof(dof_handler_vof->get_fe(),
+                              *this->cell_quadrature,
+                              *this->temperature_mapping);
+    }
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -247,6 +279,29 @@ HeatTransfer<dim>::assemble_local_system_rhs(
       scratch_data.reinit_velocity_gradient(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_vof);
+
+      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+      previous_solutions.push_back(
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
+
+
+      scratch_data.reinit_vof(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+  scratch_data.calculate_physical_properties();
 
   copy_data.reset();
 

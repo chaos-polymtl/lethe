@@ -6,7 +6,7 @@
 subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
-  set output frequency        = 10
+  set output frequency        = 0
   set output name              = mms2d_
 end
 
@@ -35,9 +35,9 @@ end
 #---------------------------------------------------
 subsection boundary conditions
   set number                  = 1
-  set beta = 10
     subsection bc 0
         set id = 0
+        set beta = 10
         set type              = function weak
         subsection u
              set Function expression = 0

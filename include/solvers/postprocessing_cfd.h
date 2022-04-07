@@ -40,6 +40,8 @@
 #  include <core/boundary_conditions.h>
 #  include <core/parameters.h>
 
+#  include <solvers/physical_properties_manager.h>
+
 /**
  * @brief Calculate the pressure drop between two boundaries. The pressure drop thus calculated has units of Length^2/Time^2.
  * @return Pressure drop of the flow between two boundaries of the domain
@@ -149,12 +151,11 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
  */
 template <int dim, typename VectorType>
 double
-calculate_apparent_viscosity(
-  const DoFHandler<dim> &               dof_handler,
-  const VectorType &                    evaluation_point,
-  const Quadrature<dim> &               quadrature_formula,
-  const Mapping<dim> &                  mapping,
-  const Parameters::PhysicalProperties &physical_properties);
+calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
+                             const VectorType &         evaluation_point,
+                             const Quadrature<dim> &    quadrature_formula,
+                             const Mapping<dim> &       mapping,
+                             PhysicalPropertiesManager &properties_manager);
 
 /**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
@@ -181,7 +182,7 @@ std::vector<Tensor<1, dim>>
 calculate_forces(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
-  const Parameters::PhysicalProperties &               physical_properties,
+  PhysicalPropertiesManager &                          properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping);
@@ -212,7 +213,7 @@ std::vector<Tensor<1, 3>>
 calculate_torques(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
-  const Parameters::PhysicalProperties &               physical_properties,
+  PhysicalPropertiesManager &                          properties_manager,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const Quadrature<dim - 1> &                          face_quadrature_formula,
   const Mapping<dim> &                                 mapping);

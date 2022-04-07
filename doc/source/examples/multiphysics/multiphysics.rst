@@ -7,6 +7,8 @@ Multiphysics Examples
     :glob:
     :numbered:
 
-    warming-up-a-viscous-fluid/warming-up-a-viscous-fluid
     tracer-through-cad-junction/tracer-through-cad-junction
+    stefan_problem/stefan_problem
+    warming-up-a-viscous-fluid/warming-up-a-viscous-fluid
     dam-break-VOF/dam-break-VOF
+    rising-bubble-VOF/rising-bubble-VOF

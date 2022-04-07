@@ -13,9 +13,9 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set non newtonian flow	= true
+  subsection fluid 0
+    set rheological model 		= carreau
     subsection non newtonian
-    	set model 		= carreau
     	subsection carreau
 	    	set viscosity_0		= 1.0
 	    	set viscosity_inf 	= 0
@@ -24,6 +24,7 @@ subsection physical properties
 	    	set n	      		= 0.5
 	end
     end
+  end
 end
 
 #---------------------------------------------------

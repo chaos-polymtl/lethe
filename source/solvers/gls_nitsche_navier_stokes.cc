@@ -67,9 +67,13 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 {
   TimerOutput::Scope t(this->computing_timer, "assemble Nitsche restriction");
 
+  Assert(
+    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity("assemble_nitsche_restriction"));
+
   // Viscosity for stabilization constant
   const double viscosity =
-    this->simulation_parameters.physical_properties.fluids[0].viscosity;
+    this->simulation_parameters.physical_properties_manager.viscosity_scale;
 
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
@@ -94,7 +98,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
       Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
 
       // Penalization terms
-      const double beta = this->simulation_parameters.nitsche->beta;
+      const double beta =
+        this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
 
       // Loop over all local particles
       auto particle = solid_ph->begin();
@@ -249,14 +254,20 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
   Tensor<2, 3> fluid_pressure;
   Tensor<1, 3> force; // to be changed for a vector of tensors when
   // allowing multiple solids
+
+
+  Assert(
+    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity("assemble_nitsche_restriction"));
+
   const double viscosity =
-    this->simulation_parameters.physical_properties.fluids[0].viscosity;
+    this->simulation_parameters.physical_properties_manager.viscosity_scale;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();
   while (particle != solid_ph->end())
     {
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       const auto &cell = particle->get_surrounding_cell(*this->triangulation);
 #else
       const auto &cell = particle->get_surrounding_cell();
@@ -272,7 +283,7 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
       // at the particle location
       auto &evaluation_point = this->evaluation_point;
 
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       Functions::
         FEFieldFunction<3, DoFHandler<3, 3>, TrilinosWrappers::MPI::Vector>
           fe_field(this->dof_handler, evaluation_point);
@@ -331,7 +342,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
 
   // Penalization terms
-  const double        beta = this->simulation_parameters.nitsche->beta;
+  const double beta =
+    this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
   Tensor<1, spacedim> velocity;
   Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
   Tensor<1, spacedim> force;
@@ -412,7 +424,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
 
   // Penalization terms
-  const double        beta = this->simulation_parameters.nitsche->beta;
+  const double beta =
+    this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
   Tensor<1, spacedim> velocity;
   Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
 
@@ -421,7 +434,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
   torque = 0;
 
   // Todo center of rotation should be parameter passed.
-  Point<spacedim> center_of_rotation = this->simulation_parameters.nitsche->cor;
+  Point<spacedim> center_of_rotation =
+    this->simulation_parameters.nitsche->nitsche_solids[i_solid]->cor;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();
@@ -503,29 +517,23 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
+GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces(
+  const unsigned int i_solid,
+  bool               first_solid_forces)
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_force_on_solid");
 
   std::vector<Tensor<1, spacedim>> force;
+  std::vector<unsigned int>        solid_indices;
 
-  std::vector<unsigned int> solid_indices;
-
-  for (unsigned int i_solid = 0;
-       i_solid < this->simulation_parameters.nitsche->number_solids;
-       ++i_solid)
-    {
-      force.push_back(this->calculate_forces_on_solid(i_solid));
-      solid_indices.push_back(i_solid);
-    }
+  force.push_back(this->calculate_forces_on_solid(i_solid));
+  solid_indices.push_back(i_solid);
 
   if (this->simulation_parameters.nitsche->verbosity ==
         Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
     {
-      std::cout << std::endl;
-      std::string independent_column_names = "Solid ID";
-
+      std::string              independent_column_names = "Solid ID";
       std::vector<std::string> dependent_column_names;
       dependent_column_names.push_back("f_x");
       dependent_column_names.push_back("f_y");
@@ -539,79 +547,77 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
         dependent_column_names,
         this->simulation_parameters.simulation_control.log_precision);
 
-      std::cout << "+------------------------------------------+" << std::endl;
-      std::cout << "|  Force on solid summary                  |" << std::endl;
-      std::cout << "+------------------------------------------+" << std::endl;
+      // printed only for the first i_solid for which calculate_forces is true
+      // to be improved so that the column_names are not repeated
+      if (first_solid_forces)
+        {
+          std::cout << std::endl;
+          std::cout << "+------------------------------------------+"
+                    << std::endl;
+          std::cout << "|  Force on solid summary                  |"
+                    << std::endl;
+          std::cout << "+------------------------------------------+"
+                    << std::endl;
+        }
       table.write_text(std::cout);
     }
 
-  for (unsigned int i_solid = 0;
-       i_solid < this->simulation_parameters.nitsche->number_solids;
-       ++i_solid)
+  if (this->simulation_control->is_steady())
     {
-      if (this->simulation_control->is_steady())
-        {
-          solid_forces_table[i_solid].add_value(
-            "cells", this->triangulation->n_global_active_cells());
-        }
-      else
-        {
-          solid_forces_table[i_solid].add_value(
-            "time", this->simulation_control->get_current_time());
-          solid_forces_table[i_solid].set_precision(
-            "time",
-            this->simulation_parameters.forces_parameters.output_precision);
-        }
-      solid_forces_table[i_solid].add_value("f_x", force[0][0]);
-      solid_forces_table[i_solid].add_value("f_y", force[0][1]);
-      if (dim == 3)
-        solid_forces_table[i_solid].add_value("f_z", force[0][2]);
-      else
-        solid_forces_table[i_solid].add_value("f_z", 0.);
-
-      // Precision
-      solid_forces_table[i_solid].set_precision(
-        "f_x", this->simulation_parameters.forces_parameters.output_precision);
-      solid_forces_table[i_solid].set_precision(
-        "f_y", this->simulation_parameters.forces_parameters.output_precision);
-      solid_forces_table[i_solid].set_precision(
-        "f_z", this->simulation_parameters.forces_parameters.output_precision);
-
-      std::string filename_force =
-        this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.nitsche->force_output_name + "_" +
-        Utilities::int_to_string(i_solid, 2) + ".dat";
-      std::ofstream output_force(filename_force.c_str());
-
-      solid_forces_table[i_solid].write_text(output_force);
+      solid_forces_table[i_solid].add_value(
+        "cells", this->triangulation->n_global_active_cells());
     }
+  else
+    {
+      solid_forces_table[i_solid].add_value(
+        "time", this->simulation_control->get_current_time());
+      solid_forces_table[i_solid].set_precision(
+        "time", this->simulation_parameters.forces_parameters.output_precision);
+    }
+  solid_forces_table[i_solid].add_value("f_x", force[0][0]);
+  solid_forces_table[i_solid].add_value("f_y", force[0][1]);
+  if (dim == 3)
+    solid_forces_table[i_solid].add_value("f_z", force[0][2]);
+  else
+    solid_forces_table[i_solid].add_value("f_z", 0.);
+
+  // Precision
+  solid_forces_table[i_solid].set_precision(
+    "f_x", this->simulation_parameters.forces_parameters.output_precision);
+  solid_forces_table[i_solid].set_precision(
+    "f_y", this->simulation_parameters.forces_parameters.output_precision);
+  solid_forces_table[i_solid].set_precision(
+    "f_z", this->simulation_parameters.forces_parameters.output_precision);
+
+  std::string filename_force =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+      ->force_output_name +
+    "_" + Utilities::int_to_string(i_solid, 2) + ".dat";
+  std::ofstream output_force(filename_force.c_str());
+
+  solid_forces_table[i_solid].write_text(output_force);
 }
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques()
+GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques(
+  const unsigned int i_solid,
+  bool               first_solid_torques)
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_torque_on_solid");
 
   std::vector<Tensor<1, 3>> torque;
-
   std::vector<unsigned int> solid_indices;
 
-  for (unsigned int i_solid = 0;
-       i_solid < this->simulation_parameters.nitsche->number_solids;
-       ++i_solid)
-    {
-      torque.push_back(this->calculate_torque_on_solid(i_solid));
-      solid_indices.push_back(i_solid);
-    }
+  torque.push_back(this->calculate_torque_on_solid(i_solid));
+  solid_indices.push_back(i_solid);
 
   if (this->simulation_parameters.nitsche->verbosity ==
         Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
     {
-      std::cout << std::endl;
-      std::string independent_column_names = "Solid ID";
-
+      std::string              independent_column_names = "Solid ID";
       std::vector<std::string> dependent_column_names;
       dependent_column_names.push_back("T_x");
       dependent_column_names.push_back("T_y");
@@ -624,46 +630,52 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques()
         dependent_column_names,
         this->simulation_parameters.simulation_control.log_precision);
 
-      std::cout << "+------------------------------------------+" << std::endl;
-      std::cout << "|  Torque on solids summary                |" << std::endl;
-      std::cout << "+------------------------------------------+" << std::endl;
+      // printed only for the first i_solid for which calculate_torques is true
+      // to be improved so that the column_names are not repeated
+      if (first_solid_torques)
+        {
+          std::cout << std::endl;
+          std::cout << "+------------------------------------------+"
+                    << std::endl;
+          std::cout << "|  Torque on solids summary                |"
+                    << std::endl;
+          std::cout << "+------------------------------------------+"
+                    << std::endl;
+        }
       table.write_text(std::cout);
     }
 
-
-  for (unsigned int i_solid = 0;
-       i_solid < this->simulation_parameters.nitsche->number_solids;
-       ++i_solid)
+  if (this->simulation_control->is_steady())
     {
-      if (this->simulation_control->is_steady())
-        {
-          solid_torques_table[i_solid].add_value(
-            "cells", this->triangulation->n_global_active_cells());
-        }
-      else
-        {
-          solid_torques_table[i_solid].add_value(
-            "time", this->simulation_control->get_current_time());
-          solid_torques_table[i_solid].set_precision(
-            "time",
-            this->simulation_parameters.forces_parameters.output_precision);
-        }
-      solid_torques_table[i_solid].add_value("T_x", torque[0][0]);
-      solid_torques_table[i_solid].add_value("T_y", torque[0][1]);
-      solid_torques_table[i_solid].add_value("T_z", torque[0][2]);
+      solid_torques_table[i_solid].add_value(
+        "cells", this->triangulation->n_global_active_cells());
+    }
+  else
+    {
+      solid_torques_table[i_solid].add_value(
+        "time", this->simulation_control->get_current_time());
+      solid_torques_table[i_solid].set_precision(
+        "time", this->simulation_parameters.forces_parameters.output_precision);
+    }
+  solid_torques_table[i_solid].add_value("T_x", torque[0][0]);
+  solid_torques_table[i_solid].add_value("T_y", torque[0][1]);
+  solid_torques_table[i_solid].add_value("T_z", torque[0][2]);
 
-      // Precision
-      solid_torques_table[i_solid].set_precision(
-        "T_x", this->simulation_parameters.forces_parameters.output_precision);
-      solid_torques_table[i_solid].set_precision(
-        "T_y", this->simulation_parameters.forces_parameters.output_precision);
-      solid_torques_table[i_solid].set_precision(
-        "T_z", this->simulation_parameters.forces_parameters.output_precision);
+  // Precision
+  solid_torques_table[i_solid].set_precision(
+    "T_x", this->simulation_parameters.forces_parameters.output_precision);
+  solid_torques_table[i_solid].set_precision(
+    "T_y", this->simulation_parameters.forces_parameters.output_precision);
+  solid_torques_table[i_solid].set_precision(
+    "T_z", this->simulation_parameters.forces_parameters.output_precision);
 
+  if (this->this_mpi_process == 0)
+    {
       std::string filename_torque =
         this->simulation_parameters.simulation_control.output_folder +
-        this->simulation_parameters.nitsche->torque_output_name + "_" +
-        Utilities::int_to_string(i_solid, 2) + ".dat";
+        this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+          ->torque_output_name +
+        "_" + Utilities::int_to_string(i_solid, 2) + ".dat";
       std::ofstream output_torque(filename_torque.c_str());
 
       solid_torques_table[i_solid].write_text(output_torque);
@@ -742,25 +754,41 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         }
 
       this->postprocess(false);
-      if (this->simulation_parameters.nitsche->calculate_force_on_solid)
-        {
-          postprocess_solid_forces();
-        }
-      if (this->simulation_parameters.nitsche->calculate_torque_on_solid)
-        {
-          if (dim == spacedim)
-            postprocess_solid_torques();
-        }
+      bool first_solid_forces(true);
+      bool first_solid_torques(true);
 
-      if (this->simulation_control->is_output_iteration())
+      for (unsigned int i_solid = 0;
+           i_solid < this->simulation_parameters.nitsche->number_solids;
+           ++i_solid)
         {
-          for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+          if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+                ->calculate_force_on_solid)
             {
+              postprocess_solid_forces(i_solid, first_solid_forces);
+              first_solid_forces = false;
+            }
+          if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+                ->calculate_torque_on_solid)
+            {
+              // for 22 and 33 simulations
+              //(to be implemented for 23 simulations)
+              if (dim == spacedim)
+                {
+                  postprocess_solid_torques(i_solid, first_solid_torques);
+                  first_solid_torques = false;
+                }
+            }
+
+          if (this->simulation_control->is_output_iteration())
+            {
+              //              for (unsigned int i_solid = 0; i_solid <
+              //              solid.size(); ++i_solid)
+              //                {
               output_solid_particles(i_solid);
               output_solid_triangulation(i_solid);
+              //                }
             }
         }
-
       this->finish_time_step();
     }
   if (this->simulation_parameters.test.enabled)
@@ -806,7 +834,7 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   const unsigned int i_solid)
 {
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   DataOut<dim, DoFHandler<dim, spacedim>> data_out;
 #else
   DataOut<dim, spacedim> data_out;
@@ -825,7 +853,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   TrilinosWrappers::MPI::Vector &displacement_vector =
     solid[i_solid]->get_displacement_vector();
 
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   data_out.add_data_vector(
     displacement_vector,
     solution_names,
@@ -956,20 +984,24 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
         Utilities::int_to_string(i_solid, 2));
 
       // Refill force and torque table from checkpoint
-      if (this->simulation_parameters.nitsche->calculate_force_on_solid)
+      if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+            ->calculate_force_on_solid)
         {
           std::string filename_force =
             this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.nitsche->force_output_name + "_" +
-            Utilities::int_to_string(i_solid, 2) + ".dat";
+            this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+              ->force_output_name +
+            "_" + Utilities::int_to_string(i_solid, 2) + ".dat";
           fill_table_from_file(solid_forces_table[i_solid], filename_force);
         }
-      if (this->simulation_parameters.nitsche->calculate_torque_on_solid)
+      if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+            ->calculate_torque_on_solid)
         {
           std::string filename_torque =
             this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.nitsche->torque_output_name + "_" +
-            Utilities::int_to_string(i_solid, 2) + ".dat";
+            this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+              ->torque_output_name +
+            "_" + Utilities::int_to_string(i_solid, 2) + ".dat";
           fill_table_from_file(solid_torques_table[i_solid], filename_torque);
         }
     }

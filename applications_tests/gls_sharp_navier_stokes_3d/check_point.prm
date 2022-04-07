@@ -6,11 +6,10 @@
 subsection simulation control
   set method                  = bdf1
   set time step               = 0.0025 # Time step
-    set number mesh adapt     = 2       # If steady, nb mesh adaptation
+  set number mesh adapt       = 2       # If steady, nb mesh adaptation
   set time end                = 0.005  # End time of simulation
-  set output path             =  # Path to where the output results are made
   set output name             = out # Prefix for VTU outputs
-  set output frequency        = 1       # Frequency of simulation output
+  set output frequency        = 0       # Frequency of simulation output
   set subdivision             = 1       # Mesh subdivision when outputend
 end
 
@@ -20,6 +19,7 @@ end
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity            = 0.604166666666667
+    set density =0.000960
   end
 end
 
@@ -89,7 +89,6 @@ subsection particles
 	set refine mesh inside radius factor = 0.5
 	set refine mesh outside radius factor = 1.5
 	set initial refinement = 3
-	set fluid density =0.000960
 	set integrate motion = true
 	set alpha =0.5
 	set assemble Navier-Stokes inside particles = false

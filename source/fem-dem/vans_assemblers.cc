@@ -8,12 +8,12 @@
 
 template <int dim>
 void
-GLSVansAssemblerCore<dim>::assemble_matrix(
+GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Scheme and physical properties
-  const double viscosity = physical_properties.fluids[0].viscosity;
+  // Viscosity at Gauss points
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -32,14 +32,14 @@ GLSVansAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  // Grad-div weight factor
-  const double gamma = 0.1;
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const double         viscosity = viscosity_vector[q];
+      const Tensor<1, dim> velocity  = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
@@ -56,10 +56,22 @@ GLSVansAssemblerCore<dim>::assemble_matrix(
       const Tensor<1, dim> force       = scratch_data.force[q];
       double               mass_source = scratch_data.mass_source[q];
 
-
+      double u_mag = 0;
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma = calculate_gamma(u_mag, viscosity, h, cfd_dem.cstar);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -127,6 +139,7 @@ GLSVansAssemblerCore<dim>::assemble_matrix(
 
               double local_matrix_ij =
                 viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                // Convection
                 ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +
                  (grad_phi_u_j * void_fraction * velocity * phi_u_i))
                 // Mass source term
@@ -170,12 +183,12 @@ GLSVansAssemblerCore<dim>::assemble_matrix(
 
 template <int dim>
 void
-GLSVansAssemblerCore<dim>::assemble_rhs(
+GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
-  const double viscosity = physical_properties.fluids[0].viscosity;
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -196,8 +209,13 @@ GLSVansAssemblerCore<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical property
+      const double viscosity = viscosity_vector[q];
+
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> velocity_gradient =
         scratch_data.velocity_gradients[q];
@@ -218,9 +236,22 @@ GLSVansAssemblerCore<dim>::assemble_rhs(
       const Tensor<1, dim> force       = scratch_data.force[q];
       double               mass_source = scratch_data.mass_source[q];
 
+      double u_mag = 0;
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma = calculate_gamma(u_mag, viscosity, h, cfd_dem.cstar);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -236,9 +267,6 @@ GLSVansAssemblerCore<dim>::assemble_rhs(
                          9 * std::pow(4 * viscosity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * viscosity / (h * h), 2));
-
-      // Grad-div weight factor
-      const double gamma = 0.1;
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity * void_fraction +
@@ -303,9 +331,347 @@ GLSVansAssemblerCore<dim>::assemble_rhs(
 }
 
 
-template class GLSVansAssemblerCore<2>;
-template class GLSVansAssemblerCore<3>;
+template class GLSVansAssemblerCoreModelB<2>;
+template class GLSVansAssemblerCoreModelB<3>;
 
+template <int dim>
+void
+GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
+
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // Grad-div weight factor
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
+
+      // Gather into local variables the relevant fields
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
+      const Tensor<2, dim> velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+
+      const Tensor<1, dim> pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      const double         void_fraction = scratch_data.void_fraction_values[q];
+      const Tensor<1, dim> void_fraction_gradients =
+        scratch_data.void_fraction_gradient_values[q];
+
+      // Forcing term
+      const Tensor<1, dim> force       = scratch_data.force[q];
+      double               mass_source = scratch_data.mass_source[q];
+
+      double u_mag = 0;
+      // Calculation of the magnitude of the velocity for the
+      // stabilization parameter
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma = calculate_gamma(u_mag, viscosity, h, cfd_dem.cstar);
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation
+      // is steady or unsteady. In the unsteady case it includes the
+      // value of the time-step
+      const double tau =
+        this->simulation_control->get_assembly_method() ==
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * viscosity / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * viscosity / (h * h), 2));
+
+      // Calculate the strong residual for GLS stabilization
+      auto strong_residual = velocity_gradient * velocity * void_fraction +
+                             // Mass Source
+                             mass_source * velocity
+                             // Pressure
+                             + void_fraction * pressure_gradient -
+                             // Viscosity and Force
+                             void_fraction * viscosity * velocity_laplacian -
+                             force * void_fraction + strong_residual_vec[q];
+
+      // We loop over the column first to prevent recalculation
+      // of the strong jacobian in the inner loop
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto &phi_u_j           = scratch_data.phi_u[q][j];
+          const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
+          const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
+
+          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+
+          strong_jacobian_vec[q][j] +=
+            (velocity_gradient * phi_u_j * void_fraction +
+             grad_phi_u_j * velocity * void_fraction +
+             // Mass Source
+             mass_source * phi_u_j +
+             // Pressure
+             void_fraction * grad_phi_p_j
+             // Viscosity
+             - void_fraction * viscosity * laplacian_phi_u_j);
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+
+              const auto &phi_p_j = scratch_data.phi_p[q][j];
+
+              const auto &strong_jac = strong_jacobian_vec[q][j];
+
+              double local_matrix_ij =
+                (void_fraction * viscosity *
+                   scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                 viscosity * grad_phi_u_j * void_fraction_gradients * phi_u_i) +
+                // Convection
+                ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +
+                 (grad_phi_u_j * void_fraction * velocity * phi_u_i))
+                // Mass source term
+                + mass_source * phi_u_j * phi_u_i
+                // Pressure
+                - (div_phi_u_i * phi_p_j * void_fraction +
+                   phi_p_j * void_fraction_gradients * phi_u_i) +
+                // Continuity
+                phi_p_i * ((void_fraction * div_phi_u_j) +
+                           (phi_u_j * void_fraction_gradients));
+
+              // PSPG GLS term
+              local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+
+              // The jacobian matrix for the SUPG formulation
+              // currently does not include the jacobian of the stabilization
+              // parameter tau. Our experience has shown that does not alter the
+              // number of newton iteration for convergence, but greatly
+              // simplifies assembly.
+              if (SUPG)
+                {
+                  local_matrix_ij +=
+                    tau * (strong_jac * grad_phi_u_i * velocity +
+                           strong_residual * grad_phi_u_i * phi_u_j);
+                }
+
+              // Grad-div stabilization
+              if (cfd_dem.grad_div == true)
+                {
+                  local_matrix_ij += gamma *
+                                     (div_phi_u_j * void_fraction +
+                                      phi_u_j * void_fraction_gradients) *
+                                     div_phi_u_i;
+                }
+
+              local_matrix_ij *= JxW;
+              local_matrix(i, j) += local_matrix_ij;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
+
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
+      // Velocity
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> previous_velocity =
+        scratch_data.previous_velocity_values[0][q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
+      const Tensor<2, dim> velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+
+      // Pressure
+      const double         pressure = scratch_data.pressure_values[q];
+      const Tensor<1, dim> pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      // Void Fraction
+      const double         void_fraction = scratch_data.void_fraction_values[q];
+      const Tensor<1, dim> void_fraction_gradients =
+        scratch_data.void_fraction_gradient_values[q];
+
+      // Forcing term
+      const Tensor<1, dim> force       = scratch_data.force[q];
+      double               mass_source = scratch_data.mass_source[q];
+
+      double u_mag = 0;
+      // Calculation of the magnitude of the
+      // velocity for the stabilization parameter
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity.norm(), 1e-12);
+      else
+        {
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity.norm(), 1e-12);
+          else
+            u_mag = std::max(previous_velocity.norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma = calculate_gamma(u_mag, viscosity, h, cfd_dem.cstar);
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation
+      // is steady or unsteady. In the unsteady case it includes the
+      // value of the time-step
+      const double tau =
+        this->simulation_control->get_assembly_method() ==
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * viscosity / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * viscosity / (h * h), 2));
+
+      // Calculate the strong residual for GLS stabilization
+      auto strong_residual = velocity_gradient * velocity * void_fraction +
+                             // Mass Source
+                             mass_source * velocity
+                             // Pressure
+                             + void_fraction * pressure_gradient -
+                             // Viscosity and Force
+                             void_fraction * viscosity * velocity_laplacian -
+                             force * void_fraction + strong_residual_vec[q];
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i      = scratch_data.phi_u[q][i];
+          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto phi_p_i      = scratch_data.phi_p[q][i];
+          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+
+          double local_rhs_i = 0;
+
+          // Navier-Stokes Residual
+          local_rhs_i +=
+            (
+              // Momentum
+              -(void_fraction * viscosity *
+                  scalar_product(velocity_gradient, grad_phi_u_i) +
+                viscosity * velocity_gradient * void_fraction_gradients *
+                  phi_u_i) -
+              velocity_gradient * velocity * void_fraction * phi_u_i
+              // Mass Source
+              - mass_source * velocity * phi_u_i
+              // Pressure and Force
+              + (void_fraction * pressure * div_phi_u_i +
+                 pressure * void_fraction_gradients * phi_u_i) +
+              force * void_fraction * phi_u_i
+              // Continuity
+              - (velocity_divergence * void_fraction +
+                 velocity * void_fraction_gradients - mass_source) *
+                  phi_p_i) *
+            JxW;
+
+          // PSPG GLS term
+          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+
+          // SUPG GLS term
+          if (SUPG)
+            {
+              local_rhs_i +=
+                -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
+            }
+
+          // Grad-div stabilization
+          if (cfd_dem.grad_div == true)
+            {
+              local_rhs_i -= gamma *
+                             (void_fraction * velocity_divergence +
+                              velocity * void_fraction_gradients) *
+                             div_phi_u_i * JxW;
+            }
+
+          local_rhs(i) += local_rhs_i;
+        }
+    }
+}
+
+template class GLSVansAssemblerCoreModelA<2>;
+template class GLSVansAssemblerCoreModelA<3>;
 
 template <int dim>
 void
@@ -375,7 +741,11 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+  // Physical properties
+  const std::vector<double> &viscosity = scratch_data.viscosity;
+
   // Loop and quadrature informations
+  const double       h          = scratch_data.cell_size;
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -411,6 +781,23 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
         {
           strong_residual[q] += bdf_coefs[p] * velocity[p] * void_fraction[0];
         }
+      double u_mag = 0;
+
+      if (cfd_dem.implicit_stabilization)
+        u_mag = std::max(velocity[0].norm(), 1e-12);
+      else
+        {
+          // Grad-div weight factor used to be constant 0.1
+          if (simulation_control->get_current_time() ==
+              simulation_control->get_time_step())
+            u_mag = std::max(velocity[0].norm(), 1e-12);
+          else
+            u_mag = std::max(velocity[1].norm(), 1e-12);
+        }
+
+      // Grad-div weight factor
+      const double gamma =
+        calculate_gamma(u_mag, viscosity[q], h, cfd_dem.cstar);
 
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -432,7 +819,7 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
                   if (cfd_dem.grad_div == true)
                     {
                       local_rhs_i -=
-                        (bdf_coefs[p] * void_fraction[p]) * div_phi_u_i;
+                        gamma * (bdf_coefs[p] * void_fraction[p]) * div_phi_u_i;
                     }
                 }
             }
@@ -450,9 +837,9 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  // particle_number is an increment that goes from 0 to n_particles_in_cell. It
-  // is incremented at the end of the loop over particles and is used to point
-  // to the element of the vectors relative_velocity and
+  // particle_number is an increment that goes from 0 to n_particles_in_cell.
+  // It is incremented at the end of the loop over particles and is used to
+  // point to the element of the vectors relative_velocity and
   // fluid_velocity_at_particle_location corresponding to the particle being
   // looped over.
   unsigned int particle_number;
@@ -461,6 +848,20 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
+
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
 
   const auto pic  = scratch_data.pic;
   beta_drag       = 0;
@@ -479,14 +880,14 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
         scratch_data.cell_void_fraction[particle_number];
 
       // Particle's Reynolds number
-      double re = 1e-1 + relative_velocity.norm() *
+      double re = 1e-1 + cell_void_fraction * relative_velocity.norm() *
                            particle_properties[DEM::PropertiesIndex::dp] /
-                           physical_properties.fluids[0].viscosity;
+                           (viscosity + DBL_MIN);
 
       // Di Felice Drag Model CD Calculation
       c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
             pow(cell_void_fraction,
-                -(3.7 - 0.65 * exp(-pow((1.5 - log10(re)), 2) / 2)));
+                2 - (3.7 - 0.65 * exp(-pow((1.5 - log10(re)), 2) / 2)));
 
       double momentum_transfer_coefficient =
         (0.5 * c_d * M_PI *
@@ -495,8 +896,7 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = this->physical_properties.fluids[0].density *
-                   momentum_transfer_coefficient * relative_velocity;
+      drag_force = density * momentum_transfer_coefficient * relative_velocity;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -526,6 +926,17 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
+  // Physical Properties
+  Assert(!scratch_data.properties_manager.is_non_newtonian(),
+         RequiresConstantViscosity(
+           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
   const auto pic  = scratch_data.pic;
   beta_drag       = 0;
   particle_number = 0;
@@ -543,17 +954,17 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
         scratch_data.cell_void_fraction[particle_number];
 
       // Particle's Reynolds number
-      double re = 1e-1 + relative_velocity.norm() *
+      double re = 1e-1 + cell_void_fraction * relative_velocity.norm() *
                            particle_properties[DEM::PropertiesIndex::dp] /
-                           physical_properties.fluids[0].viscosity;
+                           (viscosity + DBL_MIN);
 
       // Rong Drag Model CD Calculation
-      c_d =
-        pow((0.63 + 4.8 / sqrt(re)), 2) *
-        pow(cell_void_fraction,
-            -(2.65 * (cell_void_fraction + 1) -
-              (5.3 - (3.5 * cell_void_fraction)) * pow(cell_void_fraction, 2) *
-                exp(-pow(1.5 - log10(re), 2) / 2)));
+      c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
+            pow(cell_void_fraction,
+                2 - (2.65 * (cell_void_fraction + 1) -
+                     (5.3 - (3.5 * cell_void_fraction)) *
+                       pow(cell_void_fraction, 2) *
+                       exp(-pow(1.5 - log10(re), 2) / 2)));
 
       double momentum_transfer_coefficient =
         (0.5 * c_d * M_PI *
@@ -562,8 +973,7 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = this->physical_properties.fluids[0].density *
-                   momentum_transfer_coefficient * relative_velocity;
+      drag_force = density * momentum_transfer_coefficient * relative_velocity;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -593,6 +1003,19 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
 
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
   const auto pic  = scratch_data.pic;
   beta_drag       = 0;
   particle_number = 0;
@@ -609,7 +1032,7 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
       // Particle's Reynolds number
       double re = 1e-1 + relative_velocity.norm() *
                            particle_properties[DEM::PropertiesIndex::dp] /
-                           physical_properties.fluids[0].viscosity;
+                           (viscosity + DBL_MIN);
 
       // Dallavalle Drag Model CD Calculation
       c_d = pow((0.63 + 4.8 / sqrt(re)), 2);
@@ -621,8 +1044,7 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = this->physical_properties.fluids[0].density *
-                   momentum_transfer_coefficient * relative_velocity;
+      drag_force = density * momentum_transfer_coefficient * relative_velocity;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -641,12 +1063,114 @@ template class GLSVansAssemblerDallavalle<3>;
 
 template <int dim>
 void
+GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+{
+  unsigned int particle_number;
+  auto &       beta_drag = scratch_data.beta_drag;
+
+  Tensor<1, dim> relative_velocity;
+  Tensor<1, dim> drag_force;
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
+  const auto pic  = scratch_data.pic;
+  beta_drag       = 0;
+  particle_number = 0;
+
+  double f0 = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      relative_velocity =
+        scratch_data.fluid_velocity_at_particle_location[particle_number] -
+        scratch_data.particle_velocity[particle_number];
+
+      double cell_void_fraction =
+        scratch_data.cell_void_fraction[particle_number];
+
+      // Particle's Reynolds number
+      double re = 1e-1 + relative_velocity.norm() *
+                           particle_properties[DEM::PropertiesIndex::dp] /
+                           viscosity;
+
+      // Koch and Hill Drag Model Calculation
+      if ((1 - cell_void_fraction) < 0.4)
+        {
+          f0 = (1 + 3 * sqrt((1 - cell_void_fraction) / 2) +
+                (135.0 / 64) * (1 - cell_void_fraction) *
+                  log(1 - cell_void_fraction) +
+                16.14 * (1 - cell_void_fraction)) /
+               (1 + 0.681 * (1 - cell_void_fraction) -
+                8.48 * pow(1 - cell_void_fraction, 2) +
+                8.14 * pow(1 - cell_void_fraction, 3));
+        }
+      else if ((1 - cell_void_fraction) >= 0.4)
+        {
+          f0 = 10 * (1 - cell_void_fraction) / pow(cell_void_fraction, 3);
+        }
+
+      double f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
+                  0.0232 / pow(cell_void_fraction, 5);
+
+      double momentum_transfer_coefficient =
+        ((18 * viscosity * pow(cell_void_fraction, 2) *
+          (1 - cell_void_fraction)) /
+         pow(particle_properties[DEM::PropertiesIndex::dp], 2)) *
+        (f0 + 0.5 * f3 * cell_void_fraction * re) *
+        (M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+         (2 * dim)) /
+        (1 - cell_void_fraction);
+
+      beta_drag += momentum_transfer_coefficient;
+
+      drag_force = density * momentum_transfer_coefficient * relative_velocity;
+
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
+        }
+
+      particle_number += 1;
+    }
+
+  beta_drag = beta_drag / scratch_data.cell_volume;
+}
+
+template class GLSVansAssemblerKochHill<2>;
+template class GLSVansAssemblerKochHill<3>;
+
+template <int dim>
+void
 GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 
 {
-  const auto     pic = scratch_data.pic;
-  Tensor<1, dim> buoyancy_force;
+  const auto   pic = scratch_data.pic;
+  Tensor<1, 3> buoyancy_force;
+
+  // Physical Properties
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
+
+  const double density = scratch_data.properties_manager.density_scale;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -661,7 +1185,7 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            buoyancy_force[d] * physical_properties.fluids[0].density;
+            buoyancy_force[d] * density;
         }
     }
 }
@@ -684,23 +1208,39 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
 
   particle_number = 0;
 
+  // Physical Properties
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerPressureForc<dim>::calculate_particle_fluid_interactions"));
+
+
+  const double density = scratch_data.properties_manager.density_scale;
   // Loop over particles in cell
   for (auto &particle : pic)
     {
       auto particle_properties = particle.get_properties();
 
       // Pressure Force
-      -pressure_force =
-        (M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
-         (2 * dim)) *
+      pressure_force =
+        -(M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+          (2 * dim)) *
         pressure_gradients[particle_number];
 
       for (int d = 0; d < dim; ++d)
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            pressure_force[d] * physical_properties.fluids[0].density;
-          undisturbed_flow_force[d] +=
-            pressure_force[d] / scratch_data.cell_volume;
+            pressure_force[d] * density;
+
+          // Apply pressure force to the particles only, when we are solving
+          // model A of the VANS. When we are solving Model B, apply the
+          // pressure force back on the fluid by lumping it in the
+          // undisturbed_flow_force.
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+            {
+              undisturbed_flow_force[d] +=
+                pressure_force[d] / scratch_data.cell_volume;
+            }
         }
 
       particle_number += 1;
@@ -725,8 +1265,20 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
 
   particle_number = 0;
 
-  // Viscosity
-  const double viscosity = physical_properties.fluids[0].viscosity;
+  // Viscosity and density are currently assumed constant from the particle
+  // point of view.
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -742,9 +1294,17 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            shear_force[d] * physical_properties.fluids[0].density;
-          undisturbed_flow_force[d] +=
-            shear_force[d] / scratch_data.cell_volume;
+            shear_force[d] * density;
+
+          // Apply shear force to the particles only, when we are solving
+          // model A of the VANS. When we are solving Model B, apply the shear
+          // force back on the fluid by lumping it in the
+          // undisturbed_flow_force.
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+            {
+              undisturbed_flow_force[d] +=
+                shear_force[d] / scratch_data.cell_volume;
+            }
         }
 
       particle_number += 1;
@@ -770,7 +1330,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
   auto &strong_residual        = copy_data.strong_residual;
   auto &strong_jacobian        = copy_data.strong_jacobian;
   auto &local_matrix           = copy_data.local_matrix;
-  auto &beta_drag              = scratch_data.beta_drag;
+  auto  beta_drag              = scratch_data.beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
@@ -785,20 +1345,28 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
       const double JxW = JxW_vec[q];
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual[q] += // Drag Force
-        beta_drag * (velocity - average_particles_velocity) +
-        undisturbed_flow_force;
+      if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+        {
+          strong_residual[q] += // Drag Force
+            (beta_drag * (velocity - average_particles_velocity) +
+             undisturbed_flow_force);
+        }
+      else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+        {
+          strong_residual[q] += // Drag Force
+            beta_drag * (velocity - average_particles_velocity);
+        }
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           const auto &phi_u_j = scratch_data.phi_u[q][j];
-
           strong_jacobian[q][j] +=
             // Drag Force
             beta_drag * phi_u_j;
         }
+
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -829,7 +1397,7 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
   // Copy data elements
   auto &strong_residual        = copy_data.strong_residual;
   auto &local_rhs              = copy_data.local_rhs;
-  auto &beta_drag              = scratch_data.beta_drag;
+  auto  beta_drag              = scratch_data.beta_drag;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
@@ -844,18 +1412,38 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
       const double JxW = JxW_vec[q];
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual[q] += // Drag Force
-        beta_drag * (velocity - average_particles_velocity) +
-        undisturbed_flow_force;
+      if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+        {
+          strong_residual[q] += // Drag Force
+            (beta_drag * (velocity - average_particles_velocity) +
+             undisturbed_flow_force);
+        }
+      else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+        {
+          strong_residual[q] += // Drag Force
+            beta_drag * (velocity - average_particles_velocity);
+        }
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
           // Drag Force
-          local_rhs(i) -= (beta_drag * (velocity - average_particles_velocity) +
-                           undisturbed_flow_force) *
-                          phi_u_i * JxW;
+          //  Model B of the VANS
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
+            {
+              local_rhs(i) -=
+                (beta_drag * (velocity - average_particles_velocity) +
+                 undisturbed_flow_force) *
+                phi_u_i * JxW;
+            }
+          //  Model A of the VANS
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+            {
+              local_rhs(i) -=
+                (beta_drag * (velocity - average_particles_velocity)) *
+                phi_u_i * JxW;
+            }
         }
     }
 }

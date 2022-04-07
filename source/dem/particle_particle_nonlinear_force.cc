@@ -1,3 +1,5 @@
+#include <core/tensors_and_points_dimension_manipulation.h>
+
 #include <dem/particle_particle_nonlinear_force.h>
 
 using namespace DEM;
@@ -65,21 +67,16 @@ ParticleParticleHertzMindlinLimitOverlap<
 
           this->effective_coefficient_of_restitution[i].insert(
             {j,
-             2 * restitution_coefficient_i * restitution_coefficient_j /
-               (restitution_coefficient_i + restitution_coefficient_j +
-                DBL_MIN)});
+             harmonic_mean(restitution_coefficient_i,
+                           restitution_coefficient_j)});
 
           this->effective_coefficient_of_friction[i].insert(
-            {j,
-             2 * friction_coefficient_i * friction_coefficient_j /
-               (friction_coefficient_i + friction_coefficient_j + DBL_MIN)});
+            {j, harmonic_mean(friction_coefficient_i, friction_coefficient_j)});
 
           this->effective_coefficient_of_rolling_friction[i].insert(
             {j,
-             2 * rolling_friction_coefficient_i *
-               rolling_friction_coefficient_j /
-               (rolling_friction_coefficient_i +
-                rolling_friction_coefficient_j + DBL_MIN)});
+             harmonic_mean(rolling_friction_coefficient_i,
+                           rolling_friction_coefficient_j)});
 
           double restitution_coefficient_particle_log =
             std::log(this->effective_coefficient_of_restitution[i][j]);
@@ -122,10 +119,10 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
       types::particle_index,
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info_struct<dim>>>
-      &                          ghost_adjacent_particles,
-    const double &               dt,
-    std::vector<Tensor<1, dim>> &momentum,
-    std::vector<Tensor<1, dim>> &force)
+      &                        ghost_adjacent_particles,
+    const double &             dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force)
 {
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
@@ -142,14 +139,27 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
             {
               // Getting information (location and properties) of particle one
               // and two in contact
-              auto             particle_one = contact_info.particle_one;
-              auto             particle_two = contact_info.particle_two;
-              const Point<dim> particle_one_location =
-                particle_one->get_location();
-              const Point<dim> particle_two_location =
-                particle_two->get_location();
-              auto particle_one_properties = particle_one->get_properties();
-              auto particle_two_properties = particle_two->get_properties();
+              auto     particle_one = contact_info.particle_one;
+              auto     particle_two = contact_info.particle_two;
+              Point<3> particle_one_location;
+              Point<3> particle_two_location;
+              auto     particle_one_properties = particle_one->get_properties();
+              auto     particle_two_properties = particle_two->get_properties();
+
+
+              if constexpr (dim == 3)
+                {
+                  particle_one_location = particle_one->get_location();
+                  particle_two_location = particle_two->get_location();
+                }
+
+              if constexpr (dim == 2)
+                {
+                  particle_one_location =
+                    point_nd_to_3d(particle_one->get_location());
+                  particle_two_location =
+                    point_nd_to_3d(particle_two->get_location());
+                }
 
               // Calculation of normal overlap
               double normal_overlap =
@@ -173,7 +183,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                     particle_two_location,
                     dt);
 
-                  this->calculate_nonlinear_contact_force_and_torque(
+                  this->calculate_hertz_mindlin_limit_overlap_contact(
                     contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
@@ -186,7 +196,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                     particle_two_tangential_torque,
                     rolling_resistance_torque);
 
-                  // Getting particles' momentum and force
+                  // Getting particles' torque and force
 #if DEAL_II_VERSION_GTE(10, 0, 0)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();
@@ -198,12 +208,10 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                   types::particle_index particle_two_id =
                     particle_two->get_id();
 #endif
-                  Tensor<1, dim> &particle_one_momentum =
-                    momentum[particle_one_id];
-                  Tensor<1, dim> &particle_two_momentum =
-                    momentum[particle_two_id];
-                  Tensor<1, dim> &particle_one_force = force[particle_one_id];
-                  Tensor<1, dim> &particle_two_force = force[particle_two_id];
+                  Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+                  Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
+                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
+                  Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
 
                   // Apply the calculated forces and torques on the particle
@@ -214,8 +222,8 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                     particle_one_tangential_torque,
                     particle_two_tangential_torque,
                     rolling_resistance_torque,
-                    particle_one_momentum,
-                    particle_two_momentum,
+                    particle_one_torque,
+                    particle_two_torque,
                     particle_one_force,
                     particle_two_force);
                 }
@@ -248,14 +256,27 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
             {
               // Getting information (location and properties) of particle one
               // and two in contact
-              auto             particle_one = contact_info.particle_one;
-              auto             particle_two = contact_info.particle_two;
-              const Point<dim> particle_one_location =
-                particle_one->get_location();
-              const Point<dim> particle_two_location =
-                particle_two->get_location();
-              auto particle_one_properties = particle_one->get_properties();
-              auto particle_two_properties = particle_two->get_properties();
+              auto     particle_one = contact_info.particle_one;
+              auto     particle_two = contact_info.particle_two;
+              Point<3> particle_one_location;
+              Point<3> particle_two_location;
+              auto     particle_one_properties = particle_one->get_properties();
+              auto     particle_two_properties = particle_two->get_properties();
+
+
+              if constexpr (dim == 3)
+                {
+                  particle_one_location = particle_one->get_location();
+                  particle_two_location = particle_two->get_location();
+                }
+
+              if constexpr (dim == 2)
+                {
+                  particle_one_location =
+                    point_nd_to_3d(particle_one->get_location());
+                  particle_two_location =
+                    point_nd_to_3d(particle_two->get_location());
+                }
 
               // Calculation of normal overlap
               double normal_overlap =
@@ -280,7 +301,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                     particle_two_location,
                     dt);
 
-                  this->calculate_nonlinear_contact_force_and_torque(
+                  this->calculate_hertz_mindlin_limit_overlap_contact(
                     contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
@@ -293,7 +314,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                     particle_two_tangential_torque,
                     rolling_resistance_torque);
 
-                  // Getting momentum and force of particle one
+                  // Getting torque and force of particle one
 #if DEAL_II_VERSION_GTE(10, 0, 0)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();
@@ -301,9 +322,8 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                   types::particle_index particle_one_id =
                     particle_one->get_id();
 #endif
-                  Tensor<1, dim> &particle_one_momentum =
-                    momentum[particle_one_id];
-                  Tensor<1, dim> &particle_one_force = force[particle_one_id];
+                  Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
 
                   // Apply the calculated forces and torques on the particle
                   // pair
@@ -312,7 +332,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                     tangential_force,
                     particle_one_tangential_torque,
                     rolling_resistance_torque,
-                    particle_one_momentum,
+                    particle_one_torque,
                     particle_one_force);
                 }
 
@@ -330,23 +350,144 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
     }
 }
 
+template <int dim>
+void
+ParticleParticleHertzMindlinLimitOverlap<dim>::
+  calculate_IB_particle_particle_contact_force(
+    const double &                              normal_overlap,
+    particle_particle_contact_info_struct<dim> &contact_info,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque,
+    IBParticle<dim> &                           particle_one,
+    IBParticle<dim> &                           particle_two,
+    const Point<dim> &                          particle_one_location,
+    const Point<dim> &                          particle_two_location,
+    const double &                              dt,
+    const double &                              particle_one_radius,
+    const double &                              particle_two_radius,
+    const double &                              particle_one_mass,
+    const double &                              particle_two_mass)
+{
+  Point<3> particle_one_location_3d;
+  Point<3> particle_two_location_3d;
+
+  if constexpr (dim == 3)
+    {
+      particle_one_location_3d = particle_one_location;
+      particle_two_location_3d = particle_two_location;
+    }
+
+  if constexpr (dim == 2)
+    {
+      particle_one_location_3d = point_nd_to_3d(particle_one_location);
+      particle_two_location_3d = point_nd_to_3d(particle_two_location);
+    }
+
+  auto particle_one_properties = particle_one.get_properties();
+  particle_one_properties[DEM::PropertiesIndex::mass] = particle_one_mass;
+  particle_one_properties[DEM::PropertiesIndex::type] = 0;
+  particle_one_properties[DEM::PropertiesIndex::dp]   = 2 * particle_one_radius;
+
+  auto particle_two_properties = particle_one.get_properties();
+  particle_two_properties[DEM::PropertiesIndex::mass] = particle_two_mass;
+  particle_two_properties[DEM::PropertiesIndex::type] = 0;
+  particle_two_properties[DEM::PropertiesIndex::dp]   = 2 * particle_two_radius;
+
+  // DEM::PropertiesIndex::type is the first (0) property of particles in the
+  // DEM solver. For the IB particles, the first property is ID. For force and
+  // torque calculations, we need pair-wise properties (such as effective
+  // Young's modulus, effective coefficient of restitution, etc.) We rewrite
+  // these pair-wise properties by using the ID of IB particles (using
+  // DEM::PropertiesIndex::type) and use them in force calculations.
+  const unsigned int particle_one_type =
+    particle_one_properties[DEM::PropertiesIndex::type];
+  const unsigned int particle_two_type =
+    particle_two_properties[DEM::PropertiesIndex::type];
+
+  this->effective_youngs_modulus[particle_one_type][particle_two_type] =
+    (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+    ((particle_two.youngs_modulus *
+      (1 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
+     (particle_one.youngs_modulus *
+      (1 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
+     DBL_MIN);
+
+  this->effective_shear_modulus[particle_one_type][particle_two_type] =
+    (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+    (2 * ((particle_two.youngs_modulus * (2 - particle_one.poisson_ratio) *
+           (1 + particle_one.poisson_ratio)) +
+          (particle_one.youngs_modulus * (2 - particle_two.poisson_ratio) *
+           (1 + particle_two.poisson_ratio))) +
+     DBL_MIN);
+
+  this->effective_coefficient_of_restitution[particle_one_type]
+                                            [particle_two_type] =
+    harmonic_mean(particle_one.restitution_coefficient,
+                  particle_two.restitution_coefficient);
+  this
+    ->effective_coefficient_of_friction[particle_one_type][particle_two_type] =
+    harmonic_mean(particle_one.friction_coefficient,
+                  particle_two.friction_coefficient);
+  this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                 [particle_two_type] =
+    harmonic_mean(particle_one.rolling_friction_coefficient,
+                  particle_two.rolling_friction_coefficient);
+
+  const double restitution_coefficient_particle_log =
+    std::log(this->effective_coefficient_of_restitution[particle_one_type]
+                                                       [particle_two_type]);
+
+  this->model_parameter_beta[particle_one_type][particle_two_type] =
+    restitution_coefficient_particle_log /
+    sqrt(restitution_coefficient_particle_log *
+           restitution_coefficient_particle_log +
+         9.8696);
+
+  // Since the normal overlap is already calculated we update
+  // this element of the container here. The rest of information
+  // are updated using the following function
+  this->update_contact_information(contact_info,
+                                   normal_relative_velocity_value,
+                                   normal_unit_vector,
+                                   particle_one_properties,
+                                   particle_two_properties,
+                                   particle_one_location_3d,
+                                   particle_two_location_3d,
+                                   dt);
+
+  calculate_hertz_mindlin_limit_overlap_contact(contact_info,
+                                                normal_relative_velocity_value,
+                                                normal_unit_vector,
+                                                normal_overlap,
+                                                particle_one_properties,
+                                                particle_two_properties,
+                                                normal_force,
+                                                tangential_force,
+                                                particle_one_tangential_torque,
+                                                particle_two_tangential_torque,
+                                                rolling_resistance_torque);
+}
+
 
 // Calculates nonlinear contact force and torques
 template <int dim>
 void
 ParticleParticleHertzMindlinLimitOverlap<dim>::
-  calculate_nonlinear_contact_force_and_torque(
+  calculate_hertz_mindlin_limit_overlap_contact(
     particle_particle_contact_info_struct<dim> &contact_info,
     const double &                              normal_relative_velocity_value,
-    const Tensor<1, dim> &                      normal_unit_vector,
+    const Tensor<1, 3> &                        normal_unit_vector,
     const double &                              normal_overlap,
     const ArrayView<const double> &             particle_one_properties,
     const ArrayView<const double> &             particle_two_properties,
-    Tensor<1, dim> &                            normal_force,
-    Tensor<1, dim> &                            tangential_force,
-    Tensor<1, dim> &                            particle_one_tangential_torque,
-    Tensor<1, dim> &                            particle_two_tangential_torque,
-    Tensor<1, dim> &                            rolling_resistance_torque)
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque)
 {
   // Calculation of effective radius and mass
   this->find_effective_radius_and_mass(particle_one_properties,
@@ -387,7 +528,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
 
   // Calculation of tangential force. Since we need damping tangential force in
   // the gross sliding again, we define it as a separate variable
-  Tensor<1, dim> damping_tangential_force =
+  Tensor<1, 3> damping_tangential_force =
     tangential_damping_constant * contact_info.tangential_relative_velocity;
   tangential_force =
     (tangential_spring_constant * contact_info.tangential_overlap) +
@@ -416,23 +557,19 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
 
   // Calculation of torque
   // Torque caused by tangential force (tangential_torque)
-  if (dim == 3)
-    {
-      particle_one_tangential_torque =
-        cross_product_3d(normal_unit_vector,
-                         tangential_force * particle_one_properties[DEM::dp] *
-                           0.5);
-      particle_two_tangential_torque =
-        particle_one_tangential_torque *
-        particle_two_properties[DEM::PropertiesIndex::dp] /
-        particle_one_properties[DEM::PropertiesIndex::dp];
-    }
+  particle_one_tangential_torque =
+    cross_product_3d(normal_unit_vector,
+                     tangential_force * particle_one_properties[DEM::dp] * 0.5);
+  particle_two_tangential_torque =
+    particle_one_tangential_torque *
+    particle_two_properties[DEM::PropertiesIndex::dp] /
+    particle_one_properties[DEM::PropertiesIndex::dp];
 
 
   // Rolling resistance torque
   if (rolling_reistance_model ==
       RollingResistanceTorqueModel::no_rolling_resistance)
-    rolling_resistance_torque = no_rolling_resistance_torque<dim>(
+    rolling_resistance_torque = no_rolling_resistance_torque(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,
@@ -442,7 +579,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
       normal_unit_vector);
   if (rolling_reistance_model ==
       RollingResistanceTorqueModel::constant_rolling_resistance)
-    rolling_resistance_torque = constant_rolling_resistance_torque<dim>(
+    rolling_resistance_torque = constant_rolling_resistance_torque(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,
@@ -452,7 +589,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
       normal_unit_vector);
   if (rolling_reistance_model ==
       RollingResistanceTorqueModel::viscous_rolling_resistance)
-    rolling_resistance_torque = viscous_rolling_resistance_torque<dim>(
+    rolling_resistance_torque = viscous_rolling_resistance_torque(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,
@@ -529,21 +666,16 @@ ParticleParticleHertzMindlinLimitForce<
 
           this->effective_coefficient_of_restitution[i].insert(
             {j,
-             2 * restitution_coefficient_i * restitution_coefficient_j /
-               (restitution_coefficient_i + restitution_coefficient_j +
-                DBL_MIN)});
+             harmonic_mean(restitution_coefficient_i,
+                           restitution_coefficient_j)});
 
           this->effective_coefficient_of_friction[i].insert(
-            {j,
-             2 * friction_coefficient_i * friction_coefficient_j /
-               (friction_coefficient_i + friction_coefficient_j + DBL_MIN)});
+            {j, harmonic_mean(friction_coefficient_i, friction_coefficient_j)});
 
           this->effective_coefficient_of_rolling_friction[i].insert(
             {j,
-             2 * rolling_friction_coefficient_i *
-               rolling_friction_coefficient_j /
-               (rolling_friction_coefficient_i +
-                rolling_friction_coefficient_j + DBL_MIN)});
+             harmonic_mean(rolling_friction_coefficient_i,
+                           rolling_friction_coefficient_j)});
 
           double restitution_coefficient_particle_log =
             std::log(this->effective_coefficient_of_restitution[i][j]);
@@ -586,10 +718,10 @@ ParticleParticleHertzMindlinLimitForce<dim>::
       types::particle_index,
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info_struct<dim>>>
-      &                          ghost_adjacent_particles,
-    const double &               dt,
-    std::vector<Tensor<1, dim>> &momentum,
-    std::vector<Tensor<1, dim>> &force)
+      &                        ghost_adjacent_particles,
+    const double &             dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force)
 {
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
@@ -606,14 +738,26 @@ ParticleParticleHertzMindlinLimitForce<dim>::
             {
               // Getting information (location and properties) of particle one
               // and two in contact
-              auto             particle_one = contact_info.particle_one;
-              auto             particle_two = contact_info.particle_two;
-              const Point<dim> particle_one_location =
-                particle_one->get_location();
-              const Point<dim> particle_two_location =
-                particle_two->get_location();
-              auto particle_one_properties = particle_one->get_properties();
-              auto particle_two_properties = particle_two->get_properties();
+              auto     particle_one = contact_info.particle_one;
+              auto     particle_two = contact_info.particle_two;
+              Point<3> particle_one_location;
+              Point<3> particle_two_location;
+              auto     particle_one_properties = particle_one->get_properties();
+              auto     particle_two_properties = particle_two->get_properties();
+
+              if constexpr (dim == 3)
+                {
+                  particle_one_location = particle_one->get_location();
+                  particle_two_location = particle_two->get_location();
+                }
+
+              if constexpr (dim == 2)
+                {
+                  particle_one_location =
+                    point_nd_to_3d(particle_one->get_location());
+                  particle_two_location =
+                    point_nd_to_3d(particle_two->get_location());
+                }
 
               // Calculation of normal overlap
               double normal_overlap =
@@ -650,7 +794,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                     particle_two_tangential_torque,
                     rolling_resistance_torque);
 
-                  // Getting particles' momentum and force
+                  // Getting particles' torque and force
 #if DEAL_II_VERSION_GTE(10, 0, 0)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();
@@ -662,12 +806,10 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                   types::particle_index particle_two_id =
                     particle_two->get_id();
 #endif
-                  Tensor<1, dim> &particle_one_momentum =
-                    momentum[particle_one_id];
-                  Tensor<1, dim> &particle_two_momentum =
-                    momentum[particle_two_id];
-                  Tensor<1, dim> &particle_one_force = force[particle_one_id];
-                  Tensor<1, dim> &particle_two_force = force[particle_two_id];
+                  Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+                  Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
+                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
+                  Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
 
                   // Apply the calculated forces and torques on the particle
@@ -678,8 +820,8 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                     particle_one_tangential_torque,
                     particle_two_tangential_torque,
                     rolling_resistance_torque,
-                    particle_one_momentum,
-                    particle_two_momentum,
+                    particle_one_torque,
+                    particle_two_torque,
                     particle_one_force,
                     particle_two_force);
                 }
@@ -712,14 +854,26 @@ ParticleParticleHertzMindlinLimitForce<dim>::
             {
               // Getting information (location and properties) of particle one
               // and two in contact
-              auto             particle_one = contact_info.particle_one;
-              auto             particle_two = contact_info.particle_two;
-              const Point<dim> particle_one_location =
-                particle_one->get_location();
-              const Point<dim> particle_two_location =
-                particle_two->get_location();
-              auto particle_one_properties = particle_one->get_properties();
-              auto particle_two_properties = particle_two->get_properties();
+              auto     particle_one = contact_info.particle_one;
+              auto     particle_two = contact_info.particle_two;
+              Point<3> particle_one_location;
+              Point<3> particle_two_location;
+              auto     particle_one_properties = particle_one->get_properties();
+              auto     particle_two_properties = particle_two->get_properties();
+
+              if constexpr (dim == 3)
+                {
+                  particle_one_location = particle_one->get_location();
+                  particle_two_location = particle_two->get_location();
+                }
+
+              if constexpr (dim == 2)
+                {
+                  particle_one_location =
+                    point_nd_to_3d(particle_one->get_location());
+                  particle_two_location =
+                    point_nd_to_3d(particle_two->get_location());
+                }
 
               // Calculation of normal overlap
               double normal_overlap =
@@ -756,7 +910,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                     particle_two_tangential_torque,
                     rolling_resistance_torque);
 
-                  // Getting momentum and force of particle one
+                  // Getting torque and force of particle one
 #if DEAL_II_VERSION_GTE(10, 0, 0)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();
@@ -764,9 +918,8 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                   types::particle_index particle_one_id =
                     particle_one->get_id();
 #endif
-                  Tensor<1, dim> &particle_one_momentum =
-                    momentum[particle_one_id];
-                  Tensor<1, dim> &particle_one_force = force[particle_one_id];
+                  Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
 
                   // Apply the calculated forces and torques on the particle
                   // pair
@@ -775,7 +928,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                     tangential_force,
                     particle_one_tangential_torque,
                     rolling_resistance_torque,
-                    particle_one_momentum,
+                    particle_one_torque,
                     particle_one_force);
                 }
 
@@ -793,6 +946,127 @@ ParticleParticleHertzMindlinLimitForce<dim>::
     }
 }
 
+template <int dim>
+void
+ParticleParticleHertzMindlinLimitForce<dim>::
+  calculate_IB_particle_particle_contact_force(
+    const double &                              normal_overlap,
+    particle_particle_contact_info_struct<dim> &contact_info,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque,
+    IBParticle<dim> &                           particle_one,
+    IBParticle<dim> &                           particle_two,
+    const Point<dim> &                          particle_one_location,
+    const Point<dim> &                          particle_two_location,
+    const double &                              dt,
+    const double &                              particle_one_radius,
+    const double &                              particle_two_radius,
+    const double &                              particle_one_mass,
+    const double &                              particle_two_mass)
+{
+  Point<3> particle_one_location_3d;
+  Point<3> particle_two_location_3d;
+
+  if constexpr (dim == 3)
+    {
+      particle_one_location_3d = particle_one_location;
+      particle_two_location_3d = particle_two_location;
+    }
+
+  if constexpr (dim == 2)
+    {
+      particle_one_location_3d = point_nd_to_3d(particle_one_location);
+      particle_two_location_3d = point_nd_to_3d(particle_two_location);
+    }
+
+  auto particle_one_properties = particle_one.get_properties();
+  particle_one_properties[DEM::PropertiesIndex::mass] = particle_one_mass;
+  particle_one_properties[DEM::PropertiesIndex::type] = 0;
+  particle_one_properties[DEM::PropertiesIndex::dp]   = 2 * particle_one_radius;
+
+  auto particle_two_properties = particle_one.get_properties();
+  particle_two_properties[DEM::PropertiesIndex::mass] = particle_two_mass;
+  particle_two_properties[DEM::PropertiesIndex::type] = 0;
+  particle_two_properties[DEM::PropertiesIndex::dp]   = 2 * particle_two_radius;
+
+  // DEM::PropertiesIndex::type is the first (0) property of particles in the
+  // DEM solver. For the IB particles, the first property is ID. For force and
+  // torque calculations, we need pair-wise properties (such as effective
+  // Young's modulus, effective coefficient of restitution, etc.) We rewrite
+  // these pair-wise properties by using the ID of IB particles (using
+  // DEM::PropertiesIndex::type) and use them in force calculations.
+  const unsigned int particle_one_type =
+    particle_one_properties[DEM::PropertiesIndex::type];
+  const unsigned int particle_two_type =
+    particle_two_properties[DEM::PropertiesIndex::type];
+
+  this->effective_youngs_modulus[particle_one_type][particle_two_type] =
+    (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+    ((particle_two.youngs_modulus *
+      (1 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
+     (particle_one.youngs_modulus *
+      (1 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
+     DBL_MIN);
+
+  this->effective_shear_modulus[particle_one_type][particle_two_type] =
+    (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+    (2 * ((particle_two.youngs_modulus * (2 - particle_one.poisson_ratio) *
+           (1 + particle_one.poisson_ratio)) +
+          (particle_one.youngs_modulus * (2 - particle_two.poisson_ratio) *
+           (1 + particle_two.poisson_ratio))) +
+     DBL_MIN);
+
+  this->effective_coefficient_of_restitution[particle_one_type]
+                                            [particle_two_type] =
+    harmonic_mean(particle_one.restitution_coefficient,
+                  particle_two.restitution_coefficient);
+  this
+    ->effective_coefficient_of_friction[particle_one_type][particle_two_type] =
+    harmonic_mean(particle_one.friction_coefficient,
+                  particle_two.friction_coefficient);
+  this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                 [particle_two_type] =
+    harmonic_mean(particle_one.rolling_friction_coefficient,
+                  particle_two.rolling_friction_coefficient);
+
+  const double restitution_coefficient_particle_log =
+    std::log(this->effective_coefficient_of_restitution[particle_one_type]
+                                                       [particle_two_type]);
+
+  this->model_parameter_beta[particle_one_type][particle_two_type] =
+    restitution_coefficient_particle_log /
+    sqrt(restitution_coefficient_particle_log *
+           restitution_coefficient_particle_log +
+         9.8696);
+
+  // Since the normal overlap is already calculated we update
+  // this element of the container here. The rest of information
+  // are updated using the following function
+  this->update_contact_information(contact_info,
+                                   normal_relative_velocity_value,
+                                   normal_unit_vector,
+                                   particle_one_properties,
+                                   particle_two_properties,
+                                   particle_one_location_3d,
+                                   particle_two_location_3d,
+                                   dt);
+
+  calculate_hertz_mindlin_limit_force_contact(contact_info,
+                                              normal_relative_velocity_value,
+                                              normal_unit_vector,
+                                              normal_overlap,
+                                              particle_one_properties,
+                                              particle_two_properties,
+                                              normal_force,
+                                              tangential_force,
+                                              particle_one_tangential_torque,
+                                              particle_two_tangential_torque,
+                                              rolling_resistance_torque);
+}
+
 // Calculates nonlinear contact force and torques
 template <int dim>
 void
@@ -800,15 +1074,15 @@ ParticleParticleHertzMindlinLimitForce<dim>::
   calculate_hertz_mindlin_limit_force_contact(
     particle_particle_contact_info_struct<dim> &contact_info,
     const double &                              normal_relative_velocity_value,
-    const Tensor<1, dim> &                      normal_unit_vector,
+    const Tensor<1, 3> &                        normal_unit_vector,
     const double &                              normal_overlap,
     const ArrayView<const double> &             particle_one_properties,
     const ArrayView<const double> &             particle_two_properties,
-    Tensor<1, dim> &                            normal_force,
-    Tensor<1, dim> &                            tangential_force,
-    Tensor<1, dim> &                            particle_one_tangential_torque,
-    Tensor<1, dim> &                            particle_two_tangential_torque,
-    Tensor<1, dim> &                            rolling_resistance_torque)
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque)
 {
   // Calculation of effective radius and mass
   this->find_effective_radius_and_mass(particle_one_properties,
@@ -871,23 +1145,20 @@ ParticleParticleHertzMindlinLimitForce<dim>::
 
   // Calculation of torque
   // Torque caused by tangential force (tangential_torque)
-  if (dim == 3)
-    {
-      particle_one_tangential_torque =
-        cross_product_3d(normal_unit_vector,
-                         tangential_force * particle_one_properties[DEM::dp] *
-                           0.5);
+  particle_one_tangential_torque =
+    cross_product_3d(normal_unit_vector,
+                     tangential_force * particle_one_properties[DEM::dp] * 0.5);
 
-      particle_two_tangential_torque =
-        particle_one_tangential_torque *
-        particle_two_properties[DEM::PropertiesIndex::dp] /
-        particle_one_properties[DEM::PropertiesIndex::dp];
-    }
+  particle_two_tangential_torque =
+    particle_one_tangential_torque *
+    particle_two_properties[DEM::PropertiesIndex::dp] /
+    particle_one_properties[DEM::PropertiesIndex::dp];
+
 
   // Rolling resistance torque
   if (rolling_reistance_model ==
       RollingResistanceTorqueModel::no_rolling_resistance)
-    rolling_resistance_torque = no_rolling_resistance_torque<dim>(
+    rolling_resistance_torque = no_rolling_resistance_torque(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,
@@ -897,7 +1168,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
       normal_unit_vector);
   if (rolling_reistance_model ==
       RollingResistanceTorqueModel::constant_rolling_resistance)
-    rolling_resistance_torque = constant_rolling_resistance_torque<dim>(
+    rolling_resistance_torque = constant_rolling_resistance_torque(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,
@@ -907,7 +1178,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
       normal_unit_vector);
   if (rolling_reistance_model ==
       RollingResistanceTorqueModel::viscous_rolling_resistance)
-    rolling_resistance_torque = viscous_rolling_resistance_torque<dim>(
+    rolling_resistance_torque = viscous_rolling_resistance_torque(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,
@@ -982,21 +1253,16 @@ ParticleParticleHertz<dim>::ParticleParticleHertz(
 
           this->effective_coefficient_of_restitution[i].insert(
             {j,
-             2 * restitution_coefficient_i * restitution_coefficient_j /
-               (restitution_coefficient_i + restitution_coefficient_j +
-                DBL_MIN)});
+             harmonic_mean(restitution_coefficient_i,
+                           restitution_coefficient_j)});
 
           this->effective_coefficient_of_friction[i].insert(
-            {j,
-             2 * friction_coefficient_i * friction_coefficient_j /
-               (friction_coefficient_i + friction_coefficient_j + DBL_MIN)});
+            {j, harmonic_mean(friction_coefficient_i, friction_coefficient_j)});
 
           this->effective_coefficient_of_rolling_friction[i].insert(
             {j,
-             2 * rolling_friction_coefficient_i *
-               rolling_friction_coefficient_j /
-               (rolling_friction_coefficient_i +
-                rolling_friction_coefficient_j + DBL_MIN)});
+             harmonic_mean(rolling_friction_coefficient_i,
+                           rolling_friction_coefficient_j)});
 
           double restitution_coefficient_particle_log =
             std::log(this->effective_coefficient_of_restitution[i][j]);
@@ -1038,10 +1304,10 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
-    &                          ghost_adjacent_particles,
-  const double &               dt,
-  std::vector<Tensor<1, dim>> &momentum,
-  std::vector<Tensor<1, dim>> &force)
+    &                        ghost_adjacent_particles,
+  const double &             dt,
+  std::vector<Tensor<1, 3>> &torque,
+  std::vector<Tensor<1, 3>> &force)
 {
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
@@ -1058,14 +1324,26 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
             {
               // Getting information (location and properties) of particle one
               // and two in contact
-              auto             particle_one = contact_info.particle_one;
-              auto             particle_two = contact_info.particle_two;
-              const Point<dim> particle_one_location =
-                particle_one->get_location();
-              const Point<dim> particle_two_location =
-                particle_two->get_location();
-              auto particle_one_properties = particle_one->get_properties();
-              auto particle_two_properties = particle_two->get_properties();
+              auto     particle_one = contact_info.particle_one;
+              auto     particle_two = contact_info.particle_two;
+              Point<3> particle_one_location;
+              Point<3> particle_two_location;
+              auto     particle_one_properties = particle_one->get_properties();
+              auto     particle_two_properties = particle_two->get_properties();
+
+              if constexpr (dim == 3)
+                {
+                  particle_one_location = particle_one->get_location();
+                  particle_two_location = particle_two->get_location();
+                }
+
+              if constexpr (dim == 2)
+                {
+                  particle_one_location =
+                    point_nd_to_3d(particle_one->get_location());
+                  particle_two_location =
+                    point_nd_to_3d(particle_two->get_location());
+                }
 
               // Calculation of normal overlap
               double normal_overlap =
@@ -1101,7 +1379,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                                           particle_two_tangential_torque,
                                           rolling_resistance_torque);
 
-                  // Getting particles' momentum and force
+                  // Getting particles' torque and force
 #if DEAL_II_VERSION_GTE(10, 0, 0)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();
@@ -1113,12 +1391,10 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                   types::particle_index particle_two_id =
                     particle_two->get_id();
 #endif
-                  Tensor<1, dim> &particle_one_momentum =
-                    momentum[particle_one_id];
-                  Tensor<1, dim> &particle_two_momentum =
-                    momentum[particle_two_id];
-                  Tensor<1, dim> &particle_one_force = force[particle_one_id];
-                  Tensor<1, dim> &particle_two_force = force[particle_two_id];
+                  Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+                  Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
+                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
+                  Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
 
                   // Apply the calculated forces and torques on the particle
@@ -1129,8 +1405,8 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                     particle_one_tangential_torque,
                     particle_two_tangential_torque,
                     rolling_resistance_torque,
-                    particle_one_momentum,
-                    particle_two_momentum,
+                    particle_one_torque,
+                    particle_two_torque,
                     particle_one_force,
                     particle_two_force);
                 }
@@ -1163,20 +1439,32 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
             {
               // Getting information (location and properties) of particle one
               // and two in contact
-              auto             particle_one = contact_info.particle_one;
-              auto             particle_two = contact_info.particle_two;
-              const Point<dim> particle_one_location =
-                particle_one->get_location();
-              const Point<dim> particle_two_location =
-                particle_two->get_location();
-              auto particle_one_properties = particle_one->get_properties();
-              auto particle_two_properties = particle_two->get_properties();
+              auto     particle_one = contact_info.particle_one;
+              auto     particle_two = contact_info.particle_two;
+              Point<3> particle_one_location;
+              Point<3> particle_two_location;
+              auto     particle_one_properties = particle_one->get_properties();
+              auto     particle_two_properties = particle_two->get_properties();
 
               // Calculation of normal overlap
               double normal_overlap =
                 0.5 * (particle_one_properties[PropertiesIndex::dp] +
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
+
+              if constexpr (dim == 3)
+                {
+                  particle_one_location = particle_one->get_location();
+                  particle_two_location = particle_two->get_location();
+                }
+
+              if constexpr (dim == 2)
+                {
+                  particle_one_location =
+                    point_nd_to_3d(particle_one->get_location());
+                  particle_two_location =
+                    point_nd_to_3d(particle_two->get_location());
+                }
 
               if (normal_overlap > 0)
                 {
@@ -1206,7 +1494,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                                           particle_two_tangential_torque,
                                           rolling_resistance_torque);
 
-                  // Getting momentum and force of particle one
+                  // Getting torque and force of particle one
 #if DEAL_II_VERSION_GTE(10, 0, 0)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();
@@ -1214,9 +1502,8 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                   types::particle_index particle_one_id =
                     particle_one->get_id();
 #endif
-                  Tensor<1, dim> &particle_one_momentum =
-                    momentum[particle_one_id];
-                  Tensor<1, dim> &particle_one_force = force[particle_one_id];
+                  Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
 
                   // Apply the calculated forces and torques on the particle
                   // pair
@@ -1225,7 +1512,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                     tangential_force,
                     particle_one_tangential_torque,
                     rolling_resistance_torque,
-                    particle_one_momentum,
+                    particle_one_torque,
                     particle_one_force);
                 }
 
@@ -1243,21 +1530,141 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
     }
 }
 
+template <int dim>
+void
+ParticleParticleHertz<dim>::calculate_IB_particle_particle_contact_force(
+  const double &                              normal_overlap,
+  particle_particle_contact_info_struct<dim> &contact_info,
+  Tensor<1, 3> &                              normal_force,
+  Tensor<1, 3> &                              tangential_force,
+  Tensor<1, 3> &                              particle_one_tangential_torque,
+  Tensor<1, 3> &                              particle_two_tangential_torque,
+  Tensor<1, 3> &                              rolling_resistance_torque,
+  IBParticle<dim> &                           particle_one,
+  IBParticle<dim> &                           particle_two,
+  const Point<dim> &                          particle_one_location,
+  const Point<dim> &                          particle_two_location,
+  const double &                              dt,
+  const double &                              particle_one_radius,
+  const double &                              particle_two_radius,
+  const double &                              particle_one_mass,
+  const double &                              particle_two_mass)
+{
+  Point<3> particle_one_location_3d;
+  Point<3> particle_two_location_3d;
+
+  if constexpr (dim == 3)
+    {
+      particle_one_location_3d = particle_one_location;
+      particle_two_location_3d = particle_two_location;
+    }
+
+  if constexpr (dim == 2)
+    {
+      particle_one_location_3d = point_nd_to_3d(particle_one_location);
+      particle_two_location_3d = point_nd_to_3d(particle_two_location);
+    }
+
+  auto particle_one_properties = particle_one.get_properties();
+  particle_one_properties[DEM::PropertiesIndex::mass] = particle_one_mass;
+  particle_one_properties[DEM::PropertiesIndex::type] = 0;
+  particle_one_properties[DEM::PropertiesIndex::dp]   = 2 * particle_one_radius;
+
+  auto particle_two_properties = particle_one.get_properties();
+  particle_two_properties[DEM::PropertiesIndex::mass] = particle_two_mass;
+  particle_two_properties[DEM::PropertiesIndex::type] = 0;
+  particle_two_properties[DEM::PropertiesIndex::dp]   = 2 * particle_two_radius;
+
+  // DEM::PropertiesIndex::type is the first (0) property of particles in the
+  // DEM solver. For the IB particles, the first property is ID. For force and
+  // torque calculations, we need pair-wise properties (such as effective
+  // Young's modulus, effective coefficient of restitution, etc.) We rewrite
+  // these pair-wise properties by using the ID of IB particles (using
+  // DEM::PropertiesIndex::type) and use them in force calculations.
+  const unsigned int particle_one_type =
+    particle_one_properties[DEM::PropertiesIndex::type];
+  const unsigned int particle_two_type =
+    particle_two_properties[DEM::PropertiesIndex::type];
+
+  this->effective_youngs_modulus[particle_one_type][particle_two_type] =
+    (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+    ((particle_two.youngs_modulus *
+      (1 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
+     (particle_one.youngs_modulus *
+      (1 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
+     DBL_MIN);
+
+  this->effective_shear_modulus[particle_one_type][particle_two_type] =
+    (particle_one.youngs_modulus * particle_two.youngs_modulus) /
+    (2 * ((particle_two.youngs_modulus * (2 - particle_one.poisson_ratio) *
+           (1 + particle_one.poisson_ratio)) +
+          (particle_one.youngs_modulus * (2 - particle_two.poisson_ratio) *
+           (1 + particle_two.poisson_ratio))) +
+     DBL_MIN);
+
+  this->effective_coefficient_of_restitution[particle_one_type]
+                                            [particle_two_type] =
+    harmonic_mean(particle_one.restitution_coefficient,
+                  particle_two.restitution_coefficient);
+  this
+    ->effective_coefficient_of_friction[particle_one_type][particle_two_type] =
+    harmonic_mean(particle_one.friction_coefficient,
+                  particle_two.friction_coefficient);
+  this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                 [particle_two_type] =
+    harmonic_mean(particle_one.rolling_friction_coefficient,
+                  particle_two.rolling_friction_coefficient);
+
+  const double restitution_coefficient_particle_log =
+    std::log(this->effective_coefficient_of_restitution[particle_one_type]
+                                                       [particle_two_type]);
+
+  this->model_parameter_beta[particle_one_type][particle_two_type] =
+    restitution_coefficient_particle_log /
+    sqrt(restitution_coefficient_particle_log *
+           restitution_coefficient_particle_log +
+         9.8696);
+
+  // Since the normal overlap is already calculated we update
+  // this element of the container here. The rest of information
+  // are updated using the following function
+  this->update_contact_information(contact_info,
+                                   normal_relative_velocity_value,
+                                   normal_unit_vector,
+                                   particle_one_properties,
+                                   particle_two_properties,
+                                   particle_one_location_3d,
+                                   particle_two_location_3d,
+                                   dt);
+
+  calculate_hertz_contact(contact_info,
+                          normal_relative_velocity_value,
+                          normal_unit_vector,
+                          normal_overlap,
+                          particle_one_properties,
+                          particle_two_properties,
+                          normal_force,
+                          tangential_force,
+                          particle_one_tangential_torque,
+                          particle_two_tangential_torque,
+                          rolling_resistance_torque);
+}
+
 // Calculates nonlinear contact force and torques
 template <int dim>
 void
 ParticleParticleHertz<dim>::calculate_hertz_contact(
   particle_particle_contact_info_struct<dim> &contact_info,
   const double &                              normal_relative_velocity_value,
-  const Tensor<1, dim> &                      normal_unit_vector,
+  const Tensor<1, 3> &                        normal_unit_vector,
   const double &                              normal_overlap,
   const ArrayView<const double> &             particle_one_properties,
   const ArrayView<const double> &             particle_two_properties,
-  Tensor<1, dim> &                            normal_force,
-  Tensor<1, dim> &                            tangential_force,
-  Tensor<1, dim> &                            particle_one_tangential_torque,
-  Tensor<1, dim> &                            particle_two_tangential_torque,
-  Tensor<1, dim> &                            rolling_resistance_torque)
+  Tensor<1, 3> &                              normal_force,
+  Tensor<1, 3> &                              tangential_force,
+  Tensor<1, 3> &                              particle_one_tangential_torque,
+  Tensor<1, 3> &                              particle_two_tangential_torque,
+  Tensor<1, 3> &                              rolling_resistance_torque)
 {
   // Calculation of effective radius and mass
   this->find_effective_radius_and_mass(particle_one_properties,
@@ -1315,23 +1722,20 @@ ParticleParticleHertz<dim>::calculate_hertz_contact(
 
   // Calculation of torque
   // Torque caused by tangential force (tangential_torque)
-  if (dim == 3)
-    {
-      particle_one_tangential_torque =
-        cross_product_3d(normal_unit_vector,
-                         tangential_force * particle_one_properties[DEM::dp] *
-                           0.5);
+  particle_one_tangential_torque =
+    cross_product_3d(normal_unit_vector,
+                     tangential_force * particle_one_properties[DEM::dp] * 0.5);
 
-      particle_two_tangential_torque =
-        particle_one_tangential_torque *
-        particle_two_properties[DEM::PropertiesIndex::dp] /
-        particle_one_properties[DEM::PropertiesIndex::dp];
-    }
+  particle_two_tangential_torque =
+    particle_one_tangential_torque *
+    particle_two_properties[DEM::PropertiesIndex::dp] /
+    particle_one_properties[DEM::PropertiesIndex::dp];
+
 
   // Rolling resistance torque
   if (rolling_reistance_model ==
       RollingResistanceTorqueModel::no_rolling_resistance)
-    rolling_resistance_torque = no_rolling_resistance_torque<dim>(
+    rolling_resistance_torque = no_rolling_resistance_torque(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,
@@ -1341,7 +1745,7 @@ ParticleParticleHertz<dim>::calculate_hertz_contact(
       normal_unit_vector);
   if (rolling_reistance_model ==
       RollingResistanceTorqueModel::constant_rolling_resistance)
-    rolling_resistance_torque = constant_rolling_resistance_torque<dim>(
+    rolling_resistance_torque = constant_rolling_resistance_torque(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,
@@ -1351,7 +1755,7 @@ ParticleParticleHertz<dim>::calculate_hertz_contact(
       normal_unit_vector);
   if (rolling_reistance_model ==
       RollingResistanceTorqueModel::viscous_rolling_resistance)
-    rolling_resistance_torque = viscous_rolling_resistance_torque<dim>(
+    rolling_resistance_torque = viscous_rolling_resistance_torque(
       this->effective_radius,
       particle_one_properties,
       particle_two_properties,

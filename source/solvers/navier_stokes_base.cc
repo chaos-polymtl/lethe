@@ -37,6 +37,7 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_simplex_p.h>
 
+#include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria_iterator.h>
 
@@ -48,6 +49,8 @@
 
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
+
+#include <sys/stat.h>
 
 
 /*
@@ -115,6 +118,20 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
+
+  // Check if the output directory exists
+  std::string output_dir_name =
+    simulation_parameters.simulation_control.output_folder;
+  struct stat buffer;
+
+  // If output directory does not exist, create it
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      if (stat(output_dir_name.c_str(), &buffer) != 0)
+        {
+          create_output_folder(output_dir_name);
+        }
+    }
 
   if (simulation_parameters.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::steady)
@@ -269,7 +286,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
   this->forces_on_boundaries =
     calculate_forces(this->dof_handler,
                      evaluation_point,
-                     simulation_parameters.physical_properties,
+                     simulation_parameters.physical_properties_manager,
                      simulation_parameters.boundary_conditions,
                      *this->face_quadrature,
                      *this->mapping);
@@ -348,7 +365,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
   this->torques_on_boundaries =
     calculate_torques(this->dof_handler,
                       evaluation_point,
-                      simulation_parameters.physical_properties,
+                      simulation_parameters.physical_properties_manager,
                       simulation_parameters.boundary_conditions,
                       *this->face_quadrature,
                       *this->mapping);
@@ -437,6 +454,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
       if (this->this_mpi_process == 0)
         {
           std::string filename =
+            simulation_parameters.simulation_control.output_folder +
             simulation_parameters.analytical_solution->get_filename() + ".dat";
           std::ofstream output(filename.c_str());
           error_table.write_text(output);
@@ -511,7 +529,8 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
   if (simulation_control->get_assembly_method() ==
-      Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk22 &&
+      simulation_parameters.multiphysics.fluid_dynamics)
     {
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1);
@@ -523,7 +542,8 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
     }
   else if (simulation_control->get_assembly_method() ==
-           Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
+             Parameters::SimulationControl::TimeSteppingMethod::sdirk33 &&
+           simulation_parameters.multiphysics.fluid_dynamics)
     {
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1);
@@ -549,7 +569,8 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       // dynamics
       multiphysics->pre_solve(simulation_parameters.simulation_control.method);
 
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
+      if (simulation_parameters.multiphysics.fluid_dynamics)
+        PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       // Solve the auxiliary physics that should be treated AFTER the fluid
       // dynamics
@@ -689,6 +710,11 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 
       // Time monitoring
       TimerOutput::Scope t(this->computing_timer, "box refine");
+      this->pcout
+        << "Initial refinement in box - Step  " << i + 1 << " of "
+        << this->simulation_parameters.mesh_box_refinement->initial_refinement
+        << std::endl;
+
 
       Vector<float> estimated_error_per_cell(tria.n_active_cells());
       const FEValuesExtractors::Vector velocity(0);
@@ -1080,7 +1106,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         this->present_solution,
         *this->cell_quadrature,
         *this->mapping,
-        this->simulation_parameters.physical_properties);
+        this->simulation_parameters.physical_properties_manager);
 
       this->apparent_viscosity_table.add_value(
         "time", simulation_control->get_current_time());
@@ -1130,9 +1156,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Pressure drop: "
-                      << this->simulation_parameters.physical_properties
-                             .fluids[0]
-                             .density *
+                      << this->simulation_parameters.physical_properties_manager
+                             .density_scale *
                            pressure_drop
                       << " Pa" << std::endl;
         }
@@ -1523,10 +1548,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     data_out.add_data_vector(solution, srf);
 
   NonNewtonianViscosityPostprocessor<dim> non_newtonian_viscosity(
-    simulation_parameters.physical_properties);
+    this->simulation_parameters.physical_properties_manager.get_rheology());
   ShearRatePostprocessor<dim> shear_rate_processor;
 
-  if (simulation_parameters.physical_properties.non_newtonian_flow)
+  if (this->simulation_parameters.physical_properties_manager
+        .is_non_newtonian())
     {
       data_out.add_data_vector(solution, non_newtonian_viscosity);
       data_out.add_data_vector(solution, shear_rate_processor);
@@ -1570,17 +1596,20 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_forces()
 {
   TimerOutput::Scope t(this->computing_timer, "output_forces");
-  for (unsigned int boundary_id = 0;
-       boundary_id < simulation_parameters.boundary_conditions.size;
-       ++boundary_id)
+  if (this->this_mpi_process == 0)
     {
-      std::string filename =
-        simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.forces_parameters.force_output_name + "." +
-        Utilities::int_to_string(boundary_id, 2) + ".dat";
-      std::ofstream output(filename.c_str());
+      for (unsigned int boundary_id = 0;
+           boundary_id < simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.forces_parameters.force_output_name + "." +
+            Utilities::int_to_string(boundary_id, 2) + ".dat";
+          std::ofstream output(filename.c_str());
 
-      forces_tables[boundary_id].write_text(output);
+          forces_tables[boundary_id].write_text(output);
+        }
     }
 }
 
@@ -1589,17 +1618,20 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_torques()
 {
   TimerOutput::Scope t(this->computing_timer, "output_torques");
-  for (unsigned int boundary_id = 0;
-       boundary_id < simulation_parameters.boundary_conditions.size;
-       ++boundary_id)
+  if (this->this_mpi_process == 0)
     {
-      std::string filename =
-        simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.forces_parameters.torque_output_name + "." +
-        Utilities::int_to_string(boundary_id, 2) + ".dat";
-      std::ofstream output(filename.c_str());
+      for (unsigned int boundary_id = 0;
+           boundary_id < simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.forces_parameters.torque_output_name + "." +
+            Utilities::int_to_string(boundary_id, 2) + ".dat";
+          std::ofstream output(filename.c_str());
 
-      this->torques_tables[boundary_id].write_text(output);
+          this->torques_tables[boundary_id].write_text(output);
+        }
     }
 }
 

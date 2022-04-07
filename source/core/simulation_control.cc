@@ -4,7 +4,7 @@
 #include <fstream>
 
 
-SimulationControl::SimulationControl(Parameters::SimulationControl param)
+SimulationControl::SimulationControl(const Parameters::SimulationControl param)
   : method(param.method)
   , assembly_method(param.method)
   , current_time(0)
@@ -283,6 +283,7 @@ SimulationControlTransientDynamicOutput::
   SimulationControlTransientDynamicOutput(Parameters::SimulationControl param)
   : SimulationControlTransient(param)
   , time_step_forced_output(false)
+  // To be fixed for restarts
   , last_output_time(0.)
 {}
 

@@ -215,6 +215,24 @@ namespace LetheGridTools
 
   /**
    * @brief
+   * Function returns all the boundary cells with at least one vertex in a
+   * sphere.
+   *
+   * @param dof_handler the dof handler containing all the elements.
+   *
+   * @param center The center of the sphere.
+   *
+   * @param radius The radius of the sphere.
+   *
+   */
+  template <int dim>
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+  find_boundary_cells_in_sphere(const DoFHandler<dim> &dof_handler,
+                                const Point<dim> &     center,
+                                const double           radius);
+
+  /**
+   * @brief
    * A functor that provides a unique and uniformly distributed hash for a
    * a cell. Used to store cells in hash sets.
    */

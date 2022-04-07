@@ -55,21 +55,20 @@ public:
 
 
 /**
- * @brief Class that assembles the core of the Volume Averaged Navier-Stokes equations.
+ * @brief Class that assembles the core of Model B of the Volume Averaged Navier-Stokes equations.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers
  */
 template <int dim>
-class GLSVansAssemblerCore : public NavierStokesAssemblerBase<dim>
+class GLSVansAssemblerCoreModelB : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerCore(std::shared_ptr<SimulationControl> simulation_control,
-                       Parameters::PhysicalProperties     physical_properties,
-                       Parameters::CFDDEM                 cfd_dem)
+  GLSVansAssemblerCoreModelB(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
     , cfd_dem(cfd_dem)
   {}
 
@@ -94,7 +93,48 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
+  Parameters::CFDDEM                 cfd_dem;
+};
+
+/**
+ * @brief Class that assembles the core of Model A of the Volume Averaged Navier-Stokes equations.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class GLSVansAssemblerCoreModelA : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerCoreModelA(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::CFDDEM                 cfd_dem)
+    : simulation_control(simulation_control)
+    , cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)Particles::ParticleHandler
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const bool SUPG = true;
+
+  std::shared_ptr<SimulationControl> simulation_control;
   Parameters::CFDDEM                 cfd_dem;
 };
 
@@ -139,8 +179,10 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::CFDDEM                 cfd_dem;
+
+  Parameters::CFDDEM cfd_dem;
 };
+
 
 /**
  * @brief Class that assembles the drag force using DiFelice model for the
@@ -160,9 +202,8 @@ template <int dim>
 class GLSVansAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDiFelice(Parameters::PhysicalProperties physical_properties)
-    : physical_properties(physical_properties)
-
+  GLSVansAssemblerDiFelice(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -173,8 +214,7 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::PhysicalProperties physical_properties;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -198,9 +238,8 @@ template <int dim>
 class GLSVansAssemblerRong : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerRong(Parameters::PhysicalProperties physical_properties)
-    : physical_properties(physical_properties)
-
+  GLSVansAssemblerRong(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -211,8 +250,7 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::PhysicalProperties physical_properties;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -232,9 +270,8 @@ template <int dim>
 class GLSVansAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDallavalle(Parameters::PhysicalProperties physical_properties)
-    : physical_properties(physical_properties)
-
+  GLSVansAssemblerDallavalle(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -245,8 +282,55 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
+};
 
-  Parameters::PhysicalProperties physical_properties;
+/**
+ * @brief Class that assembles the drag force using the Koch and Hill drag model for the
+ * VANS equations where the momentum exchange coefficient
+ *  beta =   ((18 * mu * cell_void_fraction^2 *
+          (1 - cell_void_fraction)) / pow(dp, 2)) *
+        (f0 + 0.5 * f3 * cell_void_fraction * re) *
+        Vp /(1 - cell_void_fraction) where f0 and f3 are functions given by:
+      if ((1 - cell_void_fraction) < 0.4)
+        {
+          f0 = (1 + 3 * sqrt((1 - cell_void_fraction) / 2) +
+                (135.0 / 64) * (1 - cell_void_fraction) *
+                  log(1 - cell_void_fraction) +
+                16.14 * (1 - cell_void_fraction)) /
+               (1 + 0.681 * (1 - cell_void_fraction) -
+                8.48 * (1 - cell_void_fraction)^2 +
+                8.14 * (1 - cell_void_fraction)^3);
+        }
+      else if ((1 - cell_void_fraction) >= 0.4)
+        {
+          f0 = 10 * (1 - cell_void_fraction) / cell_void_fraction^3;
+        }
+
+      f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
+           0.0232 / pow(cell_void_fraction, 5);
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerKochHill : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerKochHill(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions  calculates the solid-fluid interaction of the Koch-Hill drag model.
+   * @param scratch_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::CFDDEM cfd_dem;
 };
 
 
@@ -265,12 +349,9 @@ template <int dim>
 class GLSVansAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerBuoyancy(
-    Parameters::PhysicalProperties physical_properties,
-    Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
-      lagrangian_physical_properties)
-    : physical_properties(physical_properties)
-    , lagrangian_physical_properties(lagrangian_physical_properties)
+  GLSVansAssemblerBuoyancy(Parameters::Lagrangian::LagrangianPhysicalProperties
+                             lagrangian_physical_properties)
+    : lagrangian_physical_properties(lagrangian_physical_properties)
 
   {}
 
@@ -283,10 +364,10 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  Parameters::PhysicalProperties physical_properties;
-  Parameters::Lagrangian::LagrangianPhysicalProperties<dim>
+  Parameters::Lagrangian::LagrangianPhysicalProperties
     lagrangian_physical_properties;
 };
+
 
 /**
  * @brief Class that assembles the particle pressure force that will then
@@ -301,9 +382,8 @@ template <int dim>
 class GLSVansAssemblerPressureForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerPressureForce(
-    Parameters::PhysicalProperties physical_properties)
-    : physical_properties(physical_properties)
+  GLSVansAssemblerPressureForce(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -315,7 +395,7 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  Parameters::PhysicalProperties physical_properties;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -331,8 +411,8 @@ template <int dim>
 class GLSVansAssemblerShearForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerShearForce(Parameters::PhysicalProperties physical_properties)
-    : physical_properties(physical_properties)
+  GLSVansAssemblerShearForce(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -344,7 +424,7 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  Parameters::PhysicalProperties physical_properties;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -360,7 +440,8 @@ template <int dim>
 class GLSVansAssemblerFPI : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerFPI()
+  GLSVansAssemblerFPI(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
 
   {}
 
@@ -381,7 +462,14 @@ public:
   virtual void
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  Parameters::CFDDEM cfd_dem;
 };
 
+inline double
+calculate_gamma(double velocity, double viscosity, double /*h*/, double c_star)
+{
+  return viscosity + c_star * velocity;
+}
 
 #endif

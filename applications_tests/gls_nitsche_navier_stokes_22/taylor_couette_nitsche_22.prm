@@ -9,7 +9,7 @@ subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
   set output name             = taylor_couette_22
-  set output frequency        = 1
+  set output frequency        = 0
   set log precision           = 1
 end
 
@@ -65,11 +65,11 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-    set beta = 10
     set verbosity = verbose
     set calculate torques on solid = true
 
     subsection nitsche solid 0
+	set beta = 10
 	subsection mesh
 		set type = dealii
 		set grid type = hyper_ball

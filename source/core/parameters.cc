@@ -193,6 +193,7 @@ namespace Parameters
       output_folder     = prm.get("output path");
       output_name       = prm.get("output name");
       output_frequency  = prm.get_integer("output frequency");
+      output_time       = prm.get_double("output time");
       output_boundaries = prm.get_bool("output boundaries");
 
       subdivision   = prm.get_integer("subdivision");
@@ -308,11 +309,6 @@ namespace Parameters
   {
     prm.enter_subsection("non newtonian");
     {
-      prm.declare_entry("model",
-                        "carreau",
-                        Patterns::Selection("power-law|carreau"),
-                        "Non newtonian model "
-                        "Choices are <power-law|carreau>.");
       powerlaw_parameters.declare_parameters(prm);
       carreau_parameters.declare_parameters(prm);
     }
@@ -324,17 +320,8 @@ namespace Parameters
   {
     prm.enter_subsection("non newtonian");
     {
-      const std::string op = prm.get("model");
-      if (op == "power-law")
-        {
-          model = Model::powerlaw;
-          powerlaw_parameters.parse_parameters(prm);
-        }
-      else if (op == "carreau")
-        {
-          model = Model::carreau;
-          carreau_parameters.parse_parameters(prm);
-        }
+      powerlaw_parameters.parse_parameters(prm);
+      carreau_parameters.parse_parameters(prm);
     }
     prm.leave_subsection();
   }
@@ -397,6 +384,67 @@ namespace Parameters
   }
 
   void
+  SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("surface tension force");
+    {
+      prm.declare_entry("surface tension coefficient",
+                        "0.0",
+                        Patterns::Double(),
+                        "Surface tension coefficient");
+
+      prm.declare_entry("output auxiliary fields",
+                        "false",
+                        Patterns::Bool(),
+                        "Output the phase fraction gradient and curvature");
+
+      prm.declare_entry(
+        "phase fraction gradient filter",
+        "0.5",
+        Patterns::Double(),
+        "The filter value for phase fraction gradient calculations to damp high-frequency errors");
+
+      prm.declare_entry(
+        "curvature filter",
+        "0.5",
+        Patterns::Double(),
+        "The filter value for curvature calculations to damp high-frequency errors");
+
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the surface tension force calculations should be printed "
+        "Choices are <quiet|verbose>.");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("surface tension force");
+    {
+      // Surface tension coefficient
+      surface_tension_coef = prm.get_double("surface tension coefficient");
+      phase_fraction_gradient_filter_value =
+        prm.get_double("phase fraction gradient filter");
+      curvature_filter_value = prm.get_double("curvature filter");
+
+      output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
+
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Parameters::Verbosity::verbose;
+      else if (op == "quiet")
+        verbosity = Parameters::Verbosity::quiet;
+      else
+        throw(std::runtime_error("Invalid verbosity level"));
+    }
+    prm.leave_subsection();
+  }
+
+  void
   PhaseChange::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("phase change");
@@ -406,6 +454,8 @@ namespace Parameters
       latent_enthalpy = prm.get_double("latent enthalpy");
       cp_l            = prm.get_double("specific heat liquid");
       cp_s            = prm.get_double("specific heat solid");
+      viscosity_l     = prm.get_double("viscosity liquid");
+      viscosity_s     = prm.get_double("viscosity solid");
     }
 
     Assert(T_liquidus > T_solidus,
@@ -442,6 +492,16 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Specific heat of the solid phase");
+
+      prm.declare_entry("viscosity liquid",
+                        "1",
+                        Patterns::Double(),
+                        "Viscosity of the liquid phase");
+
+      prm.declare_entry("viscosity solid",
+                        "1",
+                        Patterns::Double(),
+                        "Viscosity of the solid phase");
     }
     prm.leave_subsection();
   }
@@ -454,28 +514,14 @@ namespace Parameters
 
     prm.enter_subsection("physical properties");
     {
-      prm.declare_entry("non newtonian flow",
-                        "false",
-                        Patterns::Bool(),
-                        "Non Newtonian flow");
-      non_newtonian_parameters.declare_parameters(prm);
-
-
       prm.declare_entry("number of fluids",
                         "1",
                         Patterns::Integer(),
                         "Number of fluids");
 
-      prm.declare_entry("enable phase change",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable melting/freezing of fluids");
-      phase_change_parameters.declare_parameters(prm);
-
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
         {
-          fluids[i_fluid] = Fluid();
           fluids[i_fluid].declare_parameters(prm, i_fluid);
         }
     }
@@ -487,14 +533,6 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-      // Management of non_newtonian_flows
-      non_newtonian_flow = prm.get_bool("non newtonian flow");
-      non_newtonian_parameters.parse_parameters(prm);
-
-      // Management of phase_change
-      enable_phase_change = prm.get_bool("enable phase change");
-      phase_change_parameters.parse_parameters(prm);
-
       // Multiphasic simulations parameters definition
       number_of_fluids = prm.get_integer("number of fluids");
       Assert(number_of_fluids == 1 || number_of_fluids == 2,
@@ -548,6 +586,47 @@ namespace Parameters
         Patterns::Double(),
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
+
+      prm.declare_entry("rheological model",
+                        "newtonian",
+                        Patterns::Selection(
+                          "newtonian|power-law|carreau|phase_change"),
+                        "Rheological model "
+                        "Choices are <newtonian|power-law|carreau>.");
+
+      non_newtonian_parameters.declare_parameters(prm);
+
+
+      prm.declare_entry("density model",
+                        "constant",
+                        Patterns::Selection("constant"),
+                        "Model used for the calculation of the density"
+                        "Choices are <constant>.");
+
+      prm.declare_entry("specific heat model",
+                        "constant",
+                        Patterns::Selection("constant|phase_change"),
+                        "Model used for the calculation of the specific heat"
+                        "Choices are <constant|phase_change>.");
+
+      phase_change_parameters.declare_parameters(prm);
+
+      prm.declare_entry(
+        "thermal conductivity model",
+        "constant",
+        Patterns::Selection("constant|linear"),
+        "Model used for the calculation of the thermal conductivity"
+        "Choices are <constant|linear>.");
+
+      prm.declare_entry("k_A0",
+                        "0",
+                        Patterns::Double(),
+                        "k_A0 parameter for linear conductivity model");
+
+      prm.declare_entry("k_A1",
+                        "0",
+                        Patterns::Double(),
+                        "k_A1 parameter for linear conductivity model");
     }
     prm.leave_subsection();
   }
@@ -563,6 +642,56 @@ namespace Parameters
       thermal_conductivity = prm.get_double("thermal conductivity");
       thermal_expansion    = prm.get_double("thermal expansion");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");
+
+
+      // Parse models for the physical properties
+      std::string op;
+
+      // Density
+      op = prm.get("density model");
+      if (op == "constant")
+        density_model = DensityModel::constant;
+
+      // Thermal conductivity
+      op = prm.get("thermal conductivity model");
+      if (op == "constant")
+        thermal_conductivity_model = ThermalConductivityModel::constant;
+      else if (op == "linear")
+        thermal_conductivity_model = ThermalConductivityModel::linear;
+
+      // Linear conductivity model parameters
+      k_A0 = prm.get_double("k_A0");
+      k_A1 = prm.get_double("k_A1");
+
+      // Specific heat
+      op = prm.get("specific heat model");
+      if (op == "constant")
+        specific_heat_model = SpecificHeatModel::constant;
+      else if (op == "phase_change")
+        specific_heat_model = SpecificHeatModel::phase_change;
+
+      phase_change_parameters.parse_parameters(prm);
+
+      // Rheology
+      op = prm.get("rheological model");
+      if (op == "power-law")
+        {
+          rheological_model = RheologicalModel::powerlaw;
+        }
+      else if (op == "carreau")
+        {
+          rheological_model = RheologicalModel::carreau;
+        }
+      else if (op == "newtonian")
+        {
+          rheological_model = RheologicalModel::newtonian;
+        }
+      else if (op == "phase_change")
+        {
+          rheological_model = RheologicalModel::phase_change;
+        }
+
+      non_newtonian_parameters.parse_parameters(prm);
     }
     prm.leave_subsection();
   }
@@ -631,14 +760,14 @@ namespace Parameters
         Patterns::Selection("quiet|verbose"),
         "State whether from the non-linear solver should be printed "
         "Choices are <quiet|verbose>.");
-      prm.declare_entry("calculate forces",
+      prm.declare_entry("calculate force",
                         "false",
                         Patterns::Bool(),
-                        "Enable calculation of forces");
-      prm.declare_entry("calculate torques",
+                        "Enable calculation of force");
+      prm.declare_entry("calculate torque",
                         "false",
                         Patterns::Bool(),
-                        "Enable calculation of torques");
+                        "Enable calculation of torque");
       prm.declare_entry("force name",
                         "force",
                         Patterns::FileName(),
@@ -673,8 +802,8 @@ namespace Parameters
         verbosity = Verbosity::verbose;
       if (op == "quiet")
         verbosity = Verbosity::quiet;
-      calculate_force       = prm.get_bool("calculate forces");
-      calculate_torque      = prm.get_bool("calculate torques");
+      calculate_force       = prm.get_bool("calculate force");
+      calculate_torque      = prm.get_bool("calculate torque");
       force_output_name     = prm.get("force name");
       torque_output_name    = prm.get("torque name");
       output_precision      = prm.get_integer("output precision");
@@ -891,6 +1020,12 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Reuse the last jacobian matrix for the next non-linear problem solution");
+
+      prm.declare_entry(
+        "abort at convergence failure",
+        "false",
+        Patterns::Bool(),
+        "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
     }
     prm.leave_subsection();
   }
@@ -936,6 +1071,8 @@ namespace Parameters
       display_precision     = prm.get_integer("residual precision");
       force_rhs_calculation = prm.get_bool("force rhs calculation");
       reuse_matrix          = prm.get_bool("reuse matrix");
+      abort_at_convergence_failure =
+        prm.get_bool("abort at convergence failure");
     }
     prm.leave_subsection();
   }
@@ -988,6 +1125,12 @@ namespace Parameters
         Patterns::Bool(),
         "Enables checking the input grid for diamond-shaped cells.");
 
+      prm.declare_entry(
+        "expand particle-wall contact search",
+        "true",
+        Patterns::Bool(),
+        "Enables adding the boundary neighbor cells of boundary cells to the"
+        "particle-wall contact search list.");
 
       prm.declare_entry("target size",
                         "1",
@@ -1071,7 +1214,9 @@ namespace Parameters
       refine_until_target_size = prm.get_bool("enable target size");
       simplex                  = prm.get_bool("simplex");
       check_for_diamond_cells  = prm.get_bool("check diamond cells");
-      target_size              = prm.get_double("target size");
+      expand_particle_wall_contact_search =
+        prm.get_bool("expand particle-wall contact search");
+      target_size = prm.get_double("target size");
 
 
       translate = prm.get_bool("translate");
@@ -1535,6 +1680,29 @@ namespace Parameters
                       "1",
                       Patterns::Double(),
                       "uniform rotational moment of inertia");
+    prm.declare_entry("youngs modulus",
+                      "100000000",
+                      Patterns::Double(),
+                      "The youngs modulus of particle in case of contact");
+    prm.declare_entry("poisson ratio",
+                      "0.3",
+                      Patterns::Double(),
+                      "The poisson ratio of particle in case of contact");
+    prm.declare_entry(
+      "restitution coefficient",
+      "1",
+      Patterns::Double(),
+      "The restitution coefficient of particle in case of contact");
+    prm.declare_entry(
+      "friction coefficient",
+      "0",
+      Patterns::Double(),
+      "The friction coefficient of particle in case of contact");
+    prm.declare_entry(
+      "rolling friction coefficient",
+      "0",
+      Patterns::Double(),
+      "The rolling friction coefficient of particle in case of contact");
   }
 
   template <int dim>
@@ -1603,14 +1771,58 @@ namespace Parameters
         "1e-6",
         Patterns::Double(),
         "The nonlinear tolerance for the coupling of the particle dynamics and the fluid");
-      prm.declare_entry("fluid density",
-                        "1",
-                        Patterns::Double(),
-                        "density of the fluid");
+      prm.declare_entry("DEM coupling frequency",
+                        "1000",
+                        Patterns::Integer(),
+                        "The number of DEM time steps per CFD time step");
       prm.declare_entry("alpha",
                         "1",
                         Patterns::Double(),
                         "relaxation parameter");
+
+      prm.declare_entry("enable lubrication force",
+                        "true",
+                        Patterns::Bool(),
+                        "Bool to enable or disable the lubrication force");
+      prm.declare_entry(
+        "lubrication range max",
+        "2",
+        Patterns::Double(),
+        "Gap require to consider the lubrication force. This value is multiplied the smallest cell size");
+      prm.declare_entry(
+        "lubrication range min",
+        "0.1",
+        Patterns::Double(),
+        "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
+      prm.declare_entry(
+        "wall youngs modulus",
+        "100000000",
+        Patterns::Double(),
+        "The wall youngs modulus if IB particles are in contact with it");
+
+      prm.declare_entry(
+        "wall poisson ratio",
+        "0.3",
+        Patterns::Double(),
+        "The wall poisson ratio if IB particles are in contact with it");
+
+      prm.declare_entry(
+        "wall rolling friction coefficient",
+        "0",
+        Patterns::Double(),
+        "The wall rolling friction coefficient if IB particles are in contact with it");
+
+      prm.declare_entry(
+        "wall friction coefficient",
+        "0",
+        Patterns::Double(),
+        "The wall friction coefficient if IB particles are in contact with it");
+
+      prm.declare_entry(
+        "wall restitution coefficient",
+        "1",
+        Patterns::Double(),
+        "The wall restitution coefficient if IB particles are in contact with it");
 
 
       prm.enter_subsection("gravity");
@@ -1650,7 +1862,6 @@ namespace Parameters
       outside_radius     = prm.get_double("refine mesh outside radius factor");
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
-      density              = prm.get_double("fluid density");
       integrate_motion     = prm.get_bool("integrate motion");
       alpha                = prm.get_double("alpha");
 
@@ -1665,6 +1876,20 @@ namespace Parameters
       prm.enter_subsection("gravity");
       f_gravity->parse_parameters(prm);
       prm.leave_subsection();
+
+      wall_youngs_modulus = prm.get_double("wall youngs modulus");
+      wall_poisson_ratio  = prm.get_double("wall poisson ratio");
+      wall_rolling_friction_coefficient =
+        prm.get_double("wall rolling friction coefficient");
+      wall_friction_coefficient = prm.get_double("wall friction coefficient");
+      wall_restitution_coefficient =
+        prm.get_double("wall restitution coefficient");
+      coupling_frequency       = prm.get_double("DEM coupling frequency");
+      enable_lubrication_force = prm.get_bool("enable lubrication force");
+      lubrication_range_max    = prm.get_double("lubrication range max");
+      lubrication_range_min    = prm.get_double("lubrication range min");
+
+
 
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
@@ -1700,13 +1925,21 @@ namespace Parameters
           particles[i].omega[2] =
             particles[i].f_omega->value(particles[i].position, 2);
 
-
+          particles[i].particle_id          = i;
           particles[i].radius               = prm.get_double("radius");
           particles[i].inertia[0][0]        = prm.get_double("inertia");
           particles[i].inertia[1][1]        = prm.get_double("inertia");
           particles[i].inertia[2][2]        = prm.get_double("inertia");
           particles[i].pressure_location[0] = prm.get_double("pressure x");
           particles[i].pressure_location[1] = prm.get_double("pressure y");
+          particles[i].youngs_modulus       = prm.get_double("youngs modulus");
+          particles[i].restitution_coefficient =
+            prm.get_double("restitution coefficient");
+          particles[i].friction_coefficient =
+            prm.get_double("friction coefficient");
+          particles[i].poisson_ratio = prm.get_double("poisson ratio");
+          particles[i].rolling_friction_coefficient =
+            prm.get_double("rolling friction coefficient");
 
           if (dim == 3)
             {

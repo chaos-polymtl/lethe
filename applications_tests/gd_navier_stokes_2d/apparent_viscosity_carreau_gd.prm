@@ -8,7 +8,7 @@ subsection simulation control
   set method                  = steady
   set number mesh adapt       = 0
   set output name             = apparent_viscosity
-  set output frequency        = 1
+  set output frequency        = 0
   set subdivision             = 1
 end
 
@@ -25,9 +25,10 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set non newtonian flow	= true
+  set number of fluids = 1
+  subsection fluid 0
+   	set rheological model 	= carreau
     subsection non newtonian
-    	set model 		= carreau
     	subsection carreau
 	    	set viscosity_0		= 1.0
 	    	set viscosity_inf 	= 0
@@ -36,6 +37,7 @@ subsection physical properties
 	    	set n	      		= 0.5
 	end
     end
+  end
 end
 
 #--------------------------------------------------

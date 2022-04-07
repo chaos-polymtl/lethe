@@ -50,7 +50,14 @@ namespace Parameters
   {
     difelice,
     rong,
-    dallavalle
+    dallavalle,
+    kochhill
+  };
+
+  enum class VANSModel
+  {
+    modelA,
+    modelB
   };
 
 
@@ -84,6 +91,7 @@ namespace Parameters
   {
     bool         grad_div;
     DragModel    drag_model;
+    VANSModel    vans_model;
     bool         post_processing;
     unsigned int inlet_boundary_id;
     unsigned int outlet_boundary_id;
@@ -93,6 +101,8 @@ namespace Parameters
     bool         shear_force;
     bool         pressure_force;
     bool         void_fraction_time_derivative;
+    double       cstar;
+    bool         implicit_stabilization;
 
     static void
     declare_parameters(ParameterHandler &prm);

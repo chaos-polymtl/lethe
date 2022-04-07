@@ -30,6 +30,7 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe.h>
+#include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping.h>
 
@@ -715,7 +716,7 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
 {
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   parallel::distributed::SolutionTransfer<dim,
                                           TrilinosWrappers::MPI::Vector,
                                           DoFHandler<dim, spacedim>>
@@ -779,7 +780,7 @@ SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
   std::vector<TrilinosWrappers::MPI::Vector *> x_system(1);
   x_system[0] = &(displacement);
 
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   parallel::distributed::SolutionTransfer<dim,
                                           TrilinosWrappers::MPI::Vector,
                                           DoFHandler<dim, spacedim>>

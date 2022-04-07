@@ -53,6 +53,7 @@ subsection mesh
     set grid type            				= subdivided_hyper_rectangle
     set grid arguments       				= 2,33,2:-0.005,-0.05,-0.005:0.005,0.05,0.005:true
     set initial refinement   				= 2
+        set expand particle-wall contact search		= false
 end
 #---------------------------------------------------
 # Void Fraction

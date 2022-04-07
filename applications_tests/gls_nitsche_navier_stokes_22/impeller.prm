@@ -11,7 +11,7 @@ subsection simulation control
   set time end 		      = 1
   set number mesh adapt       = 0
   set output name             = impeller
-  set output frequency        = 5
+  set output frequency        = 0
   set subdivision             = 1
 end
 
@@ -70,8 +70,8 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 100
         subsection nitsche solid 0
+	    set beta = 100
 	    subsection mesh
 		set type = dealii
 		set grid type = hyper_rectangle

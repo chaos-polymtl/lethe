@@ -134,9 +134,9 @@ test(double coefficient_of_restitution)
     M_PI * particle_diameter * particle_diameter * particle_diameter / 6;
 
 
-  std::vector<Tensor<1, dim>> momentum;
-  std::vector<Tensor<1, dim>> force;
-  std::vector<double>         MOI;
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<Tensor<1, 3>> force;
+  std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if DEAL_II_VERSION_GTE(10, 0, 0)
@@ -149,7 +149,7 @@ test(double coefficient_of_restitution)
     force.resize(max_particle_id + 1);
   }
 #endif
-  momentum.resize(force.size());
+  torque.resize(force.size());
   MOI.resize(force.size());
   for (unsigned i = 0; i < MOI.size(); ++i)
     MOI[i] = 1;
@@ -198,9 +198,8 @@ test(double coefficient_of_restitution)
         particle_wall_contact_list, particle_wall_contact_information);
 
       particle_wall_force_object.calculate_particle_wall_contact_force(
-        particle_wall_contact_information, dt, momentum, force);
-      integrator_object.integrate(
-        particle_handler, g, dt, momentum, force, MOI);
+        particle_wall_contact_information, dt, torque, force);
+      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
     }
 
   deallog << "Coefficient of restitution is " << coefficient_of_restitution

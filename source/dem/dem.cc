@@ -17,6 +17,7 @@
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
 #include <core/solutions_output.h>
+#include <core/utilities.h>
 
 #include <dem/dem.h>
 #include <dem/explicit_euler_integrator.h>
@@ -38,6 +39,8 @@
 #include <dem/print_initial_information.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
+#include <dem/set_particle_particle_contact_force_model.h>
+#include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/uniform_insertion.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
@@ -48,6 +51,8 @@
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
+
+#include <sys/stat.h>
 
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
@@ -74,6 +79,19 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
 {
+  // Check if the output directory exists
+  std::string output_dir_name = parameters.simulation_control.output_folder;
+  struct stat buffer;
+
+  // If output directory does not exist, create it
+  if (this_mpi_process == 0)
+    {
+      if (stat(output_dir_name.c_str(), &buffer) != 0)
+        {
+          create_output_folder(output_dir_name);
+        }
+    }
+
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
@@ -217,31 +235,39 @@ DEMSolver<dim>::cell_weight(
   const unsigned int particle_weight =
     parameters.model_parameters.load_balance_particle_weight;
 
-  // This does not use adaptive refinement, therefore every cell
-  // should have the status CELL_PERSIST. However this function can also
-  // be used to distribute load during refinement, therefore we consider
-  // refined or coarsened cells as well.
-  if (status == parallel::distributed::Triangulation<dim>::CELL_PERSIST ||
-      status == parallel::distributed::Triangulation<dim>::CELL_REFINE)
+  switch (status)
     {
-      const unsigned int n_particles_in_cell =
-        particle_handler.n_particles_in_cell(cell);
-      return n_particles_in_cell * particle_weight;
+      case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
+        {
+          const unsigned int n_particles_in_cell =
+            particle_handler.n_particles_in_cell(cell);
+          return n_particles_in_cell * particle_weight;
+          break;
+        }
+
+      case parallel::distributed::Triangulation<dim>::CELL_INVALID:
+        break;
+
+      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
+        {
+          unsigned int n_particles_in_cell = 0;
+
+          for (unsigned int child_index = 0;
+               child_index < GeometryInfo<dim>::max_children_per_cell;
+               ++child_index)
+            n_particles_in_cell +=
+              particle_handler.n_particles_in_cell(cell->child(child_index));
+
+          return n_particles_in_cell * particle_weight;
+        }
+        break;
+
+      default:
+        Assert(false, ExcInternalError());
+        break;
     }
-  else if (status == parallel::distributed::Triangulation<dim>::CELL_COARSEN)
-    {
-      unsigned int n_particles_in_cell = 0;
 
-      for (unsigned int child_index = 0;
-           child_index < GeometryInfo<dim>::max_children_per_cell;
-           ++child_index)
-        n_particles_in_cell +=
-          particle_handler.n_particles_in_cell(cell->child(child_index));
-
-      return n_particles_in_cell * particle_weight;
-    }
-
-  Assert(false, ExcInternalError());
   return 0;
 }
 
@@ -267,11 +293,13 @@ DEMSolver<dim>::load_balance()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
 
-  boundary_cell_object.build(triangulation,
-                             parameters.floating_walls,
-                             parameters.boundary_conditions.outlet_boundaries,
-                             parameters.mesh.check_for_diamond_cells,
-                             pcout);
+  boundary_cell_object.build(
+    triangulation,
+    parameters.floating_walls,
+    parameters.boundary_conditions.outlet_boundaries,
+    parameters.mesh.check_for_diamond_cells,
+    parameters.mesh.expand_particle_wall_contact_search,
+    pcout);
 
   if (parameters.grid_motion.motion_type !=
       Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
@@ -409,7 +437,7 @@ DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<double> &                    MOI)
 {
-  MOI.resize(momentum.size());
+  MOI.resize(torque.size());
 
   for (auto &particle : particle_handler)
     {
@@ -499,7 +527,7 @@ DEMSolver<dim>::particle_wall_contact_force()
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
     particle_wall_pairs_in_contact,
     simulation_control->get_time_step(),
-    momentum,
+    torque,
     force);
 
   if (parameters.forces_torques.calculate_force_torque)
@@ -516,7 +544,7 @@ DEMSolver<dim>::particle_wall_contact_force()
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
         pfw_pairs_in_contact,
         simulation_control->get_time_step(),
-        momentum,
+        torque,
         force);
     }
 
@@ -557,7 +585,7 @@ DEMSolver<dim>::finish_simulation()
   // Outputting force and torques over boundary
   if (parameters.forces_torques.calculate_force_torque)
     {
-      write_forces_torques_output_results(
+      write_forces_torques_output_results<dim>(
         parameters.forces_torques.force_torque_output_name,
         parameters.forces_torques.output_frequency,
         triangulation.get_boundary_ids(),
@@ -623,86 +651,6 @@ DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
       throw "The chosen integration method is invalid";
     }
   return integrator_object;
-}
-
-template <int dim>
-std::shared_ptr<ParticleParticleContactForce<dim>>
-DEMSolver<dim>::set_particle_particle_contact_force(
-  const DEMSolverParameters<dim> &parameters)
-{
-  if (parameters.model_parameters.particle_particle_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::
-        ParticleParticleContactForceModel::linear)
-    {
-      particle_particle_contact_force_object =
-        std::make_shared<ParticleParticleLinearForce<dim>>(parameters);
-    }
-  else if (parameters.model_parameters.particle_particle_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleParticleContactForceModel::hertz_mindlin_limit_overlap)
-    {
-      particle_particle_contact_force_object =
-        std::make_shared<ParticleParticleHertzMindlinLimitOverlap<dim>>(
-          parameters);
-    }
-  else if (parameters.model_parameters.particle_particle_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleParticleContactForceModel::hertz_mindlin_limit_force)
-    {
-      particle_particle_contact_force_object =
-        std::make_shared<ParticleParticleHertzMindlinLimitForce<dim>>(
-          parameters);
-    }
-  else if (parameters.model_parameters.particle_particle_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleParticleContactForceModel::hertz)
-    particle_particle_contact_force_object =
-      std::make_shared<ParticleParticleHertz<dim>>(parameters);
-  else
-    {
-      throw "The chosen particle-particle contact force model is invalid";
-    }
-  return particle_particle_contact_force_object;
-}
-
-template <int dim>
-std::shared_ptr<ParticleWallContactForce<dim>>
-DEMSolver<dim>::set_particle_wall_contact_force(
-  const DEMSolverParameters<dim> &parameters)
-{
-  std::vector<types::boundary_id> boundary_index =
-    triangulation.get_boundary_ids();
-  if (parameters.model_parameters.particle_wall_contact_force_method ==
-      Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
-        linear)
-    {
-      particle_wall_contact_force_object =
-        std::make_shared<ParticleWallLinearForce<dim>>(
-          parameters.boundary_conditions.boundary_translational_velocity,
-          parameters.boundary_conditions.boundary_rotational_speed,
-          parameters.boundary_conditions.boundary_rotational_vector,
-          triangulation_cell_diameter,
-          parameters,
-          boundary_index);
-    }
-  else if (parameters.model_parameters.particle_wall_contact_force_method ==
-           Parameters::Lagrangian::ModelParameters::
-             ParticleWallContactForceModel::nonlinear)
-    {
-      particle_wall_contact_force_object =
-        std::make_shared<ParticleWallNonLinearForce<dim>>(
-          parameters.boundary_conditions.boundary_translational_velocity,
-          parameters.boundary_conditions.boundary_rotational_speed,
-          parameters.boundary_conditions.boundary_rotational_vector,
-          triangulation_cell_diameter,
-          parameters,
-          boundary_index);
-    }
-  else
-    {
-      throw "The chosen particle-wall contact force model is invalid";
-    }
-  return particle_wall_contact_force_object;
 }
 
 template <int dim>
@@ -828,7 +776,7 @@ DEMSolver<dim>::solve()
       }
 #endif
       force.resize(displacement.size());
-      momentum.resize(displacement.size());
+      torque.resize(displacement.size());
 
       update_moment_of_inertia(particle_handler, MOI);
 
@@ -852,19 +800,23 @@ DEMSolver<dim>::solve()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
   // Finding boundary cells with faces
-  boundary_cell_object.build(triangulation,
-                             parameters.floating_walls,
-                             parameters.boundary_conditions.outlet_boundaries,
-                             parameters.mesh.check_for_diamond_cells,
-                             pcout);
+  boundary_cell_object.build(
+    triangulation,
+    parameters.floating_walls,
+    parameters.boundary_conditions.outlet_boundaries,
+    parameters.mesh.check_for_diamond_cells,
+    parameters.mesh.expand_particle_wall_contact_search,
+    pcout);
 
   // Setting chosen contact force, insertion and integration methods
   insertion_object  = set_insertion_type(parameters);
   integrator_object = set_integrator_type(parameters);
   particle_particle_contact_force_object =
-    set_particle_particle_contact_force(parameters);
+    set_particle_particle_contact_force_model(parameters);
   particle_wall_contact_force_object =
-    set_particle_wall_contact_force(parameters);
+    set_particle_wall_contact_force_model(parameters,
+                                          triangulation,
+                                          triangulation_cell_diameter);
 
   // DEM engine iterator:
   while (simulation_control->integrate())
@@ -930,7 +882,7 @@ DEMSolver<dim>::solve()
           }
 #endif
           force.resize(displacement.size());
-          momentum.resize(displacement.size());
+          torque.resize(displacement.size());
 
           // Updating moment of inertia container
           update_moment_of_inertia(particle_handler, MOI);
@@ -1001,7 +953,7 @@ DEMSolver<dim>::solve()
           local_adjacent_particles,
           ghost_adjacent_particles,
           simulation_control->get_time_step(),
-          momentum,
+          torque,
           force);
 
       // We have to update the positions of the points on boundary faces and
@@ -1029,7 +981,7 @@ DEMSolver<dim>::solve()
             particle_handler,
             parameters.lagrangian_physical_properties.g,
             simulation_control->get_time_step(),
-            momentum,
+            torque,
             force,
             MOI);
         }
@@ -1039,7 +991,7 @@ DEMSolver<dim>::solve()
             particle_handler,
             parameters.lagrangian_physical_properties.g,
             simulation_control->get_time_step(),
-            momentum,
+            torque,
             force,
             MOI);
         }
@@ -1056,7 +1008,7 @@ DEMSolver<dim>::solve()
            0) &&
           (parameters.forces_torques.force_torque_verbosity ==
            Parameters::Verbosity::verbose))
-        write_forces_torques_output_locally<dim>(
+        write_forces_torques_output_locally(
           forces_boundary_information[simulation_control->get_step_number()],
           torques_boundary_information[simulation_control->get_step_number()]);
 

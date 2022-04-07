@@ -45,7 +45,39 @@ public:
    * Newtonian flow
    */
   static std::shared_ptr<RheologicalModel>
-  model_cast(const Parameters::PhysicalProperties &physical_properties);
+  model_cast(const Parameters::Fluid &fluid_properties);
+
+  /**
+   * @brief Returns the value of the n parameters of the model, is the model has one.
+   */
+  virtual double
+  get_n() const
+  {
+    return 1.0;
+  }
+
+  /**
+   * @brief Sets a new value to the n parameter, if the models has one.
+   */
+  virtual void
+  set_n(const double &)
+  {}
+
+  /**
+   * @brief Returns the value of the viscosity, is the model has one.
+   */
+  virtual double
+  get_viscosity() const
+  {
+    return 1.0;
+  }
+
+  /**
+   * @brief Sets a new viscosity value, if the models has one.
+   */
+  virtual void
+  set_viscosity(const double &)
+  {}
 };
 
 class Newtonian : public RheologicalModel
@@ -112,6 +144,18 @@ public:
     std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
   }
 
+  double
+  get_viscosity() const
+  {
+    return viscosity;
+  }
+
+  void
+  set_viscosity(const double &p_viscosity)
+  {
+    viscosity = p_viscosity;
+  }
+
 private:
   double viscosity;
 };
@@ -129,7 +173,7 @@ public:
     , n(n)
     , shear_rate_min(shear_rate_min)
   {
-    this->model_depends_on[shear_rate] = false;
+    this->model_depends_on[shear_rate] = true;
   }
 
   /**
@@ -178,6 +222,30 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override;
 
+  double
+  get_n() const
+  {
+    return n;
+  }
+
+  void
+  set_n(const double &p_n)
+  {
+    n = p_n;
+  }
+
+  double
+  get_viscosity() const
+  {
+    return K;
+  }
+
+  void
+  set_viscosity(const double &p_viscosity)
+  {
+    K = p_viscosity;
+  }
+
 private:
   inline double
   calculate_viscosity(const double shear_rate_magnitude)
@@ -195,9 +263,8 @@ private:
              0;
   }
 
-
-  const double K;
-  const double n;
+  double       K;
+  double       n;
   const double shear_rate_min;
 };
 
@@ -220,7 +287,7 @@ public:
     , a(a)
     , n(n)
   {
-    this->model_depends_on[shear_rate] = false;
+    this->model_depends_on[shear_rate] = true;
   }
 
   /**
@@ -268,6 +335,18 @@ public:
     const field /*id*/,
     std::vector<double> &jacobian_vector) override;
 
+  double
+  get_n() const
+  {
+    return n;
+  }
+
+  void
+  set_n(const double &p_n)
+  {
+    n = p_n;
+  }
+
 private:
   inline double
   calculate_viscosity(const double shear_rate_magnitude)
@@ -306,5 +385,85 @@ calculate_shear_rate_magnitude(const Tensor<2, dim> shear_rate)
   return shear_rate_magnitude;
 }
 
+
+class PhaseChangeRheology : public RheologicalModel
+{
+public:
+  /**
+   * @brief Parameter constructor
+   *
+   * @param p_phase_change parameters The parameters needed by the phase change rheology
+   */
+  PhaseChangeRheology(const Parameters::PhaseChange p_phase_change_parameters)
+    : param(p_phase_change_parameters)
+  {
+    this->model_depends_on[temperature] = true;
+  }
+
+  /**
+   * @brief Returns the viscosity.
+   *
+   * @param field_values Values of the field on which the viscosity may depend on.
+   * For the constant viscosity, the viscosity does not depend on anything.
+   */
+  double
+  value(const std::map<field, double> & /*field_values*/) override;
+
+  /**
+   * @brief vector_value Calculates the vector values of the viscosity.
+   * @param field_vectors Values of the field on which the viscosity may depend on. These are not used for the constant viscosity
+   */
+  void
+  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
+               std::vector<double> &property_vector) override;
+
+  /**
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the viscosity
+   * with respect to a field
+   * @param field_values Value of the various fields on which the property may depend. The constant viscosity does not depend on anything
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated
+   * @return value of the partial derivative of the viscosity with respect to the field.
+   */
+
+  double
+  jacobian(const std::map<field, double> & /*field_values*/,
+           field /*id*/) override;
+
+  /**
+   * @brief vector_jacobian Calculate the derivative of the with respect to a field
+   * @param field_vectors Vector for the values of the fields used to evaluate the property
+   * @param id Identifier of the field with respect to which a derivative should be calculated
+   * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
+   */
+
+  void
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field /*id*/,
+    std::vector<double> &jacobian_vector) override;
+
+private:
+  /**
+   * @brief viscosity Calculates the viscosity from the temperature using the liquid fraction
+   *
+   * @param T value of the temperature
+   * @return value of the viscosity
+   *
+   */
+  inline double
+  viscosity(const double T)
+  {
+    const double l_frac =
+      std::min(std::max((T - param.T_solidus) /
+                          (param.T_liquidus - param.T_solidus),
+                        0.),
+               1.);
+
+    return param.viscosity_l * l_frac + param.viscosity_s * (1. - l_frac);
+  }
+
+  Parameters::PhaseChange param;
+};
 
 #endif

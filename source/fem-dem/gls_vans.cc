@@ -519,6 +519,28 @@ GLSVANSSolver<dim>::setup_assemblers()
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
 
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::function_weak))
+    {
+      this->assemblers.push_back(
+        std::make_shared<WeakDirichletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+    {
+      this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+    {
+      this->assemblers.push_back(
+        std::make_shared<PressureBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+
   if (this->cfd_dem_simulation_parameters.cfd_dem.drag_force == true)
     {
       // Particle_Fluid Interactions Assembler
@@ -528,8 +550,7 @@ GLSVANSSolver<dim>::setup_assemblers()
           // DiFelice Model drag Assembler
           particle_fluid_assemblers.push_back(
             std::make_shared<GLSVansAssemblerDiFelice<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_parameters
-                .physical_properties));
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -538,8 +559,7 @@ GLSVANSSolver<dim>::setup_assemblers()
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
             std::make_shared<GLSVansAssemblerRong<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_parameters
-                .physical_properties));
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -548,8 +568,16 @@ GLSVANSSolver<dim>::setup_assemblers()
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
             std::make_shared<GLSVansAssemblerDallavalle<dim>>(
-              this->cfd_dem_simulation_parameters.cfd_parameters
-                .physical_properties));
+              this->cfd_dem_simulation_parameters.cfd_dem));
+        }
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::kochhill)
+        {
+          // Koch and Hill Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerKochHill<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
     }
 
@@ -557,7 +585,6 @@ GLSVANSSolver<dim>::setup_assemblers()
     // Buoyancy Force Assembler
     particle_fluid_assemblers.push_back(
       std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
@@ -565,15 +592,13 @@ GLSVANSSolver<dim>::setup_assemblers()
     // Pressure Force
     particle_fluid_assemblers.push_back(
       std::make_shared<GLSVansAssemblerPressureForce<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_parameters
-          .physical_properties));
+        this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
     // Shear Force
     particle_fluid_assemblers.push_back(
       std::make_shared<GLSVansAssemblerShearForce<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_parameters
-          .physical_properties));
+        this->cfd_dem_simulation_parameters.cfd_dem));
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
@@ -583,15 +608,23 @@ GLSVANSSolver<dim>::setup_assemblers()
     }
 
   //  Fluid_Particle Interactions Assembler
-  this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>());
+  this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>(
+    this->cfd_dem_simulation_parameters.cfd_dem));
 
   // The core assembler should always be the last assembler to be called in the
   // stabilized formulation as to have all strong residual and jacobian stored.
   // Core assembler
-  this->assemblers.push_back(std::make_shared<GLSVansAssemblerCore<dim>>(
-    this->simulation_control,
-    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties,
-    this->cfd_dem_simulation_parameters.cfd_dem));
+  if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
+      Parameters::VANSModel::modelA)
+    this->assemblers.push_back(
+      std::make_shared<GLSVansAssemblerCoreModelA<dim>>(
+        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
+      Parameters::VANSModel::modelB)
+    this->assemblers.push_back(
+      std::make_shared<GLSVansAssemblerCoreModelB<dim>>(
+        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 }
 
 template <int dim>
@@ -603,10 +636,12 @@ GLSVANSSolver<dim>::assemble_system_matrix()
 
   setup_assemblers();
 
-  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->mapping,
-                                                   *this->face_quadrature);
+  auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    *this->face_quadrature);
 
   scratch_data.enable_void_fraction(fe_void_fraction,
                                     *this->cell_quadrature,
@@ -667,6 +702,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
                                                   particle_handler,
                                                   this->dof_handler,
                                                   void_fraction_dof_handler);
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
@@ -707,10 +743,12 @@ GLSVANSSolver<dim>::assemble_system_rhs()
 
   setup_assemblers();
 
-  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->mapping,
-                                                   *this->face_quadrature);
+  auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    *this->face_quadrature);
 
 
   scratch_data.enable_void_fraction(fe_void_fraction,
@@ -776,6 +814,7 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
                                                   this->dof_handler,
                                                   void_fraction_dof_handler);
 
+  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
@@ -851,6 +890,8 @@ GLSVANSSolver<dim>::post_processing()
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
 
   double mass_source           = 0;
+  double max_local_mass_source = 0;
+  double local_mass_source     = 0;
   double fluid_volume          = 0;
   double bed_volume            = 0;
   double average_void_fraction = 0;
@@ -916,6 +957,8 @@ GLSVANSSolver<dim>::post_processing()
                   previous_void_fraction[2], p3_void_fraction_values);
             }
 
+          local_mass_source = 0;
+
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               // Calculate the divergence of the velocity
@@ -923,34 +966,37 @@ GLSVANSSolver<dim>::post_processing()
                 trace(present_velocity_gradients[q]);
 
               // Evaluation of global mass conservation
-              mass_source += (present_velocity_values[q] *
-                                present_void_fraction_gradients[q] +
-                              present_void_fraction_values[q] *
-                                present_velocity_divergence) *
-                             fe_values_void_fraction.JxW(q);
+              local_mass_source = (present_velocity_values[q] *
+                                     present_void_fraction_gradients[q] +
+                                   present_void_fraction_values[q] *
+                                     present_velocity_divergence) *
+                                  fe_values_void_fraction.JxW(q);
 
               if (scheme ==
                     Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
                   scheme == Parameters::SimulationControl::TimeSteppingMethod::
                               steady_bdf)
-                mass_source += (bdf_coefs[0] * present_void_fraction_values[q] +
-                                bdf_coefs[1] * p1_void_fraction_values[q]) *
-                               fe_values_void_fraction.JxW(q);
+                local_mass_source +=
+                  (bdf_coefs[0] * present_void_fraction_values[q] +
+                   bdf_coefs[1] * p1_void_fraction_values[q]) *
+                  fe_values_void_fraction.JxW(q);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                mass_source += (bdf_coefs[0] * present_void_fraction_values[q] +
-                                bdf_coefs[1] * p1_void_fraction_values[q] +
-                                bdf_coefs[2] * p2_void_fraction_values[q]) *
-                               fe_values_void_fraction.JxW(q);
+                local_mass_source +=
+                  (bdf_coefs[0] * present_void_fraction_values[q] +
+                   bdf_coefs[1] * p1_void_fraction_values[q] +
+                   bdf_coefs[2] * p2_void_fraction_values[q]) *
+                  fe_values_void_fraction.JxW(q);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                mass_source += (bdf_coefs[0] * present_void_fraction_values[q] +
-                                bdf_coefs[1] * p1_void_fraction_values[q] +
-                                bdf_coefs[2] * p2_void_fraction_values[q] +
-                                bdf_coefs[3] * p3_void_fraction_values[q]) *
-                               fe_values_void_fraction.JxW(q);
+                local_mass_source +=
+                  (bdf_coefs[0] * present_void_fraction_values[q] +
+                   bdf_coefs[1] * p1_void_fraction_values[q] +
+                   bdf_coefs[2] * p2_void_fraction_values[q] +
+                   bdf_coefs[3] * p3_void_fraction_values[q]) *
+                  fe_values_void_fraction.JxW(q);
 
               // Calculation of fluid and bed volumes in bed
               if (present_void_fraction_values[q] < 0.6)
@@ -960,7 +1006,12 @@ GLSVANSSolver<dim>::post_processing()
 
                   bed_volume += fe_values_void_fraction.JxW(q);
                 }
+
+              mass_source += local_mass_source;
             }
+
+          max_local_mass_source =
+            std::max(max_local_mass_source, abs(local_mass_source));
         }
     }
 
@@ -972,6 +1023,10 @@ GLSVANSSolver<dim>::post_processing()
 
   QGauss<dim>     cell_quadrature_formula(this->number_quadrature_points);
   QGauss<dim - 1> face_quadrature_formula(this->number_quadrature_points);
+
+  Assert(this->cfd_dem_simulation_parameters.cfd_parameters
+           .physical_properties_manager.density_is_constant(),
+         RequiresConstantDensity("Pressure drop calculation"));
   pressure_drop =
     calculate_pressure_drop(
       this->dof_handler,
@@ -981,11 +1036,12 @@ GLSVANSSolver<dim>::post_processing()
       face_quadrature_formula,
       this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
       this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
-    this->cfd_dem_simulation_parameters.cfd_parameters.physical_properties
-      .fluids[0]
-      .density;
+    this->cfd_dem_simulation_parameters.cfd_parameters
+      .physical_properties_manager.density_scale;
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
+  this->pcout << "Max Local Mass Source: " << max_local_mass_source << " s^-1"
+              << std::endl;
   this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
               << std::endl;
 }

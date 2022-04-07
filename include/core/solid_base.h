@@ -38,10 +38,7 @@
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_simplex_p.h>
-#include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_fe.h>
-
-#include <deal.II/grid/grid_generator.h>
 
 #include <deal.II/lac/trilinos_vector.h>
 

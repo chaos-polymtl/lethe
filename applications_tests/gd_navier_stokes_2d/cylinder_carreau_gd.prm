@@ -9,7 +9,7 @@ subsection simulation control
   set method                  = steady
   set number mesh adapt       = 1
   set output name             = output
-  set output frequency        = 1
+  set output frequency        = 0
   set subdivision             = 1
 end
 #---------------------------------------------------
@@ -32,12 +32,12 @@ subsection timer
     set type    = none                                  # <none|iteration|end>
 end
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose
-    set calculate forces      = true
-    set calculate torques     = false
+    set calculate force       = true
+    set calculate torque      = false
     set force name            = force
     set torque name           = torque
     set output precision      = 10
@@ -57,9 +57,10 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set non newtonian flow	= true
+set number of fluids = 1
+  subsection fluid 0
+  	set rheological model	= carreau
     subsection non newtonian
-    	set model 		= carreau
     	subsection carreau
 	    	set viscosity_0		= 2.0
 	    	set viscosity_inf 	= 1.0
@@ -68,6 +69,7 @@ subsection physical properties
 	    	set n			= 0.25
 	end
     end
+end
 end
 #---------------------------------------------------
 # Mesh

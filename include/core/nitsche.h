@@ -51,6 +51,9 @@ namespace Parameters
     Functions::ParsedFunction<dim> solid_velocity;
     bool                           enable_particles_motion;
 
+    // Penalization term
+    double beta;
+
     // Particle motion integration parameters
     unsigned int particles_sub_iterations;
     bool         stop_particles_lost;
@@ -58,6 +61,12 @@ namespace Parameters
     // Information for force calculation
     Point<dim>
       center_of_rotation; // Center of rotation used for torque calculation
+
+    bool        calculate_force_on_solid;
+    bool        calculate_torque_on_solid;
+    Point<dim>  cor; // Center of rotation used for torque calculation
+    std::string force_output_name;
+    std::string torque_output_name;
   };
 
 
@@ -68,6 +77,7 @@ namespace Parameters
     prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
       solid_mesh.declare_parameters(prm);
+
       prm.enter_subsection("solid velocity");
       solid_velocity.declare_parameters(prm, dim);
       if (dim == 2)
@@ -75,10 +85,16 @@ namespace Parameters
       if (dim == 3)
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
+
       prm.declare_entry("enable particles motion",
                         "false",
                         Patterns::Bool(),
                         "Condition on the motion of particles");
+
+      prm.declare_entry("beta",
+                        "10",
+                        Patterns::Double(),
+                        "Penalization term for Nitsche method");
 
       prm.declare_entry(
         "particles sub iterations",
@@ -89,7 +105,7 @@ namespace Parameters
 
       prm.declare_entry(
         "stop if particles lost",
-        "false",
+        "true",
         Patterns::Bool(),
         "Enable stopping the simulation if Nitsche particles have been lost");
 
@@ -106,6 +122,23 @@ namespace Parameters
       prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
       prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
       prm.leave_subsection();
+
+      prm.declare_entry("calculate force on solid",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of forces on solid");
+      prm.declare_entry("calculate torque on solid",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of torques on solid");
+      prm.declare_entry("solid force name",
+                        "force_solid",
+                        Patterns::FileName(),
+                        "File output solid force prefix");
+      prm.declare_entry("solid torque name",
+                        "torque_solid",
+                        Patterns::FileName(),
+                        "File output solid torque prefix");
     }
     prm.leave_subsection();
   }
@@ -121,6 +154,7 @@ namespace Parameters
       solid_velocity.parse_parameters(prm);
       prm.leave_subsection();
       enable_particles_motion  = prm.get_bool("enable particles motion");
+      beta                     = prm.get_double("beta");
       particles_sub_iterations = prm.get_integer("particles sub iterations");
       stop_particles_lost      = prm.get_bool("stop if particles lost");
       number_quadrature_points = prm.get_integer("number quadrature points");
@@ -131,6 +165,11 @@ namespace Parameters
       if (dim == 3)
         center_of_rotation[2] = prm.get_double("z");
       prm.leave_subsection();
+
+      calculate_force_on_solid  = prm.get_bool("calculate force on solid");
+      calculate_torque_on_solid = prm.get_bool("calculate torque on solid");
+      force_output_name         = prm.get("solid force name");
+      torque_output_name        = prm.get("solid torque name");
     }
     prm.leave_subsection();
   }
@@ -147,16 +186,8 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
 
-    // Penalization term
-    double beta;
-
     // Calculate forces
-    Verbosity   verbosity;
-    bool        calculate_force_on_solid;
-    bool        calculate_torque_on_solid;
-    Point<dim>  cor; // Center of rotation used for torque calculation
-    std::string force_output_name;
-    std::string torque_output_name;
+    Verbosity verbosity;
 
     // Nitsche solid objects
     std::vector<std::shared_ptr<NitscheSolid<dim>>> nitsche_solids;
@@ -173,32 +204,13 @@ namespace Parameters
 
     prm.enter_subsection("nitsche");
     {
-      prm.declare_entry("beta",
-                        "1",
-                        Patterns::Double(),
-                        "Penalization term for Nitsche method");
       prm.declare_entry(
         "verbosity",
         "quiet",
         Patterns::Selection("quiet|verbose"),
         "State whether the force on the solid should be printed "
         "Choices are <quiet|verbose>.");
-      prm.declare_entry("calculate forces on solid",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of forces on solid");
-      prm.declare_entry("calculate torques on solid",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of torques on solid");
-      prm.declare_entry("solid force name",
-                        "force_solid",
-                        Patterns::FileName(),
-                        "File output solid force prefix");
-      prm.declare_entry("solid torque name",
-                        "torque_solid",
-                        Patterns::FileName(),
-                        "File output solid torque prefix");
+
       prm.declare_entry("number of solids",
                         "1",
                         Patterns::Integer(),
@@ -219,16 +231,11 @@ namespace Parameters
   {
     prm.enter_subsection("nitsche");
     {
-      beta                 = prm.get_double("beta");
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
         verbosity = Verbosity::verbose;
       if (op == "quiet")
         verbosity = Verbosity::quiet;
-      calculate_force_on_solid  = prm.get_bool("calculate forces on solid");
-      calculate_torque_on_solid = prm.get_bool("calculate torques on solid");
-      force_output_name         = prm.get("solid force name");
-      torque_output_name        = prm.get("solid torque name");
 
       number_solids = prm.get_integer("number of solids");
       for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)

@@ -34,6 +34,9 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 
 	  # State if the RHS must be calulated at the beginning of every newton iteration
 	  set force rhs calculation = false
+
+	  # Force the simulation to stop and throw an error if a non-linear solution has failed to converge
+	  set abort at convergence failure = false
 	end
 
 * The ``solver`` parameter enables to choose the nonlinear solver used. Currently, Lethe supports three non-linear solvers:
@@ -79,4 +82,6 @@ The Navier-Stokes equations (and other) are non-linear equations. The parameters
 
 * The ``residual precision`` parameter enables to change the number of digits displayed when showing residuals (with ``set verbosity = verbose``).
 * The ``force_rhs_calculation``: Force RHS recalculation at the beginning of every non-linear steps, This is required if there is a fixed point component to the non-linear solver that is changed at the beginning of every newton iteration. This is notably the case of the sharp edge method. The default value of this parameter is false.
+* The ``abort at convergence failure`` allows the user to stop the simulation and throw an error if the non-linear solver has failed to converge. Setting ``abort at convergence failure = true`` will enable this feature. This is generally useful when launching a large batch of simulation to quickly identify which one have failed.
+
 

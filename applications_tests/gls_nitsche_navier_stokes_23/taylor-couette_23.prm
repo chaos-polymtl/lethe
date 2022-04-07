@@ -9,7 +9,7 @@ subsection simulation control
   set method                  = steady
   set number mesh adapt       = 1
   set output name             = taylor_couette_23
-  set output frequency        = 1
+  set output frequency        = 0
 end
 
 #---------------------------------------------------
@@ -28,12 +28,12 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose
-    set calculate forces      = false
-    set calculate torques     = true
+    set calculate force       = false
+    set calculate torque      = true
     set force name            = force
     set torque name           = torque
     set output precision      = 10
@@ -64,18 +64,18 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 10
     subsection nitsche solid 0
+	    set beta = 10
 	    subsection mesh
 		    set type = gmsh
 		    set file name = ../cylinder.msh
 	    end
 	    subsection solid velocity
 		    set Function expression = 0 ; -z ; y
-	      end
-      end
-  set calculate torques on solid = true
-  set verbosity = verbose
+	    end
+	    set calculate torque on solid = true
+    end
+    set verbosity = verbose
 end
 
 # --------------------------------------------------

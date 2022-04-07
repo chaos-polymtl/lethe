@@ -79,10 +79,8 @@ class GLSNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties)
+    std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
   {}
 
   /**
@@ -112,7 +110,6 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
 };
 
 
@@ -179,13 +176,9 @@ class GLSNavierStokesAssemblerNonNewtonianCore
 {
 public:
   GLSNavierStokesAssemblerNonNewtonianCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties)
+    std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
-  {
-    rheological_model = RheologicalModel::model_cast(physical_properties);
-  }
+  {}
 
   /**
    * @brief Calculates an approximation of the gradient of the viscosity
@@ -195,25 +188,12 @@ public:
      @param d_gamma_dot Th difference in the shear rate magnitude to approximate the
      viscosity variation with a slight change in the shear_rate magnitude
    */
-  Tensor<1, dim>
+  inline Tensor<1, dim>
   get_viscosity_gradient(const Tensor<2, dim> &velocity_gradient,
                          const Tensor<3, dim> &velocity_hessians,
-                         const double &        shear_rate_magnitude,
-                         const double &        non_newtonian_viscosity,
-                         const double &        d_gamma_dot) const
+                         const double          shear_rate_magnitude,
+                         const double          grad_viscosity_shear_rate) const
   {
-    std::map<field, double> field_values_plus;
-
-    // Calculates an approximation of the derivative of the viscosity with a
-    // slight change in the shear rate magnitude using finite difference
-    field_values_plus[field::shear_rate] = shear_rate_magnitude + d_gamma_dot;
-
-    const double non_newtonian_viscosity_plus =
-      rheological_model->value(field_values_plus);
-
-    double grad_viscosity_shear_rate =
-      (non_newtonian_viscosity_plus - non_newtonian_viscosity) / d_gamma_dot;
-
     // Calculates an approximation of the shear rate magnitude gradient using
     // the derived form, since it does not change with rheological models
     Tensor<1, dim> grad_shear_rate;
@@ -277,8 +257,6 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
-  std::shared_ptr<RheologicalModel>  rheological_model;
 };
 
 
@@ -381,10 +359,8 @@ class GDNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
 public:
   GDNavierStokesAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
     const double                       gamma)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
     , gamma(gamma)
   {}
 
@@ -409,7 +385,6 @@ public:
 
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
   double                             gamma;
 };
 
@@ -420,14 +395,10 @@ class GDNavierStokesAssemblerNonNewtonianCore
 public:
   GDNavierStokesAssemblerNonNewtonianCore(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
     const double                       gamma)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
     , gamma(gamma)
-  {
-    rheological_model = RheologicalModel::model_cast(physical_properties);
-  }
+  {}
 
   /**
    * @brief assemble_matrix Assembles the matrix
@@ -450,9 +421,7 @@ public:
 
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
   double                             gamma;
-  std::shared_ptr<RheologicalModel>  rheological_model;
 };
 
 
@@ -469,10 +438,8 @@ template <int dim>
 class LaplaceAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
-  LaplaceAssembly(std::shared_ptr<SimulationControl> simulation_control,
-                  Parameters::PhysicalProperties     physical_properties)
+  LaplaceAssembly(std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
   {}
 
   /**
@@ -496,7 +463,6 @@ public:
 
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
 };
 
 /**
@@ -514,11 +480,9 @@ class PressureBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   PressureBoundaryCondition(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
     const BoundaryConditions::NSBoundaryConditions<dim>
       &pressure_boundary_conditions_input)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
     , pressure_boundary_conditions(pressure_boundary_conditions_input)
   {}
 
@@ -543,7 +507,6 @@ public:
 
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
   const BoundaryConditions::NSBoundaryConditions<dim>
     &pressure_boundary_conditions;
 };
@@ -563,11 +526,9 @@ class WeakDirichletBoundaryCondition : public NavierStokesAssemblerBase<dim>
 public:
   WeakDirichletBoundaryCondition(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::PhysicalProperties     physical_properties,
     const BoundaryConditions::NSBoundaryConditions<dim>
       &boundary_conditions_input)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
     , boundary_conditions(boundary_conditions_input)
   {}
 
@@ -592,7 +553,52 @@ public:
 
 
   std::shared_ptr<SimulationControl>                   simulation_control;
-  Parameters::PhysicalProperties                       physical_properties;
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+};
+
+/**
+ * @brief Class that assembles the weak formulation of an oulet boundary condition.
+ * This class assembles the weak form of (nu grad(u) * grad(v) + pI - (beta *
+ * u)_ * n See the paper by Arndt, Braack and Lube
+ * https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @param boundary_condition The boundary condition objects us to store the function.
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class OutletBoundaryCondition : public NavierStokesAssemblerBase<dim>
+{
+public:
+  OutletBoundaryCondition(std::shared_ptr<SimulationControl> simulation_control,
+                          const BoundaryConditions::NSBoundaryConditions<dim>
+                            &boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , boundary_conditions(boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl>                   simulation_control;
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
 };
 
@@ -612,10 +618,8 @@ template <int dim>
 class BuoyancyAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
-  BuoyancyAssembly(std::shared_ptr<SimulationControl> simulation_control,
-                   Parameters::PhysicalProperties     physical_properties)
+  BuoyancyAssembly(std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , physical_properties(physical_properties)
   {}
 
   /**
@@ -639,7 +643,6 @@ public:
 
 
   std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::PhysicalProperties     physical_properties;
 };
 
 

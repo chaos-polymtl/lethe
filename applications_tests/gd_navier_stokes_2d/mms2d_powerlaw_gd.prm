@@ -13,15 +13,18 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set non newtonian flow	= true
+set number of fluids = 1
+  subsection fluid 0
+   	set rheological model	= power-law
+
     subsection non newtonian
-    	set model 		= power-law
     	subsection power-law
 	    	set K 		   = 1.0
 	    	set n 		   = 0.7
 	    	set shear rate min = 1e-8
 	end
     end
+end
 end
 
 #---------------------------------------------------
