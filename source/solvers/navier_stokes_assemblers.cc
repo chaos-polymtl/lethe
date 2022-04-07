@@ -1893,7 +1893,8 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
       const double beta = boundary_conditions.beta[i_bc];
-      const double beta_tangent = boundary_conditions.beta_tangent[i_bc];
+      const double boundary_layer_thickness = boundary_conditions.boundary_layer_thickness[i_bc];
+      const double beta_tangent = viscosity / boundary_layer_thickness;
       if (this->boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::slip_weak)
         {
@@ -1929,46 +1930,42 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
                                         fe.system_to_component_index(j).first;
                                       if (comp_i == comp_j)
                                         {
-                                        double beta_terms_normal =
-                                          scratch_data.face_normal[f][q][comp_i] * 
+                                          double beta_terms_normal =
                                             penalty_parameter * beta * 
-                                              scratch_data.face_normal[f][q][comp_i] * 
-                                                scratch_data.face_phi_u[f][q][j][comp_i] * 
-                                                  scratch_data.face_normal[f][q][comp_i] * 
-                                                    scratch_data.face_phi_u[f][q][i][comp_i] *
-                                                      JxW;
-
-                                        double beta_terms_tangent =
-                                          penalty_parameter * beta_tangent * 
-                                            (scratch_data.face_phi_u[f][q][j][comp_i] -
-                                              scratch_data.face_normal[f][q][comp_i] * 
-                                                (scratch_data.face_normal[f][q][comp_i] * 
-                                                  scratch_data.face_phi_u[f][q][j][comp_i])) * 
-                                                    (scratch_data.face_phi_u[f][q][j][comp_i] -
-                                                      scratch_data.face_normal[f][q][comp_i] *
-                                                        (scratch_data.face_normal[f][q][comp_i] * 
-                                                          scratch_data.face_phi_u[f][q][i][comp_i])) *
-                                                            JxW;
-
-                                          /*double grad_phi_terms =
-                                            ((viscosity *
-                                              scratch_data
-                                                .face_phi_u[f][q][j]) *
-                                             (scratch_data
-                                                .face_grad_phi_u[f][q][i] *
-                                              scratch_data.face_normal[f][q])) *
+                                            scratch_data
+                                              .face_normal[f][q][comp_i] *
+                                            (scratch_data
+                                              .face_normal[f][q][comp_i] * 
+                                            scratch_data
+                                              .face_phi_u[f][q][j][comp_i]) *
+                                            scratch_data
+                                              .face_normal[f][q][comp_i] * 
+                                            (scratch_data
+                                              .face_normal[f][q][comp_i] * 
+                                            scratch_data
+                                              .face_phi_u[f][q][i][comp_i]) *
                                             JxW;
-                                          double surface_stress_term =
-                                            (viscosity *
-                                             scratch_data
-                                               .face_grad_phi_u[f][q][j] *
-                                             scratch_data.face_normal[f][q]) *
-                                            scratch_data.face_phi_u[f][q][i] *
-                                            JxW;*/
-
+                                          double beta_terms_tangent =
+                                            beta_tangent * 
+                                            (scratch_data
+                                              .face_phi_u[f][q][j][comp_i] -
+                                            scratch_data
+                                              .face_normal[f][q][comp_i] * 
+                                            (scratch_data
+                                              .face_normal[f][q][comp_i] * 
+                                            scratch_data
+                                              .face_phi_u[f][q][j][comp_i])) * 
+                                            (scratch_data
+                                              .face_phi_u[f][q][j][comp_i] -
+                                            scratch_data
+                                              .face_normal[f][q][comp_i] *
+                                            (scratch_data
+                                              .face_normal[f][q][comp_i] * 
+                                            scratch_data
+                                              .face_phi_u[f][q][i][comp_i])) *
+                                            JxW;
                                           local_matrix(i, j) +=
-                                            + beta_terms_normal + beta_terms_tangent;// - grad_phi_terms -
-                                            //surface_stress_term;
+                                            + beta_terms_normal + beta_terms_tangent;
                                         }
                                     }
                                 }
@@ -2013,7 +2010,8 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_rhs(
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
       const double beta = boundary_conditions.beta[i_bc];
-      const double beta_tangent = boundary_conditions.beta_tangent[i_bc];
+      const double boundary_layer_thickness = boundary_conditions.boundary_layer_thickness[i_bc];
+      const double beta_tangent = viscosity / boundary_layer_thickness;
       if (this->boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::slip_weak)
         {
@@ -2050,48 +2048,42 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_rhs(
                                 fe.system_to_component_index(i).first;
                               if (comp_i < dim)
                                 {
-                                  
                                   double beta_terms_normal = 
-                                    scratch_data.face_normal[f][q][comp_i] * 
-                                      penalty_parameter * beta * 
-                                        (scratch_data.face_normal[f][q][comp_i] * 
-                                          scratch_data.face_velocity_values[f][q][comp_i] - 
-                                            scratch_data.face_normal[f][q][comp_i] *
-                                              prescribed_velocity_values[f][q][comp_i]) *
-                                                scratch_data.face_phi_u[f][q][i][comp_i] *
-                                                  JxW;
-                                  
-                                  double beta_terms_tangent =  
-                                      penalty_parameter * beta_tangent * 
-                                        (scratch_data.face_velocity_values[f][q][comp_i] - 
-                                          scratch_data.face_normal[f][q][comp_i] * 
-                                            (scratch_data.face_normal[f][q][comp_i] * 
-                                              scratch_data.face_velocity_values[f][q][comp_i]) - 
-                                                (prescribed_velocity_values[f][q][comp_i] -
-                                                  scratch_data.face_normal[f][q][comp_i] * 
-                                                    (scratch_data.face_normal[f][q][comp_i] * 
-                                                      prescribed_velocity_values[f][q][comp_i]))) *
-                                                        scratch_data.face_phi_u[f][q][i][comp_i] *
-                                                          JxW;
-                                  
-                                  /*double grad_phi_terms =
-                                    ((viscosity *
-                                      (scratch_data.face_velocity_values[f][q] -
-                                       prescribed_velocity_values[f][q])) *
-                                     (scratch_data.face_grad_phi_u[f][q][i] *
-                                      scratch_data.face_normal[f][q])) *
+                                    scratch_data
+                                      .face_normal[f][q][comp_i] * 
+                                    penalty_parameter * beta * 
+                                    (scratch_data
+                                      .face_normal[f][q][comp_i] * 
+                                    scratch_data
+                                      .face_velocity_values[f][q][comp_i] - 
+                                    scratch_data
+                                      .face_normal[f][q][comp_i] *
+                                    prescribed_velocity_values[f][q][comp_i]) *
+                                    scratch_data
+                                      .face_phi_u[f][q][i][comp_i] *
                                     JxW;
-                                  double surface_stress_term =
-                                    (viscosity *
-                                     scratch_data
-                                       .face_velocity_gradients[f][q] *
-                                     scratch_data.face_normal[f][q] *
-                                     scratch_data.face_phi_u[f][q][i]) *
-                                    JxW;*/
+                                  double beta_terms_tangent =  
+                                    beta_tangent * 
+                                    (scratch_data
+                                      .face_velocity_values[f][q][comp_i] - 
+                                    scratch_data
+                                      .face_normal[f][q][comp_i] * 
+                                    (scratch_data
+                                      .face_normal[f][q][comp_i] * 
+                                    scratch_data
+                                      .face_velocity_values[f][q][comp_i]) - 
+                                    (prescribed_velocity_values[f][q][comp_i] -
+                                    scratch_data
+                                      .face_normal[f][q][comp_i] * 
+                                    (scratch_data
+                                      .face_normal[f][q][comp_i] * 
+                                    prescribed_velocity_values[f][q][comp_i]))) *
+                                    scratch_data
+                                      .face_phi_u[f][q][i][comp_i] *
+                                    JxW;
 
                                   local_rhs(i) += -beta_terms_normal - 
-                                    beta_terms_tangent;// + grad_phi_terms +
-                                                 // surface_stress_term;
+                                    beta_terms_tangent;
                                 }
                             }
                         }

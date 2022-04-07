@@ -954,8 +954,8 @@ namespace Parameters
     // Initial beta
     double beta_0;
 
-    // Initial beta_tangent
-    double beta_tangent_0;
+    // Initial boundary layer thickness
+    double boundary_layer_thickness_0;
 
     static void
     declare_parameters(ParameterHandler &prm);

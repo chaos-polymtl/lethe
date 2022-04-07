@@ -68,8 +68,8 @@ namespace BoundaryConditions
     // Penalization parameter for weak dirichlet BCs and outlets
     std::vector<double> beta;
 
-    // Penalization tangent component parameter for slip weak dirichlet BCs and outlets
-    std::vector<double> beta_tangent;
+    // Boundary layer size tangent component parameter for slip weak dirichlet BCs and outlets
+    std::vector<double> boundary_layer_thickness;
 
     // Number of boundary conditions
     unsigned int size;
@@ -156,8 +156,6 @@ namespace BoundaryConditions
     this->size    = 1;
     this->beta.resize(1);
     this->beta[0] = 0;
-  //  this->beta_tangent.resize(1);
-  //  this->beta_tangent[0] = 0;
   }
 
 
@@ -233,10 +231,10 @@ namespace BoundaryConditions
     
     // Penalization parameter for weakly imposed dirichlet BCs and outlets
     prm.declare_entry(
-      "beta tangent",
+      "boundary layer thickness",
       "0",
       Patterns::Double(),
-      "penalty parameter for slip weak boundary condition in tangent direction imposed through Nitsche's method or outlets");
+      "thickness of the boundary layer used to calculate the penalty parameter for slip weak boundary condition in tangent direction imposed through Nitsche's method or outlets");
   }
 
 
@@ -312,7 +310,7 @@ namespace BoundaryConditions
 
     this->id[i_bc]   = prm.get_integer("id");
     this->beta[i_bc] = prm.get_double("beta");
-    this->beta_tangent[i_bc] = prm.get_double("beta tangent");
+    this->boundary_layer_thickness[i_bc] = prm.get_double("boundary layer thickness");
   }
 
 
@@ -341,7 +339,7 @@ namespace BoundaryConditions
 
       this->id.resize(this->max_size);
       this->beta.resize(this->max_size);
-      this->beta_tangent.resize(this->max_size);
+      this->boundary_layer_thickness.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
       this->type.resize(this->max_size);
