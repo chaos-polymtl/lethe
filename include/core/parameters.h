@@ -38,7 +38,6 @@
 #include <deal.II/base/parsed_function.h>
 
 
-
 using namespace dealii;
 
 namespace Parameters
@@ -454,6 +453,33 @@ namespace Parameters
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Laser parameters - Defines the parameters for the
+   * laser heat source.
+   */
+  struct Laser
+  {
+  // Laser parameters
+  double concentration_factor;
+  double laser_power;
+  double laser_absorptivity;
+  double penentration_depth;
+
+  // Laser initial coordinate. Since the laser operates at the surface
+  // of the domain, this point is two-dimensional. This also applies
+  // for the laser velocity.
+  Point<2> start_point;
+  Tensor<1, 2> laser_velocity;
+
+  double start_time;
+  double end_time;
+
+  static void
+  declare_parameters(ParameterHandler &prm);
+  void
+  parse_parameters(ParameterHandler &prm);
   };
 
   /**

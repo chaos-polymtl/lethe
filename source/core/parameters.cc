@@ -814,6 +814,88 @@ namespace Parameters
   }
 
   void
+  Laser::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("laser parameters");
+    {
+      prm.declare_entry("concentration factor",
+                        "2.0",
+                        Patterns::Double(),
+                        "Concentration factor");
+      prm.declare_entry("laser power",
+                        "0.0",
+                        Patterns::Double(),
+                        "Laser power");
+      prm.declare_entry("laser absorptivity",
+                        "0.6",
+                        Patterns::Double(),
+                        "Laser absorptivity");
+      prm.declare_entry("penentration depth",
+                        "0.0",
+                        Patterns::Double(),
+                        "Penentration depth");
+
+      prm.enter_subsection("laser initial coordinate");
+      prm.declare_entry("x",
+                        "0",
+                        Patterns::Double(),
+                        "X initial coordinate of laser");
+      prm.declare_entry("y",
+                        "0",
+                        Patterns::Double(),
+                        "Y initial coordinate of laser");
+      prm.leave_subsection();
+
+      prm.enter_subsection("laser velocity");
+      prm.declare_entry("x",
+                        "0",
+                        Patterns::Double(),
+                        "X component of the laser motion");
+      prm.declare_entry("y",
+                        "0",
+                        Patterns::Double(),
+                        "Y component of the laser motion");
+      prm.leave_subsection();
+
+      prm.declare_entry("start time",
+                        "0.0",
+                        Patterns::Double(),
+                        "Start time of laser");
+      prm.declare_entry("end time",
+                        "0.0",
+                        Patterns::Double(),
+                        "End time of laser");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  Laser::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("laser parameters");
+    {
+      concentration_factor      = prm.get_double("concentration factor");
+      laser_power               = prm.get_double("laser power");
+      laser_absorptivity        = prm.get_double("laser absorptivity");
+      penentration_depth        = prm.get_double("penentration depth");
+
+      prm.enter_subsection("laser initial coordinate");
+      start_point[0] = prm.get_double("x");
+      start_point[1] = prm.get_double("y");
+      prm.leave_subsection();
+
+      prm.enter_subsection("laser velocity");
+      laser_velocity[0] = prm.get_double("x");
+      laser_velocity[1] = prm.get_double("y");
+      prm.leave_subsection();
+
+      start_time        = prm.get_double("start time");
+      end_time        = prm.get_double("end time");
+    }
+    prm.leave_subsection();
+  }
+
+  void
   PostProcessing::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("post-processing");
