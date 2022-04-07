@@ -376,8 +376,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::slip_weak))
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::slip_weak))
     {
       this->assemblers.push_back(
         std::make_shared<WeakSlipDirichletBoundaryCondition<dim>>(
@@ -573,7 +572,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->solution_stages,
                       this->forcing_function,
                       this->beta);
-  
+
   if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_vof =

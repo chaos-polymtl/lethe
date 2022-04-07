@@ -1996,10 +1996,11 @@ namespace Parameters
                         "0",
                         Patterns::Double(),
                         "Beta coefficient value for the first step time");
-      prm.declare_entry("initial boundary layer thickness",
-                        "0.0000000001",
-                        Patterns::Double(),
-                        "Bouyndary layer used to calculate the tangent beta coefficient value for the first step time");
+      prm.declare_entry(
+        "initial boundary layer thickness",
+        "0.0000000001",
+        Patterns::Double(),
+        "Bouyndary layer used to calculate the tangent beta coefficient value for the first step time");
     }
     prm.leave_subsection();
   }
@@ -2019,7 +2020,8 @@ namespace Parameters
       boundary_flow_id    = prm.get_integer("boundary id");
       flow_direction      = prm.get_integer("flow direction");
       beta_0              = prm.get_double("initial beta");
-      boundary_layer_thickness_0     = prm.get_double("initial boundary layer thickness");
+      boundary_layer_thickness_0 =
+        prm.get_double("initial boundary layer thickness");
     }
     prm.leave_subsection();
   }

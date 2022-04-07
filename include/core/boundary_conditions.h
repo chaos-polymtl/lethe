@@ -68,7 +68,8 @@ namespace BoundaryConditions
     // Penalization parameter for weak dirichlet BCs and outlets
     std::vector<double> beta;
 
-    // Boundary layer size tangent component parameter for slip weak dirichlet BCs and outlets
+    // Boundary layer size tangent component parameter for slip weak dirichlet
+    // BCs and outlets
     std::vector<double> boundary_layer_thickness;
 
     // Number of boundary conditions
@@ -228,7 +229,7 @@ namespace BoundaryConditions
       "0",
       Patterns::Double(),
       "penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
-    
+
     // Penalization parameter for weakly imposed dirichlet BCs and outlets
     prm.declare_entry(
       "boundary layer thickness",
@@ -278,7 +279,7 @@ namespace BoundaryConditions
         prm.enter_subsection("center of rotation");
         bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
         bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
-        
+
         if (dim == 3)
           bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
         prm.leave_subsection();
@@ -310,7 +311,8 @@ namespace BoundaryConditions
 
     this->id[i_bc]   = prm.get_integer("id");
     this->beta[i_bc] = prm.get_double("beta");
-    this->boundary_layer_thickness[i_bc] = prm.get_double("boundary layer thickness");
+    this->boundary_layer_thickness[i_bc] =
+      prm.get_double("boundary layer thickness");
   }
 
 
