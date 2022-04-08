@@ -1940,11 +1940,7 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
                                              scratch_data
                                                .face_phi_u[f][q][j][comp_i]) *
                                             scratch_data
-                                              .face_normal[f][q][comp_i] *
-                                            (scratch_data
-                                               .face_normal[f][q][comp_i] *
-                                             scratch_data
-                                               .face_phi_u[f][q][i][comp_i]) *
+                                              .face_phi_u[f][q][i][comp_i]*
                                             JxW;
                                           double beta_terms_tangent =
                                             beta_tangent *
@@ -1956,17 +1952,9 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
                                                   .face_normal[f][q][comp_i] *
                                                 scratch_data
                                                   .face_phi_u[f][q][j]
-                                                             [comp_i])) *
-                                            (scratch_data
-                                               .face_phi_u[f][q][j][comp_i] -
-                                             scratch_data
-                                                 .face_normal[f][q][comp_i] *
-                                               (scratch_data
-                                                  .face_normal[f][q][comp_i] *
-                                                scratch_data
-                                                  .face_phi_u[f][q][i]
-                                                             [comp_i])) *
+                                                             [comp_i])) *scratch_data.face_phi_u[f][q][i][comp_i]*
                                             JxW;
+
                                           local_matrix(i, j) +=
                                             +beta_terms_normal +
                                             beta_terms_tangent;
