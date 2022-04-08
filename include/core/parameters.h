@@ -459,27 +459,38 @@ namespace Parameters
    * @brief Laser parameters - Defines the parameters for the
    * laser heat source.
    */
-  struct Laser
+  template <int dim>
+  class Laser
   {
-  // Laser parameters
-  double concentration_factor;
-  double laser_power;
-  double laser_absorptivity;
-  double penentration_depth;
+  public:
+    // Laser parameters
+    bool   activate_laser;
+    double concentration_factor;
+    double laser_power;
+    double laser_absorptivity;
+    double penentration_depth;
+    double beam_radius;
 
-  // Laser initial coordinate. Since the laser operates at the surface
-  // of the domain, this point is two-dimensional. This also applies
-  // for the laser velocity.
-  Point<2> start_point;
-  Tensor<1, 2> laser_velocity;
+    enum class BeamDirection
+    {
+      x,
+      y,
+      z,
+    } beam_direction;
 
-  double start_time;
-  double end_time;
+    unsigned int beam_direction_coordinate;
+    unsigned int perpendicular_plane_coordinate_one;
+    unsigned int perpendicular_plane_coordinate_two;
 
-  static void
-  declare_parameters(ParameterHandler &prm);
-  void
-  parse_parameters(ParameterHandler &prm);
+    std::shared_ptr<Functions::ParsedFunction<dim>> laser_path;
+
+    double start_time;
+    double end_time;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
   };
 
   /**

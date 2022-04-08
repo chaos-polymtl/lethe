@@ -813,11 +813,16 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  Laser::declare_parameters(ParameterHandler &prm)
+  Laser<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("laser parameters");
     {
+      prm.declare_entry("activate laser",
+                        "false",
+                        Patterns::Bool(),
+                        "Activate laser");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),
@@ -834,27 +839,19 @@ namespace Parameters
                         "0.0",
                         Patterns::Double(),
                         "Penentration depth");
+      prm.declare_entry("beam radius",
+                        "0.0",
+                        Patterns::Double(),
+                        "Laser beam radius");
 
-      prm.enter_subsection("laser initial coordinate");
-      prm.declare_entry("x",
-                        "0",
-                        Patterns::Double(),
-                        "X initial coordinate of laser");
-      prm.declare_entry("y",
-                        "0",
-                        Patterns::Double(),
-                        "Y initial coordinate of laser");
-      prm.leave_subsection();
 
-      prm.enter_subsection("laser velocity");
-      prm.declare_entry("x",
-                        "0",
-                        Patterns::Double(),
-                        "X component of the laser motion");
-      prm.declare_entry("y",
-                        "0",
-                        Patterns::Double(),
-                        "Y component of the laser motion");
+      prm.enter_subsection("path");
+      laser_path = std::make_shared<Functions::ParsedFunction<dim>>(dim);
+      laser_path->declare_parameters(prm, dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
       prm.declare_entry("start time",
@@ -865,32 +862,61 @@ namespace Parameters
                         "0.0",
                         Patterns::Double(),
                         "End time of laser");
+
+      prm.declare_entry("beam direction",
+                        "z",
+                        Patterns::Selection("x|y|z"),
+                        "Laser beam direction "
+                        "Choices are <x|y|z>.");
     }
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  Laser::parse_parameters(ParameterHandler &prm)
+  Laser<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("laser parameters");
     {
-      concentration_factor      = prm.get_double("concentration factor");
-      laser_power               = prm.get_double("laser power");
-      laser_absorptivity        = prm.get_double("laser absorptivity");
-      penentration_depth        = prm.get_double("penentration depth");
+      activate_laser       = prm.get_bool("activate laser");
+      concentration_factor = prm.get_double("concentration factor");
+      laser_power          = prm.get_double("laser power");
+      laser_absorptivity   = prm.get_double("laser absorptivity");
+      penentration_depth   = prm.get_double("penentration depth");
+      beam_radius          = prm.get_double("beam radius");
 
-      prm.enter_subsection("laser initial coordinate");
-      start_point[0] = prm.get_double("x");
-      start_point[1] = prm.get_double("y");
+      prm.enter_subsection("path");
+      laser_path->parse_parameters(prm);
+      laser_path->set_time(0);
       prm.leave_subsection();
 
-      prm.enter_subsection("laser velocity");
-      laser_velocity[0] = prm.get_double("x");
-      laser_velocity[1] = prm.get_double("y");
-      prm.leave_subsection();
+      start_time = prm.get_double("start time");
+      end_time   = prm.get_double("end time");
 
-      start_time        = prm.get_double("start time");
-      end_time        = prm.get_double("end time");
+      std::string op;
+      // Density
+      op = prm.get("beam direction");
+      if (op == "x")
+        {
+          beam_direction                     = BeamDirection::x;
+          beam_direction_coordinate          = 0;
+          perpendicular_plane_coordinate_one = 1;
+          perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "y")
+        {
+          beam_direction                     = BeamDirection::y;
+          perpendicular_plane_coordinate_one = 0;
+          beam_direction_coordinate          = 1;
+          perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "z")
+        {
+          beam_direction                     = BeamDirection::z;
+          perpendicular_plane_coordinate_one = 0;
+          perpendicular_plane_coordinate_two = 1;
+          beam_direction_coordinate          = 2;
+        }
     }
     prm.leave_subsection();
   }
@@ -2101,6 +2127,8 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template class Laser<2>;
+  template class Laser<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
 } // namespace Parameters

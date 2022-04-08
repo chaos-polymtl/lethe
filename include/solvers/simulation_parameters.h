@@ -46,6 +46,7 @@ public:
   Parameters::Timer                                 timer;
   Parameters::FEM                                   fem_parameters;
   Parameters::Forces                                forces_parameters;
+  std::shared_ptr<Parameters::Laser<dim>>           laser_parameters;
   Parameters::PostProcessing                        post_processing;
   Parameters::Restart                               restart_parameters;
   Parameters::Manifolds                             manifolds_parameters;
@@ -87,6 +88,8 @@ public:
     Parameters::Multiphysics::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
+    laser_parameters = std::make_shared<Parameters::Laser<dim>>();
+    laser_parameters->declare_parameters(prm);
     Parameters::MeshAdaptation::declare_parameters(prm);
     mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
     mesh_box_refinement->declare_parameters(prm);
@@ -126,6 +129,7 @@ public:
     multiphysics.parse_parameters(prm);
     timer.parse_parameters(prm);
     fem_parameters.parse_parameters(prm);
+    laser_parameters->parse_parameters(prm);
     forces_parameters.parse_parameters(prm);
     post_processing.parse_parameters(prm);
     flow_control.parse_parameters(prm);
@@ -143,8 +147,6 @@ public:
     simulation_control.parse_parameters(prm);
     velocity_sources.parse_parameters(prm);
     particlesParameters->parse_parameters(prm);
-
-    multiphysics.parse_parameters(prm);
 
     physical_properties_manager.initialize(physical_properties);
 
