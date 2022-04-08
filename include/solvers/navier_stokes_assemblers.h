@@ -566,10 +566,11 @@ public:
  */
 
 template <int dim>
-class WeakSlipDirichletBoundaryCondition : public NavierStokesAssemblerBase<dim>
+class PartialSlipDirichletBoundaryCondition
+  : public NavierStokesAssemblerBase<dim>
 {
 public:
-  WeakSlipDirichletBoundaryCondition(
+  PartialSlipDirichletBoundaryCondition(
     std::shared_ptr<SimulationControl> simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim>
       &boundary_conditions_input)

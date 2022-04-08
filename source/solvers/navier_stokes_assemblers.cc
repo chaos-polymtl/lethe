@@ -1863,7 +1863,7 @@ template class WeakDirichletBoundaryCondition<3>;
 
 template <int dim>
 void
-WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
+PartialSlipDirichletBoundaryCondition<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1897,7 +1897,7 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
         boundary_conditions.boundary_layer_thickness[i_bc];
       const double beta_tangent = viscosity / boundary_layer_thickness;
       if (this->boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::slip_weak)
+          BoundaryConditions::BoundaryType::partial_slip)
         {
           // Loop over the faces of the cell.
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
@@ -1940,7 +1940,7 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
                                              scratch_data
                                                .face_phi_u[f][q][j][comp_i]) *
                                             scratch_data
-                                              .face_phi_u[f][q][i][comp_i]*
+                                              .face_phi_u[f][q][i][comp_i] *
                                             JxW;
                                           double beta_terms_tangent =
                                             beta_tangent *
@@ -1952,7 +1952,9 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
                                                   .face_normal[f][q][comp_i] *
                                                 scratch_data
                                                   .face_phi_u[f][q][j]
-                                                             [comp_i])) *scratch_data.face_phi_u[f][q][i][comp_i]*
+                                                             [comp_i])) *
+                                            scratch_data
+                                              .face_phi_u[f][q][i][comp_i] *
                                             JxW;
 
                                           local_matrix(i, j) +=
@@ -1972,7 +1974,7 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_matrix(
 
 template <int dim>
 void
-WeakSlipDirichletBoundaryCondition<dim>::assemble_rhs(
+PartialSlipDirichletBoundaryCondition<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -2006,7 +2008,7 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_rhs(
         boundary_conditions.boundary_layer_thickness[i_bc];
       const double beta_tangent = viscosity / boundary_layer_thickness;
       if (this->boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::slip_weak)
+          BoundaryConditions::BoundaryType::partial_slip)
         {
           // Loop over the faces of the cell.
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
@@ -2081,8 +2083,8 @@ WeakSlipDirichletBoundaryCondition<dim>::assemble_rhs(
     }
 }
 
-template class WeakSlipDirichletBoundaryCondition<2>;
-template class WeakSlipDirichletBoundaryCondition<3>;
+template class PartialSlipDirichletBoundaryCondition<2>;
+template class PartialSlipDirichletBoundaryCondition<3>;
 
 template <int dim>
 void

@@ -34,7 +34,7 @@ namespace BoundaryConditions
     slip,
     function,
     function_weak,
-    slip_weak,
+    partial_slip,
     periodic,
     pressure,
     outlet,
@@ -68,8 +68,8 @@ namespace BoundaryConditions
     // Penalization parameter for weak dirichlet BCs and outlets
     std::vector<double> beta;
 
-    // Boundary layer size tangent component parameter for slip weak dirichlet
-    // BCs and outlets
+    // Boundary layer size tangent component parameter for partial slip
+    // dirichlet BCs
     std::vector<double> boundary_layer_thickness;
 
     // Number of boundary conditions
@@ -176,9 +176,9 @@ namespace BoundaryConditions
       "type",
       "noslip",
       Patterns::Selection(
-        "noslip|slip|function|periodic|pressure|function weak|slip weak|outlet"),
+        "noslip|slip|function|periodic|pressure|function weak|partial slip|outlet"),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|function weak|slip weak|outlet>.");
+      "Choices are <noslip|slip|function|periodic|pressure|function weak|partial slip|outlet>.");
 
 
     prm.declare_entry("id",
@@ -235,7 +235,7 @@ namespace BoundaryConditions
       "boundary layer thickness",
       "0",
       Patterns::Double(),
-      "thickness of the boundary layer used to calculate the penalty parameter for slip weak boundary condition in tangent direction imposed through Nitsche's method or outlets");
+      "thickness of the boundary layer used to calculate the penalty parameter for partial slip boundary condition in tangent direction imposed through Nitsche's method or outlets");
   }
 
 
@@ -256,14 +256,14 @@ namespace BoundaryConditions
       this->type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
       this->type[i_bc] = BoundaryType::slip;
-    if (op == "function" || op == "function weak" || op == "slip weak")
+    if (op == "function" || op == "function weak" || op == "partial slip")
       {
         if (op == "function")
           this->type[i_bc] = BoundaryType::function;
         else if (op == "function weak")
           this->type[i_bc] = BoundaryType::function_weak;
-        else if (op == "slip weak")
-          this->type[i_bc] = BoundaryType::slip_weak;
+        else if (op == "partial slip")
+          this->type[i_bc] = BoundaryType::partial_slip;
         prm.enter_subsection("u");
         bcFunctions[i_bc].u.parse_parameters(prm);
         prm.leave_subsection();
