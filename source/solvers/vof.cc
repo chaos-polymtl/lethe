@@ -23,6 +23,8 @@
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
 
+#include <cmath>
+
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_matrix_and_rhs()
@@ -498,9 +500,6 @@ VolumeOfFluid<dim>::modify_solution()
   // Peeling/wetting
   if (this->simulation_parameters.multiphysics.peeling_wetting)
     { // TODO restructure in subfunction (init_peeling_wetting?)
-      this->nb_cells_wet    = 0;
-      this->nb_cells_peeled = 0;
-
       for (unsigned int i_bc = 0;
            i_bc < this->simulation_parameters.boundary_conditions_vof.size;
            ++i_bc)
@@ -1241,9 +1240,11 @@ VolumeOfFluid<dim>::setup_dofs()
                              dsp,
                              mpi_communicator);
 
-  // Initialize peeling/wetting marker vector
+  // Initialize peeling/wetting variables
   // TODO réinitialiser seulement sur nombre d'itérations % fréquence output?
   marker_pw.reinit(locally_owned_dofs, mpi_communicator);
+  nb_cells_wet    = 0;
+  nb_cells_peeled = 0;
 
   this->pcout << "   Number of VOF degrees of freedom: "
               << this->dof_handler.n_dofs() << std::endl;
@@ -1667,9 +1668,6 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
 
   std::vector<double> density_0(n_q_points);
   std::vector<double> density_1(n_q_points);
-  int                 id_denser_fluid;
-  int                 id_lighter_fluid;
-  //  const double        phase_threshold(0.2);
 
   // Useful definitions for readability
   const double wetting_threshold =
@@ -1682,6 +1680,16 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
     {
       if (cell_vof->is_locally_owned() && cell_vof->at_boundary())
         {
+          // Initialize average values on the cell
+          double id_denser_fluid_cell(0);
+          double id_lighter_fluid_cell(0);
+          double phase_values_cell(0);
+          double pressure_values_cell(0);
+          bool   pressure_grad_meet_peel_condition(false);
+
+          // Local index (see deal.II step 4)
+          cell_vof->get_dof_indices(dof_indices_vof);
+
           for (const auto face : cell_vof->face_indices())
             { // TODO ajouter condition que soit sur la BC de pw
               if (cell_vof->face(face)->at_boundary() &&
@@ -1708,36 +1716,24 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                   fe_face_values_vof.get_function_values(present_solution,
                                                          phase_values);
 
-                  // Number of points meeting the peeling criteria in the cell
-                  unsigned int nb_q_peeled(0);
-
-                  // Number of points meeting the wetting criteria in the cell
-                  unsigned int nb_q_wet(0);
-
-                  // Local index (see deal.II step 4)
-                  cell_vof->get_dof_indices(dof_indices_vof);
-
                   // Calculate physical properties for the cell
                   density_models[0]->vector_value(fields, density_0);
                   density_models[1]->vector_value(fields, density_1);
 
+                  // Loop on the quadrature points
                   for (unsigned int q = 0; q < n_q_points; q++)
                     {
                       // Get denser/lighter fluid id
                       if (density_1[q] > density_0[q])
-                        { // TODO trouver comment comparer sur la cellule
-                          // complète
-                          id_denser_fluid  = 1;
-                          id_lighter_fluid = 0;
+                        {
+                          id_denser_fluid_cell += 1;
                         }
                       else
                         {
-                          id_denser_fluid  = 0;
-                          id_lighter_fluid = 1;
+                          id_lighter_fluid_cell += 1;
                         }
 
                       // Peeling condition on the pressure gradient
-                      bool pressure_grad_meet_peel_condition(false);
                       for (unsigned int d = 0; d < dim; d++)
                         {
                           if (pressure_gradients[q][d] < peeling_threshold)
@@ -1747,65 +1743,48 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                             }
                         }
 
-                      // Wetting of lower density fluid
-                      if ((pressure_values[q] > wetting_threshold)) // ||
-                        //                          (pressure_gradients[q][1] >
-                        //                          wetting_threshold))
-                        {
-                          if ((id_denser_fluid ==
-                                 1 && // phase_values[q] < 0.5 &&
-                               phase_values[q] > 0.1) ||
-                              (id_denser_fluid == 0 && phase_values[q] > 0.5 &&
-                               phase_values[q] < 0.9))
-                            {
-                              nb_q_wet++;
+                      pressure_values_cell += pressure_values[q];
+                      phase_values_cell += phase_values[q];
 
-                              // if enough quadrature points meet the condition
-                              if (nb_q_wet >= n_q_points / 2)
-                                { // TODO appliquer le changement au niveau de
-                                  // la cellule
-                                  change_cell_phase(PhaseChange::wetting,
-                                                    id_denser_fluid,
-                                                    solution_pw,
-                                                    dof_indices_vof);
-                                  // increment cells count
-                                  this->nb_cells_wet++;
-                                  // stop searching as soon as condition is met
-                                  break;
-                                }
-                            }
-                        } // end wetting
-
-                      // Peeling of higher density fluid
-                      else if (pressure_grad_meet_peel_condition)
-                        {
-                          if ((id_denser_fluid == 1 && phase_values[q] > 0.5) ||
-                              (id_denser_fluid == 0 && phase_values[q] < 0.5))
-                            {
-                              nb_q_peeled++;
-
-                              // if enough quadrature points meet the condition
-                              if (nb_q_peeled > n_q_points / 2)
-                                { // TODO appliquer le changement au niveau de
-                                  // la cellule
-                                  change_cell_phase(PhaseChange::peeling,
-                                                    id_lighter_fluid,
-                                                    solution_pw,
-                                                    dof_indices_vof);
-
-                                  // increment cells count
-                                  this->nb_cells_peeled++;
-
-                                  // stop searching as soon as condition is met
-                                  break;
-                                }
-                            }
-                        } // end peeling
-                    }     // end loop on quadrature points
+                    } // end loop on quadrature points
                 }
             } // end loop on faces
-        }
-    } // end loop on cells
+
+          // Caculate average values on the cell
+          id_denser_fluid_cell  = round(id_denser_fluid_cell / n_q_points);
+          id_lighter_fluid_cell = round(id_lighter_fluid_cell / n_q_points);
+          pressure_values_cell  = pressure_values_cell / n_q_points;
+          phase_values_cell     = phase_values_cell / n_q_points;
+
+          // Wetting of lower density fluid
+          if (phase_values_cell > wetting_threshold &&
+              ((id_denser_fluid_cell == 1 && phase_values_cell < 0.5) ||
+               (id_denser_fluid_cell == 0 && phase_values_cell > 0.5)))
+            {
+              change_cell_phase(PhaseChange::wetting,
+                                id_denser_fluid_cell,
+                                solution_pw,
+                                dof_indices_vof);
+              // increment cells count
+              this->nb_cells_wet++;
+            }
+
+          // Peeling of higher density fluid
+          else if (pressure_grad_meet_peel_condition &&
+                   ((id_denser_fluid_cell == 1 && phase_values_cell > 0.5) ||
+                    (id_denser_fluid_cell == 0 && phase_values_cell < 0.5)))
+            {
+              change_cell_phase(PhaseChange::peeling,
+                                id_lighter_fluid_cell,
+                                solution_pw,
+                                dof_indices_vof);
+
+              // increment cells count
+              this->nb_cells_peeled++;
+            }
+
+        } // end condition cell at boundary
+    }     // end loop on cells
 
   present_solution = solution_pw;
 }
