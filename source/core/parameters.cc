@@ -2000,7 +2000,7 @@ namespace Parameters
         "initial boundary layer thickness",
         "0.0000000001",
         Patterns::Double(),
-        "Bouyndary layer used to calculate the tangent beta coefficient value for the first step time");
+        "Bouyndary layer used to calculate the tangential beta coefficient value for the first step time");
     }
     prm.leave_subsection();
   }
