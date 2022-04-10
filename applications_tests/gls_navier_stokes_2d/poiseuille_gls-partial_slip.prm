@@ -94,9 +94,7 @@ subsection boundary conditions
         set periodic_direction  = 0
     end
     subsection bc 2
-        set type              = slip
-        #set beta              = 500
-        #set boundary layer thickness = 0.001
+        set type              = noslip
     end
     subsection bc 3
         set type              = partial slip
