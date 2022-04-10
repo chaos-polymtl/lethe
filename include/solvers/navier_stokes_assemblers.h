@@ -557,8 +557,9 @@ public:
 };
 
 /**
- * @brief Class that assembles the special case of slip condition using the weak formulation of a Dirichlet boundary condition using the Nitsche method.
- * This class assembles the weak form of: (u_ib-u)-(u,grad v)
+ * @brief Class that assembles the special case of partial slip condition using the weak formulation of a Dirichlet boundary condition using the Nitsche method.
+ * This class assembles the weak form of: beta n(nu-nv) +
+ * mu/boundary_layer_thickness t(tu-tv)
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  * @param boundary_condition The boundary condition objects us to store the function.
