@@ -52,7 +52,7 @@ end
 # Analytical Solution
 #---------------------------------------------------
 subsection analytical solution
-  set enable                 = false
+  set enable                 = true
     subsection uvwp
             set Function constants = H=1, G=1, mu=1
             set Function expression =  0.5 * G / mu * (y) * (H - y) ; 0 ; 0
