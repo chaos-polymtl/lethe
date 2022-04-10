@@ -8,7 +8,7 @@
 subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
-  set output name             = poiseuille-partial_slip
+  set output name             = poiseuille_partial_slip
 end
 #---------------------------------------------------
 # FEM
