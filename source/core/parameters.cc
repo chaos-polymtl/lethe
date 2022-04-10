@@ -1996,6 +1996,14 @@ namespace Parameters
                         "0",
                         Patterns::Double(),
                         "Beta coefficient value for the first step time");
+<<<<<<< HEAD
+=======
+      prm.declare_entry(
+        "initial boundary layer thickness",
+        "0.0000000001",
+        Patterns::Double(),
+        "Bouyndary layer used to calculate the tangential beta coefficient value for the first step time");
+>>>>>>> 88a41b34981c6378f6afa32f58c4be5058e8289a
     }
     prm.leave_subsection();
   }
