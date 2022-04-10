@@ -53,15 +53,16 @@ public:
   BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
-  Parameters::InitialConditions<dim> *              initial_condition;
-  AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
-  SourceTerms::SourceTerm<dim> *                    source_term;
+  Parameters::InitialConditions<dim>               *initial_condition;
+  AnalyticalSolutions::AnalyticalSolution<dim>     *analytical_solution;
+  SourceTerms::SourceTerm<dim>                     *source_term;
   Parameters::VelocitySource                        velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
   Parameters::InterfaceSharpening                   interface_sharpening;
   Parameters::SurfaceTensionForce                   surface_tension_force;
   Parameters::Multiphysics                          multiphysics;
+  Parameters::Stabilization                         stabilization;
 
   PhysicalPropertiesManager physical_properties_manager;
 
@@ -109,6 +110,8 @@ public:
 
     Parameters::VelocitySource::declare_parameters(prm);
 
+    Parameters::Stabilization::declare_parameters(prm);
+
     multiphysics.declare_parameters(prm);
   }
 
@@ -143,10 +146,12 @@ public:
     simulation_control.parse_parameters(prm);
     velocity_sources.parse_parameters(prm);
     particlesParameters->parse_parameters(prm);
+    stabilization.parse_parameters(prm);
 
     multiphysics.parse_parameters(prm);
 
     physical_properties_manager.initialize(physical_properties);
+
 
     // Check consistency of parameters parsed in different subsections
     if (multiphysics.VOF && physical_properties.number_of_fluids != 2)
