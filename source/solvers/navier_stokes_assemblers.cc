@@ -1957,9 +1957,34 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_matrix(
                                               .face_phi_u[f][q][i][comp_i] *
                                             JxW;
 
+                                          /* We don't use these terms has its
+                                           * seems they don't affect the
+                                           * solution for the normal component
+                                           */
+                                          /*
+                                                                                    double grad_phi_terms =
+                                                                                      scratch_data.face_normal[f][q][comp_i]*((viscosity *
+                                                                                        scratch_data
+                                                                                          .face_phi_u[f][q][j]) *
+                                                                                       (scratch_data
+                                                                                          .face_grad_phi_u[f][q][i] *
+                                                                                        scratch_data.face_normal[f][q])) *
+                                                                                      JxW;
+                                                                                    double surface_stress_term =
+                                                                                      scratch_data.face_normal[f][q][comp_i]* (viscosity *
+                                                                                       scratch_data
+                                                                                         .face_grad_phi_u[f][q][j] *
+                                                                                       scratch_data.face_normal[f][q]) *
+                                                                                      scratch_data.face_phi_u[f][q][i] *
+                                                                                      JxW;
+                                          */
+
                                           local_matrix(i, j) +=
                                             +beta_terms_normal +
-                                            beta_terms_tangent;
+                                            beta_terms_tangent; //-
+                                                                //grad_phi_terms
+                                                                //-
+                                          // surface_stress_term;
                                         }
                                     }
                                 }
@@ -2070,9 +2095,30 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_rhs(
                                                                    [comp_i]))) *
                                     scratch_data.face_phi_u[f][q][i][comp_i] *
                                     JxW;
+                                  /* We don't use these terms has its seems they
+                                   * don't affect the solution for the normal
+                                   * component */
+                                  /*
+                                  double grad_phi_terms =
+                                    scratch_data.face_normal[f][q][comp_i]*((viscosity
+                                  * (scratch_data.face_velocity_values[f][q] -
+                                       prescribed_velocity_values[f][q])) *
+                                     (scratch_data.face_grad_phi_u[f][q][i] *
+                                      scratch_data.face_normal[f][q])) *
+                                    JxW;
+                                  double surface_stress_term =
+                                    scratch_data.face_normal[f][q][comp_i]*(viscosity
+                                  * scratch_data .face_velocity_gradients[f][q]
+                                  * scratch_data.face_normal[f][q] *
+                                     scratch_data.face_phi_u[f][q][i]) *
+                                    JxW;*/
+
+
 
                                   local_rhs(i) +=
-                                    -beta_terms_normal - beta_terms_tangent;
+                                    -beta_terms_normal -
+                                    beta_terms_tangent; //+ grad_phi_terms +
+                                                        // surface_stress_term;
                                 }
                             }
                         }
