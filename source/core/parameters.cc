@@ -819,20 +819,14 @@ namespace Parameters
   {
     prm.enter_subsection("laser parameters");
     {
-      prm.declare_entry("activate laser",
-                        "false",
-                        Patterns::Bool(),
-                        "Activate laser");
+      prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),
                         "Concentration factor");
-      prm.declare_entry("laser power",
-                        "0.0",
-                        Patterns::Double(),
-                        "Laser power");
-      prm.declare_entry("laser absorptivity",
-                        "0.6",
+      prm.declare_entry("power", "100.0", Patterns::Double(), "Laser power");
+      prm.declare_entry("absorptivity",
+                        "0.5",
                         Patterns::Double(),
                         "Laser absorptivity");
       prm.declare_entry("penentration depth",
@@ -859,14 +853,14 @@ namespace Parameters
                         Patterns::Double(),
                         "Start time of laser");
       prm.declare_entry("end time",
-                        "0.0",
+                        "1.0",
                         Patterns::Double(),
                         "End time of laser");
 
-      prm.declare_entry("beam direction",
+      prm.declare_entry("beam orientation",
                         "z",
                         Patterns::Selection("x|y|z"),
-                        "Laser beam direction "
+                        "Laser beam orientation "
                         "Choices are <x|y|z>.");
     }
     prm.leave_subsection();
@@ -878,10 +872,10 @@ namespace Parameters
   {
     prm.enter_subsection("laser parameters");
     {
-      activate_laser       = prm.get_bool("activate laser");
+      activate_laser       = prm.get_bool("enable");
       concentration_factor = prm.get_double("concentration factor");
-      laser_power          = prm.get_double("laser power");
-      laser_absorptivity   = prm.get_double("laser absorptivity");
+      laser_power          = prm.get_double("power");
+      laser_absorptivity   = prm.get_double("absorptivity");
       penentration_depth   = prm.get_double("penentration depth");
       beam_radius          = prm.get_double("beam radius");
 
@@ -894,28 +888,27 @@ namespace Parameters
       end_time   = prm.get_double("end time");
 
       std::string op;
-      // Density
-      op = prm.get("beam direction");
+      op = prm.get("beam orientation");
       if (op == "x")
         {
-          beam_direction                     = BeamDirection::x;
-          beam_direction_coordinate          = 0;
+          beam_orientation                   = BeamOrientation::x;
+          beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
           perpendicular_plane_coordinate_two = 2;
         }
       else if (op == "y")
         {
-          beam_direction                     = BeamDirection::y;
+          beam_orientation                   = BeamOrientation::y;
           perpendicular_plane_coordinate_one = 0;
-          beam_direction_coordinate          = 1;
+          beam_orientation_coordinate        = 1;
           perpendicular_plane_coordinate_two = 2;
         }
       else if (op == "z")
         {
-          beam_direction                     = BeamDirection::z;
+          beam_orientation                   = BeamOrientation::z;
           perpendicular_plane_coordinate_one = 0;
           perpendicular_plane_coordinate_two = 1;
-          beam_direction_coordinate          = 2;
+          beam_orientation_coordinate        = 2;
         }
     }
     prm.leave_subsection();

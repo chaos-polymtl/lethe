@@ -554,21 +554,36 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
       Function<dim> &laser_scan_path = *(laser_parameters->laser_scan_path);
       laser_scan_path.set_time(current_time);
 
-      // Get laser lcoation
-      Point<dim> laser_location;
-      laser_location[0] =
-        laser_scan_path.value(laser_location,
-                         laser_parameters->perpendicular_plane_coordinate_one);
-      laser_location[1] =
-        laser_scan_path.value(laser_location,
-                         laser_parameters->perpendicular_plane_coordinate_two);
+      // For the laser heat source calculations, we need the radial distance, r,
+      // (in a 2d plane perpendicular to the laser beam direction) between the
+      // laser focal point and the quadrature points, as well as the axial
+      // distance, z, (in a laser emission direction) between the laser focal
+      // point and the quadrature points, separately. Hence, we get the laser
+      // location (laser_location) as a Point<dim>, in which the first and
+      // second components show the position of the laser focal point in a plane
+      // perpendicular to the emission direction, and the third component
+      // denotes the position of the laser focal point in the direction of
+      // emission. Note that in two-dimensional simulations, the third component
+      // is always equal to zero. Then we use two auxiliary variables (Point<2>
+      // laser_location_on_surface to store the position of the laser focal
+      // point in the perpendicular plane to the emission direction, and double
+      // laser_location_in_depth to store the position of the laser focal point
+      // in the direction of emission.
 
+      // Get laser location
+      Point<dim> laser_location;
+      laser_location[0] = laser_scan_path.value(
+        laser_location, laser_parameters->perpendicular_plane_coordinate_one);
+      laser_location[1] = laser_scan_path.value(
+        laser_location, laser_parameters->perpendicular_plane_coordinate_two);
+
+      // Get laser location in depth (direction of emission). For
+      // two-dimensional simulations, this variable is equal to zero.
       double laser_location_in_depth = 0.0;
       if constexpr (dim == 3)
         {
-          laser_location[2] =
-            laser_scan_path.value(laser_location,
-                             laser_parameters->beam_direction_coordinate);
+          laser_location[2] = laser_scan_path.value(
+            laser_location, laser_parameters->beam_orientation_coordinate);
           laser_location_in_depth = laser_location[2];
         }
 
@@ -587,23 +602,31 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
       // assembling right hand side
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
-          // Get quadrate point location
+          // Get quadrature point location on surface to calculate its distance
+          // from the laser focal point in a perpendicular plane to the
+          // direction of emission
           Point<2> quadrature_point_on_surface;
-          quadrature_point_on_surface[0] = scratch_data.quadrature_points[q][0];
-          quadrature_point_on_surface[1] = scratch_data.quadrature_points[q][1];
+          quadrature_point_on_surface[0] =
+            scratch_data.quadrature_points
+              [q][laser_parameters->perpendicular_plane_coordinate_one];
+          quadrature_point_on_surface[1] =
+            scratch_data.quadrature_points
+              [q][laser_parameters->perpendicular_plane_coordinate_two];
 
-          // Get quadrate point depth
-          double laser_quadrate_point_distance_in_depth = 0.0;
+          // Get quadrature point depth to calculate its distance from the laser
+          // focal point in the direction of emission. Note that in
+          // two-dimensional simulations, this variable is always equal to zero
+          double laser_quadrature_point_distance_in_depth = 0.0;
           if constexpr (dim == 3)
             {
-              const double quadrate_point_depth =
-                scratch_data.quadrature_points[q][2];
-              laser_quadrate_point_distance_in_depth =
-                std::abs(quadrate_point_depth - laser_location_in_depth);
+              const double quadrature_point_depth =
+                scratch_data.quadrature_points
+                  [q][laser_parameters->beam_orientation_coordinate];
+              laser_quadrature_point_distance_in_depth =
+                std::abs(quadrature_point_depth - laser_location_in_depth);
             }
           // Store JxW in local variable for faster access
           const double JxW = scratch_data.fe_values_T.JxW(q);
-
 
           // Calculate the strong residual for GLS stabilization
           const double laser_heat_source =
@@ -614,7 +637,7 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
                            quadrature_point_on_surface),
                          2) /
                 (beam_radius * beam_radius)) *
-            exp(-1.0 * laser_quadrate_point_distance_in_depth /
+            exp(-1.0 * laser_quadrature_point_distance_in_depth /
                 penetration_depth);
           strong_residual[q] -= laser_heat_source;
 

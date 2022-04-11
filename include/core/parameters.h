@@ -464,7 +464,7 @@ namespace Parameters
   {
   public:
     // A boolean parameter that enables the calculations of laser heat source
-    bool   activate_laser;
+    bool activate_laser;
 
     // Laser concentration factor indicates the definition of the beam radius.
     // In almost all the articles, it is assumed equal to 2.0
@@ -493,25 +493,25 @@ namespace Parameters
     // Laser beam radius on the melt pool surface
     double beam_radius;
 
-    // Beam direction shows the direction of the laser beam. For instance, if a
-    // laser beam is emitted perpendicular on a plane in x-y coordinates, the
-    // direction of the laser beam will be in the z direction. Note that in
-    // two-dimensional simulations, the laser beam direction is always in the
-    // perpendicular direction to the simulation domain
-    enum class BeamDirection
+    // Beam orientation shows the orientation of the laser beam. For instance,
+    // if a laser beam is emitted perpendicular on a plane in x-y coordinates,
+    // the orientation of the laser beam will be in the z direction. Note that
+    // in two-dimensional simulations, the laser beam orientation is always in
+    // the perpendicular direction to the simulation domain
+    enum class BeamOrientation
     {
       x,
       y,
       z,
-    } beam_direction;
+    } beam_orientation;
 
-    // beam_direction_coordinate parameter stores the integer (x = 0, y = 1,
-    // z =2) value of the beam_direction parameter
-    unsigned int beam_direction_coordinate;
+    // beam_orientation_coordinate parameter stores the integer (x = 0, y = 1,
+    // z =2) value of the beam_orientation parameter
+    unsigned int beam_orientation_coordinate;
 
-    // Based on the laser beam direction, the integer values of a perpendicular
-    // plane to the laser beam direction are stored in the following parameters
-    // (x = 0, y = 1, z = 2)
+    // Based on the laser beam orientation, the integer values of a
+    // perpendicular plane to the laser beam orientation are stored in the
+    // following parameters (x = 0, y = 1, z = 2)
     unsigned int perpendicular_plane_coordinate_one;
     unsigned int perpendicular_plane_coordinate_two;
 
