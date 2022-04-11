@@ -28,6 +28,12 @@ DeclException1(NumberOfFluidsError,
                << "Number of fluids: " << arg1
                << " is not 1 (single phase simulation) or 2 (VOF simulation)");
 
+DeclException1(
+  TwoDimensionalLaserError,
+  unsigned int,
+  << "Laser beam orientation in : " << arg1
+  << "-dimensional simulations cannot be defined in the z direction");
+
 namespace Parameters
 {
   void
@@ -894,21 +900,28 @@ namespace Parameters
           beam_orientation                   = BeamOrientation::x;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
-          perpendicular_plane_coordinate_two = 2;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
         }
       else if (op == "y")
         {
           beam_orientation                   = BeamOrientation::y;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
-          perpendicular_plane_coordinate_two = 2;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
         }
       else if (op == "z")
         {
-          beam_orientation                   = BeamOrientation::z;
-          perpendicular_plane_coordinate_one = 0;
-          perpendicular_plane_coordinate_two = 1;
-          beam_orientation_coordinate        = 2;
+          if constexpr (dim == 3)
+            {
+              beam_orientation                   = BeamOrientation::z;
+              perpendicular_plane_coordinate_one = 0;
+              perpendicular_plane_coordinate_two = 1;
+              beam_orientation_coordinate        = 2;
+            }
+          else if constexpr (dim == 2)
+            Assert(dim == 2, TwoDimensionalLaserError(dim));
         }
     }
     prm.leave_subsection();

@@ -37,7 +37,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 * The ``beam orientation`` parameter shows the orientation of the laser beam. For instance, if a laser beam is emitted perpendicular on a plane in x-y coordinates, the orientation of the laser beam will be in the z direction.
 
 .. note:: 
-    In two-dimensional simulations, the laser beam orientation is always in the perpendicular direction to the simulation domain.
+    In two-dimensional simulations, the laser beam orientation cannot be in the z direction.
 
 
 * In the ``path`` subsection, the laser scanning path is defined using a ``Function expression``.

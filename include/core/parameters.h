@@ -496,8 +496,7 @@ namespace Parameters
     // Beam orientation shows the orientation of the laser beam. For instance,
     // if a laser beam is emitted perpendicular on a plane in x-y coordinates,
     // the orientation of the laser beam will be in the z direction. Note that
-    // in two-dimensional simulations, the laser beam orientation is always in
-    // the perpendicular direction to the simulation domain
+    // this parameter cannot be equal to z in two-dimensional simulations
     enum class BeamOrientation
     {
       x,
