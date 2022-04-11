@@ -260,10 +260,10 @@ namespace BoundaryConditions
       {
         if (op == "function")
           this->type[i_bc] = BoundaryType::function;
-        else if (op == "function weak")
-          this->type[i_bc] = BoundaryType::function_weak;
         else if (op == "partial slip")
           this->type[i_bc] = BoundaryType::partial_slip;
+        else
+          this->type[i_bc] = BoundaryType::function_weak;
         prm.enter_subsection("u");
         bcFunctions[i_bc].u.parse_parameters(prm);
         prm.leave_subsection();
