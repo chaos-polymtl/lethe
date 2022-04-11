@@ -551,23 +551,23 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
   if (current_time >= laser_start_time && current_time <= laser_end_time)
     {
       // Get laser path
-      Function<dim> &laser_path = *(laser_parameters->laser_path);
-      laser_path.set_time(current_time);
+      Function<dim> &laser_scan_path = *(laser_parameters->laser_scan_path);
+      laser_scan_path.set_time(current_time);
 
       // Get laser lcoation
       Point<dim> laser_location;
       laser_location[0] =
-        laser_path.value(laser_location,
+        laser_scan_path.value(laser_location,
                          laser_parameters->perpendicular_plane_coordinate_one);
       laser_location[1] =
-        laser_path.value(laser_location,
+        laser_scan_path.value(laser_location,
                          laser_parameters->perpendicular_plane_coordinate_two);
 
       double laser_location_in_depth = 0.0;
       if constexpr (dim == 3)
         {
           laser_location[2] =
-            laser_path.value(laser_location,
+            laser_scan_path.value(laser_location,
                              laser_parameters->beam_direction_coordinate);
           laser_location_in_depth = laser_location[2];
         }

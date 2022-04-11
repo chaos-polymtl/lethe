@@ -846,8 +846,8 @@ namespace Parameters
 
 
       prm.enter_subsection("path");
-      laser_path = std::make_shared<Functions::ParsedFunction<dim>>(dim);
-      laser_path->declare_parameters(prm, dim);
+      laser_scan_path = std::make_shared<Functions::ParsedFunction<dim>>(dim);
+      laser_scan_path->declare_parameters(prm, dim);
       if (dim == 2)
         prm.set("Function expression", "0; 0");
       if (dim == 3)
@@ -886,8 +886,8 @@ namespace Parameters
       beam_radius          = prm.get_double("beam radius");
 
       prm.enter_subsection("path");
-      laser_path->parse_parameters(prm);
-      laser_path->set_time(0);
+      laser_scan_path->parse_parameters(prm);
+      laser_scan_path->set_time(0);
       prm.leave_subsection();
 
       start_time = prm.get_double("start time");
