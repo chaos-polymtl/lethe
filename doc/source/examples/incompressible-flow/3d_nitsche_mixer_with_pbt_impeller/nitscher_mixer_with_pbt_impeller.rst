@@ -30,6 +30,8 @@ The setup that we wish to simulate is schematized in the following figures:
    :alt: The geometry and boundary conditions
    :align: center
    :name: geometry
+   :height: 12cm
+
 
 
 It consists of a PBT of diameter :math:`D` in a vessel of diameter :math:`T`. The vessel is at a clearance :math:`C` from the bottom. Without loss of generality, we will consider :math:`T=1` and make the problem dimensionless by considering all other dimensions are ratio of :math:`T`. The diameter of the impeller is :math:`D/3` and the clearance is :math:`D/4`. The Reynolds number of the flow will be controlled through the viscosity and the angular velocity of the impeller.
@@ -230,34 +232,40 @@ Lethe will generate a much larger number of files when the Nitsche immersed boun
 Results
 ~~~~~~~~~
 
-The following movie shows the evolution of the velocity magnitude as a function of time in a cut perpendicular to the radius of the vessel :
+The following movie shows the evolution of the velocity magnitude as a function of time in a cut perpendicular to the radius of the vessel with and without the mesh :
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/h5aRpA4chXE" frameborder="0" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://youtu.be/rt6PAvgMkio" frameborder="0" allowfullscreen></iframe>
+
+.. raw:: html
+
+   <iframe width="560" height="315" src="https://youtu.be/jvaT76qBBTs" frameborder="0" allowfullscreen></iframe>
 
 Whereas the next one show the evolution of the axial velocity pattern in the same cut:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/h5aRpA4chXE" frameborder="0" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://youtu.be/8b0ETD8EkQc" frameborder="0" allowfullscreen></iframe>
 
 
 Finally, the following animation illustrates the axial velocity pattern in an axial cut of the vessel:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/h5aRpA4chXE" frameborder="0" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://youtu.be/_VUoN8TGsJ4" frameborder="0" allowfullscreen></iframe>
 
 
-From these animations, we can clearly see that the impeller generates an axial pumping flow. The fluid is propelled from the blade in diagonal to the lateral walls and rises along the outer periphery of the vessel before circulating down along the shaft. Although the transient flow patterns are quite clear, it is also relevant to look at the time-averaged velocity field. The following figures shows the axial velocity in the radial and axial planes:
+From these animations, we can clearly see that the impeller generates an axial pumping flow. The fluid is propelled from the blade in diagonal to the lateral walls and rises along the outer periphery of the vessel before circulating down along the shaft. Although the transient flow patterns are quite clear, it is also relevant to look at the time-averaged velocity field. The following figures shows the time-averaged axial velocity in the axial plane:
 
+  .. image:: images/averaged_axial_velocity.png
+   :alt: Time-averaged axial velocity
+   :align: center
+   :name: axial_velocity
 
 
 There, it is quite apparent that the fluid is descending along the shaft and rises along the lateral walls of the vessel.
 Multiple analysis can be done with this type of simulation. For example, one can monitor the torque on the impeller as a function of the Reynolds number to generate the power curve of the agitator. One could also leverage the tracer multiphysics module to measure the mixing time of the tank and/or to identify the presence of dead zones.
-
-
 
 
 Possibilities for extension
