@@ -394,6 +394,26 @@ namespace Parameters
   };
 
   /**
+   * @brief Stabilization - Defines parameters for an advanced control over the stabilization strategy used by the solvers.
+   */
+  struct Stabilization
+  {
+    bool use_default_stabilization;
+
+    enum class NavierStokesStabilization
+    {
+      pspg_supg,
+      gls,
+      grad_div
+    } stabilization;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Timer - Defines the parameters that control the timing of the simulation.
    * Lethe supports advanced timing features which supports the monitoring of
    * specific sub-sections of the software to evaluate the relative

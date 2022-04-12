@@ -2430,7 +2430,7 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
         {
           // Core assembler
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
+            std::make_shared<PSPGSUPGNavierStokesAssemblerCore<dim>>(
               this->simulation_control));
         }
     }

@@ -62,6 +62,7 @@ public:
   Parameters::InterfaceSharpening                   interface_sharpening;
   Parameters::SurfaceTensionForce                   surface_tension_force;
   Parameters::Multiphysics                          multiphysics;
+  Parameters::Stabilization                         stabilization;
 
   PhysicalPropertiesManager physical_properties_manager;
 
@@ -109,6 +110,8 @@ public:
 
     Parameters::VelocitySource::declare_parameters(prm);
 
+    Parameters::Stabilization::declare_parameters(prm);
+
     multiphysics.declare_parameters(prm);
   }
 
@@ -143,10 +146,12 @@ public:
     simulation_control.parse_parameters(prm);
     velocity_sources.parse_parameters(prm);
     particlesParameters->parse_parameters(prm);
+    stabilization.parse_parameters(prm);
 
     multiphysics.parse_parameters(prm);
 
     physical_properties_manager.initialize(physical_properties);
+
 
     // Check consistency of parameters parsed in different subsections
     if (multiphysics.VOF && physical_properties.number_of_fluids != 2)

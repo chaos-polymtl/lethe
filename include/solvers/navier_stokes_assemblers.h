@@ -75,6 +75,50 @@ public:
 
 
 template <int dim>
+class PSPGSUPGNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
+{
+public:
+  PSPGSUPGNavierStokesAssemblerCore(
+    std::shared_ptr<SimulationControl> simulation_control)
+    : simulation_control(simulation_control)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+};
+
+/**
+ * @brief Class that assembles the core of the Navier-Stokes equation.
+ * This class assembles the weak form of:
+ * $$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
+ * =0 $$ with a full GLS stabilization including the laplacian of the test
+ * function.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+
+template <int dim>
 class GLSNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
@@ -101,13 +145,6 @@ public:
   virtual void
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  /**
-   * Enables SUPG stabilization for the Navier-Stokes formulation.
-   * We have not found any scenarios where it is relevant not to use SUPG
-   * stabilization yet.
-   */
-  const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
 };

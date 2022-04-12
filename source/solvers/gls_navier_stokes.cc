@@ -472,10 +472,25 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         }
       else
         {
-          // Core assembler
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
-              this->simulation_control));
+          // Core default assembler
+          if ((this->simulation_parameters.stabilization
+                 .use_default_stabilization == true) ||
+              this->simulation_parameters.stabilization.stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+            this->assemblers.push_back(
+              std::make_shared<PSPGSUPGNavierStokesAssemblerCore<dim>>(
+                this->simulation_control));
+
+          else if (this->simulation_parameters.stabilization.stabilization ==
+                   Parameters::Stabilization::NavierStokesStabilization::gls)
+            this->assemblers.push_back(
+              std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
+                this->simulation_control));
+
+          else
+            throw std::runtime_error(
+              "Using the GLS solver with a stabilization other than the pspg_supg or gls "
+              "stabilization will lead to an unstable solver that is unable to converge");
         }
     }
 }

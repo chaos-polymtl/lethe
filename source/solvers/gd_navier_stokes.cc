@@ -117,10 +117,19 @@ GDNavierStokesSolver<dim>::setup_assemblers()
         }
       else
         {
-          // Core assembler
-          this->assemblers.push_back(
-            std::make_shared<GDNavierStokesAssemblerCore<dim>>(
-              this->simulation_control, gamma));
+          // Core default assembler
+          if ((this->simulation_parameters.stabilization
+                 .use_default_stabilization == true) ||
+              this->simulation_parameters.stabilization.stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::grad_div)
+            this->assemblers.push_back(
+              std::make_shared<GDNavierStokesAssemblerCore<dim>>(
+                this->simulation_control, gamma));
+
+          else
+            throw std::runtime_error(
+              "Using the GD solver with a stabilization other than the grad_div "
+              "stabilization will lead to an unstable block solver that is unable to converge");
         }
     }
 }
