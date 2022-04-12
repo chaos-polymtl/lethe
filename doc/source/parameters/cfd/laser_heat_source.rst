@@ -24,7 +24,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to 2.0.
 
-* The ``power`` parameter sets the power of the laser in W.
+* The ``power`` parameter sets the power of the laser [:math:`ML^2T^{-3}`].
 
 * The ``absorptivity`` parameter is defined as the fraction of the amount of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of 0.3-0.8 (for welding processes with titanium) are used in the literature. However, recent studies show that it varies with powder particle size distribution, and the angle of incidence that changes due to the dynamic melt pool surface [1].
 
