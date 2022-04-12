@@ -376,8 +376,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
     return;
   auto &local_matrix = copy_data.local_matrix;
 
-  // Robin boundary condition, loop on faces (Newton's cooling law)
-  // implementation similar to deal.ii step-7
+  // Robin boundary condition, loop on faces (Newton's cooling law +
+  // Stefan-Boltzmann law) implementation similar to deal.ii step-7
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
     {
       if (this->boundary_conditions_ht.type[i_bc] ==
@@ -426,8 +426,14 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
   const double Stefan_Boltzmann_constant =
     this->boundary_conditions_ht.Stefan_Boltzmann_constant;
 
-  // Robin boundary condition, loop on faces (Newton's cooling law)
-  // implementation similar to deal.ii step-7
+  // Robin boundary condition, loop on faces (Newton's cooling law +
+  // Stefan-Boltzmann law) Convection-radiation BC is a combination of
+  // convection and radiation. If the Stefan-Boltzmann constant (with default
+  // value = 0) is set to 0, only the convection component is considered,
+  // whereas if the convection coefficient, h (with default value = 0), is set
+  // to 0, only the radiation component is considered. Otherwise, both the
+  // convection and radiation are significant on the boundary implementation
+  // similar to deal.ii step-7
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
     {
       if (this->boundary_conditions_ht.type[i_bc] ==
