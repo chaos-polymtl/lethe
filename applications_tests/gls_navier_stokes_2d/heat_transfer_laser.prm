@@ -28,7 +28,7 @@ subsection laser parameters
 	set concentration factor 	= 2
 	set power 			= 100
 	set absorptivity 		= 0.6
-	set penentration depth 		= 0.01
+	set penetration depth 		= 0.01
 	set beam radius 		= 0.002
 	set start time 			= 0
 	set end time 			= 0.05

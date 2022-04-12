@@ -488,7 +488,7 @@ namespace Parameters
     double laser_absorptivity;
 
     // Penetration depth of the laser
-    double penentration_depth;
+    double penetration_depth;
 
     // Laser beam radius on the melt pool surface
     double beam_radius;

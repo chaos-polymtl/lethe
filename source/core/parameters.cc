@@ -835,10 +835,10 @@ namespace Parameters
                         "0.5",
                         Patterns::Double(),
                         "Laser absorptivity");
-      prm.declare_entry("penentration depth",
+      prm.declare_entry("penetration depth",
                         "0.0",
                         Patterns::Double(),
-                        "Penentration depth");
+                        "Penetration depth");
       prm.declare_entry("beam radius",
                         "0.0",
                         Patterns::Double(),
@@ -882,7 +882,7 @@ namespace Parameters
       concentration_factor = prm.get_double("concentration factor");
       laser_power          = prm.get_double("power");
       laser_absorptivity   = prm.get_double("absorptivity");
-      penentration_depth   = prm.get_double("penentration depth");
+      penetration_depth    = prm.get_double("penetration depth");
       beam_radius          = prm.get_double("beam radius");
 
       prm.enter_subsection("path");

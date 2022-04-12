@@ -542,7 +542,7 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
   const double concentration_factor = laser_parameters->concentration_factor;
   const double laser_power          = laser_parameters->laser_power;
   const double absorptivity         = laser_parameters->laser_absorptivity;
-  const double penetration_depth    = laser_parameters->penentration_depth;
+  const double penetration_depth    = laser_parameters->penetration_depth;
   const double laser_start_time     = laser_parameters->start_time;
   const double laser_end_time       = laser_parameters->end_time;
   const double beam_radius          = laser_parameters->beam_radius;
