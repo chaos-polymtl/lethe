@@ -25,6 +25,12 @@
 
 using namespace dealii;
 
+DeclException1(
+  EmissivityError,
+  double,
+  << "Emissivity : " << arg1
+  << " cannot be larger than 1.0 (black body) or smaller than 0.0");
+
 namespace BoundaryConditions
 {
   enum class BoundaryType
@@ -536,6 +542,9 @@ namespace BoundaryConditions
         this->h[i_bc]          = prm.get_double("h");
         this->Tinf[i_bc]       = prm.get_double("Tinf");
         this->emissivity[i_bc] = prm.get_double("emissivity");
+
+        Assert(this->emissivity[i_bc] > 1.0 | this->emissivity[i_bc] < 0.0,
+               EmissivityError(this->emissivity[i_bc]));
       }
 
     this->id[i_bc] = prm.get_integer("id");
