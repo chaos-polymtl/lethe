@@ -1982,7 +1982,7 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_matrix(
                                           local_matrix(i, j) +=
                                             +beta_terms_normal +
                                             beta_terms_tangent; //-
-                                                                //grad_phi_terms
+                                                                // grad_phi_terms
                                                                 //-
                                           // surface_stress_term;
                                         }
