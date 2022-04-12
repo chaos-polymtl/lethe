@@ -28,3 +28,4 @@ General, CFD and Multiphysics
    dynamic_flow_control
    interface_sharpening
    surface_tension_force
+   laser_heat_source

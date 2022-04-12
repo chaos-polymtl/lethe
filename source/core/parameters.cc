@@ -28,6 +28,12 @@ DeclException1(NumberOfFluidsError,
                << "Number of fluids: " << arg1
                << " is not 1 (single phase simulation) or 2 (VOF simulation)");
 
+DeclException1(
+  TwoDimensionalLaserError,
+  unsigned int,
+  << "Laser beam orientation in : " << arg1
+  << "-dimensional simulations cannot be defined in the z direction");
+
 namespace Parameters
 {
   void
@@ -848,6 +854,114 @@ namespace Parameters
       output_precision      = prm.get_integer("output precision");
       calculation_frequency = prm.get_integer("calculation frequency");
       output_frequency      = prm.get_integer("output frequency");
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  Laser<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("laser parameters");
+    {
+      prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
+      prm.declare_entry("concentration factor",
+                        "2.0",
+                        Patterns::Double(),
+                        "Concentration factor");
+      prm.declare_entry("power", "100.0", Patterns::Double(), "Laser power");
+      prm.declare_entry("absorptivity",
+                        "0.5",
+                        Patterns::Double(),
+                        "Laser absorptivity");
+      prm.declare_entry("penetration depth",
+                        "0.0",
+                        Patterns::Double(),
+                        "Penetration depth");
+      prm.declare_entry("beam radius",
+                        "0.0",
+                        Patterns::Double(),
+                        "Laser beam radius");
+
+
+      prm.enter_subsection("path");
+      laser_scan_path = std::make_shared<Functions::ParsedFunction<dim>>(dim);
+      laser_scan_path->declare_parameters(prm, dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0");
+      prm.leave_subsection();
+
+      prm.declare_entry("start time",
+                        "0.0",
+                        Patterns::Double(),
+                        "Start time of laser");
+      prm.declare_entry("end time",
+                        "1.0",
+                        Patterns::Double(),
+                        "End time of laser");
+
+      prm.declare_entry("beam orientation",
+                        "z",
+                        Patterns::Selection("x|y|z"),
+                        "Laser beam orientation "
+                        "Choices are <x|y|z>.");
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  Laser<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("laser parameters");
+    {
+      activate_laser       = prm.get_bool("enable");
+      concentration_factor = prm.get_double("concentration factor");
+      laser_power          = prm.get_double("power");
+      laser_absorptivity   = prm.get_double("absorptivity");
+      penetration_depth    = prm.get_double("penetration depth");
+      beam_radius          = prm.get_double("beam radius");
+
+      prm.enter_subsection("path");
+      laser_scan_path->parse_parameters(prm);
+      laser_scan_path->set_time(0);
+      prm.leave_subsection();
+
+      start_time = prm.get_double("start time");
+      end_time   = prm.get_double("end time");
+
+      std::string op;
+      op = prm.get("beam orientation");
+      if (op == "x")
+        {
+          beam_orientation                   = BeamOrientation::x;
+          beam_orientation_coordinate        = 0;
+          perpendicular_plane_coordinate_one = 1;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "y")
+        {
+          beam_orientation                   = BeamOrientation::y;
+          perpendicular_plane_coordinate_one = 0;
+          beam_orientation_coordinate        = 1;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "z")
+        {
+          if constexpr (dim == 3)
+            {
+              beam_orientation                   = BeamOrientation::z;
+              perpendicular_plane_coordinate_one = 0;
+              perpendicular_plane_coordinate_two = 1;
+              beam_orientation_coordinate        = 2;
+            }
+          else if constexpr (dim == 2)
+            Assert(dim == 2, TwoDimensionalLaserError(dim));
+        }
     }
     prm.leave_subsection();
   }
@@ -2058,6 +2172,8 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template class Laser<2>;
+  template class Laser<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
 } // namespace Parameters

@@ -38,7 +38,6 @@
 #include <deal.II/base/parsed_function.h>
 
 
-
 using namespace dealii;
 
 namespace Parameters
@@ -471,6 +470,79 @@ namespace Parameters
     std::string torque_output_name;
 
     static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Laser parameters - Defines the parameters for the
+   * laser heat source.
+   */
+  template <int dim>
+  class Laser
+  {
+  public:
+    // A boolean parameter that enables the calculations of laser heat source
+    bool activate_laser;
+
+    // Laser concentration factor indicates the definition of the beam radius.
+    // In almost all the articles, it is assumed equal to 2.0
+    double concentration_factor;
+
+    // Laser power in W
+    double laser_power;
+
+    // Absorptivity is defined as the fraction of the amount of incident
+    // radiation that is absorbed by the surface, and it is measured using
+    // diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in
+    // the range of 0.3-0.8 (for welding processes with titanium) are used
+    // in the literature. However, recent studies show that it varies with
+    // powder particle size distribution, and the angle of incidence that
+    // changes due to the dynamic melt pool surface [Zhang, Z., Huang, Y.,
+    // Kasinathan, A.R., Shahabad, S.I., Ali, U., Mahmoodkhani, Y. and
+    // Toyserkani, E., 2019. 3-Dimensional heat transfer modeling for laser
+    // powder-bed fusion additive manufacturing with volumetric heat sources
+    // based on varied thermal conductivity and absorptivity. Optics & Laser
+    // Technology, 109, pp.297-312.]
+    double laser_absorptivity;
+
+    // Penetration depth of the laser
+    double penetration_depth;
+
+    // Laser beam radius on the melt pool surface
+    double beam_radius;
+
+    // Beam orientation shows the orientation of the laser beam. For instance,
+    // if a laser beam is emitted perpendicular on a plane in x-y coordinates,
+    // the orientation of the laser beam will be in the z direction. Note that
+    // this parameter cannot be equal to z in two-dimensional simulations
+    enum class BeamOrientation
+    {
+      x,
+      y,
+      z,
+    } beam_orientation;
+
+    // beam_orientation_coordinate parameter stores the integer (x = 0, y = 1,
+    // z =2) value of the beam_orientation parameter
+    unsigned int beam_orientation_coordinate;
+
+    // Based on the laser beam orientation, the integer values of a
+    // perpendicular plane to the laser beam orientation are stored in the
+    // following parameters (x = 0, y = 1, z = 2)
+    unsigned int perpendicular_plane_coordinate_one;
+    unsigned int perpendicular_plane_coordinate_two;
+
+    // Laser scan path indicates the path of the laser focal point during a
+    // simulation
+    std::shared_ptr<Functions::ParsedFunction<dim>> laser_scan_path;
+
+    // Start and end time of the laser operation
+    double start_time;
+    double end_time;
+
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);

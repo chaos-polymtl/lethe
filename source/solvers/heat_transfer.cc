@@ -46,6 +46,15 @@ HeatTransfer<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
+  // Laser heat source
+  if (this->simulation_parameters.laser_parameters->activate_laser)
+    {
+      this->assemblers.push_back(
+        std::make_shared<HeatTransferAssemblerLaser<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.laser_parameters));
+    }
+
   // Robin boundary condition
   this->assemblers.push_back(
     std::make_shared<HeatTransferAssemblerRobinBC<dim>>(
