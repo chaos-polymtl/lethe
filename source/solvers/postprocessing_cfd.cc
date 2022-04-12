@@ -1053,11 +1053,7 @@ calculate_min_max_temperature(const DoFHandler<dim> &dof_handler_ht,
   const unsigned int  n_q_points = quadrature_formula.size();
   std::vector<double> local_temperature_values(n_q_points);
 
-  FEValues<dim> fe_values(mapping,
-                          fe,
-                          quadrature_formula,
-                          update_values | update_quadrature_points |
-                            update_JxW_values);
+  FEValues<dim> fe_values(mapping, fe, quadrature_formula, update_values);
 
   double minimum_temperature = DBL_MAX;
   double maximum_temperature = -DBL_MAX;

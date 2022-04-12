@@ -276,11 +276,13 @@ calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
 /**
  * @brief Calculates the minimum and maximum temperature in the simulation domain
  *
- * @param dof_handler. The argument used to get finite elements
+ * @param dof_handler_ht. The dof handler associated with the heat transfer problem
  *
- * @param face_quadrature_formula The face quadrature formula for the calculation
+ * @param evaluation_point Temperature solution
  *
- * @param mapping The mapping of the simulation
+ * @param quadrature_formula The quadrature formula for the calculation
+ *
+ * @param mapping
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
