@@ -95,7 +95,7 @@ subsection boundary conditions heat transfer
     end
     subsection bc 1
     set id = 1
-	set type	      = convection
+	set type	      = convection-radiation
         set h	      = 1000
         set Tinf	      = 1
     end

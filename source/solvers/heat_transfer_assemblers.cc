@@ -381,7 +381,7 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
     {
       if (this->boundary_conditions_ht.type[i_bc] ==
-          BoundaryConditions::BoundaryType::convection)
+          BoundaryConditions::BoundaryType::convection_radiation)
         {
           const double h = this->boundary_conditions_ht.h[i_bc];
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
@@ -422,18 +422,21 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  auto &local_rhs = copy_data.local_rhs;
-
+  auto &       local_rhs = copy_data.local_rhs;
+  const double Stefan_Boltzmann_constant =
+    this->boundary_conditions_ht.Stefan_Boltzmann_constant;
 
   // Robin boundary condition, loop on faces (Newton's cooling law)
   // implementation similar to deal.ii step-7
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
     {
       if (this->boundary_conditions_ht.type[i_bc] ==
-          BoundaryConditions::BoundaryType::convection)
+          BoundaryConditions::BoundaryType::convection_radiation)
         {
           const double h     = this->boundary_conditions_ht.h[i_bc];
           const double T_inf = this->boundary_conditions_ht.Tinf[i_bc];
+          const double emissivity =
+            this->boundary_conditions_ht.emissivity[i_bc];
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
@@ -451,7 +454,12 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                           const double phi_face_T_i =
                             scratch_data.phi_face_T[f][q][i];
                           local_rhs(i) -=
-                            phi_face_T_i * h * (T_face - T_inf) * JxW;
+                            phi_face_T_i *
+                            (h * (T_face - T_inf) +
+                             Stefan_Boltzmann_constant * emissivity *
+                               (T_face * T_face * T_face * T_face -
+                                T_inf * T_inf * T_inf * T_inf)) *
+                            JxW;
                         }
                     }
                 }

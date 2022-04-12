@@ -39,13 +39,13 @@ namespace BoundaryConditions
     pressure,
     outlet,
     // for heat transfer
-    temperature,      // - Dirichlet
-    convection,       // - Robin
-                      // for tracer
-    tracer_dirichlet, // - Dirichlet tracer
-                      // for vof
-    none,             // - none
-    pw,               // - peeling/wetting
+    temperature,          // - Dirichlet
+    convection_radiation, // - Robin
+                          // for tracer
+    tracer_dirichlet,     // - Dirichlet tracer
+                          // for vof
+    none,                 // - none
+    pw,                   // - peeling/wetting
   };
 
   /**
@@ -400,9 +400,11 @@ namespace BoundaryConditions
    * The members "value", "h" and "Tinf" contain double used for bc calculation:
    *  - if bc type is "temperature" (Dirichlet condition), "value" is the
    * double passed to the deal.ii ConstantFunction
-   *  - if bc type is "convection" (Robin condition), "h" is the
+   *  - if bc type is "convection-radiation" (Robin condition), "h" is the
    * convective heat transfer coefficient and "Tinf" is the
-   * environment temperature at the boundary
+   * environment temperature at the boundary, "emissivity" is the emissivity
+   * coefficient, and "Stefan-Boltzmann constant" is the Stefan-Boltzmann
+   * constant = 5.6703*10-8 (W.m-2.K-4)
    */
 
   template <int dim>
@@ -412,6 +414,8 @@ namespace BoundaryConditions
     std::vector<double> value;
     std::vector<double> h;
     std::vector<double> Tinf;
+    std::vector<double> emissivity;
+    double              Stefan_Boltzmann_constant;
 
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
@@ -438,9 +442,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "temperature",
-                      Patterns::Selection("temperature|convection"),
+                      Patterns::Selection("temperature|convection-radiation"),
                       "Type of boundary condition for heat transfer"
-                      "Choices are <temperature|convection>.");
+                      "Choices are <temperature|convection-radiation>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -452,15 +456,22 @@ namespace BoundaryConditions
                       Patterns::Double(),
                       "Value (Double) for constant temperature at bc");
 
-    prm.declare_entry("h",
-                      "0",
-                      Patterns::Double(),
-                      "Value (Double) for the h coefficient of convection bc");
+    prm.declare_entry(
+      "h",
+      "0",
+      Patterns::Double(),
+      "Value (Double) for the h coefficient of convection-radiation bc");
 
-    prm.declare_entry("Tinf",
+    prm.declare_entry(
+      "Tinf",
+      "0",
+      Patterns::Double(),
+      "Temperature (Double) of environment for convection-radiation bc");
+
+    prm.declare_entry("emissivity",
                       "0",
                       Patterns::Double(),
-                      "Temperature (Double) of environment for convection bc");
+                      "Emissivity of the boundary for convection-radiation bc");
   }
 
   /**
@@ -492,6 +503,10 @@ namespace BoundaryConditions
           }
           prm.leave_subsection();
         }
+      prm.declare_entry("Stefan-Boltzmann constant",
+                        "0.000000056703",
+                        Patterns::Double(),
+                        "Stefan-Boltzmann constant");
     }
     prm.leave_subsection();
   }
@@ -515,11 +530,12 @@ namespace BoundaryConditions
         this->type[i_bc]  = BoundaryType::temperature;
         this->value[i_bc] = prm.get_double("value");
       }
-    else if (op == "convection")
+    else if (op == "convection-radiation")
       {
-        this->type[i_bc] = BoundaryType::convection;
-        this->h[i_bc]    = prm.get_double("h");
-        this->Tinf[i_bc] = prm.get_double("Tinf");
+        this->type[i_bc]       = BoundaryType::convection_radiation;
+        this->h[i_bc]          = prm.get_double("h");
+        this->Tinf[i_bc]       = prm.get_double("Tinf");
+        this->emissivity[i_bc] = prm.get_double("emissivity");
       }
 
     this->id[i_bc] = prm.get_integer("id");
@@ -546,6 +562,7 @@ namespace BoundaryConditions
       this->h.resize(this->size);
 
       this->Tinf.resize(this->size);
+      this->emissivity.resize(this->size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {
@@ -558,6 +575,8 @@ namespace BoundaryConditions
               prm.leave_subsection();
             }
         }
+      this->Stefan_Boltzmann_constant =
+        prm.get_double("Stefan-Boltzmann constant");
     }
     prm.leave_subsection();
   }
