@@ -557,6 +557,53 @@ public:
 };
 
 /**
+ * @brief Class that assembles the special case of partial slip condition using the weak formulation of a Dirichlet boundary condition using the Nitsche method.
+ * This class assembles the weak form of: beta n(nu-nv) +
+ * mu/boundary_layer_thickness t(tu-tv)
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @param boundary_condition The boundary condition objects us to store the function.
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class PartialSlipDirichletBoundaryCondition
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  PartialSlipDirichletBoundaryCondition(
+    std::shared_ptr<SimulationControl> simulation_control,
+    const BoundaryConditions::NSBoundaryConditions<dim>
+      &boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , boundary_conditions(boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl>                   simulation_control;
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+};
+
+/**
  * @brief Class that assembles the weak formulation of an oulet boundary condition.
  * This class assembles the weak form of (nu grad(u) * grad(v) + pI - (beta *
  * u)_ * n See the paper by Arndt, Braack and Lube

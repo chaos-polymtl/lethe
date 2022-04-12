@@ -34,6 +34,7 @@ namespace BoundaryConditions
     slip,
     function,
     function_weak,
+    partial_slip,
     periodic,
     pressure,
     outlet,
@@ -66,6 +67,10 @@ namespace BoundaryConditions
 
     // Penalization parameter for weak dirichlet BCs and outlets
     std::vector<double> beta;
+
+    // Boundary layer size tangent component parameter for partial slip
+    // dirichlet BCs
+    std::vector<double> boundary_layer_thickness;
 
     // Number of boundary conditions
     unsigned int size;
@@ -171,9 +176,9 @@ namespace BoundaryConditions
       "type",
       "noslip",
       Patterns::Selection(
-        "noslip|slip|function|periodic|pressure|function weak|outlet"),
+        "noslip|slip|function|periodic|pressure|function weak|partial slip|outlet"),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|function weak|outlet>.");
+      "Choices are <noslip|slip|function|periodic|pressure|function weak|partial slip|outlet>.");
 
 
     prm.declare_entry("id",
@@ -224,6 +229,13 @@ namespace BoundaryConditions
       "0",
       Patterns::Double(),
       "penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
+
+    // Penalization parameter for weakly imposed dirichlet BCs and outlets
+    prm.declare_entry(
+      "boundary layer thickness",
+      "0",
+      Patterns::Double(),
+      "thickness of the boundary layer used to calculate the penalty parameter for partial slip boundary condition in tangent direction imposed through Nitsche's method or outlets");
   }
 
 
@@ -244,10 +256,12 @@ namespace BoundaryConditions
       this->type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
       this->type[i_bc] = BoundaryType::slip;
-    if (op == "function" || op == "function weak")
+    if (op == "function" || op == "function weak" || op == "partial slip")
       {
         if (op == "function")
           this->type[i_bc] = BoundaryType::function;
+        else if (op == "partial slip")
+          this->type[i_bc] = BoundaryType::partial_slip;
         else
           this->type[i_bc] = BoundaryType::function_weak;
         prm.enter_subsection("u");
@@ -265,6 +279,7 @@ namespace BoundaryConditions
         prm.enter_subsection("center of rotation");
         bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
         bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
+
         if (dim == 3)
           bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
         prm.leave_subsection();
@@ -296,6 +311,8 @@ namespace BoundaryConditions
 
     this->id[i_bc]   = prm.get_integer("id");
     this->beta[i_bc] = prm.get_double("beta");
+    this->boundary_layer_thickness[i_bc] =
+      prm.get_double("boundary layer thickness");
   }
 
 
@@ -324,6 +341,7 @@ namespace BoundaryConditions
 
       this->id.resize(this->max_size);
       this->beta.resize(this->max_size);
+      this->boundary_layer_thickness.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
       this->type.resize(this->max_size);

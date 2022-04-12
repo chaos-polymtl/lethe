@@ -2358,6 +2358,14 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
         this->simulation_control,
         this->simulation_parameters.boundary_conditions));
     }
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::partial_slip))
+    {
+      this->assemblers.push_back(
+        std::make_shared<PartialSlipDirichletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
   if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
@@ -2463,6 +2471,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->solution_stages,
                       this->forcing_function,
                       this->beta);
+
   if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_vof =
