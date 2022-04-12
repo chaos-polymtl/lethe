@@ -20,6 +20,7 @@ General, CFD and Multiphysics
    timer
    non-linear_solver_control
    linear_solver_control
+   stabilization
    multiphysics
    boundary_conditions_multiphysics
    nitsche

@@ -384,6 +384,45 @@ namespace Parameters
   }
 
   void
+  Stabilization::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("stabilization");
+    {
+      prm.declare_entry(
+        "use default stabilization",
+        "true",
+        Patterns::Bool(),
+        "Use the default stabilization method provided by the solver");
+      prm.declare_entry(
+        "stabilization",
+        "pspg_supg",
+        Patterns::Selection("pspg_supg|gls|grad_div"),
+        "Type of stabilization used for the Navier-Stokes equations"
+        "Choices are <pspg_supg|gls|grad_div>.");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  Stabilization::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("stabilization");
+    {
+      use_default_stabilization = prm.get_bool("use default stabilization");
+      std::string op            = prm.get("stabilization");
+      if (op == "pspg_supg")
+        stabilization = NavierStokesStabilization::pspg_supg;
+      else if (op == "gls")
+        stabilization = NavierStokesStabilization::gls;
+      else if (op == "grad_div")
+        stabilization = NavierStokesStabilization::grad_div;
+      else
+        throw(std::runtime_error("Invalid stabilization strategy"));
+    }
+    prm.leave_subsection();
+  }
+
+  void
   SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("surface tension force");
