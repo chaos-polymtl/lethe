@@ -96,7 +96,7 @@ The ``mesh`` subsection specifies the computational grid:
       set initial refinement   = 3
   end
 
-Because we use an immersed boundary approach, we only need to mesh the vessel without considering the impeller. This greatly simplifies the meshing process. The mesh can be generated straightforwardly using the deal.II mesh generator for a subdivided cylinder. We set the half-height and the radius of the vessel to be :math:`0.5`. This will generate a vessel in which the axis of the impeller will be along the :math:`x` coordinate. The bottom of the vessel will be on the :math:`x=-0.5` plane. This is not really intuitive, but this is a consequence of some of the inherent limitations of the mesh generators.
+Because we use an immersed boundary approach, we only need to mesh the vessel without considering the impeller. This greatly simplifies the meshing process. The mesh can be generated straightforwardly using the deal.II mesh generator for a subdivided cylinder. We set the half-height and the radius of the vessel to be :math:`0.5`. This will generate a vessel in which the axis of the impeller will be along the :math:`x` coordinate. The bottom of the vessel will be on the :math:`x=-0.5` plane. This is not really intuitive, but this is a consequence of some of the inherent limitations of the mesh generators. We refer to the documentation of the deal.ii `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ for a detailed explanation of the mesh generators.
 
 
 Boundary conditions
@@ -123,7 +123,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
     end
 
 
-Three different boundary conditions are considered. On the lateral walls (``id=0``) and the bottom wall (``id=1``), a no-slip boundary condition applies whereas a slip boundary condition is imposed on the free surface at the top of the vessel (``id=2``).
+Three different boundary conditions are considered. On the lateral walls (``id=0``) and the bottom wall (``id=1``), a no-slip boundary condition applies whereas a slip boundary condition is imposed on the free surface at the top of the vessel (``id=2``). The boundary conditions are described in the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section of the documentation.
 
 Nitsche immersed boundary parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -271,9 +271,12 @@ Multiple analyses can be done with this type of simulation. For example, one can
 Possibilities for extension
 ----------------------------
 
-**Increase the Reynolds number:** Using a finer grid, this example can be launched at even higher Reynolds numbers. In the latter case, the flow is significantly more unsteady.
+- **Increase the Reynolds number:** Using a finer grid, this example can be launched at even higher Reynolds numbers. In the latter case, the flow is significantly more unsteady.
 
 - **Calculate the mixing time using the passive tracer physics:** Using the passive tracer physics and the built-in post-processing tool, the mixing time in the vessel can be easily calculated.
 
 
+References
+----------------------------
 
+[1] Paul, Edward L., Victor A. Atiemo-Obeng, and Suzanne M. Kresta, eds. Handbook of industrial mixing: science and practice. Vol. 1. John Wiley & Sons, 2003.
