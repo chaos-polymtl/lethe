@@ -22,6 +22,7 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+#include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
 template <int dim>
@@ -508,6 +509,27 @@ HeatTransfer<dim>::post_mesh_adaptation()
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
       previous_solutions[i] = tmp_previous_solution;
+    }
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::compute_kelly(
+  dealii::Vector<float> &estimated_error_per_cell)
+{
+  if (this->simulation_parameters.mesh_adaptation.variable ==
+      Parameters::MeshAdaptation::Variable::temperature)
+    {
+      const FEValuesExtractors::Scalar temperature(0);
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->temperature_mapping,
+        this->dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        this->present_solution,
+        estimated_error_per_cell,
+        this->fe->component_mask(temperature));
     }
 }
 
