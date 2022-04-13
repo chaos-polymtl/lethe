@@ -13,7 +13,7 @@ string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_LOWER_BUILD_TYPE)
 	file(COPY ib_force.00.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/check_point.${CMAKE_LOWER_BUILD_TYPE})
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release" )
-    set_tests_properties(gls_sharp_navier_stokes_3d/sphere_power_law_ramp.release PROPERTIES TIMEOUT 1000) 
+#    set_tests_properties(gls_sharp_navier_stokes_3d/sphere_power_law_ramp.release PROPERTIES TIMEOUT 1000) 
 ENDIF()
 
 	
