@@ -15,3 +15,5 @@ Incompressible Flow
     3d-flow-around-sphere/flow-around-sphere
     3d-flow-over-periodic-hills/3d-flow-over-periodic-hills
     2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche
+    3d_nitsche_mixer_with_pbt_impeller/nitsche_mixer_with_pbt_impeller
+
