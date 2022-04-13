@@ -468,7 +468,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         }
     }
 
-  // Minimum, maximum and average temperature
+  // Minimum and maximum temperature
   if (simulation_parameters.post_processing.calculate_min_max_temperature)
     {
       std::pair<double, double> min_max_temperature =
