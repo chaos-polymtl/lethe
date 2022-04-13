@@ -475,7 +475,7 @@ namespace BoundaryConditions
       "Temperature (Double) of environment for convection-radiation bc");
 
     prm.declare_entry("emissivity",
-                      "0",
+                      "0.0",
                       Patterns::Double(),
                       "Emissivity of the boundary for convection-radiation bc");
   }
@@ -543,7 +543,7 @@ namespace BoundaryConditions
         this->Tinf[i_bc]       = prm.get_double("Tinf");
         this->emissivity[i_bc] = prm.get_double("emissivity");
 
-        Assert(this->emissivity[i_bc] > 1.0 | this->emissivity[i_bc] < 0.0,
+        Assert(this->emissivity[i_bc] <= 1.0 && this->emissivity[i_bc] >= 0.0,
                EmissivityError(this->emissivity[i_bc]));
       }
 
