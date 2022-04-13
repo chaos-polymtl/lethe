@@ -56,7 +56,7 @@ set number of fluids = 1
     	subsection power-law
 	    	set K 		   = 2
 	    	set n 		   = 0.8
-	    	set shear rate min = 1e-03
+	    	set shear rate min = 1e-01
 	end
     end
   end
@@ -67,28 +67,17 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                 = dealii
-    set grid type            = subdivided_hyper_rectangle
-    set grid arguments       = 1,1,1 : -15,-15,-15 : 15,15,15 : true
-    set initial refinement   = 2
+    set grid type            = hyper_cube
+    set grid arguments       = -1 : 1 : true
+    set initial refinement   = 5
 end
 
-subsection  box refinement
-    set initial refinement   = 4
-    subsection mesh
-    set type                 = dealii
-    set grid type            = subdivided_hyper_rectangle
-    set grid arguments       = 2,2,2: -2,-2,-2 : 2,2,2 : true
-    set initial refinement   = 0
-    end
-end
-
-
-
-# --------------------------------------------------
-# Boundary Conditions
-#---------------------------------------------------
+#-----------------------------------------
+# Boundary conditions
+#-----------------------------------------
 subsection boundary conditions
-set number                  = 5
+set number                  = 3
+    
     subsection bc 0
 	set id = 0
         set type              = function
@@ -105,46 +94,32 @@ set number                  = 5
     subsection bc 1
 	set id = 2
         set type              = slip
-    end    
+    end
     subsection bc 2
 	set id = 3
         set type              = slip
     end
-    subsection bc 3
-	set id = 4
-        set type              = slip
-    end
-    subsection bc 4
-	set id = 5
-        set type              = slip
-    end
 end
-
 # --------------------------------------------------
 # IB particules
 #---------------------------------------------------
 subsection particles
 	set number of particles = 1
-	set stencil order = 2
-	set length ratio  = 2.5
-	set refine mesh inside radius factor = 0.5
-	set refine mesh outside radius factor = 1.5
-	set initial refinement = 2
+	set stencil order = 6
 	set integrate motion = false
 	set assemble Navier-Stokes inside particles = false    
 	subsection particle info 0
 	subsection position
-	    set Function expression =0;0;0
+	    set Function expression =0;0
 	end
 	subsection velocity
-	    set Function expression =0;0;0
+	    set Function expression =0;0
 	end
 	    subsection omega
 	    set Function expression =0;0;0
 	end
 	    set pressure x =0.00001
 	    set pressure y =0.00001
-	    set pressure z =0.00001
 	    set radius = 0.5
     end
 end
@@ -159,38 +134,27 @@ subsection mesh adaptation
   set frequency            = 1
   set max number elements     = 8000000
   set min refinement level    = 0
-  set max refinement level    = 10
+  set max refinement level    = 5
 end
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
   set verbosity               = verbose
-  set tolerance               = 1e-6
-  set max iterations          = 1000
+  set tolerance               = 1e-4
+  set max iterations          = 10
   set residual precision      = 5
   set force rhs calculation   = true
 end
 # --------------------------------------------------
-# Timer
-#---------------------------------------------------
-subsection restart
-  # Enable checkpointing. Checkpointing creates a restartpoint from which the
-  # simulation can be restarted from.
-  set checkpoint = true  # Prefix for the filename of checkpoints
-  set filename   = check_point  # Frequency for checkpointing
-  set frequency  = 300  # Frequency for
-  set restart    = false
-  end
-  # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
 subsection linear solver
-#  set verbosity               = verbose
+  set verbosity               = quiet
   set method                  = gmres
-  set max iters               = 1000
+  set max iters               = 100
   set relative residual       = 1e-3
-  set minimum residual        = 1e-8
+  set minimum residual        = 1e-6
   set ilu preconditioner fill = 0
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
