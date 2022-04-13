@@ -1,5 +1,5 @@
 ====================================
-2D Flow Past a Backward-Facing Step  
+2D Flow past a backward-facing step  
 ====================================
 
 Features
