@@ -1,0 +1,32 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      4
+*********************************
+ Initial condition using ramp 
+*********************************
+********* Solution for n = 1.000000 and viscosity = 1.000000 *********
+Newton iteration: 0  - Residual:  11.29
+		alpha =      1 res = 0.27512
+Newton iteration: 1  - Residual:  0.27512
+		alpha =      1 res = 0.0027458
+Newton iteration: 2  - Residual:  0.0027458
+		alpha =      1 res = 2.9563e-05
+********* Solution for n = 0.800000 and viscosity = 1.000000 *********
+Newton iteration: 0  - Residual:  0.6024
+		alpha =      1 res = 0.0052672
+Newton iteration: 1  - Residual:  0.0052672
+		alpha =      1 res = 6.5903e-05
+
+*****************************************************************
+Steady iteration :        1/1
+*****************************************************************
+Newton iteration: 0  - Residual:  1.486
+		alpha =      1 res = 0.0029403
+Newton iteration: 1  - Residual:  0.0029403
+		alpha =      1 res = 2.7733e-05
++------------------------------------------+
+|  Force  summary particle 0               |
++------------------------------------------+
+particle_ID    T_z       f_x      f_y    
+          0 -0.002662 77.290296 0.004968
