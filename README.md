@@ -71,7 +71,7 @@ Contributors (in alphabetical order):
 
 ## License
 
-This project is licensed under the [LGPL-3.0-only](LICENSE).
+This project is licensed under the [LGPL-2.1-only](LICENSE).
 
 Unless you explicitly state otherwise, any contribution intentionally
 submitted by you for inclusion in this project shall be licensed as
