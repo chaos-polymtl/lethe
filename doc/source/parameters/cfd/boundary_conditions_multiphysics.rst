@@ -7,7 +7,7 @@ This subsection's purpose is defining the boundary conditions associated to mult
 Heat Transfer
 ^^^^^^^^^^^^^
 
-For heat transfer boundary conditions, the possible ``types`` are ``temperature`` (default) and ``convection``.
+For heat transfer boundary conditions, the possible ``types`` are ``temperature`` (default) and ``convection-radiation``.
 The default parameters of each are shown: 
 
 .. code-block:: text
@@ -21,10 +21,12 @@ The default parameters of each are shown:
         end
         subsection bc 1
 	    set id 		= 1
-            set type		= convection
-            set h 		= 0
-            set Tinf	   	= 0
+            set type		    = convection-radiation
+            set h 		    = 0
+            set Tinf	   	    = 0
+            set emissivity   = 0
         end
+        set Stefan-Boltzmann constant = 0.000000056703
     end
 
 * ``number``: This is the number of boundary conditions of the problem. 
@@ -36,11 +38,13 @@ The default parameters of each are shown:
 
 * ``type``: This is the type of boundary condition been imposed. At the moment, choices are
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary 
-    * ``convection`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` following Newton's law of cooling (and heating)
+    * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and emissivity of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation
 
 .. math::
-    \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_\textit{inf})
+    \frac{ \partial T}{\partial \mathbf{n}} = h (T - T_{inf}) + \epsilon \sigma (T^4 - T_{inf}^4)
 
+
+where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
 
 .. note::
     By default, the boundary condition type is ``temperature`` with ``value = 0``

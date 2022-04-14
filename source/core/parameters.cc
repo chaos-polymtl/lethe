@@ -1007,6 +1007,12 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of between two boundaries.");
 
+      prm.declare_entry(
+        "calculate temperature range",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of minimum and maximum temperature.");
+
       prm.declare_entry("inlet boundary id",
                         "0",
                         Patterns::Integer(),
@@ -1084,7 +1090,9 @@ namespace Parameters
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
+      calculate_pressure_drop = prm.get_bool("calculate pressure drop");
+      calculate_min_max_temperature =
+        prm.get_bool("calculate temperature range");
       inlet_boundary_id              = prm.get_integer("inlet boundary id");
       outlet_boundary_id             = prm.get_integer("outlet boundary id");
       initial_time                   = prm.get_double("initial time");

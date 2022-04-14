@@ -4,11 +4,11 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  		= bdf1
-  set time end                		= 0.05
+  set time end                		= 0.01
   set time step               		= 0.01
   set adapt 		      		= false
   set number mesh adapt       		= 0
-  set output name             		= laser
+  set output name             		= radiation
   set output frequency        		= 0
   set subdivision             		= 1
 end
@@ -18,24 +18,6 @@ end
 #---------------------------------------------------
 subsection multiphysics
 	set heat transfer  = true
-end
-
-#---------------------------------------------------
-# Laser heat source
-#---------------------------------------------------
-subsection laser parameters
-	set enable 			= true
-	set concentration factor 	= 2
-	set power 			= 100
-	set absorptivity 		= 0.6
-	set penetration depth 		= 0.01
-	set beam radius 		= 0.002
-	set start time 			= 0
-	set end time 			= 0.05
-	set beam orientation 		= y
-	subsection path
-	    set Function expression 	=  3 * t; 0.1
-	end
 end
 
 #---------------------------------------------------
@@ -53,6 +35,9 @@ subsection initial conditions
     set type = nodal
     subsection uvwp
         set Function expression = 0; 0; 0
+    end
+    subsection temperature
+    	set Function expression = 1000
     end
 end
 
@@ -73,7 +58,11 @@ subsection physical properties
   set number of fluids     = 1
     subsection fluid 0
     set density              = 1000
-    set kinematic viscosity  = 0.01
+    set kinematic viscosity  = 1
+    set thermal conductivity model = constant
+    set thermal conductivity = 1000
+    set specific heat model = constant
+    set specific heat = 10
     end
 end
 
@@ -83,8 +72,8 @@ end
 subsection mesh
         set type = dealii
         set grid type = subdivided_hyper_rectangle
-        set grid arguments = 1, 1: 0, 0 : 0.1, 0.1 : true
-        set initial refinement = 5
+        set grid arguments = 1, 1: 0, 0 : 0.01, 0.01 : true
+        set initial refinement = 1
 end
 
 # --------------------------------------------------
@@ -95,30 +84,45 @@ subsection boundary conditions heat transfer
     subsection bc 0
     	set id = 0
 	set type	      = convection-radiation
-        set h	      	      = 10
+        set h	      	      = 0
         set Tinf	      = 20
-        set emissivity        = 0.5
+        set emissivity        = 1
     end
     subsection bc 1
     	set id = 1
 	set type	      = convection-radiation
-        set h	              = 10
+        set h	              = 0
         set Tinf	      = 20
-        set emissivity        = 0.5
+        set emissivity        = 1
     end
     subsection bc 2
     	set id = 2
 	set type	      = convection-radiation
-        set h	              = 10
+        set h	              = 0
         set Tinf	      = 20
-        set emissivity        = 0.5
+        set emissivity        = 1
     end
     subsection bc 3
     	set id = 3
 	set type	      = convection-radiation
-        set h	              = 10
+        set h	              = 0
         set Tinf	      = 20
-        set emissivity        = 0.5
+        set emissivity        = 1
+    end
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+subsection analytical solution
+  set enable                 = true
+  set verbosity = verbose
+    subsection uvwp
+            set Function expression =  0 ; 0 ; 0
+    end
+    subsection temperature
+            
+            set Function expression =  977.318
     end
 end
 
