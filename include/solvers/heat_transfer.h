@@ -181,13 +181,9 @@ public:
 
   /**
    * @brief Compute the Kelly error estimator for mesh refinement.
-   * NB : not implemented for the heat_tranfer parameter for now.
    */
   void
-  compute_kelly(dealii::Vector<float> & /*estimated_error_per_cell*/)
-  {
-    return;
-  }
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell);
 
   /**
    * @brief Prepares Heat Transfer to write checkpoint
