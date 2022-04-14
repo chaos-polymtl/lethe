@@ -591,9 +591,8 @@ private:
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
 
   // Peeling/Wetting analysis
-  TrilinosWrappers::MPI::Vector marker_pw;
-  TrilinosWrappers::MPI::Vector dofs_wet;
-  TrilinosWrappers::MPI::Vector dofs_peeled;
+  TrilinosWrappers::MPI::Vector nodes_wet;
+  TrilinosWrappers::MPI::Vector nodes_peeled;
 
   // Filtered phase fraction gradient (pfg) solution
   TrilinosWrappers::MPI::Vector present_pfg_solution;
