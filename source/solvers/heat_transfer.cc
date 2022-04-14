@@ -6,6 +6,7 @@
 #include <solvers/heat_transfer.h>
 #include <solvers/heat_transfer_assemblers.h>
 #include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/postprocessing_cfd.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -464,6 +465,24 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         {
           this->pcout << "L2 error temperature : " << temperature_error
                       << std::endl;
+        }
+    }
+
+  // Minimum and maximum temperature
+  if (simulation_parameters.post_processing.calculate_min_max_temperature)
+    {
+      std::pair<double, double> min_max_temperature =
+        calculate_min_max_temperature(dof_handler,
+                                      present_solution,
+                                      *cell_quadrature,
+                                      *temperature_mapping);
+
+      if (simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Minimum and maximum temperatures : "
+                      << min_max_temperature.first << " , "
+                      << min_max_temperature.second << std::endl;
         }
     }
 }
