@@ -1,12 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/heat_transfer.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -23,6 +14,14 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/heat_transfer.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
 
 template <int dim>
 void
@@ -341,8 +340,8 @@ HeatTransfer<dim>::finish_simulation()
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
   if (this_mpi_process == 0 &&
-      simulation_parameters.analytical_solution->verbosity ==
-        Parameters::Verbosity::verbose)
+      simulation_parameters.analytical_solution->verbosity !=
+        Parameters::Verbosity::quiet)
     {
       error_table.omit_column_from_convergence_rate_evaluation("cells");
 

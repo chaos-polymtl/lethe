@@ -17,14 +17,6 @@
 #ifndef lethe_VOF_h
 #define lethe_VOF_h
 
-#include <core/bdf.h>
-#include <core/simulation_control.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/multiphysics_interface.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/table_handler.h>
@@ -43,6 +35,13 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/error_estimator.h>
+
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 class VolumeOfFluid
@@ -433,8 +432,17 @@ private:
   void
   assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
 
+
   /**
-   * @brief Modification of the solution
+   * @brief Carries out peeling and wetting. It is called in the modify solution function.
+   * Launches apply_peeling_wetting on affected boundaries and handle output
+   * messages.
+   */
+  void
+  handle_peeling_wetting();
+
+  /**
+   * @brief Modification of the solution to take into account peeling and wetting
    *
    * @tparam VectorType The Vector type used for the solvers
    *
@@ -584,8 +592,8 @@ private:
 
   // Peeling/Wetting analysis
   TrilinosWrappers::MPI::Vector marker_pw;
-  unsigned int                  nb_cells_wet;
-  unsigned int                  nb_cells_peeled;
+  TrilinosWrappers::MPI::Vector dofs_wet;
+  TrilinosWrappers::MPI::Vector dofs_peeled;
 
   // Filtered phase fraction gradient (pfg) solution
   TrilinosWrappers::MPI::Vector present_pfg_solution;
