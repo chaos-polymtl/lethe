@@ -26,14 +26,11 @@ jobs:
     # Run steps in container of dealii's master branch
     container:
       image: dealii/dealii:${{ matrix.dealii_version }}-focal
+      options: --user root
 
     steps:
       - name: Setup
         run: |
-          # Github action require containers to run as root. We can't do this without breaking the mpi tests.
-          # To allow the checkout action to operate, we preemptively give access to the workspace directory manually. 
-          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
-
           # Since dealii image doesn't include Node.js, we'll install it
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs
