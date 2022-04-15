@@ -63,10 +63,13 @@ Contributors (in alphabetical order):
 - Jeanne Joachim
 - Rajeshwari Kamble
 - Martin Kronbichler
+- Charles Le Pailleur
 - Ghazaleh Mirakhori
 - Peter Munch
+- Victor Oliveira Ferreira
 - Paul Patience
 - Catherine Radburn
+- Philippe Rivest
 - Laura Prieto Saavedra
 
 ## License
