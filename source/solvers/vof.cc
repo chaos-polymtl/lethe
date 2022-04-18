@@ -1,3 +1,12 @@
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
+
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -14,14 +23,6 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
 
 #include <cmath>
 
@@ -250,9 +251,6 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   if (this->simulation_parameters.multiphysics.peeling_wetting)
     {
       // Peeling/wetting output
-      TrilinosWrappers::MPI::Vector marker_pw(this->nodes_wet);
-      marker_pw.add(this->nodes_peeled);
-
       data_out.add_data_vector(this->dof_handler, marker_pw, "marker_pw");
     }
   if (this->simulation_parameters.multiphysics.continuum_surface_force &&
@@ -1205,8 +1203,7 @@ VolumeOfFluid<dim>::setup_dofs()
                              mpi_communicator);
 
   // Initialize peeling/wetting variables
-  nodes_wet.reinit(locally_owned_dofs, mpi_communicator);
-  nodes_peeled.reinit(locally_owned_dofs, mpi_communicator);
+  marker_pw.reinit(locally_owned_dofs, mpi_communicator);
 
   this->pcout << "   Number of VOF degrees of freedom: "
               << this->dof_handler.n_dofs() << std::endl;
@@ -1586,6 +1583,9 @@ template <int dim>
 void
 VolumeOfFluid<dim>::handle_peeling_wetting()
 {
+  this->nb_cells_wet    = 0;
+  this->nb_cells_peeled = 0;
+
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions_vof.size;
        ++i_bc)
@@ -1617,12 +1617,17 @@ VolumeOfFluid<dim>::handle_peeling_wetting()
   if (this->simulation_parameters.non_linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
+      auto mpi_communicator = this->triangulation->get_communicator();
+
       this->pcout << "Peeling/wetting correction at step "
                   << this->simulation_control->get_step_number() << std::endl;
-      this->pcout << "  -number of wet nodes: " << this->nodes_wet.l1_norm()
+      this->pcout << "  -number of wet cells: "
+                  << Utilities::MPI::sum(this->nb_cells_wet, mpi_communicator)
                   << std::endl;
-      this->pcout << "  -number of peeled nodes: "
-                  << this->nodes_peeled.l1_norm() << std::endl;
+      this->pcout << "  -number of peeled cells: "
+                  << Utilities::MPI::sum(this->nb_cells_peeled,
+                                         mpi_communicator)
+                  << std::endl;
     }
 }
 
@@ -1823,16 +1828,18 @@ VolumeOfFluid<dim>::change_cell_phase(
       for (unsigned int k = 0; k < fe->dofs_per_cell; ++k)
         {
           solution_pw[dof_indices_vof[k]]     = new_phase;
-          this->nodes_wet[dof_indices_vof[k]] = 1;
+          this->marker_pw[dof_indices_vof[k]] = 1;
         }
+      this->nb_cells_wet++;
     }
   else if (type == PhaseChange::peeling)
     {
       for (unsigned int k = 0; k < fe->dofs_per_cell; ++k)
         {
-          solution_pw[dof_indices_vof[k]]        = new_phase;
-          this->nodes_peeled[dof_indices_vof[k]] = -1;
+          solution_pw[dof_indices_vof[k]]     = new_phase;
+          this->marker_pw[dof_indices_vof[k]] = -1;
         }
+      this->nb_cells_peeled++;
     }
 }
 
