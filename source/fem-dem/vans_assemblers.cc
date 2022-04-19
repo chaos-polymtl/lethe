@@ -1157,6 +1157,91 @@ template class GLSVansAssemblerKochHill<3>;
 
 template <int dim>
 void
+GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+
+{
+  unsigned int particle_number;
+  double       normalized_drag_force = 0;
+  auto &       beta_drag             = scratch_data.beta_drag;
+
+  Tensor<1, dim> superficial_velocity;
+  Tensor<1, dim> relative_velocity;
+  Tensor<1, dim> drag_force;
+
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
+  const auto pic  = scratch_data.pic;
+  beta_drag       = 0;
+  particle_number = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      superficial_velocity =
+        scratch_data.fluid_velocity_at_particle_location[particle_number];
+
+      relative_velocity =
+        scratch_data.fluid_velocity_at_particle_location[particle_number] -
+        scratch_data.particle_velocity[particle_number];
+
+      double cell_void_fraction =
+        scratch_data.cell_void_fraction[particle_number];
+
+      // Particle's Reynolds number
+      double re = 1e-1 + superficial_velocity.norm() *
+                           particle_properties[DEM::PropertiesIndex::dp] /
+                           (viscosity + DBL_MIN);
+
+      // Beetstra normalized frag force
+      normalized_drag_force =
+        10 * (1 - cell_void_fraction) / (pow(cell_void_fraction, 2)) +
+        pow(cell_void_fraction, 2) *
+          (1 + 1.15 * pow((1 - cell_void_fraction), 1 / 2)) +
+        0.413 * re / (24 * pow(cell_void_fraction, 2)) *
+          ((1 / cell_void_fraction) +
+           3 * (1 - cell_void_fraction) * cell_void_fraction +
+           8.4 * pow(re, -0.343)) /
+          (1 + pow(10, 3 * (1 - cell_void_fraction)) *
+                 pow(re, -(1 + 4 * (1 - cell_void_fraction)) / 2));
+
+      drag_force = normalized_drag_force * 3 * M_PI * viscosity *
+                   particle_properties[DEM::PropertiesIndex::dp] *
+                   superficial_velocity.norm();
+
+      beta_drag += drag_force.norm() / (density * relative_velocity.norm());
+
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
+        }
+
+      particle_number += 1;
+    }
+
+  beta_drag = beta_drag / scratch_data.cell_volume;
+}
+
+template class GLSVansAssemblerBeetstra<2>;
+template class GLSVansAssemblerBeetstra<3>;
+
+template <int dim>
+void
 GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 

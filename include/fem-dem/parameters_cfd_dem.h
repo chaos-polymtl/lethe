@@ -51,7 +51,8 @@ namespace Parameters
     difelice,
     rong,
     dallavalle,
-    kochhill
+    kochhill,
+    beetstra
   };
 
   enum class VANSModel
