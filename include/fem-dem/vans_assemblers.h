@@ -333,18 +333,6 @@ public:
   Parameters::CFDDEM cfd_dem;
 };
 
-
-/**
- * @brief Class that assembles the Buoyancy force  for the
- * VANS equations whe F_b =  -g *
-        density * (4.0 / 3) * M_PI *
-        pow((dp /2.0),3)
- *
- * @tparam dim An integer that denotes the number of spatial dimensions
- *
- * @ingroup assemblers
- */
-
 /**
  * @brief Class that assembles the drag force using beetstra model for the
  * VANS equations where the normalized drag force = 10 * (1 -
@@ -383,6 +371,17 @@ public:
     NavierStokesScratchData<dim> &scratch_data) override;
   Parameters::CFDDEM cfd_dem;
 };
+
+/**
+ * @brief Class that assembles the Buoyancy force  for the
+ * VANS equations whe F_b =  -g *
+        density * (4.0 / 3) * M_PI *
+        pow((dp /2.0),3)
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
 
 template <int dim>
 class GLSVansAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>

@@ -162,7 +162,7 @@ namespace Parameters
       drag_model = Parameters::DragModel::dallavalle;
     else if (op == "kochhill")
       drag_model = Parameters::DragModel::kochhill;
-    else if (op == "kochhill")
+    else if (op == "beetstra")
       drag_model = Parameters::DragModel::beetstra;
     else
       throw(std::runtime_error("Invalid drag model"));
