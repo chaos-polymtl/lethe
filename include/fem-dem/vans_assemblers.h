@@ -373,6 +373,33 @@ public:
 };
 
 /**
+ * @brief Class that assembles the drag force using gidaspow model for the
+ * VANS equations
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerGidaspow : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerGidaspow(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
+};
+
+/**
  * @brief Class that assembles the Buoyancy force  for the
  * VANS equations whe F_b =  -g *
         density * (4.0 / 3) * M_PI *

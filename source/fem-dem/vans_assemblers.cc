@@ -1219,11 +1219,11 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
           (1 + pow(10, 3 * (1 - cell_void_fraction)) *
                  pow(re, -(1 + 4 * (1 - cell_void_fraction)) / 2));
 
-      drag_force = normalized_drag_force * 3 * M_PI * viscosity *
+      drag_force = normalized_drag_force * 3 * M_PI * viscosity * density *
                    particle_properties[DEM::PropertiesIndex::dp] *
                    superficial_velocity;
 
-      beta_drag += drag_force.norm() / (density * relative_velocity.norm());
+      beta_drag += drag_force.norm() / (density * (relative_velocity.norm()) + 1e-15);
 
       for (int d = 0; d < dim; ++d)
         {
