@@ -1221,7 +1221,7 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
 
       drag_force = normalized_drag_force * 3 * M_PI * viscosity *
                    particle_properties[DEM::PropertiesIndex::dp] *
-                   superficial_velocity.norm();
+                   superficial_velocity;
 
       beta_drag += drag_force.norm() / (density * relative_velocity.norm());
 
