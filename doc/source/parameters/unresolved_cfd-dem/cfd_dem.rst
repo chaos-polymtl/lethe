@@ -25,7 +25,7 @@ This subsection includes parameters related to multiphase flow simulations using
 * The ``grad div`` parameter allows the enabling of the grad div stabilization for the Volume Averaged Navier Stokes equations [1]. This allows for a much better mass conservation of the system.
 * The ``void fraction time derivative`` parameters allows us to choose whether or not we want to account for the time derivative of the void fraction or take it equal to zero.
 * The ``drag force``, ``buoyancy force``, ``shear force``, and ``pressure force`` parameters allow us to enable or disable the respective forces in a cfd-dem simulation.
-* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time of writing are: Difelice [2], Rong [3], Dallavalle [4], and Koch and Hill [5].
+* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time of writing are: Di Felice [2], Rong [3], Dallavalle [4], and Koch and Hill [5].
 * The ``post processing`` parameter, when enabled, allows the calculation of the pressure drop, void fraction in the packed region, and the mass conservation in a packed bed at each time step.
 * The ``coupling frequency`` parameter is only applicable for the cfd-dem solver and it determines the number of DEM iterations per 1 CFD iteration.
 
