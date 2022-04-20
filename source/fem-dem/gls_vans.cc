@@ -595,6 +595,14 @@ GLSVANSSolver<dim>::setup_assemblers()
             std::make_shared<GLSVansAssemblerBeetstra<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::gidaspow)
+        {
+          // Gidaspow Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerGidaspow<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
+        }
     }
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.buoyancy_force == true)
