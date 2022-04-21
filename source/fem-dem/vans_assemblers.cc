@@ -1211,13 +1211,13 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
       normalized_drag_force =
         10 * (1 - cell_void_fraction) / (pow(cell_void_fraction, 2)) +
         pow(cell_void_fraction, 2) *
-          (1 + 1.15 * pow((1 - cell_void_fraction), 1 / 2)) +
+          (1 + 1.5 * pow((1 - cell_void_fraction), 0.5)) +
         0.413 * re / (24 * pow(cell_void_fraction, 2)) *
           ((1 / cell_void_fraction) +
            3 * (1 - cell_void_fraction) * cell_void_fraction +
            8.4 * pow(re, -0.343)) /
           (1 + pow(10, 3 * (1 - cell_void_fraction)) *
-                 pow(re, -(1 + 4 * (1 - cell_void_fraction)) / 2));
+                 pow(re, -(1 + 4 * (1 - cell_void_fraction)) * 0.5));
 
       drag_force = normalized_drag_force * 3 * M_PI * viscosity * density *
                    particle_properties[DEM::PropertiesIndex::dp] *
@@ -1323,7 +1323,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
               particle_properties[DEM::PropertiesIndex::dp];
         }
 
-      drag_force = 1 / 6 * M_PI *
+      drag_force = 1.0 / 6 * M_PI *
                    pow(particle_properties[DEM::PropertiesIndex::dp], 3) *
                    momentum_transfer_coefficient * relative_velocity;
 
