@@ -590,7 +590,7 @@ GLSVANSSolver<dim>::setup_assemblers()
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
           Parameters::DragModel::beetstra)
         {
-          // Beetstra Model drag Assembler
+          // Beetstra drag model assembler
           particle_fluid_assemblers.push_back(
             std::make_shared<GLSVansAssemblerBeetstra<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
