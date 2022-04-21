@@ -1,7 +1,7 @@
 Unresolved CFD-DEM coupling
 ############################
 
-Unresolved CFD-DEM coupling is a technique with high potential for design and analysis of multiphase flows involving particles and fluid, such as fluidized beds, stirred and floculation tanks. In this approach, we apply Newton's second law to each particle individually such that their movement is described at a micro scale (as in DEM simulations). For the fluid, the Volume Average Navier-Stokes (VANS) equations are used to describe the fluid at a meso scale. The meso-micro scale allows for particle-fluid simulations involving large numbers of particles with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases need to be modeled, i.e., not resolved. The following image represents the meso-micro scale approach applied in unresolved CFD-DEM simulations.
+Unresolved CFD-DEM coupling is a technique with high potential for design and analysis of multiphase flows involving particles and fluid, such as fluidized beds, stirred and floculation tanks. In this approach, we apply Newton's second law to each particle individually such that their movement is described at a micro scale (as in DEM simulations). For the fluid, the Volume Average Navier-Stokes (VANS) equations are used to describe the fluid at a meso scale. The meso-micro scale allows for particle-fluid simulations involving large numbers of particles with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases need to be modeled, i.e., not resolved. The following image represents the meso-micro scale approach applied in unresolved CFD-DEM simulations, where the rectangles represent subdomains of the geometry and the gray spots represent the particles.
 
 .. image:: images/schematic_unresolve_cfd-dem.jpg
     :alt: Schematic represantion of micro-meso scale approach in unresolved CFD-DEM
@@ -49,28 +49,48 @@ Since pressure in Lethe does not account for the hydrostatic pressure, we explic
 
 In unresolved CFD-DEM drag is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <https://lethe-cfd.github.io/lethe/parameters/unresolved_cfd-dem/cfd_dem.html>`_.
 
-Since we represent the fluid at a meso scale, the quantities calculated for the subdomain are actually averages among its volume. 
+Since we represent the fluid at a meso scale, the quantities calculated for the subdomains are averages among its volume. Additionally, as the volume of fluid is a fraction of the subdomain, the porosity (or void fraction) is taken into account. To do this, we apply the Volume Average Navier-Stokes (VANS) equations to represent the fluid phase. Mainly, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I).
 
-, we calculate all quantities in unresolved CFD-DEM based on the volume average inside the fluid subdomain. To do this, we apply the Volume Average Navier-Stokes (VANS) equations on the fluid phase: 
+For both models, considering incompressible fluid, the continuity is:
 
 .. math::
-    \nabla \cdot \mathbf{u} &= 0   \\
-    \frac{\partial \mathbf{u}}{\partial t}  + \mathbf{u} \cdot \nabla \mathbf{u} &= -\frac{1}{\rho} \nabla p  + \nu \nabla^2 \mathbf{u} +\mathbf{f}
-
+    \frac{\partial \varepsilon_f}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \right ) = 0
 
 where:
 
-* :math:`\mathbf{u}` is the velocity of the fluid. :math:`\mathbf{u}` is a vector such that :math:`\mathbf{u}=[u,v]^T` in 2D and :math:`\mathbf{u}=[u,v,w]^T` in 3D.
+* :math:`\mathbf{u}` is the the fluid velocity vector;
+* :math:`\varepsilon_f` is the void fraction.
 
-* :math:`p` is the pressure
+Models A and B differ from each other in the way the momentum equation is calculated. In Model A, we consider that pressure is in both phases, while for Model B the pressure is only in the fluid:
 
-* :math:`\nabla` is the `del operator <https://en.wikipedia.org/wiki/Del>`_
+Model A:
 
-* :math:`\rho` is the density of the fluid.
+.. math:: 
+    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon \nabla p + \varepsilon \nabla \cdot \tau + \mathbf{F}_{fp}^A
 
-* :math:`\nu` is the `kinematic viscosity <https://en.wikipedia.org/wiki/Viscosity>`_ of the fluid.
+Model B:
 
-* :math:`\mathbf{f}` is a momentum source term.
+.. math:: 
+    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\nabla p + \nabla \cdot \tau + \mathbf{F}_{fp}^B
+
+where:
+
+* :math:`\rho_f` is the density of the fluid;
+* :math:`p` is the pressure;
+* :math:`\tau` is the shear stress;
+* :math:`\mathbf{F}_{fp}^A` and :math:`\mathbf{F}_{fp}^B` are the source terms representing the forces applied back in the fluid due to the interaction with particles for Models A and B, respectively.
+
+For Model A, since the pressure term corresponds to a 'fluid fraction of the pressure', we can write the interaction term as:
+
+.. math:: 
+    \mathbf{F}_{fp}^A = \frac{1}{\Delta V}\sum_{i}^{n_p}\left ( \mathbf{f}_{pf, i} - \mathbf{f}_{\nabla p, i} - \mathbf{f}_{\nabla \cdot \tau, i} \right )
+
+while for Model B, since the pressure is totally in the fluid, we write:
+
+.. math:: 
+    \mathbf{F}_{fp}^B = \frac{1}{\Delta V}\sum_{i}^{n_p}\left ( \mathbf{f}_{pf, i} \right )
+
+where :math:`n_p` is the number of particles inside the subdomain with volume :math:`\Delta V`.
 
 
 
