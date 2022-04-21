@@ -2771,123 +2771,123 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   // Implement the data  in the particles.
   if (dim == 2)
     {
-      unsigned int line = 0;
+      unsigned int row = 0;
       for (unsigned int p_i = 0; p_i < restart_data.size(); ++p_i)
         {
           unsigned int j = 0;
-          while (restart_data["ID"][line] == p_i)
+          while (restart_data["ID"][row] == p_i)
             {
               if (j == 0)
                 {
-                  particles[p_i].position[0]     = restart_data["p_x"][line];
-                  particles[p_i].position[1]     = restart_data["p_y"][line];
-                  particles[p_i].velocity[0]     = restart_data["v_x"][line];
-                  particles[p_i].velocity[1]     = restart_data["v_y"][line];
-                  particles[p_i].fluid_forces[0] = restart_data["f_x"][line];
-                  particles[p_i].fluid_forces[1] = restart_data["f_y"][line];
-                  particles[p_i].omega[2] = restart_data["omega_z"][line];
-                  particles[p_i].fluid_torque[2] = restart_data["T_z"][line];
+                  particles[p_i].position[0]     = restart_data["p_x"][row];
+                  particles[p_i].position[1]     = restart_data["p_y"][row];
+                  particles[p_i].velocity[0]     = restart_data["v_x"][row];
+                  particles[p_i].velocity[1]     = restart_data["v_y"][row];
+                  particles[p_i].fluid_forces[0] = restart_data["f_x"][row];
+                  particles[p_i].fluid_forces[1] = restart_data["f_y"][row];
+                  particles[p_i].omega[2] = restart_data["omega_z"][row];
+                  particles[p_i].fluid_torque[2] = restart_data["T_z"][row];
 
                   // fill previous time step
-                  particles[p_i].previous_positions[j - 1][0] =
-                    restart_data["p_x"][line];
-                  particles[p_i].previous_positions[j - 1][1] =
-                    restart_data["p_y"][line];
-                  particles[p_i].previous_velocity[j - 1][0] =
-                    restart_data["v_x"][line];
-                  particles[p_i].previous_velocity[j - 1][1] =
-                    restart_data["v_y"][line];
-                  particles[p_i].previous_omega[j - 1][2] =
-                    restart_data["omega_z"][line];
+                  particles[p_i].previous_positions[j][0] =
+                    restart_data["p_x"][row];
+                  particles[p_i].previous_positions[j][1] =
+                    restart_data["p_y"][row];
+                  particles[p_i].previous_velocity[j][0] =
+                    restart_data["v_x"][row];
+                  particles[p_i].previous_velocity[j][1] =
+                    restart_data["v_y"][row];
+                  particles[p_i].previous_omega[j][2] =
+                    restart_data["omega_z"][row];
                 }
               else
                 {
                   // fill previous time step
-                  particles[p_i].previous_positions[j - 1][0] =
-                    restart_data["p_x"][line];
-                  particles[p_i].previous_positions[j - 1][1] =
-                    restart_data["p_y"][line];
-                  particles[p_i].previous_velocity[j - 1][0] =
-                    restart_data["v_x"][line];
-                  particles[p_i].previous_velocity[j - 1][1] =
-                    restart_data["v_y"][line];
-                  particles[p_i].previous_omega[j - 1][2] =
-                    restart_data["omega_z"][line];
+                  particles[p_i].previous_positions[j][0] =
+                    restart_data["p_x"][row];
+                  particles[p_i].previous_positions[j][1] =
+                    restart_data["p_y"][row];
+                  particles[p_i].previous_velocity[j][0] =
+                    restart_data["v_x"][row];
+                  particles[p_i].previous_velocity[j][1] =
+                    restart_data["v_y"][row];
+                  particles[p_i].previous_omega[j][2] =
+                    restart_data["omega_z"][row];
                 }
-              line += 1;
+               row += 1;
               j += 1;
             }
         }
     }
   if (dim == 3)
     {
-      unsigned int line = 0;
+      unsigned int row = 0;
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           unsigned int j = 0;
-          while (restart_data["ID"][line] == p_i)
+          while (restart_data["ID"][row] == p_i)
             {
               if (j == 0)
                 {
-                  particles[p_i].position[0]     = restart_data["p_x"][line];
-                  particles[p_i].position[1]     = restart_data["p_y"][line];
-                  particles[p_i].position[2]     = restart_data["p_z"][line];
-                  particles[p_i].velocity[0]     = restart_data["v_x"][line];
-                  particles[p_i].velocity[1]     = restart_data["v_y"][line];
-                  particles[p_i].velocity[2]     = restart_data["v_z"][line];
-                  particles[p_i].fluid_forces[0] = restart_data["f_x"][line];
-                  particles[p_i].fluid_forces[1] = restart_data["f_y"][line];
-                  particles[p_i].fluid_forces[2] = restart_data["f_z"][line];
-                  particles[p_i].omega[0] = restart_data["omega_x"][line];
-                  particles[p_i].omega[1] = restart_data["omega_y"][line];
-                  particles[p_i].omega[2] = restart_data["omega_z"][line];
-                  particles[p_i].fluid_torque[0] = restart_data["T_x"][line];
-                  particles[p_i].fluid_torque[1] = restart_data["T_y"][line];
-                  particles[p_i].fluid_torque[2] = restart_data["T_z"][line];
+                  particles[p_i].position[0]     = restart_data["p_x"][row];
+                  particles[p_i].position[1]     = restart_data["p_y"][row];
+                  particles[p_i].position[2]     = restart_data["p_z"][row];
+                  particles[p_i].velocity[0]     = restart_data["v_x"][row];
+                  particles[p_i].velocity[1]     = restart_data["v_y"][row];
+                  particles[p_i].velocity[2]     = restart_data["v_z"][row];
+                  particles[p_i].fluid_forces[0] = restart_data["f_x"][row];
+                  particles[p_i].fluid_forces[1] = restart_data["f_y"][row];
+                  particles[p_i].fluid_forces[2] = restart_data["f_z"][row];
+                  particles[p_i].omega[0] = restart_data["omega_x"][row];
+                  particles[p_i].omega[1] = restart_data["omega_y"][row];
+                  particles[p_i].omega[2] = restart_data["omega_z"][row];
+                  particles[p_i].fluid_torque[0] = restart_data["T_x"][row];
+                  particles[p_i].fluid_torque[1] = restart_data["T_y"][row];
+                  particles[p_i].fluid_torque[2] = restart_data["T_z"][row];
 
                   // fill previous time step
                   particles[p_i].previous_positions[j][0] =
-                    restart_data["p_x"][line];
+                    restart_data["p_x"][row];
                   particles[p_i].previous_positions[j][1] =
-                    restart_data["p_y"][line];
+                    restart_data["p_y"][row];
                   particles[p_i].previous_positions[j][2] =
-                    restart_data["p_z"][line];
+                    restart_data["p_z"][row];
                   particles[p_i].previous_velocity[j][0] =
-                    restart_data["v_x"][line];
+                    restart_data["v_x"][row];
                   particles[p_i].previous_velocity[j][1] =
-                    restart_data["v_y"][line];
+                    restart_data["v_y"][row];
                   particles[p_i].previous_velocity[j][2] =
-                    restart_data["v_z"][line];
+                    restart_data["v_z"][row];
                   particles[p_i].previous_omega[j][0] =
-                    restart_data["omega_x"][line];
+                    restart_data["omega_x"][row];
                   particles[p_i].previous_omega[j][1] =
-                    restart_data["omega_y"][line];
+                    restart_data["omega_y"][row];
                   particles[p_i].previous_omega[j][2] =
-                    restart_data["omega_z"][line];
+                    restart_data["omega_z"][row];
                 }
               else
                 {
                   // fill previous time step
                   particles[p_i].previous_positions[j][0] =
-                    restart_data["p_x"][line];
+                    restart_data["p_x"][row];
                   particles[p_i].previous_positions[j][1] =
-                    restart_data["p_y"][line];
+                    restart_data["p_y"][row];
                   particles[p_i].previous_positions[j][2] =
-                    restart_data["p_z"][line];
+                    restart_data["p_z"][row];
                   particles[p_i].previous_velocity[j][0] =
-                    restart_data["v_x"][line];
+                    restart_data["v_x"][row];
                   particles[p_i].previous_velocity[j][1] =
-                    restart_data["v_y"][line];
+                    restart_data["v_y"][row];
                   particles[p_i].previous_velocity[j][2] =
-                    restart_data["v_z"][line];
+                    restart_data["v_z"][row];
                   particles[p_i].previous_omega[j][0] =
-                    restart_data["omega_x"][line];
+                    restart_data["omega_x"][row];
                   particles[p_i].previous_omega[j][1] =
-                    restart_data["omega_y"][line];
+                    restart_data["omega_y"][row];
                   particles[p_i].previous_omega[j][2] =
-                    restart_data["omega_z"][line];
+                    restart_data["omega_z"][row];
                 }
-              line += 1;
+              row += 1;
               j += 1;
             }
         }
