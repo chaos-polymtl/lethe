@@ -1295,7 +1295,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
                            (viscosity + DBL_MIN);
 
       // Gidaspow Drag Model CD Calculation
-      if (re <= 1000)
+      if (re < 1000)
         {
           c_d = 24 / re * (1 + 0.15 * pow(re, 0.687));
         }
@@ -1304,7 +1304,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
           c_d = 0.44;
         }
 
-      if (cell_void_fraction > 0.8)
+      if (cell_void_fraction >= 0.8)
         {
           momentum_transfer_coefficient =
             3 / 4 * c_d * cell_void_fraction * relative_velocity.norm() *
