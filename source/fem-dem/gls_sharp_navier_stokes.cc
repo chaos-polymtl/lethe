@@ -2785,7 +2785,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                   particles[p_i].velocity[1]     = restart_data["v_y"][row];
                   particles[p_i].fluid_forces[0] = restart_data["f_x"][row];
                   particles[p_i].fluid_forces[1] = restart_data["f_y"][row];
-                  particles[p_i].omega[2] = restart_data["omega_z"][row];
+                  particles[p_i].omega[2]        = restart_data["omega_z"][row];
                   particles[p_i].fluid_torque[2] = restart_data["T_z"][row];
 
                   // fill previous time step
@@ -2814,7 +2814,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                   particles[p_i].previous_omega[j][2] =
                     restart_data["omega_z"][row];
                 }
-               row += 1;
+              row += 1;
               j += 1;
             }
         }
@@ -2838,9 +2838,9 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                   particles[p_i].fluid_forces[0] = restart_data["f_x"][row];
                   particles[p_i].fluid_forces[1] = restart_data["f_y"][row];
                   particles[p_i].fluid_forces[2] = restart_data["f_z"][row];
-                  particles[p_i].omega[0] = restart_data["omega_x"][row];
-                  particles[p_i].omega[1] = restart_data["omega_y"][row];
-                  particles[p_i].omega[2] = restart_data["omega_z"][row];
+                  particles[p_i].omega[0]        = restart_data["omega_x"][row];
+                  particles[p_i].omega[1]        = restart_data["omega_y"][row];
+                  particles[p_i].omega[2]        = restart_data["omega_z"][row];
                   particles[p_i].fluid_torque[0] = restart_data["T_x"][row];
                   particles[p_i].fluid_torque[1] = restart_data["T_y"][row];
                   particles[p_i].fluid_torque[2] = restart_data["T_z"][row];
