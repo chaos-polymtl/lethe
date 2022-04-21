@@ -1974,6 +1974,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                        particles[ib_particle_id],
                                        support_points[local_dof_indices[i]]);
 
+
+
                       // Find the cell used for the stencil definition.
                       auto point_to_find_cell =
                         stencil.point_for_cell_detection(
@@ -2656,73 +2658,77 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
       for (unsigned int i_particle = 0; i_particle < particles.size();
            ++i_particle)
         {
-          particles_information_table.add_value("ID", i_particle);
-          particles_information_table.add_value(
-            "p_x", particles[i_particle].position[0]);
-          particles_information_table.set_precision("p_x", 12);
-          particles_information_table.add_value(
-            "p_y", particles[i_particle].position[1]);
-          particles_information_table.set_precision("p_y", 12);
-          if (dim == 3)
+          for (unsigned int j = 0;
+               j < particles[i_particle].previous_positions.size();
+               ++j)
             {
+              particles_information_table.add_value("ID", i_particle);
               particles_information_table.add_value(
-                "p_z", particles[i_particle].position[2]);
-              particles_information_table.set_precision("p_z", 12);
+                "p_x", particles[i_particle].previous_positions[j][0]);
+              particles_information_table.set_precision("p_x", 12);
+              particles_information_table.add_value(
+                "p_y", particles[i_particle].previous_positions[j][1]);
+              particles_information_table.set_precision("p_y", 12);
+              if (dim == 3)
+                {
+                  particles_information_table.add_value(
+                    "p_z", particles[i_particle].previous_positions[j][2]);
+                  particles_information_table.set_precision("p_z", 12);
+                }
+
+              particles_information_table.add_value(
+                "v_x", particles[i_particle].previous_velocity[j][0]);
+              particles_information_table.set_precision("v_x", 12);
+              particles_information_table.add_value(
+                "v_y", particles[i_particle].previous_velocity[j][1]);
+              particles_information_table.set_precision("v_y", 12);
+
+              if (dim == 3)
+                {
+                  particles_information_table.add_value(
+                    "v_z", particles[i_particle].previous_velocity[j][2]);
+                  particles_information_table.set_precision("v_z", 12);
+                }
+
+              particles_information_table.add_value(
+                "f_x", particles[i_particle].previous_fluid_forces[0]);
+              particles_information_table.set_precision("f_x", 12);
+              particles_information_table.add_value(
+                "f_y", particles[i_particle].previous_fluid_forces[1]);
+              particles_information_table.set_precision("f_y", 12);
+
+              if (dim == 3)
+                {
+                  particles_information_table.add_value(
+                    "f_z", particles[i_particle].previous_fluid_forces[2]);
+                  particles_information_table.set_precision("f_z", 12);
+                }
+
+              if (dim == 3)
+                {
+                  particles_information_table.add_value(
+                    "omega_x", particles[i_particle].previous_omega[j][0]);
+                  particles_information_table.set_precision("omega_x", 12);
+                  particles_information_table.add_value(
+                    "omega_y", particles[i_particle].previous_omega[j][1]);
+                  particles_information_table.set_precision("omega_y", 12);
+                }
+              particles_information_table.add_value(
+                "omega_z", particles[i_particle].previous_omega[j][2]);
+              particles_information_table.set_precision("omega_z", 12);
+              if (dim == 3)
+                {
+                  particles_information_table.add_value(
+                    "T_x", particles[i_particle].previous_fluid_torque[0]);
+                  particles_information_table.set_precision("T_x", 12);
+                  particles_information_table.add_value(
+                    "T_y", particles[i_particle].previous_fluid_torque[1]);
+                  particles_information_table.set_precision("T_y", 12);
+                }
+              particles_information_table.add_value(
+                "T_z", particles[i_particle].previous_fluid_torque[2]);
+              particles_information_table.set_precision("T_z", 12);
             }
-
-          particles_information_table.add_value(
-            "v_x", particles[i_particle].velocity[0]);
-          particles_information_table.set_precision("v_x", 12);
-          particles_information_table.add_value(
-            "v_y", particles[i_particle].velocity[1]);
-          particles_information_table.set_precision("v_y", 12);
-
-          if (dim == 3)
-            {
-              particles_information_table.add_value(
-                "v_z", particles[i_particle].velocity[2]);
-              particles_information_table.set_precision("v_z", 12);
-            }
-
-
-          particles_information_table.add_value(
-            "f_x", particles[i_particle].fluid_forces[0]);
-          particles_information_table.set_precision("f_x", 12);
-          particles_information_table.add_value(
-            "f_y", particles[i_particle].fluid_forces[1]);
-          particles_information_table.set_precision("f_y", 12);
-
-          if (dim == 3)
-            {
-              particles_information_table.add_value(
-                "f_z", particles[i_particle].fluid_forces[2]);
-              particles_information_table.set_precision("f_z", 12);
-            }
-
-          if (dim == 3)
-            {
-              particles_information_table.add_value(
-                "omega_x", particles[i_particle].omega[0]);
-              particles_information_table.set_precision("omega_x", 12);
-              particles_information_table.add_value(
-                "omega_y", particles[i_particle].omega[1]);
-              particles_information_table.set_precision("omega_y", 12);
-            }
-          particles_information_table.add_value("omega_z",
-                                                particles[i_particle].omega[2]);
-          particles_information_table.set_precision("omega_z", 12);
-          if (dim == 3)
-            {
-              particles_information_table.add_value(
-                "T_x", particles[i_particle].fluid_torque[0]);
-              particles_information_table.set_precision("T_x", 12);
-              particles_information_table.add_value(
-                "T_y", particles[i_particle].fluid_torque[1]);
-              particles_information_table.set_precision("T_y", 12);
-            }
-          particles_information_table.add_value(
-            "T_z", particles[i_particle].fluid_torque[2]);
-          particles_information_table.set_precision("T_z", 12);
         }
       // Write the table in the checkpoint file.
       particles_information_table.write_text(output);
@@ -2765,47 +2771,125 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   // Implement the data  in the particles.
   if (dim == 2)
     {
+      unsigned int line = 0;
       for (unsigned int p_i = 0; p_i < restart_data.size(); ++p_i)
         {
-          particles[p_i].position[0]     = restart_data["p_x"][p_i];
-          particles[p_i].position[1]     = restart_data["p_y"][p_i];
-          particles[p_i].velocity[0]     = restart_data["v_x"][p_i];
-          particles[p_i].velocity[1]     = restart_data["v_y"][p_i];
-          particles[p_i].fluid_forces[0] = restart_data["f_x"][p_i];
-          particles[p_i].fluid_forces[1] = restart_data["f_y"][p_i];
-          particles[p_i].omega[2]        = restart_data["omega_z"][p_i];
-          particles[p_i].fluid_torque[2] = restart_data["T_z"][p_i];
+          unsigned int j = 0;
+          while (restart_data["ID"][line] == p_i)
+            {
+              if (j == 0)
+                {
+                  particles[p_i].position[0]     = restart_data["p_x"][line];
+                  particles[p_i].position[1]     = restart_data["p_y"][line];
+                  particles[p_i].velocity[0]     = restart_data["v_x"][line];
+                  particles[p_i].velocity[1]     = restart_data["v_y"][line];
+                  particles[p_i].fluid_forces[0] = restart_data["f_x"][line];
+                  particles[p_i].fluid_forces[1] = restart_data["f_y"][line];
+                  particles[p_i].omega[2] = restart_data["omega_z"][line];
+                  particles[p_i].fluid_torque[2] = restart_data["T_z"][line];
+
+                  // fill previous time step
+                  particles[p_i].previous_positions[j - 1][0] =
+                    restart_data["p_x"][line];
+                  particles[p_i].previous_positions[j - 1][1] =
+                    restart_data["p_y"][line];
+                  particles[p_i].previous_velocity[j - 1][0] =
+                    restart_data["v_x"][line];
+                  particles[p_i].previous_velocity[j - 1][1] =
+                    restart_data["v_y"][line];
+                  particles[p_i].previous_omega[j - 1][2] =
+                    restart_data["omega_z"][line];
+                }
+              else
+                {
+                  // fill previous time step
+                  particles[p_i].previous_positions[j - 1][0] =
+                    restart_data["p_x"][line];
+                  particles[p_i].previous_positions[j - 1][1] =
+                    restart_data["p_y"][line];
+                  particles[p_i].previous_velocity[j - 1][0] =
+                    restart_data["v_x"][line];
+                  particles[p_i].previous_velocity[j - 1][1] =
+                    restart_data["v_y"][line];
+                  particles[p_i].previous_omega[j - 1][2] =
+                    restart_data["omega_z"][line];
+                }
+              line += 1;
+              j += 1;
+            }
         }
     }
   if (dim == 3)
     {
+      unsigned int line = 0;
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
-          particles[p_i].position[0]     = restart_data["p_x"][p_i];
-          particles[p_i].position[1]     = restart_data["p_y"][p_i];
-          particles[p_i].position[2]     = restart_data["p_z"][p_i];
-          particles[p_i].velocity[0]     = restart_data["v_x"][p_i];
-          particles[p_i].velocity[1]     = restart_data["v_y"][p_i];
-          particles[p_i].velocity[2]     = restart_data["v_z"][p_i];
-          particles[p_i].fluid_forces[0] = restart_data["f_x"][p_i];
-          particles[p_i].fluid_forces[1] = restart_data["f_y"][p_i];
-          particles[p_i].fluid_forces[2] = restart_data["f_z"][p_i];
-          particles[p_i].omega[0]        = restart_data["omega_x"][p_i];
-          particles[p_i].omega[1]        = restart_data["omega_y"][p_i];
-          particles[p_i].omega[2]        = restart_data["omega_z"][p_i];
-          particles[p_i].fluid_torque[0] = restart_data["T_x"][p_i];
-          particles[p_i].fluid_torque[1] = restart_data["T_y"][p_i];
-          particles[p_i].fluid_torque[2] = restart_data["T_z"][p_i];
-
-          for (unsigned int i = 0; i < particles[p_i].previous_positions.size();
-               ++i)
+          unsigned int j = 0;
+          while (restart_data["ID"][line] == p_i)
             {
-              particles[p_i].previous_positions[i] = particles[p_i].position;
-              particles[p_i].previous_velocity[i]  = particles[p_i].velocity;
-              particles[p_i].previous_omega[i]     = particles[p_i].omega;
-            }
+              if (j == 0)
+                {
+                  particles[p_i].position[0]     = restart_data["p_x"][line];
+                  particles[p_i].position[1]     = restart_data["p_y"][line];
+                  particles[p_i].position[2]     = restart_data["p_z"][line];
+                  particles[p_i].velocity[0]     = restart_data["v_x"][line];
+                  particles[p_i].velocity[1]     = restart_data["v_y"][line];
+                  particles[p_i].velocity[2]     = restart_data["v_z"][line];
+                  particles[p_i].fluid_forces[0] = restart_data["f_x"][line];
+                  particles[p_i].fluid_forces[1] = restart_data["f_y"][line];
+                  particles[p_i].fluid_forces[2] = restart_data["f_z"][line];
+                  particles[p_i].omega[0] = restart_data["omega_x"][line];
+                  particles[p_i].omega[1] = restart_data["omega_y"][line];
+                  particles[p_i].omega[2] = restart_data["omega_z"][line];
+                  particles[p_i].fluid_torque[0] = restart_data["T_x"][line];
+                  particles[p_i].fluid_torque[1] = restart_data["T_y"][line];
+                  particles[p_i].fluid_torque[2] = restart_data["T_z"][line];
 
-          particles[p_i].previous_fluid_forces = particles[p_i].fluid_forces;
+                  // fill previous time step
+                  particles[p_i].previous_positions[j][0] =
+                    restart_data["p_x"][line];
+                  particles[p_i].previous_positions[j][1] =
+                    restart_data["p_y"][line];
+                  particles[p_i].previous_positions[j][2] =
+                    restart_data["p_z"][line];
+                  particles[p_i].previous_velocity[j][0] =
+                    restart_data["v_x"][line];
+                  particles[p_i].previous_velocity[j][1] =
+                    restart_data["v_y"][line];
+                  particles[p_i].previous_velocity[j][2] =
+                    restart_data["v_z"][line];
+                  particles[p_i].previous_omega[j][0] =
+                    restart_data["omega_x"][line];
+                  particles[p_i].previous_omega[j][1] =
+                    restart_data["omega_y"][line];
+                  particles[p_i].previous_omega[j][2] =
+                    restart_data["omega_z"][line];
+                }
+              else
+                {
+                  // fill previous time step
+                  particles[p_i].previous_positions[j][0] =
+                    restart_data["p_x"][line];
+                  particles[p_i].previous_positions[j][1] =
+                    restart_data["p_y"][line];
+                  particles[p_i].previous_positions[j][2] =
+                    restart_data["p_z"][line];
+                  particles[p_i].previous_velocity[j][0] =
+                    restart_data["v_x"][line];
+                  particles[p_i].previous_velocity[j][1] =
+                    restart_data["v_y"][line];
+                  particles[p_i].previous_velocity[j][2] =
+                    restart_data["v_z"][line];
+                  particles[p_i].previous_omega[j][0] =
+                    restart_data["omega_x"][line];
+                  particles[p_i].previous_omega[j][1] =
+                    restart_data["omega_y"][line];
+                  particles[p_i].previous_omega[j][2] =
+                    restart_data["omega_z"][line];
+                }
+              line += 1;
+              j += 1;
+            }
         }
     }
   // Finish the time step of the particle.
