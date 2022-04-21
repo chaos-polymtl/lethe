@@ -353,17 +353,17 @@ private:
    * row corresponds to one particle state. The file is structured as follows:
    *
    *
-   * P0 state at t
+   * P0 state at time t
    *
-   * P0 state at t-dt
+   * P0 state at time t-dt
    *
-   * P0 state at t-2dt
+   * P0 state at time t-2dt
    *
-   * P1 state at t
+   * P1 state at time t
    *
-   * P1 state at t-dt
+   * P1 state at time t-dt
    *
-   * P1 state at t-2dt
+   * P1 state at time t-2dt
    *
    * etc
    *
@@ -372,7 +372,9 @@ private:
   virtual void
   write_checkpoint() override;
   /*
-   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart. See the description of the function write_checkpoint for more detail on the file structure.
+   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart.
+   * See the description of the function write_checkpoint for more details about
+   * the file structure.
    * */
   virtual void
   read_checkpoint() override;
