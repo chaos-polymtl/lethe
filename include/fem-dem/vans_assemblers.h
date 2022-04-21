@@ -373,7 +373,7 @@ public:
 };
 
 /**
- * @brief Class that assembles the drag force using gidaspow model for the
+ * @brief Class that assembles the drag force using Gidaspow model for the
  * VANS equations
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
