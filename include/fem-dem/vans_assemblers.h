@@ -334,7 +334,7 @@ public:
 };
 
 /**
- * @brief Class that assembles the drag force using beetstra model for the
+ * @brief Class that assembles the drag force using Beetstra model for the
  * VANS equations where the normalized drag force = 10 * (1 - cell_void_fraction) / (pow(cell_void_fraction, 2)) +
         pow(cell_void_fraction, 2) *
           (1 + 1.5 * pow((1 - cell_void_fraction), 0.5)) +
