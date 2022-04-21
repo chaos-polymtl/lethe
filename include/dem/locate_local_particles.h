@@ -56,9 +56,8 @@ using namespace dealii;
 template <int dim>
 void
 locate_local_particles_in_cells(
-  const Particles::ParticleHandler<dim> &particle_handler,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container,
+  const Particles::ParticleHandler<dim> &        particle_handler,
+  std::vector<Particles::ParticleIterator<dim>> &particle_container,
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,

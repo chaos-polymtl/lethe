@@ -335,10 +335,7 @@ private:
                      particle_point_line_contact_info_struct<dim>>
     particle_points_in_contact, particle_lines_in_contact;
 
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    particle_container;
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    ghost_particle_container;
+  std::vector<Particles::ParticleIterator<dim>> particle_container;
   std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
                                            updated_boundary_points_and_normal_vectors;
   DEM::DEMProperties<dim>                  properties_class;

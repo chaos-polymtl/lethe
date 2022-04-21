@@ -5,11 +5,11 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_container(
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &                                    particle_container,
-  const Particles::ParticleHandler<dim> *particle_handler)
+  std::vector<Particles::ParticleIterator<dim>> &particle_container,
+  const Particles::ParticleHandler<dim> *        particle_handler)
 {
   particle_container.clear();
+  particle_container.resize(particle_handler->n_global_particles());
 
   for (auto particle_iterator = particle_handler->begin();
        particle_iterator != particle_handler->end();
@@ -37,11 +37,9 @@ update_particle_container(
 }
 
 template void update_particle_container(
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
-    &                                  particle_container,
-  const Particles::ParticleHandler<2> *particle_handler);
+  std::vector<Particles::ParticleIterator<2>> &particle_container,
+  const Particles::ParticleHandler<2> *        particle_handler);
 
 template void update_particle_container(
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>
-    &                                  particle_container,
-  const Particles::ParticleHandler<3> *particle_handler);
+  std::vector<Particles::ParticleIterator<3>> &particle_container,
+  const Particles::ParticleHandler<3> *        particle_handler);

@@ -8,9 +8,8 @@ update_particle_wall_contact_container_iterators(
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container)
+    &                                            particle_wall_pairs_in_contact,
+  std::vector<Particles::ParticleIterator<dim>> &particle_container)
 {
   for (auto particle_wall_pairs_in_contact_iterator =
          particle_wall_pairs_in_contact.begin();
@@ -37,14 +36,12 @@ template void update_particle_wall_contact_container_iterators(
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<2>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
-    &particle_container);
+    &                                          particle_wall_pairs_in_contact,
+  std::vector<Particles::ParticleIterator<2>> &particle_container);
 
 template void update_particle_wall_contact_container_iterators(
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<3>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>
-    &particle_container);
+    &                                          particle_wall_pairs_in_contact,
+  std::vector<Particles::ParticleIterator<3>> &particle_container);

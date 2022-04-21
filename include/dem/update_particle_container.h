@@ -27,7 +27,7 @@ using namespace dealii;
  * Updates the iterators to local particles in a map of particles
  * (particle_container)
  *
- * @param particle_container A map of particles which is used to update
+ * @param particle_container A vector of particles which is used to update
  * the iterators to particles in particle-particle and particle-wall fine search
  * outputs after calling sort particles into cells function
  * @param particle_handler Particle handler to access all the particles in the
@@ -37,8 +37,7 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_container(
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &                                    particle_container,
-  const Particles::ParticleHandler<dim> *particle_handler);
+  std::vector<Particles::ParticleIterator<dim>> &particle_container,
+  const Particles::ParticleHandler<dim> *        particle_handler);
 
 #endif /* update_particle_container_h */

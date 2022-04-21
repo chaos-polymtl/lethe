@@ -24,10 +24,9 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
-    &ghost_adjacent_particles,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &          particle_container,
-  const double neighborhood_threshold)
+    &                                            ghost_adjacent_particles,
+  std::vector<Particles::ParticleIterator<dim>> &particle_container,
+  const double                                   neighborhood_threshold)
 {
   // First iterating over local adjacent_particles
   for (auto &&adjacent_particles_list :

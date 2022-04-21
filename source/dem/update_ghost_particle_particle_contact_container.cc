@@ -9,9 +9,8 @@ update_ghost_particle_particle_contact_container_iterators(
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
-    &ghost_adjacent_particles,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container)
+    &                                            ghost_adjacent_particles,
+  std::vector<Particles::ParticleIterator<dim>> &particle_container)
 {
   for (auto adjacent_particles_iterator = ghost_adjacent_particles.begin();
        adjacent_particles_iterator != ghost_adjacent_particles.end();
@@ -37,15 +36,13 @@ template void update_ghost_particle_particle_contact_container_iterators(
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<2>>>
-    &ghost_adjacent_particles,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
-    &particle_container);
+    &                                          ghost_adjacent_particles,
+  std::vector<Particles::ParticleIterator<2>> &particle_container);
 
 template void update_ghost_particle_particle_contact_container_iterators(
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<3>>>
-    &ghost_adjacent_particles,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>
-    &particle_container);
+    &                                          ghost_adjacent_particles,
+  std::vector<Particles::ParticleIterator<3>> &particle_container);
