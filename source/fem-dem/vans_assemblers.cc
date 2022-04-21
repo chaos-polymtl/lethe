@@ -1192,15 +1192,14 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
     {
       auto particle_properties = particle.get_properties();
 
-      superficial_velocity =
-        scratch_data.fluid_velocity_at_particle_location[particle_number];
-
       relative_velocity =
         scratch_data.fluid_velocity_at_particle_location[particle_number] -
         scratch_data.particle_velocity[particle_number];
 
       double cell_void_fraction =
         scratch_data.cell_void_fraction[particle_number];
+
+      superficial_velocity = relative_velocity * cell_void_fraction;
 
       // Particle's Reynolds number
       double re = 1e-1 + superficial_velocity.norm() *
