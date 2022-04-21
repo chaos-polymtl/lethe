@@ -598,7 +598,7 @@ GLSVANSSolver<dim>::setup_assemblers()
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
           Parameters::DragModel::gidaspow)
         {
-          // Beetstra Model drag Assembler
+          // Gidaspow Model drag Assembler
           particle_fluid_assemblers.push_back(
             std::make_shared<GLSVansAssemblerGidaspow<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
