@@ -2665,69 +2665,69 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
               particles_information_table.add_value("ID", i_particle);
               particles_information_table.add_value(
                 "p_x", particles[i_particle].previous_positions[j][0]);
-              particles_information_table.set_precision("p_x", 12);
+              particles_information_table.set_precision("p_x", 16);
               particles_information_table.add_value(
                 "p_y", particles[i_particle].previous_positions[j][1]);
-              particles_information_table.set_precision("p_y", 12);
+              particles_information_table.set_precision("p_y", 16);
               if (dim == 3)
                 {
                   particles_information_table.add_value(
                     "p_z", particles[i_particle].previous_positions[j][2]);
-                  particles_information_table.set_precision("p_z", 12);
+                  particles_information_table.set_precision("p_z", 16);
                 }
 
               particles_information_table.add_value(
                 "v_x", particles[i_particle].previous_velocity[j][0]);
-              particles_information_table.set_precision("v_x", 12);
+              particles_information_table.set_precision("v_x", 16);
               particles_information_table.add_value(
                 "v_y", particles[i_particle].previous_velocity[j][1]);
-              particles_information_table.set_precision("v_y", 12);
+              particles_information_table.set_precision("v_y", 16);
 
               if (dim == 3)
                 {
                   particles_information_table.add_value(
                     "v_z", particles[i_particle].previous_velocity[j][2]);
-                  particles_information_table.set_precision("v_z", 12);
+                  particles_information_table.set_precision("v_z", 16);
                 }
 
               particles_information_table.add_value(
                 "f_x", particles[i_particle].previous_fluid_forces[0]);
-              particles_information_table.set_precision("f_x", 12);
+              particles_information_table.set_precision("f_x", 16);
               particles_information_table.add_value(
                 "f_y", particles[i_particle].previous_fluid_forces[1]);
-              particles_information_table.set_precision("f_y", 12);
+              particles_information_table.set_precision("f_y", 16);
 
               if (dim == 3)
                 {
                   particles_information_table.add_value(
                     "f_z", particles[i_particle].previous_fluid_forces[2]);
-                  particles_information_table.set_precision("f_z", 12);
+                  particles_information_table.set_precision("f_z", 16);
                 }
 
               if (dim == 3)
                 {
                   particles_information_table.add_value(
                     "omega_x", particles[i_particle].previous_omega[j][0]);
-                  particles_information_table.set_precision("omega_x", 12);
+                  particles_information_table.set_precision("omega_x", 16);
                   particles_information_table.add_value(
                     "omega_y", particles[i_particle].previous_omega[j][1]);
-                  particles_information_table.set_precision("omega_y", 12);
+                  particles_information_table.set_precision("omega_y", 16);
                 }
               particles_information_table.add_value(
                 "omega_z", particles[i_particle].previous_omega[j][2]);
-              particles_information_table.set_precision("omega_z", 12);
+              particles_information_table.set_precision("omega_z", 16);
               if (dim == 3)
                 {
                   particles_information_table.add_value(
                     "T_x", particles[i_particle].previous_fluid_torque[0]);
-                  particles_information_table.set_precision("T_x", 12);
+                  particles_information_table.set_precision("T_x", 16);
                   particles_information_table.add_value(
                     "T_y", particles[i_particle].previous_fluid_torque[1]);
-                  particles_information_table.set_precision("T_y", 12);
+                  particles_information_table.set_precision("T_y", 16);
                 }
               particles_information_table.add_value(
                 "T_z", particles[i_particle].previous_fluid_torque[2]);
-              particles_information_table.set_precision("T_z", 12);
+              particles_information_table.set_precision("T_z", 16);
             }
         }
       // Write the table in the checkpoint file.
