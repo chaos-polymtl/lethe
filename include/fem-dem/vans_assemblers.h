@@ -374,7 +374,34 @@ public:
 
 /**
  * @brief Class that assembles the drag force using Gidaspow model for the
- * VANS equations
+ * VANS equations with c_d and the momentum_transfer_coefficient calculated
+ according to the following:
+ *  if (re < 1000)
+        {
+          c_d = 24 / re * (1 + 0.15 * pow(re, 0.687));
+        }
+      else
+        {
+          c_d = 0.44;
+        }
+
+      if (cell_void_fraction >= 0.8)
+        {
+          momentum_transfer_coefficient =
+            0.75 * c_d * cell_void_fraction * relative_velocity.norm() *
+            density * (1 - cell_void_fraction) /
+            particle_properties[DEM::PropertiesIndex::dp] *
+            pow(cell_void_fraction, -2.65);
+        }
+      else
+        {
+          momentum_transfer_coefficient =
+            150 * pow((1 - cell_void_fraction), 2) * viscosity * density /
+              (cell_void_fraction *
+               pow(particle_properties[DEM::PropertiesIndex::dp], 2)) +
+            1.75 * (1 - cell_void_fraction) * relative_velocity.norm() /
+              particle_properties[DEM::PropertiesIndex::dp];
+        }
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers

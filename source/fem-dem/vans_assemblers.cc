@@ -1307,7 +1307,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
       if (cell_void_fraction >= 0.8)
         {
           momentum_transfer_coefficient =
-            3 / 4 * c_d * cell_void_fraction * relative_velocity.norm() *
+            0.75 * c_d * cell_void_fraction * relative_velocity.norm() *
             density * (1 - cell_void_fraction) /
             particle_properties[DEM::PropertiesIndex::dp] *
             pow(cell_void_fraction, -2.65);
