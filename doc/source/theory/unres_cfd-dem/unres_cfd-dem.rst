@@ -1,16 +1,19 @@
 Unresolved CFD-DEM coupling
 ############################
 
-Unresolved CFD-DEM coupling is a technique with high potential for design and analysis of multiphase flows involving particles and fluid, such as fluidized beds, stirred and floculation tanks. In this approach, we apply Newton's second law to each particle individually such that their movement is described at a micro scale (as in DEM simulations). For the fluid, the Volume Average Navier-Stokes (VANS) equations are used to describe the fluid at a meso scale. The meso-micro scale allows for particle-fluid simulations involving large numbers of particles with reasonable computational cost and highly detailed results (in both time and space).
+Unresolved CFD-DEM coupling is a technique with high potential for design and analysis of multiphase flows involving particles and fluid, such as fluidized beds, stirred and floculation tanks. In this approach, we apply Newton's second law to each particle individually such that their movement is described at a micro scale (as in DEM simulations). For the fluid, the Volume Average Navier-Stokes (VANS) equations are used to describe the fluid at a meso scale. The meso-micro scale allows for particle-fluid simulations involving large numbers of particles with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases need to be modeled, i.e., not resolved. The following image represents the meso-micro scale approach applied in unresolved CFD-DEM simulations.
+
+.. image:: images/schematic_unresolve_cfd-dem.jpg
+    :alt: Schematic represantion of micro-meso scale approach in unresolved CFD-DEM
+    :align: center
+    :name: geometry
 
 In this guide, we summarize the theory behind Unresolved CFD-DEM. For further details, we refer the reader to the articles by Bérard, Patience & Blais (2019) `[1] <https://doi.org/10.1002/cjce.23686>`_, and Zhou et al. (2010) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
 
 Applying Newton's second law on the particle :math:`i` surrounded by fluid a :math:`f`, we find:
 
 .. math::
-    m_i \frac{d \mathbf{v}_i}{dt} = \sum_{j}\mathbf{f}_{c,ij} + \sum_{j}\mathbf{f}_{nc,ij} + \mathbf{f}_{pf,i} + \mathbf{f}_{g,i}
-    
-.. math::    
+    m_i \frac{d \mathbf{v}_i}{dt} = \sum_{j}\mathbf{f}_{c,ij} + \sum_{j}\mathbf{f}_{nc,ij} + \mathbf{f}_{pf,i} + \mathbf{f}_{g,i} \\
     I_i \frac{d\mathbf{\omega}_i}{dt} = \sum_{j}\left ( \mathbf{M}_{c,ij} + \mathbf{M}_{r,ij} \right ) + \sum_{w}\left ( \mathbf{M}_{c,iw} + \mathbf{M}_{r,iw} \right )
 
 where:
@@ -44,9 +47,11 @@ where:
 
 Since pressure in Lethe does not account for the hydrostatic pressure, we explicitly insert :math:`\mathbf{f}_{Ar,i}` in :math:`\mathbf{f}_{pf,i}`.
 
-Usually, drag is the greatest magnitude force in unresolved CFD-DEM. It is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <https://lethe-cfd.github.io/lethe/parameters/unresolved_cfd-dem/cfd_dem.html>`_.
+In unresolved CFD-DEM drag is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <https://lethe-cfd.github.io/lethe/parameters/unresolved_cfd-dem/cfd_dem.html>`_.
 
+Since we represent the fluid at a meso scale, the quantities calculated for the subdomain are actually averages among its volume. 
 
+, we calculate all quantities in unresolved CFD-DEM based on the volume average inside the fluid subdomain. To do this, we apply the Volume Average Navier-Stokes (VANS) equations on the fluid phase: 
 
 .. math::
     \nabla \cdot \mathbf{u} &= 0   \\
