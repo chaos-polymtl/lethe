@@ -1297,7 +1297,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
       // Gidaspow Drag Model CD Calculation
       if (re <= 1000)
         {
-          c_d = 24 / re * (1 + 1.15 * pow(re, 0.687));
+          c_d = 24 / re * (1 + 0.15 * pow(re, 0.687));
         }
       else
         {
