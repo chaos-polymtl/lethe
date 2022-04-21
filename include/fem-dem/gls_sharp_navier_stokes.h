@@ -349,8 +349,8 @@ private:
 
   /**
    * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
-   * This function stores all the previous particles states in one file. Each
-   * row corresponds to on particle state. The file is structured as follows:
+   * This function stores all the previous' particles states in one file. Each
+   * row corresponds to one particle state. The file is structured as follows:
    *
    *
    * P0 state at t
