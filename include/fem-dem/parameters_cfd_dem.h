@@ -52,7 +52,8 @@ namespace Parameters
     rong,
     dallavalle,
     kochhill,
-    beetstra
+    beetstra,
+    gidaspow
   };
 
   enum class VANSModel

@@ -1243,6 +1243,102 @@ template class GLSVansAssemblerBeetstra<3>;
 
 template <int dim>
 void
+GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+
+{
+  // particle_number is an increment that goes from 0 to n_particles_in_cell.
+  // It is incremented at the end of the loop over particles and is used to
+  // point to the element of the vectors relative_velocity and
+  // fluid_velocity_at_particle_location corresponding to the particle being
+  // looped over.
+  unsigned int particle_number;
+  double       c_d       = 0;
+  auto &       beta_drag = scratch_data.beta_drag;
+
+  Tensor<1, dim> relative_velocity;
+  Tensor<1, dim> drag_force;
+
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
+  const auto pic  = scratch_data.pic;
+  double momentum_transfer_coefficient = 0;
+  beta_drag       = 0;
+  particle_number = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      relative_velocity =
+        scratch_data.fluid_velocity_at_particle_location[particle_number] -
+        scratch_data.particle_velocity[particle_number];
+
+      double cell_void_fraction =
+        scratch_data.cell_void_fraction[particle_number];
+
+      // Particle's Reynolds number
+      double re = 1e-1 + cell_void_fraction * relative_velocity.norm() *
+                           particle_properties[DEM::PropertiesIndex::dp] /
+                           (viscosity + DBL_MIN);
+
+      // Gidaspow Drag Model CD Calculation
+      if (re <= 1000)
+      { 
+        c_d = 24 / re * (1 + 1.15 * pow(re, 0.687));
+      }
+      else
+      {
+        c_d = 0.44;
+      }
+
+      if (cell_void_fraction > 0.8)
+      {
+        momentum_transfer_coefficient =
+        3 / 4 * c_d * cell_void_fraction * relative_velocity.norm() * density * (1 - cell_void_fraction) / particle_properties[DEM::PropertiesIndex::dp] * pow(cell_void_fraction, -2.65);
+      }
+      else
+      {
+        momentum_transfer_coefficient = 150 * pow((1 - cell_void_fraction), 2) * viscosity * density /
+         (cell_void_fraction * pow(particle_properties[DEM::PropertiesIndex::dp], 2)) + 
+         1.75 * (1 - cell_void_fraction) * relative_velocity.norm() / particle_properties[DEM::PropertiesIndex::dp];
+      }
+
+      drag_force = 1 / 6 * M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], 3) * momentum_transfer_coefficient * relative_velocity;
+
+      beta_drag +=
+        drag_force.norm() / (density * (relative_velocity.norm()) + 1e-15);
+
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            drag_force[d];
+        }
+
+      particle_number += 1;
+    }
+
+  beta_drag = beta_drag / scratch_data.cell_volume;
+}
+
+template class GLSVansAssemblerGidaspow<2>;
+template class GLSVansAssemblerGidaspow<3>;
+
+template <int dim>
+void
 GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 

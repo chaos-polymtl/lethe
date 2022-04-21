@@ -99,7 +99,7 @@ namespace Parameters
     prm.declare_entry("drag model",
                       "difelice",
                       Patterns::Selection(
-                        "difelice|rong|dallavalle|kochhill|beetstra"),
+                        "difelice|rong|dallavalle|kochhill|beetstra|gidaspow"),
                       "The drag model used to determine the drag coefficient");
     prm.declare_entry("post processing",
                       "false",
@@ -164,6 +164,8 @@ namespace Parameters
       drag_model = Parameters::DragModel::kochhill;
     else if (op == "beetstra")
       drag_model = Parameters::DragModel::beetstra;
+    else if (op == "gidaspow")
+      drag_model = Parameters::DragModel::gidaspow;
     else
       throw(std::runtime_error("Invalid drag model"));
 
