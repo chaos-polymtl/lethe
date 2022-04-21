@@ -362,7 +362,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @brief calculate_particle_fluid_interactions calculates the solid_fluid interactions
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
