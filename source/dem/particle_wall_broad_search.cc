@@ -65,9 +65,15 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
                                 boundary_cells_content.boundary_id,
                                 boundary_cells_content.global_face_id);
 
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+              particle_wall_contact_candidates[particles_in_cell_iterator
+                                                 ->get_local_index()]
+                .insert({boundary_cells_content.global_face_id, map_content});
+#else
               particle_wall_contact_candidates[particles_in_cell_iterator
                                                  ->get_id()]
                 .insert({boundary_cells_content.global_face_id, map_content});
+#endif
             }
         }
     }
@@ -135,9 +141,15 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
                        particles_in_cell_iterator != particles_in_cell.end();
                        ++particles_in_cell_iterator)
                     {
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+                      pfw_contact_candidates[particles_in_cell_iterator
+                                               ->get_local_index()]
+                        .insert({floating_wall_id, particles_in_cell_iterator});
+#else
                       pfw_contact_candidates[particles_in_cell_iterator
                                                ->get_id()]
                         .insert({floating_wall_id, particles_in_cell_iterator});
+#endif
                     }
                 }
             }

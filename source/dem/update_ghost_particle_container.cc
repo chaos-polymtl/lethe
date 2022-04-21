@@ -15,7 +15,12 @@ update_ghost_particle_container(
        particle_iterator != particle_handler->end_ghost();
        ++particle_iterator)
     {
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      ghost_particle_container[particle_iterator->get_local_index()] =
+        particle_iterator;
+#else
       ghost_particle_container[particle_iterator->get_id()] = particle_iterator;
+#endif
     }
 }
 

@@ -75,8 +75,13 @@ ParticlePointLineFineSearch<dim>::particle_point_fine_search(
           contact_info.particle  = particle;
           contact_info.point_one = vertex_location_3d;
 
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+          particle_point_pairs_in_contact.insert(
+            {particle->get_local_index(), contact_info});
+#else
           particle_point_pairs_in_contact.insert(
             {particle->get_id(), contact_info});
+#endif
         }
     }
   return particle_point_pairs_in_contact;
@@ -165,8 +170,13 @@ ParticlePointLineFineSearch<dim>::particle_line_fine_search(
           contact_info.point_one = vertex_one_location_3d;
           contact_info.point_two = vertex_two_location_3d;
 
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+          particle_line_pairs_in_contact.insert(
+            {particle->get_local_index(), contact_info});
+#else
           particle_line_pairs_in_contact.insert(
             {particle->get_id(), contact_info});
+#endif
         }
     }
   return particle_line_pairs_in_contact;

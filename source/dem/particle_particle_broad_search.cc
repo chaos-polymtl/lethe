@@ -54,8 +54,13 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particles_in_main_cell.end();
                ++particles_in_main_cell_iterator_one)
             {
-              const unsigned int particle_one_id =
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+              const types::particle_index particle_one_id =
+                particles_in_main_cell_iterator_one->get_local_index();
+#else
+              const types::particle_index particle_one_id =
                 particles_in_main_cell_iterator_one->get_id();
+#endif
 
               std::vector<types::particle_index> &particle_candidate_container =
                 local_contact_pair_candidates[particle_one_id];
@@ -76,8 +81,13 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                 {
                   // Capturing all the local-local particle pairs in the
                   // main cell
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+                  particle_candidate_container.emplace_back(
+                    particles_in_main_cell_iterator_two->get_local_index());
+#else
                   particle_candidate_container.emplace_back(
                     particles_in_main_cell_iterator_two->get_id());
+#endif
                 }
             }
 
@@ -102,9 +112,16 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator)
                 {
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+                  std::vector<types::particle_index> &
+                    particle_candidate_container = local_contact_pair_candidates
+                      [particles_in_main_cell_iterator->get_local_index()];
+#else
                   std::vector<types::particle_index> &
                     particle_candidate_container = local_contact_pair_candidates
                       [particles_in_main_cell_iterator->get_id()];
+#endif
+
                   if (particle_candidate_container.empty())
                     particle_candidate_container.reserve(40);
 
@@ -116,8 +133,13 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                        particles_in_neighbor_cell.end();
                        ++particles_in_neighbor_cell_iterator)
                     {
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+                      particle_candidate_container.emplace_back(
+                        particles_in_neighbor_cell_iterator->get_local_index());
+#else
                       particle_candidate_container.emplace_back(
                         particles_in_neighbor_cell_iterator->get_id());
+#endif
                     }
                 }
             }
@@ -169,8 +191,13 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator)
                 {
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+                  types::particle_index particle_one_id =
+                    particles_in_main_cell_iterator->get_local_index();
+#else
                   types::particle_index particle_one_id =
                     particles_in_main_cell_iterator->get_id();
+#endif
 
                   std::vector<types::particle_index>
                     &particle_candidate_container =
@@ -185,8 +212,13 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                        particles_in_neighbor_cell.end();
                        ++particles_in_neighbor_cell_iterator)
                     {
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+                      particle_candidate_container.emplace_back(
+                        particles_in_neighbor_cell_iterator->get_local_index());
+#else
                       particle_candidate_container.emplace_back(
                         particles_in_neighbor_cell_iterator->get_id());
+#endif
                     }
                 }
             }

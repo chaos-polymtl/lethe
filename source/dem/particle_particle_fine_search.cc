@@ -175,9 +175,15 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
           if (square_distance < neighborhood_threshold)
             {
               // Getting the particle one contact list and particle two id
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+              auto particle_one_contact_list =
+                &ghost_adjacent_particles[particle_one->get_local_index()];
+              unsigned int particle_two_id = particle_two->get_local_index();
+#else
               auto particle_one_contact_list =
                 &ghost_adjacent_particles[particle_one->get_id()];
               unsigned int particle_two_id = particle_two->get_id();
+#endif
 
               Tensor<1, 3> tangential_overlap;
               tangential_overlap = 0;

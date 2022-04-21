@@ -15,14 +15,24 @@ update_particle_container(
        particle_iterator != particle_handler->end();
        ++particle_iterator)
     {
-      particle_container[particle_iterator->get_id()] = particle_iterator;
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      particle_container[particle_iterator->get_local_index()] =
+#else
+      particle_container[particle_iterator->get_id()] =
+#endif
+        particle_iterator;
     }
 
   for (auto particle_iterator = particle_handler->begin_ghost();
        particle_iterator != particle_handler->end_ghost();
        ++particle_iterator)
     {
-      particle_container[particle_iterator->get_id()] = particle_iterator;
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      particle_container[particle_iterator->get_local_index()] =
+#else
+      particle_container[particle_iterator->get_id()] =
+#endif
+        particle_iterator;
     }
 }
 
