@@ -349,12 +349,32 @@ private:
 
   /**
    * @brief Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart
+   * This function stores all the previous' particles states in one file. Each
+   * row corresponds to one particle state. The file is structured as follows:
+   *
+   *
+   * P0 state at time t
+   *
+   * P0 state at time t-dt
+   *
+   * P0 state at time t-2dt
+   *
+   * P1 state at time t
+   *
+   * P1 state at time t-dt
+   *
+   * P1 state at time t-2dt
+   *
+   * etc
+   *
    */
 
   virtual void
   write_checkpoint() override;
   /*
-   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart
+   * @brief Read a gls_sharp simulation checkpoint and initiate simulation restart.
+   * See the description of the function write_checkpoint for more details about
+   * the file structure.
    * */
   virtual void
   read_checkpoint() override;
