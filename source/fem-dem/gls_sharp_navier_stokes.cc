@@ -2772,10 +2772,11 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   if (dim == 2)
     {
       unsigned int row = 0;
-      for (unsigned int p_i = 0; p_i < restart_data.size(); ++p_i)
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           unsigned int j = 0;
-          while (restart_data["ID"][row] == p_i)
+          while (restart_data["ID"][row] == p_i and
+                 row < restart_data["ID"].size())
             {
               if (j == 0)
                 {
@@ -2825,7 +2826,8 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           unsigned int j = 0;
-          while (restart_data["ID"][row] == p_i)
+          while (restart_data["ID"][row] == p_i and
+                 row < restart_data["ID"].size())
             {
               if (j == 0)
                 {
