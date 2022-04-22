@@ -1314,6 +1314,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
         }
       else
         {
+          // Assuming the sphericity of particles = 1
           momentum_transfer_coefficient =
             150 * pow((1 - cell_void_fraction), 2) * viscosity * density /
               (cell_void_fraction *
