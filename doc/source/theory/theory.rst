@@ -50,15 +50,9 @@ Discrete Element Method
 **Under construction**
 
 
-
-
-
 Unresolved CFD-DEM
 =============================
 **Under construction**
-
-
-
 
 
 Resolved CFD-DEM
