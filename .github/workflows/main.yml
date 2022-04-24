@@ -26,17 +26,16 @@ jobs:
     # Run steps in container of dealii's master branch
     container:
       image: dealii/dealii:${{ matrix.dealii_version }}-focal
+      options: --user root
 
     steps:
       - name: Setup
         run: |
-          # Github action require containers to run as root. We can't do this without breaking the mpi tests.
-          # To allow the checkout action to operate, we preemptively give access to the workspace directory manually. 
-          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
-
           # Since dealii image doesn't include Node.js, we'll install it
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs
+
+
 
           echo "Github actions is sane!"
           echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
@@ -58,6 +57,9 @@ jobs:
       # These tests require a single core each so we will run them in parallel
       - name: Run Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
         run: |
+          #Allow OMPI to run as root
+          export OMPI_ALLOW_RUN_AS_ROOT=1
+          export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
           cd build-release
           # Print the tests to be executed
           ctest -N --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
@@ -67,6 +69,9 @@ jobs:
       # These tests require two cores each so we will run them sequencially
       - name: Run multi-core Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
         run: |
+          #Allow OMPI to run as root
+          export OMPI_ALLOW_RUN_AS_ROOT=1
+          export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
           cd build-release
           # Print the tests to be executed
           ctest -N --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
@@ -86,6 +91,9 @@ jobs:
       # These tests require a single core each so we will run them in parallel
       - name: Run Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
         run: |
+          #Allow OMPI to run as root
+          export OMPI_ALLOW_RUN_AS_ROOT=1
+          export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
           cd build-debug
           # Print the tests to be executed
           ctest -N --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
@@ -95,6 +103,9 @@ jobs:
       # These tests require two cores each so we will run them sequencially
       - name: Run multi-core Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
         run: |
+          #Allow OMPI to run as root
+          export OMPI_ALLOW_RUN_AS_ROOT=1
+          export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
           cd build-debug
           # Print the tests to be executed
           ctest -N --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}

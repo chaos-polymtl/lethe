@@ -10,15 +10,15 @@ Lethe was designed to solve the incompressible Navier-Stokes equations. For the 
 
 where:
 
-* :math:`\mathbf{u}` is the velocity of the fluid. :math:`\mathbf{u}` is a vector such that :math:`\mathbf{u}=[u,v]^T` in 2D and :math:`\mathbf{u}=[u,v,w]^T` in 3D.
+* :math:`\mathbf{u}` is the velocity of the fluid. :math:`\mathbf{u}` is a vector such that :math:`\mathbf{u}=[u,v]^T` in 2D and :math:`\mathbf{u}=[u,v,w]^T` in 3D;
 
-* :math:`p` is the pressure
+* :math:`p` is the pressure;
 
-* :math:`\nabla` is the `del operator <https://en.wikipedia.org/wiki/Del>`_
+* :math:`\nabla` is the `del operator <https://en.wikipedia.org/wiki/Del>`_;
 
-* :math:`\rho` is the density of the fluid.
+* :math:`\rho` is the density of the fluid;
 
-* :math:`\nu` is the `kinematic viscosity <https://en.wikipedia.org/wiki/Viscosity>`_ of the fluid.
+* :math:`\nu` is the `kinematic viscosity <https://en.wikipedia.org/wiki/Viscosity>`_ of the fluid;
 
 * :math:`\mathbf{f}` is a momentum source term.
 

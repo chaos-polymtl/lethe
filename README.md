@@ -63,15 +63,18 @@ Contributors (in alphabetical order):
 - Jeanne Joachim
 - Rajeshwari Kamble
 - Martin Kronbichler
+- Charles Le Pailleur
 - Ghazaleh Mirakhori
 - Peter Munch
+- Victor Oliveira Ferreira
 - Paul Patience
 - Catherine Radburn
+- Philippe Rivest
 - Laura Prieto Saavedra
 
 ## License
 
-This project is licensed under the [LGPL-3.0-only](LICENSE).
+This project is licensed under the [LGPL-2.1 license](LICENSE).
 
 Unless you explicitly state otherwise, any contribution intentionally
 submitted by you for inclusion in this project shall be licensed as
