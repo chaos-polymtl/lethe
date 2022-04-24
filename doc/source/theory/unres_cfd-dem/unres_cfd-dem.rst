@@ -105,7 +105,7 @@ Void fraction
 --------------
 Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models `[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_. In Lethe we apply the Particle Centroid Method (PCM) `[5] <https://doi.org/10.1002/aic.14421>`_, which is simple and the most popular method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle on the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
 
-.. image:: images/void_frac1.png
+.. image:: images/void_frac1.jpg
 .. image:: images/void_frac2.jpg
 
 PCM can be written as:
