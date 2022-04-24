@@ -48,7 +48,6 @@ where:
 * :math:`\mathbf{f}_{g,i}` is the force due to gravity;
 * :math:`\mathbf{f}''_{i}` are the remaining forces, including virtual mass, Basset, Lift, and Magnus (currently not implemented in Lethe).
 
-
 .. note::
     Since pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{Ar,i}` in :math:`\mathbf{f}_{pf,i}`.
 
@@ -57,7 +56,7 @@ In unresolved CFD-DEM drag is calculated using correlations (frequently called d
 Volume Average Navier-Stokes
 -----------------------------
 
-Since we represent the fluid at a meso scale, the quantities calculated for the subdomains are averages among its volume. Additionally, as the volume of fluid is a fraction of the subdomain, the porosity (or void fraction) is taken into account. To do this, we apply the Volume Average Navier-Stokes (VANS) equations to represent the fluid phase. Mainly, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I).
+Since we represent the fluid at a meso-scale, the quantities calculated for the subdomains are averages among its volume. Additionally, as the volume of fluid is a fraction of the subdomain, the porosity (or void fraction) is taken into account. To do this, we apply the Volume Average Navier-Stokes (VANS) equations to represent the fluid phase. Mainly, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I).
 
 For both models, considering incompressible fluid, the continuity is:
 
