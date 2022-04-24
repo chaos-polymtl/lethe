@@ -3,7 +3,7 @@ Unresolved CFD-DEM coupling
 
 Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred tanks, and flocculation processes. In this approach, we apply Newton's second law to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the Volume Average Navier-Stokes (VANS) equations describe the fluid at a meso-scale. The micro-meso scale approach allows for particle-fluid simulations involving large numbers of particles with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases needs to be modeled, i.e., it is not resolved. The following image represents the micro-meso scale approach applied in unresolved CFD-DEM simulations, where the rectangles represent subdomains of the geometry and the gray spots represent the particles.
 
-.. image:: images/schematic_unresolve_cfd-dem.jpg
+.. image:: images/schematic_unresolve_cfd-dem.png
     :alt: Schematic represantion of micro-meso scale approach in unresolved CFD-DEM
     :align: center
     :name: geometry
@@ -105,8 +105,8 @@ Void fraction
 --------------
 Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models `[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_. In Lethe we apply the Particle Centroid Method (PCM) `[5] <https://doi.org/10.1002/aic.14421>`_, which is simple and the most popular method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle on the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
 
-.. image:: images/void_frac1.jpg
-.. image:: images/void_frac2.jpg
+.. image:: images/void_frac1.png
+.. image:: images/void_frac2.png
 
 PCM can be written as:
 
