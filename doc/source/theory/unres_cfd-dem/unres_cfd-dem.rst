@@ -131,8 +131,12 @@ Then, we assemble and solve the following:
     \int_{\Omega} \varphi_i \varepsilon_{f,j} \varphi_j d \Omega = \int_{\Omega} \varepsilon_{f,i} \varphi_i d \Omega
 
 
-Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities.
+Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities. To do so, the left hand side of the previous equation is substituted by:
 
+.. math::
+    \iint_\Omega L^2 \nabla \phi_i \nabla \phi_j d\Omega
+
+Where :math:`L` is the smoothing length, used as parameter in Lethe unresolved CFD-DEM simulations.
 
 Reference
 -----------
