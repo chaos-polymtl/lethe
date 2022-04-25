@@ -118,7 +118,7 @@ PCM can be written as:
 where :math:`n_p` is the number of particles with centroid inside the cell :math:`\Omega` with volume :math:`V_{\Omega}`.
 
 .. warning::
-    The void fraction of a single cell must always be close to the actual porosity of the media, regardless of the method applied on its calculation. If the cells are excessively small, the void fraction will be excessively low in some cells while in others they will be excessively high. This leads to miscalculation of quantities highly dependent of the void fraction, such as the drag force. According to the literature, **cells should be at least 3 to 4 times larger than particles**. 
+    The void fraction of a single cell must always be close to the actual porosity of the media, regardless of the method applied on its calculation. If the cells are too small, the void fraction will be excessively low in some cells and excessively high in others. This leads to miscalculation of quantities highly dependent of the void fraction, such as the drag force. According to the literature, **cells should be at least 3 to 4 times larger than particles**. 
 
 In the finite element method, the void fraction must be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection `[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_:
 
