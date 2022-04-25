@@ -1,7 +1,9 @@
 Unresolved CFD-DEM coupling
 ############################
 
-Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred tanks, and flocculation processes. In this approach, we apply Newton's second law to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the Volume Average Navier-Stokes (VANS) equations describe the fluid at a meso-scale. The micro-meso scale approach allows for particle-fluid simulations involving large numbers of particles with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases needs to be modeled, i.e., it is not resolved. The following image represents the micro-meso scale approach applied in unresolved CFD-DEM simulations, where the rectangles represent subdomains of the geometry and the gray spots represent the particles.
+Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred-tanks, and flocculation processes. In this approach, we apply Newton's second law to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the fluid is represented at a meso-scale by a mesh of cells, to which we apply the Volume Average Navier-Stokes (VANS) equations.
+
+The micro-meso scale approach allows for particle-fluid simulations involving large numbers of particles with reasonable computational cost and highly detailed results (in both time and space). As a counterpart, the interchanged momentum between phases needs to be modeled, i.e., it is not obtained straightforwardly from the application of a no-slip boundary condition at the interface between the fluid and the particles. The following image represents the micro-meso scale approach applied in unresolved CFD-DEM simulations, where the rectangles represent mesh of the geometry and the gray spots represent the particles.
 
 .. image:: images/schematic_unresolve_cfd-dem.png
     :alt: Schematic represantion of micro-meso scale approach in unresolved CFD-DEM
@@ -16,18 +18,18 @@ Particles
 Applying Newton's second law on the particle :math:`i` surrounded by fluid a :math:`f`, we find:
 
 .. math::
-    m_i \frac{d \mathbf{v}_i}{dt} = \sum_{j}\mathbf{f}_{c,ij} + \sum_{j}\mathbf{f}_{nc,ij} + \mathbf{f}_{pf,i} + \mathbf{f}_{g,i} \\
-    I_i \frac{d\mathbf{\omega}_i}{dt} = \sum_{j}\left ( \mathbf{M}_{c,ij} + \mathbf{M}_{r,ij} \right ) + \sum_{w}\left ( \mathbf{M}_{c,iw} + \mathbf{M}_{r,iw} \right )
+    m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \sum_{j}\mathbf{f}_{c,ij} + \sum_{j}\mathbf{f}_{nc,ij} + \mathbf{f}_{pf,i} + \mathbf{f}_{g,i} \\
+    I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \sum_{j}\left ( \mathbf{M}_{c,ij} + \mathbf{M}_{r,ij} \right ) + \sum_{w}\left ( \mathbf{M}_{c,iw} + \mathbf{M}_{r,iw} \right )
 
 where:
 
 * :math:`m_i` is the mass of the particle;
-* :math:`v_i` is the velocity vector;
+* :math:`\mathbf{v}_i` is the velocity vector;
 * :math:`\mathbf{f}_{c,ij}` are the contact forces between particles :math:`i` and :math:`j` (detailed in the DEM section of this guide);
-* :math:`\mathbf{f}_{nc,ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as lubrication `[3] <https://doi.org/10.1002/aic.690400418>`_.
+* :math:`\mathbf{f}_{nc,ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as lubrication forces `[3] <https://doi.org/10.1002/aic.690400418>`_ (**not yet available on Lethe**);
 * :math:`\mathbf{f}_{pf,i}` is the force exerted by the surrounding fluid over particle :math:`i`;
-* :math:`\mathbf{f}_{g,i}` is the gravity force;
-* :math:`I_i` is the momentum of inertia;
+* :math:`\mathbf{f}_{g,i}` is the gravitational force;
+* :math:`I_i` is the moment of inertia;
 * :math:`\mathbf{\omega}_i` is the angular velocity;
 * :math:`\mathbf{M}_{c,ij}` is the torque between particles :math:`i` and :math:`j`;
 * :math:`\mathbf{M}_{r,ij}` is the rolling friction between particles :math:`i` and :math:`j`;
@@ -44,21 +46,21 @@ where:
 * :math:`\mathbf{f}_{\nabla p,i}` is the force due to the pressure gradient;
 * :math:`\mathbf{f}_{\nabla \cdot \tau,i}` is the force due to the shear stress;
 * :math:`\mathbf{f}_{d,i}` is the drag force;
-* :math:`\mathbf{f}_{Ar,i}` is the buoyant (Archimedes) force;
+* :math:`\mathbf{f}_{Ar,i}` is the buoyancy (Archimedes) force;
 * :math:`\mathbf{f}_{g,i}` is the force due to gravity;
 * :math:`\mathbf{f}''_{i}` are the remaining forces, including virtual mass, Basset, Lift, and Magnus (currently not implemented in Lethe).
 
 .. note::
     Since pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{Ar,i}` in :math:`\mathbf{f}_{pf,i}`.
 
-In unresolved CFD-DEM drag is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <https://lethe-cfd.github.io/lethe/parameters/unresolved_cfd-dem/cfd_dem.html>`_.
+In unresolved CFD-DEM, drag is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <https://lethe-cfd.github.io/lethe/parameters/unresolved_cfd-dem/cfd_dem.html>`_.
 
 Volume Average Navier-Stokes
 -----------------------------
 
-Since we represent the fluid at a meso-scale, the quantities calculated for the subdomains are averages among its volume. Additionally, as the volume of fluid is a fraction of the subdomain, the porosity (or void fraction) is taken into account. To do this, we apply the Volume Average Navier-Stokes (VANS) equations to represent the fluid phase. Mainly, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I).
+Since we represent the fluid at a meso-scale, the quantities calculated for the cells are averages among its volume. Additionally, as the volume of fluid is a fraction of the cell, the porosity (or void fraction) is taken into account. To do this, we apply the Volume Average Navier-Stokes (VANS) equations to represent the fluid phase. Mainly, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I).
 
-For both models, considering incompressible fluid, the continuity is:
+Considering an incompressible flow, the continuity equation for both models is:
 
 .. math::
     \frac{\partial \varepsilon_f}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \right ) = 0
@@ -97,7 +99,7 @@ while for Model B, since the pressure is totally in the fluid, we write:
 .. math:: 
     \mathbf{F}_{pf}^B = -\frac{1}{V_{\Omega}}\sum_{i}^{n_p}\left ( \mathbf{f}_{pf, i} \right )
 
-where :math:`n_p` is the number of particles inside the subdomain :math:`\Omega` with volume :math:`V_{\Omega}`.
+where :math:`n_p` is the number of particles inside the cell :math:`\Omega` with volume :math:`V_{\Omega}`.
 
 Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../parameters/unresolved_cfd-dem/cfd_dem` page of this guide).
 
@@ -111,11 +113,14 @@ Determining the void fraction is an important step in unresolved CFD-DEM, as can
 PCM can be written as:
 
 .. math:: 
-    \varepsilon_f = 1 - \frac{\sum_{i}^{n_p} V_{p,i}}{\Omega}
+    \varepsilon_f = 1 - \frac{\sum_{i}^{n_p} V_{p,i}}{V_\Omega}
 
-where :math:`n_p` is the number of particles with centroid inside the subdomain :math:`V_{\Omega}`.
+where :math:`n_p` is the number of particles with centroid inside the cell :math:`\Omega` with volume :math:`V_{\Omega}`.
 
-In finite Element, the void fraction must be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection `[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_:
+.. warning::
+    The void fraction of a single cell must always be close to the actual porosity of the media, regardless of the method applied on its calculation. If the cells are excessively small, the void fraction will be excessively low in some cells while in others they will be excessively high. This leads to miscalculation of quantities highly dependent of the void fraction, such as the drag force. According to the literature, **cells should be at least 3 to 4 times larger than particles**. 
+
+In the finite element method, the void fraction must be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection `[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_:
 
 .. math:: 
     \min_{\varepsilon_f \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \phi_j - \varepsilon_{f,i} \right )

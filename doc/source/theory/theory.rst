@@ -57,7 +57,7 @@ Unresolved CFD-DEM
     :glob:
     :titlesonly:
 
-    unres_cfd-dem/unres_cfd-dem
+    unresolved_cfd-dem/unresolved_cfd-dem
 
 Resolved CFD-DEM
 =============================
