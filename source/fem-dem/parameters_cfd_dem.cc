@@ -82,7 +82,7 @@ namespace Parameters
                       "Choose whether or not to implement d(epsilon)/dt ");
     prm.declare_entry(
       "interpolated void fraction",
-      "false",
+      "true",
       Patterns::Bool(),
       "Choose whether the void fraction is the one of the cell or the interpolated at the particle position.");
     prm.declare_entry("drag force",
