@@ -59,12 +59,12 @@ namespace Parameters
     void_fraction.parse_parameters(prm);
     prm.leave_subsection();
 
-    read_dem                    = prm.get_bool("read dem");
-    bound_void_fraction         = prm.get_bool("bound void fraction");
-    dem_file_name               = prm.get("dem file name");
-    l2_smoothing_factor         = prm.get_double("l2 smoothing factor");
-    l2_lower_bound              = prm.get_double("l2 lower bound");
-    l2_upper_bound              = prm.get_double("l2 upper bound");
+    read_dem            = prm.get_bool("read dem");
+    bound_void_fraction = prm.get_bool("bound void fraction");
+    dem_file_name       = prm.get("dem file name");
+    l2_smoothing_factor = prm.get_double("l2 smoothing factor");
+    l2_lower_bound      = prm.get_double("l2 lower bound");
+    l2_upper_bound      = prm.get_double("l2 upper bound");
     prm.leave_subsection();
   }
 
@@ -80,10 +80,11 @@ namespace Parameters
                       "true",
                       Patterns::Bool(),
                       "Choose whether or not to implement d(epsilon)/dt ");
-    prm.declare_entry("interpolated void fraction",
-                      "false",
-                      Patterns::Bool(),
-                      "Choose whether the void fraction is the one of the cell or the interpolated at the particle position.");
+    prm.declare_entry(
+      "interpolated void fraction",
+      "false",
+      Patterns::Bool(),
+      "Choose whether the void fraction is the one of the cell or the interpolated at the particle position.");
     prm.declare_entry("drag force",
                       "true",
                       Patterns::Bool(),
@@ -146,18 +147,17 @@ namespace Parameters
     grad_div = prm.get_bool("grad div");
     void_fraction_time_derivative =
       prm.get_bool("void fraction time derivative");
-    interpolated_void_fraction = 
-      prm.get_bool("interpolated void fraction");
-    drag_force             = prm.get_bool("drag force");
-    buoyancy_force         = prm.get_bool("buoyancy force");
-    shear_force            = prm.get_bool("shear force");
-    pressure_force         = prm.get_bool("pressure force");
-    post_processing        = prm.get_bool("post processing");
-    inlet_boundary_id      = prm.get_integer("inlet boundary id");
-    outlet_boundary_id     = prm.get_integer("outlet boundary id");
-    coupling_frequency     = prm.get_integer("coupling frequency");
-    cstar                  = prm.get_double("grad-div length scale");
-    implicit_stabilization = prm.get_bool("implicit stabilization");
+    interpolated_void_fraction = prm.get_bool("interpolated void fraction");
+    drag_force                 = prm.get_bool("drag force");
+    buoyancy_force             = prm.get_bool("buoyancy force");
+    shear_force                = prm.get_bool("shear force");
+    pressure_force             = prm.get_bool("pressure force");
+    post_processing            = prm.get_bool("post processing");
+    inlet_boundary_id          = prm.get_integer("inlet boundary id");
+    outlet_boundary_id         = prm.get_integer("outlet boundary id");
+    coupling_frequency         = prm.get_integer("coupling frequency");
+    cstar                      = prm.get_double("grad-div length scale");
+    implicit_stabilization     = prm.get_bool("implicit stabilization");
 
     const std::string op = prm.get("drag model");
     if (op == "difelice")

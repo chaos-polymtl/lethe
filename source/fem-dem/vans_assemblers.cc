@@ -880,9 +880,8 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
       if (cfd_dem.interpolated_void_fraction == true)
         cell_void_fraction =
           scratch_data.interpolated_void_fraction[particle_number];
-      else 
-        cell_void_fraction =
-          scratch_data.cell_void_fraction;
+      else
+        cell_void_fraction = scratch_data.cell_void_fraction;
 
       // Particle's Reynolds number
       double re = 1e-1 + cell_void_fraction * relative_velocity.norm() *
@@ -956,13 +955,12 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
         scratch_data.fluid_velocity_at_particle_location[particle_number] -
         scratch_data.particle_velocity[particle_number];
 
-      
+
       if (cfd_dem.interpolated_void_fraction == true)
         cell_void_fraction =
           scratch_data.interpolated_void_fraction[particle_number];
-      else 
-        cell_void_fraction =
-          scratch_data.cell_void_fraction;
+      else
+        cell_void_fraction = scratch_data.cell_void_fraction;
 
       // Particle's Reynolds number
       double re = 1e-1 + cell_void_fraction * relative_velocity.norm() *
@@ -1115,9 +1113,8 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
       if (cfd_dem.interpolated_void_fraction == true)
         cell_void_fraction =
           scratch_data.interpolated_void_fraction[particle_number];
-      else 
-        cell_void_fraction =
-          scratch_data.cell_void_fraction;
+      else
+        cell_void_fraction = scratch_data.cell_void_fraction;
 
       // Particle's Reynolds number
       double re = 1e-1 + relative_velocity.norm() *
@@ -1178,9 +1175,9 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
 
 {
   unsigned int particle_number;
-  double       cell_void_fraction     = 0;
-  double       normalized_drag_force  = 0;
-  auto &       beta_drag              = scratch_data.beta_drag;
+  double       cell_void_fraction    = 0;
+  double       normalized_drag_force = 0;
+  auto &       beta_drag             = scratch_data.beta_drag;
 
   Tensor<1, dim> superficial_velocity;
   Tensor<1, dim> relative_velocity;
@@ -1216,9 +1213,8 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
       if (cfd_dem.interpolated_void_fraction == true)
         cell_void_fraction =
           scratch_data.interpolated_void_fraction[particle_number];
-      else 
-        cell_void_fraction =
-          scratch_data.cell_void_fraction;
+      else
+        cell_void_fraction = scratch_data.cell_void_fraction;
 
       superficial_velocity = relative_velocity * cell_void_fraction;
 
@@ -1311,9 +1307,8 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
       if (cfd_dem.interpolated_void_fraction == true)
         cell_void_fraction =
           scratch_data.interpolated_void_fraction[particle_number];
-      else 
-        cell_void_fraction =
-          scratch_data.cell_void_fraction;
+      else
+        cell_void_fraction = scratch_data.cell_void_fraction;
 
       // Particle's Reynolds number
       double re = 1e-1 + cell_void_fraction * relative_velocity.norm() *

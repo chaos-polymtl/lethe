@@ -649,22 +649,23 @@ public:
     void_fraction_dh_cell->get_dof_indices(void_fraction_dof_indices);
 
     // Loop over particles in cell
-    double total_particle_volume         = 0;
-    cell_void_fraction                   = 0;
+    double total_particle_volume = 0;
+    cell_void_fraction           = 0;
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
-        total_particle_volume += M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
-                (2 * dim);
+        total_particle_volume +=
+          M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+          (2 * dim);
         // Set the particle_fluid_interactions properties and vectors to 0
         for (int d = 0; d < dim; ++d)
           {
             particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
             undisturbed_flow_force[d]                                  = 0;
           }
-        
-        interpolated_void_fraction[particle_number]           = 0;
-        fluid_velocity_at_particle_location[particle_number]  = 0;
+
+        interpolated_void_fraction[particle_number]          = 0;
+        fluid_velocity_at_particle_location[particle_number] = 0;
 
         // Stock the values of particle velocity in a tensor
         particle_velocity[particle_number][0] =
