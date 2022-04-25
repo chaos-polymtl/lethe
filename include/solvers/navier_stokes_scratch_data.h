@@ -649,19 +649,22 @@ public:
     void_fraction_dh_cell->get_dof_indices(void_fraction_dof_indices);
 
     // Loop over particles in cell
+    double total_particle_volume         = 0;
+    cell_void_fraction                   = 0;
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
-
+        total_particle_volume += M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                (2 * dim);
         // Set the particle_fluid_interactions properties and vectors to 0
         for (int d = 0; d < dim; ++d)
           {
             particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
             undisturbed_flow_force[d]                                  = 0;
           }
-
-        cell_void_fraction[particle_number]                  = 0;
-        fluid_velocity_at_particle_location[particle_number] = 0;
+        
+        interpolated_void_fraction[particle_number]           = 0;
+        fluid_velocity_at_particle_location[particle_number]  = 0;
 
         // Stock the values of particle velocity in a tensor
         particle_velocity[particle_number][0] =
@@ -689,7 +692,7 @@ public:
           }
         for (unsigned int j = 0; j < fe_void_fraction.dofs_per_cell; ++j)
           {
-            cell_void_fraction[particle_number] +=
+            interpolated_void_fraction[particle_number] +=
               void_fraction_solution[void_fraction_dof_indices[j]] *
               fe_void_fraction.shape_value(j, reference_location);
           }
@@ -697,6 +700,8 @@ public:
         average_particle_velocity += particle_velocity[particle_number];
         particle_number += 1;
       }
+
+    cell_void_fraction = (cell_volume - total_particle_volume) / cell_volume;
 
     if (particle_number != 0)
       {
@@ -882,7 +887,8 @@ public:
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
-  std::vector<double>         cell_void_fraction;
+  double                      cell_void_fraction;
+  std::vector<double>         interpolated_void_fraction;
   unsigned int                max_number_of_particles_per_cell;
   unsigned int                number_of_locally_owned_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
