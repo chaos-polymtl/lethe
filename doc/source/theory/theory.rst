@@ -52,8 +52,12 @@ Discrete Element Method
 
 Unresolved CFD-DEM
 =============================
-**Under construction**
+.. toctree::
+    :maxdepth: 3
+    :glob:
+    :titlesonly:
 
+    unresolved_cfd-dem/unresolved_cfd-dem
 
 Resolved CFD-DEM
 =============================

@@ -886,7 +886,7 @@ public:
   std::vector<double>            curvature_values;
 
   /**
-   * Scratch component for the void fractoin auxiliary physics
+   * Scratch component for the void fraction auxiliary physics
    */
   bool                             gather_void_fraction;
   unsigned int                     n_dofs_void_fraction;
