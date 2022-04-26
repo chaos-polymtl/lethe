@@ -84,7 +84,7 @@ namespace Parameters
       "interpolated void fraction",
       "true",
       Patterns::Bool(),
-      "Choose whether the void fraction is the one of the cell or the interpolated at the particle position.");
+      "Choose whether the void fraction is the one of the cell or the one interpolated at the particle position.");
     prm.declare_entry("drag force",
                       "true",
                       Patterns::Bool(),
