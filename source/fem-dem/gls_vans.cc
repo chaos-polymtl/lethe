@@ -719,13 +719,15 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     std::vector<TrilinosWrappers::MPI::Vector>());
 
 
-  scratch_data.reinit_particle_fluid_interactions(cell,
-                                                  this->evaluation_point,
-                                                  this->previous_solutions[0],
-                                                  nodal_void_fraction_relevant,
-                                                  particle_handler,
-                                                  this->dof_handler,
-                                                  void_fraction_dof_handler);
+  scratch_data.reinit_particle_fluid_interactions(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions[0],
+    nodal_void_fraction_relevant,
+    particle_handler,
+    this->dof_handler,
+    void_fraction_dof_handler,
+    this->cfd_dem_simulation_parameters.cfd_dem);
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
@@ -830,13 +832,15 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     previous_void_fraction,
     std::vector<TrilinosWrappers::MPI::Vector>());
 
-  scratch_data.reinit_particle_fluid_interactions(cell,
-                                                  this->evaluation_point,
-                                                  this->previous_solutions[0],
-                                                  nodal_void_fraction_relevant,
-                                                  particle_handler,
-                                                  this->dof_handler,
-                                                  void_fraction_dof_handler);
+  scratch_data.reinit_particle_fluid_interactions(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions[0],
+    nodal_void_fraction_relevant,
+    particle_handler,
+    this->dof_handler,
+    void_fraction_dof_handler,
+    this->cfd_dem_simulation_parameters.cfd_dem);
 
   scratch_data.calculate_physical_properties();
   copy_data.reset();

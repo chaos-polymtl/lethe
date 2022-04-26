@@ -24,6 +24,7 @@
 
 #include <dem/dem.h>
 #include <dem/dem_properties.h>
+#include <fem-dem/parameters_cfd_dem.h>
 
 #include <deal.II/base/quadrature.h>
 
@@ -620,7 +621,8 @@ public:
     const VectorType                       void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
     DoFHandler<dim> &                      dof_handler,
-    DoFHandler<dim> &                      void_fraction_dof_handler)
+    DoFHandler<dim> &                      void_fraction_dof_handler,
+    Parameters::CFDDEM                     cfd_dem)
   {
     const FiniteElement<dim> &fe = this->fe_values.get_fe();
     const FiniteElement<dim> &fe_void_fraction =
@@ -650,13 +652,9 @@ public:
 
     // Loop over particles in cell
     double total_particle_volume = 0;
-    cell_void_fraction           = 0;
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
-        total_particle_volume +=
-          M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
-          (2 * dim);
         // Set the particle_fluid_interactions properties and vectors to 0
         for (int d = 0; d < dim; ++d)
           {
@@ -664,7 +662,6 @@ public:
             undisturbed_flow_force[d]                                  = 0;
           }
 
-        interpolated_void_fraction[particle_number]          = 0;
         fluid_velocity_at_particle_location[particle_number] = 0;
 
         // Stock the values of particle velocity in a tensor
@@ -691,18 +688,38 @@ public:
                   fe.shape_value(j, reference_location);
               }
           }
-        for (unsigned int j = 0; j < fe_void_fraction.dofs_per_cell; ++j)
+
+        cell_void_fraction[particle_number] = 0;
+        if (cfd_dem.interpolated_void_fraction == true)
           {
-            interpolated_void_fraction[particle_number] +=
-              void_fraction_solution[void_fraction_dof_indices[j]] *
-              fe_void_fraction.shape_value(j, reference_location);
+            for (unsigned int j = 0; j < fe_void_fraction.dofs_per_cell; ++j)
+              {
+                cell_void_fraction[particle_number] +=
+                  void_fraction_solution[void_fraction_dof_indices[j]] *
+                  fe_void_fraction.shape_value(j, reference_location);
+              }
+          }
+        else
+          {
+            total_particle_volume +=
+              M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+              (2 * dim);
           }
 
         average_particle_velocity += particle_velocity[particle_number];
         particle_number += 1;
       }
 
-    cell_void_fraction = (cell_volume - total_particle_volume) / cell_volume;
+    if (cfd_dem.interpolated_void_fraction == false)
+      {
+        double cell_void_fraction_bulk = 0;
+        cell_void_fraction_bulk =
+          (cell_volume - total_particle_volume) / cell_volume;
+
+        for (unsigned int j = 0; j < particle_number; ++j)
+          cell_void_fraction[j] = cell_void_fraction_bulk;
+      }
+
 
     if (particle_number != 0)
       {
@@ -888,8 +905,7 @@ public:
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
-  double                      cell_void_fraction;
-  std::vector<double>         interpolated_void_fraction;
+  std::vector<double>         cell_void_fraction;
   unsigned int                max_number_of_particles_per_cell;
   unsigned int                number_of_locally_owned_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
