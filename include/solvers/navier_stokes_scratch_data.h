@@ -164,7 +164,8 @@ public:
                            sd.fe_values_void_fraction->get_quadrature(),
                            sd.fe_values_void_fraction->get_mapping());
     if (sd.gather_particles_information)
-      enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell);
+      enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell,
+                                         sd.interpolated_void_fraction);
     if (sd.gather_temperature)
       enable_heat_transfer(sd.fe_values_temperature->get_fe(),
                            sd.fe_values_temperature->get_quadrature(),
@@ -596,7 +597,8 @@ public:
 
   void
   enable_particle_fluid_interactions(
-    const unsigned int n_global_max_particles_per_cell);
+    const unsigned int n_global_max_particles_per_cell,
+    const bool         enable_void_fraction_interpolation);
 
   /** @brief Calculate the content of the scratch for the particle fluid interactions
    *
@@ -621,13 +623,13 @@ public:
     const VectorType                       void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
     DoFHandler<dim> &                      dof_handler,
-    DoFHandler<dim> &                      void_fraction_dof_handler,
-    Parameters::CFDDEM                     cfd_dem)
+    DoFHandler<dim> &                      void_fraction_dof_handler)
   {
     const FiniteElement<dim> &fe = this->fe_values.get_fe();
     const FiniteElement<dim> &fe_void_fraction =
       this->fe_values_void_fraction->get_fe();
 
+    bool interpolated_void_fraction = this->interpolated_void_fraction;
     const unsigned int                   dofs_per_cell = fe.dofs_per_cell;
     std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
     std::vector<types::global_dof_index> void_fraction_dof_indices(
@@ -690,7 +692,7 @@ public:
           }
 
         cell_void_fraction[particle_number] = 0;
-        if (cfd_dem.interpolated_void_fraction == true)
+        if (interpolated_void_fraction == true)
           {
             for (unsigned int j = 0; j < fe_void_fraction.dofs_per_cell; ++j)
               {
@@ -710,7 +712,7 @@ public:
         particle_number += 1;
       }
 
-    if (cfd_dem.interpolated_void_fraction == false)
+    if (interpolated_void_fraction == false)
       {
         double cell_void_fraction_bulk = 0;
         cell_void_fraction_bulk =
@@ -900,6 +902,7 @@ public:
    * Scratch component for the particle fluid interaction auxiliary physics
    */
   bool                        gather_particles_information;
+  bool                        interpolated_void_fraction;
   std::vector<Tensor<1, dim>> particle_velocity;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;

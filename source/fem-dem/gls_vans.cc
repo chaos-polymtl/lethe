@@ -673,7 +673,8 @@ GLSVANSSolver<dim>::assemble_system_matrix()
 
 
   scratch_data.enable_particle_fluid_interactions(
-    particle_handler.n_global_max_particles_per_cell());
+    particle_handler.n_global_max_particles_per_cell(),
+    this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -719,15 +720,13 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     std::vector<TrilinosWrappers::MPI::Vector>());
 
 
-  scratch_data.reinit_particle_fluid_interactions(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions[0],
-    nodal_void_fraction_relevant,
-    particle_handler,
-    this->dof_handler,
-    void_fraction_dof_handler,
-    this->cfd_dem_simulation_parameters.cfd_dem);
+  scratch_data.reinit_particle_fluid_interactions(cell,
+                                                  this->evaluation_point,
+                                                  this->previous_solutions[0],
+                                                  nodal_void_fraction_relevant,
+                                                  particle_handler,
+                                                  this->dof_handler,
+                                                  void_fraction_dof_handler);
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
@@ -783,7 +782,8 @@ GLSVANSSolver<dim>::assemble_system_rhs()
 
 
   scratch_data.enable_particle_fluid_interactions(
-    particle_handler.n_global_max_particles_per_cell());
+    particle_handler.n_global_max_particles_per_cell(),
+    this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -832,15 +832,13 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     previous_void_fraction,
     std::vector<TrilinosWrappers::MPI::Vector>());
 
-  scratch_data.reinit_particle_fluid_interactions(
-    cell,
-    this->evaluation_point,
-    this->previous_solutions[0],
-    nodal_void_fraction_relevant,
-    particle_handler,
-    this->dof_handler,
-    void_fraction_dof_handler,
-    this->cfd_dem_simulation_parameters.cfd_dem);
+  scratch_data.reinit_particle_fluid_interactions(cell,
+                                                  this->evaluation_point,
+                                                  this->previous_solutions[0],
+                                                  nodal_void_fraction_relevant,
+                                                  particle_handler,
+                                                  this->dof_handler,
+                                                  void_fraction_dof_handler);
 
   scratch_data.calculate_physical_properties();
   copy_data.reset();
