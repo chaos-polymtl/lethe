@@ -347,6 +347,19 @@ public:
     n = p_n;
   }
 
+  double
+  get_viscosity() const
+  {
+    return viscosity_0;
+  }
+
+  void
+  set_viscosity(const double &p_viscosity)
+  {
+    viscosity_0 = p_viscosity;
+  }
+
+
 private:
   inline double
   calculate_viscosity(const double shear_rate_magnitude)
