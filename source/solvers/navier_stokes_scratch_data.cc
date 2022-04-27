@@ -169,10 +169,12 @@ NavierStokesScratchData<dim>::enable_void_fraction(
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
-  const unsigned int n_global_max_particles_per_cell)
+  const unsigned int n_global_max_particles_per_cell,
+  const bool         enable_void_fraction_interpolation)
 {
   gather_particles_information     = true;
   max_number_of_particles_per_cell = n_global_max_particles_per_cell;
+  interpolated_void_fraction       = enable_void_fraction_interpolation;
 
   // Velocities
   particle_velocity =
