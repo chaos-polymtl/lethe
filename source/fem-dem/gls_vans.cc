@@ -673,7 +673,8 @@ GLSVANSSolver<dim>::assemble_system_matrix()
 
 
   scratch_data.enable_particle_fluid_interactions(
-    particle_handler.n_global_max_particles_per_cell());
+    particle_handler.n_global_max_particles_per_cell(),
+    this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -781,7 +782,8 @@ GLSVANSSolver<dim>::assemble_system_rhs()
 
 
   scratch_data.enable_particle_fluid_interactions(
-    particle_handler.n_global_max_particles_per_cell());
+    particle_handler.n_global_max_particles_per_cell(),
+    this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
   WorkStream::run(
     this->dof_handler.begin_active(),
