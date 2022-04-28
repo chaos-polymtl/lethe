@@ -54,6 +54,9 @@ It is often necessary to set-up complex initial conditions when simulating trans
 .. math::
   \eta_{i+1} = \eta_i + \alpha (\eta_{\text{end}} - \eta_i)
 
+.. note::
+  The ramped up viscosity in the Carreau model in :math:`\eta_0`, and :math:`\eta_{\infty}` stays unchanged. See :doc:`physical_properties` for more details.
+
 
 Likewise, in the ``subection n``, the parameters for ramping on the ``n`` value are the following.
   * The ``initial n`` is the :math:`n` value with which the initial condition starts off. An initial math:`n` of 1.0 is suggested.
