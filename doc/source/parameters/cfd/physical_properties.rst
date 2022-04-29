@@ -255,7 +255,7 @@ In the ``phase_change`` thermal conductivity model, two different values (``ther
   k = \alpha_l k_l + (1 - \alpha_l) k_s
 
 
-where :math:`k_l`, :math:`k_s`, :math:`alpha_l` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
+where :math:`k_l`, :math:`k_s` and  :math:`alpha_l` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
 
 Specific heat models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
