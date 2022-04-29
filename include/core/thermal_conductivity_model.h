@@ -208,7 +208,7 @@ public:
   {}
 
   /**
-   * @brief value Calculates the value the thermal conductivity
+   * @brief value Calculates the value of the thermal conductivity
    * @param fields_value Value of the various field on which the thermal conductivity depends.
    * @return value of the thermal conductivity calculated with the fields_value.
    */
