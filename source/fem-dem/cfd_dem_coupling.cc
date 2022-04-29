@@ -1274,6 +1274,8 @@ CFDDEMSolver<dim>::solve()
           this->update_boundary_conditions();
         }
 
+      this->dynamic_flow_control();
+
       if (this->simulation_control->is_at_start())
         {
           this->initialize_void_fraction();
