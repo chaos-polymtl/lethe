@@ -22,36 +22,31 @@ test()
 {
   deallog << "Beggining" << std::endl;
 
-  Parameters::PhaseChange phase_change_param;
-  phase_change_param.thermal_conductivity_l = 10;
-  phase_change_param.thermal_conductivity_s = 20;
-  phase_change_param.T_solidus              = 1;
-  phase_change_param.T_liquidus             = 2;
+  Parameters::PhaseChange phase_change_params;
+  phase_change_params.thermal_conductivity_l = 10;
+  phase_change_params.thermal_conductivity_s = 20;
+  phase_change_params.T_solidus              = 1;
+  phase_change_params.T_liquidus             = 2;
 
 
   ThermalConductivityPhaseChange thermal_conductivity_model(
-    phase_change_param.thermal_conductivity_l,
-    phase_change_param.thermal_conductivity_s,
-    phase_change_param.T_solidus,
-    phase_change_param.T_liquidus);
+    phase_change_params);
 
 
   deallog << "Testing thermal conductivity" << std::endl;
 
-  double T_0 = 0.1;
-  double dT  = 0.2;
-  double T_1 = T_0 + dT;
+  double T_0 = 0.5;
+  double dT  = 0.1;
+  double T   = T_0;
   for (int i = 0; i < 20; ++i)
     {
       std::map<field, double> field_values;
-      field_values[field::temperature]          = T_1;
-      field_values[field::previous_temperature] = T_0;
+      field_values[field::temperature] = T;
 
-      deallog << " T_0 = " << T_0 << " T_1 = " << T_1
+      deallog << "T = " << T
               << " k = " << thermal_conductivity_model.value(field_values)
               << std::endl;
-      T_0 += dT;
-      T_1 += dT;
+      T += dT;
     }
 
 

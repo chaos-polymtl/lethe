@@ -23,6 +23,26 @@
 using namespace dealii;
 
 /**
+ * @brief calculate_liquid_fraction Calculates the liquid fraction of a phase change material at
+ * a temperature T
+ *
+ * @param T temperature at which to calculate the solid fraction
+ * @return value of the liquid_fraction
+ *
+ */
+inline double
+calculate_liquid_fraction(
+  const double &                 T,
+  const Parameters::PhaseChange &phase_change_parameters)
+{
+  return std::min(std::max((T - phase_change_parameters.T_solidus) /
+                             (phase_change_parameters.T_liquidus -
+                              phase_change_parameters.T_solidus),
+                           0.),
+                  1.);
+}
+
+/**
  * @brief SpecificHeatModel. Abstract class that allows to calculate the
  * specific heat on each quadrature point using the temperature of the fluid.
  * magnitude. SpecficiHeat::get_specific_heat() is a pure virtual method,
@@ -229,24 +249,6 @@ public:
   };
 
   /**
-   * @brief solid_fraction Calculates the solid fraction of a phase change material at
-   * a temperature T
-   *
-   * @param T temperature at which to calculate the solid fraction
-   * @return value of the liquid_fraction
-   *
-   */
-  inline double
-  liquid_fraction(const double T)
-  {
-    return std::min(std::max((T - param.T_solidus) /
-                               (param.T_liquidus - param.T_solidus),
-                             0.),
-                    1.);
-  }
-
-
-  /**
    * @brief enthalpy Calculates the enthalpy of a phase change material for a temperature T
    * The enthalpy is defined as :
    *
@@ -278,10 +280,10 @@ public:
               param.latent_enthalpy + (T - param.T_liquidus) * param.cp_l);
     else if (T > param.T_solidus)
       {
-        const double l_frac = liquid_fraction(T);
+        liquid_fraction = calculate_liquid_fraction(T, param);
         return (param.cp_s * param.T_solidus +
                 0.5 * (param.cp_l + param.cp_s) * (T - param.T_solidus) +
-                param.latent_enthalpy * l_frac);
+                param.latent_enthalpy * liquid_fraction);
       }
     else
       return param.cp_s * T;
@@ -289,7 +291,7 @@ public:
 
 private:
   const Parameters::PhaseChange param;
+  double                        liquid_fraction;
 };
-
 
 #endif

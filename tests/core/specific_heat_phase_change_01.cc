@@ -35,18 +35,18 @@ test()
 
   deallog << "Testing solid fraction xi" << std::endl;
 
-  deallog << " T = 0.5  , xi = " << specific_heat_model.liquid_fraction(0.5)
-          << std::endl;
-  deallog << " T = 1    , xi = " << specific_heat_model.liquid_fraction(1)
-          << std::endl;
-  deallog << " T = 1.5  , xi = " << specific_heat_model.liquid_fraction(1.5)
-          << std::endl;
-  deallog << " T = 1.75 , xi = " << specific_heat_model.liquid_fraction(1.75)
-          << std::endl;
-  deallog << " T = 2    , xi = " << specific_heat_model.liquid_fraction(2)
-          << std::endl;
-  deallog << " T = 2.5  , xi = " << specific_heat_model.liquid_fraction(2.5)
-          << std::endl;
+  deallog << " T = 0.5  , xi = "
+          << calculate_liquid_fraction(0.5, phase_change_param) << std::endl;
+  deallog << " T = 1    , xi = "
+          << calculate_liquid_fraction(1, phase_change_param) << std::endl;
+  deallog << " T = 1.5  , xi = "
+          << calculate_liquid_fraction(1.5, phase_change_param) << std::endl;
+  deallog << " T = 1.75 , xi = "
+          << calculate_liquid_fraction(1.75, phase_change_param) << std::endl;
+  deallog << " T = 2    , xi = "
+          << calculate_liquid_fraction(2, phase_change_param) << std::endl;
+  deallog << " T = 2.5  , xi = "
+          << calculate_liquid_fraction(2.5, phase_change_param) << std::endl;
 
 
   deallog << "Testing enthalpy H" << std::endl;

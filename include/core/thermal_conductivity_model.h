@@ -19,6 +19,7 @@
 
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
+#include <core/specific_heat_model.h>
 
 /**
  * @brief ThermalConductivityModel. Abstract class that allows to calculate the
@@ -197,15 +198,16 @@ public:
   /**
    * @brief Default constructor
    */
-  ThermalConductivityPhaseChange(const double thermal_conductivity_s,
-                                 const double thermal_conductivity_l,
-                                 const double T_solidus,
-                                 const double T_liquidus)
-    : thermal_conductivity_s(thermal_conductivity_s)
-    , thermal_conductivity_l(thermal_conductivity_l)
-    , T_solidus(T_solidus)
-    , T_liquidus(T_liquidus)
-  {}
+  ThermalConductivityPhaseChange(
+    const Parameters::PhaseChange phase_change_params)
+    : p_phase_change_params(phase_change_params)
+    , thermal_conductivity_s(phase_change_params.thermal_conductivity_s)
+    , thermal_conductivity_l(phase_change_params.thermal_conductivity_l)
+    , T_solidus(phase_change_params.T_solidus)
+    , T_liquidus(phase_change_params.T_liquidus)
+  {
+    this->model_depends_on[field::temperature] = true;
+  }
 
   /**
    * @brief value Calculates the value of the thermal conductivity
@@ -226,10 +228,8 @@ public:
     else
       {
         const double l_frac =
-          std::min(std::max((fields_value.at(field::temperature) - T_solidus) /
-                              (T_liquidus - T_solidus),
-                            0.),
-                   1.);
+          calculate_liquid_fraction(fields_value.at(field::temperature),
+                                    p_phase_change_params);
 
         thermal_conductivity = thermal_conductivity_l * l_frac +
                                thermal_conductivity_s * (1. - l_frac);
@@ -258,8 +258,8 @@ public:
           property_vector[i] = thermal_conductivity_l;
         else
           {
-            const double l_frac = std::min(
-              std::max((T[i] - T_solidus) / (T_liquidus - T_solidus), 0.), 1.);
+            const double l_frac =
+              calculate_liquid_fraction(T[i], p_phase_change_params);
 
             property_vector[i] = thermal_conductivity_l * l_frac +
                                  thermal_conductivity_s * (1. - l_frac);
@@ -285,10 +285,10 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the with respect to a field
+   * @brief vector_jacobian Calculate the derivative of the thermal conductivity with respect to a field
    * @param field_vectors Vector for the values of the fields used to evaluate the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the viscosity with respect to the field id
+   * @param jacobian Vector of the value of the derivative of the thermal conductivity with respect to the field id
    */
 
   void
@@ -300,10 +300,11 @@ public:
   };
 
 private:
-  const double thermal_conductivity_s;
-  const double thermal_conductivity_l;
-  const double T_solidus;
-  const double T_liquidus;
+  Parameters::PhaseChange p_phase_change_params;
+  const double            thermal_conductivity_s;
+  const double            thermal_conductivity_l;
+  const double            T_solidus;
+  const double            T_liquidus;
 };
 
 #endif
