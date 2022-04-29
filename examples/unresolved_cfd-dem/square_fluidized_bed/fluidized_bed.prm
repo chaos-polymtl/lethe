@@ -6,10 +6,10 @@
 subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
-  set output name              = result_
+  set output name              = cfd_dem
   set output frequency	  	= 10
   set startup time scaling         = 0.6
-  set time end                     = 0.01
+  set time end                     = 1.
   set time step                    = 0.001
   set subdivision             = 1 
   set log precision     = 10 
@@ -209,7 +209,7 @@ end
 subsection non-linear solver
   set tolerance               = 1e-9
   set max iterations          = 10
-  set verbosity               = quiet
+  set verbosity               = verbose
 end
 
 # --------------------------------------------------
