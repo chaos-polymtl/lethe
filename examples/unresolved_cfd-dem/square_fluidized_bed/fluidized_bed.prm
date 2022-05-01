@@ -11,8 +11,6 @@ subsection simulation control
   set startup time scaling         = 0.6
   set time end                     = 1.
   set time step                    = 0.001
-  set subdivision             = 1 
-  set log precision     = 10 
   set output path                  	 = ./output/
 #  set output boundaries    = true
 end

@@ -33,7 +33,6 @@ end
 #---------------------------------------------------
 subsection model parameters
   set contact detection method 		   		 = dynamic
-  set contact detection frequency                 	 = 10
   set load balance method				 = dynamic
   set load balance threshold				 = 0.5
   set dynamic load balance check frequency	= 10000
