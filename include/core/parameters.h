@@ -179,6 +179,12 @@ namespace Parameters
     // Specific heat solid - Units in J/(kg*K)
     double cp_s;
 
+    // Thermal conductivity liquid - Units in W/(m*K)
+    double thermal_conductivity_l;
+
+    // Thermal conductivity solid - Units in W/(m*K)
+    double thermal_conductivity_s;
+
     // kinematic viscosity liquid - Units in m^2/(s)
     double viscosity_l;
 
@@ -305,7 +311,8 @@ namespace Parameters
     enum class ThermalConductivityModel
     {
       constant,
-      linear
+      linear,
+      phase_change
     } thermal_conductivity_model;
 
     // Linear thermal conductivity parameters : k = k_A0 + k_A1 * T

@@ -494,13 +494,15 @@ namespace Parameters
   {
     prm.enter_subsection("phase change");
     {
-      T_solidus       = prm.get_double("solidus temperature");
-      T_liquidus      = prm.get_double("liquidus temperature");
-      latent_enthalpy = prm.get_double("latent enthalpy");
-      cp_l            = prm.get_double("specific heat liquid");
-      cp_s            = prm.get_double("specific heat solid");
-      viscosity_l     = prm.get_double("viscosity liquid");
-      viscosity_s     = prm.get_double("viscosity solid");
+      T_solidus              = prm.get_double("solidus temperature");
+      T_liquidus             = prm.get_double("liquidus temperature");
+      latent_enthalpy        = prm.get_double("latent enthalpy");
+      cp_l                   = prm.get_double("specific heat liquid");
+      cp_s                   = prm.get_double("specific heat solid");
+      viscosity_l            = prm.get_double("viscosity liquid");
+      viscosity_s            = prm.get_double("viscosity solid");
+      thermal_conductivity_l = prm.get_double("thermal conductivity liquid");
+      thermal_conductivity_s = prm.get_double("thermal conductivity solid");
     }
 
     Assert(T_liquidus > T_solidus,
@@ -537,6 +539,16 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Specific heat of the solid phase");
+
+      prm.declare_entry("thermal conductivity liquid",
+                        "1",
+                        Patterns::Double(),
+                        "Thermal conductivity of the liquid phase");
+
+      prm.declare_entry("thermal conductivity solid",
+                        "1",
+                        Patterns::Double(),
+                        "Thermal conductivity of the solid phase");
 
       prm.declare_entry("viscosity liquid",
                         "1",
@@ -659,9 +671,9 @@ namespace Parameters
       prm.declare_entry(
         "thermal conductivity model",
         "constant",
-        Patterns::Selection("constant|linear"),
+        Patterns::Selection("constant|linear|phase_change"),
         "Model used for the calculation of the thermal conductivity"
-        "Choices are <constant|linear>.");
+        "Choices are <constant|linear|phase_change>.");
 
       prm.declare_entry("k_A0",
                         "0",
@@ -703,6 +715,8 @@ namespace Parameters
         thermal_conductivity_model = ThermalConductivityModel::constant;
       else if (op == "linear")
         thermal_conductivity_model = ThermalConductivityModel::linear;
+      else if (op == "phase_change")
+        thermal_conductivity_model = ThermalConductivityModel::phase_change;
 
       // Linear conductivity model parameters
       k_A0 = prm.get_double("k_A0");

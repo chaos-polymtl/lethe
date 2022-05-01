@@ -23,6 +23,10 @@ ThermalConductivityModel::model_cast(const Parameters::Fluid &fluid_properties)
       Parameters::Fluid::ThermalConductivityModel::linear)
     return std::make_shared<ThermalConductivityLinear>(fluid_properties.k_A0,
                                                        fluid_properties.k_A1);
+  else if (fluid_properties.thermal_conductivity_model ==
+           Parameters::Fluid::ThermalConductivityModel::phase_change)
+    return std::make_shared<ThermalConductivityPhaseChange>(
+      fluid_properties.phase_change_parameters);
   else
 
     return std::make_shared<ConstantThermalConductivity>(

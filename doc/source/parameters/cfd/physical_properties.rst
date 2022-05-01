@@ -241,12 +241,21 @@ This model is parameterized using the ``phase change`` subsection
 Thermal conductivity models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Constant and linear thermal conductivities are supported in Lethe. Constant thermal conductivity assumes a constant value of the thermal conductivity. Linear thermal conductivity assumes that that the thermal conductivity :math:`k` varies linearly with the temperature, taking the following form:
+Constant, linear and phase_change thermal conductivities are supported in Lethe. Constant thermal conductivity assumes a constant value of the thermal conductivity. Linear thermal conductivity assumes that that the thermal conductivity :math:`k` varies linearly with the temperature, taking the following form:
 
 .. math::
   k = k_{A,0}+ k_{A,1} T 
 
 where :math:`k_{A,0}` and :math:`k_{A,1}` are constants and :math:`T` is the temperature. This enables a linear variation of the thermal conductivity as a function of the temperature.
+
+In the ``phase_change`` thermal conductivity model, two different values (``thermal conductivity liquid``, and ``thermal conductivity solid``) are required for calculating the thermal conductivities of the liquid and solid phases, respectively. For the liquid phase (T>T_liquidus), the ``thermal conductivity liquid`` is applied, while for the solid phase (T<T_solidus), the model uses the ``thermal conductivity solid``. In the mushy zone between T_solidus and T_liquidus, the thermal conductivity is equal to:
+
+.. math::
+
+  k = \alpha_l k_l + (1 - \alpha_l) k_s
+
+
+where :math:`k_l`, :math:`k_s` and  :math:`alpha_l` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
 
 Specific heat models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
