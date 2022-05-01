@@ -19,6 +19,7 @@
 
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
+#include <core/specific_heat_model.h>
 
 /**
  * @brief ThermalConductivityModel. Abstract class that allows to calculate the
@@ -186,6 +187,124 @@ public:
 private:
   const double A;
   const double B;
+};
+
+/**
+ * @brief ThermalConductivityPhaseChange Implements a phase-dependant thermal conductivity
+ */
+class ThermalConductivityPhaseChange : public ThermalConductivityModel
+{
+public:
+  /**
+   * @brief Default constructor
+   */
+  ThermalConductivityPhaseChange(
+    const Parameters::PhaseChange phase_change_params)
+    : p_phase_change_params(phase_change_params)
+    , thermal_conductivity_s(phase_change_params.thermal_conductivity_s)
+    , thermal_conductivity_l(phase_change_params.thermal_conductivity_l)
+    , T_solidus(phase_change_params.T_solidus)
+    , T_liquidus(phase_change_params.T_liquidus)
+  {
+    this->model_depends_on[field::temperature] = true;
+  }
+
+  /**
+   * @brief value Calculates the value of the thermal conductivity
+   * @param fields_value Value of the various field on which the thermal conductivity depends.
+   * @return value of the thermal conductivity calculated with the fields_value.
+   */
+  double
+  value(const std::map<field, double> &fields_value) override
+  {
+    double thermal_conductivity;
+    // Thermal conductivity of solid phase
+    if (fields_value.at(field::temperature) < T_solidus)
+      thermal_conductivity = thermal_conductivity_s;
+    // Thermal conductivity of liquid phase
+    else if (fields_value.at(field::temperature) > T_liquidus)
+      thermal_conductivity = thermal_conductivity_l;
+    // Mean value of the conductivities of the solid and liquid phases
+    else
+      {
+        const double l_frac =
+          calculate_liquid_fraction(fields_value.at(field::temperature),
+                                    p_phase_change_params);
+
+        thermal_conductivity = thermal_conductivity_l * l_frac +
+                               thermal_conductivity_s * (1. - l_frac);
+      }
+
+    return thermal_conductivity;
+  };
+
+  /**
+   * @brief vector_value Calculates the vector value of thermal conductivities
+   * @param field_vectors Vector of properties on which the thermal conductivities depend
+   * @param property_vector Values of the thermal conductivities
+   */
+  void
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
+               std::vector<double> &property_vector) override
+  {
+    const std::vector<double> &T = field_vectors.at(field::temperature);
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      {
+        // Thermal conductivity of solid phase
+        if (T[i] < T_solidus)
+          property_vector[i] = thermal_conductivity_s;
+        // Thermal conductivity of liquid phase
+        else if (T[i] > T_liquidus)
+          property_vector[i] = thermal_conductivity_l;
+        else
+          {
+            const double l_frac =
+              calculate_liquid_fraction(T[i], p_phase_change_params);
+
+            property_vector[i] = thermal_conductivity_l * l_frac +
+                                 thermal_conductivity_s * (1. - l_frac);
+          }
+      }
+  };
+
+  /**
+   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the thermal conductivity with respect to a field
+   * @param field_values Value of the various fields on which the property may depend.
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated
+   * @return value of the partial derivative of the thermal conductivity with respect to the field.
+   */
+
+  double
+  jacobian(const std::map<field, double> &field_values, field id) override
+  {
+    if (id == field::temperature)
+      return this->numerical_jacobian(field_values, field::temperature);
+    else
+      return 0;
+  };
+
+  /**
+   * @brief vector_jacobian Calculate the derivative of the thermal conductivity with respect to a field
+   * @param field_vectors Vector for the values of the fields used to evaluate the property
+   * @param id Identifier of the field with respect to which a derivative should be calculated
+   * @param jacobian Vector of the value of the derivative of the thermal conductivity with respect to the field id
+   */
+
+  void
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) override
+  {
+    vector_numerical_jacobian(field_vectors, id, jacobian_vector);
+  };
+
+private:
+  Parameters::PhaseChange p_phase_change_params;
+  const double            thermal_conductivity_s;
+  const double            thermal_conductivity_l;
+  const double            T_solidus;
+  const double            T_liquidus;
 };
 
 #endif
