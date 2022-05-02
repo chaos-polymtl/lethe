@@ -1059,7 +1059,7 @@ CFDDEMSolver<dim>::write_DEM_output_results()
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
-    dem_parameters.simulation_control.output_name + "particles";
+    dem_parameters.simulation_control.output_name + "_particles";
   const unsigned int iter = this->simulation_control->get_step_number();
   const double       time = this->simulation_control->get_current_time();
   const unsigned int group_files =
