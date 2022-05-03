@@ -53,7 +53,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
       phase_force_cutoff      = 1 - 1e-6;
-      phase_continuity_cutoff = 1 - 1e-3;
+      phase_continuity_cutoff = 1 - 1e-6;
     }
 
 

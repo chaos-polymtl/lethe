@@ -26,6 +26,8 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  // TODO test to add a small diffusivity
+  const double diffusivity = 1e-2;
 
   // Copy data elements
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
@@ -80,7 +82,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       // the contribution aligned with the velocity
       const Tensor<2, dim> dcdd_factor = rr; // - k_corr;
 
-      // Gradient of the shock capturing viscosity for the assemblyu
+      // Gradient of the shock capturing viscosity for the assembly
       // of the jacobian matrix
       const double d_vdcdd = order * (0.5 * h * h) *
                              (velocity.norm() * velocity.norm()) *
@@ -96,7 +98,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
         is_steady(method) ?
           h / (2. * u_mag) :
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt, 2));
-
+      // TODO add diffusivity term?
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
@@ -105,7 +107,8 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
           // Strong Jacobian associated with the GLS
           // stabilization
-          strong_jacobian_vec[q][j] += velocity * grad_phi_phase_j;
+          strong_jacobian_vec[q][j] +=
+            velocity * grad_phi_phase_j - diffusivity * laplacian_phi_phase_j;
 
           // DCDD shock capturing
           if (DCDD)
@@ -124,9 +127,12 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
             {
               const auto grad_phi_phase_j = scratch_data.grad_phi[q][j];
 
-              // Weak form for advection: u * nabla(phase) = 0
+              // Weak form for advection-diffusion:
+              // u * grad(phase) - diffusivity * laplacian(phase) = 0
               local_matrix(i, j) +=
-                (phi_phase_i * velocity * grad_phi_phase_j) * JxW;
+                (phi_phase_i * velocity * grad_phi_phase_j +
+                 diffusivity * grad_phi_phase_i * grad_phi_phase_j) *
+                JxW;
 
               // Addition to the cell matrix for GLS stabilization
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
@@ -157,6 +163,9 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
 {
   // Scheme and physical properties
   const auto method = this->simulation_control->get_assembly_method();
+
+  // TODO test to add a small diffusivity
+  const double diffusivity = 1e-2;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -213,9 +222,11 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
         is_steady(method) ?
           h / (2. * u_mag) :
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt, 2));
+      // TODO add diffusivity term?
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual_vec[q] += velocity * phase_gradient;
+      strong_residual_vec[q] +=
+        velocity * phase_gradient - diffusivity * phase_laplacians;
 
       // DCDD shock capturing
       if (DCDD)
@@ -227,8 +238,10 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
           const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
 
 
-          // rhs for : u * nabla(phase) = 0
-          local_rhs(i) -= (phi_phase_i * velocity * phase_gradient) * JxW;
+          // rhs for: u * grad(phase) - diffusivity * laplacian(phase) = 0
+          local_rhs(i) -= (phi_phase_i * velocity * phase_gradient +
+                           diffusivity * grad_phi_phase_i * phase_gradient) *
+                          JxW;
 
 
           local_rhs(i) -=
