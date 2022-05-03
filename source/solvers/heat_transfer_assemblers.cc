@@ -165,7 +165,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] += rho_cp * velocity * temperature_gradient -
-                                thermal_conductivity[q] * temperature_laplacian;
+                                thermal_conductivity[q] * temperature_laplacian + scratch_data.source[q];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
