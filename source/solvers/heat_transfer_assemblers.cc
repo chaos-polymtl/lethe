@@ -164,8 +164,10 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
                       9 * std::pow(4 * alpha / (h * h), 2));
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual_vec[q] += rho_cp * velocity * temperature_gradient -
-                                thermal_conductivity[q] * temperature_laplacian + scratch_data.source[q];
+      strong_residual_vec[q] +=
+        rho_cp * velocity * temperature_gradient -
+        thermal_conductivity[q] * temperature_laplacian +
+        scratch_data.source[q];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -374,7 +376,9 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
 {
   if (!scratch_data.is_boundary_cell)
     return;
-  auto &local_matrix = copy_data.local_matrix;
+  auto &       local_matrix = copy_data.local_matrix;
+  const double Stefan_Boltzmann_constant =
+    this->boundary_conditions_ht.Stefan_Boltzmann_constant;
 
   // Robin boundary condition, loop on faces (Newton's cooling law +
   // Stefan-Boltzmann law) implementation similar to deal.ii step-7
@@ -384,6 +388,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
           BoundaryConditions::BoundaryType::convection_radiation)
         {
           const double h = this->boundary_conditions_ht.h[i_bc];
+          const double emissivity =
+            this->boundary_conditions_ht.emissivity[i_bc];
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
@@ -392,6 +398,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)
                     {
+                      const double T_face =
+                        scratch_data.temperature_face_value[f][q];
                       const double JxW = scratch_data.face_JxW[f][q];
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
@@ -403,7 +411,9 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                               const double phi_face_T_j =
                                 scratch_data.phi_face_T[f][q][j];
                               local_matrix(i, j) +=
-                                phi_face_T_i * phi_face_T_j * h * JxW;
+                                (h + 4.0 * Stefan_Boltzmann_constant *
+                                       emissivity * T_face * T_face * T_face) *
+                                phi_face_T_i * phi_face_T_j * JxW;
                             }
                         }
                     }
