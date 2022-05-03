@@ -278,9 +278,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
         {
           force = 0;
-          if (multiphysics_parameters
-                .skip_mass_conservation_fluid_0) // TODO et point sur boundary
-                                                 // (et wetting?)
+          if (multiphysics_parameters.skip_mass_conservation_fluid_0)
             solve_continuity = false;
         }
       else if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
@@ -353,7 +351,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
           else
             {
               // assemble RHS for p = 0
-              local_rhs(i) += -phi_p_i * pressure;
+              local_rhs(i) += -phi_p_i * pressure * JxW;
             }
 
           // SUPG GLS term

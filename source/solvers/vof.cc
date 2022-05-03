@@ -1702,7 +1702,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
           cell_vof->get_dof_indices(dof_indices_vof);
 
           for (const auto face : cell_vof->face_indices())
-            { // TODO ajouter condition que soit sur la BC de pw
+            {
               if (cell_vof->face(face)->at_boundary() &&
                   cell_vof->face(face)->boundary_id() == boundary_id)
                 {
@@ -1766,29 +1766,32 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
           pressure_values_cell  = pressure_values_cell / n_q_points;
           phase_values_cell     = phase_values_cell / n_q_points;
 
-          // Wetting of lower density fluid
-          if ((pressure_values_cell > wetting_threshold) &&
-              ((id_denser_fluid_cell == 1 && phase_values_cell < 0.5) ||
-               (id_denser_fluid_cell == 0 && phase_values_cell > 0.5)))
+          // Check wetting condition on the pressure value
+          if (pressure_values_cell > wetting_threshold)
             {
-              change_cell_phase(PhaseChange::wetting,
-                                id_denser_fluid_cell,
-                                solution_pw,
-                                dof_indices_vof);
+              // Wet the lower density fluid
+              if ((id_denser_fluid_cell == 1 && phase_values_cell < 0.5) ||
+                  (id_denser_fluid_cell == 0 && phase_values_cell > 0.5))
+                {
+                  change_cell_phase(PhaseChange::wetting,
+                                    id_denser_fluid_cell,
+                                    solution_pw,
+                                    dof_indices_vof);
+                }
             }
-
-          // Peeling of higher density fluid
-          else if ((nb_pressure_grad_meet_peel_condition >
-                    dim * n_q_points / 2) &&
-                   ((id_denser_fluid_cell == 1 && phase_values_cell > 0.5) ||
-                    (id_denser_fluid_cell == 0 && phase_values_cell < 0.5)))
+          // Check peeling condition on the pressure gradient
+          else if (nb_pressure_grad_meet_peel_condition > dim * n_q_points / 2)
             {
-              change_cell_phase(PhaseChange::peeling,
-                                id_lighter_fluid_cell,
-                                solution_pw,
-                                dof_indices_vof);
+              // Peel the higher density fluid
+              if ((id_denser_fluid_cell == 1 && phase_values_cell > 0.5) ||
+                  (id_denser_fluid_cell == 0 && phase_values_cell < 0.5))
+                {
+                  change_cell_phase(PhaseChange::peeling,
+                                    id_lighter_fluid_cell,
+                                    solution_pw,
+                                    dof_indices_vof);
+                }
             }
-
         } // end condition cell at boundary
     }     // end loop on cells
 
