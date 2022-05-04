@@ -72,6 +72,11 @@ BoundaryCellsInformation<dim>::build(
         boundary_cells_information,
         global_boundary_cells_information);
     }
+  else
+    pcout << "Warning: expansion of particle-wall contact list is disabled. "
+          << std::endl
+          << "This feature is useful in geometries with concave boundaries. "
+          << std::endl;
 }
 
 template <int dim>
