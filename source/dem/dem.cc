@@ -27,7 +27,6 @@
 #include <dem/input_parameter_inspection.h>
 #include <dem/list_insertion.h>
 #include <dem/localize_contacts.h>
-#include <dem/locate_ghost_particles.h>
 #include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/particle_particle_contact_info_struct.h>
@@ -442,7 +441,7 @@ DEMSolver<dim>::update_moment_of_inertia(
   for (auto &particle : particle_handler)
     {
       auto &particle_properties = particle.get_properties();
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
       MOI[particle.get_local_index()] =
 #else
       MOI[particle.get_id()] =
@@ -765,7 +764,7 @@ DEMSolver<dim>::solve()
                       triangulation,
                       particle_handler);
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
       displacement.resize(particle_handler.get_max_local_particle_index());
 #else
       {
@@ -836,7 +835,7 @@ DEMSolver<dim>::solve()
       particles_insertion_step = insert_particles();
 
       if (particles_insertion_step)
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
         displacement.resize(particle_handler.get_max_local_particle_index());
 #else
         {
@@ -851,7 +850,7 @@ DEMSolver<dim>::solve()
       load_balance_step = (this->*check_load_balance_step)();
 
       if (load_balance_step || checkpoint_step)
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
         displacement.resize(particle_handler.get_max_local_particle_index());
 #else
         {
@@ -871,7 +870,7 @@ DEMSolver<dim>::solve()
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
           displacement.resize(particle_handler.get_max_local_particle_index());
 #else
           {

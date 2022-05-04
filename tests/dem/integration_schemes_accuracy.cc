@@ -111,7 +111,7 @@ test()
   std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
   force.resize(particle_handler.get_max_local_particle_index());
 #else
   {
@@ -135,7 +135,7 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
           force[particle_iterator->get_local_index()] = force_tensor;
 #else
           force[particle_iterator->get_id()] = force_tensor;
@@ -167,7 +167,7 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
   force.resize(particle_handler.get_max_local_particle_index());
 #else
   {
@@ -191,7 +191,7 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
           force[particle_iterator->get_local_index()] = force_tensor;
 #else
           force[particle_iterator->get_id()] = force_tensor;
@@ -226,7 +226,7 @@ test()
   pit2->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
   force.resize(particle_handler.get_max_local_particle_index());
 #else
   {
@@ -249,7 +249,7 @@ test()
     {
       t = 0;
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
       force[particle_iterator->get_local_index()][dim - 1] = -x0;
 #else
       force[particle_iterator->get_id()][dim - 1] = -x0;
@@ -264,7 +264,7 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
           force[particle_iterator->get_local_index()] = force_tensor;
 #else
           force[particle_iterator->get_id()] = force_tensor;
@@ -294,7 +294,7 @@ test()
   pit3->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
   force.resize(particle_handler.get_max_local_particle_index());
 #else
   {
@@ -314,7 +314,7 @@ test()
     {
       t = 0;
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
       force[particle_iterator->get_local_index()][dim - 1] = -x0;
 #else
       force[particle_iterator->get_id()][dim - 1] = -x0;
@@ -328,7 +328,7 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
           force[particle_iterator->get_local_index()] = force_tensor;
 #else
           force[particle_iterator->get_id()] = force_tensor;

@@ -139,7 +139,7 @@ test(double coefficient_of_restitution)
   std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-#if DEAL_II_VERSION_GTE(10, 0, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
   force.resize(particle_handler.get_max_local_particle_index());
 #else
   {

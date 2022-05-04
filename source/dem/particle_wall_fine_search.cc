@@ -32,52 +32,55 @@ void ParticleWallFineSearch<dim>::particle_wall_fine_search(
   for (auto const &[particle_id, particle_pair_candidates] :
        particle_wall_contact_pair_candidates)
     {
-      for (auto const &[face_id, particle_pair_candidate_content] :
-           particle_pair_candidates)
+      if (!particle_pair_candidates.empty())
         {
-          auto particle = std::get<0>(particle_pair_candidate_content);
+          for (auto const &[face_id, particle_pair_candidate_content] :
+               particle_pair_candidates)
+            {
+              auto particle = std::get<0>(particle_pair_candidate_content);
 
-          // Normal vector of the boundary and a point on the boudary are
-          // defined as local parameters
-          auto normal_vector = std::get<1>(particle_pair_candidate_content);
-          Point<dim> point_on_boundary =
-            std::get<2>(particle_pair_candidate_content);
+              // Normal vector of the boundary and a point on the boudary are
+              // defined as local parameters
+              auto normal_vector = std::get<1>(particle_pair_candidate_content);
+              Point<dim> point_on_boundary =
+                std::get<2>(particle_pair_candidate_content);
 
-          // Setting tangential overlap of the new particle-wall contact
-          // pair equal to zero
-          Tensor<1, 3> tangential_overlap({0, 0, 0});
+              // Setting tangential overlap of the new particle-wall contact
+              // pair equal to zero
+              Tensor<1, 3> tangential_overlap({0, 0, 0});
 
-          Tensor<1, 3> normal_vector_3d;
-          if constexpr (dim == 3)
-            normal_vector_3d = normal_vector;
+              Tensor<1, 3> normal_vector_3d;
+              if constexpr (dim == 3)
+                normal_vector_3d = normal_vector;
 
-          if constexpr (dim == 2)
-            normal_vector_3d = tensor_nd_to_3d(normal_vector);
+              if constexpr (dim == 2)
+                normal_vector_3d = tensor_nd_to_3d(normal_vector);
 
-          Point<3> point_on_boundary_3d;
-          if constexpr (dim == 3)
-            point_on_boundary_3d = point_on_boundary;
+              Point<3> point_on_boundary_3d;
+              if constexpr (dim == 3)
+                point_on_boundary_3d = point_on_boundary;
 
-          if constexpr (dim == 2)
-            point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
+              if constexpr (dim == 2)
+                point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
 
-          // Adding contact info to the sample to
-          // particle_wall_contact_info_struct
-          particle_wall_contact_info_struct<dim> contact_info;
-          contact_info.particle                 = particle;
-          contact_info.normal_vector            = normal_vector_3d;
-          contact_info.normal_overlap           = .0;
-          contact_info.normal_relative_velocity = .0;
-          contact_info.point_on_boundary        = point_on_boundary_3d;
-          contact_info.boundary_id =
-            std::get<3>(particle_pair_candidate_content);
-          contact_info.tangential_overlap           = tangential_overlap;
-          contact_info.tangential_relative_velocity = .0;
-          contact_info.global_face_id =
-            std::get<4>(particle_pair_candidate_content);
+              // Adding contact info to the sample to
+              // particle_wall_contact_info_struct
+              particle_wall_contact_info_struct<dim> contact_info;
+              contact_info.particle                 = particle;
+              contact_info.normal_vector            = normal_vector_3d;
+              contact_info.normal_overlap           = .0;
+              contact_info.normal_relative_velocity = .0;
+              contact_info.point_on_boundary        = point_on_boundary_3d;
+              contact_info.boundary_id =
+                std::get<3>(particle_pair_candidate_content);
+              contact_info.tangential_overlap           = tangential_overlap;
+              contact_info.tangential_relative_velocity = .0;
+              contact_info.global_face_id =
+                std::get<4>(particle_pair_candidate_content);
 
-          particle_wall_pairs_in_contact[particle_id].insert(
-            {face_id, contact_info});
+              particle_wall_pairs_in_contact[particle_id].insert(
+                {face_id, contact_info});
+            }
         }
     }
 }
@@ -107,82 +110,89 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
   for (auto const &[particle_id, particle_pair_candidates] :
        pfw_contact_candidates)
     {
-      for (auto particle_pair_candidate_iterator =
-             particle_pair_candidates.begin();
-           particle_pair_candidate_iterator != particle_pair_candidates.end();
-           ++particle_pair_candidate_iterator)
+      if (!particle_pair_candidates.empty())
         {
-          // Getting the floating wall id once to improve efficiency
-          unsigned int floating_wall_id =
-            particle_pair_candidate_iterator->first;
-
-          // Checking simulation time for temporary floating walls
-          if (simulation_time >=
-                floating_wall_properties.time_start[floating_wall_id] &&
-              simulation_time <=
-                floating_wall_properties.time_end[floating_wall_id])
+          for (auto particle_pair_candidate_iterator =
+                 particle_pair_candidates.begin();
+               particle_pair_candidate_iterator !=
+               particle_pair_candidates.end();
+               ++particle_pair_candidate_iterator)
             {
-              // Reading particle, normal vector and point on wall once to
-              // improve efficiency
-              auto particle = particle_pair_candidate_iterator->second;
-              Tensor<1, dim> normal_vector =
-                wall_normal_vector[floating_wall_id];
-              Point<dim> point_on_floating_wall =
-                point_on_wall[floating_wall_id];
+              // Getting the floating wall id once to improve efficiency
+              unsigned int floating_wall_id =
+                particle_pair_candidate_iterator->first;
 
-              Point<3> point_on_floating_wall_3d;
-              if constexpr (dim == 3)
-                point_on_floating_wall_3d = point_on_floating_wall;
-
-              if constexpr (dim == 2)
-                point_on_floating_wall_3d =
-                  point_nd_to_3d(point_on_floating_wall);
-
-              // Check to see on which side of the wall the particle is located:
-
-              // Finding connecting vector from defined point on the boundary
-              // wall to the particle location
-              Tensor<1, dim> connecting_vector =
-                particle->get_location() - point_on_floating_wall;
-              int inner_product_sign =
-                boost::math::sign(connecting_vector * normal_vector);
-
-              // If the cell is located on the opposite side of the defined
-              // normal vector, the normal vector of the cell should be reversed
-              if (inner_product_sign < 0)
+              // Checking simulation time for temporary floating walls
+              if (simulation_time >=
+                    floating_wall_properties.time_start[floating_wall_id] &&
+                  simulation_time <=
+                    floating_wall_properties.time_end[floating_wall_id])
                 {
-                  normal_vector = -1 * normal_vector;
+                  // Reading particle, normal vector and point on wall once to
+                  // improve efficiency
+                  auto particle = particle_pair_candidate_iterator->second;
+                  Tensor<1, dim> normal_vector =
+                    wall_normal_vector[floating_wall_id];
+                  Point<dim> point_on_floating_wall =
+                    point_on_wall[floating_wall_id];
+
+                  Point<3> point_on_floating_wall_3d;
+                  if constexpr (dim == 3)
+                    point_on_floating_wall_3d = point_on_floating_wall;
+
+                  if constexpr (dim == 2)
+                    point_on_floating_wall_3d =
+                      point_nd_to_3d(point_on_floating_wall);
+
+                  // Check to see on which side of the wall the particle is
+                  // located:
+
+                  // Finding connecting vector from defined point on the
+                  // boundary wall to the particle location
+                  Tensor<1, dim> connecting_vector =
+                    particle->get_location() - point_on_floating_wall;
+                  int inner_product_sign =
+                    boost::math::sign(connecting_vector * normal_vector);
+
+                  // If the cell is located on the opposite side of the defined
+                  // normal vector, the normal vector of the cell should be
+                  // reversed
+                  if (inner_product_sign < 0)
+                    {
+                      normal_vector = -1 * normal_vector;
+                    }
+
+                  Tensor<1, 3> normal_vector_3d;
+                  if constexpr (dim == 3)
+                    normal_vector_3d = normal_vector;
+
+                  if constexpr (dim == 2)
+                    normal_vector_3d = tensor_nd_to_3d(normal_vector);
+
+                  // Setting tangential overlap of the new particle-floating
+                  // wall contact pair equal to zero
+                  Tensor<1, 3> tangential_overlap({0.0, 0.0, 0.0});
+
+                  // Creating a sample from the
+                  // particle_wall_contact_info_struct and adding contact info
+                  // to the sample
+                  particle_wall_contact_info_struct<dim> contact_info;
+                  contact_info.particle                 = particle;
+                  contact_info.normal_vector            = normal_vector_3d;
+                  contact_info.normal_overlap           = .0;
+                  contact_info.normal_relative_velocity = .0;
+                  contact_info.point_on_boundary = point_on_floating_wall_3d;
+                  // The boundary ID of floating walls is set to 100, it should
+                  // be modified after adding motion of floating walls
+                  contact_info.boundary_id        = 100;
+                  contact_info.global_face_id     = 0;
+                  contact_info.tangential_overlap = tangential_overlap;
+                  contact_info.tangential_relative_velocity = .0;
+
+
+                  pfw_pairs_in_contact[particle_id].insert(
+                    {floating_wall_id, contact_info});
                 }
-
-              Tensor<1, 3> normal_vector_3d;
-              if constexpr (dim == 3)
-                normal_vector_3d = normal_vector;
-
-              if constexpr (dim == 2)
-                normal_vector_3d = tensor_nd_to_3d(normal_vector);
-
-              // Setting tangential overlap of the new particle-floating wall
-              // contact pair equal to zero
-              Tensor<1, 3> tangential_overlap({0.0, 0.0, 0.0});
-
-              // Creating a sample from the particle_wall_contact_info_struct
-              // and adding contact info to the sample
-              particle_wall_contact_info_struct<dim> contact_info;
-              contact_info.particle                 = particle;
-              contact_info.normal_vector            = normal_vector_3d;
-              contact_info.normal_overlap           = .0;
-              contact_info.normal_relative_velocity = .0;
-              contact_info.point_on_boundary        = point_on_floating_wall_3d;
-              // The boundary ID of floating walls is set to 100, it should be
-              // modified after adding motion of floating walls
-              contact_info.boundary_id                  = 100;
-              contact_info.global_face_id               = 0;
-              contact_info.tangential_overlap           = tangential_overlap;
-              contact_info.tangential_relative_velocity = .0;
-
-
-              pfw_pairs_in_contact[particle_id].insert(
-                {floating_wall_id, contact_info});
             }
         }
     }

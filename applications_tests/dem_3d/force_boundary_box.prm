@@ -75,7 +75,6 @@ subsection mesh
     set grid type      	     				            = hyper_cube
     set grid arguments       				            = 0:0.1:true
     set initial refinement   				            = 4
-    set expand particle-wall contact search			    = false
 end
 
 subsection boundary forces

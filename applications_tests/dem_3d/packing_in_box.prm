@@ -89,5 +89,4 @@ subsection mesh
     set grid type            				= hyper_cube
     set grid arguments       				= -0.04 : 0.04 : false
     set initial refinement   				= 3
-    set expand particle-wall contact search		= false
 end

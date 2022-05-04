@@ -73,41 +73,42 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   for (auto const &[particle_one_id, second_particle_container] :
        local_contact_pair_candidates)
     {
-      auto particle_one = particle_container[particle_one_id];
-
-      for (const unsigned int &particle_two_id : second_particle_container)
+      if (!second_particle_container.empty())
         {
-          auto particle_two = particle_container[particle_two_id];
-
-          // Obtaining locations of particles one and two:
+          auto               particle_one = particle_container[particle_one_id];
           Point<dim, double> particle_one_location =
             particle_one->get_location();
-          Point<dim, double> particle_two_location =
-            particle_two->get_location();
 
-          // Finding distance
-          const double square_distance =
-            particle_one_location.distance_square(particle_two_location);
-
-          // If the particles distance is less than the threshold
-          if (square_distance < neighborhood_threshold)
+          for (const unsigned int &particle_two_id : second_particle_container)
             {
-              // Getting the particle one contact list and particle two id
-              auto particle_one_contact_list =
-                &local_adjacent_particles[particle_one_id];
+              auto particle_two = particle_container[particle_two_id];
+              Point<dim, double> particle_two_location =
+                particle_two->get_location();
 
-              Tensor<1, 3> tangential_overlap;
-              tangential_overlap = 0;
+              // Finding distance
+              const double square_distance =
+                particle_one_location.distance_square(particle_two_location);
+
+              // If the particles distance is less than the threshold
+              if (square_distance < neighborhood_threshold)
+                {
+                  // Getting the particle one contact list and particle two id
+                  auto particle_one_contact_list =
+                    &local_adjacent_particles[particle_one_id];
+
+                  Tensor<1, 3> tangential_overlap;
+                  tangential_overlap = 0;
 
 
-              // Adding the elements to contact info
-              particle_particle_contact_info_struct<dim> contact_info;
-              contact_info.tangential_overlap = tangential_overlap;
-              contact_info.particle_one       = particle_one;
-              contact_info.particle_two       = particle_two;
+                  // Adding the elements to contact info
+                  particle_particle_contact_info_struct<dim> contact_info;
+                  contact_info.tangential_overlap = tangential_overlap;
+                  contact_info.particle_one       = particle_one;
+                  contact_info.particle_two       = particle_two;
 
-              particle_one_contact_list->insert(
-                {particle_two_id, contact_info});
+                  particle_one_contact_list->insert(
+                    {particle_two_id, contact_info});
+                }
             }
         }
     }
@@ -155,42 +156,42 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   for (auto const &[particle_one_id, second_particle_container] :
        ghost_contact_pair_candidates)
     {
-      auto particle_one = particle_container[particle_one_id];
-
-      for (const unsigned int &particle_two_id : second_particle_container)
+      if (!second_particle_container.empty())
         {
-          auto particle_two = particle_container[particle_two_id];
-
-          // Obtaining locations of particles one and two:
+          auto               particle_one = particle_container[particle_one_id];
           Point<dim, double> particle_one_location =
             particle_one->get_location();
-          Point<dim, double> particle_two_location =
-            particle_two->get_location();
 
-          // Finding distance
-          const double square_distance =
-            particle_one_location.distance_square(particle_two_location);
-
-          // If the particles distance is less than the threshold
-          if (square_distance < neighborhood_threshold)
+          for (const unsigned int &particle_two_id : second_particle_container)
             {
-              // Getting the particle one contact list and particle two id
-              auto particle_one_contact_list =
-                &ghost_adjacent_particles[particle_one->get_id()];
-              unsigned int particle_two_id = particle_two->get_id();
+              auto particle_two = particle_container[particle_two_id];
+              Point<dim, double> particle_two_location =
+                particle_two->get_location();
 
-              Tensor<1, 3> tangential_overlap;
-              tangential_overlap = 0;
+              // Finding distance
+              const double square_distance =
+                particle_one_location.distance_square(particle_two_location);
+
+              // If the particles distance is less than the threshold
+              if (square_distance < neighborhood_threshold)
+                {
+                  // Getting the particle one contact list and particle two id
+                  auto particle_one_contact_list =
+                    &ghost_adjacent_particles[particle_one_id];
+
+                  Tensor<1, 3> tangential_overlap;
+                  tangential_overlap = 0;
 
 
-              // Adding elements to contact info
-              particle_particle_contact_info_struct<dim> contact_info;
-              contact_info.tangential_overlap = tangential_overlap;
-              contact_info.particle_one       = particle_one;
-              contact_info.particle_two       = particle_two;
+                  // Adding elements to contact info
+                  particle_particle_contact_info_struct<dim> contact_info;
+                  contact_info.tangential_overlap = tangential_overlap;
+                  contact_info.particle_one       = particle_one;
+                  contact_info.particle_two       = particle_two;
 
-              particle_one_contact_list->insert(
-                {particle_two_id, contact_info});
+                  particle_one_contact_list->insert(
+                    {particle_two_id, contact_info});
+                }
             }
         }
     }
