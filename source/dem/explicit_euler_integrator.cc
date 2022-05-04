@@ -33,7 +33,7 @@ ExplicitEulerIntegrator<dim>::integrate(
     {
       // Get the total array view to the particle properties and location once
       // to improve efficiency
-#if DEAL_II_VERSION_GTE(9, 3, 0)
+#if DEAL_II_VERSION_GTE(9, 4, 0)
       types::particle_index particle_id = particle->get_local_index();
 #else
       types::particle_index particle_id = particle->get_id();
