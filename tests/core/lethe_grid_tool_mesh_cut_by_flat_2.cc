@@ -116,7 +116,7 @@ test()
 
     // Printing the final position for all the vertices
 
-#if DEAL_II_VERSION_GTE(9, 4, 0)
+#if DEAL_II_VERSION_GTE(9, 2, 0)
   Legacy::DataOut<2>                   data_out;
   Legacy::DataOut<1, DoFHandler<1, 2>> flat_data_out;
 #else

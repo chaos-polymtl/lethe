@@ -50,7 +50,7 @@ check_contact_detection_method(
         (checkpoint_step || load_balance_step || contact_detection_step);
 
       if (sorting_in_subdomains_step)
-#if DEAL_II_VERSION_GTE(9, 4, 0)
+#if DEAL_II_VERSION_GTE(9, 2, 0)
         displacement.resize(particle_handler.get_max_local_particle_index());
 #else
         {
@@ -792,7 +792,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
-#if DEAL_II_VERSION_GTE(9, 4, 0)
+#if DEAL_II_VERSION_GTE(9, 2, 0)
   displacement.resize(this->particle_handler.get_max_local_particle_index());
 #else
   {
@@ -827,7 +827,7 @@ CFDDEMSolver<dim>::update_moment_of_inertia(
   for (auto &particle : particle_handler)
     {
       auto &particle_properties = particle.get_properties();
-#if DEAL_II_VERSION_GTE(9, 4, 0)
+#if DEAL_II_VERSION_GTE(9, 2, 0)
       MOI[particle.get_local_index()] =
 #else
       MOI[particle.get_id()] =
@@ -876,7 +876,7 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
     {
       auto particle_properties = particle->get_properties();
 
-#if DEAL_II_VERSION_GTE(9, 4, 0)
+#if DEAL_II_VERSION_GTE(9, 2, 0)
       types::particle_index particle_id = particle->get_local_index();
 #else
       types::particle_index particle_id = particle->get_id();
@@ -969,7 +969,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
-#if DEAL_II_VERSION_GTE(9, 4, 0)
+#if DEAL_II_VERSION_GTE(9, 2, 0)
       displacement.resize(
         this->particle_handler.get_max_local_particle_index());
 #else
