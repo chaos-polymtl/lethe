@@ -60,23 +60,35 @@ BoundaryCellsInformation<dim>::build(
 
   if (expand_particle_wall_contact_search)
     {
-      pcout
-        << "Warning: expansion of particle-wall contact list is enabled. "
-        << std::endl
-        << "This feature should only be activated in geometries with concave boundaries. "
-           "(For example, for particles flow inside a cylinder or sphere). In geometries with "
-           "convex boundaries, this feature MUST NOT be activated."
-        << std::endl;
+      if (display_pw_contact_expansion_warning)
+        {
+          pcout
+            << "Warning: expansion of particle-wall contact list is enabled. "
+            << std::endl
+            << "This feature should only be activated in geometries with concave boundaries. "
+               "(For example, for particles flow inside a cylinder or sphere). In geometries with "
+               "convex boundaries, this feature MUST NOT be activated."
+            << std::endl;
+          display_pw_contact_expansion_warning = false;
+        }
+
       add_boundary_neighbors_of_boundary_cells(
         triangulation,
         boundary_cells_information,
         global_boundary_cells_information);
     }
   else
-    pcout << "Warning: expansion of particle-wall contact list is disabled. "
-          << std::endl
-          << "This feature is useful in geometries with concave boundaries. "
-          << std::endl;
+    {
+      if (display_pw_contact_expansion_warning)
+        {
+          pcout
+            << "Warning: expansion of particle-wall contact list is disabled. "
+            << std::endl
+            << "This feature is useful in geometries with concave boundaries. "
+            << std::endl;
+          display_pw_contact_expansion_warning = false;
+        }
+    }
 }
 
 template <int dim>
@@ -573,13 +585,14 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
                                             normal_vector_two >
                                           0.707)
                                         {
-                                          if (first_time_warning)
+                                          if (display_diamond_cells_warning)
                                             {
                                               pcout
                                                 << std::endl
                                                 << "Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells. It should be mentioned that these cells are not detected if you have grid motion"
                                                 << std::endl;
-                                              first_time_warning = false;
+                                              display_diamond_cells_warning =
+                                                false;
                                             }
 
                                           if (check_diamond_cells &&

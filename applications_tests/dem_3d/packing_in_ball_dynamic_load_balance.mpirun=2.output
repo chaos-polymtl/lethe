@@ -12,14 +12,10 @@ This feature is useful in geometries with concave boundaries.
 20 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***************************************************************** 
 -->Repartitionning triangulation
-Warning: expansion of particle-wall contact list is disabled. 
-This feature is useful in geometries with concave boundaries. 
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 10 , 0 and 20
 Minimum and maximum number of cells owned by the processors are 2898 and 3108
 -->Repartitionning triangulation
-Warning: expansion of particle-wall contact list is disabled. 
-This feature is useful in geometries with concave boundaries. 
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 10 , 0 and 20
 Minimum and maximum number of cells owned by the processors are 2898 and 3108
