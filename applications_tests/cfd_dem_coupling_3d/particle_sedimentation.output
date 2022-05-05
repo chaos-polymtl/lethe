@@ -7,6 +7,8 @@ Finished reading DEM checkpoint
    Number of degrees of freedom: 1100
    Volume of triangulation:      0.001414213562
 Initializing DEM parameters 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters 
 DEM time-step is 1e-05 s 
 *****************************************************************
