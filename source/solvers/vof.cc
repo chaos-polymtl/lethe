@@ -1839,7 +1839,9 @@ VolumeOfFluid<dim>::change_cell_phase(
     {
       for (unsigned int k = 0; k < fe->dofs_per_cell; ++k)
         {
-          solution_pw[dof_indices_vof[k]]     = new_phase;
+          solution_pw[dof_indices_vof[k]] =
+            simulation_parameters.multiphysics
+              .phase_value_peeling; // new_phase TEST
           this->marker_pw[dof_indices_vof[k]] = -1;
         }
       this->nb_cells_peeled++;

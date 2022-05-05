@@ -52,6 +52,11 @@ namespace Parameters
     bool skip_mass_conservation_fluid_0;
     bool skip_mass_conservation_fluid_1;
 
+    // TEST
+    double phase_value_peeling;
+    double phase_threshold_no_cv;
+
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

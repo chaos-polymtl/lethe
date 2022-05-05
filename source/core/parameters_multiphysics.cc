@@ -81,6 +81,16 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
       "false",
       Patterns::Bool(),
       "Enable skipping mass conservation in fluid 1 <true|false>");
+
+    prm.declare_entry("phase value peeling",
+                      "1e-6",
+                      Patterns::Double(),
+                      "UNDER TEST");
+
+    prm.declare_entry("phase threshold no conservation",
+                      "1e-6",
+                      Patterns::Double(),
+                      "UNDER TEST");
   }
   prm.leave_subsection();
 }
@@ -109,6 +119,9 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
       prm.get_bool("skip mass conservation in fluid 0");
     skip_mass_conservation_fluid_1 =
       prm.get_bool("skip mass conservation in fluid 1");
+    // UNDER TEST
+    phase_value_peeling   = prm.get_double("phase value peeling");
+    phase_threshold_no_cv = prm.get_double("phase threshold no conservation");
   }
   prm.leave_subsection();
 }

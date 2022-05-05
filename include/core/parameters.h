@@ -549,6 +549,9 @@ namespace Parameters
     // Apply high order mapping everywhere
     bool qmapping_all;
 
+    // TEST
+    double vof_diffusion;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

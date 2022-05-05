@@ -729,6 +729,11 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Apply high order mapping everywhere");
+
+      prm.declare_entry("VOF diffusion",
+                        "1e-2",
+                        Patterns::Double(),
+                        "UNDER TEST");
     }
     prm.leave_subsection();
   }
@@ -745,6 +750,8 @@ namespace Parameters
       tracer_order        = prm.get_integer("tracer order");
       VOF_order           = prm.get_integer("VOF order");
       qmapping_all        = prm.get_bool("qmapping all");
+      // UNDER TEST
+      vof_diffusion = prm.get_double("VOF diffusion");
     }
     prm.leave_subsection();
   }

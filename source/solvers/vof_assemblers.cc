@@ -26,8 +26,9 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  // TODO test to add a small diffusivity
-  const double diffusivity = 1e-2;
+  // TODO TEST to add a small diffusivity
+  const double diffusivity = this->fem_parameters.vof_diffusion;
+  ;
 
   // Copy data elements
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
@@ -96,8 +97,14 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       // method for transient advection-diffusion problems, CMAME 2004]
       const double tau =
         is_steady(method) ?
-          h / (2. * u_mag) :
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt, 2));
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * diffusivity / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * diffusivity / (h * h), 2));
+      //        is_steady(method) ?
+      //          h / (2. * u_mag) :
+      //          1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt,
+      //          2));
       // TODO add diffusivity term?
 
       for (unsigned int j = 0; j < n_dofs; ++j)
@@ -165,7 +172,8 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   const auto method = this->simulation_control->get_assembly_method();
 
   // TODO test to add a small diffusivity
-  const double diffusivity = 1e-2;
+  const double diffusivity = this->fem_parameters.vof_diffusion;
+  ;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -220,8 +228,14 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
       // method for transient advection-diffusion problems, CMAME 2004]
       const double tau =
         is_steady(method) ?
-          h / (2. * u_mag) :
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt, 2));
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * diffusivity / (h * h), 2)) :
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * diffusivity / (h * h), 2));
+      //        is_steady(method) ?
+      //          h / (2. * u_mag) :
+      //          1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt,
+      //          2));
       // TODO add diffusivity term?
 
       // Calculate the strong residual for GLS stabilization
