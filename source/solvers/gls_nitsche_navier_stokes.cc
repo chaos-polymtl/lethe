@@ -109,7 +109,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
           local_rhs    = 0;
 
 
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
           const auto &cell =
             particle->get_surrounding_cell(*this->triangulation);
 #else
@@ -354,7 +354,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
   auto particle = solid_ph->begin();
   while (particle != solid_ph->end())
     {
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       const auto &cell = particle->get_surrounding_cell(*this->triangulation);
 #else
       const auto &cell = particle->get_surrounding_cell();
@@ -441,7 +441,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
   auto particle = solid_ph->begin();
   while (particle != solid_ph->end())
     {
-#if (DEAL_II_VERSION_MAJOR < 10)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       const auto &cell = particle->get_surrounding_cell(*this->triangulation);
 #else
       const auto &cell = particle->get_surrounding_cell();

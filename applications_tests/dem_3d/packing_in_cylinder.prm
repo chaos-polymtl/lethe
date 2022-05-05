@@ -89,4 +89,5 @@ subsection mesh
     set grid type      	     				= cylinder
     set grid arguments       				= 0.1:0.1
     set initial refinement   				= 3
+    set expand particle-wall contact search		= true
 end

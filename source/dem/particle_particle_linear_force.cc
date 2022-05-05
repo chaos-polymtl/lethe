@@ -182,7 +182,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
                     rolling_resistance_torque);
 
                   // Getting particles' torque and force
-#if DEAL_II_VERSION_GTE(9, 2, 0)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();
                   types::particle_index particle_two_id =
@@ -297,7 +297,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
                     rolling_resistance_torque);
 
                   // Getting torque and force of particle one
-#if DEAL_II_VERSION_GTE(9, 2, 0)
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
                   types::particle_index particle_one_id =
                     particle_one->get_local_index();
 #else

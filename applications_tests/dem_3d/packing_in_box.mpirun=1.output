@@ -6,6 +6,8 @@ Starting simulation with Lethe/DEM on 1 processors
 Reading triangulation 
 
 Finished reading triangulation 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
 ***************************************************************** 
 200 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***************************************************************** 
