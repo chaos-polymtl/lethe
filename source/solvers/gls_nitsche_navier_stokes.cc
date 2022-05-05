@@ -286,14 +286,14 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       Functions::
         FEFieldFunction<3, DoFHandler<3, 3>, TrilinosWrappers::MPI::Vector>
-          fe_field(this->dof_handler, evaluation_point)
+          fe_field(this->dof_handler, evaluation_point);
 #else
       Functions::FEFieldFunction<3, TrilinosWrappers::MPI::Vector> fe_field(
         this->dof_handler, evaluation_point);
 #endif
 
 
-            fe_field.set_active_cell(dh_cell);
+      fe_field.set_active_cell(dh_cell);
 
       for (const auto &p : pic)
         {
