@@ -187,9 +187,9 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
 
               // Getting particle's torque and force
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-              types::particle_index particle_id = particle->get_local_index();
-#else
               types::particle_index particle_id = particle->get_id();
+#else
+              types::particle_index particle_id = particle->get_local_index();
 #endif
 
               Tensor<1, 3> &particle_torque = torque[particle_id];

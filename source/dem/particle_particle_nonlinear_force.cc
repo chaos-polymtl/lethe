@@ -199,14 +199,14 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                   // Getting particles' torque and force
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
                   types::particle_index particle_one_id =
-                    particle_one->get_local_index();
-                  types::particle_index particle_two_id =
-                    particle_two->get_local_index();
-#else
-                  types::particle_index particle_one_id =
                     particle_one->get_id();
                   types::particle_index particle_two_id =
                     particle_two->get_id();
+#else
+                  types::particle_index particle_one_id =
+                    particle_one->get_local_index();
+                  types::particle_index particle_two_id =
+                    particle_two->get_local_index();
 #endif
                   Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
                   Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
@@ -317,10 +317,10 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                   // Getting torque and force of particle one
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
                   types::particle_index particle_one_id =
-                    particle_one->get_local_index();
+                    particle_one->get_id();
 #else
                   types::particle_index particle_one_id =
-                    particle_one->get_id();
+                    particle_one->get_local_index();
 #endif
                   Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
                   Tensor<1, 3> &particle_one_force  = force[particle_one_id];
@@ -797,14 +797,14 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                   // Getting particles' torque and force
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
                   types::particle_index particle_one_id =
-                    particle_one->get_local_index();
-                  types::particle_index particle_two_id =
-                    particle_two->get_local_index();
-#else
-                  types::particle_index particle_one_id =
                     particle_one->get_id();
                   types::particle_index particle_two_id =
                     particle_two->get_id();
+#else
+                  types::particle_index particle_one_id =
+                    particle_one->get_local_index();
+                  types::particle_index particle_two_id =
+                    particle_two->get_local_index();
 #endif
                   Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
                   Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
@@ -913,10 +913,10 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                   // Getting torque and force of particle one
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
                   types::particle_index particle_one_id =
-                    particle_one->get_local_index();
+                    particle_one->get_id();
 #else
                   types::particle_index particle_one_id =
-                    particle_one->get_id();
+                    particle_one->get_local_index();
 #endif
                   Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
                   Tensor<1, 3> &particle_one_force  = force[particle_one_id];
@@ -1382,14 +1382,14 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                   // Getting particles' torque and force
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
                   types::particle_index particle_one_id =
-                    particle_one->get_local_index();
-                  types::particle_index particle_two_id =
-                    particle_two->get_local_index();
-#else
-                  types::particle_index particle_one_id =
                     particle_one->get_id();
                   types::particle_index particle_two_id =
                     particle_two->get_id();
+#else
+                  types::particle_index particle_one_id =
+                    particle_one->get_local_index();
+                  types::particle_index particle_two_id =
+                    particle_two->get_local_index();
 #endif
                   Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
                   Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
@@ -1497,10 +1497,10 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                   // Getting torque and force of particle one
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
                   types::particle_index particle_one_id =
-                    particle_one->get_local_index();
+                    particle_one->get_id();
 #else
                   types::particle_index particle_one_id =
-                    particle_one->get_id();
+                    particle_one->get_local_index();
 #endif
                   Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
                   Tensor<1, 3> &particle_one_force  = force[particle_one_id];

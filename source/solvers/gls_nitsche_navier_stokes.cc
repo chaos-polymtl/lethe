@@ -110,10 +110,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+          const auto &cell = particle->get_surrounding_cell();
+#else
           const auto &cell =
             particle->get_surrounding_cell(*this->triangulation);
-#else
-          const auto &cell = particle->get_surrounding_cell();
 #endif
           double h_cell = 0;
           if (dim == 2)
@@ -268,9 +268,9 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
   while (particle != solid_ph->end())
     {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
-#else
       const auto &cell = particle->get_surrounding_cell();
+#else
+      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
 #endif
       const auto &dh_cell =
         typename DoFHandler<3>::cell_iterator(*cell, &this->dof_handler);
@@ -286,14 +286,14 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       Functions::
         FEFieldFunction<3, DoFHandler<3, 3>, TrilinosWrappers::MPI::Vector>
-          fe_field(this->dof_handler, evaluation_point);
+          fe_field(this->dof_handler, evaluation_point)
 #else
       Functions::FEFieldFunction<3, TrilinosWrappers::MPI::Vector> fe_field(
         this->dof_handler, evaluation_point);
 #endif
 
 
-      fe_field.set_active_cell(dh_cell);
+            fe_field.set_active_cell(dh_cell);
 
       for (const auto &p : pic)
         {
@@ -355,9 +355,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
   while (particle != solid_ph->end())
     {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
-#else
       const auto &cell = particle->get_surrounding_cell();
+#else
+      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
 #endif
       double h_cell = 0;
       if (dim == 2)
@@ -442,9 +442,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
   while (particle != solid_ph->end())
     {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
-#else
       const auto &cell = particle->get_surrounding_cell();
+#else
+      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
 #endif
       double h_cell = 0;
       if (dim == 2)

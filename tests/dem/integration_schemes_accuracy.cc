@@ -112,14 +112,14 @@ test()
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  force.resize(particle_handler.get_max_local_particle_index());
-#else
   {
     unsigned int max_particle_id = 0;
     for (const auto &particle : particle_handler)
       max_particle_id = std::max(max_particle_id, particle.get_id());
     force.resize(max_particle_id + 1);
   }
+#else
+  force.resize(particle_handler.get_max_local_particle_index());
 #endif
   torque.resize(force.size());
   MOI.resize(force.size());
@@ -136,9 +136,9 @@ test()
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          force[particle_iterator->get_local_index()] = force_tensor;
-#else
           force[particle_iterator->get_id()] = force_tensor;
+#else
+          force[particle_iterator->get_local_index()] = force_tensor;
 #endif
           explicit_euler_object.integrate(
             particle_handler, g, dt1, torque, force, MOI);
@@ -168,14 +168,14 @@ test()
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  force.resize(particle_handler.get_max_local_particle_index());
-#else
   {
     unsigned int max_particle_id = 0;
     for (const auto &particle : particle_handler)
       max_particle_id = std::max(max_particle_id, particle.get_id());
     force.resize(max_particle_id + 1);
   }
+#else
+  force.resize(particle_handler.get_max_local_particle_index());
 #endif
   torque.resize(force.size());
   MOI.resize(force.size());
@@ -192,9 +192,9 @@ test()
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          force[particle_iterator->get_local_index()] = force_tensor;
-#else
           force[particle_iterator->get_id()] = force_tensor;
+#else
+          force[particle_iterator->get_local_index()] = force_tensor;
 #endif
           explicit_euler_object.integrate(
             particle_handler, g, dt2, torque, force, MOI);
@@ -227,14 +227,14 @@ test()
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  force.resize(particle_handler.get_max_local_particle_index());
-#else
   {
     unsigned int max_particle_id = 0;
     for (const auto &particle : particle_handler)
       max_particle_id = std::max(max_particle_id, particle.get_id());
     force.resize(max_particle_id + 1);
   }
+#else
+  force.resize(particle_handler.get_max_local_particle_index());
 #endif
   torque.resize(force.size());
   MOI.resize(force.size());
@@ -250,9 +250,9 @@ test()
       t = 0;
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      force[particle_iterator->get_local_index()][dim - 1] = -x0;
-#else
       force[particle_iterator->get_id()][dim - 1] = -x0;
+#else
+      force[particle_iterator->get_local_index()][dim - 1] = -x0;
 #endif
 
       velocity_verlet_object.integrate_half_step_location(
@@ -265,9 +265,9 @@ test()
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          force[particle_iterator->get_local_index()] = force_tensor;
-#else
           force[particle_iterator->get_id()] = force_tensor;
+#else
+          force[particle_iterator->get_local_index()] = force_tensor;
 #endif
           velocity_verlet_object.integrate(
             particle_handler, g, dt1, torque, force, MOI);
@@ -295,14 +295,14 @@ test()
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  force.resize(particle_handler.get_max_local_particle_index());
-#else
   {
     unsigned int max_particle_id = 0;
     for (const auto &particle : particle_handler)
       max_particle_id = std::max(max_particle_id, particle.get_id());
     force.resize(max_particle_id + 1);
   }
+#else
+  force.resize(particle_handler.get_max_local_particle_index());
 #endif
   torque.resize(force.size());
   MOI.resize(force.size());
@@ -315,9 +315,9 @@ test()
       t = 0;
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      force[particle_iterator->get_local_index()][dim - 1] = -x0;
-#else
       force[particle_iterator->get_id()][dim - 1] = -x0;
+#else
+      force[particle_iterator->get_local_index()][dim - 1] = -x0;
 #endif
       velocity_verlet_object.integrate_half_step_location(
         particle_handler, g, dt2, torque, force, MOI);
@@ -329,9 +329,9 @@ test()
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          force[particle_iterator->get_local_index()] = force_tensor;
-#else
           force[particle_iterator->get_id()] = force_tensor;
+#else
+          force[particle_iterator->get_local_index()] = force_tensor;
 #endif
 
           velocity_verlet_object.integrate(

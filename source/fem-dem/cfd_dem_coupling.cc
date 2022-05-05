@@ -51,14 +51,14 @@ check_contact_detection_method(
 
       if (sorting_in_subdomains_step)
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-        displacement.resize(particle_handler.get_max_local_particle_index());
-#else
         {
           unsigned int max_particle_id = 0;
           for (const auto &particle : particle_handler)
             max_particle_id = std::max(max_particle_id, particle.get_id());
           displacement.resize(max_particle_id + 1);
         }
+#else
+        displacement.resize(particle_handler.get_max_local_particle_index());
 #endif
 
       contact_detection_step =
@@ -793,14 +793,14 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  displacement.resize(this->particle_handler.get_max_local_particle_index());
-#else
   {
     unsigned int max_particle_id = 0;
     for (const auto &particle : this->particle_handler)
       max_particle_id = std::max(max_particle_id, particle.get_id());
     displacement.resize(max_particle_id + 1);
   }
+#else
+  displacement.resize(this->particle_handler.get_max_local_particle_index());
 #endif
 
   force.resize(displacement.size());
@@ -828,9 +828,9 @@ CFDDEMSolver<dim>::update_moment_of_inertia(
     {
       auto &particle_properties = particle.get_properties();
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      MOI[particle.get_local_index()] =
-#else
       MOI[particle.get_id()] =
+#else
+      MOI[particle.get_local_index()] =
 #endif
         0.1 * particle_properties[DEM::PropertiesIndex::mass] *
         particle_properties[DEM::PropertiesIndex::dp] *
@@ -877,9 +877,9 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
       auto particle_properties = particle->get_properties();
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      types::particle_index particle_id = particle->get_local_index();
-#else
       types::particle_index particle_id = particle->get_id();
+#else
+      types::particle_index particle_id = particle->get_local_index();
 #endif
 
       force[particle_id][0] +=
@@ -970,15 +970,15 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      displacement.resize(
-        this->particle_handler.get_max_local_particle_index());
-#else
       {
         unsigned int max_particle_id = 0;
         for (const auto &particle : this->particle_handler)
           max_particle_id = std::max(max_particle_id, particle.get_id());
         displacement.resize(max_particle_id + 1);
       }
+#else
+      displacement.resize(
+        this->particle_handler.get_max_local_particle_index());
 #endif
       force.resize(displacement.size());
       torque.resize(displacement.size());
