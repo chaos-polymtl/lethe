@@ -195,10 +195,10 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
                     contact_information, particle_properties);
 
               // Getting particle's torque and force
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-              types::particle_index particle_id = particle->get_local_index();
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
               types::particle_index particle_id = particle->get_id();
+#else
+              types::particle_index particle_id = particle->get_local_index();
 #endif
               Tensor<1, 3> &particle_torque = torque[particle_id];
               Tensor<1, 3> &particle_force  = force[particle_id];

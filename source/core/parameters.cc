@@ -1302,10 +1302,13 @@ namespace Parameters
 
       prm.declare_entry(
         "expand particle-wall contact search",
-        "true",
+        "false",
         Patterns::Bool(),
         "Enables adding the boundary neighbor cells of boundary cells to the"
-        "particle-wall contact search list.");
+        "particle-wall contact search list. This feature should only be "
+        "activated in geometries with concave boundaries. (For example, for "
+        "particles flow inside a cylinder or sphere). In geometries with "
+        "convex boundaries, this feature MUST NOT be activated");
 
       prm.declare_entry("target size",
                         "1",
