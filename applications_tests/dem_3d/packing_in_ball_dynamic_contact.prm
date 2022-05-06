@@ -87,5 +87,5 @@ subsection mesh
     set grid type      	     				= hyper_ball
     set grid arguments       				= 0.0, 0.0, 0.0 : 0.1 : false
     set initial refinement   				= 3
-    set expand particle-wall contact search		= false
+    set expand particle-wall contact search		= true
 end

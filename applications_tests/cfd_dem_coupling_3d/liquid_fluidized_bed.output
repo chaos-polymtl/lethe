@@ -8,6 +8,8 @@ Finished reading DEM checkpoint
    Volume of triangulation:      1e-05
 Pressure drop: 0 Pa
 Initializing DEM parameters 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters 
 DEM time-step is 5e-06 s 
 *****************************************************************
