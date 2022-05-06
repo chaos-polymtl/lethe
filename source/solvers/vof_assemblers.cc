@@ -101,11 +101,6 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
                          9 * std::pow(4 * diffusivity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * diffusivity / (h * h), 2));
-      //        is_steady(method) ?
-      //          h / (2. * u_mag) :
-      //          1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt,
-      //          2));
-      // TODO add diffusivity term?
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
@@ -232,11 +227,6 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
                          9 * std::pow(4 * diffusivity / (h * h), 2)) :
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * diffusivity / (h * h), 2));
-      //        is_steady(method) ?
-      //          h / (2. * u_mag) :
-      //          1. / std::sqrt(std::pow(2. * u_mag / h, 2) + std::pow(sdt,
-      //          2));
-      // TODO add diffusivity term?
 
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] +=

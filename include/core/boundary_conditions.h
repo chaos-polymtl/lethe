@@ -686,9 +686,14 @@ namespace BoundaryConditions
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    *
-   *  - if bc type is "pw", peeling/wetting of the free surface will applied
-   * where the pressure condition met the peeling_threshold and
-   * wetting_threshold set for this boundary.
+   *  - if bc type is "pw", peeling/wetting of the free surface will applied.
+   * peeling is applied on the higher density phase, where the pressure gradient
+   * is below the peeling_threshold.
+   * wetting is applied on the lower density phase, where the phase value is at
+   * a wetting_distance from the diffusive interface, defined for phase = 0.5
+   * after VOF advection with diffusion is solved). For wetting_distance<0, the
+   * phase limit for wetting is closer to the wetting fluid.
+   *
    * See vof.cc for further implementation details.
    *
    * - if bc type is "none", nothing happens
@@ -699,7 +704,7 @@ namespace BoundaryConditions
   {
   public:
     std::vector<double> peeling_threshold;
-    std::vector<double> wetting_threshold;
+    std::vector<double> wetting_distance;
 
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
@@ -735,15 +740,20 @@ namespace BoundaryConditions
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
-    prm.declare_entry("peeling threshold",
-                      "0",
-                      Patterns::Double(),
-                      "Value (Double) for peeling threshold at bc");
+    prm.declare_entry(
+      "peeling threshold",
+      "-1e-3",
+      Patterns::Double(),
+      "Value (Double) for peeling threshold at bc, corresponding to the "
+      "pressure gradient above which peeling occurs.");
 
-    prm.declare_entry("wetting threshold",
-                      "0",
-                      Patterns::Double(),
-                      "Value (Double) for wetting threshold at bc");
+    prm.declare_entry(
+      "wetting distance",
+      "0",
+      Patterns::Double(),
+      "Value (Double) for wetting threshold at bc, corresponding to the "
+      "phase distance from the diffusive interface for which wetting occurs. "
+      "For wetting_distance<0, the phase limit for wetting is closer to the wetting fluid.");
   }
 
   /**
@@ -801,7 +811,7 @@ namespace BoundaryConditions
       {
         this->type[i_bc]              = BoundaryType::pw;
         this->peeling_threshold[i_bc] = prm.get_double("peeling threshold");
-        this->wetting_threshold[i_bc] = prm.get_double("wetting threshold");
+        this->wetting_distance[i_bc]  = prm.get_double("wetting distance");
       }
 
     this->id[i_bc] = prm.get_integer("id");
@@ -825,7 +835,7 @@ namespace BoundaryConditions
       this->type.resize(this->size);
       this->id.resize(this->size);
       this->peeling_threshold.resize(this->size);
-      this->wetting_threshold.resize(this->size);
+      this->wetting_distance.resize(this->size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {

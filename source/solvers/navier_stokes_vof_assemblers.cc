@@ -33,9 +33,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
   // Limit force application : not applied if cell density is below
   // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio           = 2;
-  double       phase_force_cutoff      = 0;
-  double       phase_continuity_cutoff = 0;
+  const double density_ratio = 2;
+  double       phase_cutoff  = 0;
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
@@ -46,15 +45,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
       scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
-      phase_force_cutoff      = 1e-6;
-      phase_continuity_cutoff = multiphysics_parameters.phase_threshold_no_cv;
+      phase_cutoff = 1e-6;
     }
   if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
       scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
-      phase_force_cutoff = 1 - 1e-6;
-      phase_continuity_cutoff =
-        1 - multiphysics_parameters.phase_threshold_no_cv;
+      phase_cutoff = 1 - 1e-6;
     }
 
 
@@ -65,12 +61,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
   if (multiphysics_parameters.skip_mass_conservation_fluid_0)
     {
-      if (*max_phase_cell < phase_continuity_cutoff)
+      if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
   else if (multiphysics_parameters.skip_mass_conservation_fluid_1)
     {
-      if (*max_phase_cell > phase_continuity_cutoff)
+      if (*max_phase_cell > phase_cutoff)
         solve_continuity = false;
     }
 
@@ -90,22 +86,14 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      //      bool solve_continuity(true);
-
       // Determine whether gravity is applied at this quadrature point
-      if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
+      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
         {
           force = 0;
-          //          if
-          //          (multiphysics_parameters.skip_mass_conservation_fluid_0)
-          //            solve_continuity = false;
         }
-      else if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
+      else if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
         {
           force = 0;
-          //          if
-          //          (multiphysics_parameters.skip_mass_conservation_fluid_1)
-          //            solve_continuity = false;
         }
 
       // Calculation of the magnitude of the velocity for the
@@ -252,9 +240,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
   // Limit force application : not applied if cell density is below
   // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio           = 2;
-  double       phase_force_cutoff      = 0;
-  double       phase_continuity_cutoff = 0;
+  const double density_ratio = 2;
+  double       phase_cutoff  = 0;
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
@@ -266,15 +253,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
       scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
-      phase_force_cutoff      = 1e-6;
-      phase_continuity_cutoff = multiphysics_parameters.phase_threshold_no_cv;
+      phase_cutoff = 1e-6;
     }
   if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
       scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
-      phase_force_cutoff = 1 - 1e-6;
-      phase_continuity_cutoff =
-        1 - multiphysics_parameters.phase_threshold_no_cv;
+      phase_cutoff = 1 - 1e-6;
     }
 
   // Determine whether continuity condition is solved in this cell
@@ -284,12 +268,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
   if (multiphysics_parameters.skip_mass_conservation_fluid_0)
     {
-      if (*max_phase_cell < phase_continuity_cutoff)
+      if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
   else if (multiphysics_parameters.skip_mass_conservation_fluid_1)
     {
-      if (*max_phase_cell > phase_continuity_cutoff)
+      if (*max_phase_cell > phase_cutoff)
         solve_continuity = false;
     }
 
@@ -312,23 +296,15 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      //      bool solve_continuity(true);
-
       // Determine whether gravity and continuity condition are applied at this
       // quadrature point
-      if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
+      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
         {
           force = 0;
-          //          if
-          //          (multiphysics_parameters.skip_mass_conservation_fluid_0)
-          //            solve_continuity = false;
         }
-      else if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
+      else if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
         {
           force = 0;
-          //          if
-          //          (multiphysics_parameters.skip_mass_conservation_fluid_1)
-          //            solve_continuity = false;
         }
 
       // Calculation of the magnitude of the
