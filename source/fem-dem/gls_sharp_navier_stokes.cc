@@ -216,7 +216,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>            q_formula(this->number_quadrature_points);
   MappingQ<dim - 1, dim> local_face_map(
-    this->velocity_fem_degree,
+    (2 > this->simulation_parameters.fem_parameters.velocity_order) ?
+      2 :
+      this->simulation_parameters.fem_parameters.velocity_order,
     this->simulation_parameters.fem_parameters.qmapping_all);
 
   FESystem<dim - 1, dim> local_face_fe(
@@ -2903,6 +2905,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::solve()
 {
+  MultithreadInfo::set_thread_limit(1);
   read_mesh_and_manifolds(
     this->triangulation,
     this->simulation_parameters.mesh,
