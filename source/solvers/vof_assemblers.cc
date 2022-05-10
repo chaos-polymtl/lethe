@@ -27,7 +27,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
   const double sdt = 1. / dt;
 
   // TODO TEST to add a small diffusivity
-  const double diffusivity = this->fem_parameters.vof_diffusion;
+  const double diffusivity = this->vof_parameters.diffusion;
   ;
 
   // Copy data elements
@@ -167,7 +167,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   const auto method = this->simulation_control->get_assembly_method();
 
   // TODO test to add a small diffusivity
-  const double diffusivity = this->fem_parameters.vof_diffusion;
+  const double diffusivity = this->vof_parameters.diffusion;
   ;
 
   // Loop and quadrature informations

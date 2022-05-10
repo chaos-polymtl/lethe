@@ -59,11 +59,8 @@ public:
   Parameters::VelocitySource                        velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
-  Parameters::InterfaceSharpening                   interface_sharpening;
   Parameters::SurfaceTensionForce                   surface_tension_force;
   Parameters::Multiphysics                          multiphysics;
-  // Parameters::VOF_Monitoring                        monitoring_parameters;
-  //  Parameters::Multiphysics_VOF multiphysics_VOF;
 
   PhysicalPropertiesManager physical_properties_manager;
 
@@ -101,7 +98,7 @@ public:
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
-    interface_sharpening.declare_parameters(prm);
+    //    interface_sharpening.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
 
     analytical_solution = new AnalyticalSolutions::AnalyticalSolution<dim>;
@@ -134,7 +131,7 @@ public:
     forces_parameters.parse_parameters(prm);
     post_processing.parse_parameters(prm);
     flow_control.parse_parameters(prm);
-    interface_sharpening.parse_parameters(prm);
+    //    interface_sharpening.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
     restart_parameters.parse_parameters(prm);
     boundary_conditions.parse_parameters(prm);

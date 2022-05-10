@@ -61,7 +61,9 @@ VolumeOfFluid<dim>::setup_assemblers()
 
   // Core assembler
   this->assemblers.push_back(std::make_shared<VOFAssemblerCore<dim>>(
-    this->simulation_control, this->simulation_parameters.fem_parameters));
+    this->simulation_control,
+    this->simulation_parameters.fem_parameters,
+    this->simulation_parameters.multiphysics.vof_parameters));
 }
 
 template <int dim>
@@ -454,12 +456,11 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (simulation_parameters.multiphysics.vof_parameters.monitoring
-        .conservation_monitoring)
+  if (simulation_parameters.multiphysics.vof_parameters.conservation.monitoring)
     {
       double volume =
         calculate_volume(simulation_parameters.multiphysics.vof_parameters
-                           .monitoring.id_fluid_monitored);
+                           .conservation.id_fluid_monitored);
 
       auto         mpi_communicator = this->triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -482,7 +483,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           std::string fluid_id =
             "fluid_" + Utilities::int_to_string(
                          this->simulation_parameters.multiphysics.vof_parameters
-                           .monitoring.id_fluid_monitored,
+                           .conservation.id_fluid_monitored,
                          1);
 
           this->table_monitoring_vof.add_value("volume_" + fluid_id, volume);
@@ -508,7 +509,7 @@ VolumeOfFluid<dim>::modify_solution()
       handle_peeling_wetting();
     }
   // Interface sharpening
-  if (this->simulation_parameters.multiphysics.vof_parameters
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
         .interface_sharpening)
     sharpen_interface();
 
@@ -531,7 +532,8 @@ VolumeOfFluid<dim>::sharpen_interface()
 
   // Interface sharpening is done at a constant frequency
   if (this->simulation_control->get_step_number() %
-        this->simulation_parameters.interface_sharpening.sharpening_frequency ==
+        this->simulation_parameters.multiphysics.vof_parameters.sharpening
+          .sharpening_frequency ==
       0)
     {
       if (simulation_parameters.non_linear_solver.verbosity ==
@@ -1396,9 +1398,11 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   TrilinosWrappers::MPI::Vector &solution)
 {
   const double sharpening_threshold =
-    this->simulation_parameters.interface_sharpening.sharpening_threshold;
+    this->simulation_parameters.multiphysics.vof_parameters.sharpening
+      .sharpening_threshold;
   const double interface_sharpness =
-    this->simulation_parameters.interface_sharpening.interface_sharpness;
+    this->simulation_parameters.multiphysics.vof_parameters.sharpening
+      .interface_sharpness;
 
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
@@ -1491,8 +1495,8 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
 
-  if (this->simulation_parameters.interface_sharpening.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1534,8 +1538,8 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
                system_rhs_phase_fraction,
                *ilu_preconditioner);
 
-  if (this->simulation_parameters.interface_sharpening.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;

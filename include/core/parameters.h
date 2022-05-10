@@ -315,36 +315,6 @@ namespace Parameters
   };
 
 
-
-  /**
-   * @brief InterfaceSharpening - Defines the parameters for
-   * interface sharpening in the VOF solver.
-   */
-  struct InterfaceSharpening
-  {
-    // Interface sharpening parameters. The sharpening method and parameters are
-    // explained in the dam break VOF example:
-    // https://github.com/lethe-cfd/lethe/wiki/Dam-break-VOF
-    // sharpening_threshold is the phase fraction threshold for sharpening. It
-    // should be chosen in the range of (0,1), but generally it is equal to 0.5
-    // interface_sharpness is a parameter which defines the sharpness of the
-    // interface. It should be chosen in the range of (1,2] sharpening_frequency
-    // (integer) is the frequency at which the interface sharpneing is called.
-    // Users may set this variable to 1 to call interface sharpening at every
-    // step, but it could be chosen in the range of [1-20]
-
-    double sharpening_threshold;
-    double interface_sharpness;
-    int    sharpening_frequency;
-    // Type of verbosity for the interface sharpening calculation
-    Verbosity verbosity;
-
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
-
   /**
    * @brief SurfaceTensionForce - Defines the parameters for
    * the calculation of surface tension force in the VOF solver.
@@ -548,9 +518,6 @@ namespace Parameters
 
     // Apply high order mapping everywhere
     bool qmapping_all;
-
-    // TEST
-    double vof_diffusion;
 
     static void
     declare_parameters(ParameterHandler &prm);

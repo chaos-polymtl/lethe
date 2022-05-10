@@ -111,7 +111,8 @@ public:
       }
 
     // Check the value of interface sharpness
-    if (simulation_parameters.interface_sharpening.interface_sharpness < 1.0)
+    if (simulation_parameters.multiphysics.vof_parameters.sharpening
+          .interface_sharpness < 1.0)
       this->pcout
         << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it."
         << std::endl
