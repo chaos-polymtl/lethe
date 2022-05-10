@@ -32,6 +32,41 @@ using namespace dealii;
 
 namespace Parameters
 {
+  /**
+   * @brief Subparameter for VOF monitoring.
+   */
+  struct VOF_Monitoring
+  {
+    bool conservation_monitoring;
+    int  id_fluid_monitored;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Multiphysics_VOF - Defines the parameters for
+   * free surface simulations using the VOF method.
+   */
+  struct VOF
+  {
+    bool interface_sharpening;
+
+    bool peeling_wetting;
+    bool continuum_surface_force;
+    bool skip_mass_conservation_fluid_0;
+    bool skip_mass_conservation_fluid_1;
+
+    VOF_Monitoring monitoring;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
   struct Multiphysics
   {
     bool fluid_dynamics;
@@ -43,20 +78,12 @@ namespace Parameters
     bool viscous_dissipation;
     bool buoyancy_force;
 
-    // subparameters for VOF
-    bool interface_sharpening;
-    bool conservation_monitoring;
-    int  id_fluid_monitored;
-    bool peeling_wetting;
-    bool continuum_surface_force;
-    bool skip_mass_conservation_fluid_0;
-    bool skip_mass_conservation_fluid_1;
+    Parameters::VOF vof_parameters;
 
-    static void
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
-  }; // namespace Parameters
-
+  };
 } // namespace Parameters
 #endif

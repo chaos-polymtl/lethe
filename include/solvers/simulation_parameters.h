@@ -62,6 +62,8 @@ public:
   Parameters::InterfaceSharpening                   interface_sharpening;
   Parameters::SurfaceTensionForce                   surface_tension_force;
   Parameters::Multiphysics                          multiphysics;
+  // Parameters::VOF_Monitoring                        monitoring_parameters;
+  //  Parameters::Multiphysics_VOF multiphysics_VOF;
 
   PhysicalPropertiesManager physical_properties_manager;
 
@@ -84,7 +86,8 @@ public:
     initial_condition->declare_parameters(prm);
 
     Parameters::FEM::declare_parameters(prm);
-    Parameters::Multiphysics::declare_parameters(prm);
+    //    Parameters::Multiphysics::declare_parameters(prm);
+    //    Parameters::Multiphysics_VOF::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     Parameters::MeshAdaptation::declare_parameters(prm);
@@ -110,6 +113,7 @@ public:
     Parameters::VelocitySource::declare_parameters(prm);
 
     multiphysics.declare_parameters(prm);
+    //    multiphysics_VOF.declare_parameters(prm);
   }
 
   void
@@ -124,6 +128,7 @@ public:
     nitsche->parse_parameters(prm);
     physical_properties.parse_parameters(prm);
     multiphysics.parse_parameters(prm);
+    //    multiphysics_VOF.parse_parameters(prm);
     timer.parse_parameters(prm);
     fem_parameters.parse_parameters(prm);
     forces_parameters.parse_parameters(prm);
@@ -145,6 +150,7 @@ public:
     particlesParameters->parse_parameters(prm);
 
     multiphysics.parse_parameters(prm);
+    //    multiphysics_VOF.parse_parameters(prm);
 
     physical_properties_manager.initialize(physical_properties);
 

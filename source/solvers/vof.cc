@@ -1,3 +1,12 @@
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
+
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -14,14 +23,6 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
 
 #include <cmath>
 
@@ -247,12 +248,13 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
-  if (this->simulation_parameters.multiphysics.peeling_wetting)
+  if (this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting)
     {
       // Peeling/wetting output
       data_out.add_data_vector(this->dof_handler, marker_pw, "marker_pw");
     }
-  if (this->simulation_parameters.multiphysics.continuum_surface_force &&
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .continuum_surface_force &&
       simulation_parameters.surface_tension_force.output_VOF_auxiliary_fields)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -452,10 +454,12 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (simulation_parameters.multiphysics.conservation_monitoring)
+  if (simulation_parameters.multiphysics.vof_parameters.monitoring
+        .conservation_monitoring)
     {
       double volume =
-        calculate_volume(simulation_parameters.multiphysics.id_fluid_monitored);
+        calculate_volume(simulation_parameters.multiphysics.vof_parameters
+                           .monitoring.id_fluid_monitored);
 
       auto         mpi_communicator = this->triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -476,9 +480,10 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             }
 
           std::string fluid_id =
-            "fluid_" +
-            Utilities::int_to_string(
-              this->simulation_parameters.multiphysics.id_fluid_monitored, 1);
+            "fluid_" + Utilities::int_to_string(
+                         this->simulation_parameters.multiphysics.vof_parameters
+                           .monitoring.id_fluid_monitored,
+                         1);
 
           this->table_monitoring_vof.add_value("volume_" + fluid_id, volume);
           this->table_monitoring_vof.set_scientific("volume_" + fluid_id, true);
@@ -498,15 +503,17 @@ void
 VolumeOfFluid<dim>::modify_solution()
 {
   // Peeling/wetting
-  if (this->simulation_parameters.multiphysics.peeling_wetting)
+  if (this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting)
     {
       handle_peeling_wetting();
     }
   // Interface sharpening
-  if (this->simulation_parameters.multiphysics.interface_sharpening)
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .interface_sharpening)
     sharpen_interface();
 
-  if (this->simulation_parameters.multiphysics.continuum_surface_force)
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .continuum_surface_force)
     {
       find_filtered_pfg();
       find_filtered_interface_curvature();

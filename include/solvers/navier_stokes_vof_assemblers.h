@@ -44,7 +44,7 @@ public:
     std::shared_ptr<SimulationControl> simulation_control,
     const SimulationParameters<dim> &  nsparam)
     : simulation_control(simulation_control)
-    , multiphysics_parameters(nsparam.multiphysics)
+    , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
 
   /**
@@ -68,7 +68,7 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::Multiphysics     multiphysics_parameters;
+  const Parameters::VOF              vof_parameters;
 };
 
 /**
