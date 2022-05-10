@@ -13,7 +13,7 @@ subsection simulation control
   set number mesh adapt       	= 0
   set output name             	= dam-break_VOF
   set output frequency        	= 20
-  set output path                  	= ./Output/
+  set output path                  	= ./output/
   set subdivision             	= 1
 end
 #---------------------------------------------------

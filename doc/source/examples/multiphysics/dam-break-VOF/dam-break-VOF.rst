@@ -217,7 +217,7 @@ In ``subsection fluid 0``, we set the density and the kinematic viscosity for th
 Similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
-:math:`[14,10]`. The first :math:`14,10` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
+:math:`[14,10]`. The first :math:`14,10` couple defines the number of initial grid subdivisions along the length and height of the rectangle. 
 This makes it so our initial mesh is composed of perfect squares. We proceed then to redefine the mesh globally four times by setting
 ``set initial refinement=4``. 
 
