@@ -53,7 +53,6 @@ time step of :math:`0.000005` seconds.
       set time step               		= 0.000005
       set output name             		= laser_phase-change
       set output frequency        		= 1
-      set subdivision             		= 1
       set output path                  	        = ./output/
     end
 
