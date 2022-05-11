@@ -6,6 +6,7 @@ This example simulates the dam break experiments of `Martin and Moyce (1952)`_.
 
 .. _Martin and Moyce (1952): https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1952.0006
 
+
 ----------------------------------
 Features
 ----------------------------------
@@ -21,8 +22,9 @@ Location of the example
 ``examples/multiphysics/dam_break_VOF/gls_VOF_dam-break_Martin_and_Moyce.prm``
 
 
+---------------------------
 Description of the case
------------------------
+---------------------------
 
 A liquid is fixed behind a dam at the left most corner of
 a rectangular domain as shown in the figure below.
@@ -256,7 +258,7 @@ level`` are 3 and 5, respectively.
         set fraction coarsening     = 0.02
     end
 
-
+----------------------
 Running the simulation
 ----------------------
 

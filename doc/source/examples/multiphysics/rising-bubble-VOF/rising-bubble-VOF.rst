@@ -6,6 +6,7 @@ This example simulates a `two-dimensional rising bubble`_.
 
 .. _two-dimensional rising bubble: https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643
 
+
 ----------------------------------
 Features
 ----------------------------------
@@ -22,8 +23,9 @@ Location of the example
 ``examples/multiphysics/rising_bubble_VOF/rising_bubble_VOF.prm``
 
 
+-----------------------------
 Description of the case
------------------------
+-----------------------------
 
 A circular bubble with density of 100 and kinematic viscosity of 0.01 (all the units in this example are dimensionless) is defined at an initial location (0.5, 0.5) in a rectangular column filled with a denser fluid (with a density of 1000 and kinematic viscosity of 0.01). At :math:`t = 0` the bubble is released to rise inside the denser fluid column. The corresponding parameter file is 
 ``rising_bubble_VOF.prm``.
@@ -247,8 +249,9 @@ defined for ``phase``. ``min refinement level`` and ``max refinement level`` are
     end
 
 
+---------------------------
 Running the simulation
-----------------------
+---------------------------
 
 Call the gls_navier_stokes_2d by invoking:  
 

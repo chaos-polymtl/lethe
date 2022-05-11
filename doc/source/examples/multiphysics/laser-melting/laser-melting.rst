@@ -4,6 +4,7 @@ Laser melting
 
 This example simulates a two-dimensional melt pool with a laser. 
 
+
 ----------------------------------
 Features
 ----------------------------------
@@ -20,8 +21,9 @@ Location of the example
 ``examples/multiphysics/laser-melting/laser-melting.prm``
 
 
+-----------------------------
 Description of the case
------------------------
+-----------------------------
 
 A stainless steel rectangular block melts using a laser beam that emits perpendicular to the top surface of the block. The laser beam speed is 0.5 m/s. Due to the laser heat source, the stainless steel solid block melts in the direction of the laser. The corresponding parameter file is 
 ``laser_melting.prm``.
@@ -253,6 +255,7 @@ defined for ``temperature``. ``min refinement level`` and ``max refinement level
     end
 
 
+----------------------
 Running the simulation
 ----------------------
 
