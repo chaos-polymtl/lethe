@@ -217,7 +217,7 @@ The laser heat source locally melts the material, which is initially in the soli
 
 We start the simulation with a rectangular mesh that spans the domain defined by the corner points situated at :math:`[-0.0001, 0]` and
 :math:`[0.0019, 0.0005]`. The first :math:`8,2` couple defines the number of initial grid subdivisions along the length and height of the rectangle. 
-This makes it so our initial mesh is composed of perfect squares. We proceed then to redefine the mesh globally eight times by setting
+This allows for the initial mesh to be composed of perfect squares. We proceed then to redefine the mesh globally eight times by setting
 ``set initial refinement=8``. 
 
 .. code-block:: text
