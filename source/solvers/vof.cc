@@ -250,7 +250,8 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
-  if (this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting)
+  if (this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting
+        .peeling_wetting)
     {
       // Peeling/wetting output
       data_out.add_data_vector(this->dof_handler, marker_pw, "marker_pw");
@@ -504,7 +505,8 @@ void
 VolumeOfFluid<dim>::modify_solution()
 {
   // Peeling/wetting
-  if (this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting)
+  if (this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting
+        .peeling_wetting)
     {
       handle_peeling_wetting();
     }
@@ -1691,10 +1693,18 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
   std::vector<double> density_1(n_q_points);
 
   // Useful definitions for readability
-  const double wetting_distance =
-    this->simulation_parameters.boundary_conditions_vof.wetting_distance[i_bc];
-  const double peeling_threshold =
-    this->simulation_parameters.boundary_conditions_vof.peeling_threshold[i_bc];
+  const double wetting_p_value =
+    this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting
+      .wetting_p_value;
+  const double wetting_phase_distance =
+    this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting
+      .wetting_phase_distance;
+  const double peeling_p_value =
+    this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting
+      .peeling_p_value;
+  const double peeling_grad_p =
+    this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting
+      .peeling_grad_p;
 
   // Loop on cell_vof
   for (const auto &cell_vof : dof_handler.active_cell_iterators())
@@ -1760,7 +1770,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                       // Peeling condition on the pressure gradient
                       for (unsigned int d = 0; d < dim; d++)
                         {
-                          if (pressure_gradients[q][d] < peeling_threshold)
+                          if (pressure_gradients[q][d] < peeling_grad_p)
                             {
                               nb_pressure_grad_meet_peel_condition += 1;
                             }
@@ -1783,19 +1793,17 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
               double phase_values_cell =
                 phase_values_q / static_cast<double>(n_q_points);
 
-              // Check wetting condition on the distance and Wet
-              // the lower density fluid i.e. where the phase value is at a
-              // "wetting_distance" phase distance from the diffusive interface
-              // (which is considered at phase = 0.5 after VOF advection with
-              // diffusion is solved). For wetting_distance<0, the phase limit
-              // for wetting is closer to the wetting fluid.
-              if (pressure_values_q > 0.05)
+              // Check wetting condition on the distance (on the phase) and
+              // wet the lower density fluid.
+              // (for wetting phase distance > 0, the wetting area is larger
+              // than the area occupied by the higher density fluid)
+              if (pressure_values_q > wetting_p_value)
                 {
                   if ((phase_denser_fluid_cell == 1 &&
-                       phase_values_cell > 0.5 - wetting_distance &&
+                       phase_values_cell > 0.5 - wetting_phase_distance &&
                        phase_values_cell < 0.9) ||
                       (phase_denser_fluid_cell == 0 &&
-                       phase_values_cell < 0.5 + wetting_distance &&
+                       phase_values_cell < 0.5 + wetting_phase_distance &&
                        phase_values_cell > 0.1))
                     {
                       double new_phase =
@@ -1809,7 +1817,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                     }
                 }
               // Check peeling condition on the pressure gradient
-              else if (pressure_values_q < -0.05)
+              else if (pressure_values_q < peeling_p_value)
                 {
                   if (nb_pressure_grad_meet_peel_condition >
                       dim * n_q_points / 2)

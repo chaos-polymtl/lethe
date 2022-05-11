@@ -35,7 +35,35 @@ using namespace dealii;
 namespace Parameters
 {
   /**
-   * @brief Defines the subparameters for free surface monitoring.
+   * @brief Defines the subparameters for free surface peeling/wetting mechanism.
+   * Has to be declared before member creation in VOF structure.
+   *
+   * Peeling/wetting mechanism (on boundaries explicitely stated in the
+   * "subsection boundary conditions VOF" of the .prm) works as such:
+   *  - Peeling of the higher density occurs if:
+   *    o the pressure is below peeling_pressure_value, and
+   *    o the pressure gradient is below the peeling_grad_p
+   *  - Wetting of the lower density phase occurs if:
+   *    o the pressure is above wetting_pressure_value, and
+   *    o the boundary is at a wetting_phase_distance from the
+   * interface.
+   */
+  struct VOF_PeelingWetting
+  {
+    bool   peeling_wetting;
+    double peeling_p_value;
+    double peeling_grad_p;
+    double wetting_p_value;
+    double wetting_phase_distance;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Defines the subparameters for free surface mass conservation.
    * Has to be declared before member creation in VOF structure.
    */
   struct VOF_MassConservation
@@ -90,11 +118,11 @@ namespace Parameters
   struct VOF
   {
     bool   continuum_surface_force;
-    bool   peeling_wetting;
     double diffusion;
 
     Parameters::VOF_MassConservation    conservation;
     Parameters::VOF_InterfaceSharpening sharpening;
+    Parameters::VOF_PeelingWetting      peeling_wetting;
 
     void
     declare_parameters(ParameterHandler &prm);

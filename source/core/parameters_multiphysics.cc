@@ -87,12 +87,6 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
                       "Continuum surface force calculation <true|false>");
 
     prm.declare_entry(
-      "peeling wetting",
-      "false",
-      Patterns::Bool(),
-      "Enable peeling/wetting in free surface calculation <true|false>");
-
-    prm.declare_entry(
       "diffusion",
       "0",
       Patterns::Double(),
@@ -102,6 +96,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
 
     conservation.declare_parameters(prm);
     sharpening.declare_parameters(prm);
+    peeling_wetting.declare_parameters(prm);
   }
   prm.leave_subsection();
 }
@@ -112,11 +107,11 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("VOF");
   {
     continuum_surface_force = prm.get_bool("continuum surface force");
-    peeling_wetting         = prm.get_bool("peeling wetting");
     diffusion               = prm.get_double("diffusion");
 
     conservation.parse_parameters(prm);
     sharpening.parse_parameters(prm);
+    peeling_wetting.parse_parameters(prm);
   }
   prm.leave_subsection();
 }
@@ -228,6 +223,61 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
       verbosity = Parameters::Verbosity::quiet;
     else
       throw(std::runtime_error("Invalid verbosity level"));
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_PeelingWetting::declare_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("peeling wetting");
+  {
+    prm.declare_entry(
+      "peeling wetting",
+      "false",
+      Patterns::Bool(),
+      "Enable peeling/wetting mechanism in free surface simulation <true|false>");
+
+    prm.declare_entry("peeling pressure value",
+                      "-0.05",
+                      Patterns::Double(),
+                      "Value (Double) for pressure value at bc below which "
+                      "peeling of the higher density fluid can occur.");
+
+    prm.declare_entry("peeling pressure gradient",
+                      "-1e-3",
+                      Patterns::Double(),
+                      "Value (Double) for pressure gradient at bc below which "
+                      "peeling of the higher density fluid can occur.");
+
+    prm.declare_entry("wetting pressure value",
+                      "0.05",
+                      Patterns::Double(),
+                      "Value (Double) for pressure value at bc above which "
+                      "wetting of the lower density fluid can occur.");
+
+    prm.declare_entry(
+      "wetting phase distance",
+      "0",
+      Patterns::Double(),
+      "Value (Double) for wetting distance at bc, "
+      "distance (on the phase value) to the interface for which wetting can occur. "
+      "For wetting phase distance>0, the wetting area is larger than "
+      "the area occupied by the higher density fluid.");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_PeelingWetting::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("peeling wetting");
+  {
+    peeling_wetting        = prm.get_bool("peeling wetting");
+    peeling_p_value        = prm.get_double("peeling pressure value");
+    peeling_grad_p         = prm.get_double("peeling pressure gradient");
+    wetting_p_value        = prm.get_double("wetting pressure value");
+    wetting_phase_distance = prm.get_double("wetting phase distance");
   }
   prm.leave_subsection();
 }
