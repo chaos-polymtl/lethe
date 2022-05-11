@@ -51,8 +51,6 @@ time step of :math:`0.000005` seconds.
       set method                  		= bdf1
       set time end                		= 0.0035
       set time step               		= 0.000005
-      set adapt 		      		= false
-      set number mesh adapt       		= 0
       set output name             		= laser_phase-change
       set output frequency        		= 1
       set subdivision             		= 1
