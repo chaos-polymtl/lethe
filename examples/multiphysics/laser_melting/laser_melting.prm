@@ -3,7 +3,7 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set method                  		= bdf1
+  set method                  		= bdf2
   set time end                		= 0.0035
   set time step               		= 0.000005
   set output name             		= laser_phase-change

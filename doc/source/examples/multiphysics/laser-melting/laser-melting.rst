@@ -2,6 +2,8 @@
 Laser melting
 ==========================
 
+This example simulates a two-dimensional melt pool with a laser. 
+
 ----------------------------------
 Features
 ----------------------------------
@@ -12,9 +14,14 @@ Features
 - Mesh adaptation using temperature
 
 
+------------------------
+Location of the example
+------------------------
+``examples/multiphysics/laser-melting/laser-melting.prm``
 
 
-This example simulates a two-dimensional melt pool with a laser. 
+Description of the case
+-----------------------
 
 A stainless steel rectangular block melts using a laser beam that emits perpendicular to the top surface of the block. The laser beam speed is 0.5 m/s. Due to the laser heat source, the stainless steel solid block melts in the direction of the laser. The corresponding parameter file is 
 ``laser_melting.prm``.
@@ -27,18 +34,12 @@ The following schematic describes the geometry and dimensions of the simulation 
     :width: 400
 
 
-------------------------
-Location of the example
-------------------------
-``examples/multiphysics/laser-melting/laser-melting.prm``
-
-
 --------------
 Parameter file
 --------------
 
-Time integration is handled by a 1st order backward differentiation scheme 
-`(bdf1)`, for a :math:`0.0035` s simulation time with a constant
+Time integration is handled by a 2nd order backward differentiation scheme 
+`(bdf2)` (for a better temporal accuracy), for a :math:`0.0035` s simulation time with a constant
 time step of :math:`0.000005` seconds.
 
 
@@ -48,7 +49,7 @@ time step of :math:`0.000005` seconds.
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-      set method                  		= bdf1
+      set method                  		= bdf2
       set time end                		= 0.0035
       set time step               		= 0.000005
       set output name             		= laser_phase-change
@@ -136,7 +137,7 @@ In the ``laser parameters`` section, the parameters of the laser model are defin
         q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{(-\eta \frac{r^2}{R^2})} \exp{(- \frac{|z|}{\mu})}
 
 
-where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r` and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
+where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r` and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively. These parameters are explained in more detail in `laser parameters <https://lethe-cfd.github.io/lethe/parameters/cfd/laser_heat_source.html>`_.
 
 
 .. note:: 
@@ -164,7 +165,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
     end    
 
 
-The laser heat source locally melts the material, which is initially in the solid phase according to the definition of the ``solidus temperature``. Hence, the physical properties should be defined using ``phase_change`` models. In the ``physical properties`` subsection, the physical properties of the different phases of the fluid are defined:
+The laser heat source locally melts the material, which is initially in the solid phase according to the definition of the ``solidus temperature``. Hence, the physical properties should be defined using ``phase_change`` models. Interested readers may find more information on phase change model in the `Stefan problem example <https://lethe-cfd.github.io/lethe/examples/multiphysics/stefan_problem/stefan_problem.html>`_ . In the ``physical properties`` subsection, the physical properties of the different phases of the fluid are defined:
 
 
 .. code-block:: text
@@ -216,7 +217,7 @@ The laser heat source locally melts the material, which is initially in the soli
 
 
 We start the simulation with a rectangular mesh that spans the domain defined by the corner points situated at :math:`[-0.0001, 0]` and
-:math:`[0.0019, 0.0005]`. The first :math:`8,2` couple defines the number of initial grid subdivisions along the length and height of the rectangle. 
+:math:`[0.0019, 0.0005]`. The first :math:`[8,2]` couple defines the number of initial grid subdivisions along the length and height of the rectangle. 
 This allows for the initial mesh to be composed of perfect squares. We proceed then to redefine the mesh globally eight times by setting
 ``set initial refinement=8``. 
 
@@ -233,7 +234,7 @@ This allows for the initial mesh to be composed of perfect squares. We proceed t
     end
     
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
-defined for ``temperature``. ``min refinement level`` and ``max refinement level`` are 4 and 8, respectively.
+defined for ``temperature``. ``min refinement level`` and ``max refinement level`` are 4 and 8, respectively. Since the laser heat source moves on the boundary and the temperature distribution changes abruptly due to the large laser heat source and radiation boundary condition, we choose 0.5 and 0.2 for ``fraction refinement`` and ``fraction refinement``, respectively.
 
 .. code-block:: text
 
@@ -251,6 +252,9 @@ defined for ``temperature``. ``min refinement level`` and ``max refinement level
         set fraction coarsening     = 0.2
     end
 
+
+Running the simulation
+----------------------
 
 Call the gls_navier_stokes_2d by invoking:  
 
@@ -274,6 +278,14 @@ The following image shows the temperature distribution in the simulation domain 
 
 .. image:: images/temperature.png
     :alt: temperature
+    :align: center
+    :width: 800
+
+
+Using ParaView post-processing tools (using a temperature threshold above the liquidus temperature, we can monitor the melted region. The following image shows the melted region at :math:`t=0.00005` s, :math:`0.0005` s, and :math:`0.0025` s. Note that the melted region is visualized using yellow color.
+
+.. image:: images/melted_region.png
+    :alt: melted_region
     :align: center
     :width: 800
 
