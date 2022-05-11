@@ -119,7 +119,7 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
     end
 
 
-The ``multiphysics`` subsection enables to turn on `(true)` 
+The ``multiphysics`` subsection enables to turn on (``true``) 
 and off `(false)` the physics of interest. Here ``heat transfer`` is enabled.
 
 
