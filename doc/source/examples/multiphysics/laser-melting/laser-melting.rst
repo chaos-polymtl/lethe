@@ -143,7 +143,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
 
 .. note:: 
-    The scanning path of the laser is defined using a Function exptression in the ``path`` subsection.
+    The scanning path of the laser is defined using a Function expression in the ``path`` subsection.
 
 
 .. code-block:: text
