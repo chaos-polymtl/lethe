@@ -7,7 +7,7 @@ subsection simulation control
   set method                  = bdf1
   set time end                = 0.04
   set time step               = 0.01
-  set output name             = dam-break_free_surface
+  set output name             = vof_interface-sharpening_blurred-circle
   set output frequency        = 1
 end
 
@@ -15,17 +15,16 @@ end
 # Multiphysics
 #---------------------------------------------------
 subsection multiphysics
-	set VOF = true
-	set interface sharpening = true
+  set VOF = true
 end
 
-#---------------------------------------------------
-# Interphase sharpening
-#---------------------------------------------------
-subsection interface sharpening
-  set sharpening threshold                    = 0.5
-  set interface sharpness               = 3
-  set sharpening frequency		= 2
+subsection VOF	
+  subsection interface sharpening
+    set interface sharpening 	= true
+    set sharpening threshold 	= 0.5
+    set interface sharpness 	= 3
+    set sharpening frequency 	= 2
+  end
 end
 
 
