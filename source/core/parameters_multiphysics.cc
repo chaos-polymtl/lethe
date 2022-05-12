@@ -80,11 +80,6 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("VOF");
   {
-    prm.declare_entry("surface tension force",
-                      "false",
-                      Patterns::Bool(),
-                      "Surface tension force calculation <true|false>");
-
     prm.declare_entry(
       "diffusion",
       "0",
@@ -96,6 +91,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
     conservation.declare_parameters(prm);
     sharpening.declare_parameters(prm);
     peeling_wetting.declare_parameters(prm);
+    stf.declare_parameters(prm);
   }
   prm.leave_subsection();
 }
@@ -105,12 +101,12 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("VOF");
   {
-    continuum_surface_force = prm.get_bool("continuum surface force");
-    diffusion               = prm.get_double("diffusion");
+    diffusion = prm.get_double("diffusion");
 
     conservation.parse_parameters(prm);
     sharpening.parse_parameters(prm);
     peeling_wetting.parse_parameters(prm);
+    stf.parse_parameters(prm);
   }
   prm.leave_subsection();
 }
@@ -277,6 +273,73 @@ Parameters::VOF_PeelingWetting::parse_parameters(ParameterHandler &prm)
     peeling_grad_p         = prm.get_double("peeling pressure gradient");
     wetting_p_value        = prm.get_double("wetting pressure value");
     wetting_phase_distance = prm.get_double("wetting phase distance");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("surface tension force");
+  {
+    prm.declare_entry("surface tension force",
+                      "false",
+                      Patterns::Bool(),
+                      "Surface tension force calculation <true|false>");
+
+    prm.declare_entry("surface tension coefficient",
+                      "0.0",
+                      Patterns::Double(),
+                      "Surface tension coefficient");
+
+    prm.declare_entry("output auxiliary fields",
+                      "false",
+                      Patterns::Bool(),
+                      "Output the phase fraction gradient and curvature");
+
+    prm.declare_entry(
+      "phase fraction gradient filter",
+      "0.5",
+      Patterns::Double(),
+      "The filter value for phase fraction gradient calculations to damp high-frequency errors");
+
+    prm.declare_entry(
+      "curvature filter",
+      "0.5",
+      Patterns::Double(),
+      "The filter value for curvature calculations to damp high-frequency errors");
+
+    prm.declare_entry(
+      "verbosity",
+      "quiet",
+      Patterns::Selection("quiet|verbose"),
+      "State whether from the surface tension force calculations should be printed "
+      "Choices are <quiet|verbose>.");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("surface tension force");
+  {
+    surface_tension_force = prm.get_bool("surface tension force");
+    // Surface tension coefficient
+    surface_tension_coef = prm.get_double("surface tension coefficient");
+    phase_fraction_gradient_filter_value =
+      prm.get_double("phase fraction gradient filter");
+    curvature_filter_value = prm.get_double("curvature filter");
+
+    output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
+
+    const std::string op = prm.get("verbosity");
+    if (op == "verbose")
+      verbosity = Parameters::Verbosity::verbose;
+    else if (op == "quiet")
+      verbosity = Parameters::Verbosity::quiet;
+    else
+      throw(std::runtime_error("Invalid verbosity level"));
   }
   prm.leave_subsection();
 }

@@ -2387,7 +2387,7 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
-              this->simulation_control, this->simulation_parameters));
+              this->simulation_control));
         }
       else
         {
@@ -2396,7 +2396,6 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
             std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
-
     }
   else
     {

@@ -128,8 +128,8 @@ class GLSNavierStokesVOFAssemblerSTF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerSTF(
-    std::shared_ptr<SimulationControl> p_simulation_control,
-    Parameters::SurfaceTensionForce    p_STF_properties)
+    std::shared_ptr<SimulationControl>  p_simulation_control,
+    Parameters::VOF_SurfaceTensionForce p_STF_properties)
     : simulation_control(p_simulation_control)
     , STF_properties(p_STF_properties)
   {}
@@ -155,7 +155,7 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 
   // Surface tension force (STF)
-  const Parameters::SurfaceTensionForce STF_properties;
+  const Parameters::VOF_SurfaceTensionForce STF_properties;
 };
 
 

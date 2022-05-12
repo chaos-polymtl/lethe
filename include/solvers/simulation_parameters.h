@@ -60,7 +60,6 @@ public:
   Parameters::VelocitySource                        velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
-  Parameters::SurfaceTensionForce                   surface_tension_force;
   Parameters::Multiphysics                          multiphysics;
   Parameters::Stabilization                         stabilization;
 
@@ -102,8 +101,6 @@ public:
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
-    //    interface_sharpening.declare_parameters(prm);
-    surface_tension_force.declare_parameters(prm);
 
     analytical_solution = new AnalyticalSolutions::AnalyticalSolution<dim>;
     analytical_solution->declare_parameters(prm);
@@ -116,7 +113,6 @@ public:
     Parameters::Stabilization::declare_parameters(prm);
 
     multiphysics.declare_parameters(prm);
-    //    multiphysics_VOF.declare_parameters(prm);
   }
 
   void
@@ -131,15 +127,12 @@ public:
     nitsche->parse_parameters(prm);
     physical_properties.parse_parameters(prm);
     multiphysics.parse_parameters(prm);
-    //    multiphysics_VOF.parse_parameters(prm);
     timer.parse_parameters(prm);
     fem_parameters.parse_parameters(prm);
     laser_parameters->parse_parameters(prm);
     forces_parameters.parse_parameters(prm);
     post_processing.parse_parameters(prm);
     flow_control.parse_parameters(prm);
-    //    interface_sharpening.parse_parameters(prm);
-    surface_tension_force.parse_parameters(prm);
     restart_parameters.parse_parameters(prm);
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);

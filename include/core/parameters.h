@@ -322,30 +322,6 @@ namespace Parameters
 
 
   /**
-   * @brief SurfaceTensionForce - Defines the parameters for
-   * the calculation of surface tension force in the VOF solver.
-   */
-  struct SurfaceTensionForce
-  {
-    // Surface tension coefficient.
-    // This will be moved to the property manager in another PR.
-    double surface_tension_coef;
-
-    double phase_fraction_gradient_filter_value;
-    double curvature_filter_value;
-
-    bool output_vof_auxiliary_fields;
-
-    // Type of verbosity for the surface tension force calculation
-    Verbosity verbosity;
-
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
-
-  /**
    * @brief PhysicalProperties - Define the possible physical properties.
    * All continuum equations share the same physical properties object but only
    * take the subset of properties they require

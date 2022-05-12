@@ -104,7 +104,32 @@ namespace Parameters
     // Type of verbosity for the interface sharpening calculation
     Parameters::Verbosity verbosity;
 
+    void // STATIC?
+    declare_parameters(ParameterHandler &prm);
     void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief SurfaceTensionForce - Defines the parameters for
+   * the calculation of surface tension force in the VOF solver.
+   */
+  struct VOF_SurfaceTensionForce
+  {
+    bool surface_tension_force;
+    // Surface tension coefficient.
+    // This will be moved to the property manager in another PR.
+    double surface_tension_coef;
+
+    double phase_fraction_gradient_filter_value;
+    double curvature_filter_value;
+
+    bool output_vof_auxiliary_fields;
+
+    // Type of verbosity for the surface tension force calculation
+    Parameters::Verbosity verbosity;
+
+    void // STATIC?
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
@@ -117,12 +142,12 @@ namespace Parameters
    */
   struct VOF
   {
-    bool   continuum_surface_force;
     double diffusion;
 
     Parameters::VOF_MassConservation    conservation;
     Parameters::VOF_InterfaceSharpening sharpening;
     Parameters::VOF_PeelingWetting      peeling_wetting;
+    Parameters::VOF_SurfaceTensionForce stf;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -146,7 +171,6 @@ namespace Parameters
     bool buoyancy_force;
 
     Parameters::VOF vof_parameters;
-    bool surface_tension_force;
 
     void
     declare_parameters(ParameterHandler &prm);

@@ -18,26 +18,16 @@ end
 #---------------------------------------------------
 subsection multiphysics
     set VOF = true
-    set surface tension force = true
 end
 
-#---------------------------------------------------
-# Surface tension force
-#---------------------------------------------------
-subsection surface tension force
-    set surface tension coefficient = 0.023
-    set phase fraction gradient filter = 0.000001
-    set curvature filter		= 0.000001
-    set output auxiliary fields = true
-end
-
-#---------------------------------------------------
-# Interphase sharpening
-#---------------------------------------------------
-subsection interface sharpening
-  set sharpening threshold              = 0.5
-  set interface sharpness               = 1.4
-  set sharpening frequency      	= 10
+subsection VOF
+  subsection surface tension force
+      set surface tension force = true
+      set surface tension coefficient = 0.023
+      set phase fraction gradient filter = 0.000001
+      set curvature filter		= 0.000001
+      set output auxiliary fields = true
+  end
 end
 
 #---------------------------------------------------

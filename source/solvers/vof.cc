@@ -250,17 +250,16 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
+  auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
 
-  if (this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting
-        .peeling_wetting)
+  if (vof_parameters.peeling_wetting.peeling_wetting)
     {
       // Peeling/wetting output
       data_out.add_data_vector(this->dof_handler, marker_pw, "marker_pw");
     }
 
-  if (this->simulation_parameters.multiphysics.vof_parameters
-        .surface_tension_force &&
-      simulation_parameters.surface_tension_force.output_vof_auxiliary_fields)
+  if (vof_parameters.stf.surface_tension_force &&
+      vof_parameters.stf.output_vof_auxiliary_fields)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         filtered_phase_fraction_gradient_component_interpretation(
@@ -507,19 +506,17 @@ template <int dim>
 void
 VolumeOfFluid<dim>::modify_solution()
 {
+  auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
   // Peeling/wetting
-  if (this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting
-        .peeling_wetting)
+  if (vof_parameters.peeling_wetting.peeling_wetting)
     {
       handle_peeling_wetting();
     }
   // Interface sharpening
-  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-        .interface_sharpening)
+  if (vof_parameters.sharpening.interface_sharpening)
     sharpen_interface();
 
-  if (this->simulation_parameters.multiphysics.vof_parameters
-        .surface_tension_force)
+  if (vof_parameters.stf.surface_tension_force)
     {
       find_filtered_phase_fraction_gradient();
       find_filtered_interface_curvature();
@@ -636,6 +633,10 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
   system_rhs_filtered_phase_fraction_gradient    = 0;
   system_matrix_filtered_phase_fraction_gradient = 0;
 
+  const double phase_fraction_gradient_filter_value =
+    this->simulation_parameters.multiphysics.vof_parameters.stf
+      .phase_fraction_gradient_filter_value;
+
   for (const auto &filtered_phase_fraction_gradient_cell :
        this->filtered_phase_fraction_gradient_dof_handler
          .active_cell_iterators())
@@ -688,8 +689,7 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
                       local_matrix_filtered_phase_fraction_gradient(i, j) +=
                         (phi_filtered_phase_fraction_gradient[j] *
                            phi_filtered_phase_fraction_gradient[i] +
-                         simulation_parameters.surface_tension_force
-                             .phase_fraction_gradient_filter_value *
+                         phase_fraction_gradient_filter_value *
                            scalar_product(
                              phi_filtered_phase_fraction_gradient_gradient[i],
                              phi_filtered_phase_fraction_gradient_gradient
@@ -763,7 +763,7 @@ VolumeOfFluid<dim>::solve_filtered_phase_fraction_gradient()
                system_rhs_filtered_phase_fraction_gradient,
                *ilu_preconditioner);
 
-  if (this->simulation_parameters.surface_tension_force.verbosity !=
+  if (this->simulation_parameters.multiphysics.vof_parameters.stf.verbosity !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver (phase fraction gradient) took : "
@@ -816,6 +816,9 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   system_rhs_curvature    = 0;
   system_matrix_curvature = 0;
 
+  double curvature_filter_value = simulation_parameters.multiphysics
+                                    .vof_parameters.stf.curvature_filter_value;
+
   for (const auto &curvature_cell :
        this->curvature_dof_handler.active_cell_iterators())
     {
@@ -866,8 +869,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
                         {
                           local_matrix_curvature(i, j) +=
                             (phi_curvature[j] * phi_curvature[i] +
-                             simulation_parameters.surface_tension_force
-                                 .curvature_filter_value *
+                             curvature_filter_value *
                                scalar_product(phi_curvature_gradient[i],
                                               phi_curvature_gradient[j])) *
                             fe_values_curvature.JxW(q);
@@ -934,7 +936,7 @@ VolumeOfFluid<dim>::solve_curvature()
                system_rhs_curvature,
                *ilu_preconditioner);
 
-  if (this->simulation_parameters.surface_tension_force.verbosity !=
+  if (this->simulation_parameters.multiphysics.vof_parameters.stf.verbosity !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << " -Iterative solver (curvature) took : "
@@ -989,7 +991,8 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
     }
 
   // PFG and curvature
-  if (this->simulation_parameters.multiphysics.surface_tension_force)
+  if (this->simulation_parameters.multiphysics.vof_parameters.stf
+        .surface_tension_force)
     {
       find_filtered_phase_fraction_gradient();
       find_filtered_interface_curvature();
@@ -1072,7 +1075,8 @@ VolumeOfFluid<dim>::setup_dofs()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
-  if (this->simulation_parameters.multiphysics.surface_tension_force)
+  if (this->simulation_parameters.multiphysics.vof_parameters.stf
+        .surface_tension_force)
     {
       filtered_phase_fraction_gradient_dof_handler.distribute_dofs(
         *fe_filtered_phase_fraction_gradient);
