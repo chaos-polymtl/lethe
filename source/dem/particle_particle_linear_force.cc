@@ -211,6 +211,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
                     particle_one_force,
                     particle_two_force);
                 }
+
               else
                 {
                   // if the adjacent pair is not in contact anymore, only the
