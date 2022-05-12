@@ -2,6 +2,11 @@
 Dam break VOF
 ==========================
 
+This example simulates the dam break experiments of `Martin and Moyce (1952)`_. 
+
+.. _Martin and Moyce (1952): https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1952.0006
+
+
 ----------------------------------
 Features
 ----------------------------------
@@ -11,11 +16,15 @@ Features
 - The use of a python script for post-processing data
 
 
+------------------------
+Location of the example
+------------------------
+``examples/multiphysics/dam_break_VOF/gls_VOF_dam-break_Martin_and_Moyce.prm``
 
 
-This example simulates the dam break experiments of `Martin and Moyce (1952)`_. 
-
-.. _Martin and Moyce (1952): https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1952.0006
+---------------------------
+Description of the case
+---------------------------
 
 A liquid is fixed behind a dam at the left most corner of
 a rectangular domain as shown in the figure below.
@@ -35,10 +44,6 @@ The following schematic describes the geometry and dimensions of the simulation 
     All the four boundary conditions are ``slip``, and an external 
     gravity field of :math:`-1`` is applied in the y direction.
 
-------------------------
-Location of the example
-------------------------
-``examples/multiphysics/dam_break_VOF/gls_VOF_dam-break_Martin_and_Moyce.prm``
 
 --------------
 Parameter file
@@ -217,8 +222,8 @@ In ``subsection fluid 0``, we set the density and the kinematic viscosity for th
 Similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
-:math:`[14,10]`. The first :math:`14,10` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
-This makes it so our initial mesh is composed of perfect squares. We proceed then to redefine the mesh globally four times by setting
+:math:`[14,10]`. The first :math:`14,10` couple defines the number of initial grid subdivisions along the length and height of the rectangle. 
+This makes our initial mesh composed of perfect squares. We proceed then to redefine the mesh globally four times by setting
 ``set initial refinement=4``. 
 
 .. code-block:: text
@@ -253,7 +258,9 @@ level`` are 3 and 5, respectively.
         set fraction coarsening     = 0.02
     end
 
-
+----------------------
+Running the simulation
+----------------------
 
 Call the gls_navier_stokes_2d by invoking:  
 
@@ -266,8 +273,6 @@ to run the simulation using two CPU cores. Feel free to use more.
     The code will compute :math:`35,000+` dofs for :math:`600+` time 
     iterations. Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun 
-
-
 
 
 -------
