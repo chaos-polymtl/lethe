@@ -5,10 +5,11 @@
 #include <core/utilities.h>
 
 #include <solvers/navier_stokes_assemblers.h>
+#include <solvers/stabilization.h>
 
 template <int dim>
 void
-GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
+PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -37,19 +38,19 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const double         viscosity = viscosity_vector[q];
-      const Tensor<1, dim> velocity  = scratch_data.velocity_values[q];
-      const Tensor<2, dim> velocity_gradient =
+      const double          viscosity = viscosity_vector[q];
+      const Tensor<1, dim> &velocity  = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> velocity_laplacian =
+      const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
 
-      const Tensor<1, dim> pressure_gradient =
+      const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
 
       // Forcing term
-      const Tensor<1, dim> force       = scratch_data.force[q];
-      double               mass_source = scratch_data.mass_source[q];
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
@@ -65,10 +66,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity / (h * h), 2));
+          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
@@ -140,12 +139,264 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
               // parameter tau. Our experience has shown that does not alter the
               // number of newton iteration for convergence, but greatly
               // simplifies assembly.
-              if (SUPG)
-                {
-                  local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i_x_velocity +
-                           strong_residual_x_grad_phi_u_i * phi_u_j);
-                }
+              local_matrix_ij +=
+                tau * (strong_jac * grad_phi_u_i_x_velocity +
+                       strong_residual_x_grad_phi_u_i * phi_u_j);
+
+              local_matrix_ij *= JxW;
+              local_matrix(i, j) += local_matrix_ij;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
+
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Physical properties
+      const double viscosity = viscosity_vector[q];
+
+      // Velocity
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
+      const Tensor<2, dim> &velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+
+      // Pressure
+      const double          pressure = scratch_data.pressure_values[q];
+      const Tensor<1, dim> &pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      // Forcing term
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
+      // Calculation of the magnitude of the
+      // velocity for the stabilization parameter
+      const double u_mag = std::max(velocity.norm(), 1e-12);
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation
+      // is steady or unsteady. In the unsteady case it includes the
+      // value of the time-step
+      const double tau =
+        this->simulation_control->get_assembly_method() ==
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
+
+
+      // Calculate the strong residual for GLS stabilization
+      auto strong_residual = velocity_gradient * velocity + pressure_gradient -
+                             viscosity * velocity_laplacian - force +
+                             mass_source * velocity + strong_residual_vec[q];
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+
+          double local_rhs_i = 0;
+
+          // Navier-Stokes Residual
+          local_rhs_i +=
+            (
+              // Momentum
+              -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) -
+              velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
+              force * phi_u_i - mass_source * velocity * phi_u_i -
+              // Continuity
+              velocity_divergence * phi_p_i + mass_source * phi_p_i) *
+            JxW;
+
+          // PSPG GLS term
+          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+
+          // SUPG GLS term
+          local_rhs_i +=
+            -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
+
+          local_rhs(i) += local_rhs_i;
+        }
+    }
+}
+
+
+
+template class PSPGSUPGNavierStokesAssemblerCore<2>;
+template class PSPGSUPGNavierStokesAssemblerCore<3>;
+
+template <int dim>
+void
+GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &viscosity_vector = scratch_data.viscosity;
+
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
+
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const double          viscosity = viscosity_vector[q];
+      const Tensor<1, dim> &velocity  = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+
+      const Tensor<1, dim> &pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      // Forcing term
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
+
+      // Calculation of the magnitude of the velocity for the
+      // stabilization parameter
+      const double u_mag = std::max(velocity.norm(), 1e-12);
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation
+      // is steady or unsteady. In the unsteady case it includes the
+      // value of the time-step
+      const double tau =
+        this->simulation_control->get_assembly_method() ==
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
+
+      // Calculate the strong residual for GLS stabilization
+      auto strong_residual = velocity_gradient * velocity + pressure_gradient -
+                             viscosity * velocity_laplacian - force +
+                             mass_source * velocity + strong_residual_vec[q];
+
+      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+
+
+      // We loop over the column first to prevent recalculation
+      // of the strong jacobian in the inner loop
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto &phi_u_j           = scratch_data.phi_u[q][j];
+          const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
+          const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
+
+          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+
+          strong_jacobian_vec[q][j] +=
+            (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
+             grad_phi_p_j - viscosity * laplacian_phi_u_j +
+             mass_source * phi_u_j);
+
+          // Store these temporary products in auxiliary variables for speed
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
+          velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
+        }
+
+
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i           = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i      = scratch_data.grad_phi_u[q][i];
+          const auto &div_phi_u_i       = scratch_data.div_phi_u[q][i];
+          const auto &phi_p_i           = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i      = scratch_data.grad_phi_p[q][i];
+          const auto &laplacian_phi_u_i = scratch_data.laplacian_phi_u[q][i];
+
+          // Store these temporary products in auxiliary variables for speed
+          const auto grad_phi_u_i_x_velocity = grad_phi_u_i * velocity;
+          const auto strong_residual_x_grad_phi_u_i =
+            strong_residual * grad_phi_u_i;
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+
+              const auto &phi_p_j = scratch_data.phi_p[q][j];
+
+              const auto &strong_jac = strong_jacobian_vec[q][j];
+
+              double local_matrix_ij =
+                viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j +
+                mass_source * phi_u_j * phi_u_i +
+                // Continuity
+                phi_p_i * div_phi_u_j;
+
+              // PSPG GLS term
+              local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+
+              // The jacobian matrix for the SUPG formulation
+              // currently does not include the jacobian of the stabilization
+              // parameter tau. Our experience has shown that does not alter the
+              // number of newton iteration for convergence, but greatly
+              // simplifies assembly.
+              local_matrix_ij +=
+                tau * (strong_jac * (grad_phi_u_i_x_velocity -
+                                     viscosity * laplacian_phi_u_i) +
+                       strong_residual_x_grad_phi_u_i * phi_u_j);
+
               local_matrix_ij *= JxW;
               local_matrix(i, j) += local_matrix_ij;
             }
@@ -185,21 +436,21 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
       const double viscosity = viscosity_vector[q];
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> velocity_laplacian =
+      const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
 
       // Pressure
-      const double         pressure = scratch_data.pressure_values[q];
-      const Tensor<1, dim> pressure_gradient =
+      const double          pressure = scratch_data.pressure_values[q];
+      const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
 
       // Forcing term
-      const Tensor<1, dim> force       = scratch_data.force[q];
-      double               mass_source = scratch_data.mass_source[q];
+      const Tensor<1, dim> &force       = scratch_data.force[q];
+      double                mass_source = scratch_data.mass_source[q];
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
@@ -214,10 +465,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity / (h * h), 2));
+          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
 
 
       // Calculate the strong residual for GLS stabilization
@@ -228,11 +477,13 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i      = scratch_data.phi_u[q][i];
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto phi_p_i      = scratch_data.phi_p[q][i];
-          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
-          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_u_i           = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i      = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i           = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i      = scratch_data.grad_phi_p[q][i];
+          const auto &div_phi_u_i       = scratch_data.div_phi_u[q][i];
+          const auto &laplacian_phi_u_i = scratch_data.laplacian_phi_u[q][i];
+
 
           double local_rhs_i = 0;
 
@@ -251,11 +502,11 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
           local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
 
           // SUPG GLS term
-          if (SUPG)
-            {
-              local_rhs_i +=
-                -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
-            }
+          local_rhs_i += -tau *
+                         (strong_residual * (grad_phi_u_i * velocity -
+                                             viscosity * laplacian_phi_u_i)) *
+                         JxW;
+
           local_rhs(i) += local_rhs_i;
         }
     }
@@ -299,13 +550,14 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Gather into local variables the relevant fields
       const double viscosity = viscosity_vector[q];
 
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> velocity_laplacian =
+      const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<3, dim> velocity_hessian = scratch_data.velocity_hessians[q];
-      const Tensor<1, dim> pressure_gradient =
+      const Tensor<3, dim> &velocity_hessian =
+        scratch_data.velocity_hessians[q];
+      const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
 
       // Calculate shear rate (at each q)
@@ -344,10 +596,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity / (h * h), 2));
+          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
@@ -383,7 +633,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
-
+      shear_rate_magnitude =
+        shear_rate_magnitude > 1e-3 ? shear_rate_magnitude : 1e-3;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -414,7 +665,11 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
               double local_matrix_ij =
                 viscosity *
                   scalar_product(grad_phi_u_j_non_newtonian, grad_phi_u_i) +
-                velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                0.5 * scratch_data.grad_viscosity_shear_rate[q] /
+                  shear_rate_magnitude *
+                  scalar_product(grad_phi_u_j_non_newtonian, shear_rate) *
+                  scalar_product(shear_rate, grad_phi_u_i) +
+                velocity_gradient_x_phi_u_j[j] * 0.5 * phi_u_i +
                 grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j +
                 mass_source * phi_u_j * phi_u_i +
                 // Continuity
@@ -473,13 +728,14 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double viscosity = viscosity_vector[q];
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> velocity_laplacian =
+      const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<3, dim> velocity_hessian = scratch_data.velocity_hessians[q];
+      const Tensor<3, dim> &velocity_hessian =
+        scratch_data.velocity_hessians[q];
 
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
@@ -520,10 +776,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * viscosity / (h * h), 2));
+          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
 
 
       // Calculate the strong residual for GLS stabilization
@@ -535,11 +789,11 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i      = scratch_data.phi_u[q][i];
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto phi_p_i      = scratch_data.phi_p[q][i];
-          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
-          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
           double local_rhs_i = 0;
 
@@ -1010,19 +1264,21 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   // Copy data elementscd ../
   auto &local_matrix = copy_data.local_matrix;
 
+  // Local variables to reuse multiplications
+  std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+  std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
-      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
 
       // We loop over the column first to prevent recalculation
@@ -1098,9 +1354,9 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double viscosity = viscosity_vector[q];
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Calculate shear rate (at each q)
@@ -1111,7 +1367,7 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double pressure = scratch_data.pressure_values[q];
 
       // Forcing term
-      const Tensor<1, dim> force = scratch_data.force[q];
+      const Tensor<1, dim> &force = scratch_data.force[q];
 
       // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
@@ -1164,6 +1420,10 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
   // Copy data elements
   auto &local_matrix = copy_data.local_matrix;
 
+  // Local variables to reuse multiplications
+  std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+  std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1172,16 +1432,12 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
 
 
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
-
-      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
-      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
-
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -1253,16 +1509,16 @@ GDNavierStokesAssemblerCore<dim>::assemble_rhs(
 
 
       // Velocity
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Pressure
       const double pressure = scratch_data.pressure_values[q];
 
       // Forcing term
-      const Tensor<1, dim> force = scratch_data.force[q];
+      const Tensor<1, dim> &force = scratch_data.force[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -1270,10 +1526,10 @@ GDNavierStokesAssemblerCore<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i      = scratch_data.phi_u[q][i];
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto phi_p_i      = scratch_data.phi_p[q][i];
-          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
           double local_rhs_i = 0;
 
@@ -1381,12 +1637,11 @@ LaplaceAssembly<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Velocity
-
-      const Tensor<2, dim> velocity_gradient =
+      const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
       // Pressure
-      const Tensor<1, dim> pressure_gradient =
+      const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
 
       // Store JxW in local variable for faster access;
@@ -1396,8 +1651,8 @@ LaplaceAssembly<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
 
           double local_rhs_i = 0;
@@ -1446,7 +1701,7 @@ BuoyancyAssembly<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Forcing term (gravity)
-      const Tensor<1, dim> force = scratch_data.force[q];
+      const Tensor<1, dim> &force = scratch_data.force[q];
 
       const double thermal_expansion = scratch_data.thermal_expansion[q];
 
@@ -1581,8 +1836,7 @@ PressureBoundaryCondition<dim>::assemble_rhs(
   prescribed_pressure_values = std::vector<std::vector<double>>(
     scratch_data.n_faces, std::vector<double>(scratch_data.n_faces_q_points));
 
-  std::vector<std::vector<Tensor<1, dim>>> gn_bc;
-  gn_bc =
+  std::vector<std::vector<Tensor<1, dim>>> gn_bc =
     std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_faces_q_points));
@@ -1671,12 +1925,11 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
 
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
-  auto & local_matrix = copy_data.local_matrix;
-  double beta         = boundary_conditions.beta;
+  auto &local_matrix = copy_data.local_matrix;
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
-      // Check if this BC is a pressure BC.
+      const double beta = boundary_conditions.beta[i_bc];
       if (this->boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::function_weak)
         {
@@ -1768,8 +2021,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
     {
       identity[d][d] = 1;
     }
-  std::vector<std::vector<Tensor<1, dim>>> prescribed_velocity_values;
-  prescribed_velocity_values =
+  std::vector<std::vector<Tensor<1, dim>>> prescribed_velocity_values =
     std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_faces_q_points));
@@ -1778,12 +2030,11 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
 
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
-  auto & local_rhs = copy_data.local_rhs;
-  double beta      = boundary_conditions.beta;
+  auto &local_rhs = copy_data.local_rhs;
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
-      // Check if this BC is a weakly imposed Dirichlet BC
+      const double beta = boundary_conditions.beta[i_bc];
       if (this->boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::function_weak)
         {
@@ -1856,3 +2107,427 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
 
 template class WeakDirichletBoundaryCondition<2>;
 template class WeakDirichletBoundaryCondition<3>;
+
+template <int dim>
+void
+PartialSlipDirichletBoundaryCondition<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  // Scheme and physical properties
+  const double viscosity = scratch_data.viscosity[0];
+
+  // Loop and quadrature informations
+  Tensor<2, dim> identity;
+  for (unsigned int d = 0; d < dim; ++d)
+    {
+      identity[d][d] = 1;
+    }
+  std::vector<std::vector<Tensor<1, dim>>> prescribed_velocity_values;
+  prescribed_velocity_values =
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_faces_q_points));
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto &local_matrix = copy_data.local_matrix;
+  // Loop over the BCs
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      const double beta = boundary_conditions.beta[i_bc];
+      const double boundary_layer_thickness =
+        boundary_conditions.boundary_layer_thickness[i_bc];
+      const double beta_tangent = viscosity / boundary_layer_thickness;
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::partial_slip)
+        {
+          // Loop over the faces of the cell.
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              // Check if the face is on a boundary
+              if (scratch_data.is_boundary_face[f])
+                {
+                  // Check if the face is part of the boundary that as a
+                  // pressure BC.
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      // Assemble the matrix of the BC
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  for (const unsigned int j :
+                                       scratch_data.fe_face_values
+                                         .dof_indices())
+                                    {
+                                      const auto comp_j =
+                                        fe.system_to_component_index(j).first;
+                                      if (comp_i == comp_j)
+                                        {
+                                          double beta_terms_normal =
+                                            penalty_parameter * beta *
+                                            scratch_data
+                                              .face_normal[f][q][comp_i] *
+                                            (scratch_data
+                                               .face_normal[f][q][comp_i] *
+                                             scratch_data
+                                               .face_phi_u[f][q][j][comp_i]) *
+                                            scratch_data
+                                              .face_phi_u[f][q][i][comp_i] *
+                                            JxW;
+                                          double beta_terms_tangent =
+                                            beta_tangent *
+                                            (scratch_data
+                                               .face_phi_u[f][q][j][comp_i] -
+                                             scratch_data
+                                                 .face_normal[f][q][comp_i] *
+                                               (scratch_data
+                                                  .face_normal[f][q][comp_i] *
+                                                scratch_data
+                                                  .face_phi_u[f][q][j]
+                                                             [comp_i])) *
+                                            scratch_data
+                                              .face_phi_u[f][q][i][comp_i] *
+                                            JxW;
+
+                                          /* We don't use these terms has its
+                                           * seems they don't affect the
+                                           * solution for the normal component
+                                           */
+                                          /*
+                                                                                    double grad_phi_terms =
+                                                                                      scratch_data.face_normal[f][q][comp_i]*((viscosity *
+                                                                                        scratch_data
+                                                                                          .face_phi_u[f][q][j]) *
+                                                                                       (scratch_data
+                                                                                          .face_grad_phi_u[f][q][i] *
+                                                                                        scratch_data.face_normal[f][q])) *
+                                                                                      JxW;
+                                                                                    double surface_stress_term =
+                                                                                      scratch_data.face_normal[f][q][comp_i]* (viscosity *
+                                                                                       scratch_data
+                                                                                         .face_grad_phi_u[f][q][j] *
+                                                                                       scratch_data.face_normal[f][q]) *
+                                                                                      scratch_data.face_phi_u[f][q][i] *
+                                                                                      JxW;
+                                          */
+
+                                          local_matrix(i, j) +=
+                                            +beta_terms_normal +
+                                            beta_terms_tangent; //-
+                                                                // grad_phi_terms
+                                                                //-
+                                          // surface_stress_term;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+PartialSlipDirichletBoundaryCondition<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  // Scheme and physical properties
+  const double viscosity = scratch_data.viscosity[0];
+
+  // Loop and quadrature informations
+  Tensor<2, dim> identity;
+  for (unsigned int d = 0; d < dim; ++d)
+    {
+      identity[d][d] = 1;
+    }
+  std::vector<std::vector<Tensor<1, dim>>> prescribed_velocity_values =
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_faces_q_points));
+
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto &local_rhs = copy_data.local_rhs;
+  // Loop over the BCs
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      const double beta = boundary_conditions.beta[i_bc];
+      const double boundary_layer_thickness =
+        boundary_conditions.boundary_layer_thickness[i_bc];
+      const double beta_tangent = viscosity / boundary_layer_thickness;
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::partial_slip)
+        {
+          // Loop over the faces of the cell.
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              // Check if the face is on a boundary
+              if (scratch_data.is_boundary_face[f])
+                {
+                  // Check if the face is part of the boundary that has a
+                  // weakly imposed Dirichlet BC.
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      NavierStokesFunctionDefined<dim> function_v(
+                        &boundary_conditions.bcFunctions[i_bc].u,
+                        &boundary_conditions.bcFunctions[i_bc].v,
+                        &boundary_conditions.bcFunctions[i_bc].w);
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (unsigned int d = 0; d < dim; ++d)
+                            {
+                              prescribed_velocity_values[f][q][d] =
+                                function_v.value(
+                                  scratch_data.face_quadrature_points[f][q], d);
+                            }
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  double beta_terms_normal =
+                                    scratch_data.face_normal[f][q][comp_i] *
+                                    penalty_parameter * beta *
+                                    (scratch_data.face_normal[f][q][comp_i] *
+                                       scratch_data
+                                         .face_velocity_values[f][q][comp_i] -
+                                     scratch_data.face_normal[f][q][comp_i] *
+                                       prescribed_velocity_values[f][q]
+                                                                 [comp_i]) *
+                                    scratch_data.face_phi_u[f][q][i][comp_i] *
+                                    JxW;
+                                  double beta_terms_tangent =
+                                    beta_tangent *
+                                    (scratch_data
+                                       .face_velocity_values[f][q][comp_i] -
+                                     scratch_data.face_normal[f][q][comp_i] *
+                                       (scratch_data.face_normal[f][q][comp_i] *
+                                        scratch_data
+                                          .face_velocity_values[f][q][comp_i]) -
+                                     (prescribed_velocity_values[f][q][comp_i] -
+                                      scratch_data.face_normal[f][q][comp_i] *
+                                        (scratch_data
+                                           .face_normal[f][q][comp_i] *
+                                         prescribed_velocity_values[f][q]
+                                                                   [comp_i]))) *
+                                    scratch_data.face_phi_u[f][q][i][comp_i] *
+                                    JxW;
+                                  /* We don't use these terms has its seems they
+                                   * don't affect the solution for the normal
+                                   * component */
+                                  /*
+                                  double grad_phi_terms =
+                                    scratch_data.face_normal[f][q][comp_i]*((viscosity
+                                  * (scratch_data.face_velocity_values[f][q] -
+                                       prescribed_velocity_values[f][q])) *
+                                     (scratch_data.face_grad_phi_u[f][q][i] *
+                                      scratch_data.face_normal[f][q])) *
+                                    JxW;
+                                  double surface_stress_term =
+                                    scratch_data.face_normal[f][q][comp_i]*(viscosity
+                                  * scratch_data .face_velocity_gradients[f][q]
+                                  * scratch_data.face_normal[f][q] *
+                                     scratch_data.face_phi_u[f][q][i]) *
+                                    JxW;*/
+
+
+
+                                  local_rhs(i) +=
+                                    -beta_terms_normal -
+                                    beta_terms_tangent; //+ grad_phi_terms +
+                                                        // surface_stress_term;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template class PartialSlipDirichletBoundaryCondition<2>;
+template class PartialSlipDirichletBoundaryCondition<3>;
+
+template <int dim>
+void
+OutletBoundaryCondition<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto &local_matrix = copy_data.local_matrix;
+  // Loop over the BCs
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      const double beta = boundary_conditions.beta[i_bc];
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::outlet)
+        {
+          // Loop over the faces of the cell.
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              // Check if the face is on a boundary
+              if (scratch_data.is_boundary_face[f])
+                {
+                  // Check if the face is part of the boundary that as a
+                  // pressure BC.
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      // Assemble the matrix of the BC
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              double normal_outflux = std::min(
+                                0.,
+                                scratch_data.face_velocity_values[f][q] *
+                                  scratch_data.face_normal[f][q]);
+
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  for (const unsigned int j :
+                                       scratch_data.fe_face_values
+                                         .dof_indices())
+                                    {
+                                      const auto comp_j =
+                                        fe.system_to_component_index(j).first;
+                                      if (comp_i == comp_j)
+                                        {
+                                          double beta_terms =
+                                            penalty_parameter * beta *
+                                            normal_outflux *
+                                            (scratch_data
+                                               .face_phi_u[f][q][j][comp_i] *
+                                             scratch_data
+                                               .face_phi_u[f][q][i][comp_i]) *
+                                            JxW;
+
+                                          local_matrix(i, j) += -beta_terms;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+OutletBoundaryCondition<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto &local_rhs = copy_data.local_rhs;
+  // Loop over the BCs
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
+    {
+      const double beta = boundary_conditions.beta[i_bc];
+      if (this->boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::outlet)
+        {
+          // Loop over the faces of the cell.
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              // Check if the face is on a boundary
+              if (scratch_data.is_boundary_face[f])
+                {
+                  // Check if the face is part of the boundary that has a
+                  // weakly imposed Dirichlet BC.
+                  if (scratch_data.boundary_face_id[f] ==
+                      this->boundary_conditions.id[i_bc])
+                    {
+                      for (unsigned int q = 0;
+                           q < scratch_data.n_faces_q_points;
+                           ++q)
+                        {
+                          const double JxW = scratch_data.face_JxW[f][q];
+                          for (const unsigned int i :
+                               scratch_data.fe_face_values.dof_indices())
+                            {
+                              // Calculate beta term depending on the
+                              // value of  u*n. If it is positive (outgoing
+                              // flow) then
+                              double normal_outflux = std::min(
+                                0.,
+                                (scratch_data.face_velocity_values[f][q] *
+                                 scratch_data.face_normal[f][q]));
+
+                              const auto comp_i =
+                                fe.system_to_component_index(i).first;
+                              if (comp_i < dim)
+                                {
+                                  double beta_terms =
+                                    penalty_parameter * beta * normal_outflux *
+                                    (scratch_data
+                                       .face_velocity_values[f][q][comp_i] *
+                                     scratch_data.face_phi_u[f][q][i][comp_i]) *
+                                    JxW;
+
+                                  local_rhs(i) += +beta_terms;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template class OutletBoundaryCondition<2>;
+template class OutletBoundaryCondition<3>;

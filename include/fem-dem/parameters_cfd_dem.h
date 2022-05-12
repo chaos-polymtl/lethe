@@ -50,7 +50,10 @@ namespace Parameters
   {
     difelice,
     rong,
-    dallavalle
+    dallavalle,
+    kochhill,
+    beetstra,
+    gidaspow
   };
 
   enum class VANSModel
@@ -100,6 +103,9 @@ namespace Parameters
     bool         shear_force;
     bool         pressure_force;
     bool         void_fraction_time_derivative;
+    bool         interpolated_void_fraction;
+    double       cstar;
+    bool         implicit_stabilization;
 
     static void
     declare_parameters(ParameterHandler &prm);

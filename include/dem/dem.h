@@ -28,7 +28,6 @@
 #include <dem/integrator.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/localize_contacts.h>
-#include <dem/locate_ghost_particles.h>
 #include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/output_force_torque_calculation.h>
@@ -337,8 +336,7 @@ private:
 
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     particle_container;
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    ghost_particle_container;
+
   std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
                                            updated_boundary_points_and_normal_vectors;
   DEM::DEMProperties<dim>                  properties_class;

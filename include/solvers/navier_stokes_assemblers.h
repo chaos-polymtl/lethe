@@ -75,6 +75,50 @@ public:
 
 
 template <int dim>
+class PSPGSUPGNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
+{
+public:
+  PSPGSUPGNavierStokesAssemblerCore(
+    std::shared_ptr<SimulationControl> simulation_control)
+    : simulation_control(simulation_control)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+};
+
+/**
+ * @brief Class that assembles the core of the Navier-Stokes equation.
+ * This class assembles the weak form of:
+ * $$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
+ * =0 $$ with a full GLS stabilization including the laplacian of the test
+ * function.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+
+template <int dim>
 class GLSNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
@@ -101,13 +145,6 @@ public:
   virtual void
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  /**
-   * Enables SUPG stabilization for the Navier-Stokes formulation.
-   * We have not found any scenarios where it is relevant not to use SUPG
-   * stabilization yet.
-   */
-  const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
 };
@@ -528,6 +565,99 @@ public:
     std::shared_ptr<SimulationControl> simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim>
       &boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , boundary_conditions(boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl>                   simulation_control;
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+};
+
+/**
+ * @brief Class that assembles the special case of partial slip condition using the weak formulation of a Dirichlet boundary condition using the Nitsche method.
+ * This class assembles the weak form of: beta n(nu-nv) +
+ * mu/boundary_layer_thickness t(tu-tv)
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @param boundary_condition The boundary condition objects us to store the function.
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class PartialSlipDirichletBoundaryCondition
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  PartialSlipDirichletBoundaryCondition(
+    std::shared_ptr<SimulationControl> simulation_control,
+    const BoundaryConditions::NSBoundaryConditions<dim>
+      &boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , boundary_conditions(boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl>                   simulation_control;
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
+};
+
+/**
+ * @brief Class that assembles the weak formulation of an oulet boundary condition.
+ * This class assembles the weak form of (nu grad(u) * grad(v) + pI - (beta *
+ * u)_ * n See the paper by Arndt, Braack and Lube
+ * https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @param boundary_condition The boundary condition objects us to store the function.
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class OutletBoundaryCondition : public NavierStokesAssemblerBase<dim>
+{
+public:
+  OutletBoundaryCondition(std::shared_ptr<SimulationControl> simulation_control,
+                          const BoundaryConditions::NSBoundaryConditions<dim>
+                            &boundary_conditions_input)
     : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
   {}

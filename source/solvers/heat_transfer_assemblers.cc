@@ -164,9 +164,10 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
                       9 * std::pow(4 * alpha / (h * h), 2));
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual_vec[q] += rho_cp * velocity * temperature_gradient -
-                                thermal_conductivity[q] * temperature_laplacian;
-
+      strong_residual_vec[q] +=
+        rho_cp * velocity * temperature_gradient -
+        thermal_conductivity[q] * temperature_laplacian -
+        scratch_data.source[q];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -375,16 +376,20 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
 {
   if (!scratch_data.is_boundary_cell)
     return;
-  auto &local_matrix = copy_data.local_matrix;
+  auto &       local_matrix = copy_data.local_matrix;
+  const double Stefan_Boltzmann_constant =
+    this->boundary_conditions_ht.Stefan_Boltzmann_constant;
 
-  // Robin boundary condition, loop on faces (Newton's cooling law)
-  // implementation similar to deal.ii step-7
+  // Robin boundary condition, loop on faces (Newton's cooling law +
+  // Stefan-Boltzmann law) implementation similar to deal.ii step-7
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
     {
       if (this->boundary_conditions_ht.type[i_bc] ==
-          BoundaryConditions::BoundaryType::convection)
+          BoundaryConditions::BoundaryType::convection_radiation)
         {
           const double h = this->boundary_conditions_ht.h[i_bc];
+          const double emissivity =
+            this->boundary_conditions_ht.emissivity[i_bc];
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
               if (scratch_data.boundary_face_id[f] ==
@@ -393,6 +398,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)
                     {
+                      const double T_face =
+                        scratch_data.temperature_face_value[f][q];
                       const double JxW = scratch_data.face_JxW[f][q];
                       for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
@@ -404,7 +411,9 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
                               const double phi_face_T_j =
                                 scratch_data.phi_face_T[f][q][j];
                               local_matrix(i, j) +=
-                                phi_face_T_i * phi_face_T_j * h * JxW;
+                                (h + 4.0 * Stefan_Boltzmann_constant *
+                                       emissivity * T_face * T_face * T_face) *
+                                phi_face_T_i * phi_face_T_j * JxW;
                             }
                         }
                     }
@@ -423,18 +432,27 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
-  auto &local_rhs = copy_data.local_rhs;
+  auto &       local_rhs = copy_data.local_rhs;
+  const double Stefan_Boltzmann_constant =
+    this->boundary_conditions_ht.Stefan_Boltzmann_constant;
 
-
-  // Robin boundary condition, loop on faces (Newton's cooling law)
-  // implementation similar to deal.ii step-7
+  // Robin boundary condition, loop on faces (Newton's cooling law +
+  // Stefan-Boltzmann law) Convection-radiation BC is a combination of
+  // convection and radiation. If the Stefan-Boltzmann constant (with default
+  // value = 0) is set to 0, only the convection component is considered,
+  // whereas if the convection coefficient, h (with default value = 0), is set
+  // to 0, only the radiation component is considered. Otherwise, both the
+  // convection and radiation are significant on the boundary implementation
+  // similar to deal.ii step-7
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
     {
       if (this->boundary_conditions_ht.type[i_bc] ==
-          BoundaryConditions::BoundaryType::convection)
+          BoundaryConditions::BoundaryType::convection_radiation)
         {
           const double h     = this->boundary_conditions_ht.h[i_bc];
           const double T_inf = this->boundary_conditions_ht.Tinf[i_bc];
+          const double emissivity =
+            this->boundary_conditions_ht.emissivity[i_bc];
 
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
@@ -452,7 +470,12 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
                           const double phi_face_T_i =
                             scratch_data.phi_face_T[f][q][i];
                           local_rhs(i) -=
-                            phi_face_T_i * h * (T_face - T_inf) * JxW;
+                            phi_face_T_i *
+                            (h * (T_face - T_inf) +
+                             Stefan_Boltzmann_constant * emissivity *
+                               (T_face * T_face * T_face * T_face -
+                                T_inf * T_inf * T_inf * T_inf)) *
+                            JxW;
                         }
                     }
                 }
@@ -523,3 +546,141 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
 
 template class HeatTransferAssemblerViscousDissipation<2>;
 template class HeatTransferAssemblerViscousDissipation<3>;
+
+
+
+template <int dim>
+void
+HeatTransferAssemblerLaser<dim>::assemble_matrix(
+  HeatTransferScratchData<dim> & /*scratch_data*/,
+  StabilizedMethodsCopyData & /*copy_data*/)
+{}
+
+template <int dim>
+void
+HeatTransferAssemblerLaser<dim>::assemble_rhs(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &   copy_data)
+{
+  // Laser parameters
+  const double concentration_factor = laser_parameters->concentration_factor;
+  const double laser_power          = laser_parameters->laser_power;
+  const double absorptivity         = laser_parameters->laser_absorptivity;
+  const double penetration_depth    = laser_parameters->penetration_depth;
+  const double laser_start_time     = laser_parameters->start_time;
+  const double laser_end_time       = laser_parameters->end_time;
+  const double beam_radius          = laser_parameters->beam_radius;
+  const double current_time = this->simulation_control->get_current_time();
+
+  if (current_time >= laser_start_time && current_time <= laser_end_time)
+    {
+      // Get laser path
+      Function<dim> &laser_scan_path = *(laser_parameters->laser_scan_path);
+      laser_scan_path.set_time(current_time);
+
+      // For the laser heat source calculations, we need the radial distance, r,
+      // (in a dim-1 dimensional plane perpendicular to the laser beam
+      // direction) between the laser focal point and the quadrature points, as
+      // well as the axial distance, z, (in a laser emission direction) between
+      // the laser focal point and the quadrature points, separately. Hence, we
+      // get the laser location (laser_location) as a Point<dim>, in which the
+      // first and second components show the position of the laser focal point
+      // in a plane perpendicular to the emission direction, and the (dim-1)th
+      // component denotes the position of the laser focal point in the
+      // direction of emission. Then we use dim-1 auxiliary variables
+      // (Point<dim-1> laser_location_on_surface to store the position of the
+      // laser focal point in the perpendicular plane to the emission direction,
+      // and double laser_location_in_depth to store the position of the laser
+      // focal point in the direction of emission.
+
+      // Get laser location
+      Point<dim> laser_location;
+      laser_location[0] = laser_scan_path.value(
+        laser_location, laser_parameters->perpendicular_plane_coordinate_one);
+      if constexpr (dim == 3)
+        {
+          laser_location[1] = laser_scan_path.value(
+            laser_location,
+            laser_parameters->perpendicular_plane_coordinate_two);
+        }
+
+      // Get laser location in depth (direction of emission).
+      double laser_location_in_depth = 0.0;
+      laser_location[dim - 1] =
+        laser_scan_path.value(laser_location,
+                              laser_parameters->beam_orientation_coordinate);
+      laser_location_in_depth = laser_location[dim - 1];
+
+      // Get laser location on the operation surface
+      Point<dim - 1> laser_location_on_surface;
+      for (unsigned int d = 0; d < dim - 1; d++)
+        laser_location_on_surface[d] = laser_location[d];
+
+      const unsigned int n_q_points = scratch_data.n_q_points;
+      const unsigned int n_dofs     = scratch_data.n_dofs;
+
+      // Copy data elements
+      auto &strong_residual = copy_data.strong_residual;
+      auto &local_rhs       = copy_data.local_rhs;
+
+      // assembling right hand side
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          // Get quadrature point location on surface to calculate its distance
+          // from the laser focal point in a perpendicular plane to the
+          // direction of emission
+          Point<dim - 1> quadrature_point_on_surface;
+          quadrature_point_on_surface[0] =
+            scratch_data.quadrature_points
+              [q][laser_parameters->perpendicular_plane_coordinate_one];
+          if constexpr (dim == 3)
+            {
+              quadrature_point_on_surface[1] =
+                scratch_data.quadrature_points
+                  [q][laser_parameters->perpendicular_plane_coordinate_two];
+            }
+
+          // Get quadrature point depth to calculate its distance from the laser
+          // focal point in the direction of emission. Note that in
+          // two-dimensional simulations, this variable is always equal to zero
+          const double quadrature_point_depth =
+            scratch_data.quadrature_points[q][laser_parameters
+                                                ->beam_orientation_coordinate];
+          const double laser_quadrature_point_distance_in_depth =
+            std::abs(quadrature_point_depth - laser_location_in_depth);
+
+          // Store JxW in local variable for faster access
+          const double JxW = scratch_data.fe_values_T.JxW(q);
+
+          // Calculate the strong residual for GLS stabilization
+          const double laser_heat_source =
+            (concentration_factor * absorptivity * laser_power /
+             (M_PI * beam_radius * beam_radius * penetration_depth)) *
+            exp(-1.0 * concentration_factor *
+                std::pow(laser_location_on_surface.distance(
+                           quadrature_point_on_surface),
+                         2.0) /
+                (beam_radius * beam_radius)) *
+            exp(-1.0 * laser_quadrature_point_distance_in_depth /
+                penetration_depth);
+          strong_residual[q] -= laser_heat_source;
+
+          for (unsigned int i = 0; i < n_dofs; ++i)
+            {
+              const auto phi_T_i = scratch_data.phi_T[q][i];
+
+              // rhs for : eta * alpha * P / (pi * R^2 * mu) * exp(-eta * r^2 /
+              // R^2) * exp(-|z| / mu) where eta, alpha, P, R, mu, r and z
+              // denote concentration factor, absorptivity, laser power, beam
+              // radius, penetration depth, radial distance from the laser focal
+              // point, and axial distance from the laser focal point,
+              // respectively.
+              local_rhs(i) += laser_heat_source * phi_T_i * JxW;
+            }
+
+        } // end loop on quadrature points
+    }
+}
+
+template class HeatTransferAssemblerLaser<2>;
+template class HeatTransferAssemblerLaser<3>;

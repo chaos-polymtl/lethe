@@ -16,6 +16,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     # Multiphase flow
     set VOF 			= false
     set interface sharpening 	= false
+    set surface tension force = false
     set conservation monitoring = false
     set fluid monitored		= 1
   end
@@ -43,6 +44,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   When ``set VOF = true``, these optional parameters can be used:
     * ``interface sharpening``: controls if the interface sharpening method is used. Additional parameters can be found at :doc:`interface_sharpening`.
+    * ``surface tension force``: controls if the surface tension force is added to the simulation. Additional parameters can be found at :doc:`surface_tension_force`.
     * ``conservation monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the ``fluid monitored``. Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
     * ``fluid monitored``: index of the monitored fluid, if ``set conservation monitoring = true``. 
 

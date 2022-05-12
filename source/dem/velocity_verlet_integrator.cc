@@ -23,10 +23,10 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
       // efficiency
       auto particle_properties = particle->get_properties();
       auto particle_position   = particle->get_location();
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-      types::particle_index particle_id = particle->get_local_index();
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       types::particle_index particle_id = particle->get_id();
+#else
+      types::particle_index particle_id = particle->get_local_index();
 #endif
       Tensor<1, dim> particle_acceleration;
 
@@ -67,10 +67,10 @@ VelocityVerletIntegrator<dim>::integrate(
     {
       // Get the total array view to the particle properties once to improve
       // efficiency
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-      types::particle_index particle_id = particle.get_local_index();
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       types::particle_index particle_id = particle.get_id();
+#else
+      types::particle_index particle_id = particle.get_local_index();
 #endif
       auto          particle_properties = particle.get_properties();
       Tensor<1, 3> &particle_torque     = torque[particle_id];

@@ -50,15 +50,15 @@ check_contact_detection_method(
         (checkpoint_step || load_balance_step || contact_detection_step);
 
       if (sorting_in_subdomains_step)
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-        displacement.resize(particle_handler.get_max_local_particle_index());
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
         {
           unsigned int max_particle_id = 0;
           for (const auto &particle : particle_handler)
             max_particle_id = std::max(max_particle_id, particle.get_id());
           displacement.resize(max_particle_id + 1);
         }
+#else
+        displacement.resize(particle_handler.get_max_local_particle_index());
 #endif
 
       contact_detection_step =
@@ -165,15 +165,6 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
     this->cfd_dem_simulation_parameters.dem_parameters.model_parameters;
   dem_parameters.simulation_control =
     this->cfd_dem_simulation_parameters.dem_parameters.simulation_control;
-
-  // In the case the simulation is being restarted from a checkpoint file, the
-  // checkpoint_step parameter is set to true. This allows to perform all
-  // operations related to restarting a simulation. Once all operations have
-  // been performed, this checkpoint_step is reset to false. It is only set once
-  // and reset once since restarting only occurs once.
-  if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-        .restart == true)
-    checkpoint_step = true;
 
   maximum_particle_diameter =
     find_maximum_particle_size(dem_parameters.lagrangian_physical_properties,
@@ -290,8 +281,18 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
 
   // Initilize contact detection step
   contact_detection_step = false;
-  checkpoint_step        = false;
   load_balance_step      = false;
+
+  // In the case the simulation is being restarted from a checkpoint file, the
+  // checkpoint_step parameter is set to true. This allows to perform all
+  // operations related to restarting a simulation. Once all operations have
+  // been performed, this checkpoint_step is reset to false. It is only set once
+  // and reset once since restarting only occurs once.
+  if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+        .restart == true)
+    checkpoint_step = true;
+  else
+    checkpoint_step = false;
 }
 
 template <int dim>
@@ -791,15 +792,15 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-  displacement.resize(this->particle_handler.get_max_local_particle_index());
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   {
     unsigned int max_particle_id = 0;
     for (const auto &particle : this->particle_handler)
       max_particle_id = std::max(max_particle_id, particle.get_id());
     displacement.resize(max_particle_id + 1);
   }
+#else
+  displacement.resize(this->particle_handler.get_max_local_particle_index());
 #endif
 
   force.resize(displacement.size());
@@ -826,10 +827,10 @@ CFDDEMSolver<dim>::update_moment_of_inertia(
   for (auto &particle : particle_handler)
     {
       auto &particle_properties = particle.get_properties();
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-      MOI[particle.get_local_index()] =
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       MOI[particle.get_id()] =
+#else
+      MOI[particle.get_local_index()] =
 #endif
         0.1 * particle_properties[DEM::PropertiesIndex::mass] *
         particle_properties[DEM::PropertiesIndex::dp] *
@@ -875,10 +876,10 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
     {
       auto particle_properties = particle->get_properties();
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-      types::particle_index particle_id = particle->get_local_index();
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       types::particle_index particle_id = particle->get_id();
+#else
+      types::particle_index particle_id = particle->get_local_index();
 #endif
 
       force[particle_id][0] +=
@@ -968,16 +969,16 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-      displacement.resize(
-        this->particle_handler.get_max_local_particle_index());
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       {
         unsigned int max_particle_id = 0;
         for (const auto &particle : this->particle_handler)
           max_particle_id = std::max(max_particle_id, particle.get_id());
         displacement.resize(max_particle_id + 1);
       }
+#else
+      displacement.resize(
+        this->particle_handler.get_max_local_particle_index());
 #endif
       force.resize(displacement.size());
       torque.resize(displacement.size());
@@ -1058,7 +1059,7 @@ CFDDEMSolver<dim>::write_DEM_output_results()
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
-    dem_parameters.simulation_control.output_name + "particles";
+    dem_parameters.simulation_control.output_name + "_particles";
   const unsigned int iter = this->simulation_control->get_step_number();
   const double       time = this->simulation_control->get_current_time();
   const unsigned int group_files =
@@ -1272,6 +1273,8 @@ CFDDEMSolver<dim>::solve()
         {
           this->update_boundary_conditions();
         }
+
+      this->dynamic_flow_control();
 
       if (this->simulation_control->is_at_start())
         {

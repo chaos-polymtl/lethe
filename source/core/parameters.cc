@@ -16,6 +16,12 @@ DeclException1(NumberOfFluidsError,
                << "Number of fluids: " << arg1
                << " is not 1 (single phase simulation) or 2 (VOF simulation)");
 
+DeclException1(
+  TwoDimensionalLaserError,
+  unsigned int,
+  << "Laser beam orientation in : " << arg1
+  << "-dimensional simulations cannot be defined in the z direction");
+
 namespace Parameters
 {
   void
@@ -181,6 +187,7 @@ namespace Parameters
       output_folder     = prm.get("output path");
       output_name       = prm.get("output name");
       output_frequency  = prm.get_integer("output frequency");
+      output_time       = prm.get_double("output time");
       output_boundaries = prm.get_bool("output boundaries");
 
       subdivision   = prm.get_integer("subdivision");
@@ -314,10 +321,54 @@ namespace Parameters
   }
 
   void
+  Stabilization::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("stabilization");
+    {
+      prm.declare_entry(
+        "use default stabilization",
+        "true",
+        Patterns::Bool(),
+        "Use the default stabilization method provided by the solver");
+      prm.declare_entry(
+        "stabilization",
+        "pspg_supg",
+        Patterns::Selection("pspg_supg|gls|grad_div"),
+        "Type of stabilization used for the Navier-Stokes equations"
+        "Choices are <pspg_supg|gls|grad_div>.");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  Stabilization::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("stabilization");
+    {
+      use_default_stabilization = prm.get_bool("use default stabilization");
+      std::string op            = prm.get("stabilization");
+      if (op == "pspg_supg")
+        stabilization = NavierStokesStabilization::pspg_supg;
+      else if (op == "gls")
+        stabilization = NavierStokesStabilization::gls;
+      else if (op == "grad_div")
+        stabilization = NavierStokesStabilization::grad_div;
+      else
+        throw(std::runtime_error("Invalid stabilization strategy"));
+    }
+    prm.leave_subsection();
+  }
+
+  void
   SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("surface tension force");
     {
+      prm.declare_entry("surface tension coefficient",
+                        "0.0",
+                        Patterns::Double(),
+                        "Surface tension coefficient");
+
       prm.declare_entry("output auxiliary fields",
                         "false",
                         Patterns::Bool(),
@@ -350,11 +401,13 @@ namespace Parameters
   {
     prm.enter_subsection("surface tension force");
     {
+      // Surface tension coefficient
+      surface_tension_coef = prm.get_double("surface tension coefficient");
       phase_fraction_gradient_filter_value =
         prm.get_double("phase fraction gradient filter");
       curvature_filter_value = prm.get_double("curvature filter");
 
-      output_VOF_auxiliary_fields = prm.get_bool("output auxiliary fields");
+      output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
 
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
@@ -372,13 +425,15 @@ namespace Parameters
   {
     prm.enter_subsection("phase change");
     {
-      T_solidus       = prm.get_double("solidus temperature");
-      T_liquidus      = prm.get_double("liquidus temperature");
-      latent_enthalpy = prm.get_double("latent enthalpy");
-      cp_l            = prm.get_double("specific heat liquid");
-      cp_s            = prm.get_double("specific heat solid");
-      viscosity_l     = prm.get_double("viscosity liquid");
-      viscosity_s     = prm.get_double("viscosity solid");
+      T_solidus              = prm.get_double("solidus temperature");
+      T_liquidus             = prm.get_double("liquidus temperature");
+      latent_enthalpy        = prm.get_double("latent enthalpy");
+      cp_l                   = prm.get_double("specific heat liquid");
+      cp_s                   = prm.get_double("specific heat solid");
+      viscosity_l            = prm.get_double("viscosity liquid");
+      viscosity_s            = prm.get_double("viscosity solid");
+      thermal_conductivity_l = prm.get_double("thermal conductivity liquid");
+      thermal_conductivity_s = prm.get_double("thermal conductivity solid");
     }
 
     Assert(T_liquidus > T_solidus,
@@ -416,6 +471,16 @@ namespace Parameters
                         Patterns::Double(),
                         "Specific heat of the solid phase");
 
+      prm.declare_entry("thermal conductivity liquid",
+                        "1",
+                        Patterns::Double(),
+                        "Thermal conductivity of the liquid phase");
+
+      prm.declare_entry("thermal conductivity solid",
+                        "1",
+                        Patterns::Double(),
+                        "Thermal conductivity of the solid phase");
+
       prm.declare_entry("viscosity liquid",
                         "1",
                         Patterns::Double(),
@@ -442,11 +507,6 @@ namespace Parameters
                         Patterns::Integer(),
                         "Number of fluids");
 
-      prm.declare_entry("surface tension coefficient",
-                        "0.0",
-                        Patterns::Double(),
-                        "Surface tension coefficient");
-
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
         {
@@ -461,9 +521,6 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-      // Surface tension coefficient
-      surface_tension_coef = prm.get_double("surface tension coefficient");
-
       // Multiphasic simulations parameters definition
       number_of_fluids = prm.get_integer("number of fluids");
       Assert(number_of_fluids == 1 || number_of_fluids == 2,
@@ -545,9 +602,9 @@ namespace Parameters
       prm.declare_entry(
         "thermal conductivity model",
         "constant",
-        Patterns::Selection("constant|linear"),
+        Patterns::Selection("constant|linear|phase_change"),
         "Model used for the calculation of the thermal conductivity"
-        "Choices are <constant|linear>.");
+        "Choices are <constant|linear|phase_change>.");
 
       prm.declare_entry("k_A0",
                         "0",
@@ -589,6 +646,8 @@ namespace Parameters
         thermal_conductivity_model = ThermalConductivityModel::constant;
       else if (op == "linear")
         thermal_conductivity_model = ThermalConductivityModel::linear;
+      else if (op == "phase_change")
+        thermal_conductivity_model = ThermalConductivityModel::phase_change;
 
       // Linear conductivity model parameters
       k_A0 = prm.get_double("k_A0");
@@ -744,6 +803,114 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim>
+  void
+  Laser<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("laser parameters");
+    {
+      prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
+      prm.declare_entry("concentration factor",
+                        "2.0",
+                        Patterns::Double(),
+                        "Concentration factor");
+      prm.declare_entry("power", "100.0", Patterns::Double(), "Laser power");
+      prm.declare_entry("absorptivity",
+                        "0.5",
+                        Patterns::Double(),
+                        "Laser absorptivity");
+      prm.declare_entry("penetration depth",
+                        "0.0",
+                        Patterns::Double(),
+                        "Penetration depth");
+      prm.declare_entry("beam radius",
+                        "0.0",
+                        Patterns::Double(),
+                        "Laser beam radius");
+
+
+      prm.enter_subsection("path");
+      laser_scan_path = std::make_shared<Functions::ParsedFunction<dim>>(dim);
+      laser_scan_path->declare_parameters(prm, dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0");
+      prm.leave_subsection();
+
+      prm.declare_entry("start time",
+                        "0.0",
+                        Patterns::Double(),
+                        "Start time of laser");
+      prm.declare_entry("end time",
+                        "1.0",
+                        Patterns::Double(),
+                        "End time of laser");
+
+      prm.declare_entry("beam orientation",
+                        "z",
+                        Patterns::Selection("x|y|z"),
+                        "Laser beam orientation "
+                        "Choices are <x|y|z>.");
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  Laser<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("laser parameters");
+    {
+      activate_laser       = prm.get_bool("enable");
+      concentration_factor = prm.get_double("concentration factor");
+      laser_power          = prm.get_double("power");
+      laser_absorptivity   = prm.get_double("absorptivity");
+      penetration_depth    = prm.get_double("penetration depth");
+      beam_radius          = prm.get_double("beam radius");
+
+      prm.enter_subsection("path");
+      laser_scan_path->parse_parameters(prm);
+      laser_scan_path->set_time(0);
+      prm.leave_subsection();
+
+      start_time = prm.get_double("start time");
+      end_time   = prm.get_double("end time");
+
+      std::string op;
+      op = prm.get("beam orientation");
+      if (op == "x")
+        {
+          beam_orientation                   = BeamOrientation::x;
+          beam_orientation_coordinate        = 0;
+          perpendicular_plane_coordinate_one = 1;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "y")
+        {
+          beam_orientation                   = BeamOrientation::y;
+          perpendicular_plane_coordinate_one = 0;
+          beam_orientation_coordinate        = 1;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "z")
+        {
+          if constexpr (dim == 3)
+            {
+              beam_orientation                   = BeamOrientation::z;
+              perpendicular_plane_coordinate_one = 0;
+              perpendicular_plane_coordinate_two = 1;
+              beam_orientation_coordinate        = 2;
+            }
+          else if constexpr (dim == 2)
+            Assert(dim == 2, TwoDimensionalLaserError(dim));
+        }
+    }
+    prm.leave_subsection();
+  }
+
   void
   PostProcessing::declare_parameters(ParameterHandler &prm)
   {
@@ -784,6 +951,12 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable calculation of between two boundaries.");
+
+      prm.declare_entry(
+        "calculate temperature range",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of minimum and maximum temperature.");
 
       prm.declare_entry("inlet boundary id",
                         "0",
@@ -862,7 +1035,9 @@ namespace Parameters
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
+      calculate_pressure_drop = prm.get_bool("calculate pressure drop");
+      calculate_min_max_temperature =
+        prm.get_bool("calculate temperature range");
       inlet_boundary_id              = prm.get_integer("inlet boundary id");
       outlet_boundary_id             = prm.get_integer("outlet boundary id");
       initial_time                   = prm.get_double("initial time");
@@ -951,6 +1126,12 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Reuse the last jacobian matrix for the next non-linear problem solution");
+
+      prm.declare_entry(
+        "abort at convergence failure",
+        "false",
+        Patterns::Bool(),
+        "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
     }
     prm.leave_subsection();
   }
@@ -996,6 +1177,8 @@ namespace Parameters
       display_precision     = prm.get_integer("residual precision");
       force_rhs_calculation = prm.get_bool("force rhs calculation");
       reuse_matrix          = prm.get_bool("reuse matrix");
+      abort_at_convergence_failure =
+        prm.get_bool("abort at convergence failure");
     }
     prm.leave_subsection();
   }
@@ -1050,10 +1233,13 @@ namespace Parameters
 
       prm.declare_entry(
         "expand particle-wall contact search",
-        "true",
+        "false",
         Patterns::Bool(),
         "Enables adding the boundary neighbor cells of boundary cells to the"
-        "particle-wall contact search list.");
+        "particle-wall contact search list. This feature should only be "
+        "activated in geometries with concave boundaries. (For example, for "
+        "particles flow inside a cylinder or sphere). In geometries with "
+        "convex boundaries, this feature MUST NOT be activated");
 
       prm.declare_entry("target size",
                         "1",
@@ -1354,9 +1540,10 @@ namespace Parameters
 
       prm.declare_entry("variable",
                         "velocity",
-                        Patterns::Selection("velocity|pressure|phase"),
+                        Patterns::Selection(
+                          "velocity|pressure|phase|temperature"),
                         "Variable for kelly estimation"
-                        "Choices are <velocity|pressure|phase>.");
+                        "Choices are <velocity|pressure|phase|temperature>.");
       prm.declare_entry(
         "fraction type",
         "number",
@@ -1411,6 +1598,8 @@ namespace Parameters
         variable = Variable::pressure;
       if (vop == "phase")
         variable = Variable::phase;
+      if (vop == "temperature")
+        variable = Variable::temperature;
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")
@@ -1698,15 +1887,25 @@ namespace Parameters
                         "1000",
                         Patterns::Integer(),
                         "The number of DEM time steps per CFD time step");
-      prm.declare_entry("fluid density",
-                        "1",
-                        Patterns::Double(),
-                        "density of the fluid");
       prm.declare_entry("alpha",
                         "1",
                         Patterns::Double(),
                         "relaxation parameter");
 
+      prm.declare_entry("enable lubrication force",
+                        "true",
+                        Patterns::Bool(),
+                        "Bool to enable or disable the lubrication force");
+      prm.declare_entry(
+        "lubrication range max",
+        "2",
+        Patterns::Double(),
+        "Gap require to consider the lubrication force. This value is multiplied the smallest cell size");
+      prm.declare_entry(
+        "lubrication range min",
+        "0.1",
+        Patterns::Double(),
+        "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
       prm.declare_entry(
         "wall youngs modulus",
         "100000000",
@@ -1775,7 +1974,6 @@ namespace Parameters
       outside_radius     = prm.get_double("refine mesh outside radius factor");
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
-      density              = prm.get_double("fluid density");
       integrate_motion     = prm.get_bool("integrate motion");
       alpha                = prm.get_double("alpha");
 
@@ -1798,7 +1996,10 @@ namespace Parameters
       wall_friction_coefficient = prm.get_double("wall friction coefficient");
       wall_restitution_coefficient =
         prm.get_double("wall restitution coefficient");
-      coupling_frequency = prm.get_double("DEM coupling frequency");
+      coupling_frequency       = prm.get_double("DEM coupling frequency");
+      enable_lubrication_force = prm.get_bool("enable lubrication force");
+      lubrication_range_max    = prm.get_double("lubrication range max");
+      lubrication_range_min    = prm.get_double("lubrication range min");
 
 
 
@@ -1835,7 +2036,6 @@ namespace Parameters
             particles[i].f_omega->value(particles[i].position, 1);
           particles[i].omega[2] =
             particles[i].f_omega->value(particles[i].position, 2);
-
 
           particles[i].particle_id          = i;
           particles[i].radius               = prm.get_double("radius");
@@ -1931,6 +2131,8 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template class Laser<2>;
+  template class Laser<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
 } // namespace Parameters

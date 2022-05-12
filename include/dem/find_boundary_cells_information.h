@@ -285,8 +285,9 @@ private:
   std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
     updated_boundary_points_and_normal_vectors;
 
-  // A boolean variable used for printing a warning only once
-  bool first_time_warning = true;
+  // Boolean variables used for printing a warning only once
+  bool display_diamond_cells_warning        = true;
+  bool display_pw_contact_expansion_warning = true;
 };
 
 #endif /* find_boundary_cells_information_h */

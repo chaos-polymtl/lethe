@@ -24,6 +24,7 @@
 
 #include <dem/dem.h>
 #include <dem/dem_properties.h>
+#include <fem-dem/parameters_cfd_dem.h>
 
 #include <deal.II/base/quadrature.h>
 
@@ -107,11 +108,13 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_VOF                   = false;
-    gather_void_fraction         = false;
-    gather_particles_information = false;
-    gather_temperature           = false;
-    gather_hessian               = properties_manager.is_non_newtonian();
+    gather_vof                              = false;
+    gather_filtered_phase_fraction_gradient = false;
+    gather_curvature                        = false;
+    gather_void_fraction                    = false;
+    gather_particles_information            = false;
+    gather_temperature                      = false;
+    gather_hessian = properties_manager.is_non_newtonian();
   }
 
   /**
@@ -141,23 +144,28 @@ public:
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
   {
-    gather_VOF                   = false;
-    gather_void_fraction         = false;
-    gather_particles_information = false;
-    gather_temperature           = false;
-
     allocate();
-    if (sd.gather_VOF)
-      enable_VOF(sd.fe_values_VOF->get_fe(),
-                 sd.fe_values_VOF->get_quadrature(),
-                 sd.fe_values_VOF->get_mapping());
+    if (sd.gather_vof)
+      enable_vof(sd.fe_values_vof->get_fe(),
+                 sd.fe_values_vof->get_quadrature(),
+                 sd.fe_values_vof->get_mapping());
+    if (sd.gather_filtered_phase_fraction_gradient)
+      enable_filtered_phase_fraction_gradient(
+        sd.fe_values_filtered_phase_fraction_gradient->get_fe(),
+        sd.fe_values_filtered_phase_fraction_gradient->get_quadrature(),
+        sd.fe_values_filtered_phase_fraction_gradient->get_mapping());
+    if (sd.gather_curvature)
+      enable_curvature(sd.fe_values_curvature->get_fe(),
+                       sd.fe_values_curvature->get_quadrature(),
+                       sd.fe_values_curvature->get_mapping());
 
     if (sd.gather_void_fraction)
       enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
                            sd.fe_values_void_fraction->get_quadrature(),
                            sd.fe_values_void_fraction->get_mapping());
     if (sd.gather_particles_information)
-      enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell);
+      enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell,
+                                         sd.interpolated_void_fraction);
     if (sd.gather_temperature)
       enable_heat_transfer(sd.fe_values_temperature->get_fe(),
                            sd.fe_values_temperature->get_quadrature(),
@@ -433,7 +441,7 @@ public:
 
 
   /**
-   * @brief enable_VOF Enables the collection of the VOF data by the scratch
+   * @brief enable_vof Enables the collection of the VOF data by the scratch
    *
    * @param fe FiniteElement associated with the VOF.
    *
@@ -443,11 +451,22 @@ public:
    */
 
   void
-  enable_VOF(const FiniteElement<dim> &fe,
+  enable_vof(const FiniteElement<dim> &fe,
              const Quadrature<dim> &   quadrature,
              const Mapping<dim> &      mapping);
 
-  /** @brief Reinitialize the content of the scratch for the VOF
+  void
+  enable_filtered_phase_fraction_gradient(
+    const FiniteElement<dim> &fe_filtered_phase_fraction_gradient,
+    const Quadrature<dim> &   quadrature,
+    const Mapping<dim> &      mapping);
+
+  void
+  enable_curvature(const FiniteElement<dim> &fe_curvature,
+                   const Quadrature<dim> &   quadrature,
+                   const Mapping<dim> &      mapping);
+
+  /** @brief Reinitialize the content of the scratch for the vof
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the VOF FE and not the
@@ -463,24 +482,54 @@ public:
 
   template <typename VectorType>
   void
-  reinit_VOF(const typename DoFHandler<dim>::active_cell_iterator &cell,
+  reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
              const VectorType &             current_solution,
              const std::vector<VectorType> &previous_solutions,
              const std::vector<VectorType> & /*solution_stages*/)
   {
-    this->fe_values_VOF->reinit(cell);
+    this->fe_values_vof->reinit(cell);
     // Gather phase fraction (values, gradient)
-    this->fe_values_VOF->get_function_values(current_solution,
+    this->fe_values_vof->get_function_values(current_solution,
                                              this->phase_values);
-    this->fe_values_VOF->get_function_gradients(current_solution,
+    this->fe_values_vof->get_function_gradients(current_solution,
                                                 this->phase_gradient_values);
 
     // Gather previous phase fraction values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_VOF->get_function_values(previous_solutions[p],
+        this->fe_values_vof->get_function_values(previous_solutions[p],
                                                  previous_phase_values[p]);
       }
+  }
+
+  template <typename VectorType>
+  void
+  reinit_filtered_phase_fraction_gradient(
+    const typename DoFHandler<dim>::active_cell_iterator
+      &               filtered_phase_fraction_gradient_cell,
+    const VectorType &current_filtered_phase_fraction_gradient_solution)
+  {
+    this->fe_values_filtered_phase_fraction_gradient->reinit(
+      filtered_phase_fraction_gradient_cell);
+
+    FEValuesExtractors::Vector pfg(0);
+    // Gather phase fraction gradient
+    (*fe_values_filtered_phase_fraction_gradient)[pfg].get_function_values(
+      current_filtered_phase_fraction_gradient_solution,
+      this->filtered_phase_fraction_gradient_values);
+  }
+
+  template <typename VectorType>
+  void
+  reinit_curvature(
+    const typename DoFHandler<dim>::active_cell_iterator &curvature_cell,
+    const VectorType &current_curvature_solution)
+  {
+    this->fe_values_curvature->reinit(curvature_cell);
+
+    // Gather phase fraction gradient
+    this->fe_values_curvature->get_function_values(current_curvature_solution,
+                                                   this->curvature_values);
   }
 
   /**
@@ -548,7 +597,8 @@ public:
 
   void
   enable_particle_fluid_interactions(
-    const unsigned int n_global_max_particles_per_cell);
+    const unsigned int n_global_max_particles_per_cell,
+    const bool         enable_void_fraction_interpolation);
 
   /** @brief Calculate the content of the scratch for the particle fluid interactions
    *
@@ -568,8 +618,8 @@ public:
   void
   reinit_particle_fluid_interactions(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType                                      current_solution,
-    const VectorType                                      previous_solution,
+    const VectorType /*current_solution*/,
+    const VectorType                       previous_solution,
     const VectorType                       void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
     DoFHandler<dim> &                      dof_handler,
@@ -579,6 +629,7 @@ public:
     const FiniteElement<dim> &fe_void_fraction =
       this->fe_values_void_fraction->get_fe();
 
+    bool interpolated_void_fraction = this->interpolated_void_fraction;
     const unsigned int                   dofs_per_cell = fe.dofs_per_cell;
     std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
     std::vector<types::global_dof_index> void_fraction_dof_indices(
@@ -602,10 +653,10 @@ public:
     void_fraction_dh_cell->get_dof_indices(void_fraction_dof_indices);
 
     // Loop over particles in cell
+    double total_particle_volume = 0;
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
-
         // Set the particle_fluid_interactions properties and vectors to 0
         for (int d = 0; d < dim; ++d)
           {
@@ -613,7 +664,6 @@ public:
             undisturbed_flow_force[d]                                  = 0;
           }
 
-        cell_void_fraction[particle_number]                  = 0;
         fluid_velocity_at_particle_location[particle_number] = 0;
 
         // Stock the values of particle velocity in a tensor
@@ -640,16 +690,38 @@ public:
                   fe.shape_value(j, reference_location);
               }
           }
-        for (unsigned int j = 0; j < fe_void_fraction.dofs_per_cell; ++j)
+
+        cell_void_fraction[particle_number] = 0;
+        if (interpolated_void_fraction == true)
           {
-            cell_void_fraction[particle_number] +=
-              void_fraction_solution[void_fraction_dof_indices[j]] *
-              fe_void_fraction.shape_value(j, reference_location);
+            for (unsigned int j = 0; j < fe_void_fraction.dofs_per_cell; ++j)
+              {
+                cell_void_fraction[particle_number] +=
+                  void_fraction_solution[void_fraction_dof_indices[j]] *
+                  fe_void_fraction.shape_value(j, reference_location);
+              }
+          }
+        else
+          {
+            total_particle_volume +=
+              M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+              (2 * dim);
           }
 
         average_particle_velocity += particle_velocity[particle_number];
         particle_number += 1;
       }
+
+    if (interpolated_void_fraction == false)
+      {
+        double cell_void_fraction_bulk = 0;
+        cell_void_fraction_bulk =
+          (cell_volume - total_particle_volume) / cell_volume;
+
+        for (unsigned int j = 0; j < particle_number; ++j)
+          cell_void_fraction[j] = cell_void_fraction_bulk;
+      }
+
 
     if (particle_number != 0)
       {
@@ -686,10 +758,10 @@ public:
     fe_values_local_particles.reinit(cell);
 
     fe_values_local_particles[velocities].get_function_laplacians(
-      current_solution, fluid_velocity_laplacian_at_particle_location);
+      previous_solution, fluid_velocity_laplacian_at_particle_location);
 
     fe_values_local_particles[pressure].get_function_gradients(
-      current_solution, fluid_pressure_gradients_at_particle_location);
+      previous_solution, fluid_pressure_gradients_at_particle_location);
   }
 
 
@@ -800,17 +872,23 @@ public:
   /**
    * Scratch component for the VOF auxiliary physics
    */
-  bool                             gather_VOF;
-  unsigned int                     n_dofs_VOF;
+  bool                             gather_vof;
+  unsigned int                     n_dofs_vof;
   std::vector<double>              phase_values;
   std::vector<std::vector<double>> previous_phase_values;
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>> fe_values_VOF;
+  std::shared_ptr<FEValues<dim>> fe_values_vof;
 
+  bool                           gather_filtered_phase_fraction_gradient;
+  bool                           gather_curvature;
+  std::shared_ptr<FEValues<dim>> fe_values_filtered_phase_fraction_gradient;
+  std::shared_ptr<FEValues<dim>> fe_values_curvature;
+  std::vector<Tensor<1, dim>>    filtered_phase_fraction_gradient_values;
+  std::vector<double>            curvature_values;
 
   /**
-   * Scratch component for the void fractoin auxiliary physics
+   * Scratch component for the void fraction auxiliary physics
    */
   bool                             gather_void_fraction;
   unsigned int                     n_dofs_void_fraction;
@@ -824,6 +902,7 @@ public:
    * Scratch component for the particle fluid interaction auxiliary physics
    */
   bool                        gather_particles_information;
+  bool                        interpolated_void_fraction;
   std::vector<Tensor<1, dim>> particle_velocity;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;

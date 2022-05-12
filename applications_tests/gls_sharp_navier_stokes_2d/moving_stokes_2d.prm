@@ -8,9 +8,8 @@ subsection simulation control
   set time step               = 1# Time step
   set number mesh adapt       = 2       # If steady, nb mesh adaptation
   set time end                = 3 # End time of simulation
-  set output path             =  # Path to where the output results are made
   set output name             = out # Prefix for VTU outputs
-  set output frequency        = 1       # Frequency of simulation output
+  set output frequency        = 0       # Frequency of simulation output
   set subdivision             = 1       # Mesh subdivision when outputend
 end
 
@@ -21,6 +20,7 @@ end
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity            =1
+    set density =1
   end
 end
 
@@ -47,7 +47,6 @@ end
 subsection boundary conditions
 set number                  =4
 set time dependent =true
-set beta =10000
     subsection bc 0
 	set id = 0
         set type              = function
@@ -90,6 +89,8 @@ set beta =10000
     subsection bc 3
 	set id = 1
         set type              = function weak
+        set beta =10000
+
         subsection u
             set Function expression =(-y^2*(0.375*(y^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + (x - cos(t))^2) - (y^2 + (x - cos(t))^2)^2) + (x - cos(t))^2*(-0.75*(y^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + (x - cos(t))^2) + (y^2 + (x - cos(t))^2)^2) - (y^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + (x - cos(t))^2)^3
         end
@@ -145,7 +146,6 @@ subsection particles
 	set refine mesh inside radius factor = 111
 	set refine mesh outside radius factor = 111
 	set initial refinement = 0
-	set fluid density =1
 	set integrate motion = false
 	set alpha=1
 	set assemble Navier-Stokes inside particles = false

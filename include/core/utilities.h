@@ -166,6 +166,13 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
                        const std::string                           file_name,
                        const std::string delimiter = " ");
 
+/**
+ * @brief Creates the simulation output folder
+ * * @param dirname Output directory name
+ */
+void
+create_output_folder(const std::string &dirname);
+
 
 
 #endif

@@ -146,6 +146,7 @@ namespace Parameters
     bool buoyancy_force;
 
     Parameters::VOF vof_parameters;
+    bool surface_tension_force;
 
     void
     declare_parameters(ParameterHandler &prm);

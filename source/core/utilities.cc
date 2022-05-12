@@ -1,6 +1,9 @@
 
 #include <core/utilities.h>
 
+#if __GNUC__ > 7
+#  include <filesystem>
+#endif
 
 template <int dim, typename T>
 TableHandler
@@ -200,6 +203,16 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
     }
   else
     std::cout << "Unable to open file";
+}
+
+void
+create_output_folder(const std::string &dirname)
+{
+#if __GNUC__ > 7
+  std::filesystem::create_directory(dirname);
+#else
+  // mkdir(dirname.c_str(), 0755);
+#endif
 }
 
 template TableHandler

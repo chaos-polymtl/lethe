@@ -80,6 +80,11 @@ namespace Parameters
                       "true",
                       Patterns::Bool(),
                       "Choose whether or not to implement d(epsilon)/dt ");
+    prm.declare_entry(
+      "interpolated void fraction",
+      "true",
+      Patterns::Bool(),
+      "Choose whether the void fraction is the one of the cell or the one interpolated at the particle position.");
     prm.declare_entry("drag force",
                       "true",
                       Patterns::Bool(),
@@ -98,7 +103,8 @@ namespace Parameters
                       "Choose whether or not to apply pressure force");
     prm.declare_entry("drag model",
                       "difelice",
-                      Patterns::Selection("difelice|rong|dallavalle"),
+                      Patterns::Selection(
+                        "difelice|rong|dallavalle|kochhill|beetstra|gidaspow"),
                       "The drag model used to determine the drag coefficient");
     prm.declare_entry("post processing",
                       "false",
@@ -120,6 +126,16 @@ namespace Parameters
                       "modelB",
                       Patterns::Selection("modelA|modelB"),
                       "The volume averaged Navier Stokes model to be solved.");
+    prm.declare_entry(
+      "grad-div length scale",
+      "1",
+      Patterns::Double(),
+      "Constant cs for the calculation of the grad-div stabilization (gamma = viscosity + cs * velocity)");
+    prm.declare_entry(
+      "implicit stabilization",
+      "true",
+      Patterns::Bool(),
+      "Choose whether or not to use implicit or explicit stabilization");
     prm.leave_subsection();
   }
 
@@ -131,14 +147,18 @@ namespace Parameters
     grad_div = prm.get_bool("grad div");
     void_fraction_time_derivative =
       prm.get_bool("void fraction time derivative");
-    drag_force           = prm.get_bool("drag force");
-    buoyancy_force       = prm.get_bool("buoyancy force");
-    shear_force          = prm.get_bool("shear force");
-    pressure_force       = prm.get_bool("pressure force");
-    post_processing      = prm.get_bool("post processing");
-    inlet_boundary_id    = prm.get_integer("inlet boundary id");
-    outlet_boundary_id   = prm.get_integer("outlet boundary id");
-    coupling_frequency   = prm.get_integer("coupling frequency");
+    interpolated_void_fraction = prm.get_bool("interpolated void fraction");
+    drag_force                 = prm.get_bool("drag force");
+    buoyancy_force             = prm.get_bool("buoyancy force");
+    shear_force                = prm.get_bool("shear force");
+    pressure_force             = prm.get_bool("pressure force");
+    post_processing            = prm.get_bool("post processing");
+    inlet_boundary_id          = prm.get_integer("inlet boundary id");
+    outlet_boundary_id         = prm.get_integer("outlet boundary id");
+    coupling_frequency         = prm.get_integer("coupling frequency");
+    cstar                      = prm.get_double("grad-div length scale");
+    implicit_stabilization     = prm.get_bool("implicit stabilization");
+
     const std::string op = prm.get("drag model");
     if (op == "difelice")
       drag_model = Parameters::DragModel::difelice;
@@ -146,6 +166,12 @@ namespace Parameters
       drag_model = Parameters::DragModel::rong;
     else if (op == "dallavalle")
       drag_model = Parameters::DragModel::dallavalle;
+    else if (op == "kochhill")
+      drag_model = Parameters::DragModel::kochhill;
+    else if (op == "beetstra")
+      drag_model = Parameters::DragModel::beetstra;
+    else if (op == "gidaspow")
+      drag_model = Parameters::DragModel::gidaspow;
     else
       throw(std::runtime_error("Invalid drag model"));
 

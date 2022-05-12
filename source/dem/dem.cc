@@ -17,6 +17,7 @@
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
 #include <core/solutions_output.h>
+#include <core/utilities.h>
 
 #include <dem/dem.h>
 #include <dem/explicit_euler_integrator.h>
@@ -26,7 +27,6 @@
 #include <dem/input_parameter_inspection.h>
 #include <dem/list_insertion.h>
 #include <dem/localize_contacts.h>
-#include <dem/locate_ghost_particles.h>
 #include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/particle_particle_contact_info_struct.h>
@@ -50,6 +50,8 @@
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
+
+#include <sys/stat.h>
 
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
@@ -76,6 +78,19 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
 {
+  // Check if the output directory exists
+  std::string output_dir_name = parameters.simulation_control.output_folder;
+  struct stat buffer;
+
+  // If output directory does not exist, create it
+  if (this_mpi_process == 0)
+    {
+      if (stat(output_dir_name.c_str(), &buffer) != 0)
+        {
+          create_output_folder(output_dir_name);
+        }
+    }
+
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
@@ -219,31 +234,39 @@ DEMSolver<dim>::cell_weight(
   const unsigned int particle_weight =
     parameters.model_parameters.load_balance_particle_weight;
 
-  // This does not use adaptive refinement, therefore every cell
-  // should have the status CELL_PERSIST. However this function can also
-  // be used to distribute load during refinement, therefore we consider
-  // refined or coarsened cells as well.
-  if (status == parallel::distributed::Triangulation<dim>::CELL_PERSIST ||
-      status == parallel::distributed::Triangulation<dim>::CELL_REFINE)
+  switch (status)
     {
-      const unsigned int n_particles_in_cell =
-        particle_handler.n_particles_in_cell(cell);
-      return n_particles_in_cell * particle_weight;
+      case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
+        {
+          const unsigned int n_particles_in_cell =
+            particle_handler.n_particles_in_cell(cell);
+          return n_particles_in_cell * particle_weight;
+          break;
+        }
+
+      case parallel::distributed::Triangulation<dim>::CELL_INVALID:
+        break;
+
+      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
+        {
+          unsigned int n_particles_in_cell = 0;
+
+          for (unsigned int child_index = 0;
+               child_index < GeometryInfo<dim>::max_children_per_cell;
+               ++child_index)
+            n_particles_in_cell +=
+              particle_handler.n_particles_in_cell(cell->child(child_index));
+
+          return n_particles_in_cell * particle_weight;
+        }
+        break;
+
+      default:
+        Assert(false, ExcInternalError());
+        break;
     }
-  else if (status == parallel::distributed::Triangulation<dim>::CELL_COARSEN)
-    {
-      unsigned int n_particles_in_cell = 0;
 
-      for (unsigned int child_index = 0;
-           child_index < GeometryInfo<dim>::max_children_per_cell;
-           ++child_index)
-        n_particles_in_cell +=
-          particle_handler.n_particles_in_cell(cell->child(child_index));
-
-      return n_particles_in_cell * particle_weight;
-    }
-
-  Assert(false, ExcInternalError());
   return 0;
 }
 
@@ -418,10 +441,10 @@ DEMSolver<dim>::update_moment_of_inertia(
   for (auto &particle : particle_handler)
     {
       auto &particle_properties = particle.get_properties();
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-      MOI[particle.get_local_index()] =
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       MOI[particle.get_id()] =
+#else
+      MOI[particle.get_local_index()] =
 #endif
         0.1 * particle_properties[DEM::PropertiesIndex::mass] *
         particle_properties[DEM::PropertiesIndex::dp] *
@@ -741,15 +764,15 @@ DEMSolver<dim>::solve()
                       triangulation,
                       particle_handler);
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-      displacement.resize(particle_handler.get_max_local_particle_index());
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       {
         unsigned int max_particle_id = 0;
         for (const auto &particle : particle_handler)
           max_particle_id = std::max(max_particle_id, particle.get_id());
         displacement.resize(max_particle_id + 1);
       }
+#else
+      displacement.resize(particle_handler.get_max_local_particle_index());
 #endif
       force.resize(displacement.size());
       torque.resize(displacement.size());
@@ -812,30 +835,30 @@ DEMSolver<dim>::solve()
       particles_insertion_step = insert_particles();
 
       if (particles_insertion_step)
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-        displacement.resize(particle_handler.get_max_local_particle_index());
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
         {
           unsigned int max_particle_id = 0;
           for (const auto &particle : particle_handler)
             max_particle_id = std::max(max_particle_id, particle.get_id());
           displacement.resize(max_particle_id + 1);
         }
+#else
+        displacement.resize(particle_handler.get_max_local_particle_index());
 #endif
 
       // Load balancing
       load_balance_step = (this->*check_load_balance_step)();
 
       if (load_balance_step || checkpoint_step)
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-        displacement.resize(particle_handler.get_max_local_particle_index());
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
         {
           unsigned int max_particle_id = 0;
           for (const auto &particle : particle_handler)
             max_particle_id = std::max(max_particle_id, particle.get_id());
           displacement.resize(max_particle_id + 1);
         }
+#else
+        displacement.resize(particle_handler.get_max_local_particle_index());
 #endif
 
       // Check to see if it is contact search step
@@ -847,15 +870,15 @@ DEMSolver<dim>::solve()
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
 
-#if DEAL_II_VERSION_GTE(10, 0, 0)
-          displacement.resize(particle_handler.get_max_local_particle_index());
-#else
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
           {
             unsigned int max_particle_id = 0;
             for (const auto &particle : particle_handler)
               max_particle_id = std::max(max_particle_id, particle.get_id());
             displacement.resize(max_particle_id + 1);
           }
+#else
+          displacement.resize(particle_handler.get_max_local_particle_index());
 #endif
           force.resize(displacement.size());
           torque.resize(displacement.size());

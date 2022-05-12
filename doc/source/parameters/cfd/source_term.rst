@@ -20,7 +20,7 @@ If the problem being simulated has a source, it can be added in this section. Th
     end
    end
 
-* The ``enable`` parameter is set to true if the problem has a source term and enables it's calculation.
+* The ``enable`` parameter is set to true if the problem has a source term and enables its calculation.
 
 If there is a Navier-Stokes source term, enter the ``xyz`` subsection.
 

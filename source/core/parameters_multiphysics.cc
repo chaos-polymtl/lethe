@@ -72,7 +72,6 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     buoyancy_force      = prm.get_bool("buoyancy force");
   }
   prm.leave_subsection();
-
   vof_parameters.parse_parameters(prm);
 }
 
@@ -81,10 +80,10 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("VOF");
   {
-    prm.declare_entry("continuum surface force",
+    prm.declare_entry("surface tension force",
                       "false",
                       Patterns::Bool(),
-                      "Continuum surface force calculation <true|false>");
+                      "Surface tension force calculation <true|false>");
 
     prm.declare_entry(
       "diffusion",

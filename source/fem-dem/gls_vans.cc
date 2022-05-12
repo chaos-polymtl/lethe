@@ -519,6 +519,36 @@ GLSVANSSolver<dim>::setup_assemblers()
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
 
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::function_weak))
+    {
+      this->assemblers.push_back(
+        std::make_shared<WeakDirichletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::partial_slip))
+    {
+      this->assemblers.push_back(
+        std::make_shared<PartialSlipDirichletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+    {
+      this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
+    {
+      this->assemblers.push_back(
+        std::make_shared<PressureBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+
   if (this->cfd_dem_simulation_parameters.cfd_dem.drag_force == true)
     {
       // Particle_Fluid Interactions Assembler
@@ -527,7 +557,8 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // DiFelice Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDiFelice<dim>>());
+            std::make_shared<GLSVansAssemblerDiFelice<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -535,7 +566,8 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerRong<dim>>());
+            std::make_shared<GLSVansAssemblerRong<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -543,7 +575,33 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDallavalle<dim>>());
+            std::make_shared<GLSVansAssemblerDallavalle<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
+        }
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::kochhill)
+        {
+          // Koch and Hill Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerKochHill<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
+        }
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::beetstra)
+        {
+          // Beetstra drag model assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerBeetstra<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
+        }
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
+          Parameters::DragModel::gidaspow)
+        {
+          // Gidaspow Model drag Assembler
+          particle_fluid_assemblers.push_back(
+            std::make_shared<GLSVansAssemblerGidaspow<dim>>(
+              this->cfd_dem_simulation_parameters.cfd_dem));
         }
     }
 
@@ -563,7 +621,8 @@ GLSVANSSolver<dim>::setup_assemblers()
   if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
     // Shear Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerShearForce<dim>>());
+      std::make_shared<GLSVansAssemblerShearForce<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_dem));
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
@@ -614,7 +673,8 @@ GLSVANSSolver<dim>::assemble_system_matrix()
 
 
   scratch_data.enable_particle_fluid_interactions(
-    particle_handler.n_global_max_particles_per_cell());
+    particle_handler.n_global_max_particles_per_cell(),
+    this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -722,7 +782,8 @@ GLSVANSSolver<dim>::assemble_system_rhs()
 
 
   scratch_data.enable_particle_fluid_interactions(
-    particle_handler.n_global_max_particles_per_cell());
+    particle_handler.n_global_max_particles_per_cell(),
+    this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -1053,6 +1114,7 @@ GLSVANSSolver<dim>::solve()
           this->update_boundary_conditions();
         }
 
+      this->dynamic_flow_control();
 
       if (this->simulation_control->is_at_start())
         {

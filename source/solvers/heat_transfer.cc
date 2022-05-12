@@ -6,6 +6,7 @@
 #include <solvers/heat_transfer.h>
 #include <solvers/heat_transfer_assemblers.h>
 #include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/postprocessing_cfd.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -22,6 +23,7 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+#include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
 template <int dim>
@@ -45,6 +47,15 @@ void
 HeatTransfer<dim>::setup_assemblers()
 {
   this->assemblers.clear();
+
+  // Laser heat source
+  if (this->simulation_parameters.laser_parameters->activate_laser)
+    {
+      this->assemblers.push_back(
+        std::make_shared<HeatTransferAssemblerLaser<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.laser_parameters));
+    }
 
   // Robin boundary condition
   this->assemblers.push_back(
@@ -88,6 +99,15 @@ HeatTransfer<dim>::assemble_system_matrix()
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
     *this->face_quadrature);
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      scratch_data.enable_vof(dof_handler_vof->get_fe(),
+                              *this->cell_quadrature,
+                              *this->temperature_mapping);
+    }
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -139,6 +159,26 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
 
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_vof);
+
+      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+      previous_solutions.push_back(
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
+
+      scratch_data.reinit_vof(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
   scratch_data.calculate_physical_properties();
 
   copy_data.reset();
@@ -185,6 +225,15 @@ HeatTransfer<dim>::assemble_system_rhs()
     *this->temperature_mapping,
     dof_handler_fluid->get_fe(),
     *this->face_quadrature);
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      scratch_data.enable_vof(dof_handler_vof->get_fe(),
+                              *this->cell_quadrature,
+                              *this->temperature_mapping);
+    }
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -240,6 +289,27 @@ HeatTransfer<dim>::assemble_local_system_rhs(
 
       scratch_data.reinit_velocity_gradient(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+    }
+
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_vof);
+
+      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+      previous_solutions.push_back(
+        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
+
+
+      scratch_data.reinit_vof(phase_cell,
+                              *this->multiphysics->get_solution(PhysicsID::VOF),
+                              previous_solutions,
+                              std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   scratch_data.calculate_physical_properties();
@@ -398,6 +468,24 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
                       << std::endl;
         }
     }
+
+  // Minimum and maximum temperature
+  if (simulation_parameters.post_processing.calculate_min_max_temperature)
+    {
+      std::pair<double, double> min_max_temperature =
+        calculate_min_max_temperature(dof_handler,
+                                      present_solution,
+                                      *cell_quadrature,
+                                      *temperature_mapping);
+
+      if (simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Minimum and maximum temperatures : "
+                      << min_max_temperature.first << " , "
+                      << min_max_temperature.second << std::endl;
+        }
+    }
 }
 
 template <int dim>
@@ -440,6 +528,27 @@ HeatTransfer<dim>::post_mesh_adaptation()
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
       previous_solutions[i] = tmp_previous_solution;
+    }
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::compute_kelly(
+  dealii::Vector<float> &estimated_error_per_cell)
+{
+  if (this->simulation_parameters.mesh_adaptation.variable ==
+      Parameters::MeshAdaptation::Variable::temperature)
+    {
+      const FEValuesExtractors::Scalar temperature(0);
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->temperature_mapping,
+        this->dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        this->present_solution,
+        estimated_error_per_cell,
+        this->fe->component_mask(temperature));
     }
 }
 

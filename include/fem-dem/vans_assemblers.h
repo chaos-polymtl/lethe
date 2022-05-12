@@ -202,7 +202,8 @@ template <int dim>
 class GLSVansAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDiFelice()
+  GLSVansAssemblerDiFelice(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -213,6 +214,7 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -236,7 +238,8 @@ template <int dim>
 class GLSVansAssemblerRong : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerRong()
+  GLSVansAssemblerRong(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -247,6 +250,7 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -266,7 +270,8 @@ template <int dim>
 class GLSVansAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDallavalle()
+  GLSVansAssemblerDallavalle(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -277,8 +282,149 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
 };
 
+/**
+ * @brief Class that assembles the drag force using the Koch and Hill drag model for the
+ * VANS equations where the momentum exchange coefficient
+ *  beta =   ((18 * mu * cell_void_fraction^2 *
+          (1 - cell_void_fraction)) / pow(dp, 2)) *
+        (f0 + 0.5 * f3 * cell_void_fraction * re) *
+        Vp /(1 - cell_void_fraction) where f0 and f3 are functions given by:
+      if ((1 - cell_void_fraction) < 0.4)
+        {
+          f0 = (1 + 3 * sqrt((1 - cell_void_fraction) / 2) +
+                (135.0 / 64) * (1 - cell_void_fraction) *
+                  log(1 - cell_void_fraction) +
+                16.14 * (1 - cell_void_fraction)) /
+               (1 + 0.681 * (1 - cell_void_fraction) -
+                8.48 * (1 - cell_void_fraction)^2 +
+                8.14 * (1 - cell_void_fraction)^3);
+        }
+      else if ((1 - cell_void_fraction) >= 0.4)
+        {
+          f0 = 10 * (1 - cell_void_fraction) / cell_void_fraction^3;
+        }
+
+      f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
+           0.0232 / pow(cell_void_fraction, 5);
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerKochHill : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerKochHill(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions  calculates the solid-fluid interaction of the Koch-Hill drag model.
+   * @param scratch_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::CFDDEM cfd_dem;
+};
+
+/**
+ * @brief Class that assembles the drag force using Beetstra model for the
+ * VANS equations where the
+ * normalized drag force = 10 * (1 - cell_void_fraction) /
+          (pow(cell_void_fraction, 2)) + pow(cell_void_fraction, 2) * (1 + 1.5 *
+ pow((1 - cell_void_fraction), 0.5)) + 0.413 * re / (24 *
+ pow(cell_void_fraction, 2)) *
+          ((1 / cell_void_fraction) + 3 * (1 - cell_void_fraction) *
+ cell_void_fraction
+          + 8.4 * pow(re, -0.343)) / (1 + pow(10, 3 * (1 - cell_void_fraction))
+ * pow(re,
+          -(1 + 4 * (1 - cell_void_fraction)) * 0.5));
+ *the drag force = normalized_drag_force * 3 * M_PI * viscosity * dp *
+          superficial_velocity and the momentum exchange coefficient beta =
+          drag_force / (density * relative_velocity)
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerBeetstra : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerBeetstra(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculates the solid_fluid interactions
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
+};
+
+/**
+ * @brief Class that assembles the drag force using Gidaspow model for the
+ * VANS equations with c_d and the momentum_transfer_coefficient calculated
+ according to the following:
+ *  if (re < 1000)
+        {
+          c_d = 24 / re * (1 + 0.15 * pow(re, 0.687));
+        }
+      else
+        {
+          c_d = 0.44;
+        }
+
+      if (cell_void_fraction >= 0.8)
+        {
+          momentum_transfer_coefficient =
+            0.75 * c_d * cell_void_fraction * relative_velocity.norm() *
+            density * (1 - cell_void_fraction) /
+            particle_properties[DEM::PropertiesIndex::dp] *
+            pow(cell_void_fraction, -2.65);
+        }
+      else
+        {
+          momentum_transfer_coefficient =
+            150 * pow((1 - cell_void_fraction), 2) * viscosity * density /
+              (cell_void_fraction *
+               pow(particle_properties[DEM::PropertiesIndex::dp], 2)) +
+            1.75 * (1 - cell_void_fraction) * relative_velocity.norm() /
+              particle_properties[DEM::PropertiesIndex::dp];
+        }
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerGidaspow : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerGidaspow(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
+};
 
 /**
  * @brief Class that assembles the Buoyancy force  for the
@@ -313,6 +459,7 @@ public:
   Parameters::Lagrangian::LagrangianPhysicalProperties
     lagrangian_physical_properties;
 };
+
 
 /**
  * @brief Class that assembles the particle pressure force that will then
@@ -356,8 +503,8 @@ template <int dim>
 class GLSVansAssemblerShearForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerShearForce()
-
+  GLSVansAssemblerShearForce(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
   {}
 
   /**
@@ -368,6 +515,8 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -409,5 +558,10 @@ public:
   Parameters::CFDDEM cfd_dem;
 };
 
+inline double
+calculate_gamma(double velocity, double viscosity, double /*h*/, double c_star)
+{
+  return viscosity + c_star * velocity;
+}
 
 #endif

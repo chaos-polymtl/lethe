@@ -169,6 +169,77 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
         }
     }
 }
+
+template <int dim>
+void
+IBParticlesDEM<dim>::calculate_pp_lubrication_force(
+  const double /*dt_dem*/,
+  const double               h_max,
+  const double               h_min,
+  const double               mu,
+  std::vector<Tensor<1, 3>> &lubrication_force,
+  std::vector<Tensor<1, 3>> & /*lubrication_torque*/)
+{
+  using numbers::PI;
+  // loop over all particles to find pair of close partilces
+  for (auto &particle_one : dem_particles)
+    {
+      for (auto &particle_two : dem_particles)
+        {
+          if (particle_one.particle_id != particle_two.particle_id and
+              particle_one.particle_id < particle_two.particle_id)
+            {
+              const Point<dim> particle_one_location = particle_one.position;
+              const Point<dim> particle_two_location = particle_two.position;
+              Tensor<1, 3>     radial_vector;
+              double           radial_velocity;
+              Tensor<1, 3>     f_lub;
+
+              // Calculation of normal overlap
+              double gap =
+                particle_one_location.distance(particle_two_location) -
+                (particle_one.radius + particle_two.radius);
+              radial_vector =
+                tensor_nd_to_3d(particle_one.position - particle_two.position);
+              if (gap > 0 and gap < h_max)
+                // This means that the adjacent particles are very close but not
+                // in contact
+                {
+                  // Limit the smallest gap calculated
+                  if (gap < h_min)
+                    {
+                      gap = h_min;
+                    }
+
+                  // Evaluate the force
+                  radial_velocity =
+                    scalar_product(-radial_vector, particle_one.velocity) +
+                    scalar_product(radial_vector, particle_two.velocity);
+                  f_lub =
+                    3 / 2 * PI * mu *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) /
+                      gap * radial_velocity * radial_vector /
+                      radial_vector.norm() -
+                    3 / 2 * PI * mu *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) *
+                      (particle_one.radius * 2 * particle_two.radius * 2 /
+                       (particle_one.radius * 2 + particle_two.radius * 2)) /
+                      h_max * radial_velocity * radial_vector /
+                      radial_vector.norm();
+                  ;
+                }
+
+              lubrication_force[particle_one.particle_id] = f_lub;
+              lubrication_force[particle_two.particle_id] = -f_lub;
+            }
+        }
+    }
+}
+
 template <int dim>
 void
 IBParticlesDEM<dim>::update_particles_boundary_contact(
@@ -259,7 +330,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
     {
       unsigned int boundary_index = 0;
       double       best_dist      = DBL_MAX;
-      unsigned int best_index;
+      unsigned int best_index     = UINT_MAX;
       // For each particle loop over the point and normal identified as
       // potential contact candidate.
       for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
@@ -298,6 +369,14 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   contact_info.tangential_overlap[d]           = 0;
                   contact_info.tangential_relative_velocity[d] = 0;
                 }
+
+              // BB temporary fix for unused variables
+              contact_info.global_face_id           = 0;
+              contact_info.boundary_id              = 0;
+              contact_info.normal_overlap           = 0;
+              contact_info.normal_relative_velocity = 0;
+              // End BB
+
               pw_contact_map[particle.particle_id][boundary_index] =
                 contact_info;
             }
@@ -380,22 +459,120 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
         }
     }
 }
+
+
 template <int dim>
 void
-IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
+IBParticlesDEM<dim>::calculate_pw_lubrication_force(
+  const double /*dt_dem*/,
+  const double               h_max,
+  const double               h_min,
+  const double               mu,
+  std::vector<Tensor<1, 3>> &lubrication_force,
+  std::vector<Tensor<1, 3>> & /*lubrication_torque*/)
+{
+  using numbers::PI;
+
+  // Loop over the particles
+  for (auto &particle : dem_particles)
+    {
+      unsigned int boundary_index = 0;
+      double       best_dist      = DBL_MAX;
+      unsigned int best_index     = UINT_MAX;
+      // For each particle loop over the point and normal identified as
+      // potential contact candidate.
+      for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
+        {
+          // find the best candidate (the closest point).
+          double dist =
+            (boundary_cell_iter.point_on_boundary - particle.position).norm();
+          if (dist < best_dist)
+            {
+              best_dist  = dist;
+              best_index = boundary_index;
+            }
+          boundary_index += 1;
+        }
+      // Do the particle wall lubrication calculation with the best candidate.
+      if (boundary_cells[particle.particle_id].size() > 0)
+        {
+          auto &boundary_cell =
+            boundary_cells[particle.particle_id][best_index];
+
+          auto         boundary_cell_information = boundary_cell;
+          Tensor<1, 3> normal =
+            tensor_nd_to_3d(boundary_cell_information.normal_vector);
+          auto point_on_boundary = boundary_cell_information.point_on_boundary;
+
+          // Calculation of gap
+          Point<3> particle_position_3d = point_nd_to_3d(particle.position);
+          Point<3> point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
+
+          Tensor<1, 3> point_to_particle_vector =
+            particle_position_3d - point_on_boundary_3d;
+
+          // Finding the projected vector on the normal vector of the boundary.
+          // Here we have used the private function find_projection. Using this
+          // projected vector, the particle-wall distance is calculated
+          Tensor<1, 3> projected_vector =
+            particle_wall_contact_force_object->find_projection(
+              point_to_particle_vector, normal);
+
+
+          double gap = (projected_vector.norm()) - particle.radius;
+
+          Tensor<1, 3> radial_vector;
+          double       radial_velocity;
+          Tensor<1, 3> f_lub;
+
+
+          radial_vector = projected_vector;
+          if (gap > 0 and gap < h_max)
+            // This means that the particles is very close to the wall but not
+            // in contact
+            {
+              // Limit the smallest gap calculated
+              if (gap < h_min)
+                {
+                  gap = h_min;
+                }
+              // Evaluate the force
+              radial_velocity =
+                scalar_product(-radial_vector, particle.velocity);
+              f_lub = 3 / 2 * PI * mu * (particle.radius) * (particle.radius) /
+                        gap * radial_velocity * radial_vector /
+                        radial_vector.norm() -
+                      3 / 2 * PI * mu * (particle.radius) * (particle.radius) /
+                        h_max * radial_velocity * radial_vector /
+                        radial_vector.norm();
+            }
+          lubrication_force[particle.particle_id] = f_lub;
+        }
+    }
+}
+
+template <int dim>
+void
+IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
+                                                const double h_max,
+                                                const double h_min,
+                                                const double rho,
+                                                const double mu)
 {
   // Initialize local containers and physical variables
   using numbers::PI;
-  double rho    = parameters->density;
   double dt_dem = dt / parameters->coupling_frequency;
 
   std::vector<Tensor<1, 3>> contact_force(dem_particles.size());
   std::vector<Tensor<1, 3>> contact_wall_force(dem_particles.size());
   std::vector<Tensor<1, 3>> contact_torque(dem_particles.size());
   std::vector<Tensor<1, 3>> contact_wall_torque(dem_particles.size());
-
   std::vector<Tensor<1, 3>> current_fluid_force(dem_particles.size());
   std::vector<Tensor<1, 3>> current_fluid_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrication_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrication_torque(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrication_wall_force(dem_particles.size());
+  std::vector<Tensor<1, 3>> lubrication_wall_torque(dem_particles.size());
 
   std::vector<Tensor<1, 3>> velocity(dem_particles.size());
   std::vector<Point<dim>>   position(dem_particles.size());
@@ -407,6 +584,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
   this->parameters->f_gravity->set_time(cfd_time);
   // The gravitational force on the particle.
   Tensor<1, 3> gravity;
+
   // Initialize the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
@@ -428,86 +606,212 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt)
   // Integrate with the sub_time_step
   while (t + 0.5 * dt_dem < dt)
     {
-      current_fluid_force.clear();
-      current_fluid_force.resize(dem_particles.size());
-      current_fluid_torque.clear();
-      current_fluid_torque.resize(dem_particles.size());
-      contact_torque.clear();
-      contact_torque.resize(dem_particles.size());
-      contact_force.clear();
-      contact_force.resize(dem_particles.size());
-      contact_wall_force.clear();
-      contact_wall_force.resize(dem_particles.size());
-      contact_wall_torque.clear();
-      contact_wall_torque.resize(dem_particles.size());
+      // Initialize vector to contain the RK 4 step
+      std::vector<Tensor<1, 3>> last_velocity;
+      std::vector<Point<dim>>   last_position;
+      std::vector<Tensor<1, 3>> last_omega;
+      last_velocity = std::vector<Tensor<1, 3>>(dem_particles.size());
+      last_position = std::vector<Point<dim>>(dem_particles.size());
+      last_omega    = std::vector<Tensor<1, 3>>(dem_particles.size());
 
-      // Calculate particle-particle and particle-wall contact force
-      calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
-      calculate_pw_contact_force(dt_dem,
-                                 contact_wall_force,
-                                 contact_wall_torque);
+      std::vector<std::vector<Tensor<1, 3>>> k_velocity =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, dim>>> k_position =
+        std::vector<std::vector<Tensor<1, dim>>>(
+          dem_particles.size(), std::vector<Tensor<1, dim>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_omega =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_impulsion =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_omega_impulsion =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_contact_impulsion =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+      std::vector<std::vector<Tensor<1, 3>>> k_omega_contact_impulsion =
+        std::vector<std::vector<Tensor<1, 3>>>(dem_particles.size(),
+                                               std::vector<Tensor<1, 3>>(4));
+
+      // Solve each of the 4 step of the RK method
+      for (unsigned int step = 0; step < 4; ++step)
+        {
+          std::fill(current_fluid_force.begin(), current_fluid_force.end(), 0);
+          std::fill(current_fluid_torque.begin(),
+                    current_fluid_torque.end(),
+                    0);
+          std::fill(contact_torque.begin(), contact_torque.end(), 0);
+          std::fill(contact_force.begin(), contact_force.end(), 0);
+          std::fill(contact_wall_force.begin(), contact_wall_force.end(), 0);
+          std::fill(contact_wall_torque.begin(), contact_wall_torque.end(), 0);
+          std::fill(lubrication_force.begin(), lubrication_force.end(), 0);
+          std::fill(lubrication_torque.begin(), lubrication_torque.end(), 0);
+          std::fill(lubrication_wall_force.begin(),
+                    lubrication_wall_force.end(),
+                    0);
+          std::fill(lubrication_wall_torque.begin(),
+                    lubrication_wall_torque.end(),
+                    0);
+
+          // Calculate particle-particle and particle-wall contact force
+          calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
+          calculate_pw_contact_force(dt_dem,
+                                     contact_wall_force,
+                                     contact_wall_torque);
+          calculate_pp_lubrication_force(
+            dt_dem, h_max, h_min, mu, lubrication_force, lubrication_torque);
+          calculate_pw_lubrication_force(dt_dem,
+                                         h_max,
+                                         h_min,
+                                         mu,
+                                         lubrication_wall_force,
+                                         lubrication_wall_torque);
+          // define local time of the rk step
+          double local_dt = dt_dem * 0.5;
+          if (step == 3)
+            {
+              local_dt = local_dt * 2;
+            }
+
+          for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
+            {
+              if (step == 0)
+                {
+                  last_velocity[p_i] = dem_particles[p_i].velocity;
+                  last_position[p_i] = dem_particles[p_i].position;
+                  last_omega[p_i]    = dem_particles[p_i].omega;
+                }
+              auto inv_inertia = invert(dem_particles[p_i].inertia);
+              if (dim == 2)
+                {
+                  gravity = g * (dem_particles[p_i].mass -
+                                 dem_particles[p_i].radius *
+                                   dem_particles[p_i].radius * PI * rho);
+                }
+              else
+                {
+                  gravity = g * (dem_particles[p_i].mass -
+                                 4.0 / 3.0 * dem_particles[p_i].radius *
+                                   dem_particles[p_i].radius *
+                                   dem_particles[p_i].radius * PI * rho);
+                }
+
+              // We consider only the force at t+dt so the scheme is consistent
+              // to a BDFn scheme on the fluid side. If there is no contact.
+
+              current_fluid_force[p_i]  = dem_particles[p_i].fluid_forces;
+              current_fluid_torque[p_i] = dem_particles[p_i].fluid_torque;
+
+              // Store each rk step of the variable we integrate in its
+              // respective vector.
+
+              k_velocity[p_i][step] =
+                (current_fluid_force[p_i] + contact_force[p_i] +
+                 contact_wall_force[p_i] + gravity + lubrication_force[p_i] +
+                 lubrication_wall_force[p_i]) /
+                dem_particles[p_i].mass;
+
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  k_position[p_i][step][d] = dem_particles[p_i].velocity[d];
+                }
+
+              k_omega[p_i][step] =
+                inv_inertia * (current_fluid_torque[p_i] + contact_torque[p_i] +
+                               contact_wall_torque[p_i]);
+
+              k_impulsion[p_i][step] =
+                (current_fluid_force[p_i] + gravity + contact_wall_force[p_i] +
+                 contact_force[p_i] + lubrication_force[p_i] +
+                 lubrication_wall_force[p_i]);
+
+              k_omega_impulsion[p_i][step] =
+                (current_fluid_torque[p_i] + contact_torque[p_i] +
+                 contact_wall_torque[p_i]);
+
+              k_contact_impulsion[p_i][step] =
+                (contact_wall_force[p_i] + contact_force[p_i]);
+
+              k_omega_contact_impulsion[p_i][step] =
+                (contact_torque[p_i] + contact_wall_torque[p_i]);
+
+
+              // Integrate the relevant state Variable for the next RK step.
+              dem_particles[p_i].velocity =
+                last_velocity[p_i] + k_velocity[p_i][step] * local_dt;
+
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  dem_particles[p_i].position[d] =
+                    last_position[p_i][d] + k_position[p_i][step][d] * local_dt;
+                }
+
+              dem_particles[p_i].omega =
+                last_omega[p_i] + k_omega[p_i][step] * local_dt;
+            }
+        }
 
 
       for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
         {
-          auto inv_inertia = invert(dem_particles[p_i].inertia);
-          if (dim == 2)
-            gravity = g * (dem_particles[p_i].mass -
-                           dem_particles[p_i].radius *
-                             dem_particles[p_i].radius * PI * rho);
-          if (dim == 3)
-            {
-              gravity = g * (dem_particles[p_i].mass -
-                             4.0 / 3.0 * dem_particles[p_i].radius *
-                               dem_particles[p_i].radius *
-                               dem_particles[p_i].radius * PI * rho);
-            }
-
-          // We consider only the force at t+dt so the scheme is consistent to a
-          // BDFn scheme on the fluid side. If there is no contact.
-          current_fluid_force[p_i]  = dem_particles[p_i].fluid_forces;
-          current_fluid_torque[p_i] = dem_particles[p_i].fluid_torque;
-
-          // Explicit Euler for the sub_time_stepping. This is exact for the
-          // gravity and fluid impulsion integration. In case of contact the
-          // scheme becomes first order. This could be improved in the future.
+          // Define the integral by combining each of the RK step.
 
           dem_particles[p_i].velocity =
-            dem_particles[p_i].velocity +
-            (current_fluid_force[p_i] + contact_force[p_i] +
-             contact_wall_force[p_i] + gravity) *
-              dt_dem / dem_particles[p_i].mass;
+            last_velocity[p_i] +
+            dt_dem *
+              (k_velocity[p_i][0] + 2 * k_velocity[p_i][1] +
+               2 * k_velocity[p_i][2] + k_velocity[p_i][3]) /
+              6;
 
           for (unsigned int d = 0; d < dim; ++d)
             {
               dem_particles[p_i].position[d] =
-                dem_particles[p_i].position[d] +
-                dem_particles[p_i].velocity[d] * dt_dem;
+                last_position[p_i][d] +
+                dt_dem *
+                  (k_position[p_i][0][d] + 2 * k_position[p_i][1][d] +
+                   2 * k_position[p_i][2][d] + k_position[p_i][3][d]) /
+                  6;
             }
 
           dem_particles[p_i].omega =
-            dem_particles[p_i].omega +
-            inv_inertia *
-              (current_fluid_torque[p_i] + contact_torque[p_i] +
-               contact_wall_torque[p_i]) *
-              dt_dem;
+            last_velocity[p_i] + dt_dem *
+                                   (k_omega[p_i][0] + 2 * k_omega[p_i][1] +
+                                    2 * k_omega[p_i][2] + k_omega[p_i][3]) /
+                                   6;
 
           // Integration of the impulsion applied to the particle.
           // This is what will be transferred to the CFD to integrate the
           // particle.
           dem_particles[p_i].impulsion +=
-            (current_fluid_force[p_i] + gravity + contact_wall_force[p_i] +
-             contact_force[p_i]) *
-            dt_dem;
+            dt_dem *
+            (k_impulsion[p_i][0] + 2 * k_impulsion[p_i][1] +
+             2 * k_impulsion[p_i][2] + k_impulsion[p_i][3]) /
+            6;
+
           dem_particles[p_i].contact_impulsion +=
-            (contact_wall_force[p_i] + contact_force[p_i]) * dt_dem;
+            dt_dem *
+            (k_contact_impulsion[p_i][0] + 2 * k_contact_impulsion[p_i][1] +
+             2 * k_contact_impulsion[p_i][2] + k_contact_impulsion[p_i][3]) /
+            6;
+
           dem_particles[p_i].omega_impulsion +=
-            (current_fluid_torque[p_i] + contact_torque[p_i] +
-             contact_wall_torque[p_i]) *
-            dt_dem;
+            dt_dem *
+            (k_omega_impulsion[p_i][0] + 2 * k_omega_impulsion[p_i][1] +
+             2 * k_omega_impulsion[p_i][2] + k_omega_impulsion[p_i][3]) /
+            6;
+
           dem_particles[p_i].omega_contact_impulsion +=
-            (contact_torque[p_i] + contact_wall_torque[p_i]) * dt_dem;
+            dt_dem *
+            (k_omega_contact_impulsion[p_i][0] +
+             2 * k_omega_contact_impulsion[p_i][1] +
+             2 * k_omega_contact_impulsion[p_i][2] +
+             k_omega_contact_impulsion[p_i][3]) /
+            6;
         }
+
       t += dt_dem;
     }
 }

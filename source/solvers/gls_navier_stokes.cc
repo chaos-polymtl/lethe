@@ -337,6 +337,16 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
         {
           /*do nothing*/
         }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::partial_slip)
+        {
+          /*do nothing*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::outlet)
+        {
+          /*do nothing*/
+        }
       else
         {
           VectorTools::interpolate_boundary_values(
@@ -366,6 +376,20 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
+  if (this->check_existance_of_bc(
+        BoundaryConditions::BoundaryType::partial_slip))
+    {
+      this->assemblers.push_back(
+        std::make_shared<PartialSlipDirichletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
+    }
+  if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
+    {
+      this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
+        this->simulation_control,
+        this->simulation_parameters.boundary_conditions));
+    }
   if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
     {
       this->assemblers.push_back(
@@ -383,10 +407,28 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_control));
         }
 
-      // Core assembler
-      this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-          this->simulation_control, this->simulation_parameters));
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
+        {
+          // Core assembler with Non newtonian viscosity
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
+        }
+      else
+        {
+          // Core assembler
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
+        }
+
+      // Surface tension force (STF)
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
+        this->assemblers.push_back(
+          std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
+            this->simulation_control,
+            this->simulation_parameters.surface_tension_force));
     }
   else
     {
@@ -430,10 +472,25 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         }
       else
         {
-          // Core assembler
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
-              this->simulation_control));
+          // Core default assembler
+          if ((this->simulation_parameters.stabilization
+                 .use_default_stabilization == true) ||
+              this->simulation_parameters.stabilization.stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+            this->assemblers.push_back(
+              std::make_shared<PSPGSUPGNavierStokesAssemblerCore<dim>>(
+                this->simulation_control));
+
+          else if (this->simulation_parameters.stabilization.stabilization ==
+                   Parameters::Stabilization::NavierStokesStabilization::gls)
+            this->assemblers.push_back(
+              std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
+                this->simulation_control));
+
+          else
+            throw std::runtime_error(
+              "Using the GLS solver with a stabilization other than the pspg_supg or gls "
+              "stabilization will lead to an unstable solver that is unable to converge");
         }
     }
 }
@@ -469,11 +526,28 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_VOF(dof_handler_fs->get_fe(),
+      scratch_data.enable_vof(dof_handler_vof->get_fe(),
                               *this->cell_quadrature,
                               *this->mapping);
+
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
+        {
+          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+            this->multiphysics
+              ->get_filtered_phase_fraction_gradient_dof_handler();
+          const DoFHandler<dim> *curvature_dof_handler =
+            this->multiphysics->get_curvature_dof_handler();
+
+          scratch_data.enable_filtered_phase_fraction_gradient(
+            filtered_phase_fraction_gradient_dof_handler->get_fe(),
+            *this->cell_quadrature,
+            *this->mapping);
+          scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
+        }
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -514,24 +588,55 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->solution_stages,
                       this->forcing_function,
                       this->beta);
+
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_fs);
+        dof_handler_vof);
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
         *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
-      scratch_data.reinit_VOF(phase_cell,
+      scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
+
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
+        {
+          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+            this->multiphysics
+              ->get_filtered_phase_fraction_gradient_dof_handler();
+
+          typename DoFHandler<dim>::active_cell_iterator
+            filtered_phase_fraction_gradient_cell(
+              &(*(this->triangulation)),
+              cell->level(),
+              cell->index(),
+              filtered_phase_fraction_gradient_dof_handler);
+          scratch_data.reinit_filtered_phase_fraction_gradient(
+            filtered_phase_fraction_gradient_cell,
+            *this->multiphysics
+               ->get_filtered_phase_fraction_gradient_solution());
+
+
+
+          const DoFHandler<dim> *curvature_dof_handler =
+            this->multiphysics->get_curvature_dof_handler();
+          typename DoFHandler<dim>::active_cell_iterator curvature_cell(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            curvature_dof_handler);
+          scratch_data.reinit_curvature(
+            curvature_cell, *this->multiphysics->get_curvature_solution());
+        }
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -597,11 +702,28 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_VOF(dof_handler_fs->get_fe(),
+      scratch_data.enable_vof(dof_handler_vof->get_fe(),
                               *this->cell_quadrature,
                               *this->mapping);
+
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
+        {
+          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+            this->multiphysics
+              ->get_filtered_phase_fraction_gradient_dof_handler();
+          const DoFHandler<dim> *curvature_dof_handler =
+            this->multiphysics->get_curvature_dof_handler();
+
+          scratch_data.enable_filtered_phase_fraction_gradient(
+            filtered_phase_fraction_gradient_dof_handler->get_fe(),
+            *this->cell_quadrature,
+            *this->mapping);
+          scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
+        }
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -650,23 +772,50 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_fs);
+        dof_handler_vof);
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
         *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
 
-      scratch_data.reinit_VOF(phase_cell,
+      scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
+
+      if (this->simulation_parameters.multiphysics.surface_tension_force)
+        {
+          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+            this->multiphysics
+              ->get_filtered_phase_fraction_gradient_dof_handler();
+          typename DoFHandler<dim>::active_cell_iterator
+            filtered_phase_fraction_gradient_cell(
+              &(*(this->triangulation)),
+              cell->level(),
+              cell->index(),
+              filtered_phase_fraction_gradient_dof_handler);
+          scratch_data.reinit_filtered_phase_fraction_gradient(
+            filtered_phase_fraction_gradient_cell,
+            *this->multiphysics
+               ->get_filtered_phase_fraction_gradient_solution());
+
+          const DoFHandler<dim> *curvature_dof_handler =
+            this->multiphysics->get_curvature_dof_handler();
+          typename DoFHandler<dim>::active_cell_iterator curvature_cell(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            curvature_dof_handler);
+          scratch_data.reinit_curvature(
+            curvature_cell, *this->multiphysics->get_curvature_solution());
+        }
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -735,7 +884,14 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
            Parameters::InitialConditionType::L2projection)
     {
       assemble_L2_projection();
-      solve_system_GMRES(true, 1e-15, 1e-15);
+      setup_preconditioner();
+
+      if (this->simulation_parameters.linear_solver.solver ==
+          Parameters::LinearSolver::SolverType::amg)
+        solve_system_AMG(true, 1e-15, 1e-15);
+      else
+        solve_system_GMRES(true, 1e-15, 1e-15);
+
       this->present_solution = this->newton_update;
       this->finish_time_step_fd();
     }
@@ -768,6 +924,90 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
 
       this->simulation_parameters.physical_properties_manager.set_rheology(
         original_viscosity_model);
+    }
+  else if (initial_condition_type == Parameters::InitialConditionType::ramp)
+    {
+      this->pcout << "*********************************" << std::endl;
+      this->pcout << " Initial condition using ramp " << std::endl;
+      this->pcout << "*********************************" << std::endl;
+
+      this->set_nodal_values();
+
+      // Create a pointer to the current viscosity model
+      std::shared_ptr<RheologicalModel> viscosity_model =
+        this->simulation_parameters.physical_properties_manager.get_rheology();
+
+      // Gather n and viscosity final paramerters
+      const double n_end         = viscosity_model->get_n();
+      const double viscosity_end = viscosity_model->get_viscosity();
+
+      // n ramp parameters
+      double n =
+        this->simulation_parameters.initial_condition->ramp.ramp_n.n_init;
+      const int n_iter_n =
+        this->simulation_parameters.initial_condition->ramp.ramp_n.n_iter;
+      const double alpha_n =
+        this->simulation_parameters.initial_condition->ramp.ramp_n.alpha;
+
+      // viscosity ramp parameters
+      const int n_iter_viscosity =
+        this->simulation_parameters.initial_condition->ramp.ramp_viscosity
+          .n_iter;
+      double viscosity = n_iter_viscosity > 0 ?
+                           this->simulation_parameters.initial_condition->ramp
+                             .ramp_viscosity.viscosity_init :
+                           viscosity_end;
+      const double alpha_viscosity =
+        this->simulation_parameters.initial_condition->ramp.ramp_viscosity
+          .alpha;
+
+      viscosity_model->set_viscosity(viscosity);
+
+      // Ramp on n
+      for (int i = 0; i < n_iter_n; ++i)
+        {
+          this->pcout << std::setprecision(4)
+                      << "********* Solution for n = " + std::to_string(n) +
+                           " and viscosity = " + std::to_string(viscosity) +
+                           " *********"
+                      << std::endl;
+
+          viscosity_model->set_n(n);
+
+          this->simulation_control->set_assembly_method(
+            Parameters::SimulationControl::TimeSteppingMethod::steady);
+          PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+            false);
+          this->finish_time_step_fd();
+
+          n += alpha_n * (n_end - n);
+        }
+
+      // Reset n to simulation parameters
+      viscosity_model->set_n(n_end);
+
+      // Ramp on viscosity
+      for (int i = 0; i < n_iter_viscosity; ++i)
+        {
+          this->pcout << std::setprecision(4)
+                      << "********* Solution for n = " + std::to_string(n_end) +
+                           " and viscosity = " + std::to_string(viscosity) +
+                           " *********"
+                      << std::endl;
+
+          viscosity_model->set_viscosity(viscosity);
+
+          this->simulation_control->set_assembly_method(
+            Parameters::SimulationControl::TimeSteppingMethod::steady);
+          PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+            false);
+          this->finish_time_step_fd();
+
+          viscosity += alpha_viscosity * (viscosity_end - viscosity);
+        }
+
+      // Reset viscosity to simulation parameters
+      viscosity_model->set_viscosity(viscosity_end);
     }
   else
     {
@@ -1305,8 +1545,6 @@ GLSNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
-
-
 
   while (this->simulation_control->integrate())
     {

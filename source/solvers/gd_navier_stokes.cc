@@ -117,10 +117,19 @@ GDNavierStokesSolver<dim>::setup_assemblers()
         }
       else
         {
-          // Core assembler
-          this->assemblers.push_back(
-            std::make_shared<GDNavierStokesAssemblerCore<dim>>(
-              this->simulation_control, gamma));
+          // Core default assembler
+          if ((this->simulation_parameters.stabilization
+                 .use_default_stabilization == true) ||
+              this->simulation_parameters.stabilization.stabilization ==
+                Parameters::Stabilization::NavierStokesStabilization::grad_div)
+            this->assemblers.push_back(
+              std::make_shared<GDNavierStokesAssemblerCore<dim>>(
+                this->simulation_control, gamma));
+
+          else
+            throw std::runtime_error(
+              "Using the GD solver with a stabilization other than the grad_div "
+              "stabilization will lead to an unstable block solver that is unable to converge");
         }
     }
 }
@@ -144,9 +153,9 @@ GDNavierStokesSolver<dim>::assemble_system_matrix()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_VOF(dof_handler_fs->get_fe(),
+      scratch_data.enable_vof(dof_handler_vof->get_fe(),
                               *this->cell_quadrature,
                               *this->mapping);
     }
@@ -199,19 +208,19 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->beta);
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_fs);
+        dof_handler_vof);
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
         *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
-      scratch_data.reinit_VOF(phase_cell,
+      scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
@@ -273,9 +282,9 @@ GDNavierStokesSolver<dim>::assemble_system_rhs()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_VOF(dof_handler_fs->get_fe(),
+      scratch_data.enable_vof(dof_handler_vof->get_fe(),
                               *this->cell_quadrature,
                               *this->mapping);
     }
@@ -327,20 +336,20 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_fs =
+      const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_fs);
+        dof_handler_vof);
 
       std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
       previous_solutions.push_back(
         *this->multiphysics->get_solution_m1(PhysicsID::VOF));
 
 
-      scratch_data.reinit_VOF(phase_cell,
+      scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());

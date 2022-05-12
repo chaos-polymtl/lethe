@@ -263,8 +263,7 @@ private:
     pfw_contact_candidates;
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     particle_container;
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    ghost_particle_container;
+
   std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
     forces_boundary_information;
   std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>

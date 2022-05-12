@@ -25,6 +25,12 @@
 
 using namespace dealii;
 
+DeclException1(
+  EmissivityError,
+  double,
+  << "Emissivity : " << arg1
+  << " cannot be larger than 1.0 (black body) or smaller than 0.0");
+
 namespace BoundaryConditions
 {
   enum class BoundaryType
@@ -34,16 +40,18 @@ namespace BoundaryConditions
     slip,
     function,
     function_weak,
+    partial_slip,
     periodic,
     pressure,
+    outlet,
     // for heat transfer
-    temperature,      // - Dirichlet
-    convection,       // - Robin
-                      // for tracer
-    tracer_dirichlet, // - Dirichlet tracer
-                      // for vof
-    none,             // - none
-    pw,               // - peeling/wetting
+    temperature,          // - Dirichlet
+    convection_radiation, // - Robin
+                          // for tracer
+    tracer_dirichlet,     // - Dirichlet tracer
+                          // for vof
+    none,                 // - none
+    pw,                   // - peeling/wetting
   };
 
   /**
@@ -63,7 +71,12 @@ namespace BoundaryConditions
     // List of boundary type for each number
     std::vector<BoundaryType> type;
 
-    double beta;
+    // Penalization parameter for weak dirichlet BCs and outlets
+    std::vector<double> beta;
+
+    // Boundary layer size tangent component parameter for partial slip
+    // dirichlet BCs
+    std::vector<double> boundary_layer_thickness;
 
     // Number of boundary conditions
     unsigned int size;
@@ -148,6 +161,8 @@ namespace BoundaryConditions
     this->type.resize(1);
     this->type[0] = BoundaryType::noslip;
     this->size    = 1;
+    this->beta.resize(1);
+    this->beta[0] = 0;
   }
 
 
@@ -167,9 +182,9 @@ namespace BoundaryConditions
       "type",
       "noslip",
       Patterns::Selection(
-        "noslip|slip|function|periodic|pressure|function weak"),
+        "noslip|slip|function|periodic|pressure|function weak|partial slip|outlet"),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|function weak>.");
+      "Choices are <noslip|slip|function|periodic|pressure|function weak|partial slip|outlet>.");
 
 
     prm.declare_entry("id",
@@ -213,6 +228,20 @@ namespace BoundaryConditions
     prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
     prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
     prm.leave_subsection();
+
+    // Penalization parameter for weakly imposed dirichlet BCs and outlets
+    prm.declare_entry(
+      "beta",
+      "0",
+      Patterns::Double(),
+      "penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
+
+    // Penalization parameter for weakly imposed dirichlet BCs and outlets
+    prm.declare_entry(
+      "boundary layer thickness",
+      "0",
+      Patterns::Double(),
+      "thickness of the boundary layer used to calculate the penalty parameter for partial slip boundary condition in tangent direction imposed through Nitsche's method or outlets");
   }
 
 
@@ -233,10 +262,12 @@ namespace BoundaryConditions
       this->type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
       this->type[i_bc] = BoundaryType::slip;
-    if (op == "function" || op == "function weak")
+    if (op == "function" || op == "function weak" || op == "partial slip")
       {
         if (op == "function")
           this->type[i_bc] = BoundaryType::function;
+        else if (op == "partial slip")
+          this->type[i_bc] = BoundaryType::partial_slip;
         else
           this->type[i_bc] = BoundaryType::function_weak;
         prm.enter_subsection("u");
@@ -254,6 +285,7 @@ namespace BoundaryConditions
         prm.enter_subsection("center of rotation");
         bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
         bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
+
         if (dim == 3)
           bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
         prm.leave_subsection();
@@ -278,8 +310,15 @@ namespace BoundaryConditions
         this->periodic_id[i_bc]        = prm.get_integer("periodic_id");
         this->periodic_direction[i_bc] = prm.get_integer("periodic_direction");
       }
+    if (op == "outlet")
+      {
+        this->type[i_bc] = BoundaryType::outlet;
+      }
 
-    this->id[i_bc] = prm.get_integer("id");
+    this->id[i_bc]   = prm.get_integer("id");
+    this->beta[i_bc] = prm.get_double("beta");
+    this->boundary_layer_thickness[i_bc] =
+      prm.get_double("boundary layer thickness");
   }
 
 
@@ -305,12 +344,10 @@ namespace BoundaryConditions
         "false",
         Patterns::Bool(),
         "Bool to define if the boundary condition is time dependent");
-      prm.declare_entry(
-        "beta",
-        "0",
-        Patterns::Double(),
-        "penalty parameter for weak boundary condition imposed through Nitsche's method");
+
       this->id.resize(this->max_size);
+      this->beta.resize(this->max_size);
+      this->boundary_layer_thickness.resize(this->max_size);
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
       this->type.resize(this->max_size);
@@ -342,7 +379,6 @@ namespace BoundaryConditions
     {
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
-      this->beta           = prm.get_double("beta");
       this->type.resize(this->size);
       this->id.resize(this->size);
       this->periodic_direction.resize(this->size);
@@ -370,9 +406,11 @@ namespace BoundaryConditions
    * The members "value", "h" and "Tinf" contain double used for bc calculation:
    *  - if bc type is "temperature" (Dirichlet condition), "value" is the
    * double passed to the deal.ii ConstantFunction
-   *  - if bc type is "convection" (Robin condition), "h" is the
+   *  - if bc type is "convection-radiation" (Robin condition), "h" is the
    * convective heat transfer coefficient and "Tinf" is the
-   * environment temperature at the boundary
+   * environment temperature at the boundary, "emissivity" is the emissivity
+   * coefficient, and "Stefan-Boltzmann constant" is the Stefan-Boltzmann
+   * constant = 5.6703*10-8 (W.m-2.K-4)
    */
 
   template <int dim>
@@ -382,6 +420,8 @@ namespace BoundaryConditions
     std::vector<double> value;
     std::vector<double> h;
     std::vector<double> Tinf;
+    std::vector<double> emissivity;
+    double              Stefan_Boltzmann_constant;
 
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
@@ -408,9 +448,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "temperature",
-                      Patterns::Selection("temperature|convection"),
+                      Patterns::Selection("temperature|convection-radiation"),
                       "Type of boundary condition for heat transfer"
-                      "Choices are <temperature|convection>.");
+                      "Choices are <temperature|convection-radiation>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -422,15 +462,22 @@ namespace BoundaryConditions
                       Patterns::Double(),
                       "Value (Double) for constant temperature at bc");
 
-    prm.declare_entry("h",
-                      "0",
-                      Patterns::Double(),
-                      "Value (Double) for the h coefficient of convection bc");
+    prm.declare_entry(
+      "h",
+      "0",
+      Patterns::Double(),
+      "Value (Double) for the h coefficient of convection-radiation bc");
 
-    prm.declare_entry("Tinf",
-                      "0",
+    prm.declare_entry(
+      "Tinf",
+      "0",
+      Patterns::Double(),
+      "Temperature (Double) of environment for convection-radiation bc");
+
+    prm.declare_entry("emissivity",
+                      "0.0",
                       Patterns::Double(),
-                      "Temperature (Double) of environment for convection bc");
+                      "Emissivity of the boundary for convection-radiation bc");
   }
 
   /**
@@ -462,6 +509,10 @@ namespace BoundaryConditions
           }
           prm.leave_subsection();
         }
+      prm.declare_entry("Stefan-Boltzmann constant",
+                        "0.000000056703",
+                        Patterns::Double(),
+                        "Stefan-Boltzmann constant");
     }
     prm.leave_subsection();
   }
@@ -485,11 +536,15 @@ namespace BoundaryConditions
         this->type[i_bc]  = BoundaryType::temperature;
         this->value[i_bc] = prm.get_double("value");
       }
-    else if (op == "convection")
+    else if (op == "convection-radiation")
       {
-        this->type[i_bc] = BoundaryType::convection;
-        this->h[i_bc]    = prm.get_double("h");
-        this->Tinf[i_bc] = prm.get_double("Tinf");
+        this->type[i_bc]       = BoundaryType::convection_radiation;
+        this->h[i_bc]          = prm.get_double("h");
+        this->Tinf[i_bc]       = prm.get_double("Tinf");
+        this->emissivity[i_bc] = prm.get_double("emissivity");
+
+        Assert(this->emissivity[i_bc] <= 1.0 && this->emissivity[i_bc] >= 0.0,
+               EmissivityError(this->emissivity[i_bc]));
       }
 
     this->id[i_bc] = prm.get_integer("id");
@@ -516,6 +571,7 @@ namespace BoundaryConditions
       this->h.resize(this->size);
 
       this->Tinf.resize(this->size);
+      this->emissivity.resize(this->size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {
@@ -528,6 +584,8 @@ namespace BoundaryConditions
               prm.leave_subsection();
             }
         }
+      this->Stefan_Boltzmann_constant =
+        prm.get_double("Stefan-Boltzmann constant");
     }
     prm.leave_subsection();
   }

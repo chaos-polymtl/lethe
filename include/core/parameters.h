@@ -38,7 +38,6 @@
 #include <deal.II/base/parsed_function.h>
 
 
-
 using namespace dealii;
 
 namespace Parameters
@@ -180,6 +179,12 @@ namespace Parameters
     // Specific heat solid - Units in J/(kg*K)
     double cp_s;
 
+    // Thermal conductivity liquid - Units in W/(m*K)
+    double thermal_conductivity_l;
+
+    // Thermal conductivity solid - Units in W/(m*K)
+    double thermal_conductivity_s;
+
     // kinematic viscosity liquid - Units in m^2/(s)
     double viscosity_l;
 
@@ -306,7 +311,8 @@ namespace Parameters
     enum class ThermalConductivityModel
     {
       constant,
-      linear
+      linear,
+      phase_change
     } thermal_conductivity_model;
 
     // Linear thermal conductivity parameters : k = k_A0 + k_A1 * T
@@ -321,10 +327,14 @@ namespace Parameters
    */
   struct SurfaceTensionForce
   {
+    // Surface tension coefficient.
+    // This will be moved to the property manager in another PR.
+    double surface_tension_coef;
+
     double phase_fraction_gradient_filter_value;
     double curvature_filter_value;
 
-    bool output_VOF_auxiliary_fields;
+    bool output_vof_auxiliary_fields;
 
     // Type of verbosity for the surface tension force calculation
     Verbosity verbosity;
@@ -353,10 +363,27 @@ namespace Parameters
     unsigned int              number_of_fluids;
     static const unsigned int max_fluids = 2;
 
-    // Surface tension coefficient
-    double surface_tension_coef;
-
     void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Stabilization - Defines parameters for an advanced control over the stabilization strategy used by the solvers.
+   */
+  struct Stabilization
+  {
+    bool use_default_stabilization;
+
+    enum class NavierStokesStabilization
+    {
+      pspg_supg,
+      gls,
+      grad_div
+    } stabilization;
+
+    static void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
@@ -426,6 +453,79 @@ namespace Parameters
   };
 
   /**
+   * @brief Laser parameters - Defines the parameters for the
+   * laser heat source.
+   */
+  template <int dim>
+  class Laser
+  {
+  public:
+    // A boolean parameter that enables the calculations of laser heat source
+    bool activate_laser;
+
+    // Laser concentration factor indicates the definition of the beam radius.
+    // In almost all the articles, it is assumed equal to 2.0
+    double concentration_factor;
+
+    // Laser power in W
+    double laser_power;
+
+    // Absorptivity is defined as the fraction of the amount of incident
+    // radiation that is absorbed by the surface, and it is measured using
+    // diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in
+    // the range of 0.3-0.8 (for welding processes with titanium) are used
+    // in the literature. However, recent studies show that it varies with
+    // powder particle size distribution, and the angle of incidence that
+    // changes due to the dynamic melt pool surface [Zhang, Z., Huang, Y.,
+    // Kasinathan, A.R., Shahabad, S.I., Ali, U., Mahmoodkhani, Y. and
+    // Toyserkani, E., 2019. 3-Dimensional heat transfer modeling for laser
+    // powder-bed fusion additive manufacturing with volumetric heat sources
+    // based on varied thermal conductivity and absorptivity. Optics & Laser
+    // Technology, 109, pp.297-312.]
+    double laser_absorptivity;
+
+    // Penetration depth of the laser
+    double penetration_depth;
+
+    // Laser beam radius on the melt pool surface
+    double beam_radius;
+
+    // Beam orientation shows the orientation of the laser beam. For instance,
+    // if a laser beam is emitted perpendicular on a plane in x-y coordinates,
+    // the orientation of the laser beam will be in the z direction. Note that
+    // this parameter cannot be equal to z in two-dimensional simulations
+    enum class BeamOrientation
+    {
+      x,
+      y,
+      z,
+    } beam_orientation;
+
+    // beam_orientation_coordinate parameter stores the integer (x = 0, y = 1,
+    // z =2) value of the beam_orientation parameter
+    unsigned int beam_orientation_coordinate;
+
+    // Based on the laser beam orientation, the integer values of a
+    // perpendicular plane to the laser beam orientation are stored in the
+    // following parameters (x = 0, y = 1, z = 2)
+    unsigned int perpendicular_plane_coordinate_one;
+    unsigned int perpendicular_plane_coordinate_two;
+
+    // Laser scan path indicates the path of the laser focal point during a
+    // simulation
+    std::shared_ptr<Functions::ParsedFunction<dim>> laser_scan_path;
+
+    // Start and end time of the laser operation
+    double start_time;
+    double end_time;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief Postprocessing - Defines the parameters
    * for the post-processing. In Lethe, post-processing
    * implies the calculation of quantities derived from the principal
@@ -450,6 +550,9 @@ namespace Parameters
 
     // Enable pressure drop post-processing
     bool calculate_pressure_drop;
+
+    // Print minimum and maximum temperature
+    bool calculate_min_max_temperature;
 
     // The outlet boundary ID for pressure drop calculation
     unsigned int inlet_boundary_id;
@@ -585,6 +688,9 @@ namespace Parameters
 
     // Carry jacobian matrix over to the new non-linear problem
     bool reuse_matrix;
+
+    // Abort solver if non-linear solution has not reached tolerance
+    bool abort_at_convergence_failure;
 
 
     static void
@@ -747,7 +853,8 @@ namespace Parameters
     {
       velocity,
       pressure,
-      phase
+      phase,
+      temperature
     } variable;
 
     // Decision factor for Kelly refinement (number or fraction)
@@ -874,7 +981,6 @@ namespace Parameters
     bool                         calculate_force_ib;
     bool                         assemble_navier_stokes_inside;
     std::string                  ib_force_output_file;
-    double                       density;
     Tensor<1, dim>               gravity;
     double                       particle_nonlinear_tol;
     double                       wall_youngs_modulus;
@@ -883,6 +989,9 @@ namespace Parameters
     double                       wall_friction_coefficient;
     double                       wall_restitution_coefficient;
     unsigned int                 coupling_frequency;
+    bool                         enable_lubrication_force;
+    double                       lubrication_range_max;
+    double                       lubrication_range_min;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 

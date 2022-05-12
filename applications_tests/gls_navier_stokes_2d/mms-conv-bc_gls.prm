@@ -8,7 +8,7 @@
 subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
-  set output frequency        = 1
+  set output frequency        = 0
   set output name             = mms_conv_22
 end
 #---------------------------------------------------
@@ -97,7 +97,7 @@ subsection boundary conditions heat transfer
     end
     subsection bc 1
     set id = 1
-	set type	      = convection
+	set type	      = convection-radiation
         set h	      = 1
         set Tinf	      = 10
     end
