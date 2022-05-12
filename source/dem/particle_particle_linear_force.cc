@@ -305,7 +305,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
                     particle_one->get_local_index();
 #endif
                   Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
-                  Tensor<1, 3> &particle_one_force  = torque[particle_one_id];
+                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
 
                   // Apply the calculated forces and torques on the particle
                   // pair
