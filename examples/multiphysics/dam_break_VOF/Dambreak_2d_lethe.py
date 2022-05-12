@@ -45,7 +45,7 @@ list_vtu = [x for x in list_vtu if "pvd" not in x ]
 list_vtu = [x for x in list_vtu if "pvtu" not in x ]
 
 #Create a list of time_steps
-data = pd.read_csv("Output/dam-break_VOF.pvd",sep='"',header=5, usecols=[1],skiprows=[38,39]) 
+data = pd.read_csv("output/dam-break_VOF.pvd",sep='"',header=5, usecols=[1],skiprows=[38,39]) 
 data.columns = ["a"] 
 time_list = data['a']
 print(data['a'])
