@@ -285,7 +285,7 @@ The following image shows the temperature distribution in the simulation domain 
     :width: 800
 
 
-Using ParaView post-processing tools (using a temperature threshold above the liquidus temperature, we can monitor the melted region. The following image shows the melted region at :math:`t=0.00005` s, :math:`0.0005` s, and :math:`0.0025` s. Note that the melted region is visualized using yellow color.
+Using Paraview, we can monitor the melted region by using a temperature threshold above the liquidus temperature. The following image shows, in yellow, the melted region at :math:`t=0.00005` s, :math:`0.0005` s, and :math:`0.0025` s. 
 
 .. image:: images/melted_region.png
     :alt: melted_region
