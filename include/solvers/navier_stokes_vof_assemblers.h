@@ -175,8 +175,10 @@ class GLSNavierStokesVOFAssemblerNonNewtonianCore
 {
 public:
   GLSNavierStokesVOFAssemblerNonNewtonianCore(
-    std::shared_ptr<SimulationControl> simulation_control)
+    std::shared_ptr<SimulationControl> simulation_control,
+    const SimulationParameters<dim> &  nsparam)
     : simulation_control(simulation_control)
+    , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
 
   /**
@@ -256,5 +258,6 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::VOF              vof_parameters;
 };
 #endif
