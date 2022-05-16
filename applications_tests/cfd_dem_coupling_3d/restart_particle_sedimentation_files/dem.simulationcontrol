@@ -4,5 +4,5 @@ dt_1 0.0001
 dt_2 0.0001
 dt_3 0.0001
 CFL  0
-Time 0.1
-Iter 1000
+Time 0.0001
+Iter 1

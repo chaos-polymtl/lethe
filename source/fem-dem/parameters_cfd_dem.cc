@@ -10,7 +10,7 @@ namespace Parameters
     prm.declare_entry(
       "mode",
       "function",
-      Patterns::Selection("function|dem"),
+      Patterns::Selection("function|pcm|qcm"),
       "Choose the method for the calculation of the void fraction");
     prm.enter_subsection("function");
     void_fraction.declare_parameters(prm, 1);
@@ -51,8 +51,10 @@ namespace Parameters
     const std::string op = prm.get("mode");
     if (op == "function")
       mode = Parameters::VoidFractionMode::function;
-    else if (op == "dem")
-      mode = Parameters::VoidFractionMode::dem;
+    else if (op == "pcm")
+      mode = Parameters::VoidFractionMode::pcm;
+    else if (op == "qcm")
+      mode = Parameters::VoidFractionMode::qcm;
     else
       throw(std::runtime_error("Invalid voidfraction model"));
     prm.enter_subsection("function");

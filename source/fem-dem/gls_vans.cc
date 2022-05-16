@@ -1,3 +1,5 @@
+﻿#include <core/lethegridtools.h>
+
 #include "solvers/postprocessing_cfd.h"
 
 #include <fem-dem/gls_vans.h>
@@ -8,6 +10,41 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+double
+particle_circle_intersection_2d(double r_particle,
+                                double R_sphere,
+                                double neighbor_distance)
+{
+  return pow(r_particle, 2) * Utilities::fixed_power<-1, double>(
+                                cos((pow(neighbor_distance, 2) +
+                                     pow(r_particle, 2) - pow(R_sphere, 2)) /
+                                    (2 * neighbor_distance * r_particle))) +
+         Utilities::fixed_power<2, double>(R_sphere) *
+           Utilities::fixed_power<-1, double>(
+             cos((pow(neighbor_distance, 2) - pow(r_particle, 2) +
+                  pow(R_sphere, 2)) /
+                 (2 * neighbor_distance * R_sphere))) -
+         0.5 * sqrt((-neighbor_distance + r_particle + R_sphere) *
+                    (neighbor_distance + r_particle - R_sphere) *
+                    (neighbor_distance - r_particle + R_sphere) *
+                    (neighbor_distance + r_particle + R_sphere));
+}
+
+double
+particle_sphere_intersection_3d(double r_particle,
+                                double R_sphere,
+                                double neighbor_distance)
+{
+  return M_PI *
+         Utilities::fixed_power<2, double>(R_sphere + r_particle -
+                                           neighbor_distance) *
+         (Utilities::fixed_power<2, double>(neighbor_distance) +
+          (2 * neighbor_distance * r_particle) -
+          (3 * Utilities::fixed_power<2, double>(r_particle)) +
+          (2 * neighbor_distance * R_sphere) + (6 * R_sphere * r_particle) -
+          (3 * Utilities::fixed_power<2, double>(R_sphere))) /
+         (12 * neighbor_distance);
+}
 
 // Constructor for class GLS_VANS
 template <int dim>
@@ -31,7 +68,6 @@ GLSVANSSolver<dim>::~GLSVANSSolver()
   void_fraction_dof_handler.clear();
 }
 
-
 template <int dim>
 void
 GLSVANSSolver<dim>::setup_dofs()
@@ -51,8 +87,6 @@ GLSVANSSolver<dim>::setup_dofs()
   DoFTools::make_hanging_node_constraints(void_fraction_dof_handler,
                                           void_fraction_constraints);
   void_fraction_constraints.close();
-
-
 
   nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
                                       locally_relevant_dofs_voidfraction,
@@ -79,7 +113,6 @@ GLSVANSSolver<dim>::setup_dofs()
     this->mpi_communicator,
     locally_relevant_dofs_voidfraction);
 
-
   system_matrix_void_fraction.reinit(locally_owned_dofs_voidfraction,
                                      locally_owned_dofs_voidfraction,
                                      dsp,
@@ -89,7 +122,6 @@ GLSVANSSolver<dim>::setup_dofs()
                                               locally_owned_dofs_voidfraction,
                                               dsp,
                                               this->mpi_communicator);
-
 
   system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
                                   this->mpi_communicator);
@@ -117,7 +149,6 @@ GLSVANSSolver<dim>::percolate_void_fraction()
     }
   previous_void_fraction[0] = nodal_void_fraction_relevant;
 }
-
 
 template <int dim>
 void
@@ -184,7 +215,8 @@ GLSVANSSolver<dim>::read_dem()
   else
     {
       throw std::runtime_error(
-        "VANS equations currently do not support triangulations other than parallel::distributed");
+        "VANS equations currently do not support "
+        "triangulations other than parallel::distributed");
     }
 }
 
@@ -201,6 +233,7 @@ template <int dim>
 void
 GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 {
+  TimerOutput::Scope t(this->computing_timer, "calculate_void_fraction");
   if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
       Parameters::VoidFractionMode::function)
     {
@@ -217,10 +250,15 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 
       nodal_void_fraction_relevant = nodal_void_fraction_owned;
     }
-  else if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
-           Parameters::VoidFractionMode::dem)
+  else
     {
-      assemble_L2_projection_void_fraction();
+      if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
+          Parameters::VoidFractionMode::pcm)
+        particle_centered_method();
+      else if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
+               Parameters::VoidFractionMode::qcm)
+        quadrature_centered_sphere_method();
+
       solve_L2_system_void_fraction();
       if (this->cfd_dem_simulation_parameters.void_fraction
             ->bound_void_fraction == true)
@@ -340,7 +378,18 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
+GLSVANSSolver<dim>::vertices_cell_mapping()
+{
+  // Find all the cells around each vertices
+  TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
+
+  LetheGridTools::vertices_cell_mapping(this->void_fraction_dof_handler,
+                                        vertices_to_cell);
+}
+
+template <int dim>
+void
+GLSVANSSolver<dim>::particle_centered_method()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(1,
@@ -385,7 +434,7 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
               auto particle_properties = particle.get_properties();
               particles_volume_in_cell +=
                 M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
-                (2 * dim);
+                (2.0 * dim);
             }
           double cell_volume = cell->measure();
 
@@ -402,6 +451,7 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
                 }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
+                  // Assemble L2 projection
                   // Matrix assembly
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
@@ -429,12 +479,375 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
   system_matrix_void_fraction.compress(VectorOperation::add);
   system_rhs_void_fraction.compress(VectorOperation::add);
 }
+
+template <int dim>
+void
+GLSVANSSolver<dim>::quadrature_centered_sphere_method()
+{
+  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
+  const MappingQ<dim> mapping(
+    1, this->simulation_parameters.fem_parameters.qmapping_all);
+
+  FEValues<dim> fe_values_void_fraction(mapping,
+                                        this->fe_void_fraction,
+                                        quadrature_formula,
+                                        update_values |
+                                          update_quadrature_points |
+                                          update_JxW_values | update_gradients);
+
+  const unsigned int dofs_per_cell = this->fe_void_fraction.dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  const unsigned int                   n_q_points = quadrature_formula.size();
+  FullMatrix<double>  local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
+  Vector<double>      local_rhs_void_fraction(dofs_per_cell);
+  std::vector<double> phi_vf(dofs_per_cell);
+
+  double R_sphere;
+  double particles_volume_in_sphere;
+  double quadrature_void_fraction;
+
+  system_rhs_void_fraction    = 0;
+  system_matrix_void_fraction = 0;
+
+  // Clear all contributions of particles from the previous timestep
+  for (const auto &cell :
+       this->void_fraction_dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          const auto pic = particle_handler.particles_in_cell(cell);
+
+          for (auto &particle : pic)
+            {
+              auto particle_properties = particle.get_properties();
+
+              particle_properties
+                [DEM::PropertiesIndex::volumetric_contribution] = 0;
+            }
+        }
+    }
+
+  for (const auto &cell :
+       this->void_fraction_dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_void_fraction.reinit(cell);
+
+          // Active Neighbors include the current cell as well
+          auto active_neighbors =
+            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
+
+          // Array of real locations for the quadrature
+          // points
+          std::vector<std::vector<Point<dim>>>
+            neighbor_quadrature_point_location(
+              active_neighbors.size(), std::vector<Point<dim>>(n_q_points));
+
+          for (unsigned int n = 0; n < active_neighbors.size(); n++)
+            {
+              fe_values_void_fraction.reinit(active_neighbors[n]);
+
+              neighbor_quadrature_point_location[n] =
+                fe_values_void_fraction.get_quadrature_points();
+            }
+
+          const auto pic = particle_handler.particles_in_cell(cell);
+
+          for (auto &particle : pic)
+            {
+              auto         particle_properties = particle.get_properties();
+              const double r_particle =
+                particle_properties[DEM::PropertiesIndex::dp] * 0.5;
+
+              //***********************************************************************
+              for (unsigned int n = 0; n < active_neighbors.size(); n++)
+                {
+                  if (dim == 2)
+                    R_sphere =
+                      (std::sqrt(active_neighbors[n]->measure() / M_PI));
+                  else if (dim == 3)
+                    R_sphere =
+                      (pow(3 * active_neighbors[n]->measure() / (4 * M_PI),
+                           1. / 3.));
+                  if (((!cell->at_boundary() || !cell->has_boundary_lines()) &&
+                       (!active_neighbors[n]->at_boundary() ||
+                        !active_neighbors[n]->has_boundary_lines())) ||
+                      ((cell->at_boundary() || cell->has_boundary_lines()) &&
+                       (!active_neighbors[n]->at_boundary() ||
+                        !active_neighbors[n]->has_boundary_lines())))
+                    {
+                      // Loop over quadrature points
+                      for (unsigned int k = 0; k < n_q_points; ++k)
+                        {
+                          // Distance between particle and quadrature
+                          // point
+                          double neighbor_distance =
+                            particle.get_location().distance(
+                              neighbor_quadrature_point_location[n][k]);
+
+                          // Particle completely in reference sphere
+                          if (neighbor_distance <= (R_sphere - r_particle))
+                            {
+                              particle_properties[DEM::PropertiesIndex::
+                                                    volumetric_contribution] +=
+                                M_PI *
+                                pow(
+                                  particle_properties[DEM::PropertiesIndex::dp],
+                                  dim) /
+                                (2.0 * dim);
+                            }
+
+                          // Particle completely outside reference
+                          // sphere. Do absolutely nothing.
+
+                          // Particle partially in reference sphere
+                          else if ((neighbor_distance >
+                                    (R_sphere - r_particle)) &&
+                                   (neighbor_distance <
+                                    (R_sphere + r_particle)))
+                            {
+                              if (dim == 2)
+                                particle_properties
+                                  [DEM::PropertiesIndex::
+                                     volumetric_contribution] +=
+                                  particle_circle_intersection_2d(
+                                    r_particle, R_sphere, neighbor_distance);
+
+                              else if (dim == 3)
+
+                                particle_properties
+                                  [DEM::PropertiesIndex::
+                                     volumetric_contribution] +=
+                                  particle_sphere_intersection_3d(
+                                    r_particle, R_sphere, neighbor_distance);
+                            }
+                        }
+                    }
+
+                  else if ((cell->at_boundary() ||
+                            cell->has_boundary_lines()) &&
+                           (active_neighbors[n] == cell))
+                    {
+                      // Loop over quadrature points
+                      for (unsigned int k = 0; k < n_q_points; ++k)
+                        {
+                          // Particle completely in cell (PCM)
+                          particle_properties
+                            [DEM::PropertiesIndex::volumetric_contribution] +=
+                            M_PI *
+                            pow(particle_properties[DEM::PropertiesIndex::dp],
+                                dim) /
+                            (2.0 * dim);
+                        }
+                    }
+                }
+
+              //*********************************************************************
+            }
+        }
+    }
+
+  // Update ghost particles
+  particle_handler.update_ghost_particles();
+
+  for (const auto &cell :
+       this->void_fraction_dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_void_fraction.reinit(cell);
+
+          local_matrix_void_fraction = 0;
+          local_rhs_void_fraction    = 0;
+
+          double particles_volume_in_cell = 0;
+
+          if (!cell->at_boundary() || !cell->has_boundary_lines())
+            {
+              if (dim == 2)
+                R_sphere = (std::sqrt(cell->measure() / M_PI));
+              else if (dim == 3)
+                R_sphere = (pow(3 * cell->measure() / (4 * M_PI), 1. / 3.));
+
+              // Array of real locations for the quadrature points
+              std::vector<Point<dim>> quadrature_point_location;
+
+              quadrature_point_location =
+                fe_values_void_fraction.get_quadrature_points();
+
+              // Active Neighbors include the current cell as well
+              auto active_neighbors =
+                LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell,
+                                                            cell);
+
+              for (unsigned int q = 0; q < n_q_points; ++q)
+                {
+                  particles_volume_in_sphere = 0;
+                  quadrature_void_fraction   = 0;
+                  std::vector<double> distance_to_face_vector;
+
+                  for (unsigned int m = 0; m < active_neighbors.size(); m++)
+                    {
+                      // Loop over particles in neighbor cell
+                      // Begin and end iterator for particles in neighbor cell
+
+                      const auto pic =
+                        particle_handler.particles_in_cell(active_neighbors[m]);
+                      for (auto &particle : pic)
+                        {
+                          double distance          = 0;
+                          auto particle_properties = particle.get_properties();
+                          const double r_particle =
+                            particle_properties[DEM::PropertiesIndex::dp] * 0.5;
+                          double single_particle_volume =
+                            M_PI * pow((r_particle * 2), dim) / (2 * dim);
+
+                          // Distance between particle and quadrature point
+                          // centers
+                          distance = particle.get_location().distance(
+                            quadrature_point_location[q]);
+
+                          // Particle completely in reference sphere
+                          if (distance <= (R_sphere - r_particle))
+                            particles_volume_in_sphere +=
+                              (M_PI *
+                               pow(
+                                 particle_properties[DEM::PropertiesIndex::dp],
+                                 dim) /
+                               (2.0 * dim)) *
+                              single_particle_volume /
+                              particle_properties
+                                [DEM::PropertiesIndex::volumetric_contribution];
+
+                          // Particle completely outside reference sphere. Do
+                          // absolutely nothing.
+
+                          // Particle partially in reference sphere
+                          else if ((distance > (R_sphere - r_particle)) &&
+                                   (distance < (R_sphere + r_particle)))
+                            {
+                              if (dim == 2)
+                                particles_volume_in_sphere +=
+                                  particle_circle_intersection_2d(r_particle,
+                                                                  R_sphere,
+                                                                  distance) *
+                                  single_particle_volume /
+                                  particle_properties
+                                    [DEM::PropertiesIndex::
+                                       volumetric_contribution];
+                              else if (dim == 3)
+                                particles_volume_in_sphere +=
+                                  particle_sphere_intersection_3d(r_particle,
+                                                                  R_sphere,
+                                                                  distance) *
+                                  single_particle_volume /
+                                  particle_properties
+                                    [DEM::PropertiesIndex::
+                                       volumetric_contribution];
+                            }
+                        }
+                    }
+
+                  // We use the volume of the cell as it is equal to the volume
+                  // of the sphere
+                  quadrature_void_fraction = ((cell->measure() / n_q_points) -
+                                              particles_volume_in_sphere) /
+                                             (cell->measure() / n_q_points);
+
+                  for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                    {
+                      phi_vf[k] = fe_values_void_fraction.shape_value(k, q);
+                    }
+
+                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                    {
+                      // Assemble L2 projection
+                      // Matrix assembly
+                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                        {
+                          local_matrix_void_fraction(i, j) +=
+                            (phi_vf[j] * phi_vf[i]) *
+                            fe_values_void_fraction.JxW(q);
+                        }
+
+                      local_rhs_void_fraction(i) +=
+                        phi_vf[i] * quadrature_void_fraction *
+                        fe_values_void_fraction.JxW(q);
+                    }
+                }
+            }
+
+          else if (cell->at_boundary() || cell->has_boundary_lines())
+            {
+              // Loop over particles in cell
+              // Begin and end iterator for particles in cell
+              const auto pic = particle_handler.particles_in_cell(cell);
+              for (auto &particle : pic)
+                {
+                  auto particle_properties = particle.get_properties();
+
+                  double r_particle =
+                    particle_properties[DEM::PropertiesIndex::dp] * 0.5;
+
+                  double single_particle_volume =
+                    M_PI * pow((r_particle * 2), dim) / (2 * dim);
+
+                  particles_volume_in_cell +=
+                    (M_PI *
+                     pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                     (2.0 * dim)) *
+                    single_particle_volume /
+                    particle_properties
+                      [DEM::PropertiesIndex::volumetric_contribution];
+                }
+              double cell_volume = cell->measure() / n_q_points;
+
+              // Calculate cell void fraction
+              double cell_void_fraction =
+                (cell_volume - particles_volume_in_cell) / cell_volume;
+
+              for (unsigned int q = 0; q < n_q_points; ++q)
+                {
+                  for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                    {
+                      phi_vf[k] = fe_values_void_fraction.shape_value(k, q);
+                    }
+                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                    {
+                      // Assemble L2 projection
+                      // Matrix assembly
+                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                        {
+                          local_matrix_void_fraction(i, j) +=
+                            (phi_vf[j] * phi_vf[i]) *
+                            fe_values_void_fraction.JxW(q);
+                        }
+                      local_rhs_void_fraction(i) +=
+                        phi_vf[i] * cell_void_fraction *
+                        fe_values_void_fraction.JxW(q);
+                    }
+                }
+            }
+
+          cell->get_dof_indices(local_dof_indices);
+          void_fraction_constraints.distribute_local_to_global(
+            local_matrix_void_fraction,
+            local_rhs_void_fraction,
+            local_dof_indices,
+            system_matrix_void_fraction,
+            system_rhs_void_fraction);
+        }
+    }
+
+  system_matrix_void_fraction.compress(VectorOperation::add);
+  system_rhs_void_fraction.compress(VectorOperation::add);
+}
+
 template <int dim>
 void
 GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 {
-  TimerOutput::Scope t(this->computing_timer,
-                       "solve_linear_system_void_fraction");
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
 
@@ -450,7 +863,6 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     locally_owned_dofs_voidfraction, this->mpi_communicator);
-
 
   SolverControl solver_control(this->cfd_dem_simulation_parameters
                                  .cfd_parameters.linear_solver.max_iterations,
@@ -493,8 +905,6 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   void_fraction_constraints.distribute(completely_distributed_solution);
   nodal_void_fraction_relevant = completely_distributed_solution;
 }
-
-
 
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
@@ -635,9 +1045,9 @@ GLSVANSSolver<dim>::setup_assemblers()
   this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>(
     this->cfd_dem_simulation_parameters.cfd_dem));
 
-  // The core assembler should always be the last assembler to be called in the
-  // stabilized formulation as to have all strong residual and jacobian stored.
-  // Core assembler
+  // The core assembler should always be the last assembler to be called
+  // in the stabilized formulation as to have all strong residual and
+  // jacobian stored. Core assembler
   if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
       Parameters::VANSModel::modelA)
     this->assemblers.push_back(
@@ -670,7 +1080,6 @@ GLSVANSSolver<dim>::assemble_system_matrix()
   scratch_data.enable_void_fraction(fe_void_fraction,
                                     *this->cell_quadrature,
                                     *this->mapping);
-
 
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell(),
@@ -719,7 +1128,6 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     previous_void_fraction,
     std::vector<TrilinosWrappers::MPI::Vector>());
 
-
   scratch_data.reinit_particle_fluid_interactions(cell,
                                                   this->evaluation_point,
                                                   this->previous_solutions[0],
@@ -734,7 +1142,6 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     {
       pf_assembler->calculate_particle_fluid_interactions(scratch_data);
     }
-
 
   for (auto &assembler : this->assemblers)
     {
@@ -775,11 +1182,9 @@ GLSVANSSolver<dim>::assemble_system_rhs()
     *this->mapping,
     *this->face_quadrature);
 
-
   scratch_data.enable_void_fraction(fe_void_fraction,
                                     *this->cell_quadrature,
                                     *this->mapping);
-
 
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell(),
@@ -825,7 +1230,6 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     cell->index(),
     &this->void_fraction_dof_handler);
 
-
   scratch_data.reinit_void_fraction(
     void_fraction_cell,
     nodal_void_fraction_relevant,
@@ -869,7 +1273,6 @@ GLSVANSSolver<dim>::copy_local_rhs_to_global_rhs(
                                               copy_data.local_dof_indices,
                                               this->system_rhs);
 }
-
 
 template <int dim>
 void
@@ -927,6 +1330,8 @@ GLSVANSSolver<dim>::post_processing()
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
 
+  const auto scheme = this->simulation_control->get_assembly_method();
+
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
     bdf_coefs = bdf_coefficients(1, time_steps_vector);
 
@@ -935,7 +1340,6 @@ GLSVANSSolver<dim>::post_processing()
 
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     bdf_coefs = bdf_coefficients(3, time_steps_vector);
-
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
@@ -963,8 +1367,8 @@ GLSVANSSolver<dim>::post_processing()
           fe_values[velocities].get_function_gradients(
             evaluation_point, present_velocity_gradients);
 
-          // Gather the previous time steps depending on the number of stages
-          // of the time integration scheme for the void fraction
+          // Gather the previous time steps depending on the number of
+          // stages of the time integration scheme for the void fraction
 
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
@@ -1025,7 +1429,7 @@ GLSVANSSolver<dim>::post_processing()
                   fe_values_void_fraction.JxW(q);
 
               // Calculation of fluid and bed volumes in bed
-              if (present_void_fraction_values[q] < 0.6)
+              if (present_void_fraction_values[q] < 1.0)
                 {
                   fluid_volume += present_void_fraction_values[q] *
                                   fe_values_void_fraction.JxW(q);
@@ -1095,10 +1499,13 @@ GLSVANSSolver<dim>::solve()
     read_dem();
 
   setup_dofs();
+
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
+
+  particle_handler.exchange_ghost_particles(true);
 
   while (this->simulation_control->integrate())
     {
@@ -1118,6 +1525,7 @@ GLSVANSSolver<dim>::solve()
 
       if (this->simulation_control->is_at_start())
         {
+          vertices_cell_mapping();
           initialize_void_fraction();
           this->iterate();
         }
@@ -1125,6 +1533,7 @@ GLSVANSSolver<dim>::solve()
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          vertices_cell_mapping();
           calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();
         }

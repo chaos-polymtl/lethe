@@ -271,6 +271,7 @@ LetheGridTools::find_cells_around_cell(
       neighbors_cells.insert(vertices_cell_map[v_index].begin(),
                              vertices_cell_map[v_index].end());
     }
+
   // Transform the set into a vector.
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
     cells_sharing_vertices(neighbors_cells.begin(), neighbors_cells.end());
