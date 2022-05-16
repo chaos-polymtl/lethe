@@ -27,6 +27,7 @@ subsection VOF
 
 	subsection peeling wetting
 		set peeling wetting = true
+		set verbosity = verbose
 		set peeling pressure gradient = -1e-3
 		set peeling pressure value = -0.05
 		set wetting phase distance = -0.2

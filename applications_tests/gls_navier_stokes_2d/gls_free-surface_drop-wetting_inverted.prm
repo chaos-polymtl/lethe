@@ -27,6 +27,7 @@ subsection VOF
 
 	subsection peeling wetting
 		set peeling wetting = true
+		set verbosity = verbose
 		set peeling pressure gradient = -1e-3
 		set peeling pressure value = -0.05
 		set wetting phase distance = -0.2
@@ -94,7 +95,6 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable     	= false
-  set verbosity 	= verbose
 end
 
 #---------------------------------------------------
@@ -162,7 +162,7 @@ subsection non-linear solver
   set tolerance               = 1e-6
   set max iterations          = 10
   set residual precision      = 2
-  set verbosity               = verbose 
+  set verbosity               = quiet 
 end
 
 # --------------------------------------------------

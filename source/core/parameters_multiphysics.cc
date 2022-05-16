@@ -1,7 +1,7 @@
-#include <core/parameters_multiphysics.h>
-
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/parameter_handler.h>
+
+#include <core/parameters_multiphysics.h>
 
 DeclException1(
   SharpeningThresholdError,
@@ -259,6 +259,13 @@ Parameters::VOF_PeelingWetting::declare_parameters(ParameterHandler &prm)
       "distance (on the phase value) to the interface for which wetting can occur. "
       "For wetting phase distance>0, the wetting area is larger than "
       "the area occupied by the higher density fluid.");
+
+    prm.declare_entry(
+      "verbosity",
+      "quiet",
+      Patterns::Selection("quiet|verbose"),
+      "State whether from the number of wet and peeled cells should be printed. "
+      "Choices are <quiet|verbose>.");
   }
   prm.leave_subsection();
 }
@@ -273,6 +280,14 @@ Parameters::VOF_PeelingWetting::parse_parameters(ParameterHandler &prm)
     peeling_grad_p         = prm.get_double("peeling pressure gradient");
     wetting_p_value        = prm.get_double("wetting pressure value");
     wetting_phase_distance = prm.get_double("wetting phase distance");
+
+    const std::string op = prm.get("verbosity");
+    if (op == "verbose")
+      verbosity = Parameters::Verbosity::verbose;
+    else if (op == "quiet")
+      verbosity = Parameters::Verbosity::quiet;
+    else
+      throw(std::runtime_error("Invalid verbosity level"));
   }
   prm.leave_subsection();
 }

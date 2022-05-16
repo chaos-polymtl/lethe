@@ -1,12 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -23,6 +14,14 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 #include <cmath>
 
@@ -538,8 +537,8 @@ VolumeOfFluid<dim>::sharpen_interface()
           .sharpening_frequency ==
       0)
     {
-      if (simulation_parameters.non_linear_solver.verbosity ==
-          Parameters::Verbosity::verbose)
+      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+            .verbosity == Parameters::Verbosity::verbose)
         {
           this->pcout << "Sharpening interface at step "
                       << this->simulation_control->get_step_number()
@@ -1336,7 +1335,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->simulation_parameters.non_linear_solver.verbosity !=
+  if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
@@ -1374,7 +1373,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
                this->system_rhs,
                ilu_preconditioner);
 
-  if (simulation_parameters.non_linear_solver.verbosity !=
+  if (simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
@@ -1692,8 +1691,8 @@ VolumeOfFluid<dim>::handle_peeling_wetting()
     } // end loop on boundary_conditions_vof
 
   // Output total of peeled/wet cells in the entire domain
-  if (this->simulation_parameters.non_linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.multiphysics.vof_parameters.peeling_wetting
+        .verbosity != Parameters::Verbosity::quiet)
     {
       auto mpi_communicator = this->triangulation->get_communicator();
 

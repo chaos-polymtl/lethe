@@ -26,9 +26,9 @@
 #ifndef lethe_parameters_multiphysics_h
 #define lethe_parameters_multiphysics_h
 
-#include <core/parameters.h>
-
 #include <deal.II/base/parameter_handler.h>
+
+#include <core/parameters.h>
 
 using namespace dealii;
 
@@ -55,6 +55,8 @@ namespace Parameters
     double peeling_grad_p;
     double wetting_p_value;
     double wetting_phase_distance;
+    // Type of verbosity for the peeling-wetting mechanism
+    Parameters::Verbosity verbosity;
 
     static void
     declare_parameters(ParameterHandler &prm);
