@@ -165,6 +165,12 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
     this->cfd_dem_simulation_parameters.dem_parameters.model_parameters;
   dem_parameters.simulation_control =
     this->cfd_dem_simulation_parameters.dem_parameters.simulation_control;
+  dem_parameters.post_processing =
+    this->cfd_dem_simulation_parameters.dem_parameters.post_processing;
+  dem_parameters.mesh = this->cfd_dem_simulation_parameters.dem_parameters.mesh;
+  dem_parameters.restart =
+    this->cfd_dem_simulation_parameters.dem_parameters.restart;
+
 
   maximum_particle_diameter =
     find_maximum_particle_size(dem_parameters.lagrangian_physical_properties,
@@ -174,13 +180,19 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
                maximum_particle_diameter,
              2);
 
-  if (this->cfd_dem_simulation_parameters.dem_parameters.mesh.type ==
-      Parameters::Mesh::Type::dealii)
+  if (dem_parameters.mesh.type == Parameters::Mesh::Type::dealii)
     {
       GridGenerator::generate_from_name_and_arguments(
         tria,
         this->cfd_dem_simulation_parameters.dem_parameters.mesh.grid_type,
         this->cfd_dem_simulation_parameters.dem_parameters.mesh.grid_arguments);
+    }
+  else if (dem_parameters.mesh.type == Parameters::Mesh::Type::gmsh)
+    {
+      GridIn<dim> grid_in;
+      grid_in.attach_triangulation(tria);
+      std::ifstream input_file(dem_parameters.mesh.file_name);
+      grid_in.read_msh(input_file);
     }
   else
     throw std::runtime_error(
@@ -188,11 +200,10 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
 
   triangulation_cell_diameter = 0.5 * GridTools::diameter(tria);
 
-  // Finding the smallest contact search frequency criterion between (smallest
-  // cell size - largest particle radius) and (security factor * (blab
-  // diamater
-  // - 1) *  largest particle radius). This value is used in
-  // find_contact_detection_frequency function
+  //   Finding the smallest contact search frequency criterion between (smallest
+  //   cell size - largest particle radius) and (security factor * (blab
+  //   diamater - 1) *  largest particle radius). This value is used in
+  //   find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(tria) -
               maximum_particle_diameter * 0.5),
@@ -232,6 +243,10 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   // Necessary signals for load balancing. This signals are only connected if
   // load balancing is enabled. This helps prevent errors in read_dem function
   // for Deal.II version 9.3
+  //  const auto parallel_triangulation =
+  //    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+  //      &*this->triangulation);
+
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
@@ -963,7 +978,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
   // directly after reading the dem initial checkpoint files
 
   if (contact_detection_step || checkpoint_step || load_balance_step ||
-      (this->simulation_control->is_at_start() && counter == 0))
+      (this->simulation_control->is_at_start() && (counter == 0)))
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
 
@@ -995,7 +1010,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
   // Broad particle-particle contact search
   if (load_balance_step || checkpoint_step || contact_detection_step ||
-      (this->simulation_control->is_at_start() && counter == 0))
+      (this->simulation_control->is_at_start() && (counter == 0)))
     {
       particle_particle_broad_search_object
         .find_particle_particle_contact_pairs(this->particle_handler,
@@ -1189,17 +1204,86 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 }
 
 
+template <int dim>
+void
+CFDDEMSolver<dim>::dem_post_process_results()
+{
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+
+  if (dem_parameters.post_processing.calculate_particles_average_velocity)
+    {
+      dem_post_processing_object.calculate_average_particles_velocity(
+        *parallel_triangulation, this->particle_handler);
+
+      dem_post_processing_object.write_average_particles_velocity(
+        *parallel_triangulation,
+        grid_pvdhandler,
+        dem_parameters,
+        this->simulation_control->get_current_time(),
+        this->simulation_control->get_step_number(),
+        this->mpi_communicator);
+    }
+  if (dem_parameters.post_processing.calculate_granular_temperature)
+    {
+      dem_post_processing_object.calculate_average_granular_temperature(
+        *parallel_triangulation, this->particle_handler);
+
+      dem_post_processing_object.write_granular_temperature(
+        *parallel_triangulation,
+        grid_pvdhandler,
+        dem_parameters,
+        this->simulation_control->get_current_time(),
+        this->simulation_control->get_step_number(),
+        this->mpi_communicator);
+    }
+}
 
 template <int dim>
 void
 CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
 {
+  this->pcout
+    << "---------------------------------------------------------------"
+    << std::endl;
+
   this->GLSNavierStokesSolver<dim>::postprocess_fd(first_iteration);
 
   // Visualization
   if (this->simulation_control->is_output_iteration())
     {
       write_DEM_output_results();
+    }
+}
+
+template <int dim>
+void
+CFDDEMSolver<dim>::post_processing()
+{
+  if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
+    {
+      this->GLSVANSSolver<dim>::post_processing();
+      double particle_total_kinetic_energy =
+        DEM::calculate_total_granular_kinetic_energy(this->particle_handler,
+                                                     this->mpi_communicator);
+
+      this->pcout << "Total particles kinetic energy: "
+                  << particle_total_kinetic_energy << std::endl;
+    }
+
+  if (dem_parameters.post_processing.Lagrangian_post_processing)
+    {
+      if (this->simulation_control->get_step_number() >=
+            dem_parameters.post_processing.initial_step &&
+          this->simulation_control->get_step_number() <=
+            dem_parameters.post_processing.end_step)
+        {
+          if (this->simulation_control->get_step_number() %
+                dem_parameters.post_processing.output_frequency ==
+              0)
+            dem_post_process_results();
+        }
     }
 }
 
@@ -1252,6 +1336,7 @@ CFDDEMSolver<dim>::solve()
     read_dem();
 
   this->setup_dofs();
+
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1278,6 +1363,7 @@ CFDDEMSolver<dim>::solve()
 
       if (this->simulation_control->is_at_start())
         {
+          this->vertices_cell_mapping();
           this->initialize_void_fraction();
           this->iterate();
         }
@@ -1285,6 +1371,7 @@ CFDDEMSolver<dim>::solve()
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          this->vertices_cell_mapping();
           this->calculate_void_fraction(
             this->simulation_control->get_current_time());
           this->iterate();
@@ -1316,16 +1403,7 @@ CFDDEMSolver<dim>::solve()
       this->postprocess(false);
       this->finish_time_step();
 
-      if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
-        {
-          this->post_processing();
-          double particle_total_kinetic_energy =
-            DEM::calculate_total_granular_kinetic_energy(
-              this->particle_handler, this->mpi_communicator);
-
-          this->pcout << "Total particles kinetic energy: "
-                      << particle_total_kinetic_energy << std::endl;
-        }
+      post_processing();
 
       // Load balancing
       // The input argument to this function is set to zero as this integer is

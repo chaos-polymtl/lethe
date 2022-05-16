@@ -7,12 +7,13 @@ subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
   set output name              = result_
-  set output frequency	  	= 1000
+  set output frequency	  	= 0
   set startup time scaling         = 0.6
-  set time end                     = 0.1
-  set time step                    = 0.001
+  set time end                     = 0.5
+  set time step                    = 0.005
   set subdivision             = 1 
   set log precision     = 10 
+#  set output boundaries    = true
 end
 
 
@@ -24,15 +25,25 @@ subsection FEM
     set pressure order            = 1
 end
 
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+subsection restart
+	set checkpoint					 = false
+	set frequency 					 = 10
+	set restart       				 = false
+	set filename      				 = case
+end
+
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-  subsection fluid 0
+ subsection fluid 0
     set kinematic viscosity            = 0.00000100501
     set density                        = 997
-  end
+ end
 end
 
 #---------------------------------------------------
@@ -43,17 +54,16 @@ subsection mesh
     set grid type            				= subdivided_cylinder
     set grid arguments       				= 5:0.05:0.1
     set initial refinement   				= 1
-    set expand particle-wall contact search		= false
 end
 
 #---------------------------------------------------
 # Void Fraction
 #---------------------------------------------------
 subsection void fraction
-   set mode = dem
+   set mode = pcm
    set read dem = true
    set dem file name = dem
-   set l2 smoothing factor = 0.0
+   set l2 smoothing factor = 0.00001
    set bound void fraction = false
    set l2 lower bound = 0
    set l2 upper bound = 1
@@ -64,9 +74,16 @@ end
 #---------------------------------------------------
 subsection cfd-dem
    set grad div = true
-   set drag model = rong
-   set post processing = false
+   set void fraction time derivative = true
+   set drag force = true
+   set buoyancy force = true
+   set shear force = false
+   set pressure force = false
+   set drag model = difelice
+   set post processing = true
    set coupling frequency = 100
+   set implicit stabilization = false
+   set vans model = modelB
 end
 
 #---------------------------------------------------
@@ -74,6 +91,7 @@ end
 #---------------------------------------------------
  subsection initial conditions
     set type = nodal
+#    set viscosity = 0.005
     subsection uvwp
             set Function expression = 0; 0; 0; 0
     end
@@ -116,17 +134,24 @@ subsection mesh adaptation
 end
 
 #---------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+  set type  = none
+end
+
+#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection lagrangian physical properties
     set gx            		 			= -9.81
-    set gy            		 			= 0.0
+    set gy            		 			= 0
     set gz						= 0
     set number of particle types	                = 1
     subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            	 	= 0.002
-    		set number				= 10
+    		set number				= 1
     		set density particles         	        = 2500
     		set young modulus particles         	= 1000000
     		set poisson ratio particles          	= 0.3
@@ -159,7 +184,7 @@ end
 # Testing
 #---------------------------------------------------
 subsection test
-  set enable = false
+  set enable = true
 end
 
 # --------------------------------------------------
@@ -167,7 +192,7 @@ end
 #---------------------------------------------------
 subsection non-linear solver
   set tolerance               = 1e-9
-  set max iterations          = 10
+  set max iterations          = 5
   set verbosity               = quiet
 end
 
@@ -180,7 +205,7 @@ subsection linear solver
   set relative residual                      = 1e-3
   set minimum residual                       = 1e-10
   set ilu preconditioner fill                = 1
-  set ilu preconditioner absolute tolerance  = 1e-14
+  set ilu preconditioner absolute tolerance  = 1e-12
   set ilu preconditioner relative tolerance  = 1.00
   set verbosity               =quiet
   set max krylov vectors = 1000

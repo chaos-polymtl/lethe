@@ -43,7 +43,8 @@ namespace Parameters
   enum class VoidFractionMode
   {
     function,
-    dem
+    pcm, // The particle centered method
+    qcm  // The quadratured centered method
   };
 
   enum class DragModel
