@@ -7,221 +7,161 @@ Running on 1 MPI rank(s)...
 *****************************************************************
 Transient iteration : 1        Time : 0.05     Time step : 0.05     CFL : 0       
 *****************************************************************
-Peeling/wetting correction at step 1
-  -number of wet cells: 0
-  -number of peeled cells: 0
 L2 error velocity : 0.356028
 L2 error phase : 0.130489
 
 *****************************************************************
-Transient iteration : 2        Time : 0.1      Time step : 0.05     CFL : 8.3247  
+Transient iteration : 2        Time : 0.1      Time step : 0.05     CFL : 8.32469 
 *****************************************************************
-Peeling/wetting correction at step 2
-  -number of wet cells: 0
-  -number of peeled cells: 0
 L2 error velocity : 0.621476
 L2 error phase : 0.10386
 
 *****************************************************************
 Transient iteration : 3        Time : 0.15     Time step : 0.05     CFL : 21.382  
 *****************************************************************
-Peeling/wetting correction at step 3
-  -number of wet cells: 0
-  -number of peeled cells: 0
 L2 error velocity : 0.659623
-L2 error phase : 0.0782739
+L2 error phase : 0.0782737
 
 *****************************************************************
-Transient iteration : 4        Time : 0.2      Time step : 0.05     CFL : 22.914  
+Transient iteration : 4        Time : 0.2      Time step : 0.05     CFL : 22.9142 
 *****************************************************************
-Peeling/wetting correction at step 4
-  -number of wet cells: 0
-  -number of peeled cells: 0
-L2 error velocity : 0.560343
+L2 error velocity : 0.560338
 L2 error phase : 0.0573782
 
 *****************************************************************
-Transient iteration : 5        Time : 0.25     Time step : 0.05     CFL : 17.3283 
+Transient iteration : 5        Time : 0.25     Time step : 0.05     CFL : 17.3282 
 *****************************************************************
-Peeling/wetting correction at step 5
-  -number of wet cells: 0
-  -number of peeled cells: 0
-L2 error velocity : 0.424893
+L2 error velocity : 0.42489
 L2 error phase : 0.0428519
 
 *****************************************************************
 Transient iteration : 6        Time : 0.3      Time step : 0.05     CFL : 11.6915 
 *****************************************************************
-Peeling/wetting correction at step 6
-  -number of wet cells: 0
-  -number of peeled cells: 0
-L2 error velocity : 0.300792
+L2 error velocity : 0.300791
 L2 error phase : 0.0337509
 
 *****************************************************************
-Transient iteration : 7        Time : 0.35     Time step : 0.05     CFL : 7.59027 
+Transient iteration : 7        Time : 0.35     Time step : 0.05     CFL : 7.59025 
 *****************************************************************
-Peeling/wetting correction at step 7
-  -number of wet cells: 20
-  -number of peeled cells: 0
-L2 error velocity : 0.205014
+L2 error velocity : 0.205015
 L2 error phase : 0.0279964
 
 *****************************************************************
-Transient iteration : 8        Time : 0.4      Time step : 0.05     CFL : 4.95208 
+Transient iteration : 8        Time : 0.4      Time step : 0.05     CFL : 4.95205 
 *****************************************************************
-Peeling/wetting correction at step 8
-  -number of wet cells: 30
-  -number of peeled cells: 0
-L2 error velocity : 0.13814
-L2 error phase : 0.0240373
+L2 error velocity : 0.138141
+L2 error phase : 0.0240364
 
 *****************************************************************
-Transient iteration : 9        Time : 0.45     Time step : 0.05     CFL : 3.34325 
+Transient iteration : 9        Time : 0.45     Time step : 0.05     CFL : 3.34322 
 *****************************************************************
-Peeling/wetting correction at step 9
-  -number of wet cells: 0
-  -number of peeled cells: 0
-L2 error velocity : 0.0944415
-L2 error phase : 0.0210092
+L2 error velocity : 0.0944308
+L2 error phase : 0.0210077
 
 *****************************************************************
-Transient iteration : 10       Time : 0.5      Time step : 0.05     CFL : 2.37948 
+Transient iteration : 10       Time : 0.5      Time step : 0.05     CFL : 2.37925 
 *****************************************************************
-Peeling/wetting correction at step 10
-  -number of wet cells: 36
-  -number of peeled cells: 0
-L2 error velocity : 0.0672592
-L2 error phase : 0.0184578
+L2 error velocity : 0.0672474
+L2 error phase : 0.018456
 
 *****************************************************************
-Transient iteration : 11       Time : 0.55     Time step : 0.05     CFL : 1.79952 
+Transient iteration : 11       Time : 0.55     Time step : 0.05     CFL : 1.7994  
 *****************************************************************
-Peeling/wetting correction at step 11
-  -number of wet cells: 38
-  -number of peeled cells: 0
-L2 error velocity : 0.0508419
-L2 error phase : 0.0161369
+L2 error velocity : 0.0508386
+L2 error phase : 0.0161347
 
 *****************************************************************
-Transient iteration : 12       Time : 0.6      Time step : 0.05     CFL : 1.43958 
+Transient iteration : 12       Time : 0.6      Time step : 0.05     CFL : 1.43955 
 *****************************************************************
-Peeling/wetting correction at step 12
-  -number of wet cells: 40
-  -number of peeled cells: 0
-L2 error velocity : 0.040738
-L2 error phase : 0.0139092
+L2 error velocity : 0.0407372
+L2 error phase : 0.0139067
 
 *****************************************************************
 Transient iteration : 13       Time : 0.65     Time step : 0.05     CFL : 1.20077 
 *****************************************************************
-Peeling/wetting correction at step 13
-  -number of wet cells: 41
-  -number of peeled cells: 0
-L2 error velocity : 0.0339523
-L2 error phase : 0.0116895
+L2 error velocity : 0.0339519
+L2 error phase : 0.0116866
 
 *****************************************************************
-Transient iteration : 14       Time : 0.7      Time step : 0.05     CFL : 1.02386 
+Transient iteration : 14       Time : 0.7      Time step : 0.05     CFL : 1.02385 
 *****************************************************************
-Peeling/wetting correction at step 14
-  -number of wet cells: 42
-  -number of peeled cells: 0
-L2 error velocity : 0.0286187
-L2 error phase : 0.00945118
+L2 error velocity : 0.0286179
+L2 error phase : 0.00944731
 
 *****************************************************************
-Transient iteration : 15       Time : 0.75     Time step : 0.05     CFL : 0.872829
+Transient iteration : 15       Time : 0.75     Time step : 0.05     CFL : 0.872802
 *****************************************************************
-Peeling/wetting correction at step 15
-  -number of wet cells: 44
-  -number of peeled cells: 0
-L2 error velocity : 0.0237146
-L2 error phase : 0.00728626
+L2 error velocity : 0.0237087
+L2 error phase : 0.00728043
 
 *****************************************************************
-Transient iteration : 16       Time : 0.8      Time step : 0.05     CFL : 0.72748 
+Transient iteration : 16       Time : 0.8      Time step : 0.05     CFL : 0.727386
 *****************************************************************
-Peeling/wetting correction at step 16
-  -number of wet cells: 45
-  -number of peeled cells: 0
-L2 error velocity : 0.0187973
-L2 error phase : 0.00540952
+L2 error velocity : 0.0187919
+L2 error phase : 0.00540394
 
 *****************************************************************
-Transient iteration : 17       Time : 0.85     Time step : 0.05     CFL : 0.58091 
+Transient iteration : 17       Time : 0.85     Time step : 0.05     CFL : 0.580802
 *****************************************************************
-Peeling/wetting correction at step 17
-  -number of wet cells: 0
-  -number of peeled cells: 0
-L2 error velocity : 0.0139483
-L2 error phase : 0.00411877
+L2 error velocity : 0.0139427
+L2 error phase : 0.00411545
 
 *****************************************************************
-Transient iteration : 18       Time : 0.9      Time step : 0.05     CFL : 0.438171
+Transient iteration : 18       Time : 0.9      Time step : 0.05     CFL : 0.438053
 *****************************************************************
-Peeling/wetting correction at step 18
-  -number of wet cells: 50
-  -number of peeled cells: 0
-L2 error velocity : 0.00961945
-L2 error phase : 0.00355818
+L2 error velocity : 0.00961499
+L2 error phase : 0.00355749
 
 *****************************************************************
-Transient iteration : 19       Time : 0.95     Time step : 0.05     CFL : 0.31075 
+Transient iteration : 19       Time : 0.95     Time step : 0.05     CFL : 0.310649
 *****************************************************************
-Peeling/wetting correction at step 19
-  -number of wet cells: 57
-  -number of peeled cells: 0
-L2 error velocity : 0.00619437
-L2 error phase : 0.00342596
+L2 error velocity : 0.00619204
+L2 error phase : 0.00342619
 
 *****************************************************************
-Transient iteration : 20       Time : 1        Time step : 0.05     CFL : 0.207979
+Transient iteration : 20       Time : 1        Time step : 0.05     CFL : 0.207916
 *****************************************************************
-Peeling/wetting correction at step 20
-  -number of wet cells: 64
-  -number of peeled cells: 0
-L2 error velocity : 0.00390028
-L2 error phase : 0.0034047
+L2 error velocity : 0.00389828
+L2 error phase : 0.00340498
  time  error_velocity error_pressure 
 0.0500 3.560284e-01   0.3238         
-0.1000 6.214756e-01   0.2279         
-0.1500 6.596230e-01   0.2406         
-0.2000 5.603433e-01   0.2539         
-0.2500 4.248934e-01   0.2252         
-0.3000 3.007919e-01   0.1663         
-0.3500 2.050140e-01   0.1170         
-0.4000 1.381399e-01   0.0893         
-0.4500 9.444147e-02   0.0755         
-0.5000 6.725920e-02   0.0675         
-0.5500 5.084188e-02   0.0615         
-0.6000 4.073801e-02   0.0562         
-0.6500 3.395230e-02   0.0508         
-0.7000 2.861874e-02   0.0447         
-0.7500 2.371463e-02   0.0379         
-0.8000 1.879735e-02   0.0304         
-0.8500 1.394827e-02   0.0232         
-0.9000 9.619455e-03   0.0186         
-0.9500 6.194375e-03   0.0176         
-1.0000 3.900281e-03   0.0180         
+0.1000 6.214760e-01   0.2279         
+0.1500 6.596232e-01   0.2406         
+0.2000 5.603382e-01   0.2539         
+0.2500 4.248901e-01   0.2252         
+0.3000 3.007908e-01   0.1663         
+0.3500 2.050146e-01   0.1170         
+0.4000 1.381405e-01   0.0893         
+0.4500 9.443085e-02   0.0755         
+0.5000 6.724736e-02   0.0675         
+0.5500 5.083861e-02   0.0615         
+0.6000 4.073724e-02   0.0562         
+0.6500 3.395195e-02   0.0507         
+0.7000 2.861785e-02   0.0447         
+0.7500 2.370867e-02   0.0379         
+0.8000 1.879188e-02   0.0303         
+0.8500 1.394271e-02   0.0232         
+0.9000 9.614993e-03   0.0186         
+0.9500 6.192043e-03   0.0176         
+1.0000 3.898277e-03   0.0180         
  time  error_phase  
-0.0500 1.304894e-01 
-0.1000 1.038603e-01 
-0.1500 7.827394e-02 
-0.2000 5.737822e-02 
-0.2500 4.285192e-02 
+0.0500 1.304893e-01 
+0.1000 1.038601e-01 
+0.1500 7.827373e-02 
+0.2000 5.737817e-02 
+0.2500 4.285190e-02 
 0.3000 3.375086e-02 
-0.3500 2.799644e-02 
-0.4000 2.403727e-02 
-0.4500 2.100923e-02 
-0.5000 1.845781e-02 
-0.5500 1.613690e-02 
-0.6000 1.390917e-02 
-0.6500 1.168946e-02 
-0.7000 9.451180e-03 
-0.7500 7.286256e-03 
-0.8000 5.409521e-03 
-0.8500 4.118767e-03 
-0.9000 3.558176e-03 
-0.9500 3.425963e-03 
-1.0000 3.404696e-03
+0.3500 2.799643e-02 
+0.4000 2.403636e-02 
+0.4500 2.100774e-02 
+0.5000 1.845596e-02 
+0.5500 1.613473e-02 
+0.6000 1.390665e-02 
+0.6500 1.168659e-02 
+0.7000 9.447315e-03 
+0.7500 7.280428e-03 
+0.8000 5.403939e-03 
+0.8500 4.115452e-03 
+0.9000 3.557489e-03 
+0.9500 3.426187e-03 
+1.0000 3.404983e-03 
