@@ -6,10 +6,11 @@
 subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
-  set time end                = 0.06
+  set time end                = 0.08
   set time step               = 0.02
   set output name             = drop_wetting_inverted_VOF
   set output frequency        = 0
+
 end
 
 #---------------------------------------------------
@@ -23,20 +24,18 @@ end
 # VOF
 #---------------------------------------------------
 subsection VOF	
-	set diffusion = 1e-2
+	set diffusion = 5e-3
 
 	subsection peeling wetting
-		set peeling wetting = true
+		set enable = true
 		set verbosity = verbose
-		set peeling pressure gradient = -1e-3
-		set peeling pressure value = -0.05
-		set wetting phase distance = -0.2
-		set wetting pressure value = 0.05
+		set wetting phase distance = 0
+		set wetting pressure value = 0.5
 	end
 	subsection interface sharpening
-		set interface sharpening = true
+		set enable = true
 		set sharpening frequency   = 1
-		set interface sharpness    = 1.8
+		set interface sharpness    = 2
 		set sharpening threshold   = 0.5
 	end
 end
@@ -50,7 +49,7 @@ subsection initial conditions
             set Function expression = 0; 0; 0
     end
     subsection VOF
-	set Function expression = if ( (((x)^2+(y-0.2)^2)<=(0.2)^2),0,1) #||(y<0)
+	set Function expression = if ( (y<0.1)&&(y>1e-2) ,0,1)
     end
 end
 
@@ -86,8 +85,8 @@ end
 subsection mesh
 		set type = dealii
 		set grid type = hyper_rectangle
-		set grid arguments = -0.3, 0 : 0.3, 0.5 : true
-		set initial refinement = 6
+		set grid arguments = -0.1, 0 : 0.1, 0.2 : true
+		set initial refinement = 5
 end
 
 # --------------------------------------------------
@@ -95,6 +94,7 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable     	= false
+  set verbosity 	= quiet
 end
 
 #---------------------------------------------------
@@ -159,7 +159,7 @@ end
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
-  set tolerance               = 1e-6
+  set tolerance               = 1e-9
   set max iterations          = 10
   set residual precision      = 2
   set verbosity               = quiet 
@@ -171,9 +171,9 @@ end
 subsection linear solver
   set verbosity               = quiet
   set method                                 = gmres
-  set max iters                              = 5000
-  set relative residual                      = 1e-3
-  set minimum residual                       = 1e-9
+  set max iters                              = 500
+  set relative residual                      = 1e-9
+  set minimum residual                       = 1e-11
   set ilu preconditioner fill                = 1
   set ilu preconditioner absolute tolerance  = 1e-12
   set ilu preconditioner relative tolerance  = 1.00

@@ -251,13 +251,13 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
 
-  if (vof_parameters.peeling_wetting.peeling_wetting)
+  if (vof_parameters.peeling_wetting.enable)
     {
       // Peeling/wetting output
       data_out.add_data_vector(this->dof_handler, marker_pw, "marker_pw");
     }
 
-  if (vof_parameters.stf.surface_tension_force &&
+  if (vof_parameters.stf.enable &&
       vof_parameters.stf.output_vof_auxiliary_fields)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -507,15 +507,15 @@ VolumeOfFluid<dim>::modify_solution()
 {
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
   // Peeling/wetting
-  if (vof_parameters.peeling_wetting.peeling_wetting)
+  if (vof_parameters.peeling_wetting.enable)
     {
       handle_peeling_wetting();
     }
   // Interface sharpening
-  if (vof_parameters.sharpening.interface_sharpening)
+  if (vof_parameters.sharpening.enable)
     sharpen_interface();
 
-  if (vof_parameters.stf.surface_tension_force)
+  if (vof_parameters.stf.enable)
     {
       find_filtered_phase_fraction_gradient();
       find_filtered_interface_curvature();
@@ -990,8 +990,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
     }
 
   // PFG and curvature
-  if (this->simulation_parameters.multiphysics.vof_parameters.stf
-        .surface_tension_force)
+  if (this->simulation_parameters.multiphysics.vof_parameters.stf.enable)
     {
       find_filtered_phase_fraction_gradient();
       find_filtered_interface_curvature();
@@ -1074,8 +1073,7 @@ VolumeOfFluid<dim>::setup_dofs()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
-  if (this->simulation_parameters.multiphysics.vof_parameters.stf
-        .surface_tension_force)
+  if (this->simulation_parameters.multiphysics.vof_parameters.stf.enable)
     {
       filtered_phase_fraction_gradient_dof_handler.distribute_dofs(
         *fe_filtered_phase_fraction_gradient);

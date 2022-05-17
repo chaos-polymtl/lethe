@@ -17,17 +17,6 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include <core/bdf.h>
-#include <core/grids.h>
-#include <core/manifolds.h>
-#include <core/multiphysics.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/gls_navier_stokes.h>
-#include <solvers/navier_stokes_vof_assemblers.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -41,6 +30,16 @@
 #include <deal.II/lac/sparse_ilu.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/manifolds.h>
+#include <core/multiphysics.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/gls_navier_stokes.h>
+#include <solvers/navier_stokes_vof_assemblers.h>
 
 
 
@@ -424,8 +423,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         }
 
       // Surface tension force (STF)
-      if (this->simulation_parameters.multiphysics.vof_parameters.stf
-            .surface_tension_force)
+      if (this->simulation_parameters.multiphysics.vof_parameters.stf.enable)
         this->assemblers.push_back(
           std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
             this->simulation_control,
@@ -533,8 +531,7 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
                               *this->cell_quadrature,
                               *this->mapping);
 
-      if (this->simulation_parameters.multiphysics.vof_parameters.stf
-            .surface_tension_force)
+      if (this->simulation_parameters.multiphysics.vof_parameters.stf.enable)
         {
           const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
             this->multiphysics
@@ -610,8 +607,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
 
-      if (this->simulation_parameters.multiphysics.vof_parameters.stf
-            .surface_tension_force)
+      if (this->simulation_parameters.multiphysics.vof_parameters.stf.enable)
         {
           const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
             this->multiphysics
@@ -711,8 +707,7 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                               *this->cell_quadrature,
                               *this->mapping);
 
-      if (this->simulation_parameters.multiphysics.vof_parameters.stf
-            .surface_tension_force)
+      if (this->simulation_parameters.multiphysics.vof_parameters.stf.enable)
         {
           const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
             this->multiphysics
@@ -794,8 +789,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
                               previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
 
-      if (this->simulation_parameters.multiphysics.vof_parameters.stf
-            .surface_tension_force)
+      if (this->simulation_parameters.multiphysics.vof_parameters.stf.enable)
         {
           const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
             this->multiphysics

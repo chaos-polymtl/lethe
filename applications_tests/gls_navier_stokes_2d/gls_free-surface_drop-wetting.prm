@@ -96,10 +96,15 @@ end
 subsection analytical solution
   set enable     	= true
   set verbosity 	= verbose
-    subsection phase
+  subsection phase
 	set Function constants = r=0.2, l=0.6
-    	set Function expression = if (y<3.14*r*r/l, 1, 0)
-    end
+   	set Function expression = if (y<3.14*r*r/l, 1, 0)
+  end
+  subsection uvwp
+ 	set Function constants = r=0.2, l=0.6, rho1=1, rho2=0.005, g=10
+	set Function expression = 0; 0; if (y<3.14*r*r/l, rho1*g*(3.14*r*r/l-y), 0)
+  end
+
 end
 
 #---------------------------------------------------

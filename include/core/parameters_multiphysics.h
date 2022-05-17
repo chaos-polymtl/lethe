@@ -50,7 +50,7 @@ namespace Parameters
    */
   struct VOF_PeelingWetting
   {
-    bool   peeling_wetting;
+    bool   enable;
     double peeling_p_value;
     double peeling_grad_p;
     double wetting_p_value;
@@ -98,7 +98,7 @@ namespace Parameters
     // Users may set this variable to 1 to call interface sharpening at every
     // step, but it could be chosen in the range of [1-20]
 
-    bool interface_sharpening;
+    bool enable;
 
     double sharpening_threshold;
     double interface_sharpness;
@@ -118,7 +118,7 @@ namespace Parameters
    */
   struct VOF_SurfaceTensionForce
   {
-    bool surface_tension_force;
+    bool enable;
     // Surface tension coefficient.
     // This will be moved to the property manager in another PR.
     double surface_tension_coef;

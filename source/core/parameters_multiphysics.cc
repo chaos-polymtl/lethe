@@ -163,10 +163,10 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface sharpening");
   {
-    prm.declare_entry("interface sharpening",
+    prm.declare_entry("enable",
                       "false",
                       Patterns::Bool(),
-                      "Interface sharpening <true|false>");
+                      "Enable interface sharpening <true|false>");
 
     prm.declare_entry(
       "sharpening threshold",
@@ -200,7 +200,7 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface sharpening");
   {
-    interface_sharpening = prm.get_bool("interface sharpening");
+    enable               = prm.get_bool("enable");
     sharpening_threshold = prm.get_double("sharpening threshold");
     interface_sharpness  = prm.get_double("interface sharpness");
     sharpening_frequency = prm.get_integer("sharpening frequency");
@@ -228,7 +228,7 @@ Parameters::VOF_PeelingWetting::declare_parameters(ParameterHandler &prm)
   prm.enter_subsection("peeling wetting");
   {
     prm.declare_entry(
-      "peeling wetting",
+      "enable",
       "false",
       Patterns::Bool(),
       "Enable peeling/wetting mechanism in free surface simulation <true|false>");
@@ -275,7 +275,7 @@ Parameters::VOF_PeelingWetting::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("peeling wetting");
   {
-    peeling_wetting        = prm.get_bool("peeling wetting");
+    enable                 = prm.get_bool("enable");
     peeling_p_value        = prm.get_double("peeling pressure value");
     peeling_grad_p         = prm.get_double("peeling pressure gradient");
     wetting_p_value        = prm.get_double("wetting pressure value");
@@ -297,10 +297,10 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("surface tension force");
   {
-    prm.declare_entry("surface tension force",
+    prm.declare_entry("enable",
                       "false",
                       Patterns::Bool(),
-                      "Surface tension force calculation <true|false>");
+                      "Enable surface tension force calculation <true|false>");
 
     prm.declare_entry("surface tension coefficient",
                       "0.0",
@@ -339,7 +339,7 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("surface tension force");
   {
-    surface_tension_force = prm.get_bool("surface tension force");
+    enable = prm.get_bool("enable");
     // Surface tension coefficient
     surface_tension_coef = prm.get_double("surface tension coefficient");
     phase_fraction_gradient_filter_value =
