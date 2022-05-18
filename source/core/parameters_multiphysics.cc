@@ -328,7 +328,7 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
       "verbosity",
       "quiet",
       Patterns::Selection("quiet|verbose"),
-      "State whether from the surface tension force calculations should be printed "
+      "State whether the output from the surface tension force calculations should be printed "
       "Choices are <quiet|verbose>.");
   }
   prm.leave_subsection();
