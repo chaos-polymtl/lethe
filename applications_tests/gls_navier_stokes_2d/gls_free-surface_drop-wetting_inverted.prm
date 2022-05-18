@@ -6,8 +6,8 @@
 subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
-  set time end                = 0.08
-  set time step               = 0.02
+  set time end                = 0.01
+  set time step               = 0.005
   set output name             = drop_wetting_inverted_VOF
   set output frequency        = 0
 
@@ -49,7 +49,7 @@ subsection initial conditions
             set Function expression = 0; 0; 0
     end
     subsection VOF
-	set Function expression = if ( (y<0.1)&&(y>1e-2) ,0,1)
+	set Function expression = if ( (y<0.1)&&(y>1e-3) ,0,1)
     end
 end
 
