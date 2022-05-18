@@ -54,7 +54,10 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
     }
 
 
-  // Determine whether continuity condition is solved in this cell
+  // Determine whether continuity condition is solved in this cell.
+  // Removing the conservation condition on the lowest density fluid
+  // can improve the wetting mechanism in the framework of incompressible
+  // fluids. See documentation for more details.
   auto max_phase_cell =
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
@@ -260,6 +263,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
     }
 
   // Determine whether continuity condition is solved in this cell
+  // Removing the conservation condition on the lowest density fluid
+  // can improve the wetting mechanism in the framework of incompressible
+  // fluids. See documentation for more details.
   auto max_phase_cell =
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
@@ -631,6 +637,9 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
     }
 
   // Determine whether continuity condition is solved in this cell
+  // Removing the conservation condition on the lowest density fluid
+  // can improve the wetting mechanism in the framework of incompressible
+  // fluids. See documentation for more details.
   auto max_phase_cell =
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
@@ -873,6 +882,9 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
     }
 
   // Determine whether continuity condition is solved in this cell
+  // Removing the conservation condition on the lowest density fluid
+  // can improve the wetting mechanism in the framework of incompressible
+  // fluids. See documentation for more details.
   auto max_phase_cell =
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);

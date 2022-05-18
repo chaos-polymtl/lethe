@@ -281,7 +281,7 @@ namespace Parameters
     double thermal_conductivity;
     // thermal expansion coefficient (alpha) in 1/K
     double thermal_expansion;
-    // tracer diffusivity) in L^2/s
+    // tracer diffusivity in L^2/s
     double tracer_diffusivity;
 
     // Phase change parameters

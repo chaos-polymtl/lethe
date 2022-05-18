@@ -84,8 +84,6 @@ public:
     initial_condition->declare_parameters(prm);
 
     Parameters::FEM::declare_parameters(prm);
-    //    Parameters::Multiphysics::declare_parameters(prm);
-    //    Parameters::Multiphysics_VOF::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     laser_parameters = std::make_shared<Parameters::Laser<dim>>();

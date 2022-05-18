@@ -96,7 +96,7 @@ namespace Parameters
     // interface. It should be chosen in the range of (1,2] sharpening_frequency
     // (integer) is the frequency at which the interface sharpneing is called.
     // Users may set this variable to 1 to call interface sharpening at every
-    // step, but it could be chosen in the range of [1-20]
+    // step, but a larger integer value could be chosen.
 
     bool enable;
 
@@ -106,7 +106,7 @@ namespace Parameters
     // Type of verbosity for the interface sharpening calculation
     Parameters::Verbosity verbosity;
 
-    void // STATIC?
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
@@ -131,7 +131,7 @@ namespace Parameters
     // Type of verbosity for the surface tension force calculation
     Parameters::Verbosity verbosity;
 
-    void // STATIC?
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
@@ -144,6 +144,9 @@ namespace Parameters
    */
   struct VOF
   {
+    // artificial diffusion coefficient (in L^2/s) added to the VOF transport
+    // equation, zero by default, which can be used to improve the wetting
+    // mechanism. See the documentation for more details.
     double diffusion;
 
     Parameters::VOF_MassConservation    conservation;

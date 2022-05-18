@@ -84,9 +84,10 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
       "diffusion",
       "0",
       Patterns::Double(),
-      "Diffusion value in the VOF transport equation. "
+      "Diffusion coefficient in the VOF transport equation (in L^2/s). "
       "Default value is 0 to have pure advection. Use this parameter, "
-      "along with interface sharpening, for peeling-wetting");
+      "along with interface sharpening, to improve the wetting mechanism. "
+      "See documentation for further details.");
 
     conservation.declare_parameters(prm);
     sharpening.declare_parameters(prm);
@@ -120,13 +121,17 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
       "skip mass conservation in fluid 0",
       "false",
       Patterns::Bool(),
-      "Enable skipping mass conservation in fluid 0 <true|false>");
+      "Enable skipping mass conservation in fluid 0 <true|false>."
+      "Can be used to improve the wetting mechanism, along with a small time step."
+      "See documentation for further details.");
 
     prm.declare_entry(
       "skip mass conservation in fluid 1",
       "false",
       Patterns::Bool(),
-      "Enable skipping mass conservation in fluid 1 <true|false>");
+      "Enable skipping mass conservation in fluid 1 <true|false>."
+      "Can be used to improve the wetting mechanism, along with a small time step."
+      "See documentation for further details.");
 
     prm.declare_entry(
       "monitoring",

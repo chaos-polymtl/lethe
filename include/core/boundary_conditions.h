@@ -745,7 +745,7 @@ namespace BoundaryConditions
    * coherently.
    *
    *  - if bc type is "peeling/wetting", peeling/wetting of the free surface
-   * will applied. See vof.cc for further implementation details.
+   * will be applied. See vof.cc for further implementation details.
    *
    * - if bc type is "none", nothing happens
    */
