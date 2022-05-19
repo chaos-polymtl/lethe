@@ -24,12 +24,15 @@ subsection multiphysics
     set interface sharpening = true
 end
 #---------------------------------------------------
-# Interface sharpening
+# VOF
 #---------------------------------------------------
-subsection interface sharpening
-  set sharpening threshold              = 0.5
-  set interface sharpness               = 2
-  set sharpening frequency      	= 10
+subsection VOF
+  subsection interface sharpening
+    set enable      = true
+    set sharpening threshold   = 0.5
+    set interface sharpness    = 2
+    set sharpening frequency   = 10
+  end
 end
 #---------------------------------------------------
 # Initial condition

@@ -24,16 +24,21 @@ end
 subsection multiphysics
     set VOF 			= true
     set surface tension force 	= true
-    set interface sharpening  	= true
 end
 
 #---------------------------------------------------
-# Interphase sharpening
+# VOF
 #---------------------------------------------------
-subsection interface sharpening
-  set sharpening threshold	= 0.5
-  set interface sharpness	= 1.4
-  set sharpening frequency	= 50
+subsection VOF
+  subsection interface sharpening
+    set enable      = true
+    set sharpening threshold	= 0.5
+    set interface sharpness	= 1.4
+    set sharpening frequency	= 50
+  end
+  subsection surface tension force
+    set enable      = true
+  end
 end
 
 
