@@ -80,19 +80,10 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("VOF");
   {
-    prm.declare_entry(
-      "diffusion",
-      "0",
-      Patterns::Double(),
-      "Diffusion coefficient in the VOF transport equation (in L^2/s). "
-      "Default value is 0 to have pure advection. Use this parameter, "
-      "along with interface sharpening, to improve the wetting mechanism. "
-      "See documentation for further details.");
-
     conservation.declare_parameters(prm);
     sharpening.declare_parameters(prm);
     peeling_wetting.declare_parameters(prm);
-    stf.declare_parameters(prm);
+    surface_tension_force.declare_parameters(prm);
   }
   prm.leave_subsection();
 }
@@ -102,12 +93,10 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("VOF");
   {
-    diffusion = prm.get_double("diffusion");
-
     conservation.parse_parameters(prm);
     sharpening.parse_parameters(prm);
     peeling_wetting.parse_parameters(prm);
-    stf.parse_parameters(prm);
+    surface_tension_force.parse_parameters(prm);
   }
   prm.leave_subsection();
 }
@@ -261,9 +250,18 @@ Parameters::VOF_PeelingWetting::declare_parameters(ParameterHandler &prm)
       "0",
       Patterns::Double(),
       "Value (Double) for wetting distance at bc, "
-      "distance (on the phase value) to the interface for which wetting can occur. "
+      "distance (on the phase value) from the interface above which wetting can occur. "
       "For wetting phase distance>0, the wetting area is larger than "
       "the area occupied by the higher density fluid.");
+
+    prm.declare_entry(
+      "diffusivity",
+      "0",
+      Patterns::Double(),
+      "Diffusivity (diffusion coefficient in L^2/s) in the VOF transport equation. "
+      "Default value is 0 to have pure advection. Use this parameter, "
+      "along with interface sharpening, to improve the wetting mechanism. "
+      "See documentation for more details.");
 
     prm.declare_entry(
       "verbosity",
@@ -285,6 +283,7 @@ Parameters::VOF_PeelingWetting::parse_parameters(ParameterHandler &prm)
     peeling_grad_p         = prm.get_double("peeling pressure gradient");
     wetting_p_value        = prm.get_double("wetting pressure value");
     wetting_phase_distance = prm.get_double("wetting phase distance");
+    diffusivity            = prm.get_double("diffusivity");
 
     const std::string op = prm.get("verbosity");
     if (op == "verbose")
