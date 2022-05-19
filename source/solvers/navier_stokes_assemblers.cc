@@ -1720,8 +1720,8 @@ BuoyancyAssembly<dim>::assemble_rhs(
           const auto phi_u_i = scratch_data.phi_u[q][i];
 
           // Laplacian on the velocity terms
-          local_rhs(i) +=
-            -force * thermal_expansion * current_temperature * phi_u_i * JxW;
+          local_rhs(i) -=
+            force * thermal_expansion * current_temperature * phi_u_i * JxW;
         }
     }
 }
