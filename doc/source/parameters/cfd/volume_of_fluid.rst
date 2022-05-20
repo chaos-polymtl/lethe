@@ -144,7 +144,7 @@ The default values of the VOF parameters are given in the text box below.
   Due to numerical diffusion of the interface, the ``peeling wetting`` mechanism or an added ``diffusivity``, the method used is not strictly conservative at every iteration. The ``sharpening threshold`` can then be adapted to counter fluid loss (e.g. ``set sharpening threshold = 0.45``) or creation (e.g. ``set sharpening threshold = 0.55``).
 
 
-* ``subsection surface tension force``: Surface tension is the tendancy of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. 
+* ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. 
 
   * ``enable``: controls if ``surface tension force`` is considered.
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
