@@ -28,15 +28,16 @@ Parameter file
 Mesh
 ~~~~~
 
-In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details).
+In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details). The ``expand particle-wall contact search`` is used in concave geometries to enable particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell.
 
 .. code-block:: text
 
     subsection mesh
-        set type                 				= dealii
+        set type                 				   = dealii
         set grid type      	     				= cylinder
-        set grid arguments       				= 0.12:0.18
-        set initial refinement   				= 4
+        set grid arguments       				   = 0.12:0.18
+        set initial refinement   				   = 4
+        set expand particle-wall contact search = true
     end
 
 
