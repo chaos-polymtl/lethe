@@ -31,7 +31,7 @@ GridMotion<dim, spacedim>::GridMotion(const DEMSolverParameters<spacedim> &dem_p
 
 template <>
 void GridMotion<1, 2>::move_grid_rotational(
-  Triangulation<1, 2> &triangulation)
+  Triangulation<1, 2> &)
 {
   throw ExcImpossibleInDim(1);
   //TODO We need to add this function to GridTools for dim=1

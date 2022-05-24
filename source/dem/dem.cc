@@ -209,9 +209,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   grid_motion_object =
     std::make_shared<GridMotion<dim, dim>>(parameters,
                                            simulation_control->get_time_step());
-
-  floating_grid_object = std::make_shared<FloatingGrid<dim-1, dim>>(
-    parameters, pcout, simulation_control->get_time_step());
 }
 
 template <int dim>
@@ -437,7 +434,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double>                     &MOI)
+  std::vector<double> &                    MOI)
 {
   MOI.resize(torque.size());
 
@@ -665,14 +662,6 @@ DEMSolver<dim>::write_output_results()
   const unsigned int iter        = simulation_control->get_step_number();
   const double       time        = simulation_control->get_current_time();
   const unsigned int group_files = parameters.simulation_control.group_files;
-
-  // Write floating grid
-  floating_grid_object->write(folder,
-                              std::string("floating_grid"),
-                              time,
-                              iter,
-                              group_files,
-                              mpi_communicator);
 
   // Write particles
   Visualization<dim> particle_data_out;

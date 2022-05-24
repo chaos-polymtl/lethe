@@ -42,7 +42,6 @@
 #include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_fine_search.h>
 #include <dem/visualization.h>
-#include <dem/floating_grid.h>
 
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>
@@ -349,8 +348,7 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
-  std::shared_ptr<GridMotion<dim, dim>>  grid_motion_object;
-  std::shared_ptr<FloatingGrid<dim-1, dim>> floating_grid_object;
+  std::shared_ptr<GridMotion<dim>>  grid_motion_object;
   ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
   ParticleParticleFineSearch<dim>   particle_particle_fine_search_object;
   ParticleWallBroadSearch<dim>      particle_wall_broad_search_object;
@@ -383,7 +381,6 @@ private:
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
-
 };
 
 #endif
