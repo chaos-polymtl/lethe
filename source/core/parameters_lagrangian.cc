@@ -1148,7 +1148,7 @@ namespace Parameters
         mesh.parse_parameters(prm);
         motion.parse_parameters(prm);
         time_start = prm.get_double("start time");
-        time_end = prm.get_double("end time");
+        time_end   = prm.get_double("end time");
       }
 
       prm.leave_subsection();

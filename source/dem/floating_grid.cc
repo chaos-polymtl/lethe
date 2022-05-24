@@ -1,24 +1,28 @@
 //
 // Created by Emile Bergeron on 2022-01-30.
 //
-#include <core/solutions_output.h>
 #include "dem/floating_grid.h"
+
+#include <core/solutions_output.h>
+
 #include "dem/read_mesh.h"
 
 #include <deal.II/grid/grid_out.h>
 
 template <int dim, int spacedim>
-FloatingGrid<dim, spacedim>::FloatingGrid(const DEMSolverParameters<spacedim> &dem_parameters,
-                                          const ConditionalOStream &     pcout,
-                                          const double                   &dem_time_step)
+FloatingGrid<dim, spacedim>::FloatingGrid(
+  const DEMSolverParameters<spacedim> &dem_parameters,
+  const ConditionalOStream &           pcout,
+  const double &                       dem_time_step)
   : gridMotion(dem_parameters, dem_time_step)
 {
-  if(dem_parameters.floating_grid.mesh.file_name != "none") {
-    read_mesh(dem_parameters.floating_grid.mesh,
-              dem_parameters.restart.restart,
-              pcout,
-              triangulation,
-              triangulation_cell_diameter);
+  if (dem_parameters.floating_grid.mesh.file_name != "none")
+    {
+      read_mesh(dem_parameters.floating_grid.mesh,
+                dem_parameters.restart.restart,
+                pcout,
+                triangulation,
+                triangulation_cell_diameter);
     }
 }
 
@@ -31,27 +35,27 @@ FloatingGrid<dim, spacedim>::iterate()
 
 template <int dim, int spacedim>
 void
-FloatingGrid<dim, spacedim>::write(const std::string                      folder,
-                                   const std::string                      file_prefix,
-                                   const double                           time,
-                                   const unsigned int                     iter,
-                                   const unsigned int                     group_files,
-                                   const MPI_Comm &                       mpi_communicator,
-                                   const unsigned int                     digits)
+FloatingGrid<dim, spacedim>::write(const std::string  folder,
+                                   const std::string  file_prefix,
+                                   const double       time,
+                                   const unsigned int iter,
+                                   const unsigned int group_files,
+                                   const MPI_Comm &   mpi_communicator,
+                                   const unsigned int digits)
 {
   DataOut<dim, spacedim> dataOut;
   dataOut.attach_triangulation(triangulation);
   dataOut.build_patches();
 
   write_vtu_and_pvd<dim, spacedim>(pvdHandler,
-                         dataOut,
-                         folder,
-                         file_prefix,
-                         time,
-                         iter,
-                         group_files,
-                         mpi_communicator,
-                         digits);
+                                   dataOut,
+                                   folder,
+                                   file_prefix,
+                                   time,
+                                   iter,
+                                   group_files,
+                                   mpi_communicator,
+                                   digits);
 }
 
 template class FloatingGrid<1, 2>;

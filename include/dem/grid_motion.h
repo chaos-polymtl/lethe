@@ -38,7 +38,7 @@ using namespace dealii;
  *
  */
 
-template <int dim, int spacedim=dim>
+template <int dim, int spacedim = dim>
 class GridMotion
 {
   using FuncPtrType = void (GridMotion<dim, spacedim>::*)(
@@ -55,7 +55,7 @@ public:
    * @param dem_time_step DEM time-step
    */
   GridMotion(const DEMSolverParameters<spacedim> &dem_parameters,
-             const double &                  dem_time_step);
+             const double &                       dem_time_step);
 
   /**
    * Calls the desired grid motion.
@@ -83,9 +83,9 @@ public:
    */
   void
   update_boundary_points_and_normal_vectors_in_contact_list(
-    std::unordered_map<
-      types::particle_index,
-      std::map<types::particle_index, particle_wall_contact_info_struct<spacedim>>>
+    std::unordered_map<types::particle_index,
+                       std::map<types::particle_index,
+                                particle_wall_contact_info_struct<spacedim>>>
       &particle_wall_pairs_in_contact,
     const std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
       &updated_boundary_points_and_normal_vectors);
@@ -97,8 +97,7 @@ private:
    * @param triangulation Triangulation
    */
   void
-  move_grid_rotational(
-    Triangulation<dim, spacedim> &triangulation);
+  move_grid_rotational(Triangulation<dim, spacedim> &triangulation);
 
   /**
    * Carries out translational motion of the triangulation
@@ -106,8 +105,7 @@ private:
    * @param triangulation Triangulation
    */
   void
-  move_grid_translational(
-    Triangulation<dim, spacedim> &triangulation);
+  move_grid_translational(Triangulation<dim, spacedim> &triangulation);
 
   // Since the DEM time-step and rotational speed are constant, we calculate the
   // rotation angle at each time-step once in the constructor and define it as a

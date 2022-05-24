@@ -11,31 +11,33 @@
 using namespace dealii;
 
 #ifndef floating_grid_h
-#define floating_grid_h
+#  define floating_grid_h
 
 template <int dim, int spacedim>
 class FloatingGrid
 {
 public:
   FloatingGrid(const DEMSolverParameters<spacedim> &dem_parameters,
-               const ConditionalOStream &      pcout,
-               const double &                  dem_time_step);
+               const ConditionalOStream &           pcout,
+               const double &                       dem_time_step);
 
-  void iterate();
+  void
+  iterate();
 
-  void write(const std::string                      folder,
-             const std::string                      file_prefix,
-             const double                           time,
-             const unsigned int                     iter,
-             const unsigned int                     group_files,
-             const MPI_Comm &                       mpi_communicator,
-             const unsigned int                     digits = 4);
+  void
+  write(const std::string  folder,
+        const std::string  file_prefix,
+        const double       time,
+        const unsigned int iter,
+        const unsigned int group_files,
+        const MPI_Comm &   mpi_communicator,
+        const unsigned int digits = 4);
 
 private:
   Triangulation<dim, spacedim> triangulation;
-  GridMotion<dim, spacedim> gridMotion;
-  double triangulation_cell_diameter;
-  PVDHandler pvdHandler;
+  GridMotion<dim, spacedim>    gridMotion;
+  double                       triangulation_cell_diameter;
+  PVDHandler                   pvdHandler;
 };
 
 #endif // floating_grid_h

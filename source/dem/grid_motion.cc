@@ -8,53 +8,51 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-GridMotion<dim, spacedim>::GridMotion(const DEMSolverParameters<spacedim> &dem_parameters,
-                            const double &                  dem_time_step)
+GridMotion<dim, spacedim>::GridMotion(
+  const DEMSolverParameters<spacedim> &dem_parameters,
+  const double &                       dem_time_step)
 {
   // Setting grid motion type
   if (dem_parameters.grid_motion.motion_type ==
-  Parameters::Lagrangian::GridMotion<spacedim>::MotionType::rotational)
+      Parameters::Lagrangian::GridMotion<spacedim>::MotionType::rotational)
     {
-    grid_motion = &GridMotion<dim, spacedim>::move_grid_rotational;
+      grid_motion = &GridMotion<dim, spacedim>::move_grid_rotational;
       rotation_angle =
         dem_parameters.grid_motion.grid_rotational_speed * dem_time_step;
       rotation_axis = dem_parameters.grid_motion.grid_rotational_axis;
     }
   else if (dem_parameters.grid_motion.motion_type ==
-  Parameters::Lagrangian::GridMotion<spacedim>::MotionType::translational)
+           Parameters::Lagrangian::GridMotion<
+             spacedim>::MotionType::translational)
     {
-    grid_motion = &GridMotion<dim, spacedim>::move_grid_translational;
+      grid_motion = &GridMotion<dim, spacedim>::move_grid_translational;
       shift_vector =
         dem_parameters.grid_motion.grid_translational_velocity * dem_time_step;
     }
 }
 
 template <>
-void GridMotion<1, 2>::move_grid_rotational(
-  Triangulation<1, 2> &)
+void GridMotion<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
 {
   throw ExcImpossibleInDim(1);
-  //TODO We need to add this function to GridTools for dim=1
-  //GridTools::rotate(rotation_angle, triangulation);
+  // TODO We need to add this function to GridTools for dim=1
+  // GridTools::rotate(rotation_angle, triangulation);
 }
 
 template <>
-void GridMotion<2, 2>::move_grid_rotational(
-  Triangulation<2, 2> &triangulation)
+void GridMotion<2, 2>::move_grid_rotational(Triangulation<2, 2> &triangulation)
 {
   GridTools::rotate(rotation_angle, triangulation);
 }
 
 template <>
-void GridMotion<2, 3>::move_grid_rotational(
-  Triangulation<2, 3> &triangulation)
+void GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
 {
   GridTools::rotate(rotation_angle, rotation_axis, triangulation);
 }
 
 template <>
-void GridMotion<3, 3>::move_grid_rotational(
-  Triangulation<3, 3> &triangulation)
+void GridMotion<3, 3>::move_grid_rotational(Triangulation<3, 3> &triangulation)
 {
   GridTools::rotate(rotation_angle, rotation_axis, triangulation);
 }
@@ -69,13 +67,14 @@ GridMotion<dim, spacedim>::move_grid_translational(
 
 template <int dim, int spacedim>
 void
-GridMotion<dim, spacedim>::update_boundary_points_and_normal_vectors_in_contact_list(
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<spacedim>>>
-    &particle_wall_pairs_in_contact,
+GridMotion<dim, spacedim>::
+  update_boundary_points_and_normal_vectors_in_contact_list(
+    std::unordered_map<types::particle_index,
+                       std::map<types::particle_index,
+                                particle_wall_contact_info_struct<spacedim>>>
+      &particle_wall_pairs_in_contact,
     const std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
-    &updated_boundary_points_and_normal_vectors)
+      &updated_boundary_points_and_normal_vectors)
 {
   for (auto &[particle_id, pairs_in_contact_content] :
        particle_wall_pairs_in_contact)

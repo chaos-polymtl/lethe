@@ -45,10 +45,10 @@ using namespace std;
 
 template <int dim, int spacedim = dim>
 void
-read_mesh(const Parameters::Mesh       &mesh_params,
-          const bool                         &restart,
-          const ConditionalOStream     &pcout,
+read_mesh(const Parameters::Mesh &      mesh_params,
+          const bool &                  restart,
+          const ConditionalOStream &    pcout,
           Triangulation<dim, spacedim> &triangulation,
-          double                       &triangulation_cell_diameter);
+          double &                      triangulation_cell_diameter);
 
 #endif /* read_mesh_h */

@@ -26,7 +26,6 @@
 
 #include <deal.II/base/parameter_handler.h>
 
-
 #include <string>
 
 using namespace dealii;
