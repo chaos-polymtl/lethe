@@ -43,6 +43,7 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/radioactive_particle.h>
 #include <rpt/rpt_calculating_parameters.h>
+#include <deal.II/base/timer.h>
 
 
 
@@ -95,10 +96,19 @@ private:
                           std::vector<double> &experimental_count
                           );
   void
-  find_cell();
+  find_cell(std::vector<double> experimental_count);
 
   void
-  find_cell_containing_point();
+  trajectory();
+
+  void
+  cylinder_shell();
+
+  void
+  post_process_L2_projection();
+
+  void
+  helix_trajectory();
 
 
 
