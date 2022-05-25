@@ -80,9 +80,11 @@ class VOFAssemblerCore : public VOFAssemblerBase<dim>
 {
 public:
   VOFAssemblerCore(std::shared_ptr<SimulationControl> simulation_control,
-                   Parameters::FEM                    fem_parameters)
+                   Parameters::FEM                    fem_parameters,
+                   Parameters::VOF                    vof_parameters)
     : simulation_control(simulation_control)
     , fem_parameters(fem_parameters)
+    , vof_parameters(vof_parameters)
   {}
 
   /**
@@ -109,6 +111,7 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::FEM                    fem_parameters;
+  Parameters::VOF                    vof_parameters;
 };
 
 /**

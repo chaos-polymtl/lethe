@@ -83,8 +83,7 @@ time step of :math:`0.01` seconds.
     you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will break.
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
-and off `(false)` the physics of interest. Here ``VOF`` and 
-``interface sharpening`` are chosen.
+and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 
 
 .. code-block:: text
@@ -94,24 +93,18 @@ and off `(false)` the physics of interest. Here ``VOF`` and
     #---------------------------------------------------
     subsection multiphysics
         set VOF = true
-        set interface sharpening = true
     end 
-    
-.. warning:: 
-     If the interface sharpening is not selected, the interface 
-     between phases will become blurry (due to diffusion). 
-     The next section defines the interface sharpening 
-     parameters.
+
 
 """"""""""""""""""""""""""""""""
 Interface Sharpening Parameters
 """"""""""""""""""""""""""""""""
 
 
-The current ``interface sharpening`` method consists of two steps:
+If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). The current ``interface sharpening`` method consists of two steps:
 
 
-#. Phase fraction limiter   
+1. Phase fraction limiter   
 
     .. math:: 
         \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
@@ -120,7 +113,7 @@ The phase fraction :math:`\phi` is a physical parameter that is bounded in the i
 The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.
   
 
-#. Interface sharpening 
+2. Interface sharpening 
 
     .. math::
         \phi :=
@@ -148,20 +141,24 @@ a phase fraction threshold for interface sharpening (generally :math:`0.5`).
 Interface sharpness is a model parameter which is generally in
 the range of :math:`(1,2]`. 
 
-""""""""""""""""""""""""""
-Fluid phase parameters 
-""""""""""""""""""""""""""
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Interface sharpening
-    #---------------------------------------------------
-    subsection interface sharpening
-        set sharpening threshold        = 0.5
-        set interface sharpness         = 2
-        set sharpening frequency      	= 10
-    end
+	#---------------------------------------------------
+	# VOF
+	#---------------------------------------------------
+	subsection VOF
+	  subsection interface sharpening
+	    set enable      = true
+	    set sharpening threshold   = 0.5
+	    set interface sharpness    = 2
+	    set sharpening frequency   = 10
+	  end
+	end
+
+""""""""""""""""""""""""""
+Fluid phase parameters 
+""""""""""""""""""""""""""
 
 In the ``initial condition``, the initial velocity and initial position 
 of the liquid phase are defined. The liquid phase is initially 

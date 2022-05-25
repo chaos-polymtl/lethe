@@ -15,10 +15,6 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
     # Multiphase flow
     set VOF 			= false
-    set interface sharpening 	= false
-    set surface tension force = false
-    set conservation monitoring = false
-    set fluid monitored		= 1
   end
 
 
@@ -38,24 +34,9 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   The tracer solver is used in the example :doc:`../../examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction`.
 
-* ``VOF``: enables multiphase flow simulations, with two fluids separated by a free surface. Volume-of-Fluid method is used, with the phase parameter following an advection equation. 
+* ``VOF``: enables multiphase flow simulations, with two fluids separated by a free surface, using the Volume-of-Fluid method. 
 
-  See :doc:`initial_conditions` for the definition of the VOF conditions and `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
-
-  When ``set VOF = true``, these optional parameters can be used:
-    * ``interface sharpening``: controls if the interface sharpening method is used. Additional parameters can be found at :doc:`interface_sharpening`.
-    * ``surface tension force``: controls if the surface tension force is added to the simulation. Additional parameters can be found at :doc:`surface_tension_force`.
-    * ``conservation monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the ``fluid monitored``. Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
-    * ``fluid monitored``: index of the monitored fluid, if ``set conservation monitoring = true``. 
-
-      .. important::
-
-        Must match with the index set in `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_. For instance, if the physical properties for the fluid of interest is defined in ``subsection fluid 0``, use ``set fluid monitored = 0``.
-
-
-.. warning::
-
-  At the moment, a maximum of two fluids is supported, with respective index of ``0`` and ``1``. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
+  See :doc:`volume_of_fluid` for advanced VOF parameters, :doc:`initial_conditions` for the definition of the VOF conditions and `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
 
 .. seealso::
 

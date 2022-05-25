@@ -16,6 +16,7 @@
 
 #include <core/simulation_control.h>
 
+#include <solvers/auxiliary_physics.h>
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
@@ -40,8 +41,10 @@ class GLSNavierStokesVOFAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control)
+    std::shared_ptr<SimulationControl> simulation_control,
+    const SimulationParameters<dim> &  nsparam)
     : simulation_control(simulation_control)
+    , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
 
   /**
@@ -65,12 +68,13 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::VOF              vof_parameters;
 };
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Navier-Stokes equation with
- * free surface using VOF modeling.. For example, if a BDF1 scheme is
+ * free surface using VOF modeling. For example, if a BDF1 scheme is
  * chosen, the following is assembled
  * $$\frac{(\rho \mathbf{u})^{t+\Delta t}-(\rho \mathbf{u})^{t}{\Delta t}
  *
@@ -124,8 +128,8 @@ class GLSNavierStokesVOFAssemblerSTF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerSTF(
-    std::shared_ptr<SimulationControl> p_simulation_control,
-    Parameters::SurfaceTensionForce    p_STF_properties)
+    std::shared_ptr<SimulationControl>  p_simulation_control,
+    Parameters::VOF_SurfaceTensionForce p_STF_properties)
     : simulation_control(p_simulation_control)
     , STF_properties(p_STF_properties)
   {}
@@ -151,7 +155,7 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 
   // Surface tension force (STF)
-  const Parameters::SurfaceTensionForce STF_properties;
+  const Parameters::VOF_SurfaceTensionForce STF_properties;
 };
 
 
@@ -171,8 +175,10 @@ class GLSNavierStokesVOFAssemblerNonNewtonianCore
 {
 public:
   GLSNavierStokesVOFAssemblerNonNewtonianCore(
-    std::shared_ptr<SimulationControl> simulation_control)
+    std::shared_ptr<SimulationControl> simulation_control,
+    const SimulationParameters<dim> &  nsparam)
     : simulation_control(simulation_control)
+    , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
 
   /**
@@ -252,5 +258,6 @@ public:
   const bool SUPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::VOF              vof_parameters;
 };
 #endif

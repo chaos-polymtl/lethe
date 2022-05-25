@@ -51,8 +51,9 @@ MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_solution()
                          PhysicsID::VOF) != active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
-  AssertThrow((multiphysics_parameters.surface_tension_force),
-              ExcInternalError());
+  AssertThrow(
+    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
+    ExcInternalError());
 
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
     ->get_filtered_phase_fraction_gradient_solution();
@@ -68,8 +69,9 @@ MultiphysicsInterface<dim>::get_curvature_solution()
                          PhysicsID::VOF) != active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
-  AssertThrow((multiphysics_parameters.surface_tension_force),
-              ExcInternalError());
+  AssertThrow(
+    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
+    ExcInternalError());
 
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
     ->get_curvature_solution();
@@ -85,8 +87,9 @@ MultiphysicsInterface<dim>::get_curvature_dof_handler()
                          PhysicsID::VOF) != active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
-  AssertThrow((multiphysics_parameters.surface_tension_force),
-              ExcInternalError());
+  AssertThrow(
+    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
+    ExcInternalError());
 
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
     ->get_curvature_dof_handler();
@@ -102,8 +105,9 @@ MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_dof_handler()
                          PhysicsID::VOF) != active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
-  AssertThrow((multiphysics_parameters.surface_tension_force),
-              ExcInternalError());
+  AssertThrow(
+    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
+    ExcInternalError());
 
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
     ->get_filtered_phase_fraction_gradient_dof_handler();
