@@ -2,18 +2,6 @@
 
 #include <deal.II/base/exceptions.h>
 
-DeclException1(
-  SharpeningThresholdError,
-  double,
-  << "Sharpening threshold : " << arg1 << " is smaller than 0 or larger than 1."
-  << " Interface sharpening model requires a sharpening threshold between 0 and 1.");
-
-DeclException1(
-  SharpeningFrequencyError,
-  int,
-  << "Sharpening frequency : " << arg1 << " is equal or smaller than 0."
-  << " Interface sharpening model requires an integer sharpening frequency larger than 0.");
-
 DeclException2(
   PhaseChangeIntervalError,
   double,
@@ -333,63 +321,6 @@ namespace Parameters
   }
 
   void
-  InterfaceSharpening::declare_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("interface sharpening");
-    {
-      prm.declare_entry(
-        "sharpening threshold",
-        "0.5",
-        Patterns::Double(),
-        "VOF interface sharpening threshold that represents the mass conservation level");
-      // This parameter must be larger than 1 for interface sharpening. Choosing
-      // values less than 1 leads to interface smoothing instead of sharpening.
-      prm.declare_entry(
-        "interface sharpness",
-        "2",
-        Patterns::Double(),
-        "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
-      prm.declare_entry("sharpening frequency",
-                        "10",
-                        Patterns::Integer(),
-                        "VOF interface sharpening frequency");
-      prm.declare_entry(
-        "verbosity",
-        "quiet",
-        Patterns::Selection("quiet|verbose"),
-        "State whether from the interface sharpening calculations should be printed "
-        "Choices are <quiet|verbose>.");
-    }
-    prm.leave_subsection();
-  }
-
-  void
-  InterfaceSharpening::parse_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("interface sharpening");
-    {
-      sharpening_threshold = prm.get_double("sharpening threshold");
-      interface_sharpness  = prm.get_double("interface sharpness");
-      sharpening_frequency = prm.get_integer("sharpening frequency");
-
-      Assert(sharpening_threshold > 0.0 && sharpening_threshold < 1.0,
-             SharpeningThresholdError(sharpening_threshold));
-
-      Assert(sharpening_frequency > 0,
-             SharpeningFrequencyError(sharpening_frequency));
-
-      const std::string op = prm.get("verbosity");
-      if (op == "verbose")
-        verbosity = Parameters::Verbosity::verbose;
-      else if (op == "quiet")
-        verbosity = Parameters::Verbosity::quiet;
-      else
-        throw(std::runtime_error("Invalid verbosity level"));
-    }
-    prm.leave_subsection();
-  }
-
-  void
   Stabilization::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("stabilization");
@@ -424,67 +355,6 @@ namespace Parameters
         stabilization = NavierStokesStabilization::grad_div;
       else
         throw(std::runtime_error("Invalid stabilization strategy"));
-    }
-    prm.leave_subsection();
-  }
-
-  void
-  SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("surface tension force");
-    {
-      prm.declare_entry("surface tension coefficient",
-                        "0.0",
-                        Patterns::Double(),
-                        "Surface tension coefficient");
-
-      prm.declare_entry("output auxiliary fields",
-                        "false",
-                        Patterns::Bool(),
-                        "Output the phase fraction gradient and curvature");
-
-      prm.declare_entry(
-        "phase fraction gradient filter",
-        "0.5",
-        Patterns::Double(),
-        "The filter value for phase fraction gradient calculations to damp high-frequency errors");
-
-      prm.declare_entry(
-        "curvature filter",
-        "0.5",
-        Patterns::Double(),
-        "The filter value for curvature calculations to damp high-frequency errors");
-
-      prm.declare_entry(
-        "verbosity",
-        "quiet",
-        Patterns::Selection("quiet|verbose"),
-        "State whether from the surface tension force calculations should be printed "
-        "Choices are <quiet|verbose>.");
-    }
-    prm.leave_subsection();
-  }
-
-  void
-  SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("surface tension force");
-    {
-      // Surface tension coefficient
-      surface_tension_coef = prm.get_double("surface tension coefficient");
-      phase_fraction_gradient_filter_value =
-        prm.get_double("phase fraction gradient filter");
-      curvature_filter_value = prm.get_double("curvature filter");
-
-      output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
-
-      const std::string op = prm.get("verbosity");
-      if (op == "verbose")
-        verbosity = Parameters::Verbosity::verbose;
-      else if (op == "quiet")
-        verbosity = Parameters::Verbosity::quiet;
-      else
-        throw(std::runtime_error("Invalid verbosity level"));
     }
     prm.leave_subsection();
   }

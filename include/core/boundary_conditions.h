@@ -744,10 +744,8 @@ namespace BoundaryConditions
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    *
-   *  - if bc type is "pw", peeling/wetting of the free surface will applied
-   * where the pressure condition met the peeling_threshold and
-   * wetting_threshold set for this boundary.
-   * See vof.cc for further implementation details.
+   *  - if bc type is "peeling/wetting", peeling/wetting of the free surface
+   * will be applied. See vof.cc for further implementation details.
    *
    * - if bc type is "none", nothing happens
    */
@@ -756,9 +754,6 @@ namespace BoundaryConditions
   class VOFBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    std::vector<double> peeling_threshold;
-    std::vector<double> wetting_threshold;
-
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
     void
@@ -792,16 +787,6 @@ namespace BoundaryConditions
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
-
-    prm.declare_entry("peeling threshold",
-                      "0",
-                      Patterns::Double(),
-                      "Value (Double) for peeling threshold at bc");
-
-    prm.declare_entry("wetting threshold",
-                      "0",
-                      Patterns::Double(),
-                      "Value (Double) for wetting threshold at bc");
   }
 
   /**
@@ -857,9 +842,7 @@ namespace BoundaryConditions
       }
     else if (op == "peeling/wetting")
       {
-        this->type[i_bc]              = BoundaryType::pw;
-        this->peeling_threshold[i_bc] = prm.get_double("peeling threshold");
-        this->wetting_threshold[i_bc] = prm.get_double("wetting threshold");
+        this->type[i_bc] = BoundaryType::pw;
       }
 
     this->id[i_bc] = prm.get_integer("id");
@@ -882,8 +865,6 @@ namespace BoundaryConditions
 
       this->type.resize(this->size);
       this->id.resize(this->size);
-      this->peeling_threshold.resize(this->size);
-      this->wetting_threshold.resize(this->size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {

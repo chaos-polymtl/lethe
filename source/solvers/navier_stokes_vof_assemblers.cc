@@ -29,34 +29,48 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  // Phase values and limiters
   std::vector<double> &phase_values = scratch_data.phase_values;
-  // std::vector<double> &phase_values_m1 =
-  // scratch_data.previous_phase_values[0];
-  // std::vector<Tensor<1, dim>> &phase_gradient_values =
-  // scratch_data.phase_gradient_values;
 
   // Limit force application : not applied if cell density is below
   // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio      = 2;
-  double       phase_force_cutoff = 0;
+  const double density_ratio = 2;
+  double       phase_cutoff  = 0;
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
       "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
+  // Phase cut-off for force (i.e. gravity) application and continuity condition
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
       scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
-      // gravity not will be applied for phase < phase_force_cutoff
-      phase_force_cutoff = 1e-6;
+      phase_cutoff = 1e-6;
     }
   if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
       scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
-      // gravity not will be applied for phase > phase_force_cutoff
-      phase_force_cutoff = 1 - 1e-6;
+      phase_cutoff = 1 - 1e-6;
+    }
+
+
+  // Determine whether continuity condition is solved in this cell.
+  // Removing the conservation condition on the lowest density fluid
+  // can improve the wetting mechanism in the framework of incompressible
+  // fluids. See documentation for more details.
+  auto max_phase_cell =
+    std::max_element(std::begin(phase_values), std::end(phase_values));
+  bool solve_continuity(true);
+
+  if (vof_parameters.conservation.skip_mass_conservation_fluid_0)
+    {
+      if (*max_phase_cell < phase_cutoff)
+        solve_continuity = false;
+    }
+  else if (vof_parameters.conservation.skip_mass_conservation_fluid_1)
+    {
+      if (*max_phase_cell > phase_cutoff)
+        solve_continuity = false;
     }
 
   // Loop over the quadrature points
@@ -75,10 +89,15 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
-        force = 0;
-      if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
-        force = 0;
+      // Determine whether gravity is applied at this quadrature point
+      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
+        {
+          force = 0;
+        }
+      else if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
+        {
+          force = 0;
+        }
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
@@ -165,12 +184,21 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
                   scalar_product(grad_phi_u_j, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
-                div_phi_u_i * phi_p_j +
-                // Continuity
-                phi_p_i * div_phi_u_j;
+                div_phi_u_i * phi_p_j;
 
-              // PSPG GLS term
-              local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+              if (solve_continuity)
+                {
+                  // Continuity
+                  local_matrix_ij += phi_p_i * div_phi_u_j;
+
+                  // PSPG GLS term
+                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                }
+              else
+                {
+                  // assemble Jacobian corresponding to p = 0
+                  local_matrix_ij += phi_p_i * phi_p_j;
+                }
 
               // Jacobian is currently incomplete
               if (SUPG)
@@ -209,35 +237,48 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-
-  // Phase values and limiters
   std::vector<double> &phase_values = scratch_data.phase_values;
-  // std::vector<double> &phase_values_m1 =
-  // scratch_data.previous_phase_values[0];
-  // std::vector<Tensor<1, dim>> &phase_gradient_values =
-  // scratch_data.phase_gradient_values;
 
   // Limit force application : not applied if cell density is below
   // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio      = 2;
-  double       phase_force_cutoff = 0;
+  const double density_ratio = 2;
+  double       phase_cutoff  = 0;
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
       "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
+  // Phase cut-off for force (i.e. gravity) application, also used for
+  // continuity condition
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
       scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
-      // gravity not will be applied for phase < phase_force_cutoff
-      phase_force_cutoff = 1e-6;
+      phase_cutoff = 1e-6;
     }
   if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
       scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
-      // gravity not will be applied for phase > phase_force_cutoff
-      phase_force_cutoff = 1 - 1e-6;
+      phase_cutoff = 1 - 1e-6;
+    }
+
+  // Determine whether continuity condition is solved in this cell
+  // Removing the conservation condition on the lowest density fluid
+  // can improve the wetting mechanism in the framework of incompressible
+  // fluids. See documentation for more details.
+  auto max_phase_cell =
+    std::max_element(std::begin(phase_values), std::end(phase_values));
+  bool solve_continuity(true);
+
+  if (vof_parameters.conservation.skip_mass_conservation_fluid_0)
+    {
+      if (*max_phase_cell < phase_cutoff)
+        solve_continuity = false;
+    }
+  else if (vof_parameters.conservation.skip_mass_conservation_fluid_1)
+    {
+      if (*max_phase_cell > phase_cutoff)
+        solve_continuity = false;
     }
 
   // Loop over the quadrature points
@@ -259,11 +300,16 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
-        force = 0;
-      // Gravity not applied on phase 1
-      if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
-        force = 0;
+      // Determine whether gravity and continuity condition are applied at this
+      // quadrature point
+      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
+        {
+          force = 0;
+        }
+      else if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
+        {
+          force = 0;
+        }
 
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
@@ -308,19 +354,27 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
 
           // Navier-Stokes Residual
+          // Momentum
           local_rhs(i) +=
-            (
-              // Momentum
-              -dynamic_viscosity_eq *
-                scalar_product(velocity_gradient, grad_phi_u_i) -
-              density_eq * velocity_gradient * velocity * phi_u_i +
-              pressure * div_phi_u_i + density_eq * force * phi_u_i -
-              // Continuity
-              velocity_divergence * phi_p_i) *
+            (-dynamic_viscosity_eq *
+               scalar_product(velocity_gradient, grad_phi_u_i) -
+             density_eq * velocity_gradient * velocity * phi_u_i +
+             pressure * div_phi_u_i + density_eq * force * phi_u_i) *
             JxW;
 
-          // PSPG GLS term
-          local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
+          if (solve_continuity)
+            {
+              // Continuity
+              local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
+
+              // PSPG GLS term
+              local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
+            }
+          else
+            {
+              // assemble RHS for p = 0
+              local_rhs(i) += -phi_p_i * pressure * JxW;
+            }
 
           // SUPG GLS term
           if (SUPG)
@@ -562,30 +616,49 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
   // Limit force application : not applied if cell density is below
   // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio      = 2;
-  double       phase_force_cutoff = 0;
+  const double density_ratio = 2;
+  double       phase_cutoff  = 0;
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
       "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
+  // Phase cut-off for force (i.e. gravity) application and continuity condition
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
       scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
-      // gravity not will be applied for phase < phase_force_cutoff
-      phase_force_cutoff = 1e-6;
+      phase_cutoff = 1e-6;
     }
   if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
       scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
-      // gravity not will be applied for phase > phase_force_cutoff
-      phase_force_cutoff = 1 - 1e-6;
+      phase_cutoff = 1 - 1e-6;
+    }
+
+  // Determine whether continuity condition is solved in this cell
+  // Removing the conservation condition on the lowest density fluid
+  // can improve the wetting mechanism in the framework of incompressible
+  // fluids. See documentation for more details.
+  auto max_phase_cell =
+    std::max_element(std::begin(phase_values), std::end(phase_values));
+  bool solve_continuity(true);
+
+  if (vof_parameters.conservation.skip_mass_conservation_fluid_0)
+    {
+      if (*max_phase_cell < phase_cutoff)
+        solve_continuity = false;
+    }
+  else if (vof_parameters.conservation.skip_mass_conservation_fluid_1)
+    {
+      if (*max_phase_cell > phase_cutoff)
+        solve_continuity = false;
     }
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Gather into local variables the relevant fields
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
@@ -617,9 +690,9 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
+      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
         force = 0;
-      if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
+      if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
         force = 0;
 
       // Calculation of the magnitude of the velocity for the
@@ -721,12 +794,22 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
                   scalar_product(grad_phi_u_j_non_newtonian, shear_rate) *
                   scalar_product(shear_rate, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * 0.5 * phi_u_i +
-                density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i
-                // Continuity
-                - div_phi_u_i * phi_p_j + phi_p_i * div_phi_u_j;
+                density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
+                div_phi_u_i * phi_p_j;
 
-              // PSPG GLS term
-              local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+              if (solve_continuity)
+                {
+                  // Continuity
+                  local_matrix_ij += phi_p_i * div_phi_u_j;
+
+                  // PSPG GLS term
+                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                }
+              else
+                {
+                  // assemble Jacobian corresponding to p = 0
+                  local_matrix_ij += phi_p_i * phi_p_j;
+                }
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
@@ -777,25 +860,44 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
   // Limit force application : not applied if cell density is below
   // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio      = 2;
-  double       phase_force_cutoff = 0;
+  const double density_ratio = 2;
+  double       phase_cutoff  = 0;
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
       "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
+  // Phase cut-off for force (i.e. gravity) application, also used for
+  // continuity condition
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
       scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
     {
-      // gravity not will be applied for phase < phase_force_cutoff
-      phase_force_cutoff = 1e-6;
+      phase_cutoff = 1e-6;
     }
   if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
       scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
     {
-      // gravity not will be applied for phase > phase_force_cutoff
-      phase_force_cutoff = 1 - 1e-6;
+      phase_cutoff = 1 - 1e-6;
+    }
+
+  // Determine whether continuity condition is solved in this cell
+  // Removing the conservation condition on the lowest density fluid
+  // can improve the wetting mechanism in the framework of incompressible
+  // fluids. See documentation for more details.
+  auto max_phase_cell =
+    std::max_element(std::begin(phase_values), std::end(phase_values));
+  bool solve_continuity(true);
+
+  if (vof_parameters.conservation.skip_mass_conservation_fluid_0)
+    {
+      if (*max_phase_cell < phase_cutoff)
+        solve_continuity = false;
+    }
+  else if (vof_parameters.conservation.skip_mass_conservation_fluid_1)
+    {
+      if (*max_phase_cell > phase_cutoff)
+        solve_continuity = false;
     }
 
   // Loop over the quadrature points
@@ -836,10 +938,10 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      if (phase_force_cutoff < 0.5 && phase_values[q] < phase_force_cutoff)
+      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
         force = 0;
       // Gravity not applied on phase 1
-      if (phase_force_cutoff > 0.5 && phase_values[q] > phase_force_cutoff)
+      if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
         force = 0;
 
       // Calculation of the magnitude of the
@@ -886,29 +988,35 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
           const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
           const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
-          double local_rhs_i = 0;
-
           // Navier-Stokes Residual
-          local_rhs_i +=
+          local_rhs(i) +=
             (
               // Momentum
               -dynamic_viscosity_eq * scalar_product(shear_rate, grad_phi_u_i) -
               density_eq * velocity_gradient * velocity * phi_u_i +
-              pressure * div_phi_u_i + density_eq * force * phi_u_i -
-              // Continuity
-              velocity_divergence * phi_p_i) *
+              pressure * div_phi_u_i + density_eq * force * phi_u_i) *
             JxW;
 
-          // PSPG GLS term
-          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+          if (solve_continuity)
+            {
+              // Continuity
+              local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
+
+              // PSPG GLS term
+              local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
+            }
+          else
+            {
+              // assemble RHS for p = 0
+              local_rhs(i) += -phi_p_i * pressure * JxW;
+            }
 
           // SUPG GLS term
           if (SUPG)
             {
-              local_rhs_i +=
+              local_rhs(i) +=
                 -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
             }
-          local_rhs(i) += local_rhs_i;
         }
     }
 }

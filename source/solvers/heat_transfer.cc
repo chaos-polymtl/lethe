@@ -411,8 +411,8 @@ HeatTransfer<dim>::finish_simulation()
     Utilities::MPI::this_mpi_process(mpi_communicator));
 
   if (this_mpi_process == 0 &&
-      simulation_parameters.analytical_solution->verbosity ==
-        Parameters::Verbosity::verbose)
+      simulation_parameters.analytical_solution->verbosity !=
+        Parameters::Verbosity::quiet)
     {
       error_table.omit_column_from_convergence_rate_evaluation("cells");
 

@@ -80,8 +80,7 @@ time step of :math:`0.001` seconds.
     you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will break.
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
-and off `(false)` the physics of interest. Here ``VOF``,
-``interface sharpening``, and ``surface tension force`` are chosen.
+and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``interface sharpening``, and ``surface tension force`` are enabled in the VOF subsection (see below).
 
 
 .. code-block:: text
@@ -105,14 +104,20 @@ The interface sharpening method and its parameters are explained in :doc:`../dam
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Interface sharpening
-    #---------------------------------------------------
-    subsection interface sharpening
-        set sharpening threshold        = 0.5
-        set interface sharpness         = 1.4
-        set sharpening frequency        = 50
-    end
+	#---------------------------------------------------
+	# VOF
+	#---------------------------------------------------
+	subsection VOF
+	  subsection interface sharpening
+	    set enable      = true
+	    set sharpening threshold	= 0.5
+	    set interface sharpness	= 1.4
+	    set sharpening frequency	= 50
+	  end
+	  subsection surface tension force
+	    set enable      = true
+	  end
+	end
 
 In the ``initial condition``, the initial velocity and initial position 
 of the liquid phase are defined. The light phase is initially 
@@ -188,28 +193,42 @@ where :math:`\sigma`, :math:`k` and :math:`\bf{\psi}` denote surface tension coe
 The following equations calculate the filtered phase fraction gradient and filtered curvature, respectively.
 
     .. math:: 
-        \int_\Omega {\bf{v}} . {\bf{\psi}} + \eta_n \nabla {\bf{v}} . \nabla {\bf{\psi}} d\Omega = \int_\Omega {\bf{v}} . \nabla {\phi} d\Omega
+        \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
 
     .. math:: 
-        \int_\Omega v k + \eta_k \nabla v . \nabla k d\Omega = \int_\Omega \nabla v . \frac{\bf{\psi}}{|\bf{\psi}|} d\Omega
+        \int_\Omega \left( v k + \eta_k \nabla v \cdot \nabla k \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
 
 where :math:`v`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, :math:`\phi`, :math:`k`, and :math:`\eta_k \geq 0` denote a test function, filtered phase fraction gradient, phase fraction gradient filter value, phase fraction, filtered curvature, and curvature filter value, respectively.
 
 .. tip::
 
-  Phase fraction gradient filter value (:math:`\eta_n`) and curvature filter value (:math:`\eta_k`) must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters: 1) Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields, 2) Choose a small value for :math:`\eta = h/10`, where :math:`h` is the smallest mesh size, 3) Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation, and 4) If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\eta` to a larger value (:math:`\eta = h/5`, for example), and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
+  Phase fraction gradient filter value (:math:`\eta_n`) and curvature filter value (:math:`\eta_k`) must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters: 
+
+  1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
+  2. Choose a small value for :math:`\eta = h/10`, where :math:`h` is the smallest mesh size. 
+  3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
+  4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\eta` to a larger value (:math:`\eta = h/5`, for example), and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Surface tension force
-    #---------------------------------------------------
-    subsection surface tension force
-        set surface tension coefficient 	   = 24.5
-        set phase fraction gradient filter   = 0.0005
-        set curvature filter			       = 0.0005
-        set output auxiliary fields 		   = true
-    end
+	#---------------------------------------------------
+	# VOF
+	#---------------------------------------------------
+	subsection VOF
+	  subsection interface sharpening
+	    set enable      = true
+	    set sharpening threshold	= 0.5
+	    set interface sharpness	= 1.4
+	    set sharpening frequency	= 50
+	  end
+	  subsection surface tension force
+	    set enable      = true
+	    set output auxiliary fields  = true
+	    set surface tension coefficient    = 24.5
+	    set phase fraction gradient filter = 0.0005
+	    set curvature filter  = 0.0005
+	  end
+	end
 
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point

@@ -281,7 +281,7 @@ namespace Parameters
     double thermal_conductivity;
     // thermal expansion coefficient (alpha) in 1/K
     double thermal_expansion;
-    // tracer diffusivity) in L^2/s
+    // tracer diffusivity in L^2/s
     double tracer_diffusivity;
 
     // Phase change parameters
@@ -320,60 +320,6 @@ namespace Parameters
     double k_A1;
   };
 
-
-
-  /**
-   * @brief InterfaceSharpening - Defines the parameters for
-   * interface sharpening in the VOF solver.
-   */
-  struct InterfaceSharpening
-  {
-    // Interface sharpening parameters. The sharpening method and parameters are
-    // explained in the dam break VOF example:
-    // https://github.com/lethe-cfd/lethe/wiki/Dam-break-VOF
-    // sharpening_threshold is the phase fraction threshold for sharpening. It
-    // should be chosen in the range of (0,1), but generally it is equal to 0.5
-    // interface_sharpness is a parameter which defines the sharpness of the
-    // interface. It should be chosen in the range of (1,2] sharpening_frequency
-    // (integer) is the frequency at which the interface sharpneing is called.
-    // Users may set this variable to 1 to call interface sharpening at every
-    // step, but it could be chosen in the range of [1-20]
-
-    double sharpening_threshold;
-    double interface_sharpness;
-    int    sharpening_frequency;
-    // Type of verbosity for the interface sharpening calculation
-    Verbosity verbosity;
-
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
-
-  /**
-   * @brief SurfaceTensionForce - Defines the parameters for
-   * the calculation of surface tension force in the VOF solver.
-   */
-  struct SurfaceTensionForce
-  {
-    // Surface tension coefficient.
-    // This will be moved to the property manager in another PR.
-    double surface_tension_coef;
-
-    double phase_fraction_gradient_filter_value;
-    double curvature_filter_value;
-
-    bool output_vof_auxiliary_fields;
-
-    // Type of verbosity for the surface tension force calculation
-    Verbosity verbosity;
-
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
 
   /**
    * @brief PhysicalProperties - Define the possible physical properties.

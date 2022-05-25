@@ -22,10 +22,9 @@ General, CFD and Multiphysics
    linear_solver_control
    stabilization
    multiphysics
+   volume_of_fluid
    boundary_conditions_multiphysics
    nitsche
    restart
    dynamic_flow_control
-   interface_sharpening
-   surface_tension_force
    laser_heat_source

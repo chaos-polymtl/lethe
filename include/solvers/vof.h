@@ -114,7 +114,8 @@ public:
       }
 
     // Check the value of interface sharpness
-    if (simulation_parameters.interface_sharpening.interface_sharpness < 1.0)
+    if (simulation_parameters.multiphysics.vof_parameters.sharpening
+          .interface_sharpness < 1.0)
       this->pcout
         << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it."
         << std::endl
@@ -457,8 +458,17 @@ private:
   void
   assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
 
+
   /**
-   * @brief Modification of the solution
+   * @brief Carries out peeling and wetting. It is called in the modify solution function.
+   * Launches apply_peeling_wetting on affected boundaries and handle output
+   * messages.
+   */
+  void
+  handle_peeling_wetting();
+
+  /**
+   * @brief Modification of the solution to take into account peeling and wetting
    *
    * @tparam VectorType The Vector type used for the solvers
    *
@@ -486,7 +496,7 @@ private:
   void
   change_cell_phase(
     const PhaseChange &                         type,
-    const unsigned int &                        new_phase,
+    const double &                              new_phase,
     TrilinosWrappers::MPI::Vector &             solution_pw,
     const std::vector<types::global_dof_index> &dof_indices_vof);
 
@@ -610,6 +620,8 @@ private:
 
   // Peeling/Wetting analysis
   TrilinosWrappers::MPI::Vector marker_pw;
+  unsigned int                  nb_cells_wet;
+  unsigned int                  nb_cells_peeled;
 
   // Filtered phase fraction gradient (pfg) solution
   TrilinosWrappers::MPI::Vector
