@@ -17,7 +17,10 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/rpt_fem_reconstruction.h>
 
+#include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
 
 using namespace dealii;
 
@@ -93,6 +96,7 @@ RPTFEMReconstruction<dim>::assemble_system(unsigned detector_no)
             particle, detectors[detector_no], rpt_parameters.rpt_param);
 
           double count = p_q_interaction.calculate_count();
+
 
           for (const unsigned int i : fe_values.dof_indices())
             {
@@ -214,12 +218,16 @@ RPTFEMReconstruction<dim>::output_counts_on_level(
        it != dof_index_and_location.end();
        ++it)
     {
-      for (unsigned d = 0; d < dim; ++d)
+      for (unsigned d = 0; d < dim; ++d){
         myfile << it->second[d] << sep;
-      for (unsigned int i = 0; i < detectors.size(); ++i)
-        myfile << nodal_counts[i][it->first] << sep;
-
+      }
       myfile << "\n";
+
+
+      //for (unsigned int i = 0; i < detectors.size(); ++i)
+        //myfile << nodal_counts[i][it->first] << sep;
+
+      //myfile << "\n";
     }
   myfile.close();
 }
@@ -236,8 +244,8 @@ RPTFEMReconstruction<dim>::L2_project()
   // flatten the triangulation
   Triangulation<dim> temp_triangulation;
   Triangulation<dim> flat_temp_triangulation;
-  GridGenerator::cylinder(temp_triangulation, 0.1, 0.2);
-  temp_triangulation.refine_global(2);
+  GridGenerator::subdivided_cylinder(temp_triangulation, 2,0.08,0.07);
+  temp_triangulation.refine_global(3);
 
   GridGenerator::flatten_triangulation(temp_triangulation,
                                        flat_temp_triangulation);
@@ -255,7 +263,7 @@ RPTFEMReconstruction<dim>::L2_project()
   }
 
   GridTools::rotate(1.57078, 1, triangulation);
-  Tensor<1, dim> shift_vector({0, 0, 0.2});
+  Tensor<1, dim> shift_vector({0, 0, 0.07});
   GridTools::shift(shift_vector, triangulation);
   {
     std::ofstream output_file("rotated_triangulation.vtk");
@@ -276,8 +284,9 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "Outputting results" << std::endl;
   output_results();
   output_raw_results_per_level();
-  find_cell();
+  //find_cell();
   // find_cell_containing_point();
+  helix_trajectory();
 }
 
 template <int dim>
@@ -409,16 +418,13 @@ RPTFEMReconstruction<dim>::assemble_matrix_and_rhs(
     }
   system_rhs[2] = -sigma;
 
-  // std::cout << "Printing RHS " << std::endl;
-  // system_rhs.print(std::cout);
-  // SOLVE
+
 
   system_matrix.set_property(LAPACKSupport::general);
   system_matrix.compute_lu_factorization();
   system_matrix.solve(system_rhs);
 
-  // std::cout << "Printing solution " << std::endl;
-  // system_rhs.print(std::cout);
+
 
 
   reference_location = system_rhs;
@@ -429,20 +435,30 @@ RPTFEMReconstruction<dim>::assemble_matrix_and_rhs(
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::find_cell()
+RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 {
   // Loop over cell in the finest level, loop over detetors get nodal values,
   // solve first loop over cell
 
   // for now I define experimental counts manually
-  std::vector<double> experimental_count({895.914, 335.409, 1283.14});
+
 
   double max_reconstruction_error = DBL_MAX;
+  double max_cost_function=DBL_MAX;
+  double final_norm;
+  double comparing_cost_function;
+  Point<dim> result;
+  Point<dim> final_result;
+  std::vector<double> check;
+
+
 
 
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
   for (const auto &cell : cell_iterator)
     {
+
+
       std::vector<std::vector<double>> count_from_all_detectors;
 
       for (unsigned int i = 0; i < detectors.size(); ++i)
@@ -455,9 +471,6 @@ RPTFEMReconstruction<dim>::find_cell()
               auto dof_index = cell->vertex_dof_index(v, 0);
               detectorCount.push_back(nodal_counts[i][dof_index]);
             }
-
-
-
           count_from_all_detectors.push_back(detectorCount);
           detectorCount.clear();
         }
@@ -468,6 +481,7 @@ RPTFEMReconstruction<dim>::find_cell()
 
       // Check if the location is a valid one
       std::vector<double> err_coordinates(4);
+      //what about the ones that they meet all four conditions? We are considering they are not valid but they are so close!
 
       for (unsigned int i = 0; i < 3; ++i)
         {
@@ -503,24 +517,17 @@ RPTFEMReconstruction<dim>::find_cell()
         }
 
 
-      // if ((0 < reference_location[0] && reference_location[0] < 1) &&
-      //    (0 < reference_location[1] && reference_location[1] < 1) &&
-      //    (0 < reference_location[2] && reference_location[2] < 1) &&
-      //    ((0 < 1 - reference_location[0] - reference_location[1] -
-      //            reference_location[2]) &&
-      //     (1 - reference_location[0] - reference_location[1] -
-      //        reference_location[2] <
-      //      1)))
-      if (norm_error_coordinates < max_reconstruction_error)
+
+      if (norm_error_coordinates < 0.05)
         {
-          std::cout << "Printing reference solution " << std::endl;
-          reference_location.print(std::cout);
+          //std::cout << "Printing reference solution " << std::endl;
+          //reference_location.print(std::cout);
           Point<dim> real_location;
-          std::cout << "Printing vertex " << std::endl;
+          //std::cout << "Printing vertex " << std::endl;
           for (unsigned int v = 0; v < cell->n_vertices(); ++v)
             {
               auto vertex_location = cell->vertex(v);
-              std::cout << vertex_location << std::endl;
+              //std::cout << vertex_location << std::endl;
               if (v == 0)
                 real_location = cell->vertex(v);
               else
@@ -529,32 +536,90 @@ RPTFEMReconstruction<dim>::find_cell()
                                     (cell->vertex(v) - cell->vertex(0));
             }
           max_reconstruction_error = norm_error_coordinates;
-          std::cout << "The reconstruction error is : "
-                    << norm_error_coordinates << std::endl;
-          std::cout << "The real location is : " << real_location << std::endl;
+          /*std::cout << "The reconstruction error is : "
+                    << norm_error_coordinates << std::endl;*/
+          //std::cout << "The real location is : " << real_location << std::endl;
+
+          //Cost function must be calculated here
+
+          double cost_function1=0;
+
+          for (unsigned int i = 0; i < detectors.size(); ++i){
+
+              double count1=0;
+
+              count1+=(nodal_counts[i][cell->vertex_dof_index(0, 0)]*(1-reference_location[0]-reference_location[1]
+                      -reference_location[2]))+
+                      (nodal_counts[i][cell->vertex_dof_index(1, 0)]*(reference_location[0]))+
+                      (nodal_counts[i][cell->vertex_dof_index(2, 0)]*(reference_location[1]))+
+                      (nodal_counts[i][cell->vertex_dof_index(3, 0)]*(reference_location[2]));
+
+              count1=count1-experimental_count[i];
+              cost_function1+=count1*count1;
+
+          }
+          //std::cout<<cost_function1<<std::endl;
+          comparing_cost_function=cost_function1;
+          result=real_location;
+          if (comparing_cost_function<max_cost_function){
+              max_cost_function=comparing_cost_function;
+              final_result=result;
+          }
         }
+
 
 
       count_from_all_detectors.clear();
     }
+
+  //std::cout<<"this: "<<max_cost_function<<std::endl;
+  std::cout<<final_result<<std::endl;
+
+
+
+
 }
+
+
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::find_cell_containing_point()
+RPTFEMReconstruction<dim>::helix_trajectory()
 {
-  Point<dim> point(0.07, 0, 0.065);
 
-  typename Triangulation<dim>::active_cell_iterator cell1 =
-    GridTools::find_active_cell_around_point(triangulation, point);
-  for (unsigned int v = 0; v < cell1->n_vertices(); ++v)
-    {
-      auto vertex_location = cell1->vertex(v);
-      auto center          = cell1->center();
-      // std::cout<<vertex_location<<std::endl;
-      std::cout << center << std::endl;
+    std::ifstream in("Test.txt");
+    std::vector<std::vector<double> > v;
+
+    if (in) {
+        std::string line;
+
+        while (std::getline(in, line)) {
+            v.push_back(std::vector<double>());
+
+            // Break down the row into column values
+            std::stringstream split(line);
+            double value;
+
+            while (split >> value)
+                v.back().push_back(value);
+        }
     }
-}
+    for(int i=0; i<v.size();i++){
+
+        std::vector<double> experimental_count=v[i];
+        find_cell(experimental_count);
+
+
+    }
+
+
+
+
+
+
+    }
+
+
 
 
 
