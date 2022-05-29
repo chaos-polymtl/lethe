@@ -163,11 +163,13 @@ public:
   calculate_L2_error();
 
   /**
-   * @brief Calculates the volume for the fluid phase with given id_fluid_monitored.
+   * @brief Calculates the volume and mass for the fluid phase with given id_fluid_monitored,
+   * and for the given solution vector for the phase value.
    * Used for conservation monitoring.
    */
   double
-  calculate_volume(int id_fluid_monitored);
+  calculate_volume_and_mass(const TrilinosWrappers::MPI::Vector &solution,
+                            const int id_fluid_monitored);
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -585,7 +587,7 @@ private:
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;
 
-  // Solution storage:
+  // Solution storage
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
@@ -656,6 +658,12 @@ private:
 
   // Conservation Analysis
   TableHandler table_monitoring_vof;
+  double       mass_monitored;
+  double       mass_first_iteration;
+
+  // Define sharpening_threshold, can be constant or adaptative to ensure mass
+  // conservation
+  double sharpening_threshold;
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;

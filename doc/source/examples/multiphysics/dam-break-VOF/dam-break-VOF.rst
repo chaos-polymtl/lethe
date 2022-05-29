@@ -119,7 +119,7 @@ The phase fraction limiter above will update the phase fraction if it failed to 
         \phi :=
         \begin{cases}
         c^{1-\alpha} \phi^{\alpha} &  (0 \leq \phi < c  ) \\
-        1-(c-1)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
+        1-(1-c)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
         \end{cases}
 
 ``Sharpening frequency`` is an integer parameter that defines the 

@@ -337,7 +337,9 @@ VolumeOfFluid<dim>::calculate_L2_error()
 
 template <int dim>
 double
-VolumeOfFluid<dim>::calculate_volume(int id_fluid_monitored)
+VolumeOfFluid<dim>::calculate_volume_and_mass(
+  const TrilinosWrappers::MPI::Vector &solution,
+  const int                            id_fluid_monitored)
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
@@ -349,16 +351,28 @@ VolumeOfFluid<dim>::calculate_volume(int id_fluid_monitored)
 
   const unsigned int  n_q_points = this->error_quadrature->size();
   std::vector<double> q_scalar_values(n_q_points);
+  std::vector<double> density_0(n_q_points);
+  std::vector<double> density_1(n_q_points);
 
-  double volume = 0;
+  double volume        = 0;
+  this->mass_monitored = 0;
+
+  // Physical properties
+  const auto density_models =
+    this->simulation_parameters.physical_properties_manager
+      .get_density_vector();
+  std::map<field, std::vector<double>> fields;
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
           fe_values_vof.reinit(cell);
-          fe_values_vof.get_function_values(this->present_solution,
-                                            q_scalar_values);
+          fe_values_vof.get_function_values(solution, q_scalar_values);
+
+          // Calculate physical properties for the cell
+          density_models[0]->vector_value(fields, density_0);
+          density_models[1]->vector_value(fields, density_1);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -367,14 +381,20 @@ VolumeOfFluid<dim>::calculate_volume(int id_fluid_monitored)
                   case 0:
                     {
                       if (q_scalar_values[q] < 0.5)
-                        volume +=
-                          fe_values_vof.JxW(q) * (1 - q_scalar_values[q]);
+                        {
+                          volume +=
+                            fe_values_vof.JxW(q) * (1 - q_scalar_values[q]);
+                          this->mass_monitored += volume * density_0[q];
+                        }
                       break;
                     }
                   case 1:
                     {
                       if (q_scalar_values[q] > 0.5)
-                        volume += fe_values_vof.JxW(q) * q_scalar_values[q];
+                        {
+                          volume += fe_values_vof.JxW(q) * q_scalar_values[q];
+                          this->mass_monitored += volume * density_1[q];
+                        }
                       break;
                     }
                   default:
@@ -384,7 +404,8 @@ VolumeOfFluid<dim>::calculate_volume(int id_fluid_monitored)
             }
         }
     }
-  volume = Utilities::MPI::sum(volume, mpi_communicator);
+  volume               = Utilities::MPI::sum(volume, mpi_communicator);
+  this->mass_monitored = Utilities::MPI::sum(volume, mpi_communicator);
   return volume;
 }
 
@@ -461,9 +482,18 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
   if (simulation_parameters.multiphysics.vof_parameters.conservation.monitoring)
     {
-      double volume =
-        calculate_volume(simulation_parameters.multiphysics.vof_parameters
-                           .conservation.id_fluid_monitored);
+      // Calculate volume and mass (this->mass_monitored)
+      // TODO n'appeler que si sharpening constant
+      double volume = calculate_volume_and_mass(
+        this->present_solution,
+        simulation_parameters.multiphysics.vof_parameters.conservation
+          .id_fluid_monitored);
+      if (first_iteration)
+        {
+          this->mass_first_iteration = this->mass_monitored;
+        }
+      //      std::cout << "mass first iteration : " << std::setprecision(5)
+      //                << this->mass_first_iteration << std::endl;
 
       auto         mpi_communicator = this->triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -489,8 +519,18 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                            .conservation.id_fluid_monitored,
                          1);
 
+          // Add volume column
           this->table_monitoring_vof.add_value("volume_" + fluid_id, volume);
           this->table_monitoring_vof.set_scientific("volume_" + fluid_id, true);
+
+          // Add mass column
+          this->table_monitoring_vof.add_value("mass_" + fluid_id,
+                                               this->mass_monitored);
+          this->table_monitoring_vof.set_scientific("mass_" + fluid_id, true);
+
+          // Add sharpening threshold column
+          this->table_monitoring_vof.add_value("sharpening_threshold",
+                                               this->sharpening_threshold);
 
           // Save table to .dat
           std::string filename =
@@ -1281,6 +1321,10 @@ VolumeOfFluid<dim>::setup_dofs()
 
   // Initialize peeling/wetting variables
   marker_pw.reinit(locally_owned_dofs, mpi_communicator);
+  // TODO make adaptative
+  this->sharpening_threshold =
+    this->simulation_parameters.multiphysics.vof_parameters.sharpening
+      .sharpening_threshold;
 
   this->pcout << "   Number of VOF degrees of freedom: "
               << this->dof_handler.n_dofs() << std::endl;
@@ -1466,9 +1510,6 @@ void
 VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   TrilinosWrappers::MPI::Vector &solution)
 {
-  const double sharpening_threshold =
-    this->simulation_parameters.multiphysics.vof_parameters.sharpening
-      .sharpening_threshold;
   const double interface_sharpness =
     this->simulation_parameters.multiphysics.vof_parameters.sharpening
       .interface_sharpness;
@@ -1525,9 +1566,10 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                   // \alpha)}$$
                   // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 - \alpha)
                   // * (1 - \phi) ^ \alpha}
-                  if (phase_value >= 0.0 && phase_value <= sharpening_threshold)
+                  if (phase_value >= 0.0 &&
+                      phase_value <= this->sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
-                      std::pow(sharpening_threshold,
+                      std::pow(this->sharpening_threshold,
                                (1 - interface_sharpness)) *
                       std::pow(phase_value, interface_sharpness) *
                       phi_phase[i] * fe_values_vof.JxW(q);
@@ -1535,7 +1577,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                     {
                       local_rhs_phase_fraction(i) +=
                         (1 -
-                         std::pow((1 - sharpening_threshold),
+                         std::pow((1 - this->sharpening_threshold),
                                   (1 - interface_sharpness)) *
                            std::pow((1 - phase_value), interface_sharpness)) *
                         phi_phase[i] * fe_values_vof.JxW(q);
