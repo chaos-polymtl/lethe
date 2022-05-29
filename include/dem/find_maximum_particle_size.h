@@ -18,11 +18,6 @@
  */
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/input_parameter_inspection.h>
-
-#include <deal.II/particles/particle_handler.h>
-
-using namespace dealii;
 
 #ifndef find_maximum_particle_size_h
 #  define find_maximum_particle_size_h
@@ -45,7 +40,7 @@ using namespace dealii;
 double
 find_maximum_particle_size(
   const Parameters::Lagrangian::LagrangianPhysicalProperties
-    &           lagrangian_physical_properties,
+               &lagrangian_physical_properties,
   const double &standard_deviation_multiplier);
 
 #endif
