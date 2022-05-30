@@ -9,17 +9,16 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2022
 ----
 
-* `Barbeau, Lucka, Stéphane Étienne, Cédric Béguin, and Bruno Blais. "Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems." Computers & Fluids 239 (2022): 105415. <https://doi.org/10.1016/j.compfluid.2022.105415>`_
+* `L. Barbeau, S. Étienne, C. Béguin, and B. Blais, "Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems", Computers & Fluids, 239, 105415, 2022 <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_. 
 
-* `Golshan, Shahab, Peter Munch, Rene Gassmoller, Martin Kronbichler, and Bruno Blais. "Lethe-DEM: An open-source parallel discrete element solver with load balancing." Comp. Part. Mech. (2022). <https://doi.org/10.1007/s40571-022-00478-6>`_
+* `S. Golshan, P. Munch, R. Gassmoller, M. Kronbichler, and B. Blais, “Lethe-Dem: An open-source parallel discrete element solver with load balancing - computational particle mechanics”, Comp. Part. Mech., 2022 <https://link.springer.com/article/10.1007/s40571-022-00478-6>`_.
 
-* `Golshan, Shahab, and Bruno Blais. "Load-Balancing Strategies in Discrete Element Method Simulations." Processes 10, no. 1 (2022): 79. <https://doi.org/10.3390/pr10010079>`_
+* `S. Golshan and B. Blais, “Load-balancing strategies in discrete element method simulations”, Processes, 10, 1, 2022 <https://www.mdpi.com/2227-9717/10/1/79>`_. 
 
 2020
 ----
 
-* `Blais, Bruno, Lucka Barbeau, Valérie Bibeau, Simon Gauvin, Toni El Geitani, Shahab Golshan, Rajeshwari Kamble, Ghazaleh Mirakhori, and Jamal Chaouki. "Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows." SoftwareX 12 (2020): 100579. <https://doi.org/10.1016/j.softx.2020.100579>`_
-
+* `B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, and J. Chaouki, “Lethe: An open-source parallel high-order adaptative CFD solver for Incompressible flows”, SoftwareX, 12, 100579, 2020 <https://www.sciencedirect.com/science/article/pii/S2352711020302922?via%3Dihub>`_. 
 
 Preprints
 ---------
