@@ -2,7 +2,7 @@
 Publications
 ############
 
-This section regroups the peer-reviewed journal articles that **describe** core functionalities of Lethe or that **use** Lethe. The publications are grouped by the year of the publications and displayed in the Chicago format.
+This section regroups the peer-reviewed journal articles that **describe** core functionalities of Lethe or that **use** Lethe. The publications are grouped by the year of the publications and displayed in the IEEE format.
 
 
 
