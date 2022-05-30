@@ -488,12 +488,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         this->present_solution,
         simulation_parameters.multiphysics.vof_parameters.conservation
           .id_fluid_monitored);
-      if (first_iteration)
-        {
-          this->mass_first_iteration = this->mass_monitored;
-        }
-      //      std::cout << "mass first iteration : " << std::setprecision(5)
-      //                << this->mass_first_iteration << std::endl;
 
       auto         mpi_communicator = this->triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -501,6 +495,12 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
       if (this_mpi_process == 0)
         {
+          // TODO voir si à déplacer
+          if (first_iteration)
+            {
+              this->mass_first_iteration = this->mass_monitored;
+            }
+
           // Set conservation monitoring table
           if (this->simulation_control->is_steady())
             {
@@ -554,7 +554,9 @@ VolumeOfFluid<dim>::modify_solution()
     }
   // Interface sharpening
   if (vof_parameters.sharpening.enable)
-    sharpen_interface();
+    {
+      handle_interface_sharpening();
+    }
 
   if (vof_parameters.surface_tension_force.enable)
     {
@@ -565,13 +567,8 @@ VolumeOfFluid<dim>::modify_solution()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::sharpen_interface()
+VolumeOfFluid<dim>::handle_interface_sharpening()
 {
-  // Limit the phase fractions between 0 and 1
-  update_solution_and_constraints(present_solution);
-  for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-    update_solution_and_constraints(previous_solutions[p]);
-
   // Interface sharpening is done at a constant frequency
   if (this->simulation_control->get_step_number() %
         this->simulation_parameters.multiphysics.vof_parameters.sharpening
@@ -585,23 +582,42 @@ VolumeOfFluid<dim>::sharpen_interface()
                       << this->simulation_control->get_step_number()
                       << std::endl;
         }
+      // Sharpen the interface of all solutions (present and previous)
+      sharpen_interface(this->present_solution, false);
+    }
+}
 
-      // Sharpen the interface of all solutions:
-      {
-        // Assemble matrix and solve the system for interface sharpening
-        assemble_L2_projection_interface_sharpening(present_solution);
-        solve_interface_sharpening(present_solution);
+template <int dim>
+void
+VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
+                                      const bool                     test)
+{
+  // Limit the phase fractions between 0 and 1
+  update_solution_and_constraints(solution);
+  if (not test)
+    {
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        update_solution_and_constraints(previous_solutions[p]);
+    }
 
-        for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-          {
-            assemble_L2_projection_interface_sharpening(previous_solutions[p]);
-            solve_interface_sharpening(previous_solutions[p]);
-          }
-      }
+  // Assemble matrix and solve the system for interface sharpening
+  assemble_L2_projection_interface_sharpening(solution);
+  solve_interface_sharpening(solution);
 
-      // Re limit the phase fractions between 0 and 1 after interface
-      // sharpening
-      update_solution_and_constraints(present_solution);
+  if (not test)
+    {
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        {
+          assemble_L2_projection_interface_sharpening(previous_solutions[p]);
+          solve_interface_sharpening(previous_solutions[p]);
+        }
+    }
+
+  // Re limit the phase fractions between 0 and 1 after interface
+  // sharpening
+  update_solution_and_constraints(solution);
+  if (not test)
+    {
       for (unsigned int p = 0; p < previous_solutions.size(); ++p)
         update_solution_and_constraints(previous_solutions[p]);
     }

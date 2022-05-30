@@ -163,9 +163,13 @@ public:
   calculate_L2_error();
 
   /**
-   * @brief Calculates the volume and mass for the fluid phase with given id_fluid_monitored,
-   * and for the given solution vector for the phase value.
+   * @brief Calculates the volume and mass for a given fluid phase.
    * Used for conservation monitoring.
+   *
+   * @param solution VOF solution (phase fraction)
+   *
+   * @param id_fluid_monitored phase value (0 or 1) corresponding to
+   * the phase of interest.
    */
   double
   calculate_volume_and_mass(const TrilinosWrappers::MPI::Vector &solution,
@@ -463,7 +467,7 @@ private:
 
   /**
    * @brief Carries out peeling and wetting. It is called in the modify solution function.
-   * Launches apply_peeling_wetting on affected boundaries and handle output
+   * Launches apply_peeling_wetting on affected boundaries and handles output
    * messages.
    */
   void
@@ -503,10 +507,24 @@ private:
     const std::vector<types::global_dof_index> &dof_indices_vof);
 
   /**
-   * @brief Carries out interface sharpening. It is called in the modify solution function.
+   * @brief Carries out interface sharpnening. It is called in the modify solution function.
+   * Launches sharpen_interface with the possibility to ensure conservation and
+   * handles output messages.
    */
   void
-  sharpen_interface();
+  handle_interface_sharpening();
+
+  /**
+   * @brief Carries out interface sharpening. It is called in the modify solution function.
+   *
+   * @param solution VOF solution (phase fraction)
+   *
+   * @param test boolean true if the sharpening is a test to determine the sharpening threshold
+   * by binary search (sharpening on a copy of the present solution only), false
+   * for the real sharpening (on the present and past solutions)
+   */
+  void
+  sharpen_interface(TrilinosWrappers::MPI::Vector &solution, const bool test);
 
   /**
    * @brief Carries out finding the gradients of phase fraction. Obtained gradients of phase
