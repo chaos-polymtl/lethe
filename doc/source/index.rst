@@ -49,6 +49,8 @@ Contents
    parameters/parameters
    examples/examples
    theory/theory
+   publications
+   referencing
    contributing
 
 Installation
