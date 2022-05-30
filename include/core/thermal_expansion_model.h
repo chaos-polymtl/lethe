@@ -122,10 +122,6 @@ public:
    */
   ThermalExpansionPhaseChange(const Parameters::PhaseChange phase_change_params)
     : p_phase_change_params(phase_change_params)
-    , thermal_expansion_s(phase_change_params.thermal_expansion_s)
-    , thermal_expansion_l(phase_change_params.thermal_expansion_l)
-    , T_solidus(phase_change_params.T_solidus)
-    , T_liquidus(phase_change_params.T_liquidus)
   {
     this->model_depends_on[field::temperature] = true;
   }
@@ -140,11 +136,12 @@ public:
   {
     double thermal_expansion;
     // Thermal expansion of solid phase
-    if (fields_value.at(field::temperature) < T_solidus)
-      thermal_expansion = thermal_expansion_s;
+    if (fields_value.at(field::temperature) < p_phase_change_params.T_solidus)
+      thermal_expansion = p_phase_change_params.thermal_expansion_s;
     // Thermal expansion coefficient of liquid phase
-    else if (fields_value.at(field::temperature) > T_liquidus)
-      thermal_expansion = thermal_expansion_l;
+    else if (fields_value.at(field::temperature) >
+             p_phase_change_params.T_liquidus)
+      thermal_expansion = p_phase_change_params.thermal_expansion_l;
     // Mean value of the thermal expansion coefficients of the solid and liquid
     // phases
     else
@@ -154,7 +151,8 @@ public:
                                     p_phase_change_params);
 
         thermal_expansion =
-          thermal_expansion_l * l_frac + thermal_expansion_s * (1. - l_frac);
+          p_phase_change_params.thermal_expansion_l * l_frac +
+          p_phase_change_params.thermal_expansion_s * (1. - l_frac);
       }
 
     return thermal_expansion;
@@ -173,24 +171,25 @@ public:
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       {
         // Thermal expansion of solid phase
-        if (T[i] < T_solidus)
-          property_vector[i] = thermal_expansion_s;
+        if (T[i] < p_phase_change_params.T_solidus)
+          property_vector[i] = p_phase_change_params.thermal_expansion_s;
         // Thermal expansion of liquid phase
-        else if (T[i] > T_liquidus)
-          property_vector[i] = thermal_expansion_l;
+        else if (T[i] > p_phase_change_params.T_liquidus)
+          property_vector[i] = p_phase_change_params.thermal_expansion_l;
         else
           {
             const double l_frac =
               calculate_liquid_fraction(T[i], p_phase_change_params);
 
-            property_vector[i] = thermal_expansion_l * l_frac +
-                                 thermal_expansion_s * (1. - l_frac);
+            property_vector[i] =
+              p_phase_change_params.thermal_expansion_l * l_frac +
+              p_phase_change_params.thermal_expansion_s * (1. - l_frac);
           }
       }
   };
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the thermal expansion with respect to a field
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the thermal expansion with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
@@ -223,10 +222,6 @@ public:
 
 private:
   Parameters::PhaseChange p_phase_change_params;
-  const double            thermal_expansion_s;
-  const double            thermal_expansion_l;
-  const double            T_solidus;
-  const double            T_liquidus;
 };
 
 #endif

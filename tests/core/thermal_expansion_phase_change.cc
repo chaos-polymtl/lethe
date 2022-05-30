@@ -1,13 +1,14 @@
 /**
- * @brief Tests the thermal_conductivity_phase_change model.
- * During a phase change the physical properties (including conductivity) of the
- * material changes. This interval is defined by [T_solidus,T_liquidus]. This
- * test verifies that the thermal conductivity is calculated correctly. For
- * temperature T<T_solidus, the thermal conductivity should be
- * thermal_conductivity_s. For temperatures T>T_liquidus the thermal
- * conductivity should be thermal_conductivity_l. For temperature in-between, T
- * \in [T_solidus,T_liquidus] the thermal conductivity should be liquid_fraction
- * * thermal_conductivity_l + (1 - liquid_fraction) * thermal_conductivity_s
+ * @brief Tests the thermal_expansion_phase_change model.
+ * During a phase change the physical properties (including thermal expansion
+ * coefficient) of the material changes. This interval is defined by
+ * [T_solidus,T_liquidus]. This test verifies that the thermal expansion
+ * coefficient is calculated correctly. For temperature T<T_solidus, the
+ * thermal expansion coefficient should be thermal_expansion_s. For temperatures
+ * T>T_liquidus the thermal expansion coefficient should be thermal_expansion_l.
+ * For temperature in-between, T \in [T_solidus,T_liquidus] the thermal
+ * expansion coefficient should be liquid_fraction * thermal_expansion_l
+ * + (1 - liquid_fraction) * thermal_expansion_s
  */
 
 // Lethe
