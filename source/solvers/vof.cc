@@ -671,7 +671,7 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
                       "Unsupported number of fluids (>2)");
                 } // end switch to adapt searching range
             }
-          while (mass_gap > tol * this->mass_first_iteration);
+          while (std::abs(mass_gap) > tol * this->mass_first_iteration);
           // TODO add limitation on number of iterations
 
           this->sharpening_threshold = st_ave;
@@ -679,8 +679,8 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
           if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
                 .verbosity == Parameters::Verbosity::extra_verbose)
             {
-              this->pcout << "Binary search converged in .... iterations"
-                          << std::endl;
+              this->pcout << "Binary search reached tolerance in " << nb_bs_ite
+                          << " iterations" << std::endl;
             }
         }
 
