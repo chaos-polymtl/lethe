@@ -176,7 +176,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "VOF interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
       "if adaptative the sharpening threshold is determined by binary search, "
-      "to assess mass conservation of the monitored phase");
+      "to ensure mass conservation of the monitored phase");
 
     // Parameters for constant sharpening
     prm.declare_entry(

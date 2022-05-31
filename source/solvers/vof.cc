@@ -336,7 +336,7 @@ VolumeOfFluid<dim>::calculate_L2_error()
 }
 
 template <int dim>
-double
+void
 VolumeOfFluid<dim>::calculate_volume_and_mass(
   const TrilinosWrappers::MPI::Vector &solution,
   const int                            id_fluid_monitored)
@@ -354,8 +354,8 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
   std::vector<double> density_0(n_q_points);
   std::vector<double> density_1(n_q_points);
 
-  double volume        = 0;
-  this->mass_monitored = 0;
+  this->volume_monitored = 0.;
+  this->mass_monitored   = 0.;
 
   // Physical properties
   const auto density_models =
@@ -382,9 +382,10 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                     {
                       if (q_scalar_values[q] < 0.5)
                         {
-                          volume +=
+                          this->volume_monitored +=
                             fe_values_vof.JxW(q) * (1 - q_scalar_values[q]);
-                          this->mass_monitored += volume * density_0[q];
+                          this->mass_monitored +=
+                            this->volume_monitored * density_0[q];
                         }
                       break;
                     }
@@ -392,8 +393,10 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                     {
                       if (q_scalar_values[q] > 0.5)
                         {
-                          volume += fe_values_vof.JxW(q) * q_scalar_values[q];
-                          this->mass_monitored += volume * density_1[q];
+                          this->volume_monitored +=
+                            fe_values_vof.JxW(q) * q_scalar_values[q];
+                          this->mass_monitored +=
+                            this->volume_monitored * density_1[q];
                         }
                       break;
                     }
@@ -404,9 +407,10 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
             }
         }
     }
-  volume               = Utilities::MPI::sum(volume, mpi_communicator);
-  this->mass_monitored = Utilities::MPI::sum(volume, mpi_communicator);
-  return volume;
+  this->volume_monitored =
+    Utilities::MPI::sum(this->volume_monitored, mpi_communicator);
+  this->mass_monitored =
+    Utilities::MPI::sum(this->mass_monitored, mpi_communicator);
 }
 
 template <int dim>
@@ -484,7 +488,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
     {
       // Calculate volume and mass (this->mass_monitored)
       // TODO n'appeler que si sharpening constant
-      double volume = calculate_volume_and_mass(
+      calculate_volume_and_mass(
         this->present_solution,
         simulation_parameters.multiphysics.vof_parameters.conservation
           .id_fluid_monitored);
@@ -521,7 +525,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                          1);
 
           // Add volume column
-          this->table_monitoring_vof.add_value("volume_" + fluid_id, volume);
+          this->table_monitoring_vof.add_value("volume_" + fluid_id,
+                                               this->volume_monitored);
           this->table_monitoring_vof.set_scientific("volume_" + fluid_id, true);
 
           // Add mass column
@@ -586,6 +591,91 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
       if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
             .type == Parameters::SharpeningType::adaptative)
         {
+          // Useful definitions for readability
+          double st_min = this->simulation_parameters.multiphysics
+                            .vof_parameters.sharpening.sharpening_threshold_min;
+          double st_max = this->simulation_parameters.multiphysics
+                            .vof_parameters.sharpening.sharpening_threshold_max;
+          const double tol = this->simulation_parameters.multiphysics
+                               .vof_parameters.conservation.tolerance;
+          const int id_fluid_monitored =
+            this->simulation_parameters.multiphysics.vof_parameters.conservation
+              .id_fluid_monitored;
+
+          double mass_gap  = 0.;
+          int    nb_bs_ite = 0;
+          double st_ave    = 0.;
+
+          // Binary search of an interface sharpening value that would ensure
+          // mass conservation of the monitored phase (do ... while loop, see
+          // condition below)
+          do
+            {
+              nb_bs_ite++;
+
+              // Define tested sharpening threshold value
+              st_ave                     = (st_min + st_max) / 2.;
+              this->sharpening_threshold = st_ave;
+
+              // Copy the present solution
+              TrilinosWrappers::MPI::Vector solution_copy =
+                this->present_solution;
+
+              // Sharpen interface using the tested threshold value
+              sharpen_interface(solution_copy, true);
+
+              // Calculate mass of the monitored phase
+              calculate_volume_and_mass(solution_copy, id_fluid_monitored);
+
+              // Calculate mass gap, between current case and mass at first
+              // iteration
+              mass_gap = this->mass_monitored - this->mass_first_iteration;
+
+              // Adapt searching range
+              switch (id_fluid_monitored)
+                {
+                  case 0:
+                    {
+                      if (mass_gap > 0.)
+                        {
+                          // Lower the sharpening threshold to reduce the area
+                          // occupied by fluid at phase = 0
+                          st_max = st_ave;
+                        }
+                      else
+                        {
+                          // Increase the sharpening threshold to increase the
+                          // area occupied by fluid at phase = 0
+                          st_min = st_ave;
+                        }
+                      break;
+                    }
+                  case 1:
+                    {
+                      if (mass_gap > 0.)
+                        {
+                          // Increase the sharpening threshold to reduce the
+                          // area occupied by fluid at phase = 1
+                          st_min = st_ave;
+                        }
+                      else
+                        {
+                          // Lower the sharpening threshold to increase the
+                          // area occupied by fluid at phase = 1
+                          st_max = st_ave;
+                        }
+                      break;
+                    }
+                  default:
+                    throw std::runtime_error(
+                      "Unsupported number of fluids (>2)");
+                } // end switch to adapt searching range
+            }
+          while (mass_gap > tol * this->mass_first_iteration);
+          // TODO add limitation on number of iterations
+
+          this->sharpening_threshold = st_ave;
+
           if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
                 .verbosity == Parameters::Verbosity::extra_verbose)
             {

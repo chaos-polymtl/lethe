@@ -171,7 +171,7 @@ public:
    * @param id_fluid_monitored phase value (0 or 1) corresponding to
    * the phase of interest.
    */
-  double
+  void
   calculate_volume_and_mass(const TrilinosWrappers::MPI::Vector &solution,
                             const int id_fluid_monitored);
 
@@ -678,6 +678,7 @@ private:
 
   // Conservation Analysis
   TableHandler table_monitoring_vof;
+  double       volume_monitored;
   double       mass_monitored;
   double       mass_first_iteration;
 

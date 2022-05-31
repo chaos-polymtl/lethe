@@ -38,7 +38,7 @@ namespace Parameters
    *  - constant: the sharpening threshold is the same throughout the
    * simulation,
    *  - adaptative: the sharpening threshold is determined by binary search, to
-   * assess mass conservation of the monitored phase
+   * ensure mass conservation of the monitored phase
    */
   enum class SharpeningType
   {
