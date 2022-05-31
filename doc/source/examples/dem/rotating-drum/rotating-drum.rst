@@ -28,15 +28,16 @@ Parameter file
 Mesh
 ~~~~~
 
-In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details).
+In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details). The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell. Between two consecutive contact search steps, where the containing cells of the particles are updated (i.e. particles are mapped into cells), particles located close to the cell boundaries may change cells. If this situation occurs for a particle on a boundary, the particle-wall collision is calculated using the information (normal vector and location of the vertices) of the previous boundary cell. Hence, when the containing cell of the particle updates, the particle may already have a large overlap with the new cell that leads to a large contact force/velocity of the particles. We use ``expand particle-wall contact search`` to avoid this undesired situation.
 
 .. code-block:: text
 
     subsection mesh
-        set type                 				= dealii
+        set type                 				   = dealii
         set grid type      	     				= cylinder
-        set grid arguments       				= 0.12:0.18
-        set initial refinement   				= 4
+        set grid arguments       				   = 0.12:0.18
+        set initial refinement   				   = 4
+        set expand particle-wall contact search = true
     end
 
 
