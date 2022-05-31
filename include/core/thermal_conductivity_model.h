@@ -18,8 +18,8 @@
 #define lethe_thermal_conductivity_model_h
 
 #include <core/parameters.h>
+#include <core/phase_change.h>
 #include <core/physical_property_model.h>
-#include <core/specific_heat_model.h>
 
 /**
  * @brief ThermalConductivityModel. Abstract class that allows to calculate the
