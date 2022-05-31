@@ -29,13 +29,14 @@ Parameter file
 Mesh
 ~~~~~
 
-Contrary to previous examples, in this example, we use a mesh generated using Gmsh. The Gmsh (with an extension of .msh) file is located inside the example folder.
+Contrary to previous examples, in this example, we use a mesh generated using Gmsh. The Gmsh (with an extension of .msh) file is located inside the example folder. ``check diamond cells`` enables searching for diamond-shaped boundary cells and adding them to particle-wall contact search cells.
 
 .. code-block:: text
 
     subsection mesh
-        set type 		= gmsh
-        set file name	= ./silo_Golshan.msh
+        set type 		         = gmsh
+        set file name	          = ./silo_Golshan.msh
+        set check diamond cells	= true
     end
 
 

@@ -33,15 +33,16 @@ The parameter file of packing in ball example is very similar to packing in circ
 Mesh
 ~~~~~
 
-In a three-dimensional simulation, ``hyper_ball`` creates a three-dimensional ball (hollow sphere). Note that the first grid argument, which is the center of the triangulation, has three components (0.0, 0.0, 0.0).
+In a three-dimensional simulation, ``hyper_ball`` creates a three-dimensional ball (hollow sphere). Note that the first grid argument, which is the center of the triangulation, has three components (0.0, 0.0, 0.0). The ``expand particle-wall contact search`` is used in concave geometries to enable particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell.
 
 .. code-block:: text
 
     subsection mesh
-        set type                 			 	= dealii
+        set type                 			 	  = dealii
         set grid type      	     			 	= hyper_ball
-        set grid arguments       				= 0.0, 0.0, 0.0 : 0.1 : false
-        set initial refinement   				= 3
+        set grid arguments       				   = 0.0, 0.0, 0.0 : 0.1 : false
+        set initial refinement   				   = 3
+        set expand particle-wall contact search = true
     end
 
 

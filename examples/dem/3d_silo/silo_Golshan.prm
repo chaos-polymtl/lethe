@@ -81,8 +81,9 @@ end
 # Mesh
 #---------------------------------------------------
 subsection mesh
-	set type = gmsh
-	set file name = ./silo_Golshan.msh
+	set type 		= gmsh
+	set file name 		= ./silo_Golshan.msh
+	set check diamond cells	= true
 end
 
 #---------------------------------------------------
