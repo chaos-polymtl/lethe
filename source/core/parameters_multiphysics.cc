@@ -133,6 +133,12 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
       "1",
       Patterns::Integer(),
       "Index of the fluid which conservation is monitored <0|1>");
+
+    prm.declare_entry(
+      "tolerance",
+      "1e-3",
+      Patterns::Double(),
+      "Tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening");
   }
   prm.leave_subsection();
 }
@@ -148,6 +154,7 @@ Parameters::VOF_MassConservation::parse_parameters(ParameterHandler &prm)
       prm.get_bool("skip mass conservation in fluid 1");
     monitoring         = prm.get_bool("monitoring");
     id_fluid_monitored = prm.get_integer("fluid monitored");
+    tolerance          = prm.get_double("tolerance");
   }
   prm.leave_subsection();
 }
@@ -163,10 +170,33 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
                       "Enable interface sharpening <true|false>");
 
     prm.declare_entry(
+      "type",
+      "constant",
+      Patterns::Selection("constant|adaptative"),
+      "VOF interface sharpening type, "
+      "if constant the sharpening threshold is the same throughout the simulation, "
+      "if adaptative the sharpening threshold is determined by binary search, "
+      "to assess mass conservation of the monitored phase");
+
+    // Parameters for constant sharpening
+    prm.declare_entry(
       "sharpening threshold",
       "0.5",
       Patterns::Double(),
-      "VOF interface sharpening threshold that represents the mass conservation level");
+      "Interface sharpening threshold that represents the mass conservation level");
+
+    // Parameters for adaptative sharpening
+    prm.declare_entry(
+      "sharpening threshold min",
+      "0.45",
+      Patterns::Double(),
+      "Minimum interface sharpening threshold considered in the binary search algorithm");
+
+    prm.declare_entry(
+      "sharpening threshold max",
+      "0.55",
+      Patterns::Double(),
+      "Maximum interface sharpening threshold considered in the binary search algorithm");
 
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.
@@ -179,10 +209,11 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
                       "10",
                       Patterns::Integer(),
                       "VOF interface sharpening frequency");
+
     prm.declare_entry(
       "verbosity",
       "quiet",
-      Patterns::Selection("quiet|verbose"),
+      Patterns::Selection("quiet|verbose|extra verbose"),
       "State whether from the interface sharpening calculations should be printed "
       "Choices are <quiet|verbose>.");
   }
@@ -195,21 +226,38 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("interface sharpening");
   {
     enable               = prm.get_bool("enable");
-    sharpening_threshold = prm.get_double("sharpening threshold");
     interface_sharpness  = prm.get_double("interface sharpness");
     sharpening_frequency = prm.get_integer("sharpening frequency");
 
+    // Sharpening type
+    const std::string t = prm.get("type");
+    if (t == "constant")
+      type = Parameters::SharpeningType::constant;
+    if (t == "adaptative")
+      type = Parameters::SharpeningType::adaptative;
+
+    // Parameters for constant sharpening
+    sharpening_threshold = prm.get_double("sharpening threshold");
+
+    // Parameters for adaptative sharpening
+    sharpening_threshold_min = prm.get_double("sharpening threshold min");
+    sharpening_threshold_max = prm.get_double("sharpening threshold max");
+
+    // Error definitions
     Assert(sharpening_threshold > 0.0 && sharpening_threshold < 1.0,
            SharpeningThresholdError(sharpening_threshold));
 
     Assert(sharpening_frequency > 0,
            SharpeningFrequencyError(sharpening_frequency));
 
+    // Verbosity
     const std::string op = prm.get("verbosity");
     if (op == "verbose")
       verbosity = Parameters::Verbosity::verbose;
     else if (op == "quiet")
       verbosity = Parameters::Verbosity::quiet;
+    else if (op == "extra verbose")
+      verbosity = Parameters::Verbosity::extra_verbose;
     else
       throw(std::runtime_error("Invalid verbosity level"));
   }

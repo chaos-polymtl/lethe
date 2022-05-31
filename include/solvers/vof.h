@@ -519,12 +519,14 @@ private:
    *
    * @param solution VOF solution (phase fraction)
    *
-   * @param test boolean true if the sharpening is a test to determine the sharpening threshold
-   * by binary search (sharpening on a copy of the present solution only), false
-   * for the real sharpening (on the present and past solutions)
+   * @param sharpen_previous_solutions boolean true for sharpening applied on the present
+   * and past solutions (then solution is this->present_solution),
+   * false if the sharpening is applied on the given solution vector only, used
+   * to determine the sharpening threshold by binary search.
    */
   void
-  sharpen_interface(TrilinosWrappers::MPI::Vector &solution, const bool test);
+  sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
+                    const bool                     sharpen_previous_solutions);
 
   /**
    * @brief Carries out finding the gradients of phase fraction. Obtained gradients of phase

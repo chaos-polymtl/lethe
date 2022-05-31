@@ -495,9 +495,10 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
       if (this_mpi_process == 0)
         {
-          // TODO voir si à déplacer
           if (first_iteration)
             {
+              // TODO trigger error if sharpening by binary search and
+              // monitoring disabled
               this->mass_first_iteration = this->mass_monitored;
             }
 
@@ -576,12 +577,23 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
       0)
     {
       if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .verbosity == Parameters::Verbosity::verbose)
+            .verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "Sharpening interface at step "
                       << this->simulation_control->get_step_number()
                       << std::endl;
         }
+      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+            .type == Parameters::SharpeningType::adaptative)
+        {
+          if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+                .verbosity == Parameters::Verbosity::extra_verbose)
+            {
+              this->pcout << "Binary search converged in .... iterations"
+                          << std::endl;
+            }
+        }
+
       // Sharpen the interface of all solutions (present and previous)
       sharpen_interface(this->present_solution, false);
     }
@@ -590,11 +602,11 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
 template <int dim>
 void
 VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
-                                      const bool                     test)
+                                      const bool sharpen_previous_solutions)
 {
   // Limit the phase fractions between 0 and 1
   update_solution_and_constraints(solution);
-  if (not test)
+  if (not sharpen_previous_solutions)
     {
       for (unsigned int p = 0; p < previous_solutions.size(); ++p)
         update_solution_and_constraints(previous_solutions[p]);
@@ -604,7 +616,7 @@ VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
   assemble_L2_projection_interface_sharpening(solution);
   solve_interface_sharpening(solution);
 
-  if (not test)
+  if (not sharpen_previous_solutions)
     {
       for (unsigned int p = 0; p < previous_solutions.size(); ++p)
         {
@@ -616,7 +628,7 @@ VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
   // Re limit the phase fractions between 0 and 1 after interface
   // sharpening
   update_solution_and_constraints(solution);
-  if (not test)
+  if (not sharpen_previous_solutions)
     {
       for (unsigned int p = 0; p < previous_solutions.size(); ++p)
         update_solution_and_constraints(previous_solutions[p]);

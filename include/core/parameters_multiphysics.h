@@ -34,6 +34,18 @@ using namespace dealii;
 
 namespace Parameters
 {
+  /** @brief Class to account for different sharpening type:
+   *  - constant: the sharpening threshold is the same throughout the
+   * simulation,
+   *  - adaptative: the sharpening threshold is determined by binary search, to
+   * assess mass conservation of the monitored phase
+   */
+  enum class SharpeningType
+  {
+    constant,
+    adaptative
+  };
+
   /**
    * @brief Defines the subparameters for free surface peeling/wetting mechanism.
    * Has to be declared before member creation in VOF structure.
@@ -98,6 +110,10 @@ namespace Parameters
     bool monitoring;
     int  id_fluid_monitored;
 
+    // Conservation tolerance on the fluid monitored,
+    // used with adaptative Sharpening
+    double tolerance;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -123,9 +139,19 @@ namespace Parameters
 
     bool enable;
 
+    Parameters::SharpeningType type;
+
+    // Parameters for constant sharpening
     double sharpening_threshold;
+
+    // Parameters for adaptative sharpening
+    double sharpening_threshold_min;
+    double sharpening_threshold_max;
+
+    // Other sharpening parameters
     double interface_sharpness;
     int    sharpening_frequency;
+
     // Type of verbosity for the interface sharpening calculation
     Parameters::Verbosity verbosity;
 
