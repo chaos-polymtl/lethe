@@ -1712,7 +1712,7 @@ BuoyancyAssembly<dim>::assemble_rhs(
       // Current temperature values
       double current_temperature = scratch_data.temperature_values[q];
 
-      strong_residual[q] += -force * thermal_expansion * current_temperature;
+      strong_residual[q] += force * thermal_expansion * current_temperature;
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -1720,8 +1720,8 @@ BuoyancyAssembly<dim>::assemble_rhs(
           const auto phi_u_i = scratch_data.phi_u[q][i];
 
           // Laplacian on the velocity terms
-          local_rhs(i) +=
-            -force * thermal_expansion * current_temperature * phi_u_i * JxW;
+          local_rhs(i) -=
+            force * thermal_expansion * current_temperature * phi_u_i * JxW;
         }
     }
 }

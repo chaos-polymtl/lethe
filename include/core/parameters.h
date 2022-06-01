@@ -185,6 +185,12 @@ namespace Parameters
     // Thermal conductivity solid - Units in W/(m*K)
     double thermal_conductivity_s;
 
+    // Thermal expansion coefficient liquid - Units in 1/K
+    double thermal_expansion_l;
+
+    // Thermal expansion coefficient solid - Units in 1/K
+    double thermal_expansion_s;
+
     // kinematic viscosity liquid - Units in m^2/(s)
     double viscosity_l;
 
@@ -314,6 +320,12 @@ namespace Parameters
       linear,
       phase_change
     } thermal_conductivity_model;
+
+    enum class ThermalExpansionModel
+    {
+      constant,
+      phase_change
+    } thermal_expansion_model;
 
     // Linear thermal conductivity parameters : k = k_A0 + k_A1 * T
     double k_A0;
