@@ -17,6 +17,7 @@
 #ifndef lethe_thermal_expansion_model_h
 #define lethe_thermal_expansion_model_h
 
+#include <core/phase_change.h>
 #include <core/physical_property_model.h>
 
 /**
@@ -108,6 +109,119 @@ public:
 
 private:
   const double thermal_expansion;
+};
+
+/**
+ * @brief ThermalExpansionPhaseChange Implements a phase-dependant thermal expansion coefficient
+ */
+class ThermalExpansionPhaseChange : public ThermalExpansionModel
+{
+public:
+  /**
+   * @brief Default constructor
+   */
+  ThermalExpansionPhaseChange(const Parameters::PhaseChange phase_change_params)
+    : p_phase_change_params(phase_change_params)
+  {
+    this->model_depends_on[field::temperature] = true;
+  }
+
+  /**
+   * @brief value Calculates the value of the thermal expansion coefficient
+   * @param fields_value Value of the various field on which the thermal expansion coefficient depends.
+   * @return value of the thermal expansion coefficient calculated with the fields_value.
+   */
+  double
+  value(const std::map<field, double> &fields_value) override
+  {
+    double thermal_expansion;
+    // Thermal expansion of solid phase
+    if (fields_value.at(field::temperature) < p_phase_change_params.T_solidus)
+      thermal_expansion = p_phase_change_params.thermal_expansion_s;
+    // Thermal expansion coefficient of liquid phase
+    else if (fields_value.at(field::temperature) >
+             p_phase_change_params.T_liquidus)
+      thermal_expansion = p_phase_change_params.thermal_expansion_l;
+    // Mean value of the thermal expansion coefficients of the solid and liquid
+    // phases
+    else
+      {
+        const double l_frac =
+          calculate_liquid_fraction(fields_value.at(field::temperature),
+                                    p_phase_change_params);
+
+        thermal_expansion =
+          p_phase_change_params.thermal_expansion_l * l_frac +
+          p_phase_change_params.thermal_expansion_s * (1. - l_frac);
+      }
+
+    return thermal_expansion;
+  };
+
+  /**
+   * @brief vector_value Calculates the vector value of thermal expansion coefficients
+   * @param field_vectors Vector of properties on which the thermal expansion coefficients depend
+   * @param property_vector Values of the thermal expansion coefficients
+   */
+  void
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
+               std::vector<double> &property_vector) override
+  {
+    const std::vector<double> &T = field_vectors.at(field::temperature);
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      {
+        // Thermal expansion of solid phase
+        if (T[i] < p_phase_change_params.T_solidus)
+          property_vector[i] = p_phase_change_params.thermal_expansion_s;
+        // Thermal expansion of liquid phase
+        else if (T[i] > p_phase_change_params.T_liquidus)
+          property_vector[i] = p_phase_change_params.thermal_expansion_l;
+        else
+          {
+            const double l_frac =
+              calculate_liquid_fraction(T[i], p_phase_change_params);
+
+            property_vector[i] =
+              p_phase_change_params.thermal_expansion_l * l_frac +
+              p_phase_change_params.thermal_expansion_s * (1. - l_frac);
+          }
+      }
+  };
+
+  /**
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the thermal expansion with respect to a field
+   * @param field_values Value of the various fields on which the property may depend.
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated
+   * @return value of the partial derivative of the thermal expansion with respect to the field.
+   */
+
+  double
+  jacobian(const std::map<field, double> &field_values, field id) override
+  {
+    if (id == field::temperature)
+      return this->numerical_jacobian(field_values, field::temperature);
+    else
+      return 0;
+  };
+
+  /**
+   * @brief vector_jacobian Calculate the derivative of the thermal expansion with respect to a field
+   * @param field_vectors Vector for the values of the fields used to evaluate the property
+   * @param id Identifier of the field with respect to which a derivative should be calculated
+   * @param jacobian Vector of the value of the derivative of the thermal expansion with respect to the field id
+   */
+
+  void
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) override
+  {
+    vector_numerical_jacobian(field_vectors, id, jacobian_vector);
+  };
+
+private:
+  Parameters::PhaseChange p_phase_change_params;
 };
 
 #endif
