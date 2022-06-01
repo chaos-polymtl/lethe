@@ -1373,7 +1373,7 @@ CFDDEMSolver<dim>::solve()
             refine_mesh();
           this->vertices_cell_mapping();
           this->calculate_void_fraction(
-            this->simulation_control->get_current_time());
+            this->simulation_control->get_current_time(), load_balance_step);
           this->iterate();
         }
 

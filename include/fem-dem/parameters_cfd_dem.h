@@ -44,7 +44,8 @@ namespace Parameters
   {
     function,
     pcm, // The particle centered method
-    qcm  // The quadratured centered method
+    qcm, // The quadratured centered method
+    spm  // The satellite point method (divided approach)
   };
 
   enum class DragModel
@@ -88,6 +89,7 @@ namespace Parameters
     double                         l2_smoothing_factor;
     double                         l2_lower_bound;
     double                         l2_upper_bound;
+    unsigned int                   particle_refinement_factor;
   };
 
   struct CFDDEM
