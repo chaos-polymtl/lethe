@@ -2,7 +2,7 @@
 Resolved CFD-DEM
 ***********************************************
 
-This subsection contains the parameters related to the resolved CFD-DEM around particles using a sharp interface immersed boundary method. This part of the parameter file concerns the usage of ``gls_sharp_navier_stokes_2d`` or ``gls_sharp_navier_stokes_3d``. These solvers can also be used to simulate the flow around static particles. In that case, using this solver eliminates the need to define a conformal mesh for the fluid between the particles.
+This subsection contains the parameters related to the resolved CFD-DEM around particles using a **sharp interface immersed boundary method**. This part of the parameter file concerns the usage of ``gls_sharp_navier_stokes_2d`` or ``gls_sharp_navier_stokes_3d``. These solvers can also be used to simulate the flow around static particles. In that case, using this solver eliminates the need to define a conformal mesh for the fluid between the particles.
 
 .. code-block:: text
 
@@ -64,7 +64,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of the underlying FEM scheme. We suggest using same order as the velocity field in most cases since it lowers the condition number of the matrix.
 
-* The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial. The length ratio should be kept as small as possible and above 1. A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme. For example, for Q1 elements with an average aspect ratio of one, the length ratio should be set to 2.
+* The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial (see `this article <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_ for more details). The length ratio should be kept as small as possible. When using a cartesian homogenous mesh (structured grid), the length ratio should be 1.
 
 * The ``assemble Navier-Stokes inside particles`` parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier-Stokes equations are not solved (the parameter is false), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure. 
 
@@ -74,17 +74,25 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
 
-* The ``initial refinement`` parameter controls how many time the refinement zone around each of the particle is applied before the simulation starts. Each application of the refinement zone reduces the size of the elements by a factor two.
+To sharpen the immersed boundary of each particles, a layer of cells around the immersed boundary can be refined forming a hypershell of refined cells.
+
+* The ``refine mesh inside radius factor`` parameter defines the inside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6. 
+
+* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3. 
+
+.. warning::
+	When you want to use the hypershell refinement zone around particles, the mesh adaptation type used must be ``kelly``, otherwise no hypershell refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
+
+.. note::
+	The refined cells are all those for which at least one of the degrees of freedom (dof) location satisfies both the ``refine mesh inside radius factor`` and the ``refine mesh outside radius factor`` thresholds. Each application of the refinement zone reduces the size of the elements by a factor two.
+
+.. note::
+	This hypershell zone will systematically be refined at each refinement step until reaching the ``max refinement level`` parameter in :doc:`../cfd/mesh_adaptation_control`.
+
+* The ``initial refinement`` parameter controls the number the refinement occurs in the hypershell refinement zone around each of the particle before the simulation starts. 
 
 .. note::
 	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
-
-* The ``refine mesh inside radius factor`` parameter defines the inside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6. 
-
-* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hyper shell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3. 
-
-.. warning::
-	When you want to use the hypershell refinement zone around particles, the mesh adaptation type used needs to be ``kelly``, otherwise no hypershell refinement will happen. :doc:`../cfd/mesh_adaptation_control`
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles remain static.  If ``ìntegrate motion=true`` the position and the velocity will be defined by the particles' position and velocity function.
 
@@ -154,7 +162,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 Box refinement
 ---------------------
-For a particle to be accounted for in the fluid mesh, the particle has to overlap one or more degrees of freedom (dof) on a wall of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls.
+For a particle to be accounted for in the fluid mesh, it has to overlap one or more vertices on a wall of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls.
 To avoid this, you can specify a region in the fluid domain where you want the mesh to be finer. To do so, a box refinement can be added with the following example parameters:
 
 .. code-block:: text
@@ -169,12 +177,22 @@ To avoid this, you can specify a region in the fluid domain where you want the m
 		set initial refinement   = 3
 	end
 
-* The ``mesh`` subsection is necessary to define the region in which the fluid mesh needs to be refined. A cell in the fluid mesh will be refined if at least one of its dofs is located within the outer boundaries of the box. Therefore, in this example, for every cell of the fluid mesh that has at least one of its dofs located in the cube located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. 
+* The ``mesh`` subsection allows to define the region in which the fluid mesh needs to be refined. A cell in the fluid mesh will be refined if at least one of its dofs is located within the outer boundaries of the box. Therefore, in this example, for every cell of the fluid mesh that has at least one of its dofs located in the cube located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. 
 
 .. note::
 	The initial refinement of the ``subdivided_hyper_rectangle`` will not have any impact on the refinement of the fluid mesh, since only its shape and outer walls location are taken into account.
 
 * The ``initial refinement`` parameter in the ``box refinement`` subsection will dictate the number of times the fluid mesh cells inside the box will be refined. 
+
+
+Mesh refinement
+---------------------
+The mesh is refined on multiple occasions during the simulations, and it can me slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The one that occurs first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection. 
+The second refinement occuring is inside the **box refinement zone**, set by the ``initial refinement`` in the ``box refinement`` subsection. Lastly, the **particle hypershell zone** is refined, defnied by the ``initial refinement`` parameter in the ``particles`` subsection.
+Therefore, the hypershell zone around each particle is refined ``mesh``:``initial refinement`` + ``box``:``initial refinement`` + ``particle``:``initial refinement`` times before the simulations starts.
+
+.. note::
+	If the ``max refinement level`` parameter in the ``adaptation condtrol`` subsection is smaller than the summation of all initial refinement parameters, no cell can be refined more than ``max refinement level``. Note that it does not mean that the refinement stops, meaning that there can be other cells that are refined to the ``max refinement level``, but no cell can be refined more than this. 
 
 Reference
 ---------------
