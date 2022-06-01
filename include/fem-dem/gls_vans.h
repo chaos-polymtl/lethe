@@ -39,6 +39,7 @@
 
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/particles/generators.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/property_pool.h>
 
@@ -81,7 +82,10 @@ private:
   particle_centered_method();
 
   void
-  quadrature_centered_sphere_method();
+  quadrature_centered_sphere_method(bool load_balance_step);
+
+  void
+  satellite_point_method();
 
   void
   solve_L2_system_void_fraction();
@@ -112,7 +116,7 @@ protected:
   initialize_void_fraction();
 
   void
-  calculate_void_fraction(const double time);
+  calculate_void_fraction(const double time, bool load_balance_step);
 
   void
   vertices_cell_mapping();

@@ -10,7 +10,7 @@ namespace Parameters
     prm.declare_entry(
       "mode",
       "function",
-      Patterns::Selection("function|pcm|qcm"),
+      Patterns::Selection("function|pcm|qcm|spm"),
       "Choose the method for the calculation of the void fraction");
     prm.enter_subsection("function");
     void_fraction.declare_parameters(prm, 1);
@@ -40,6 +40,11 @@ namespace Parameters
                       "1",
                       Patterns::Double(),
                       "The upper bound for void fraction L2 projection");
+    prm.declare_entry(
+      "particle refinement factor",
+      "0",
+      Patterns::Double(),
+      "The refinement factor used to calculate the number of pseudo-particles in the satellite point method");
     prm.leave_subsection();
   }
 
@@ -55,18 +60,21 @@ namespace Parameters
       mode = Parameters::VoidFractionMode::pcm;
     else if (op == "qcm")
       mode = Parameters::VoidFractionMode::qcm;
+    else if (op == "spm")
+      mode = Parameters::VoidFractionMode::spm;
     else
       throw(std::runtime_error("Invalid voidfraction model"));
     prm.enter_subsection("function");
     void_fraction.parse_parameters(prm);
     prm.leave_subsection();
 
-    read_dem            = prm.get_bool("read dem");
-    bound_void_fraction = prm.get_bool("bound void fraction");
-    dem_file_name       = prm.get("dem file name");
-    l2_smoothing_factor = prm.get_double("l2 smoothing factor");
-    l2_lower_bound      = prm.get_double("l2 lower bound");
-    l2_upper_bound      = prm.get_double("l2 upper bound");
+    read_dem                   = prm.get_bool("read dem");
+    bound_void_fraction        = prm.get_bool("bound void fraction");
+    dem_file_name              = prm.get("dem file name");
+    l2_smoothing_factor        = prm.get_double("l2 smoothing factor");
+    l2_lower_bound             = prm.get_double("l2 lower bound");
+    l2_upper_bound             = prm.get_double("l2 upper bound");
+    particle_refinement_factor = prm.get_integer("particle refinement factor");
     prm.leave_subsection();
   }
 
