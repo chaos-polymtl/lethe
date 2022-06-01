@@ -147,6 +147,7 @@ namespace Parameters
     // Parameters for adaptative sharpening
     double sharpening_threshold_min;
     double sharpening_threshold_max;
+    int    max_iterations;
 
     // Other sharpening parameters
     double interface_sharpness;

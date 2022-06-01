@@ -198,6 +198,12 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Maximum interface sharpening threshold considered in the binary search algorithm");
 
+    prm.declare_entry(
+      "max iterations",
+      "5",
+      Patterns::Integer(),
+      "Maximum number of iteration in the binary search algorithm");
+
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.
     prm.declare_entry(
@@ -242,6 +248,7 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
     // Parameters for adaptative sharpening
     sharpening_threshold_min = prm.get_double("sharpening threshold min");
     sharpening_threshold_max = prm.get_double("sharpening threshold max");
+    max_iterations           = prm.get_double("max iterations");
 
     // Error definitions
     Assert(sharpening_threshold > 0.0 && sharpening_threshold < 1.0,
