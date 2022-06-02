@@ -1,6 +1,6 @@
 #############################################################################
 """
-Postprocessing code for melting_cavity_with_natural_convection example
+Postprocessing code for melting_cavity example
 
 """
 #############################################################################
@@ -39,13 +39,13 @@ list_vtu = [x for x in list_vtu if "pvd" not in x ]
 list_vtu = [x for x in list_vtu if "pvtu" not in x ]
 
 #Create a list of time_steps
-data = pd.read_csv("output5/melting.pvd",sep='"',header=5, usecols=[1],skiprows=[38,39]) 
+data = pd.read_csv("output/melting.pvd",sep='"',header=5, usecols=[1],skiprows=[38,39]) 
 data.columns = ["a"] 
 time_list = data['a']
 print(data['a'])
 
 #Set temperature_threshold to search for liquid-solid interface
-T_threshold = 105.15
+T_threshold = 105.05
 
 #Sort list
 time_list, list_vtu = (list(t) for t in zip(*sorted(zip(time_list, list_vtu))))

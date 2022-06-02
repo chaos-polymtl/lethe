@@ -37,7 +37,7 @@ The melting of metals (gallium in this example) with natural convection within a
 A two-dimensional block of gallium (initially in solid phase) is heated from its left wall at :math:`t = 0`. Its initial temperature is close to (but slightly smaller than) the melting point and the temperature of the left wall is higher than the melting point. Hence, the block starts melting from the left wall. In the melted zone, close to the left wall, the buoyant force (natural convection) creates vortices inside the liquid. The corresponding parameter file is 
 ``melting_cavity.prm``.
 
-The simulation parameters are selected according to the references [1, 2] to satisfy the desired conditions for dimensionless numbers
+The simulation parameters are selected according to the references [1, 2] to satisfy the desired values for the dimensionless numbers
     .. math::
         \text{Ra} = \frac{\rho^2 \beta g (T_w - T_m) L^3}{k \mu} = 10^5
 
@@ -47,7 +47,7 @@ The simulation parameters are selected according to the references [1, 2] to sat
     .. math::
         \text{St}_l = \frac{c_p (T_w - T_m)}{\lambda} = 0.041
 
-where :math:`\rho` is the fluid density, :math:`\beta` denotes the thermal expansion coefficient, :math:`g` is the magnitude of gravitational acceleration, :math:`T_w` and :math:`T_m` are hot wall temperature and melting point temperature, :math:`L` denotes the characteristic length, :math:`k` is thermal conduction coefficient, and :math:`\mu` and :math:`\nu` are dynamic and kinematic viscosities, :math:`c_p` is specific thermal capacity, and :math:`\lambda` is the enthalpy of melting.
+where :math:`\rho` is the fluid density, :math:`\beta` denotes the thermal expansion coefficient, :math:`g` is the magnitude of gravitational acceleration, :math:`T_w` and :math:`T_m` are the hot wall and the melting point temperatures, :math:`L` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, and :math:`\mu` and :math:`\nu` are the dynamic and kinematic viscosities, :math:`c_p` is the specific thermal capacity, and :math:`\lambda` is the enthalpy of melting.
 
 .. note:: 
     All the four boundary conditions are ``noslip``, and an external 
@@ -102,7 +102,7 @@ The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` th
     end 
     
 
-In the ``initial condition``, the initial velocity and initial temperature in the simulation domain are defined. The initial velocity is equal to zero as the block is in the solid phase at :math:`t = 0`. The initial temperature is chosen slightly (0.1 :math:`^{\circ} C`) smaller than the melting point temperature.
+In the ``initial condition``, the initial velocity and initial temperature in the simulation domain are defined. The initial velocity is equal to zero as the block is in the solid phase at :math:`t = 0` s. The initial temperature is chosen slightly (0.1 :math:`^{\circ} C`) smaller than the melting point temperature.
 
 .. code-block:: text
 
@@ -133,7 +133,7 @@ The ``source term`` subsection defines the gravitational acceleration. The value
         end
     end
 
-The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of St dimensionless number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit :doc:`Stefan problem <../stefan_problem/stefan_problem>` example. The viscosity of the solid phase is chosen :math:`\approx = 10000` times larger than the viscosity of the liquid phase.
+The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of St dimensionless number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan_problem/stefan_problem>` example. The viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the viscosity of the liquid phase.
 
 
 .. code-block:: text
