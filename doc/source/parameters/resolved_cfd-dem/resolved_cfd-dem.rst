@@ -168,7 +168,7 @@ To avoid this, you can specify a region in the fluid domain where you want the m
 .. code-block:: text
 
 	subsection  box refinement
-		subsection 
+		subsection mesh
 			set type                 = dealii
 			set grid type            = subdivided_hyper_rectangle
 			set grid arguments       = 2,2,2: -1,-1,-1 : 1,1,1 : true
