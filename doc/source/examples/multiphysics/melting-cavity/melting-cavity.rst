@@ -14,7 +14,7 @@ Features
 - Phase change (solid-liquid)
 - Buoyant force (natural convection)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
-- The use of a python script for post-processing data
+- Usage of a python script for post-processing data
 
 
 ------------------------
