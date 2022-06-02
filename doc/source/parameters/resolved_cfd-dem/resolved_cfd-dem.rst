@@ -187,7 +187,7 @@ To avoid this, you can specify a region in the fluid domain where you want the m
 
 Mesh refinement
 ---------------------
-The mesh is refined on multiple occasions during the simulations, and it can me slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The one that occurs first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection. 
+The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The one that occurs first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection. 
 The second refinement occuring is inside the **box refinement zone**, set by the ``initial refinement`` in the ``box refinement`` subsection. Lastly, the **particle hypershell zone** is refined, defined by the ``initial refinement`` parameter in the ``particles`` subsection.
 Therefore, the hypershell zone around each particle is refined ``mesh``:``initial refinement`` + ``box``:``initial refinement`` + ``particle``:``initial refinement`` times before the simulations starts.
 
