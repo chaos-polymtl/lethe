@@ -4,7 +4,7 @@ Melting Cavity
 
 This example simulates a `two-dimensional gallium melting cavity`_. 
 
-.. _two-dimensional gallium melting cavity: https://asmedigitalcollection.asme.org/heattransfer/article/108/1/174/414516/Melting-and-Solidification-of-a-Pure-Metal-on-a
+.. _two-dimensional gallium melting cavity: https://www.sciencedirect.com/science/article/pii/S0045793018301415
 
 
 ----------------------------------
@@ -34,8 +34,17 @@ The melting of metals (gallium in this example) with natural convection within a
     :align: center
     :width: 400
 
-A two-dimensional block of gallium (initially in solid phase) is heated from its left wall at :math:`t = 0`. Its initial temperature is close to (but slightly smaller than) the melting point and the temperature of the left wall is higher than the melting point. Hence, the block starts melting from the left wall. In the melted zone, close to the left wall, the buoyant force (natural convection) creates vortices inside the liquid. The corresponding parameter file is 
-``melting_cavity.prm``.
+
+The incompressible Navier-Stokes equations with a Boussinesq approximation for the buoyant force are:
+    .. math::
+        \nabla \cdot {\bf{u}} = 0
+
+    .. math::
+        \rho \frac{\partial {\bf{u}}}{\partial t} + \rho ({\bf{u}} \cdot \nabla) {\bf{u}} = -\nabla p + \nabla \cdot {\bf{\tau}} - \rho \beta {\bf{g}} (T - T_0)
+
+where :math:`\beta` and :math:`T_0` denote thermal expansion coefficient and a reference temperature, respectively.
+
+A two-dimensional block of gallium (initially in solid phase) is heated from its left wall at :math:`t = 0` s. Its initial temperature is close to (but slightly smaller than) the melting point and the temperature of the left wall is higher than the melting point. Hence, the block starts melting from the left wall. In the melted zone, close to the left wall, the buoyant force (natural convection) creates vortices inside the liquid.
 
 The simulation parameters are selected according to the references [1, 2] to satisfy the desired values for the dimensionless numbers
     .. math::
@@ -79,7 +88,6 @@ time step of :math:`0.1` seconds.
         set time end                		= 40000
         set time step               		= 0.1
         set max cfl		      		    = 0.5
-        set stop tolerance          		= 1e-5
         set adaptative time step scaling 	= 1.3
         set output name             		= melting
         set output control               	= time
@@ -133,7 +141,7 @@ The ``source term`` subsection defines the gravitational acceleration. The value
         end
     end
 
-The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of St dimensionless number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan_problem/stefan_problem>` example. The viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the viscosity of the liquid phase.
+The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of Stefan number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan_problem/stefan_problem>` example. The viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the viscosity of the liquid phase.
 
 
 .. code-block:: text
