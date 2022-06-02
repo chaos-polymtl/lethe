@@ -60,7 +60,7 @@ where :math:`\rho` is the fluid density, :math:`\beta` denotes the thermal expan
 
 .. note:: 
     All the four boundary conditions are ``noslip``, and an external 
-    gravity field of :math:`-0.00516` is applied in the y direction. For the heat transfer boundary conditions the temperatures of the left (:math:`T_l = 108 ^{\circ} C`) and the right (:math:`T_l = 104.9 ^{\circ} C`) walls are defined.
+    gravity field of :math:`-0.00516` is applied in the :math:`y` direction. For the heat transfer boundary conditions the temperatures of the left (:math:`T_l = 108 ^{\circ} C`) and the right (:math:`T_l = 104.9 ^{\circ} C`) walls are defined.
 
 
 --------------
@@ -69,7 +69,7 @@ Parameter file
 
 Time integration is handled by a 2nd order backward differentiation scheme 
 `(bdf2)`, for a :math:`40000` s simulation time with an initial 
-time step of :math:`0.1` seconds.
+time step of :math:`0.1` second.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
@@ -84,15 +84,15 @@ time step of :math:`0.1` seconds.
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-        set method                  		= bdf2
-        set time end                		= 40000
-        set time step               		= 0.1
-        set max cfl		      		    = 0.5
-        set adaptative time step scaling 	= 1.3
-        set output name             		= melting
-        set output control               	= time
-        set output time                  	= 100
-        set output path                  	= ./output/      
+        set method                          = bdf2
+        set time end                        = 40000
+        set time step                       = 0.1
+        set max cfl                         = 0.5
+        set adaptative time step scaling    = 1.3
+        set output name                     = melting
+        set output control                  = time
+        set output time                     = 100
+        set output path                     = ./output/      
     end
 
 
@@ -105,8 +105,8 @@ The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` th
     #---------------------------------------------------
     subsection multiphysics
         set heat transfer  		= true
-	    set buoyancy force 		= true
-	    set fluid dynamics 		= true
+        set buoyancy force 		= true
+        set fluid dynamics 		= true
     end 
     
 
@@ -185,7 +185,6 @@ The solid block melts into liquid in this example, hence in the ``physical prope
               # viscosity of the solid phase
               set viscosity solid  		= 0.008
             end
-        
           end
       end
 
