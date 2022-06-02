@@ -91,7 +91,6 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 
 * The ``initial refinement`` parameter controls the number of refinement cycles in the hypershell refinement zone around every particle before the simulation starts. 
 
-.. note::
 	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles remain static.  If ``ìntegrate motion=true`` the position and the velocity will be defined by the particles' position and velocity function.
