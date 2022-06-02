@@ -89,7 +89,7 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 .. note::
 	This hypershell zone will systematically be refined at each refinement step until reaching the ``max refinement level`` parameter in :doc:`../cfd/mesh_adaptation_control`.
 
-* The ``initial refinement`` parameter controls the number the refinement occurs in the hypershell refinement zone around each of the particle before the simulation starts. 
+* The ``initial refinement`` parameter controls the number of refinement cycles in the hypershell refinement zone around every particle before the simulation starts. 
 
 .. note::
 	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
