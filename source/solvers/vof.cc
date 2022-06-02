@@ -567,7 +567,14 @@ VolumeOfFluid<dim>::modify_solution()
   // Interface sharpening
   if (vof_parameters.sharpening.enable)
     {
-      handle_interface_sharpening();
+      // Interface sharpening is done at a constant frequency
+      if (this->simulation_control->get_step_number() %
+            this->simulation_parameters.multiphysics.vof_parameters.sharpening
+              .sharpening_frequency ==
+          0)
+        {
+          handle_interface_sharpening();
+        }
     }
 
   if (vof_parameters.surface_tension_force.enable)
@@ -581,220 +588,208 @@ template <int dim>
 void
 VolumeOfFluid<dim>::handle_interface_sharpening()
 {
-  // Interface sharpening is done at a constant frequency
-  if (this->simulation_control->get_step_number() %
-        this->simulation_parameters.multiphysics.vof_parameters.sharpening
-          .sharpening_frequency ==
-      0)
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "Sharpening interface at step "
+                  << this->simulation_control->get_step_number() << std::endl;
+    }
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
+      Parameters::SharpeningType::adaptative)
     {
       if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
             .verbosity != Parameters::Verbosity::quiet)
         {
-          this->pcout << "Sharpening interface at step "
-                      << this->simulation_control->get_step_number()
-                      << std::endl;
+          // TODO time this operation?
+          this->pcout << "  -Adapting sharpening_threshold..." << std::endl;
         }
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .type == Parameters::SharpeningType::adaptative)
-        {
-          // Useful definitions for readability
-          double st_min = this->simulation_parameters.multiphysics
-                            .vof_parameters.sharpening.sharpening_threshold_min;
-          double st_max = this->simulation_parameters.multiphysics
-                            .vof_parameters.sharpening.sharpening_threshold_max;
-          const double mass_gap_tol = this->simulation_parameters.multiphysics
-                                        .vof_parameters.conservation.tolerance *
-                                      this->mass_first_iteration;
-          const int max_iterations =
-            this->simulation_parameters.multiphysics.vof_parameters.sharpening
-              .max_iterations;
-
-          const int id_fluid_monitored =
-            this->simulation_parameters.multiphysics.vof_parameters.conservation
-              .id_fluid_monitored;
-
-          double mass_gap  = 0.;
-          int    nb_bs_ite = 0;
-          double st_ave    = 0.;
-
-
-          // Binary search of an interface sharpening value that would ensure
-          // mass conservation of the monitored phase (do-while loop, see
-          // condition below)
-          if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-                .verbosity != Parameters::Verbosity::quiet)
-            {
-              // TODO time this operation?
-              this->pcout
-                << "  -Adaptative sharpening_threshold : entering binary search algorithm "
-                << std::endl;
-            }
-
-          do
-            {
-              nb_bs_ite++;
-
-              this->pcout << "  -step " << nb_bs_ite << std::endl;
-
-              // Define tested sharpening threshold value
-              st_ave                     = (st_min + st_max) / 2.;
-              this->sharpening_threshold = st_ave;
-
-              // Copy the present solution
-              TrilinosWrappers::MPI::Vector solution_bs;
-              solution_bs.reinit(this->locally_owned_dofs,
-                                 this->triangulation->get_communicator());
-              solution_bs = this->present_solution;
-
-
-              // Sharpen interface using the tested threshold value
-              sharpen_interface(solution_bs, true);
-
-              // Calculate mass of the monitored phase
-              calculate_volume_and_mass(solution_bs, id_fluid_monitored);
-
-              // Calculate mass gap, between current case and mass at first
-              // iteration
-              mass_gap = this->mass_monitored - this->mass_first_iteration;
-
-              // Adapt searching range
-              switch (id_fluid_monitored)
-                {
-                  case 0:
-                    {
-                      if (mass_gap > 0.)
-                        {
-                          // Lower the sharpening threshold to reduce the
-                          // area occupied by fluid at phase = 0
-                          st_max = st_ave;
-                        }
-                      else
-                        {
-                          // Increase the sharpening threshold to increase
-                          // the area occupied by fluid at phase = 0
-                          st_min = st_ave;
-                        }
-                      break;
-                    }
-                  case 1:
-                    {
-                      if (mass_gap > 0.)
-                        {
-                          // Increase the sharpening threshold to reduce the
-                          // area occupied by fluid at phase = 1
-                          st_min = st_ave;
-                        }
-                      else
-                        {
-                          // Lower the sharpening threshold to increase the
-                          // area occupied by fluid at phase = 1
-                          st_max = st_ave;
-                        }
-                      break;
-                    }
-                  default:
-                    throw std::runtime_error(
-                      "Unsupported number of fluids (>2)");
-                } // end switch to adapt searching range
-
-              this->pcout << "  ==> mass error is : "
-                          << std::abs(mass_gap) / this->mass_first_iteration
-                          << std::endl;
-            }
-          while (std::abs(mass_gap) > mass_gap_tol &&
-                 nb_bs_ite < max_iterations);
-
-          this->pcout << "  -leaving binary search algorithm" << std::endl;
-
-          // Take minimum gap in between the two endpoints of the last
-          // interval searched, if max_iterations is reached
-          if (nb_bs_ite == max_iterations)
-            {
-              double mass_gap_st_end = 0.;
-              if (st_min == st_ave)
-                {
-                  // TODO create submethod for these steps? (outputs mass_gap)
-                  // Test st_max
-                  this->sharpening_threshold = st_max;
-
-                  TrilinosWrappers::MPI::Vector solution_bs;
-                  solution_bs.reinit(this->locally_owned_dofs,
-                                     this->triangulation->get_communicator());
-                  solution_bs = this->present_solution;
-
-                  // Sharpen interface using the tested threshold value
-                  sharpen_interface(solution_bs, true);
-
-                  // Calculate mass of the monitored phase
-                  calculate_volume_and_mass(solution_bs, id_fluid_monitored);
-                }
-              else if (st_max == st_ave)
-                {
-                  // TODO create submethod for these steps? (outputs mass_gap)
-                  // Test st_min
-                  this->sharpening_threshold = st_min;
-
-                  TrilinosWrappers::MPI::Vector solution_bs;
-                  solution_bs.reinit(this->locally_owned_dofs,
-                                     this->triangulation->get_communicator());
-                  solution_bs = this->present_solution;
-
-                  // Sharpen interface using the tested threshold value
-                  sharpen_interface(solution_bs, false);
-
-                  // Calculate mass of the monitored phase
-                  calculate_volume_and_mass(solution_bs, id_fluid_monitored);
-                }
-              mass_gap_st_end =
-                this->mass_monitored - this->mass_first_iteration;
-
-              // Retake st_ave value if mass gap is not lowered at end point
-              // values
-              if (std::abs(mass_gap_st_end) > std::abs(mass_gap))
-                {
-                  this->sharpening_threshold = st_ave;
-                }
-
-              // Output message
-              if (std::abs(mass_gap_st_end) > mass_gap_tol)
-                {
-                  // TODO remplacer min/max par range? (pour s'assurer qu'on
-                  // commence par 0.5?)
-                  this->pcout
-                    << "  WARNING: Maximum number of iterations (" << nb_bs_ite
-                    << ") reached in the adaptative sharpening threshold algorithm"
-                    << ", remaining error on mass conservation is: "
-                    << (this->mass_monitored - this->mass_first_iteration) /
-                         this->mass_first_iteration
-                    << std::endl
-                    << "  Consider increasing the sharpening threshold range, "
-                    << "the number of iterations or the mass conservation tolerance."
-                    << std::endl;
-                }
-            }
-          else
-            {
-              if (this->simulation_parameters.multiphysics.vof_parameters
-                    .sharpening.verbosity != Parameters::Verbosity::quiet)
-                {
-                  this->pcout
-                    << "  -Binary search algorithm (sharpening threshold) took : "
-                    << nb_bs_ite << " step(s) " << std::endl;
-                }
-            }
-        } // end condition adaptative sharpening
-
-      // Sharpen the interface of all solutions (present and previous)
-      this->pcout << "TEST final sharpening..." << std::endl;
-      sharpen_interface(this->present_solution, true);
-      this->pcout << "... final sharpening done" << std::endl;
+      this->sharpening_threshold = find_sharpening_threshold();
     }
+  else
+    {
+      // Constant sharpening
+      this->sharpening_threshold =
+        this->simulation_parameters.multiphysics.vof_parameters.sharpening
+          .sharpening_threshold;
+    }
+
+  // Sharpen the interface of all solutions (present and previous)
+  this->pcout << "TEST final sharpening..." << std::endl;
+  sharpen_interface(this->present_solution, this->sharpening_threshold, true);
+  this->pcout << "... final sharpening done" << std::endl;
+}
+
+template <int dim>
+double
+VolumeOfFluid<dim>::find_sharpening_threshold()
+{
+  double sharpening_threshold = 0.;
+
+  // Useful definitions for readability
+  double st_min = this->simulation_parameters.multiphysics.vof_parameters
+                    .sharpening.sharpening_threshold_min;
+  double st_max = this->simulation_parameters.multiphysics.vof_parameters
+                    .sharpening.sharpening_threshold_max;
+  const double mass_gap_tol = this->simulation_parameters.multiphysics
+                                .vof_parameters.conservation.tolerance *
+                              this->mass_first_iteration;
+  const int max_iterations = this->simulation_parameters.multiphysics
+                               .vof_parameters.sharpening.max_iterations;
+
+  const int id_fluid_monitored =
+    this->simulation_parameters.multiphysics.vof_parameters.conservation
+      .id_fluid_monitored;
+
+  double mass_gap      = 0.;
+  int    nb_search_ite = 0;
+  double st_ave        = 0.;
+
+
+  // Binary search of an interface sharpening value that would ensure
+  // mass conservation of the monitored phase (do-while loop, see
+  // condition below)
+  do
+    {
+      nb_search_ite++;
+
+      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+            .verbosity != Parameters::Verbosity::quiet)
+        {
+          this->pcout << "   ... search step " << nb_search_ite << std::endl;
+        }
+
+      // Define tested sharpening threshold value
+      st_ave               = (st_min + st_max) / 2.;
+      sharpening_threshold = st_ave;
+
+      mass_gap = calculate_mass_gap(id_fluid_monitored, sharpening_threshold);
+
+      // Adapt searching range
+      switch (id_fluid_monitored)
+        {
+          case 0:
+            {
+              if (mass_gap > 0.)
+                {
+                  // Lower the sharpening threshold to reduce the
+                  // area occupied by fluid at phase = 0
+                  st_max = st_ave;
+                }
+              else
+                {
+                  // Increase the sharpening threshold to increase
+                  // the area occupied by fluid at phase = 0
+                  st_min = st_ave;
+                }
+              break;
+            }
+          case 1:
+            {
+              if (mass_gap > 0.)
+                {
+                  // Increase the sharpening threshold to reduce the
+                  // area occupied by fluid at phase = 1
+                  st_min = st_ave;
+                }
+              else
+                {
+                  // Lower the sharpening threshold to increase the
+                  // area occupied by fluid at phase = 1
+                  st_max = st_ave;
+                }
+              break;
+            }
+          default:
+            throw std::runtime_error("Unsupported number of fluids (>2)");
+        } // end switch to adapt searching range
+
+      this->pcout << "TEST  ==> mass error is : "
+                  << std::abs(mass_gap) / this->mass_first_iteration
+                  << std::endl;
+    }
+  while (std::abs(mass_gap) > mass_gap_tol && nb_search_ite < max_iterations);
+
+  this->pcout << "TEST  - leaving binary search algorithm" << std::endl;
+
+  // Take minimum gap in between the two endpoints of the last
+  // interval searched, if max_iterations is reached
+  if (nb_search_ite == max_iterations)
+    {
+      double mass_gap_endpoint = 0.;
+      if (st_min == st_ave)
+        sharpening_threshold = st_max;
+      else if (st_max == st_ave)
+        sharpening_threshold = st_min;
+
+      mass_gap_endpoint =
+        calculate_mass_gap(id_fluid_monitored, sharpening_threshold);
+
+      // Retake st_ave value if mass gap is not lowered at endpoint
+      // values
+      if (std::abs(mass_gap_endpoint) > std::abs(mass_gap))
+        {
+          sharpening_threshold = st_ave;
+        }
+
+      // Output message
+      if (std::abs(mass_gap_endpoint) > mass_gap_tol)
+        {
+          // TODO remplacer min/max par range? (pour s'assurer qu'on
+          // commence par 0.5?)
+          this->pcout
+            << "  WARNING: Maximum number of iterations (" << nb_search_ite
+            << ") reached in the adaptative sharpening threshold algorithm"
+            << ", remaining error on mass conservation is: "
+            << (this->mass_monitored - this->mass_first_iteration) /
+                 this->mass_first_iteration
+            << std::endl
+            << "  Consider increasing the sharpening threshold range or the "
+            << "number of iterations to reach the mass conservation tolerance."
+            << std::endl;
+        }
+    }
+  else
+    {
+      // Output message that mass conservation condition is reached
+      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+            .verbosity != Parameters::Verbosity::quiet)
+        {
+          this->pcout << "   ... search algorithm took : " << nb_search_ite
+                      << " step(s) " << std::endl;
+        }
+    }
+
+  return sharpening_threshold;
+}
+
+template <int dim>
+double
+VolumeOfFluid<dim>::calculate_mass_gap(const int    id_fluid_monitored,
+                                       const double sharpening_threshold)
+{
+  // Copy present solution VOF
+  TrilinosWrappers::MPI::Vector solution_copy;
+  solution_copy.reinit(this->locally_owned_dofs,
+                       this->triangulation->get_communicator());
+  solution_copy = this->present_solution;
+
+  // Sharpen interface using the tested threshold value
+  sharpen_interface(solution_copy, sharpening_threshold, false);
+
+  // Calculate mass of the monitored phase
+  calculate_volume_and_mass(solution_copy, id_fluid_monitored);
+
+  // Calculate mass gap
+  double mass_gap = this->mass_monitored - this->mass_first_iteration;
+
+  return mass_gap;
 }
 
 template <int dim>
 void
 VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
-                                      const bool sharpen_previous_solutions)
+                                      const double sharpening_threshold,
+                                      const bool   sharpen_previous_solutions)
 {
   // Limit the phase fractions between 0 and 1
   update_solution_and_constraints(solution);
@@ -808,7 +803,7 @@ VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
     }
 
   // Assemble matrix and solve the system for interface sharpening
-  assemble_L2_projection_interface_sharpening(solution);
+  assemble_L2_projection_interface_sharpening(solution, sharpening_threshold);
   solve_interface_sharpening(solution);
 
   if (sharpen_previous_solutions)
@@ -818,7 +813,8 @@ VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
         << std::endl;
       for (unsigned int p = 0; p < previous_solutions.size(); ++p)
         {
-          assemble_L2_projection_interface_sharpening(previous_solutions[p]);
+          assemble_L2_projection_interface_sharpening(previous_solutions[p],
+                                                      sharpening_threshold);
           solve_interface_sharpening(previous_solutions[p]);
         }
     }
@@ -1516,9 +1512,9 @@ VolumeOfFluid<dim>::setup_dofs()
   // system_matrix_phase_fraction is used in
   // assemble_L2_projection_interface_sharpening for assembling the system for
   // sharpening the interface, while complete_system_matrix_phase_fraction is
-  // used in update_solution_and_constraints to limit the phase fraction values
-  // between 0 and 1. Accoring to step-41, to limit the phase fractions we
-  // compute the Lagrange multiplier as the residual of the original linear
+  // used in update_solution_and_constraints to limit the phase fraction
+  // values between 0 and 1. Accoring to step-41, to limit the phase fractions
+  // we compute the Lagrange multiplier as the residual of the original linear
   // system, given via the variables complete_system_matrix_phase_fraction and
   // complete_system_rhs_phase_fraction
   system_matrix_phase_fraction.reinit(this->locally_owned_dofs,
@@ -1551,9 +1547,9 @@ VolumeOfFluid<dim>::setup_dofs()
   // Initialize peeling/wetting variables
   marker_pw.reinit(locally_owned_dofs, mpi_communicator);
   // TODO make adaptative
-  this->sharpening_threshold =
-    this->simulation_parameters.multiphysics.vof_parameters.sharpening
-      .sharpening_threshold;
+  //  this->sharpening_threshold =
+  //    this->simulation_parameters.multiphysics.vof_parameters.sharpening
+  //      .sharpening_threshold;
 
   this->pcout << "   Number of VOF degrees of freedom: "
               << this->dof_handler.n_dofs() << std::endl;
@@ -1737,7 +1733,8 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
-  TrilinosWrappers::MPI::Vector &solution)
+  TrilinosWrappers::MPI::Vector &solution,
+  const double                   sharpening_threshold)
 {
   const double interface_sharpness =
     this->simulation_parameters.multiphysics.vof_parameters.sharpening
@@ -1791,14 +1788,14 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                         (phi_phase[j] * phi_phase[i]) * fe_values_vof.JxW(q);
                     }
 
-                  // $$ (if 0 <= \phi <= c)  {\Phi = c ^ (1 - \alpha) * (\phi ^
-                  // \alpha)}$$
-                  // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 - \alpha)
+                  // $$ (if 0 <= \phi <= c)  {\Phi = c ^ (1 - \alpha) * (\phi
+                  // ^ \alpha)}$$
+                  // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 -
+                  // \alpha)
                   // * (1 - \phi) ^ \alpha}
-                  if (phase_value >= 0.0 &&
-                      phase_value <= this->sharpening_threshold)
+                  if (phase_value >= 0.0 && phase_value <= sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
-                      std::pow(this->sharpening_threshold,
+                      std::pow(sharpening_threshold,
                                (1 - interface_sharpness)) *
                       std::pow(phase_value, interface_sharpness) *
                       phi_phase[i] * fe_values_vof.JxW(q);
@@ -1806,7 +1803,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                     {
                       local_rhs_phase_fraction(i) +=
                         (1 -
-                         std::pow((1 - this->sharpening_threshold),
+                         std::pow((1 - sharpening_threshold),
                                   (1 - interface_sharpness)) *
                            std::pow((1 - phase_value), interface_sharpness)) *
                         phi_phase[i] * fe_values_vof.JxW(q);
@@ -2165,8 +2162,8 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                       dim * n_q_points / 2)
                     {
                       // Peel the higher density fluid
-                      // conditions phase_values_cell < 1 or phase_values_cell >
-                      // 0 prevent from treating values outside of the range
+                      // conditions phase_values_cell < 1 or phase_values_cell
+                      // > 0 prevent from treating values outside of the range
                       // [0,1]
                       if ((phase_denser_fluid_cell == 1 &&
                            phase_values_cell > 0.1) ||

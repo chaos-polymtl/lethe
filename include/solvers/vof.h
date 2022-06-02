@@ -168,7 +168,7 @@ public:
    *
    * @param solution VOF solution (phase fraction)
    *
-   * @param id_fluid_monitored phase value (0 or 1) corresponding to
+   * @param id_fluid_monitored Phase value (0 or 1) corresponding to
    * the phase of interest.
    */
   void
@@ -437,10 +437,17 @@ private:
    * \phi <= 1 $$
    * Reference for sharpening method
    * https://www.sciencedirect.com/science/article/pii/S0045782500002000
+   *
+   * @param solution VOF solution (phase fraction)
+   *
+   * @param sharpening_threshold Interface sharpening threshold that represents
+   * the mass conservation level
+   *
    */
   void
   assemble_L2_projection_interface_sharpening(
-    TrilinosWrappers::MPI::Vector &solution);
+    TrilinosWrappers::MPI::Vector &solution,
+    const double                   sharpening_threshold);
 
   /**
    * @brief Solves the assembled system to sharpen the interface. The linear_solver_tolerance
@@ -515,17 +522,44 @@ private:
   handle_interface_sharpening();
 
   /**
+   * @brief Find the sharpening threshold to ensure mass conservation of the fluid
+   * monitored, as given in the prm (VOF, subsection monitoring), by binary
+   * search.
+   */
+  double
+  find_sharpening_threshold();
+
+  /**
+   * @brief Calculate the mass gap of the monitored fluid, between the current
+   * iteration and the mass at first iteration (mass_first_iteration). Used to
+   * test multiple sharpening threshold in the binary search algorithm
+   * (adaptative sharpening).
+   *
+   * @param id_fluid_monitored Phase value (0 or 1) corresponding to
+   * the phase of interest.
+   *
+   * @param sharpening_threshold Interface sharpening threshold that represents the
+   * mass conservation level
+   */
+  double
+  calculate_mass_gap(const int    id_fluid_monitored,
+                     const double sharpening_threshold);
+
+  /**
    * @brief Carries out interface sharpening. It is called in the modify solution function.
    *
    * @param solution VOF solution (phase fraction)
    *
-   * @param sharpen_previous_solutions boolean true for sharpening applied on the present
-   * and past solutions (then solution is this->present_solution),
-   * false if the sharpening is applied on the given solution vector only, used
-   * to determine the sharpening threshold by binary search.
+   * @param sharpening_threshold Interface sharpening threshold that represents the mass conservation level
+   *
+   * @param sharpen_previous_solutions Boolean true if sharpening is applied on the present
+   * and past solutions, false if the sharpening is applied on the given
+   * solution vector only. Used to determine the sharpening threshold by binary
+   * search.
    */
   void
   sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
+                    const double                   sharpening_threshold,
                     const bool                     sharpen_previous_solutions);
 
   /**
@@ -681,10 +715,7 @@ private:
   double       volume_monitored;
   double       mass_monitored;
   double       mass_first_iteration;
-
-  // Define sharpening_threshold, can be constant or adaptative to ensure mass
-  // conservation
-  double sharpening_threshold;
+  double       sharpening_threshold;
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;
