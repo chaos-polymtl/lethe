@@ -161,7 +161,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 Box refinement
 ---------------------
-For a particle to be accounted for in the fluid mesh, it has to overlap one or more vertices on a wall of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls.
+For a particle to be accounted for in the fluid mesh, it has to overlap one or more vertices of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls.
 To avoid this, you can specify a region in the fluid domain where you want the mesh to be finer. To do so, a box refinement can be added with the following example parameters:
 
 .. code-block:: text
