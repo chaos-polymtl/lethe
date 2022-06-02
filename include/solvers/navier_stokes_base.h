@@ -171,8 +171,12 @@ protected:
   virtual void
   postprocess(bool first_iteration)
   {
+    this->pcout << "entrée postprocess_fd, first_iteration =" << first_iteration
+                << std::endl;
     postprocess_fd(first_iteration);
+    this->pcout << "sortie postprocess_fd" << std::endl;
     multiphysics->postprocess(first_iteration);
+    this->pcout << "sortie multiphysics->postprocess" << std::endl;
   };
 
   /**

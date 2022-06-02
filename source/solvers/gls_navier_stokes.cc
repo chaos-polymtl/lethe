@@ -1572,15 +1572,28 @@ GLSNavierStokesSolver<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           this->iterate();
+
+          this->pcout
+            << " TEST I am back in gls solve() (simulation_control->is_at_start()) "
+            << std::endl;
         }
       else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
           this->iterate();
+
+          this->pcout << " TEST I am back in gls solve() " << std::endl;
         }
+
+      this->pcout << " TEST in gls solve(), entering postprocess(false)... "
+                  << std::endl;
       this->postprocess(false);
+      this->pcout << " TEST in gls solve(), entering finish_time_step... "
+                  << std::endl;
       this->finish_time_step();
+      this->pcout << " TEST in gls solve(), leaving finish_time_step "
+                  << std::endl;
     }
 
 

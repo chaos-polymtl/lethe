@@ -188,13 +188,13 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
     // Parameters for adaptative sharpening
     prm.declare_entry(
       "sharpening threshold min",
-      "0.45",
+      "0.40",
       Patterns::Double(),
       "Minimum interface sharpening threshold considered in the binary search algorithm");
 
     prm.declare_entry(
       "sharpening threshold max",
-      "0.55",
+      "0.60",
       Patterns::Double(),
       "Maximum interface sharpening threshold considered in the binary search algorithm");
 
