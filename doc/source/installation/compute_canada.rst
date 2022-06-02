@@ -55,7 +55,7 @@ Then, we can clone and compile ``dealii``. Although Lethe always supports the ma
 
  git clone https://github.com/lethe-cfd/dealii.git
 
-We can compile ``dealii`` in the ``$HOME/dealii/build folder``, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``:
+We can compile ``dealii`` in the ``$HOME/dealii/build folder``, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est`` :
 
 .. code-block:: text
 
@@ -92,7 +92,7 @@ Then, we can clone and compile ``dealii``. Although Lethe always supports the ma
 
  git clone https://github.com/lethe-cfd/dealii.git
 
-We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``:
+We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est`` :
 
 .. code-block:: text
 
@@ -267,6 +267,9 @@ which defaults to an RSA key. If you want to specify the key type you want to ge
 .. code-block:: text
 
  ssh-keygen -t ed25519
+
+.. note::
+  ED25519 keys are preferred to RSA keys since they are more secure and performant. Seek more information in the `Gitlab Documentation<https://docs.gitlab.com/ee/user/ssh.html>`.
 
 To upload this local key to your Compute Canada Database account (CCDB) use:
 
