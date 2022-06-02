@@ -89,7 +89,7 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 .. note::
 	This hypershell zone will systematically be refined at each refinement step until reaching the ``max refinement level`` parameter in :doc:`../cfd/mesh_adaptation_control`.
 
-* The ``initial refinement`` parameter controls the number the refinement occurs in the hypershell refinement zone around each of the particle before the simulation starts. 
+* The ``initial refinement`` parameter controls the number of refinement cycles in the hypershell refinement zone around every particle before the simulation starts. 
 
 .. note::
 	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
@@ -168,7 +168,7 @@ To avoid this, you can specify a region in the fluid domain where you want the m
 .. code-block:: text
 
 	subsection  box refinement
-		subsection 
+		subsection mesh
 			set type                 = dealii
 			set grid type            = subdivided_hyper_rectangle
 			set grid arguments       = 2,2,2: -1,-1,-1 : 1,1,1 : true
@@ -177,7 +177,7 @@ To avoid this, you can specify a region in the fluid domain where you want the m
 		set initial refinement   = 3
 	end
 
-* The ``mesh`` subsection allows to define the region in which the fluid mesh needs to be refined. A cell in the fluid mesh will be refined if at least one of its dofs is located within the outer boundaries of the box. Therefore, in this example, for every cell of the fluid mesh that has at least one of its dofs located in the cube located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. 
+* The ``mesh`` subsection allows to define the region in which the fluid mesh needs to be refined. A cell in the fluid mesh will be refined if at least one of its dofs is located within the outer boundaries of the box. Therefore, in this example, every cell of the fluid mesh that has at least one of its dofs located in the cube located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. 
 
 .. note::
 	The initial refinement of the ``subdivided_hyper_rectangle`` will not have any impact on the refinement of the fluid mesh, since only its shape and outer walls location are taken into account.
@@ -188,7 +188,7 @@ To avoid this, you can specify a region in the fluid domain where you want the m
 Mesh refinement
 ---------------------
 The mesh is refined on multiple occasions during the simulations, and it can me slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The one that occurs first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection. 
-The second refinement occuring is inside the **box refinement zone**, set by the ``initial refinement`` in the ``box refinement`` subsection. Lastly, the **particle hypershell zone** is refined, defnied by the ``initial refinement`` parameter in the ``particles`` subsection.
+The second refinement occuring is inside the **box refinement zone**, set by the ``initial refinement`` in the ``box refinement`` subsection. Lastly, the **particle hypershell zone** is refined, defined by the ``initial refinement`` parameter in the ``particles`` subsection.
 Therefore, the hypershell zone around each particle is refined ``mesh``:``initial refinement`` + ``box``:``initial refinement`` + ``particle``:``initial refinement`` times before the simulations starts.
 
 .. note::

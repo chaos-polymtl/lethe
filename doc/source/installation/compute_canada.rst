@@ -262,7 +262,7 @@ To save your key on the cluster, so that it is not asked for each log or ``scp``
 
  ssh-keygen
 
-which defaults to an RSA key. If you want to specify the key you want to generate (i.e. ED25519 key), type
+which defaults to an RSA key. If you want to specify the key type you want to generate (i.e. ED25519 key), type
 
 .. code-block:: text
 
