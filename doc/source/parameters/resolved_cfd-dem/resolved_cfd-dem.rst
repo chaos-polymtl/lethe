@@ -62,12 +62,12 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 	
 * The ``number of particles`` is the number of particles simulated by the sharp-edge IB.
 
-* The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of the underlying FEM scheme. We suggest using the same order as the velocity field in most cases since it lowers the condition number of the matrix.
+* The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of the underlying FEM scheme. We suggest using the same order as the velocity field in most cases since it improves the condition number of the matrix.
 
 .. note::
 	The stencil order used does not alter the order of convergence of the solution.
 
-* The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial (see `this article <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_ for more details). The length ratio should be kept as small as possible and above 1. When using a cartesian homogenous mesh (structured grid), the length ratio should be 1.
+* The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial (see `this article <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_ for more details). The length ratio should be kept as small as possible and above 1. When using a Cartesian homogenous mesh (aspect ratio of 1), the length ratio should be 1.
 
 .. tip::
 	A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme.
@@ -82,9 +82,9 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 To sharpen the immersed boundary of each particles, a layer of cells around the immersed boundary can be refined forming a hypershell of refined cells.
 
-* The ``refine mesh inside radius factor`` parameter defines the inside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6. 
+* The ``refine mesh inside radius factor`` parameter defines the inside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6 (see example below).
 
-* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3. 
+* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3 (see example below). 
 
 .. warning::
 	When you want to use the hypershell refinement zone around particles, the mesh adaptation type used must be ``kelly``, otherwise no hypershell refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
@@ -94,6 +94,10 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 
 .. note::
 	This hypershell zone will systematically be refined at each refinement step until reaching the ``max refinement level`` parameter in :doc:`../cfd/mesh_adaptation_control`.
+
+.. image:: images/particle_hypershell.png
+	:align: center
+
 
 * The ``initial refinement`` parameter controls the number of refinement cycles in the hypershell refinement zone around every particle before the simulation starts. 
 
