@@ -219,8 +219,11 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   // loop over all particles to find pair of close partilces
   for (auto &particle_one : dem_particles)
     {
-      for (auto &particle_two : dem_particles)
+      auto particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();
+      for (particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();  particle_contact_candidates_id != particles_contact_candidates[particle_one.id].end(); ++ particle_contact_candidates_id)
         {
+          auto particle_contact_id=*particle_contact_candidates_id;
+          auto &particle_two = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {

@@ -3001,7 +3001,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
                                                    this->dof_handler,
                                                    *this->face_quadrature,
                                                    *this->mapping);
-          ib_dem.update_contact_candidates(1.5);
+          ib_dem.update_contact_candidates(3);
 
 
           // add initialization
