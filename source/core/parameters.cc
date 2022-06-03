@@ -1835,7 +1835,7 @@ namespace Parameters
         "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
       prm.declare_entry(
         "contact search radius factor",
-        "3",
+        "0",
         Patterns::Double(),
         "The factor that multiplies the radius to define the region of contact search around the particle");
       prm.declare_entry(
