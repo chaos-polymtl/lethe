@@ -104,8 +104,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
 {
   for (auto &particle_one : dem_particles)
     {
-      auto particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();
-      for (particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();  particle_contact_candidates_id != particles_contact_candidates[particle_one.id].end(); ++ particle_contact_candidates_id)
+      for (auto particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();  particle_contact_candidates_id != particles_contact_candidates[particle_one.id].end(); ++ particle_contact_candidates_id)
         {
 
           auto particle_contact_id=*particle_contact_candidates_id;
@@ -215,8 +214,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   // loop over all particles to find pair of close partilces
   for (auto &particle_one : dem_particles)
     {
-      auto particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();
-      for (particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();  particle_contact_candidates_id != particles_contact_candidates[particle_one.id].end(); ++ particle_contact_candidates_id)
+      for (auto particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();  particle_contact_candidates_id != particles_contact_candidates[particle_one.id].end(); ++ particle_contact_candidates_id)
         {
           auto particle_contact_id=*particle_contact_candidates_id;
           auto &particle_two = dem_particles[particle_contact_id];
