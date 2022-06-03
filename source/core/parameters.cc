@@ -1807,12 +1807,12 @@ namespace Parameters
         "refine mesh inside radius factor",
         "0.5",
         Patterns::Double(),
-        "The factor that multiplie the radius to define the inside bound for the refinement of the mesh");
+        "The factor that multiplies the radius to define the inside bound for the refinement of the mesh");
       prm.declare_entry(
         "refine mesh outside radius factor",
         "1.5",
         Patterns::Double(),
-        "The factor that multiplie the radius to define the outside bound for the refinement of the mesh");
+        "The factor that multiplies the radius to define the outside bound for the refinement of the mesh");
       prm.declare_entry(
         "calculate force",
         "true",
@@ -1833,6 +1833,11 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
+      prm.declare_entry(
+        "contact search radius factor",
+        "3",
+        Patterns::Double(),
+        "The factor that multiplies the radius to define the region of contact search around the particle");
       prm.declare_entry(
         "assemble Navier-Stokes inside particles",
         "false",
@@ -1941,6 +1946,8 @@ namespace Parameters
       ib_force_output_file = prm.get("ib force output file");
       integrate_motion     = prm.get_bool("integrate motion");
       alpha                = prm.get_double("alpha");
+      contact_search_radius_factor =
+        prm.get_double("contact search radius factor");
 
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");

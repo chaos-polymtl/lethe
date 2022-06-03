@@ -20,7 +20,7 @@
 
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/dem_solver_parameters.h>
+#include <dem/dem_solver_integrate motions.h>
 #include <dem/particle_particle_linear_force.h>
 #include <dem/particle_particle_nonlinear_force.h>
 #include <dem/particle_wall_linear_force.h>
@@ -69,9 +69,11 @@ IBParticlesDEM<dim>::update_particles(
 
 template <int dim>
 void
-IBParticlesDEM<dim>::update_contact_candidates(double radius_factor)
+IBParticlesDEM<dim>::update_contact_candidates()
 {
   particles_contact_candidates.resize(dem_particles.size());
+
+  double radius_factor = parameters->contact_search_radius_factor;
 
   for (auto &particle_one : dem_particles)
     {

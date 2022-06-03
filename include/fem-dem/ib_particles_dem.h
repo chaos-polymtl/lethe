@@ -126,7 +126,7 @@ public:
    * @brief updates the contact candidates of all the particles
    */
   void
-  update_contact_candidates(double radius_factor);
+  update_contact_candidates();
 
 
   /**
