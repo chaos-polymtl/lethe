@@ -71,9 +71,14 @@ template <int dim>
 void
 IBParticlesDEM<dim>::update_contact_candidates()
 {
-  particles_contact_candidates.resize(dem_particles.size());
-
   double radius_factor = parameters->contact_search_radius_factor;
+
+  if (radius_factor < 1)
+    AssertThrow(false,
+                ExcMessage("Contact search radius factor cannot be < 1."));
+  ;
+
+  particles_contact_candidates.resize(dem_particles.size());
 
   for (auto &particle_one : dem_particles)
     {
