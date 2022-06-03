@@ -20,7 +20,7 @@
 
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/dem_solver_integrate motions.h>
+#include <dem/dem_solver_parameters.h>
 #include <dem/particle_particle_linear_force.h>
 #include <dem/particle_particle_nonlinear_force.h>
 #include <dem/particle_wall_linear_force.h>
