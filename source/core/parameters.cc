@@ -1910,7 +1910,7 @@ namespace Parameters
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
-      unsigned int max_ib_particles = 50;
+      unsigned int max_ib_particles = 1000;
       particles.resize(max_ib_particles);
       for (unsigned int i = 0; i < max_ib_particles; ++i)
         {

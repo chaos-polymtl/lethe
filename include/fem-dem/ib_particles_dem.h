@@ -122,6 +122,12 @@ public:
                              std::vector<Tensor<1, 3>> &contact_force,
                              std::vector<Tensor<1, 3>> &contact_torque);
 
+  /**
+   * @brief updates the contact candidates of all the particles
+   */
+  void
+  update_contact_candidates(double radius_factor);
+
 
   /**
    * @brief Calculates non-linear (Hertzian) particle-wall contact force
@@ -237,11 +243,14 @@ private:
   std::shared_ptr<ParticleParticleContactForce<dim>>
     particle_particle_contact_force_object;
 
+  std::vector<std::set<int>> particles_contact_candidates;
+
   std::shared_ptr<ParticleWallContactForce<dim>>
     particle_wall_contact_force_object;
 
   // Empty parameters to initilize particle_wall_contact_force_object
   double triangulation_cell_diameter = 0.0;
+
 
   // Particles contact history
   std::map<unsigned int,

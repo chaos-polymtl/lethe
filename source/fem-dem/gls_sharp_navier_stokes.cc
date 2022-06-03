@@ -103,7 +103,6 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 }
 
 
-
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
@@ -2987,6 +2986,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
                                                    this->dof_handler,
                                                    *this->face_quadrature,
                                                    *this->mapping);
+          ib_dem.update_contact_candidates(1.5);
           this->iterate();
         }
       else
@@ -3001,6 +3001,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
                                                    this->dof_handler,
                                                    *this->face_quadrature,
                                                    *this->mapping);
+          ib_dem.update_contact_candidates(1.5);
+
+
           // add initialization
           this->iterate();
         }
