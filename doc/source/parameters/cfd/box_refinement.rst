@@ -15,7 +15,7 @@ The box refinement section allows for a specific region in the grid to be finer 
 		set initial refinement   = 3
 	end
 
-* The ``mesh`` subsection allows to define the region in which the fluid mesh needs to be refined. A cell be refined if at least one of its degrees of freedom (dofs) is located within the outer boundaries of the box specified in the ``grid arguments``. Therefore, in this example, every cell of the fluid mesh that has at least one of its dofs located in the hexahedron located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. 
+* The ``mesh`` subsection allows to define the region in which the fluid mesh needs to be refined. A cell will be refined if at least one of its degrees of freedom (dofs) is located within the outer boundaries of the box specified in the ``grid arguments``. Therefore, in this example, every cell of the fluid mesh that has at least one of its dofs located in the hexahedron located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see :doc:`../cfd/mesh`. 
 
 .. tip::
   The ``initial refinement`` of the ``subdivided_hyper_rectangle`` should be as small as possible, since the initial refinement of the box mesh itself will not have any impact on the definition of the refinement zone. 
