@@ -1,6 +1,6 @@
-=======================================================================================
-Non-Newtonian flow past a sphere using the sharp interface method and the Carreau model
-=======================================================================================
+================================
+Non-Newtonian flow past a sphere
+================================
 
 This example showcases a laminar non-Newtonian flow around a sphere, with an *a priori* Reynolds number Re = 50, using the Carreau rheological model.
 
@@ -9,7 +9,7 @@ Features
 - Solvers: ``gls_sharp_navier_stokes_3d`` (with Q1-Q1) 
 - Steady-state problem
 - Non-Newtonian behavior
-- Explains how to set sharp interface immersed boundary to represent a particle
+- Ramping initial condition
 - Displays the use of non-uniform mesh adaptation 
 
 Location of the example
@@ -21,64 +21,106 @@ Location of the example
 Description of the case
 -----------------------
 
-In this example, we study the flow around a static sphere using the sharp-interface method to represent the sphere. The geometry of the flow takes the same basic case defined in 
- :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`. As such, we use the parameter file associated with :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder` as the base for this example. The exact dimensions for this example can be found in the following figure. 
+In this example, we study the flow around a static sphere using the sharp-interface method to represent the sphere. The geometry of the flow is the following, with a particle of diameter D = 1.0 located at (0,0,0)
+and the flow domain located between (-18,-15,-15) and (42,15,15).
 
-.. image:: images/cylinder_case.png
+.. image:: images/sharp_carreau_case.png
     :alt: Simulation schematic
     :align: center
 
-This case uses a cartesian structured rectangular mesh, and we define the position and radius of the immersed boundary.
-    
+Parameter file
+-----------------------
+
+Mesh
+~~~~~
+
 The mesh is defined using the following subsection.
 
 .. code-block:: text
-
-	#---------------------------------------------------
-	# Mesh
-	#---------------------------------------------------
+	
 	subsection mesh
-	    set type                 = dealii
-	    set grid type            = subdivided_hyper_rectangle
-	    set grid arguments       = 2,1: 0,0 : 32 , 16  : true
-	    set initial refinement   = 6
+		set type                 = dealii
+		set grid type            = subdivided_hyper_rectangle
+		set grid arguments       = 2,1,1 : -18,-15,-15 : 42,15,15 : true
+		set initial refinement   = 4
 	end
 	
-As for the :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`, we define the boundary conditions in order to have an inlet on the left, two slip boundary conditions at the top and bottom, and an outlet on the right of the domain.
-
+Using an ``initial refinement`` of 4, the initial size of the cubic cells is 1.875. Since the particle size is small in regards to the mesh size, a refinement zone is generated around the particle to better capture it (See :doc:`../../../parameters/cfd/box_refinement`).
 
 .. code-block:: text
 
-	# --------------------------------------------------
-	# Boundary Conditions
-	#---------------------------------------------------
+	subsection  box refinement
+		set initial refinement   = 3
+		subsection mesh
+		set type                 = dealii
+		set grid type            = subdivided_hyper_rectangle
+		set grid arguments       = 1,1,1: -2,-2,-2 : 6,2,2 : true
+		set initial refinement   = 0
+		end
+	end
+
+Boundary conditions
+~~~~~~~~~~~~~~~~~~~~
+We define the boundary conditions in order to have an inlet velocity of 1 m/s on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain.
+
+.. code-block:: text
 
 	subsection boundary conditions
-	set number                  = 3
-	   
-	    subsection bc 0
-	set id = 0
-		set type              = function
-		subsection u
-		    set Function expression = 1
+		set number                  = 5
+		subsection bc 0
+			set id 		= 0
+			set type    = function
+			subsection u
+				set Function expression = 1
+			end
+			subsection v
+				set Function expression = 0
+			end
+			subsection w
+				set Function expression = 0
+			end
 		end
-		subsection v
-		    set Function expression = 0
+		subsection bc 1
+			set id 		= 2
+			set type    = slip
+		end    
+		subsection bc 2
+			set id 		= 3
+			set type    = slip
 		end
-		subsection w
-		    set Function expression = 0
+		subsection bc 3
+			set id 		= 4
+			set type    = slip
 		end
-	    end
-	    subsection bc 1
-	set id = 2
-		set type              = slip
-	    end
-	    subsection bc 2
-	set id = 3
-		set type              = slip
-	    end
+		subsection bc 4
+			set id 		= 5
+			set type    = slip
+		end
 	end
-	
+
+Physical properties
+~~~~~~~~~~~~~~~~~~~~
+
+This example showcases a shear-thinning flow, for which the viscosity decreases when the local shear rate increases. The Carreau model is being used. For more information on rheological models, see :doc:`../../../parameters/cfd/physical_properties`
+
+.. code-block:: text
+
+	subsection physical properties
+		set number of fluids = 1
+		subsection fluid 0
+			set rheological model	= carreau
+			subsection non newtonian
+				subsection carreau
+					set viscosity_0    	= 0.063403
+					set viscosity_inf  	= 0
+					set lambda	   		= 10
+					set a	           	= 2.0
+					set n 		   		= 0.5
+				end
+			end
+		end
+	end
+
 The initial condition has been modified compared to the initial solution proposed in :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`. We use the following initial condition to ensure that the particle's boundary condition is satisfied.
 
 .. code-block:: text
@@ -150,17 +192,8 @@ Results
 The simulation of this case results in the following solution for the velocity and pressure field. 
 
 
-Velocity:
- 
-.. image:: images/exemple10_velocite.png
-    :alt: Simulation schematic
-    :align: center
 
-Pressure: 
 
-.. image:: images/exemple10_pression.png
-    :alt: Simulation schematic
-    :align: center
 
 We get the following force applied on the particle for each of the mesh refinements, which is similar to the one obtained with a conformal mesh in :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`. With the conformal mesh drag force applied to the particle is 7.123. The difference between the 2 can mostly be attributed to the discretization error.
 
