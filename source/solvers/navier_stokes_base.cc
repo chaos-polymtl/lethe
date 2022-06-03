@@ -575,7 +575,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       // Solve the auxiliary physics that should be treated AFTER the fluid
       // dynamics
       multiphysics->post_solve(simulation_parameters.simulation_control.method);
-      std::cout << " TEST I am out of multiphysics->post_solve " << std::endl;
     }
 }
 
@@ -1008,8 +1007,6 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
-  this->pcout << "postprocess_fd, copy present_solution" << std::endl;
-
   auto &present_solution = this->present_solution;
 
   if (this->simulation_parameters.post_processing.calculate_enstrophy)
@@ -1052,8 +1049,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // tolerance.
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      this->pcout << "postprocess_fd, enter caculate average velocities"
-                  << std::endl;
       // Calculate average velocities when the time reaches the initial time.
       // time >= initial time with the epsilon as tolerance.
       const double dt = simulation_control->get_time_step();
@@ -1070,8 +1065,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 
   if (this->simulation_parameters.post_processing.calculate_kinetic_energy)
     {
-      this->pcout << "postprocess_fd, enter caculate kinetic energy"
-                  << std::endl;
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
       double             kE = calculate_kinetic_energy(this->dof_handler,
                                            present_solution,
@@ -1106,8 +1099,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Calculte apparent viscosity
   if (this->simulation_parameters.post_processing.calculate_apparent_viscosity)
     {
-      this->pcout << "postprocess_fd, enter caculate apparent viscosity"
-                  << std::endl;
       TimerOutput::Scope t(this->computing_timer,
                            "apparent_viscosity_calculation");
       double             apparent_viscosity = calculate_apparent_viscosity(
@@ -1149,8 +1140,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // Calculate pressure drop between two boundaries
   if (this->simulation_parameters.post_processing.calculate_pressure_drop)
     {
-      this->pcout << "postprocess_fd, enter caculate pressure drop"
-                  << std::endl;
       TimerOutput::Scope t(this->computing_timer, "pressure_drop_calculation");
       double             pressure_drop = calculate_pressure_drop(
         this->dof_handler,

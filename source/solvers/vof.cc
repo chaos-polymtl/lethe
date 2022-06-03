@@ -408,15 +408,11 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
             }
         }
     }
+
   this->volume_monitored =
     Utilities::MPI::sum(this->volume_monitored, mpi_communicator);
   this->mass_monitored =
     Utilities::MPI::sum(this->mass_monitored, mpi_communicator);
-
-  this->pcout << "           volume monitored = " << this->volume_monitored
-              << std::endl;
-  this->pcout << "           mass monitored = " << this->mass_monitored
-              << std::endl;
 }
 
 template <int dim>
@@ -493,11 +489,17 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.multiphysics.vof_parameters.conservation.monitoring)
     {
       // Calculate volume and mass (this->mass_monitored)
-      // TODO n'appeler que si sharpening constant
       calculate_volume_and_mass(
         this->present_solution,
         simulation_parameters.multiphysics.vof_parameters.conservation
           .id_fluid_monitored);
+
+      if (first_iteration)
+        {
+          // TODO trigger error if sharpening by binary search and
+          // monitoring disabled
+          this->mass_first_iteration = this->mass_monitored;
+        }
 
       auto         mpi_communicator = this->triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -505,13 +507,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
       if (this_mpi_process == 0)
         {
-          if (first_iteration)
-            {
-              // TODO trigger error if sharpening by binary search and
-              // monitoring disabled
-              this->mass_first_iteration = this->mass_monitored;
-            }
-
           // Set conservation monitoring table
           if (this->simulation_control->is_steady())
             {
@@ -614,17 +609,13 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
     }
 
   // Sharpen the interface of all solutions (present and previous)
-  this->pcout << "TEST final sharpening..." << std::endl;
   sharpen_interface(this->present_solution, this->sharpening_threshold, true);
-  this->pcout << "... final sharpening done" << std::endl;
 }
 
 template <int dim>
 double
 VolumeOfFluid<dim>::find_sharpening_threshold()
 {
-  double sharpening_threshold = 0.;
-
   // Useful definitions for readability
   double st_min = this->simulation_parameters.multiphysics.vof_parameters
                     .sharpening.sharpening_threshold_min;
@@ -643,7 +634,8 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
   double mass_gap      = 0.;
   int    nb_search_ite = 0;
   double st_ave        = 0.;
-
+  // Local variable for the tested sharpening_threshold values
+  double st_tested = 0.;
 
   // Binary search of an interface sharpening value that would ensure
   // mass conservation of the monitored phase (do-while loop, see
@@ -659,10 +651,10 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
         }
 
       // Define tested sharpening threshold value
-      st_ave               = (st_min + st_max) / 2.;
-      sharpening_threshold = st_ave;
+      st_ave    = (st_min + st_max) / 2.;
+      st_tested = st_ave;
 
-      mass_gap = calculate_mass_gap(id_fluid_monitored, sharpening_threshold);
+      mass_gap = calculate_mass_gap(id_fluid_monitored, st_tested);
 
       // Adapt searching range
       switch (id_fluid_monitored)
@@ -702,33 +694,27 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
           default:
             throw std::runtime_error("Unsupported number of fluids (>2)");
         } // end switch to adapt searching range
-
-      this->pcout << "TEST  ==> mass error is : "
-                  << std::abs(mass_gap) / this->mass_first_iteration
-                  << std::endl;
     }
   while (std::abs(mass_gap) > mass_gap_tol && nb_search_ite < max_iterations);
 
-  this->pcout << "TEST  - leaving binary search algorithm" << std::endl;
-
   // Take minimum gap in between the two endpoints of the last
-  // interval searched, if max_iterations is reached
-  if (nb_search_ite == max_iterations)
+  // interval searched, if out of the do-while loop because max_iterations is
+  // reached
+  if (std::abs(mass_gap) > mass_gap_tol)
     {
       double mass_gap_endpoint = 0.;
       if (st_min == st_ave)
-        sharpening_threshold = st_max;
+        st_tested = st_max;
       else if (st_max == st_ave)
-        sharpening_threshold = st_min;
+        st_tested = st_min;
 
-      mass_gap_endpoint =
-        calculate_mass_gap(id_fluid_monitored, sharpening_threshold);
+      mass_gap_endpoint = calculate_mass_gap(id_fluid_monitored, st_tested);
 
       // Retake st_ave value if mass gap is not lowered at endpoint
       // values
       if (std::abs(mass_gap_endpoint) > std::abs(mass_gap))
         {
-          sharpening_threshold = st_ave;
+          st_tested = st_ave;
         }
 
       // Output message
@@ -759,7 +745,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
         }
     }
 
-  return sharpening_threshold;
+  return st_tested;
 }
 
 template <int dim>
@@ -768,9 +754,10 @@ VolumeOfFluid<dim>::calculate_mass_gap(const int    id_fluid_monitored,
                                        const double sharpening_threshold)
 {
   // Copy present solution VOF
+  auto mpi_communicator = this->triangulation->get_communicator();
+
   TrilinosWrappers::MPI::Vector solution_copy;
-  solution_copy.reinit(this->locally_owned_dofs,
-                       this->triangulation->get_communicator());
+  solution_copy.reinit(this->locally_owned_dofs, mpi_communicator);
   solution_copy = this->present_solution;
 
   // Sharpen interface using the tested threshold value
@@ -795,9 +782,6 @@ VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
   update_solution_and_constraints(solution);
   if (sharpen_previous_solutions)
     {
-      this->pcout
-        << "... update_solution_and_constraints on previous solutions..."
-        << std::endl;
       for (unsigned int p = 0; p < previous_solutions.size(); ++p)
         update_solution_and_constraints(previous_solutions[p]);
     }
@@ -808,9 +792,6 @@ VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
 
   if (sharpen_previous_solutions)
     {
-      this->pcout
-        << "... assemble_L2_projection_interface_sharpening on previous solutions..."
-        << std::endl;
       for (unsigned int p = 0; p < previous_solutions.size(); ++p)
         {
           assemble_L2_projection_interface_sharpening(previous_solutions[p],
@@ -824,9 +805,6 @@ VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
   update_solution_and_constraints(solution);
   if (sharpen_previous_solutions)
     {
-      this->pcout
-        << "... update_solution_and_constraints on previous solutions..."
-        << std::endl;
       for (unsigned int p = 0; p < previous_solutions.size(); ++p)
         update_solution_and_constraints(previous_solutions[p]);
     }
@@ -1943,8 +1921,6 @@ VolumeOfFluid<dim>::handle_peeling_wetting()
           // Parse fluid present solution to apply_peeling_wetting method
           if (multiphysics->fluid_dynamics_is_block())
             {
-              this->pcout << "===== VOF pw: fluid_dynamics_is_block..."
-                          << std::endl;
               const TrilinosWrappers::MPI::BlockVector current_solution_fd(
                 *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
               // apply_peeling_wetting is templated with
@@ -1953,8 +1929,6 @@ VolumeOfFluid<dim>::handle_peeling_wetting()
             }
           else
             {
-              this->pcout << "===== VOF pw: fluid_dynamics is not block..."
-                          << std::endl;
               const TrilinosWrappers::MPI::Vector current_solution_fd(
                 *multiphysics->get_solution(PhysicsID::fluid_dynamics));
               // apply_peeling_wetting is templated with

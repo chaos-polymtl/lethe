@@ -241,8 +241,6 @@ public:
     physics[physics_id]->time_stepping_method = time_stepping_method;
     physics[physics_id]->solve_non_linear_system(false);
     physics[physics_id]->modify_solution();
-
-    std::cout << " TEST I am out of modify_solution " << std::endl;
   }
 
   /**
@@ -263,9 +261,6 @@ public:
     block_physics[physics_id]->time_stepping_method = time_stepping_method;
     block_physics[physics_id]->solve_non_linear_system(false);
     block_physics[physics_id]->modify_solution();
-
-    std::cout << " TEST I am out of modify_solution (block physics) "
-              << std::endl;
   }
 
 
