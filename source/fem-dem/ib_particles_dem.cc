@@ -71,8 +71,6 @@ template <int dim>
 void
 IBParticlesDEM<dim>::update_contact_candidates(double radius_factor){
   particles_contact_candidates.resize(dem_particles.size());
-  unsigned int i=0;
-  unsigned int j=0;
 
   for (auto &particle_one : dem_particles)
     {
@@ -87,15 +85,12 @@ IBParticlesDEM<dim>::update_contact_candidates(double radius_factor){
 
               if((particle_one_location-particle_two_location).norm()<(particle_one.radius+particle_two.radius)*radius_factor){
 
-                  particles_contact_candidates[i].insert(particle_two.id);
+                  particles_contact_candidates[particle_one.particle_id].insert(particle_two.particle_id );
 
                 }
             }
-          j+=1;
         }
-      i+=1;
     }
-
 }
 
 
@@ -112,6 +107,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
       auto particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();
       for (particle_contact_candidates_id = particles_contact_candidates[particle_one.id].begin();  particle_contact_candidates_id != particles_contact_candidates[particle_one.id].end(); ++ particle_contact_candidates_id)
         {
+
           auto particle_contact_id=*particle_contact_candidates_id;
           auto &particle_two = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and

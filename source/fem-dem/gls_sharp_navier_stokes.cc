@@ -3003,14 +3003,11 @@ GLSSharpNavierStokesSolver<dim>::solve()
                                                    *this->mapping);
           ib_dem.update_contact_candidates(3);
 
-
           // add initialization
           this->iterate();
         }
 
       this->postprocess_fd(false);
-
-
 
       if (this->simulation_parameters.particlesParameters->calculate_force_ib)
         force_on_ib();
