@@ -51,11 +51,12 @@ public:
    * handler, and calculates the rotation angle for rotational and
    * translational-rotational motions.
    *
-   * @param dem_parameters DEM parameters defined using the parameter handler
+   * @param grid_motion_parameters DEM parameters defined using the parameter handler
    * @param dem_time_step DEM time-step
    */
-  GridMotion(const DEMSolverParameters<spacedim> &dem_parameters,
-             const double &                       dem_time_step);
+  GridMotion(
+    const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
+    const double                                       &dem_time_step);
 
   /**
    * Calls the desired grid motion.

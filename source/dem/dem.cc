@@ -207,7 +207,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                standard_deviation_multiplier);
 
   grid_motion_object =
-    std::make_shared<GridMotion<dim, dim>>(parameters,
+    std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
                                            simulation_control->get_time_step());
 }
 

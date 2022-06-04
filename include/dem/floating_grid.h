@@ -17,9 +17,11 @@ template <int dim, int spacedim>
 class FloatingGrid
 {
 public:
-  FloatingGrid(const DEMSolverParameters<spacedim> &dem_parameters,
-               const ConditionalOStream &           pcout,
-               const double &                       dem_time_step);
+  FloatingGrid(const Parameters::Lagrangian::FloatingGrid<spacedim>
+                                        &floating_grid_parameters,
+               const bool                restart,
+               const ConditionalOStream &pcout,
+               const double             &dem_time_step);
 
   void
   iterate();

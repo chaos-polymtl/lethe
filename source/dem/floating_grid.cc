@@ -1,6 +1,3 @@
-//
-// Created by Emile Bergeron on 2022-01-30.
-//
 #include "dem/floating_grid.h"
 
 #include <core/solutions_output.h>
@@ -11,15 +8,17 @@
 
 template <int dim, int spacedim>
 FloatingGrid<dim, spacedim>::FloatingGrid(
-  const DEMSolverParameters<spacedim> &dem_parameters,
-  const ConditionalOStream &           pcout,
-  const double &                       dem_time_step)
-  : gridMotion(dem_parameters, dem_time_step)
+  const Parameters::Lagrangian::FloatingGrid<spacedim>
+                           &floating_grid_parameters,
+  const bool                restart,
+  const ConditionalOStream &pcout,
+  const double             &dem_time_step)
+  : gridMotion(floating_grid_parameters.motion, dem_time_step)
 {
-  if (dem_parameters.floating_grid.mesh.file_name != "none")
+  if (floating_grid_parameters.mesh.file_name != "none")
     {
-      read_mesh(dem_parameters.floating_grid.mesh,
-                dem_parameters.restart.restart,
+      read_mesh(floating_grid_parameters.mesh,
+                restart,
                 pcout,
                 triangulation,
                 triangulation_cell_diameter);
@@ -43,7 +42,12 @@ FloatingGrid<dim, spacedim>::write(const std::string  folder,
                                    const MPI_Comm &   mpi_communicator,
                                    const unsigned int digits)
 {
-  DataOut<dim, spacedim> dataOut;
+
+  #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+    DataOut<dim, DoFHandler<dim, spacedim>> dataOut;
+  #else
+    DataOut<dim, spacedim> dataOut;
+  #endif
   dataOut.attach_triangulation(triangulation);
   dataOut.build_patches();
 

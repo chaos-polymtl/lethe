@@ -9,25 +9,25 @@ using namespace dealii;
 
 template <int dim, int spacedim>
 GridMotion<dim, spacedim>::GridMotion(
-  const DEMSolverParameters<spacedim> &dem_parameters,
-  const double &                       dem_time_step)
+  const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
+  const double                                       &dem_time_step)
 {
   // Setting grid motion type
-  if (dem_parameters.grid_motion.motion_type ==
+  if (grid_motion_parameters.motion_type ==
       Parameters::Lagrangian::GridMotion<spacedim>::MotionType::rotational)
     {
       grid_motion = &GridMotion<dim, spacedim>::move_grid_rotational;
       rotation_angle =
-        dem_parameters.grid_motion.grid_rotational_speed * dem_time_step;
-      rotation_axis = dem_parameters.grid_motion.grid_rotational_axis;
+        grid_motion_parameters.grid_rotational_speed * dem_time_step;
+      rotation_axis = grid_motion_parameters.grid_rotational_axis;
     }
-  else if (dem_parameters.grid_motion.motion_type ==
+  else if (grid_motion_parameters.motion_type ==
            Parameters::Lagrangian::GridMotion<
              spacedim>::MotionType::translational)
     {
       grid_motion = &GridMotion<dim, spacedim>::move_grid_translational;
       shift_vector =
-        dem_parameters.grid_motion.grid_translational_velocity * dem_time_step;
+        grid_motion_parameters.grid_translational_velocity * dem_time_step;
     }
 }
 
