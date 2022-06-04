@@ -139,6 +139,13 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
       "1e-3",
       Patterns::Double(),
       "Tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening");
+
+    prm.declare_entry(
+      "verbosity",
+      "quiet",
+      Patterns::Selection("quiet|verbose|extra verbose"),
+      "State whether from the mass conservation data should be printed "
+      "Choices are <quiet|verbose>.");
   }
   prm.leave_subsection();
 }
@@ -155,6 +162,17 @@ Parameters::VOF_MassConservation::parse_parameters(ParameterHandler &prm)
     monitoring         = prm.get_bool("monitoring");
     id_fluid_monitored = prm.get_integer("fluid monitored");
     tolerance          = prm.get_double("tolerance");
+
+    // Verbosity
+    const std::string op = prm.get("verbosity");
+    if (op == "verbose")
+      verbosity = Parameters::Verbosity::verbose;
+    else if (op == "quiet")
+      verbosity = Parameters::Verbosity::quiet;
+    else if (op == "extra verbose")
+      verbosity = Parameters::Verbosity::extra_verbose;
+    else
+      throw(std::runtime_error("Invalid verbosity level"));
   }
   prm.leave_subsection();
 }
@@ -187,10 +205,12 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 
     // Parameters for adaptative sharpening
     prm.declare_entry(
-      "sharpening threshold min",
-      "0.40",
+      "threshold max deviation",
+      "0.20",
       Patterns::Double(),
-      "Minimum interface sharpening threshold considered in the binary search algorithm");
+      "Maximum deviation (from the base value of 0.5) considered in the search "
+      "algorithm to ensure mass conservation. "
+      "A threshold max deviation of 0.20 results in a search interval from 0.30 to 0.70");
 
     prm.declare_entry(
       "sharpening threshold max",
@@ -246,9 +266,8 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
     sharpening_threshold = prm.get_double("sharpening threshold");
 
     // Parameters for adaptative sharpening
-    sharpening_threshold_min = prm.get_double("sharpening threshold min");
-    sharpening_threshold_max = prm.get_double("sharpening threshold max");
-    max_iterations           = prm.get_double("max iterations");
+    threshold_max_deviation = prm.get_double("threshold max deviation");
+    max_iterations          = prm.get_double("max iterations");
 
     // Error definitions
     Assert(sharpening_threshold > 0.0 && sharpening_threshold < 1.0,

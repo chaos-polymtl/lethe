@@ -427,7 +427,7 @@ VolumeOfFluid<dim>::finish_simulation()
       simulation_parameters.analytical_solution->verbosity ==
         Parameters::Verbosity::verbose)
     {
-      if (simulation_parameters.simulation_control.method ==
+      if (this->simulation_parameters.simulation_control.method ==
           Parameters::SimulationControl::TimeSteppingMethod::steady)
         this->error_table.omit_column_from_convergence_rate_evaluation("cells");
       else
@@ -437,6 +437,12 @@ VolumeOfFluid<dim>::finish_simulation()
       this->error_table.set_precision(
         "error_phase", this->simulation_control->get_log_precision());
       this->error_table.write_text(std::cout);
+    }
+  if (this_mpi_process == 0 &&
+      this->simulation_parameters.multiphysics.vof_parameters.conservation
+          .verbosity == Parameters::Verbosity::extra_verbose)
+    {
+      this->table_monitoring_vof.write_text(std::cout);
     }
 }
 
@@ -486,7 +492,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (simulation_parameters.multiphysics.vof_parameters.conservation.monitoring)
+  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+        .monitoring)
     {
       // Calculate volume and mass (this->mass_monitored)
       calculate_volume_and_mass(
@@ -584,7 +591,9 @@ void
 VolumeOfFluid<dim>::handle_interface_sharpening()
 {
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-        .verbosity != Parameters::Verbosity::quiet)
+          .verbosity != Parameters::Verbosity::quiet ||
+      this->simulation_parameters.multiphysics.vof_parameters.conservation
+          .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "Sharpening interface at step "
                   << this->simulation_control->get_step_number() << std::endl;
@@ -592,11 +601,11 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
       Parameters::SharpeningType::adaptative)
     {
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
             .verbosity != Parameters::Verbosity::quiet)
         {
           // TODO time this operation?
-          this->pcout << "  -Adapting sharpening_threshold..." << std::endl;
+          this->pcout << "   Adapting sharpening_threshold" << std::endl;
         }
       this->sharpening_threshold = find_sharpening_threshold();
     }
@@ -608,6 +617,11 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
           .sharpening_threshold;
     }
 
+  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+        .verbosity == Parameters::Verbosity::extra_verbose)
+    {
+      this->pcout << "   ... final sharpening" << std::endl;
+    }
   // Sharpen the interface of all solutions (present and previous)
   sharpen_interface(this->present_solution, this->sharpening_threshold, true);
 }
@@ -616,11 +630,13 @@ template <int dim>
 double
 VolumeOfFluid<dim>::find_sharpening_threshold()
 {
+  // Sharpening threshold (st) search range extrema
+  double st_min = 0.5 - this->simulation_parameters.multiphysics.vof_parameters
+                          .sharpening.threshold_max_deviation;
+  double st_max = 0.5 + this->simulation_parameters.multiphysics.vof_parameters
+                          .sharpening.threshold_max_deviation;
+
   // Useful definitions for readability
-  double st_min = this->simulation_parameters.multiphysics.vof_parameters
-                    .sharpening.sharpening_threshold_min;
-  double st_max = this->simulation_parameters.multiphysics.vof_parameters
-                    .sharpening.sharpening_threshold_max;
   const double mass_gap_tol = this->simulation_parameters.multiphysics
                                 .vof_parameters.conservation.tolerance *
                               this->mass_first_iteration;
@@ -644,13 +660,16 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
     {
       nb_search_ite++;
 
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .verbosity != Parameters::Verbosity::quiet)
+      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+            .verbosity == Parameters::Verbosity::extra_verbose)
         {
-          this->pcout << "   ... search step " << nb_search_ite << std::endl;
+          this->pcout << "   ... step " << nb_search_ite
+                      << " of the search algorithm" << std::endl;
         }
 
       // Define tested sharpening threshold value
+      // NB: the first value tested is always 0.5 (see definition of st_min and
+      // st_max above)
       st_ave    = (st_min + st_max) / 2.;
       st_tested = st_ave;
 
@@ -734,15 +753,17 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
             << std::endl;
         }
     }
-  else
+
+  // Output message that mass conservation condition is reached
+  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+        .verbosity == Parameters::Verbosity::extra_verbose)
     {
-      // Output message that mass conservation condition is reached
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .verbosity != Parameters::Verbosity::quiet)
-        {
-          this->pcout << "   ... search algorithm took : " << nb_search_ite
-                      << " step(s) " << std::endl;
-        }
+      this->pcout << "   ... search algorithm took : " << nb_search_ite
+                  << " step(s) " << std::endl
+                  << "   ... error on mass conservation reached: "
+                  << (this->mass_monitored - this->mass_first_iteration) /
+                       this->mass_first_iteration
+                  << std::endl;
     }
 
   return st_tested;

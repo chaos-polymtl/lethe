@@ -114,6 +114,9 @@ namespace Parameters
     // used with adaptative Sharpening
     double tolerance;
 
+    // Type of verbosity for the interface sharpening calculation
+    Parameters::Verbosity verbosity;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -145,8 +148,7 @@ namespace Parameters
     double sharpening_threshold;
 
     // Parameters for adaptative sharpening
-    double sharpening_threshold_min;
-    double sharpening_threshold_max;
+    double threshold_max_deviation;
     int    max_iterations;
 
     // Other sharpening parameters
