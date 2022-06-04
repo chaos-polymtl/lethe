@@ -18,10 +18,10 @@ class FloatingGrid
 {
 public:
   FloatingGrid(const Parameters::Lagrangian::FloatingGrid<spacedim>
-                                        &floating_grid_parameters,
+                 &                       floating_grid_parameters,
                const bool                restart,
                const ConditionalOStream &pcout,
-               const double             &dem_time_step);
+               const double &            dem_time_step);
 
   void
   iterate();
