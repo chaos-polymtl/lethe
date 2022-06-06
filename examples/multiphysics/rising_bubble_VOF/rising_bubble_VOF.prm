@@ -31,12 +31,16 @@ end
 subsection VOF
   subsection interface sharpening
     set enable      = true
-    set sharpening threshold	= 0.5
+    set threshold   = 0.5
     set interface sharpness	= 1.4
-    set sharpening frequency	= 50
+    set frequency   = 50
   end
   subsection surface tension force
     set enable      = true
+    set surface tension coefficient 	= 24.5
+    set phase fraction gradient filter 	= 0.0005
+    set curvature filter		= 0.0005
+    set output auxiliary fields 	= true
   end
 end
 
@@ -77,16 +81,6 @@ subsection physical properties
     set density              	= 100
     set kinematic viscosity  	= 0.01
   end
-end
-
-#---------------------------------------------------
-# Surface tension force
-#---------------------------------------------------
-subsection surface tension force
- 	set surface tension coefficient 	= 24.5
-	set phase fraction gradient filter 	= 0.0005
-	set curvature filter			= 0.0005
-	set output auxiliary fields 		= true
 end
 
 

@@ -3,17 +3,17 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set method                          = bdf1
+  set method                    = bdf1
   set time end                	= 4.1
   set time step               	= 0.01
-    set adapt 		      		= true
-  set max cfl		      		= 0.5
+    set adapt 		      	= true
+  set max cfl		      	= 0.5
   set stop tolerance          	= 1e-5
   set adaptative time step scaling 	= 1.1
   set number mesh adapt       	= 0
   set output name             	= dam-break_VOF
   set output frequency        	= 20
-  set output path                  	= ./output/
+  set output path               = ./output/
   set subdivision             	= 1
 end
 #---------------------------------------------------
@@ -21,7 +21,6 @@ end
 #---------------------------------------------------
 subsection multiphysics
     set VOF = true
-    set interface sharpening = true
 end
 #---------------------------------------------------
 # VOF
@@ -29,9 +28,9 @@ end
 subsection VOF
   subsection interface sharpening
     set enable      = true
-    set sharpening threshold   = 0.5
+    set threshold   = 0.5
     set interface sharpness    = 2
-    set sharpening frequency   = 10
+    set frequency   = 10
   end
 end
 #---------------------------------------------------
