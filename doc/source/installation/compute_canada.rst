@@ -55,7 +55,7 @@ Then, we can clone and compile ``dealii``. Although Lethe always supports the ma
 
  git clone https://github.com/lethe-cfd/dealii.git
 
-We can compile ``dealii`` in the ``$HOME/dealii/build folder``, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``:
+We can compile ``dealii`` in the ``$HOME/dealii/build folder``, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est`` :
 
 .. code-block:: text
 
@@ -92,7 +92,7 @@ Then, we can clone and compile ``dealii``. Although Lethe always supports the ma
 
  git clone https://github.com/lethe-cfd/dealii.git
 
-We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``:
+We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est`` :
 
 .. code-block:: text
 
@@ -262,9 +262,26 @@ To save your key on the cluster, so that it is not asked for each log or ``scp``
 
  ssh-keygen
 
-and copy it on the cluster:
+which defaults to an RSA key. If you want to specify the key type you want to generate (i.e. ED25519 key), type
+
+.. code-block:: text
+
+ ssh-keygen -t ed25519
+
+.. note::
+  ED25519 keys are preferred to RSA keys since they are more secure and performant. Seek more information in the `Gitlab Documentation<https://docs.gitlab.com/ee/user/ssh.html>`.
+
+To upload this local key to your Compute Canada Database account (CCDB) use:
 
 .. code-block:: text
 
  ssh-copy-id username@clustername.computecanada.ca
 
+.. warning::
+ This command does not work on Niagara anymore. You may use the following:
+ 
+ .. code-block:: text
+ 
+  cat ~/.ssh/$KEY_ID.pub
+
+ where ``$KEY_ID.pub`` is the public key file located in ``~/.ssh/``. For more information, see `SSH documentation <https://docs.scinet.utoronto.ca/index.php/SSH#SSH_Keys>`_.

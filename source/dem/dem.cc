@@ -207,8 +207,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                standard_deviation_multiplier);
 
   grid_motion_object =
-    std::make_shared<GridMotion<dim>>(parameters,
-                                      simulation_control->get_time_step());
+    std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
+                                           simulation_control->get_time_step());
 }
 
 template <int dim>
@@ -753,7 +753,11 @@ DEMSolver<dim>::solve()
   print_initial_information(pcout, n_mpi_processes);
 
   // Reading mesh
-  read_mesh(parameters, pcout, triangulation, triangulation_cell_diameter);
+  read_mesh(parameters.mesh,
+            parameters.restart.restart,
+            pcout,
+            triangulation,
+            triangulation_cell_diameter);
 
   if (parameters.restart.restart == true)
     {
