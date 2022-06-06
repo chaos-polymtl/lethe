@@ -261,7 +261,7 @@ Lethe will generate a number of files. The most important one bears the extensio
 First case results (Re = 0.1)
 -----------------------------
 
-Using Paraview, the steady-state velocity profile and the pressure profile can be visualized by operating a *slice* along the xy-plane (z-normal) that cuts in the middle of the sphere (See documentation <https://forgeanalytics.io/blog/creating-slices-in-paraview/>)_.
+Using Paraview, the steady-state velocity profile and the pressure profile can be visualized by operating a *slice* along the xy-plane (z-normal) that cuts in the middle of the sphere (See `documentation <https://forgeanalytics.io/blog/creating-slices-in-paraview/>`_). 
 
 .. image:: images/velocity_0.1.png
     :alt: velocity distribution 0.1

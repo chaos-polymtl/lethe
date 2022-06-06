@@ -231,10 +231,22 @@ In order to the hypershell refinement zone around the immersed boundary, the ``m
 
 Results
 ---------------
-The simulation of this case results in the following solution for the velocity and pressure field. 
 
+Using Paraview, the steady-state velocity profile and the pressure profile can be visualized by operating a *slice* along the xy-plane (z-normal) that cuts in the middle of the sphere (See `documentation <https://forgeanalytics.io/blog/creating-slices-in-paraview/>`_). 
 
+.. image:: images/velocity.png
+	:align: center
 
+.. image:: images/pressure.png
+	:align: center
+
+We can also see the viscosity profile throughout the domain, that is a function of the shear rate magnitude profile. Close to the particle, the shear rate is high which decreases the viscosity. Far from the particle, the viscosity is higher.
+
+.. image:: images/viscosity.png
+	:align: center
+
+.. image:: images/shear_rate.png
+	:align: center
 
 We get the following force applied on the particle for each of the mesh refinements, which is similar to the one obtained with a conformal mesh in :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`. With the conformal mesh drag force applied to the particle is 7.123. The difference between the 2 can mostly be attributed to the discretization error.
 
