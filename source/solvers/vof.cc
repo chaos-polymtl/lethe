@@ -605,9 +605,16 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
             .verbosity != Parameters::Verbosity::quiet)
         {
           // TODO time this operation?
-          this->pcout << "   Adapting sharpening threshold" << std::endl;
+          this->pcout << "   Adapting the sharpening threshold" << std::endl;
         }
+
       this->sharpening_threshold = find_sharpening_threshold();
+
+      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+            .verbosity != Parameters::Verbosity::quiet)
+        {
+          this->pcout << "   ... final sharpening" << std::endl;
+        }
     }
   else
     {
@@ -616,11 +623,6 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
                                      .vof_parameters.sharpening.threshold;
     }
 
-  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
-        .verbosity == Parameters::Verbosity::extra_verbose)
-    {
-      this->pcout << "   ... final sharpening" << std::endl;
-    }
   // Sharpen the interface of all solutions (present and previous)
   sharpen_interface(this->present_solution, this->sharpening_threshold, true);
 }
@@ -660,7 +662,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
       nb_search_ite++;
 
       if (this->simulation_parameters.multiphysics.vof_parameters.conservation
-            .verbosity == Parameters::Verbosity::extra_verbose)
+            .verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   ... step " << nb_search_ite
                       << " of the search algorithm" << std::endl;
@@ -742,20 +744,23 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
           // commence par 0.5?)
           this->pcout
             << "  WARNING: Maximum number of iterations (" << nb_search_ite
-            << ") reached in the adaptative sharpening threshold algorithm"
-            << ", remaining error on mass conservation is: "
+            << ") reached in the " << std::endl
+            << "  adaptative sharpening threshold algorithm, remaining error"
+            << std::endl
+            << "  on mass conservation is: "
             << (this->mass_monitored - this->mass_first_iteration) /
                  this->mass_first_iteration
             << std::endl
             << "  Consider increasing the sharpening threshold range or the "
-            << "number of iterations to reach the mass conservation tolerance."
+            << std::endl
+            << "  number of iterations to reach the mass conservation tolerance."
             << std::endl;
         }
     }
 
   // Output message that mass conservation condition is reached
   if (this->simulation_parameters.multiphysics.vof_parameters.conservation
-        .verbosity == Parameters::Verbosity::extra_verbose)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "   ... search algorithm took : " << nb_search_ite
                   << " step(s) " << std::endl

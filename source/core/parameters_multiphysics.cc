@@ -159,7 +159,7 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry(
       "tolerance",
-      "1e-3",
+      "1e-2",
       Patterns::Double(),
       "Tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening");
 
@@ -168,7 +168,7 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
       "quiet",
       Patterns::Selection("quiet|verbose|extra verbose"),
       "State whether from the mass conservation data should be printed "
-      "Choices are <quiet|verbose>.");
+      "Choices are <quiet|verbose|extra verbose>.");
   }
   prm.leave_subsection();
 }
@@ -224,7 +224,8 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "threshold",
       "0.5",
       Patterns::Double(),
-      "Interface sharpening threshold that represents the mass conservation level");
+      "Interface sharpening threshold that represents the phase fraction at which "
+      "the interphase is considered located");
 
     // Parameters for adaptative sharpening
     prm.declare_entry(
