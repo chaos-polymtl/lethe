@@ -38,11 +38,11 @@ using namespace dealii;
  *
  */
 
-template <int dim>
+template <int dim, int spacedim = dim>
 class GridMotion
 {
-  using FuncPtrType = void (GridMotion<dim>::*)(
-    parallel::distributed::Triangulation<dim> &triangulation);
+  using FuncPtrType = void (GridMotion<dim, spacedim>::*)(
+    Triangulation<dim, spacedim> &triangulation);
   FuncPtrType grid_motion;
 
 public:
@@ -51,11 +51,12 @@ public:
    * handler, and calculates the rotation angle for rotational and
    * translational-rotational motions.
    *
-   * @param dem_parameters DEM parameters defined using the parameter handler
+   * @param grid_motion_parameters DEM parameters defined using the parameter handler
    * @param dem_time_step DEM time-step
    */
-  GridMotion(const DEMSolverParameters<dim> &dem_parameters,
-             const double &                  dem_time_step);
+  GridMotion(
+    const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
+    const double &                                      dem_time_step);
 
   /**
    * Calls the desired grid motion.
@@ -63,7 +64,7 @@ public:
    * @param triangulation Triangulation
    */
   void
-  move_grid(parallel::distributed::Triangulation<dim> &triangulation)
+  move_grid(Triangulation<dim, spacedim> &triangulation)
   {
     (this->*grid_motion)(triangulation);
   }
@@ -83,9 +84,9 @@ public:
    */
   void
   update_boundary_points_and_normal_vectors_in_contact_list(
-    std::unordered_map<
-      types::particle_index,
-      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::unordered_map<types::particle_index,
+                       std::map<types::particle_index,
+                                particle_wall_contact_info_struct<spacedim>>>
       &particle_wall_pairs_in_contact,
     const std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
       &updated_boundary_points_and_normal_vectors);
@@ -97,8 +98,7 @@ private:
    * @param triangulation Triangulation
    */
   void
-  move_grid_rotational(
-    parallel::distributed::Triangulation<dim> &triangulation);
+  move_grid_rotational(Triangulation<dim, spacedim> &triangulation);
 
   /**
    * Carries out translational motion of the triangulation
@@ -106,8 +106,7 @@ private:
    * @param triangulation Triangulation
    */
   void
-  move_grid_translational(
-    parallel::distributed::Triangulation<dim> &triangulation);
+  move_grid_translational(Triangulation<dim, spacedim> &triangulation);
 
   // Since the DEM time-step and rotational speed are constant, we calculate the
   // rotation angle at each time-step once in the constructor and define it as a
@@ -116,7 +115,7 @@ private:
 
   unsigned int rotation_axis;
 
-  Tensor<1, dim> shift_vector;
+  Tensor<1, spacedim> shift_vector;
 };
 
 

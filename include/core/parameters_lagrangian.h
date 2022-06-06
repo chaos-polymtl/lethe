@@ -412,6 +412,26 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
+    template <int dim>
+    struct FloatingGrid
+    {
+      // Floating mesh motion information
+      Parameters::Mesh mesh;
+
+      // Floating grid motion information
+      Parameters::Lagrangian::GridMotion<dim> motion;
+
+      // Beginning time
+      double time_start;
+      // Ending time
+      double time_end;
+
+      void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
   } // namespace Lagrangian
 } // namespace Parameters
 
