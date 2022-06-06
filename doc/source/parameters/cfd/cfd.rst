@@ -28,3 +28,4 @@ General, CFD and Multiphysics
    restart
    dynamic_flow_control
    laser_heat_source
+   box_refinement
