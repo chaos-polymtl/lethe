@@ -45,7 +45,7 @@ The mesh is defined using the following subsection.
 	  set initial refinement   = 4
 	end
 	
-Using an ``initial refinement`` of 4, the initial size of the cubic cells is 1.875. Since the particle size is small in regards to the mesh size, a refinement zone is generated around the particle to better capture it .
+Using an ``initial refinement`` of 4, the initial size of the cubic cells is 1.875. Since the particle size is small in regards to the mesh size, a refinement zone is generated around the particle to better capture it (see :doc:`../../../parameters/cfd/box_refinement` for more details).
 
 .. code-block:: text
 
@@ -111,10 +111,10 @@ This example showcases a shear-thinning flow, for which the viscosity decreases 
 		set rheological model	= carreau
 		subsection non newtonian
 		  subsection carreau
-			set n 		   		= 0.5
+			set n 		   	= 0.5
 			set viscosity_0    	= 0.063403
 			set viscosity_inf  	= 0
-			set lambda	   		= 10
+			set lambda	   	= 10
 			set a	           	= 2.0
 		  end
 		end
@@ -132,7 +132,7 @@ We use an *a priori* Reynolds number, since it is not possible, *a priori*, to k
 Initial conditions
 ~~~~~~~~~~~~~~~~~~~~
 
-This examples uses a ramping initial condition that first ramps on the ``n`` parameter, and after on the ``viscosity_0`` parameter. This allows for a smooth transition of regime and of non-Newtonian level.
+This example uses a ramping initial condition that first ramps on the ``n`` parameter, and after on the ``viscosity_0`` parameter. This allows for a smooth transition of regime and of non-Newtonian level.
 
 .. code-block:: text
 
@@ -140,14 +140,14 @@ This examples uses a ramping initial condition that first ramps on the ``n`` par
 	  set type = ramp
 	  subsection ramp
 		subsection n
-		  set initial n = 1.0
-		  set iterations = 2
-		  set alpha = 0.5
+		  set initial n 	= 1.0
+		  set iterations 	= 2
+		  set alpha 		= 0.5
 		end
 		subsection viscosity
 		  set initial viscosity = 1.0
-		  set iterations = 2
-		  set alpha = 0.5
+		  set iterations 	= 2
+		  set alpha 		= 0.5
 		end
 	  end
 	end
@@ -158,12 +158,12 @@ The first initial condition simulation solves for ``n=1.0``, ``viscosity_0 = 1.0
 * (First ``viscosity`` iteration) ``n=0.5``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2`` ;
 * (Second ``viscosity`` iteration) ``n=0.5``, ``viscosity_0 = 0.531702``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2`` 
 
-and the first simulation uses the parameters in the Physical Properties section. 
+and the first simulation uses the parameters in the **Physical Properties** section. For more information on ramping initial conditions, see :doc:`../../../parameters/cfd/initial_conditions`.
 
 Particle
 ~~~~~~~~~~~~~~~~~~~~
 
-In this case, we want to define a spherical boundary of radius 0.5 center at (0,0,0) that has no velocity. For more information on particle immersed boundary conditions using shar interface, see :doc:`../../../parameters/resolved_cfd-dem/resolved_cfd-dem`.
+In this case, we want to define a spherical boundary of radius 0.5 center at (0,0,0) that has no velocity. For more information on particle immersed boundary conditions using a sharp interface, see :doc:`../../../parameters/resolved_cfd-dem/resolved_cfd-dem`.
 
 .. code-block:: text
 
@@ -193,7 +193,7 @@ In this case, we want to define a spherical boundary of radius 0.5 center at (0,
 	  end
 	end
 
-The hypershell around the boundary between ``refine mesh inside radius factor`` (r = 0.425) and ``refine mesh outside radius factor`` (r = 0.65) will initialy be refined twice. 
+The hypershell around the boundary between ``refine mesh inside radius factor`` (r = 0.425) and ``refine mesh outside radius factor`` (r = 0.65) will initialy be refined twice (`initial refinement = 2`). 
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -213,7 +213,7 @@ The simulation is solved at steady-state with 2 mesh adaptation.
 Mesh Adaptation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to the hypershell refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, 40% of the cells with be slip in 8 equal cubes (``fraction refinement   = 0.4``) using a velocity-gradient kelly operator.
+In order to generate the hypershell refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, 40% of the cells with be split in 8 (``fraction refinement   = 0.4``) using a velocity-gradient kelly operator.
 
 .. code-block:: text
 
@@ -240,7 +240,7 @@ Using Paraview, the steady-state velocity profile and the pressure profile can b
 .. image:: images/pressure.png
 	:align: center
 
-We can also see the viscosity profile throughout the domain, that is a function of the shear rate magnitude profile. Close to the particle, the shear rate is high which decreases the viscosity. Far from the particle, the viscosity is higher.
+We can also see the viscosity profile throughout the domain, that is a function of the shear rate magnitude profile. Close to the particle, the shear rate is high which decreases the viscosity. 
 
 .. image:: images/viscosity.png
 	:align: center
@@ -248,19 +248,24 @@ We can also see the viscosity profile throughout the domain, that is a function 
 .. image:: images/shear_rate.png
 	:align: center
 
-We get the following force applied on the particle for each of the mesh refinements, which is similar to the one obtained with a conformal mesh in :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder`. With the conformal mesh drag force applied to the particle is 7.123. The difference between the 2 can mostly be attributed to the discretization error.
+We can notice that the viscosity rapidely reaches a plateau at :math:`\eta=0.063`. Given the parameters in the **Physical properties** section, the viscosity behavior should be given  by:
+
+.. image:: images/carreau.png
+	:align: center
+
+We get the following force applied on the particle for each of the mesh refinements.
 
 .. code-block:: text
 
-    particle_ID    T_z      f_x       f_y    
-          0 -0.033177 5.698080  0.016542 
-          0 -0.006670 6.438133  0.004265 
-          0 -0.000349 6.773126 -0.000063 
-          0  0.000040 6.905268 -0.000170 
-          0 -0.000014 6.962307  0.000057 
+    particle_ID    T_x       T_y       T_z      f_x      f_y       f_z    
+	0 	-0.000008  0.000019 -0.000021 0.411248 0.000019  0.000038 
+	0 	 0.000000  0.000001 -0.000003 0.415503 0.000001  0.000002 
+	0 	-0.000000 -0.000000 -0.000000 0.424717 0.000002 -0.000002 
           
 .. note:: 
-	The drag coefficient obtained in this case is higher than the drag coefficient for a cylinder at a Reynolds number of 1 as the size of the domain is not large enough relative to the diameter of the cylinder. The flow around the cylinder is then constrained by the lateral boundaries, and this incrases the drag coefficient.
-	
-	
-	
+	Since analysing non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at Re = 50, the drag force would be 0.6165. Therefore, the drag force was decreased usgin a shear-thinning fluid.
+
+Possibilities for extension
+-----------------------------	
+* **High-order methods** : Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers.
+* **Reynolds number** : By changing the inlet velocity, it can be interesting to see the impact of the shear-thinning behavior on the effective drag force.
