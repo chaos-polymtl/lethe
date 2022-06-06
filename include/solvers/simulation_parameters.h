@@ -155,6 +155,15 @@ public:
         throw std::logic_error(
           "Inconsistency in .prm!\n with VOF = true\n use: number of fluids = 2");
       }
+
+    if (multiphysics.vof_parameters.sharpening.type ==
+          Parameters::SharpeningType::adaptative &&
+        not(multiphysics.vof_parameters.conservation.monitoring))
+      {
+        throw std::logic_error(
+          "Inconsistency in .prm!\n in subsection VOF, with sharpening type = adaptative\n "
+          "use: monitoring = true");
+      }
   }
 
 private:

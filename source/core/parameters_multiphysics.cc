@@ -7,13 +7,31 @@ DeclException1(
   SharpeningThresholdError,
   double,
   << "Sharpening threshold : " << arg1 << " is smaller than 0 or larger than 1."
-  << " Interface sharpening model requires a sharpening threshold between 0 and 1.");
+  << std::endl
+  << "Interface sharpening model requires a sharpening threshold between 0 and 1.");
+
+DeclException1(
+  SharpeningThresholdErrorMaxDeviation,
+  double,
+  << "Sharpening threshold max deviation : " << arg1
+  << " is smaller than 0 or larger than 0.5." << std::endl
+  << "Adaptative interface sharpening requires a maximum deviation of the"
+  << " sharpening threshold between 0.0 and 0.5. See documentation for further details");
 
 DeclException1(
   SharpeningFrequencyError,
   int,
   << "Sharpening frequency : " << arg1 << " is equal or smaller than 0."
-  << " Interface sharpening model requires an integer sharpening frequency larger than 0.");
+  << std::endl
+  << "Interface sharpening model requires an integer sharpening frequency larger than 0.");
+
+DeclException1(
+  AdaptativeSharpeningError,
+  bool,
+  << "Sharpening type is set to 'adaptative' but monitoring is : " << arg1
+  << std::endl
+  << "Adaptative sharpening requires to set 'monitoring = true', and to define"
+  << " the 'fluid monitored' and the 'tolerance' to reach. See documentation for further details.");
 
 
 void
@@ -97,6 +115,11 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     sharpening.parse_parameters(prm);
     peeling_wetting.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
+
+    // Error definitions
+    if (sharpening.type == Parameters::SharpeningType::adaptative)
+      Assert(conservation.monitoring == true,
+             AdaptativeSharpeningError(conservation.monitoring));
   }
   prm.leave_subsection();
 }
@@ -198,7 +221,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 
     // Parameters for constant sharpening
     prm.declare_entry(
-      "sharpening threshold",
+      "threshold",
       "0.5",
       Patterns::Double(),
       "Interface sharpening threshold that represents the mass conservation level");
@@ -213,12 +236,6 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "A threshold max deviation of 0.20 results in a search interval from 0.30 to 0.70");
 
     prm.declare_entry(
-      "sharpening threshold max",
-      "0.60",
-      Patterns::Double(),
-      "Maximum interface sharpening threshold considered in the binary search algorithm");
-
-    prm.declare_entry(
       "max iterations",
       "5",
       Patterns::Integer(),
@@ -231,7 +248,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "2",
       Patterns::Double(),
       "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
-    prm.declare_entry("sharpening frequency",
+    prm.declare_entry("frequency",
                       "10",
                       Patterns::Integer(),
                       "VOF interface sharpening frequency");
@@ -251,9 +268,9 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface sharpening");
   {
-    enable               = prm.get_bool("enable");
-    interface_sharpness  = prm.get_double("interface sharpness");
-    sharpening_frequency = prm.get_integer("sharpening frequency");
+    enable              = prm.get_bool("enable");
+    interface_sharpness = prm.get_double("interface sharpness");
+    frequency           = prm.get_integer("frequency");
 
     // Sharpening type
     const std::string t = prm.get("type");
@@ -263,18 +280,20 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
       type = Parameters::SharpeningType::adaptative;
 
     // Parameters for constant sharpening
-    sharpening_threshold = prm.get_double("sharpening threshold");
+    threshold = prm.get_double("threshold");
 
     // Parameters for adaptative sharpening
     threshold_max_deviation = prm.get_double("threshold max deviation");
     max_iterations          = prm.get_double("max iterations");
 
     // Error definitions
-    Assert(sharpening_threshold > 0.0 && sharpening_threshold < 1.0,
-           SharpeningThresholdError(sharpening_threshold));
+    Assert(threshold > 0.0 && threshold < 1.0,
+           SharpeningThresholdError(threshold));
 
-    Assert(sharpening_frequency > 0,
-           SharpeningFrequencyError(sharpening_frequency));
+    Assert(threshold_max_deviation > 0.0 && threshold_max_deviation < 0.5,
+           SharpeningThresholdErrorMaxDeviation(threshold_max_deviation));
+
+    Assert(frequency > 0, SharpeningFrequencyError(frequency));
 
     // Verbosity
     const std::string op = prm.get("verbosity");

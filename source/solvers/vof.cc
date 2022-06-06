@@ -572,7 +572,7 @@ VolumeOfFluid<dim>::modify_solution()
       // Interface sharpening is done at a constant frequency
       if (this->simulation_control->get_step_number() %
             this->simulation_parameters.multiphysics.vof_parameters.sharpening
-              .sharpening_frequency ==
+              .frequency ==
           0)
         {
           handle_interface_sharpening();
@@ -605,16 +605,15 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
             .verbosity != Parameters::Verbosity::quiet)
         {
           // TODO time this operation?
-          this->pcout << "   Adapting sharpening_threshold" << std::endl;
+          this->pcout << "   Adapting sharpening threshold" << std::endl;
         }
       this->sharpening_threshold = find_sharpening_threshold();
     }
   else
     {
       // Constant sharpening
-      this->sharpening_threshold =
-        this->simulation_parameters.multiphysics.vof_parameters.sharpening
-          .sharpening_threshold;
+      this->sharpening_threshold = this->simulation_parameters.multiphysics
+                                     .vof_parameters.sharpening.threshold;
     }
 
   if (this->simulation_parameters.multiphysics.vof_parameters.conservation
@@ -1545,10 +1544,6 @@ VolumeOfFluid<dim>::setup_dofs()
 
   // Initialize peeling/wetting variables
   marker_pw.reinit(locally_owned_dofs, mpi_communicator);
-  // TODO make adaptative
-  //  this->sharpening_threshold =
-  //    this->simulation_parameters.multiphysics.vof_parameters.sharpening
-  //      .sharpening_threshold;
 
   this->pcout << "   Number of VOF degrees of freedom: "
               << this->dof_handler.n_dofs() << std::endl;

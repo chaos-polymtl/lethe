@@ -21,9 +21,9 @@ end
 subsection VOF	
   subsection interface sharpening
     set enable		 	= true
-    set sharpening threshold 	= 0.5
+    set threshold 		= 0.5
     set interface sharpness 	= 3
-    set sharpening frequency 	= 2
+    set frequency 		= 2
   end
 end
 
