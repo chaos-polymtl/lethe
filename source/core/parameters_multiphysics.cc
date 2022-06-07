@@ -167,7 +167,7 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
       "verbosity",
       "quiet",
       Patterns::Selection("quiet|verbose|extra verbose"),
-      "State whether from the mass conservation data should be printed "
+      "States whether the mass conservation data should be printed "
       "Choices are <quiet|verbose|extra verbose>.");
   }
   prm.leave_subsection();
