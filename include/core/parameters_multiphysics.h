@@ -34,7 +34,7 @@ using namespace dealii;
 
 namespace Parameters
 {
-  /** @brief Class to account for different sharpening type:
+  /** @brief Class to account for different sharpening types:
    *  - constant: the sharpening threshold is the same throughout the
    * simulation,
    *  - adaptative: the sharpening threshold is determined by binary search, to
