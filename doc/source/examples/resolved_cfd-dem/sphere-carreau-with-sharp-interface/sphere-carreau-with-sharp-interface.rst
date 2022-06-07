@@ -52,10 +52,10 @@ Using an ``initial refinement`` of 4, the initial size of the cubic cells is 1.8
 	subsection  box refinement
 	  set initial refinement   = 3
 	  subsection mesh
-	  set type                 = dealii
-	  set grid type            = subdivided_hyper_rectangle
-	  set grid arguments       = 1,1,1: -2,-2,-2 : 6,2,2 : true
-	  set initial refinement   = 0
+	      set type                 = dealii
+	      set grid type            = subdivided_hyper_rectangle
+	      set grid arguments       = 1,1,1: -2,-2,-2 : 6,2,2 : true
+	      set initial refinement   = 0
 	  end
 	end
 
