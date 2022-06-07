@@ -2,7 +2,7 @@
 Non-Newtonian flow past a sphere
 ================================
 
-This example showcases a laminar non-Newtonian flow around a sphere, with an *a priori* Reynolds number Re = 50, using the Carreau rheological model.
+This example showcases a laminar non-Newtonian flow around a sphere, with an *a priori* Reynolds number :math:`Re = 50`, using the Carreau rheological model.
 
 Features
 ----------------------------------
@@ -10,7 +10,7 @@ Features
 - Steady-state problem
 - Non-Newtonian behavior
 - Ramping initial condition
-- Displays the use of non-uniform mesh adaptation 
+- Non-uniform mesh adaptation 
 
 Location of the example
 ------------------------
@@ -21,8 +21,8 @@ Location of the example
 Description of the case
 -----------------------
 
-In this example, we study the flow around a static sphere using the sharp-interface method to represent the sphere. The geometry of the flow is the following, with a particle of diameter D = 1.0 located at (0,0,0)
-and the flow domain located between (-18,-15,-15) and (42,15,15).
+In this example, we study the flow around a static sphere using the sharp-interface method to represent the sphere. The geometry of the flow is the following, with a particle of diameter :math:`D = 1.0` located at :math:`(0,0,0)`
+and the flow domain located between :math:`(-18,-15,-15)` and :math:`(42,15,15)`.
 
 .. image:: images/sharp_carreau_case.png
     :alt: Simulation schematic
@@ -45,7 +45,7 @@ The mesh is defined using the following subsection.
 	  set initial refinement   = 4
 	end
 	
-The dimensions of the used domain are (60x30x30), and the ``subdivided_hyper_rectangle`` is initially divided in (2x1x1) cells, the cells are therefore cubic and of initial size (30x30x30). Using an ``initial refinement`` of 4, the initial size of the cubic cells is 30/2^4 = 1.875. Since the particle size is small in regards to the mesh size, a refinement zone is generated around the particle to better capture it (see :doc:`../../../parameters/cfd/box_refinement` for more details).
+The dimensions of the used domain are :math:`(60 \times 30 \times 30)`, and the ``subdivided_hyper_rectangle`` is initially divided in :math:`(2 \times 1 \times 1)` cells, the cells are therefore cubic and of initial size :math:`(30 \times 30 \times 30)`. Using ``set initial refinement = 4``, the initial size of the cubic cells is :math:`30/2^4 = 1.875`. Since the particle size is small in regards to the mesh size, a refinement zone is generated around the particle to better capture it (see :doc:`../../../parameters/cfd/box_refinement` for more details).
 
 .. code-block:: text
 
@@ -61,7 +61,7 @@ The dimensions of the used domain are (60x30x30), and the ``subdivided_hyper_rec
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~~
-We define the boundary conditions in order to have an inlet velocity of 1 m/s on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain (unspecified condition at ``id = 1``).
+We define the boundary conditions in order to have an inlet velocity of :math:`1~m/s` on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain (unspecified condition at ``id = 1``).
 
 .. code-block:: text
 
@@ -127,7 +127,7 @@ With ``viscosity_inf = 0`` (3-parameter Carreau model), the *a priori* Reynolds 
 
 	 Re = \frac{u_{\infty}D(1+(\lambda(\frac{u_\infty}{D}))^2)^{\frac{1-n}{2}}}{\eta_0}
 
-We use an *a priori* Reynolds number, since it is not possible, *a priori*, to know the effective viscosity of the flow. For the given parameters, the *a priori* Reynolds number is 50. 
+We use an *a priori* Reynolds number, since it is not possible, *a priori*, to know the effective viscosity of the flow. For the given parameters, the *a priori* Reynolds number is :math:`50`. 
 
 Initial conditions
 ~~~~~~~~~~~~~~~~~~~~
@@ -158,12 +158,12 @@ The first initial condition simulation solves for ``n=1.0``, ``viscosity_0 = 1.0
 * (First ``viscosity`` iteration) ``n=0.5``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2`` ;
 * (Second ``viscosity`` iteration) ``n=0.5``, ``viscosity_0 = 0.531702``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2`` 
 
-and the first simulation uses the parameters in the **Physical Properties** section. For more information on ramping initial conditions, see :doc:`../../../parameters/cfd/initial_conditions`.
+and the first simulation uses the parameters in the ``subsection physical properties``. For more information on ramping initial conditions, see :doc:`../../../parameters/cfd/initial_conditions`.
 
 Particle
 ~~~~~~~~~~~~~~~~~~~~
 
-In this case, we want to define a spherical boundary of radius 0.5 center at (0,0,0) that has no velocity. For more information on particle immersed boundary conditions using a sharp interface, see :doc:`../../../parameters/resolved_cfd-dem/resolved_cfd-dem`.
+In this case, we want to define a spherical boundary of radius :math:`0.5`, with its center at :math:`(0,0,0)` and that has no velocity. For more information on particle immersed boundary conditions using a sharp interface, see :doc:`../../../parameters/resolved_cfd-dem/resolved_cfd-dem`.
 
 .. code-block:: text
 
@@ -187,12 +187,12 @@ In this case, we want to define a spherical boundary of radius 0.5 center at (0,
 	  end
 	end
 
-The hypershell around the boundary between ``refine mesh inside radius factor`` (r = 0.425) and ``refine mesh outside radius factor`` (r = 0.65) will initialy be refined twice (`initial refinement = 2`). 
+The hypershell around the boundary between ``refine mesh inside radius factor`` (:math:`r = 0.425`) and ``refine mesh outside radius factor`` (:math:`r = 0.65`) will initially be refined twice (``initial refinement = 2``). 
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation is solved at steady-state with 2 mesh adaptation.
+The simulation is solved at steady-state with 2 mesh adaptations.
 
 .. code-block:: text
 
@@ -207,7 +207,7 @@ The simulation is solved at steady-state with 2 mesh adaptation.
 Mesh Adaptation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to generate an additional refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, 40% of the cells with be split in 8 (``fraction refinement   = 0.4``) using a velocity-gradient kelly operator.
+In order to generate an additional refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, :math:`40\%` of the cells with be split in :math:`8` (``fraction refinement = 0.4``) using a velocity-gradient Kelly operator.
 
 .. code-block:: text
 
@@ -215,7 +215,7 @@ In order to generate an additional refinement zone around the immersed boundary,
 	  set type                  = kelly
 	  set fraction coarsening   = 0.0
 	  set fraction refinement   = 0.4
-	  set fraction type	      	= number
+	  set fraction type	   = number
 	  set frequency             = 1
 	  set max number elements   = 8000000
 	  set min refinement level  = 0
@@ -242,7 +242,7 @@ We can also see the viscosity profile throughout the domain, that is a function 
 .. image:: images/shear_rate.png
 	:align: center
 
-We can notice that the viscosity rapidely reaches a plateau at :math:`\eta=0.063`. Given the parameters in the **Physical properties** section, the viscosity behavior should be given  by:
+We can notice that the viscosity rapidly reaches a plateau at :math:`\eta=0.063`. Given the parameters in the ``subsection physical properties``, the viscosity behavior should be given  by:
 
 .. image:: images/carreau.png
 	:align: center
@@ -257,7 +257,7 @@ We get the following torques and forces applied on the particle for each of the 
 	0 	-0.000000 -0.000000 -0.000000 0.424717 0.000002 -0.000002 
           
 .. note:: 
-	Because this analysis concerns non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at Re = 50, the drag force would be 0.6165. Therefore, the drag force was decreased using a shear-thinning fluid.
+	Because this analysis concerns non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at :math:`Re = 50`, the drag force would be :math:`0.6165`. Therefore, the drag force was decreased using a shear-thinning fluid.
 
 Possibilities for extension
 -----------------------------	
