@@ -220,7 +220,7 @@ In order to generate an additional refinement zone around the immersed boundary,
 	  set max number elements   = 8000000
 	  set min refinement level  = 0
 	  set max refinement level  = 11
-	  set variable		      	= velocity
+	  set variable		     = velocity
 	end
 
 Results
