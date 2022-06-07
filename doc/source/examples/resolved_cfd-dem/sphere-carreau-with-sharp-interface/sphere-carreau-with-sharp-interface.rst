@@ -180,12 +180,6 @@ In this case, we want to define a spherical boundary of radius 0.5 center at (0,
 	  subsection position
 		set Function expression =0;0;0
 	  end
-	  subsection velocity
-		set Function expression =0;0;0
-	  end
-		subsection omega
-		set Function expression =0;0;0
-	  end
 		set pressure x =0.00001
 		set pressure y =0.00001
 		set pressure z =0.00001
