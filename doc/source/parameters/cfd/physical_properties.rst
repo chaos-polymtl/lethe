@@ -186,16 +186,16 @@ The parameters for the Carreau model are defined by the ``carreau`` subsection. 
 .. code-block:: text
 
   subsection physical properties
-    set number of fluids		= 1
+    set number of fluids		  = 1
     subsection fluid 0
-      set rheological model = carreau
+      set rheological model   = carreau
       subsection non newtonian
         subsection carreau
-          set viscosity_0	= 1.0
-          set viscosity_inf = 1.0
-          set a = 2.0
-          set lambda = 1.0
-          set n = 0.5
+          set viscosity_0	    = 1.0
+          set viscosity_inf   = 1.0
+          set a               = 2.0
+          set lambda          = 1.0
+          set n               = 0.5
         end
       end
     end
@@ -210,6 +210,9 @@ The parameters for the Carreau model are defined by the ``carreau`` subsection. 
 * The ``lambda`` is the relaxation time associated to the fluid.
 
 * The ``n`` is a power parameter. It sets the slope in the log-log :math:`\eta = f(\dot{\gamma})` graph.
+
+.. note..
+    The Carreau model is only suitable for Newtonian and shear-thinning flows.
 
 Phase-change model
 ^^^^^^^^^^^^^^^^^^^ 
