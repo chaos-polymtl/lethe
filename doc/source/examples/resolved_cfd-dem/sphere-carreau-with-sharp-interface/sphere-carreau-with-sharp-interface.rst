@@ -2,7 +2,7 @@
 Non-Newtonian flow past a sphere
 ================================
 
-This example showcases a laminar non-Newtonian flow around a sphere, with an *a priori* Reynolds number :math:`Re = 50`, using the Carreau rheological model.
+This example showcases a laminar non-Newtonian flow around a sphere, with an *a priori* Reynolds number :math:`Re = 50`, using the `Carreau rheological model<https://en.wikipedia.org/wiki/Carreau_fluid>`_.
 
 Features
 ----------------------------------
@@ -97,6 +97,9 @@ We define the boundary conditions in order to have an inlet velocity of :math:`1
 		set type    = slip
 	end
 	end
+
+.. note::
+	Since using a `deal.ii mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the boundary ``id = 1`` is by default the second boundary in the *x* axis, hence the free boundary in this problem. This is why all boundary indices are shifted.
 
 Physical properties
 ~~~~~~~~~~~~~~~~~~~~
