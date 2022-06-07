@@ -132,7 +132,7 @@ We use an *a priori* Reynolds number, since it is not possible, *a priori*, to k
 Initial conditions
 ~~~~~~~~~~~~~~~~~~~~
 
-This example uses a ramping initial condition that first ramps on the ``n`` parameter, and after on the ``viscosity_0`` parameter. This allows for a smooth transition of regime and of non-Newtonian level.
+This example uses a ramping initial condition that first ramps on the ``n`` parameter, and then on the ``viscosity_0`` parameter. This allows for a smooth transition of non-Newtonian behavior level and of regime.
 
 .. code-block:: text
 
