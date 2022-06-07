@@ -35,6 +35,8 @@ namespace BoundaryConditions
 {
   enum class BoundaryType
   {
+    // common
+    none,
     // for fluid
     noslip,
     slip,
@@ -45,13 +47,12 @@ namespace BoundaryConditions
     pressure,
     outlet,
     // for heat transfer
-    temperature,          // - Dirichlet
-    convection_radiation, // - Robin
-                          // for tracer
-    tracer_dirichlet,     // - Dirichlet tracer
-                          // for vof
-    none,                 // - none
-    pw,                   // - peeling/wetting
+    temperature,
+    convection_radiation,
+    // for tracer
+    tracer_dirichlet,
+    // for vof
+    pw,
   };
 
   /**
@@ -404,8 +405,12 @@ namespace BoundaryConditions
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    * The members "value", "h" and "Tinf" contain double used for bc calculation:
+   *
+   *  - if bc type is "none", nothing happens
+   *
    *  - if bc type is "temperature" (Dirichlet condition), "value" is the
    * double passed to the deal.ii ConstantFunction
+   *
    *  - if bc type is "convection-radiation" (Robin condition), "h" is the
    * convective heat transfer coefficient and "Tinf" is the
    * environment temperature at the boundary, "emissivity" is the emissivity
@@ -435,7 +440,6 @@ namespace BoundaryConditions
 
   /**
    * @brief Declares the default parameters for a boundary condition id i_bc
-   * i.e. Dirichlet condition (ConstantFunction) with value 0
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
@@ -447,10 +451,11 @@ namespace BoundaryConditions
                                                  unsigned int      i_bc)
   {
     prm.declare_entry("type",
-                      "temperature",
-                      Patterns::Selection("temperature|convection-radiation"),
+                      "none",
+                      Patterns::Selection(
+                        "none|temperature|convection-radiation"),
                       "Type of boundary condition for heat transfer"
-                      "Choices are <temperature|convection-radiation>.");
+                      "Choices are <none|temperature|convection-radiation>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -531,6 +536,10 @@ namespace BoundaryConditions
                                             unsigned int      i_bc)
   {
     const std::string op = prm.get("type");
+    if (op == "none")
+      {
+        this->type[i_bc] = BoundaryType::none;
+      }
     if (op == "temperature")
       {
         this->type[i_bc]  = BoundaryType::temperature;
@@ -766,7 +775,6 @@ namespace BoundaryConditions
 
   /**
    * @brief Declares the default parameters for a boundary condition id i_bc
-   * i.e. Dirichlet condition (ConstantFunction) with value 0
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
