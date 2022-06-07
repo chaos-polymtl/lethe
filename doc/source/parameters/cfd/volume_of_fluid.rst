@@ -22,7 +22,7 @@ The default values of the VOF parameters are given in the text box below.
 			set type 	= constant
 
 			# parameter for constant sharpening
-			set sharpening threshold   = 0.5
+			set threshold   = 0.5
 
 			# parameters for adaptative sharpening
 			set threshold max deviation = 0.20
