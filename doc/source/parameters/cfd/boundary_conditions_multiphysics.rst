@@ -7,8 +7,8 @@ This subsection's purpose is defining the boundary conditions associated to mult
 Heat Transfer
 ^^^^^^^^^^^^^
 
-For heat transfer boundary conditions, the possible ``types`` are ``temperature`` (default) and ``convection-radiation``.
-The default parameters of each are shown: 
+For heat transfer boundary conditions, the possible ``types`` are ``none`` (default), ``temperature`` and ``convection-radiation``.
+The default parameters for ``temperature`` and ``convection-radiation`` are shown: 
 
 .. code-block:: text
 
@@ -36,8 +36,9 @@ The default parameters of each are shown:
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
-* ``type``: This is the type of boundary condition been imposed. At the moment, choices are:
-    * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary.
+* ``type``: type of boundary condition being imposed. At the moment, choices are:
+    * ``none`` so that there is no heat transfer boundary condition (nothing happens),
+    * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
     * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and emissivity of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation.
 
 .. math::
@@ -47,7 +48,12 @@ The default parameters of each are shown:
 where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
 
 .. note::
-    By default, the boundary condition type is ``temperature`` with ``value = 0``
+    By default, the boundary condition type is ``none``.
+
+.. seealso::
+
+  The :doc:`../../examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid` example uses heat transfer boundary conditions.
+
 
 Tracer
 ^^^^^^

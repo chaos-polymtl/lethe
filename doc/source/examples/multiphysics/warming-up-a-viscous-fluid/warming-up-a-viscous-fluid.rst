@@ -28,7 +28,7 @@ The following schematic describes the simulation.
     :align: center
 
 * bc = 0 : no slip and thermal insulation boundary condition
-* bc = 1 : flow in the y-direction (v=2) and heating at Tw
+* bc = 1 : flow in the y-direction (:math:`v=2`) and heating at Tw
 
 .. important:: 
     The whole simulation is carried out in the frame of one-way coupling: the fluid velocity influences the heat generated through viscous dissipation, but the heat transfer does not influence the fluid velocity. Moreover, fluid state changes are not considered.
@@ -321,6 +321,64 @@ After the fluid has been heated up by the right plate, the temperature is really
 .. image:: images/domain_t7_water_rescale_nodiss.png
     :alt: Rescaled domain with temperature (t = 7)
     :width: 30%
+
+
+Horizontal domain
+~~~~~~~~~~~~~~~~~
+
+Several adjustments have to be made in the `.prm` to turn the domain clockwise, so that it becomes horizontal, with the upper wall being the no slip and thermal insulation boundary condition, and the lower wall with the flow in the y-direction (:math:`v=2`) and heating at Tw:
+
+* in ``subsection mesh``: ``set grid arguments = 0, 0 : 1, 0.5 : true``
+* in ``subsection analytical solution``, ``subsection temperature``: 
+   ``set Function expression = Tw+(((rho*nu)*v*v)/(2*K))*(1-(y/B)*(y/B))``
+* and most importantly, the ``boundary conditions`` subsection should state explicitly ``outlet`` for the fluid boundary conditions, as the ``number`` of boundary conditions should be adapted to use the bottom and top wall (see the `deal.II documentation on hyper_rectangle grid generator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a56019d263ae45708302d5d7599f0d458>`_ for further details):
+
+.. code-block:: text
+
+	subsection boundary conditions
+	  set number                  = 4
+	    subsection bc 0
+	    set id = 0
+		set type              = outlet
+	    end
+	    subsection bc 1
+	    set id = 1
+		set type              = outlet
+	    end
+	    subsection bc 2
+	    set id = 2
+		set type              = noslip
+	    end
+	    subsection bc 3
+	    set id = 3
+		set type              = function
+		subsection u
+		    set Function expression = 2
+		end
+		subsection v
+		    set Function expression = 0
+		end
+	    end
+	end
+
+	subsection boundary conditions heat transfer
+	  set number                  = 4
+	    subsection bc 2
+	    set id = 2
+		set type          = convection-radiation
+		set h             = 0
+		set Tinf	  = 0
+	    end
+	    subsection bc 3
+	    set id = 3
+		set type              = temperature
+		set value             = 80
+	    end
+	end
+
+.. tip::
+	Heat transfer boundary conditions are of ``type = none`` by default, so this is the type implicitly used for ``subsection bc 0`` and ``subsection bc 1``.
+
 
 Possibilities for extension
 ----------------------------
