@@ -247,7 +247,7 @@ We can notice that the viscosity rapidely reaches a plateau at :math:`\eta=0.063
 .. image:: images/carreau.png
 	:align: center
 
-We get the following force applied on the particle for each of the mesh refinements.
+We get the following torques and forces applied on the particle for each of the mesh refinements.
 
 .. code-block:: text
 
