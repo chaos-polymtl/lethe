@@ -258,7 +258,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "verbosity",
       "quiet",
       Patterns::Selection("quiet|verbose|extra verbose"),
-      "State whether from the interface sharpening calculations should be printed "
+      "States whether the interface sharpening calculations should be printed "
       "Choices are <quiet|verbose>.");
   }
   prm.leave_subsection();
