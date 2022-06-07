@@ -2,7 +2,7 @@
 Non-Newtonian flow past a sphere
 ================================
 
-This example showcases a laminar non-Newtonian flow around a sphere, with an *a priori* Reynolds number :math:`Re = 50`, using the `Carreau rheological model<https://en.wikipedia.org/wiki/Carreau_fluid>`_.
+This example showcases a laminar non-Newtonian flow around a sphere, with an *a priori* Reynolds number :math:`Re = 50`, using the `Carreau rheological model <https://en.wikipedia.org/wiki/Carreau_fluid>`_.
 
 Features
 ----------------------------------
