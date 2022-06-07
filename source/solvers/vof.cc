@@ -159,7 +159,6 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_system_rhs()
 {
-  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
   this->system_rhs = 0;
   setup_assemblers();
 
@@ -503,8 +502,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
       if (first_iteration)
         {
-          // TODO trigger error if sharpening by binary search and
-          // monitoring disabled
           this->mass_first_iteration = this->mass_monitored;
         }
 
@@ -604,7 +601,6 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
       if (this->simulation_parameters.multiphysics.vof_parameters.conservation
             .verbosity != Parameters::Verbosity::quiet)
         {
-          // TODO time this operation?
           this->pcout << "   Adapting the sharpening threshold" << std::endl;
         }
 
@@ -740,8 +736,6 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
       // Output message
       if (std::abs(mass_gap_endpoint) > mass_gap_tol)
         {
-          // TODO remplacer min/max par range? (pour s'assurer qu'on
-          // commence par 0.5?)
           this->pcout
             << "  WARNING: Maximum number of iterations (" << nb_search_ite
             << ") reached in the " << std::endl
