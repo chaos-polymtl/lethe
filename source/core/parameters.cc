@@ -531,7 +531,7 @@ namespace Parameters
                         Patterns::Selection(
                           "newtonian|power-law|carreau|phase_change"),
                         "Rheological model "
-                        "Choices are <newtonian|power-law|carreau>.");
+                        "Choices are <newtonian|power-law|carreau|phase_change>.");
 
       non_newtonian_parameters.declare_parameters(prm);
 
