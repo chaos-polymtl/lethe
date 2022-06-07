@@ -207,7 +207,7 @@ The simulation is solved at steady-state with 2 mesh adaptation.
 Mesh Adaptation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to generate the hypershell refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, 40% of the cells with be split in 8 (``fraction refinement   = 0.4``) using a velocity-gradient kelly operator.
+In order to generate an additional refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, 40% of the cells with be split in 8 (``fraction refinement   = 0.4``) using a velocity-gradient kelly operator.
 
 .. code-block:: text
 
