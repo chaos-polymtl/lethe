@@ -514,7 +514,7 @@ private:
     const std::vector<types::global_dof_index> &dof_indices_vof);
 
   /**
-   * @brief Carries out interface sharpnening. It is called in the modify solution function.
+   * @brief Carries out interface sharpening. It is called in the modify solution function.
    * Launches sharpen_interface with the possibility to ensure conservation and
    * handles output messages.
    */
