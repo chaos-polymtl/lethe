@@ -247,7 +247,7 @@ We can notice that the viscosity rapidly reaches a plateau at :math:`\eta=0.063`
 .. image:: images/carreau.png
 	:align: center
 
-We get the following torques and forces applied on the particle for each of the mesh refinements.
+We get the following torques and forces applied on the particle for each of the mesh refinements. The drag force applied on the particle in the effective force in the same direction fo the flow, which is in the math:`x` direction in this case. 
 
 .. code-block:: text
 
@@ -263,3 +263,7 @@ Possibilities for extension
 -----------------------------	
 * **High-order methods** : Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers.
 * **Reynolds number** : By changing the inlet velocity, it can be interesting to see the impact of the shear-thinning behavior on the effective drag force.
+* **Non-Newtonian parameters** : It can also be interesting to change the Carreau model parameters, i.e. changing the slope to appreciate the change in behavior.
+
+.. note::
+	It is note possible to use the Carreau model for a shear-thickening flow. You should change the model to power-law, and use the decribed parameters in :doc:`../../../parameters/cfd/physical_properties`
