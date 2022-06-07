@@ -572,6 +572,7 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
   const double laser_start_time     = laser_parameters->start_time;
   const double laser_end_time       = laser_parameters->end_time;
   const double beam_radius          = laser_parameters->beam_radius;
+  const bool   beam_direction       = laser_parameters->beam_direction;
   const double current_time = this->simulation_control->get_current_time();
 
   if (current_time >= laser_start_time && current_time <= laser_end_time)
@@ -648,8 +649,19 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
           const double quadrature_point_depth =
             scratch_data.quadrature_points[q][laser_parameters
                                                 ->beam_orientation_coordinate];
-          const double laser_quadrature_point_distance_in_depth =
-            std::abs(quadrature_point_depth - laser_location_in_depth);
+
+          // if the laser beam is in negative direction and
+          // quadrature_point_depth is smaller than the laser_location_in_depth,
+          // or the laser beam is in positive direction and
+          // quadrature_point_depth is larger then laser_location_in_depth we
+          // need to apply the laser on the quadrate point, otherwise it is zero
+          double laser_quadrature_point_distance_in_depth = 0.0;
+          if ((beam_direction == 0 &&
+               quadrature_point_depth <= laser_location_in_depth) |
+              (beam_direction == 1 &&
+               quadrature_point_depth >= laser_location_in_depth))
+            laser_quadrature_point_distance_in_depth =
+              std::abs(quadrature_point_depth - laser_location_in_depth);
 
           // Store JxW in local variable for faster access
           const double JxW = scratch_data.fe_values_T.JxW(q);
