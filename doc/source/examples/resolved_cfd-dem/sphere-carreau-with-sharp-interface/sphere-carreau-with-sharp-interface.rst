@@ -45,7 +45,7 @@ The mesh is defined using the following subsection.
 	  set initial refinement   = 4
 	end
 	
-Using an ``initial refinement`` of 4, the initial size of the cubic cells is 1.875. Since the particle size is small in regards to the mesh size, a refinement zone is generated around the particle to better capture it (see :doc:`../../../parameters/cfd/box_refinement` for more details).
+The dimensions of the used domain are (60x30x30), and the ``subdivided_hyper_rectangle`` is initially divided in (2x1x1) cells, the cells are therefore cubic and of initial size (30x30x30). Using an ``initial refinement`` of 4, the initial size of the cubic cells is 30/2^4 = 1.875. Since the particle size is small in regards to the mesh size, a refinement zone is generated around the particle to better capture it (see :doc:`../../../parameters/cfd/box_refinement` for more details).
 
 .. code-block:: text
 
@@ -257,7 +257,7 @@ We get the following torques and forces applied on the particle for each of the 
 	0 	-0.000000 -0.000000 -0.000000 0.424717 0.000002 -0.000002 
           
 .. note:: 
-	Since analysing non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at Re = 50, the drag force would be 0.6165. Therefore, the drag force was decreased usgin a shear-thinning fluid.
+	Because this analysis concerns non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at Re = 50, the drag force would be 0.6165. Therefore, the drag force was decreased using a shear-thinning fluid.
 
 Possibilities for extension
 -----------------------------	
