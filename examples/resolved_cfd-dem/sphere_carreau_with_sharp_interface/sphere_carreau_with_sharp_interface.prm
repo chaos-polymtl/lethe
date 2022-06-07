@@ -33,7 +33,20 @@ end
 # Initial condition
 #---------------------------------------------------
 subsection initial conditions
-    set type = viscous
+    set type = ramp
+    subsection ramp
+    	subsection n
+    		set initial n = 1.0
+    		set iterations = 2
+    		set alpha = 0.5
+    	end
+    	subsection viscosity
+    		set initial viscosity = 1.0
+    		set iterations = 2
+    		set alpha = 0.5
+    	end
+    end
+end
 end
 
 # --------------------------------------------------
@@ -138,10 +151,7 @@ subsection particles
 	subsection position
 	    set Function expression =0;0;0
 	end
-	    set pressure x =0.00001
-	    set pressure y =0.00001
-	    set pressure z =0.00001
-	    set radius = 0.5
+	set radius = 0.5
     end
 end
 # --------------------------------------------------
@@ -169,17 +179,14 @@ subsection non-linear solver
   set residual precision      = 5
   set force rhs calculation   = true
 end
+
 # --------------------------------------------------
 # Timer
 #---------------------------------------------------
-subsection restart
-  # Enable checkpointing. Checkpointing creates a restartpoint from which the
-  # simulation can be restarted from.
-  set checkpoint = false  
-  set filename   = check_point  
-  set frequency  = 1
-  set restart    = false
-  end
+subsection timer
+	set type = iteration 
+end
+  
   # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
@@ -192,13 +199,4 @@ subsection linear solver
   set ilu preconditioner fill = 0
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
-  set amg aggregation threshold                 = 1e-20
-  set amg n cycles                              = 1
-  set amg preconditioner ilu absolute tolerance = 1e-20
-  set amg preconditioner ilu fill               = 0
-  set amg preconditioner ilu relative tolerance = 1.00
-  set amg smoother overlap                      = 1
-  set amg smoother sweeps                       = 2
-  set amg w cycles                              = false
-  set max krylov vectors = 1000
 end
