@@ -59,7 +59,7 @@ set number of fluids = 1
 	    	set lambda	   = 10
 	    	set a	           = 2.0
 	    	set n 		   = 0.5
-	end
+	    end
     end
   end
 end
