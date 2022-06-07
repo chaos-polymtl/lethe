@@ -61,7 +61,7 @@ Using an ``initial refinement`` of 4, the initial size of the cubic cells is 1.8
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~~
-We define the boundary conditions in order to have an inlet velocity of 1 m/s on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain.
+We define the boundary conditions in order to have an inlet velocity of 1 m/s on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain (unspecified condition at ``id = 1``).
 
 .. code-block:: text
 
