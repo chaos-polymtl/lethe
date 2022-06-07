@@ -160,7 +160,7 @@ The interface sharpening method and its parameters are explained in :doc:`../dam
 	end
 
 .. warning:: 
-     If the interface sharpening is not selected, the interface between phases will become blurry (due to diffusion). 
+     If the interface sharpening is not enabled, the interface between phases will become blurry (due to diffusion). 
 
 """"""""""""""""""""""""""""""""
 Initial condition
