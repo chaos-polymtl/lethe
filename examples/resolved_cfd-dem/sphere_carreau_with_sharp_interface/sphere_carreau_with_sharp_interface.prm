@@ -47,7 +47,6 @@ subsection initial conditions
     	end
     end
 end
-end
 
 # --------------------------------------------------
 # Post-processing
