@@ -274,6 +274,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   for (unsigned int i = 0; i < dim + 1; ++i)
     velocity_gradients_component[i].resize(ib_coef.size());
   Tensor<2, dim>              fluid_stress;
+  Tensor<2, dim>              fluid_viscous_stress;
   Tensor<2, dim>              fluid_pressure;
   Tensor<2, dim>              fluid_stress_at_ib;
   Tensor<2, dim>              shear_rate;
@@ -520,8 +521,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       viscosity =
                                         rheological_model->value(field_values);
 
+                                      fluid_viscous_stress = viscosity * shear_rate;
+
                                       fluid_stress =
-                                        viscosity * shear_rate - fluid_pressure;
+                                        fluid_viscous_stress - fluid_pressure;
 
                                       fluid_stress_at_ib +=
                                         fluid_stress * ib_coef[k];
