@@ -309,8 +309,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // Clear particle force and torque
   for (unsigned int i = 0; i < particles.size(); ++i)
     {
-      particles[i].fluid_forces = 0;
-      particles[i].fluid_torque = 0;
+      particles[i].fluid_forces          = 0;
+      particles[i].fluid_viscous_forces  = 0;
+      particles[i].fluid_pressure_forces = 0;
+      particles[i].fluid_torque          = 0;
     }
 
   double       total_area    = 0;
