@@ -479,6 +479,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     }
 
                                   fluid_stress_at_ib = 0;
+                                  fluid_viscous_stress_at_ib = 0;
+                                  fluid_pressure_stress_at_ib = 0;
 
                                   // Create a quadrature that is based on the IB
                                   // stencil
@@ -528,18 +530,18 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       viscosity =
                                         rheological_model->value(field_values);
 
-                                      fluid_viscous_stress = viscosity * shear_rate;
+                                      fluid_viscous_stress = - viscosity * shear_rate;
 
                                       fluid_stress =
-                                        fluid_viscous_stress - fluid_pressure;
+                                        - fluid_viscous_stress - fluid_pressure;
 
                                       fluid_stress_at_ib +=
                                         fluid_stress * ib_coef[k];
 
-                                      fluid_viscous_stress_at_ib +=
+                                      fluid_viscous_stress_at_ib -=
                                         fluid_viscous_stress * ib_coef[k];
 
-                                      fluid_pressure_stress_at_ib +=
+                                      fluid_pressure_stress_at_ib -=
                                         fluid_pressure * ib_coef[k];
                                     }
                                   // Store the stress tensor that results from
@@ -698,15 +700,18 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       fluid_stress +=
                                         fe_face_projection_values.shape_value(
                                           i, q) *
-                                        local_face_viscous_stress_tensor[i];
+                                        local_face_tensor[i];
+
                                       fluid_viscous_stress +=
                                         fe_face_projection_values.shape_value(
                                           i, q) *
-                                        local_face_pressure_tensor[i];
+                                        local_face_viscous_stress_tensor[i];
+
                                       fluid_pressure +=
                                         fe_face_projection_values.shape_value(
                                           i, q) *
-                                        local_face_tensor[i];
+                                        local_face_pressure_tensor[i];
+
                                       total_area +=
                                         fe_face_projection_values.JxW(q) *
                                         fe_face_projection_values.shape_value(
@@ -725,7 +730,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                               auto pressure_force = fluid_pressure * normal_vector *
                                            fe_face_projection_values.JxW(q);
-                                           
+
                               if (force.norm() > 0)
                                 {
                                   nb_evaluation += local_weight;
@@ -737,6 +742,12 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                               particles[p].fluid_forces +=
                                 tensor_nd_to_3d(force);
+
+                              particles[p].fluid_viscous_forces +=
+                                tensor_nd_to_3d(viscous_force);
+
+                              particles[p].fluid_pressure_forces +=
+                                tensor_nd_to_3d(pressure_force);
 
                               auto distance =
                                 q_points[q] - particles[p].position;
@@ -774,6 +785,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
       particles[i].fluid_forces =
         Utilities::MPI::sum(particles[i].fluid_forces, this->mpi_communicator) *
         density;
+      particles[i].fluid_viscous_forces =
+        Utilities::MPI::sum(particles[i].fluid_viscous_forces, this->mpi_communicator) *
+        density;
+      particles[i].fluid_pressure_forces =
+        Utilities::MPI::sum(particles[i].fluid_pressure_forces, this->mpi_communicator) *
+        density;
+
       particles[i].fluid_torque =
         Utilities::MPI::sum(particles[i].fluid_torque, this->mpi_communicator) *
         density;
@@ -1676,12 +1694,16 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
       table_p[p].add_value("f_x", particles[p].fluid_forces[0]);
+      table_p[p].add_value("f_xv", particles[p].fluid_viscous_forces[0]);
+      table_p[p].add_value("f_xp", particles[p].fluid_pressure_forces[0]);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_x", particles[p].velocity[0]);
           table_p[p].add_value("p_x", particles[p].position[0]);
         }
       table_p[p].add_value("f_y", particles[p].fluid_forces[1]);
+      table_p[p].add_value("f_yv", particles[p].fluid_viscous_forces[1]);
+      table_p[p].add_value("f_yp", particles[p].fluid_pressure_forces[1]);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_y", particles[p].velocity[1]);
@@ -1690,7 +1712,15 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       table_p[p].set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
       table_p[p].set_precision(
+        "f_xv", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
+        "f_xp", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
+        "f_yv", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
+        "f_yp", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].set_precision(
@@ -1709,8 +1739,16 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       if (dim == 3)
         {
           table_p[p].add_value("f_z", particles[p].fluid_forces[2]);
+          table_p[p].add_value("f_zv", particles[p].fluid_viscous_forces[2]);
+          table_p[p].add_value("f_zp", particles[p].fluid_pressure_forces[2]);
           table_p[p].set_precision(
             "f_z",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_p[p].set_precision(
+            "f_zv",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_p[p].set_precision(
+            "f_zp",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters->integrate_motion)
             {
