@@ -34,7 +34,7 @@ Physical Properties
      end
   end
  
-* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological model, see  `RheologicalModels`_ .
+* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological model, see  `Rheological Models`_ .
 
 * The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonain fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
 
