@@ -35,8 +35,6 @@ namespace BoundaryConditions
 {
   enum class BoundaryType
   {
-    // common
-    none,
     // for fluid
     noslip,
     slip,
@@ -47,11 +45,13 @@ namespace BoundaryConditions
     pressure,
     outlet,
     // for heat transfer
+    noflux,
     temperature,
     convection_radiation,
     // for tracer
     tracer_dirichlet,
     // for vof
+    none,
     pw,
   };
 
@@ -406,7 +406,7 @@ namespace BoundaryConditions
    * coherently.
    * The members "value", "h" and "Tinf" contain double used for bc calculation:
    *
-   *  - if bc type is "none", nothing happens
+   *  - if bc type is "noflux", no flux is assembled at the boundary
    *
    *  - if bc type is "temperature" (Dirichlet condition), "value" is the
    * double passed to the deal.ii ConstantFunction
@@ -451,11 +451,11 @@ namespace BoundaryConditions
                                                  unsigned int      i_bc)
   {
     prm.declare_entry("type",
-                      "none",
+                      "noflux",
                       Patterns::Selection(
-                        "none|temperature|convection-radiation"),
+                        "noflux|temperature|convection-radiation"),
                       "Type of boundary condition for heat transfer"
-                      "Choices are <none|temperature|convection-radiation>.");
+                      "Choices are <noflux|temperature|convection-radiation>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -536,9 +536,9 @@ namespace BoundaryConditions
                                             unsigned int      i_bc)
   {
     const std::string op = prm.get("type");
-    if (op == "none")
+    if (op == "noflux")
       {
-        this->type[i_bc] = BoundaryType::none;
+        this->type[i_bc] = BoundaryType::noflux;
       }
     if (op == "temperature")
       {

@@ -7,7 +7,7 @@ This subsection's purpose is defining the boundary conditions associated to mult
 Heat Transfer
 ^^^^^^^^^^^^^
 
-For heat transfer boundary conditions, the possible ``types`` are ``none`` (default), ``temperature`` and ``convection-radiation``.
+For heat transfer boundary conditions, the possible ``types`` are ``noflux`` (default), ``temperature`` and ``convection-radiation``.
 The default parameters for ``temperature`` and ``convection-radiation`` are shown: 
 
 .. code-block:: text
@@ -37,7 +37,7 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
 * ``type``: type of boundary condition being imposed. At the moment, choices are:
-    * ``none`` so that there is no heat transfer boundary condition (nothing happens),
+    * ``noflux`` so that there is no heat transfer boundary condition,
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
     * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and emissivity of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation.
 
