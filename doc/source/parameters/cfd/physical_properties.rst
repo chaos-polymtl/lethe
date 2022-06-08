@@ -101,7 +101,7 @@ For two phases, the properties are defined for each fluid. Default values are:
   Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.
 
 
-.. _RheologicalModels:
+.. _rheological_models:
 
 Rheological models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
