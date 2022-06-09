@@ -331,25 +331,17 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
 * in ``subsection mesh``: ``set grid arguments = 0, 0 : 1, 0.5 : true``
 * in ``subsection analytical solution``, ``subsection temperature``: 
    ``set Function expression = Tw+(((rho*nu)*v*v)/(2*K))*(1-(y/B)*(y/B))``
-* and most importantly, the ``boundary conditions`` subsection should state explicitly ``outlet`` for the fluid boundary conditions, as the ``number`` of boundary conditions should be adapted to use the bottom and top wall (see the `deal.II documentation on hyper_rectangle grid generator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a56019d263ae45708302d5d7599f0d458>`_ for further details):
+* and most importantly, the ``id`` of ``boundary conditions`` should be adapted to use the bottom and top wall (see the `deal.II documentation on hyper_rectangle grid generator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a56019d263ae45708302d5d7599f0d458>`_ for further details):
 
 .. code-block:: text
 
 	subsection boundary conditions
-	  set number                  = 4
+	  set number                  = 2
 	    subsection bc 0
-	    set id = 0
-		set type              = outlet
-	    end
-	    subsection bc 1
-	    set id = 1
-		set type              = outlet
-	    end
-	    subsection bc 2
 	    set id = 2
 		set type              = noslip
 	    end
-	    subsection bc 3
+	    subsection bc 1
 	    set id = 3
 		set type              = function
 		subsection u
@@ -376,8 +368,11 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
 	    end
 	end
 
-.. tip::
-	Heat transfer boundary conditions are of ``type = none`` by default, so this is the type implicitly used for ``subsection bc 0`` and ``subsection bc 1``.
+.. important::
+	For the fluid ``boundary conditions``, we use ``set number = 2``, whereas for ``boundary conditions heat transfer`` we use ``set number = 4``. These two notations are perfectly equivalent, as the boundary conditions are ``none`` by default (or ``noflux`` in the case of heat transfer, see :doc:`../../../parameters/cfd/boundary_conditions_multiphysics`). However, it is important to make sure that:
+
+	* the index in ``subsection bc ..`` is coherent with the ``number`` set (if ``number = 2``, ``bc 0`` and ``bc 1`` are created but ``bc 2`` does not exist),
+	* the index in ``set id = ..`` is coherent with the ``id`` of the boundary in the mesh (here, the deal.II generated mesh).
 
 
 Possibilities for extension

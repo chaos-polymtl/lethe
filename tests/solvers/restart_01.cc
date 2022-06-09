@@ -164,7 +164,7 @@ test()
   NSparam.restart_parameters.frequency  = 1;
   NSparam.non_linear_solver.verbosity   = Parameters::Verbosity::quiet;
   NSparam.linear_solver.verbosity       = Parameters::Verbosity::quiet;
-  NSparam.boundary_conditions.createDefaultNoSlip();
+  NSparam.boundary_conditions.createNoSlip();
 
   RestartNavierStokes<2> problem_2d(NSparam);
   problem_2d.run();

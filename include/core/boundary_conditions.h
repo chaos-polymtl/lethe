@@ -35,6 +35,8 @@ namespace BoundaryConditions
 {
   enum class BoundaryType
   {
+    // common
+    none,
     // for fluid
     noslip,
     slip,
@@ -51,7 +53,6 @@ namespace BoundaryConditions
     // for tracer
     tracer_dirichlet,
     // for vof
-    none,
     pw,
   };
 
@@ -146,16 +147,17 @@ namespace BoundaryConditions
     void
     parse_parameters(ParameterHandler &prm);
     void
-    createDefaultNoSlip();
+    createNoSlip();
   };
 
 
   /**
-   * @brief Creates a default no-slip boundary condition for id=0
+   * @brief Creates a noslip boundary condition for id=0
+   * Used in tests only
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::createDefaultNoSlip()
+  NSBoundaryConditions<dim>::createNoSlip()
   {
     this->id.resize(1);
     this->id[0] = 0;
@@ -181,9 +183,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry(
       "type",
-      "noslip",
+      "none",
       Patterns::Selection(
-        "noslip|slip|function|periodic|pressure|function weak|partial slip|outlet"),
+        "none|noslip|slip|function|periodic|pressure|function weak|partial slip|outlet"),
       "Type of boundary condition"
       "Choices are <noslip|slip|function|periodic|pressure|function weak|partial slip|outlet>.");
 
@@ -259,6 +261,8 @@ namespace BoundaryConditions
                                             unsigned int      i_bc)
   {
     const std::string op = prm.get("type");
+    if (op == "none")
+      this->type[i_bc] = BoundaryType::none;
     if (op == "noslip")
       this->type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
