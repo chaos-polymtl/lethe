@@ -526,12 +526,12 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-      prm.declare_entry("rheological model",
-                        "newtonian",
-                        Patterns::Selection(
-                          "newtonian|power-law|carreau|phase_change"),
-                        "Rheological model "
-                        "Choices are <newtonian|power-law|carreau>.");
+      prm.declare_entry(
+        "rheological model",
+        "newtonian",
+        Patterns::Selection("newtonian|power-law|carreau|phase_change"),
+        "Rheological model "
+        "Choices are <newtonian|power-law|carreau|phase_change>.");
 
       non_newtonian_parameters.declare_parameters(prm);
 
