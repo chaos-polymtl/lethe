@@ -299,8 +299,8 @@ VolumeOfFluid<dim>::calculate_L2_error()
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   const unsigned int  n_q_points = this->error_quadrature->size();
-  std::vector<double> q_exact_solution(n_q_points);
-  std::vector<double> q_scalar_values(n_q_points);
+  std::vector<double> phase_exact_solution(n_q_points);
+  std::vector<double> phase_values(n_q_points);
 
   auto &exact_solution = simulation_parameters.analytical_solution->phase;
   exact_solution.set_time(this->simulation_control->get_current_time());
@@ -313,19 +313,19 @@ VolumeOfFluid<dim>::calculate_L2_error()
         {
           fe_values_vof.reinit(cell);
           fe_values_vof.get_function_values(this->present_solution,
-                                            q_scalar_values);
+                                            phase_values);
 
           // Retrieve the effective "connectivity matrix" for this element
           cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
           exact_solution.value_list(fe_values_vof.get_quadrature_points(),
-                                    q_exact_solution);
+                                    phase_exact_solution);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              double sim   = q_scalar_values[q];
-              double exact = q_exact_solution[q];
+              double sim   = phase_values[q];
+              double exact = phase_exact_solution[q];
               l2error += (sim - exact) * (sim - exact) * fe_values_vof.JxW(q);
             }
         }
@@ -349,7 +349,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                                 update_JxW_values);
 
   const unsigned int  n_q_points = this->error_quadrature->size();
-  std::vector<double> q_scalar_values(n_q_points);
+  std::vector<double> phase_values(n_q_points);
   std::vector<double> density_0(n_q_points);
   std::vector<double> density_1(n_q_points);
 
@@ -367,7 +367,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
       if (cell->is_locally_owned())
         {
           fe_values_vof.reinit(cell);
-          fe_values_vof.get_function_values(solution, q_scalar_values);
+          fe_values_vof.get_function_values(solution, phase_values);
 
           // Calculate physical properties for the cell
           density_models[0]->vector_value(fields, density_0);
@@ -379,25 +379,18 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                 {
                   case 0:
                     {
-                      if (q_scalar_values[q] < 0.5)
-                        {
-                          this->volume_monitored +=
-                            fe_values_vof.JxW(q) * (1 - q_scalar_values[q]);
-                          this->mass_monitored +=
-                            this->volume_monitored * density_0[q];
-                        }
+                      this->volume_monitored +=
+                        fe_values_vof.JxW(q) * (1 - phase_values[q]);
+                      this->mass_monitored +=
+                        this->volume_monitored * density_0[q];
                       break;
                     }
                   case 1:
                     {
-                      if (q_scalar_values[q] > 0.5)
-                        {
-                          this->volume_monitored +=
-                            fe_values_vof.JxW(q) * q_scalar_values[q];
-                          this->mass_monitored += fe_values_vof.JxW(q) *
-                                                  q_scalar_values[q] *
-                                                  density_1[q];
-                        }
+                      this->volume_monitored +=
+                        fe_values_vof.JxW(q) * phase_values[q];
+                      this->mass_monitored +=
+                        fe_values_vof.JxW(q) * phase_values[q] * density_1[q];
                       break;
                     }
                   default:

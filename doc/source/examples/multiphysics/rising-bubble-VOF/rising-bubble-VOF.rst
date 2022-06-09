@@ -46,13 +46,11 @@ The following schematic describes the geometry and dimensions of the simulation 
 Parameter file
 --------------
 
-Time integration is handled by a 1st order backward differentiation scheme 
-`(bdf1)`, for a :math:`3` sec simulation time with an initial 
-time step of :math:`0.001` sec.
+Time integration is handled by a 1st order backward differentiation scheme `(bdf1)`, for a :math:`3~\text{s}` simulation time with an initial time step of :math:`0.001~\text{s}`.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output control = time``, and ``output time = 0.03`` the simulation results are written every :math:`0.03` sec.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output control = time``, and ``output time = 0.03`` the simulation results are written every :math:`0.03~\text{s}`.
 
 .. code-block:: text
 
