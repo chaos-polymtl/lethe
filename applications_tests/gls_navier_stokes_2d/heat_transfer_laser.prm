@@ -32,7 +32,7 @@ subsection laser parameters
 	set beam radius 		= 0.002
 	set start time 			= 0
 	set end time 			= 0.05
-	set beam orientation 		= y negative
+	set beam orientation 		= y-
 	subsection path
 	    set Function expression 	=  3 * t; 0.1
 	end

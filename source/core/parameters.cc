@@ -812,13 +812,11 @@ namespace Parameters
                         Patterns::Double(),
                         "End time of laser");
 
-      prm.declare_entry(
-        "beam orientation",
-        "z negative",
-        Patterns::Selection(
-          "x positive|x negative|y positive|y negative|z positive|z negative"),
-        "Laser beam orientation "
-        "Choices are <x positive|x negative|y positive|y negative|z positive|z negative>.");
+      prm.declare_entry("beam orientation",
+                        "z-",
+                        Patterns::Selection("x+|x-|y+|y-|z+|z-"),
+                        "Laser beam orientation "
+                        "Choices are <x+|x-|y+|y-|z+|z->.");
     }
     prm.leave_subsection();
   }
@@ -846,7 +844,7 @@ namespace Parameters
 
       std::string op;
       op = prm.get("beam orientation");
-      if (op == "x positive")
+      if (op == "x+")
         {
           beam_direction                     = 1;
           beam_orientation                   = BeamOrientation::positive_x;
@@ -855,7 +853,7 @@ namespace Parameters
           if constexpr (dim == 3)
             perpendicular_plane_coordinate_two = 2;
         }
-      else if (op == "x negative")
+      else if (op == "x-")
         {
           beam_direction                     = 0;
           beam_orientation                   = BeamOrientation::negative_x;
@@ -864,7 +862,7 @@ namespace Parameters
           if constexpr (dim == 3)
             perpendicular_plane_coordinate_two = 2;
         }
-      else if (op == "y positive")
+      else if (op == "y+")
         {
           beam_direction                     = 1;
           beam_orientation                   = BeamOrientation::positive_y;
@@ -873,7 +871,7 @@ namespace Parameters
           if constexpr (dim == 3)
             perpendicular_plane_coordinate_two = 2;
         }
-      else if (op == "y negative")
+      else if (op == "y-")
         {
           beam_direction                     = 0;
           beam_orientation                   = BeamOrientation::negative_y;
@@ -882,7 +880,7 @@ namespace Parameters
           if constexpr (dim == 3)
             perpendicular_plane_coordinate_two = 2;
         }
-      else if (op == "z positive")
+      else if (op == "z+")
         {
           if constexpr (dim == 3)
             {
@@ -895,7 +893,7 @@ namespace Parameters
           else if constexpr (dim == 2)
             Assert(dim == 2, TwoDimensionalLaserError(dim));
         }
-      else if (op == "z negative")
+      else if (op == "z-")
         {
           if constexpr (dim == 3)
             {
