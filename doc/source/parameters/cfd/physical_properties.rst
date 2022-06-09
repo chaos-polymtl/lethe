@@ -34,7 +34,7 @@ Physical Properties
      end
   end
  
-* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological model, see  `rheological_models`_ .
+* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological model, see  `Rheological models`_ .
 
 * The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonain fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
 
@@ -46,7 +46,7 @@ Physical Properties
 
 * The ``specific heat`` parameter is the constant specific heat of the fluid in units of :math:`\text{Energy} \cdot \text{Temperature}^{-1} \cdot \text{Mass}^{-1}` .
 
-* The ``thermal conductivity model`` specifies the model used to calculate the thermal conductivity. At the moment, ``constant`` and ``linear`` thermal conductivity are available. For more details on the thermal conductivity models, see `thermal_conductivity_models`_.
+* The ``thermal conductivity model`` specifies the model used to calculate the thermal conductivity. At the moment, ``constant`` and ``linear`` thermal conductivity are available. For more details on the thermal conductivity models, see `Thermal conductivity models`_.
 
 * The ``thermal conductivity`` parameter is the thermal conductivity coefficient of the fluid with units of :math:`\text{Power} \cdot \text{Temperature}^{-1} \cdot \text{Length}^{-1}`.
 
@@ -108,25 +108,66 @@ Rheological models
 
 Two families of rheological models are supported in Lethe. The first one are generalized non Newtonian rheologies (for shear thinning and shear thickening flows). In these models, the viscosity depends on the shear rate. The second family of rheological models possess a viscosity that is independent of the shear rate, but that may depend on other fields such as the temperature.
 
-Default values for a non Newtonian fluid are
+The ``rheological model`` parameter sets which rheological model you are using. The default ``rheological model`` is ``newtonian``, which uses a constant ``kinematic viscosity``.
 
 .. code-block:: text
 
     subsection physical properties
       set number of fluids		= 1
       subsection fluid 0
-        set rheological model = carreau
-        subsection non newtonian
+        set rheological model   = newtonian
+        set kinematic viscosity = 1.0
+      end
+    end
+
+The rheological model available options are:
+    * ``newtonian``
+    * ``power-law`` 
+    * ``carreau``
+    * ``phase_change``
+
+Power-law model
+^^^^^^^^^^^^^^^
+
+The power-law model is the simplest rheological model, using only 2 parameters 
+
+.. math::
+
+  \eta(\dot{\gamma}) = K \dot{\gamma}^{n-1}
+
+
+where :math:`\eta` is the **kinematic viscosity** and :math:`\dot{\gamma}` is the local shear rate magnitude.
+
+.. image:: images/physical_properties_powerlaw.png
+    :width: 600
+    :align: center
+
+When using the power-law model, the default values are:
+
+.. code-block:: text
+
+  subsection physical properties
+    set number of fluids		  = 1
+    subsection fluid 0
+      set rheological model   = power-law
+      subsection non newtonian
+        subsection power-law
+          set K               = 1.0
+          set n               = 0.5
+          set shear rate min  = 1e-3
         end
       end
     end
-    
-* The ``rheological model`` parameter sets which rheological model you are using. The available options are:
-    * ``newtonian``
-    * ``carreau``
-    * ``power-law`` 
-    * ``phase_change``
+  end
 
+* The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity for a local shear rate of :math:`1.0`.
+
+* The ``n`` parameter is the flow behavior index. It sets the slope in the log-log :math:`\eta = f(\dot{\gamma})` graph.
+
+* The ``shear rate min`` parameter yields the magnitude of the shear rate tensor for which the viscosity is calculated. Since the model uses a power operation, a null shear rate magnitude leads to an invalid viscosity. To ensure numerical stability, the shear rate cannot go below this threshold when the viscosity  calculated.
+
+Carreau model
+^^^^^^^^^^^^^^^
 
 The Carreau model is in reality the five parameter Carreau model:
 
@@ -136,21 +177,25 @@ The Carreau model is in reality the five parameter Carreau model:
  
 where :math:`\eta` is the **kinematic viscosity** and :math:`\dot{\gamma}` is the shear rate.
 
+.. image:: images/physical_properties_carreau.png
+    :width: 600
+    :align: center
+
 The parameters for the Carreau model are defined by the ``carreau`` subsection. The default values are:
 
 .. code-block:: text
 
   subsection physical properties
-    set number of fluids		= 1
+    set number of fluids		  = 1
     subsection fluid 0
-      set rheological model = carreau
+      set rheological model   = carreau
       subsection non newtonian
         subsection carreau
-          set viscosity_0	= 1.0
-          set viscosity_inf = 1.0
-          set a = 2.0
-          set lambda = 1.0
-          set n = 0.5
+          set viscosity_0	   = 1.0
+          set viscosity_inf   = 1.0
+          set a               = 2.0
+          set lambda          = 1.0
+          set n               = 0.5
         end
       end
     end
@@ -164,41 +209,13 @@ The parameters for the Carreau model are defined by the ``carreau`` subsection. 
 
 * The ``lambda`` is the relaxation time associated to the fluid.
 
-* The ``n`` is a power parameter. It sets the slope in the log-log :math:`\eta = f(\dot{\gamma})` graph.
+* The ``n`` is a power parameter. It sets the slope in the log-log :math:`\eta = f(\dot{\gamma})` graph just like in the power-law model.
 
+.. note::
+    The Carreau model is only suitable for Newtonian and shear-thinning flows.
 
-The power-law model is a simple rheological model:
-
-.. math::
-
-  \eta(\dot{\gamma}) = K \dot{\gamma}^{n-1}
-
-
-where :math:`\eta` is the **kinematic viscosity** and :math:`\dot{\gamma}` is the shear rate.
-When using the Power-Law model, the default values are:
-
-.. code-block:: text
-
-  subsection physical properties
-    set number of fluids		= 1
-    subsection fluid 0
-      set rheological model = power-law
-      subsection non newtonian
-        subsection power-law
-          set K = 1.0
-          set n = 0.5
-          set shear rate min = 1e-3
-        end
-      end
-    end
-  end
-
-* The ``K`` parameter is a fluid consistency index. It represents the fluid viscosity if it were Newtonian.
-
-* The ``n`` parameter is the flow behavior index. low  It sets the slope in the log-log :math:`\eta = f(\dot{\gamma})` graph.
-
-* The ``shear rate min`` parameter yields the magnitude of the shear rate tensor for which the viscosity is calculated. Since the model uses a power operation, a nul shear rate magnitude leads to an invalid viscosity. To ensure numerical stability, the shear rate cannot go below this threshold when the viscosity  calculated.
-
+Phase-change model
+^^^^^^^^^^^^^^^^^^^ 
 
 The phase change model is a simple rheological model in which the viscosity depends on the temperature. This model is used to model melting and freezing of components. The kinematic viscosity :math:`\nu` is given by :
 
