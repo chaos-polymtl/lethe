@@ -153,16 +153,16 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
     #---------------------------------------------------
     subsection laser parameters
     	set enable = true
-        	set concentration factor 	= 2
-        	set power 			= 100
-        	set absorptivity 		= 0.6
-        	set penetration depth 		= 0.000070
-        	set beam radius 		= 0.000050
-        	set start time 			= 0
-        	set end time 			= 0.0034
-        	set beam orientation 		= y
+        	set concentration factor       = 2
+        	set power 			          = 100
+        	set absorptivity               = 0.6
+        	set penetration depth          = 0.000070
+        	set beam radius                = 0.000050
+        	set start time                 = 0
+        	set end time                   = 0.0034
+        	set beam orientation           = y-
         	subsection path
-        		set Function expression =  0.5 * t; 0.000500
+        		set Function expression    =  0.5 * t; 0.000500
         	end
     end    
 

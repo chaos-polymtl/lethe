@@ -813,10 +813,10 @@ namespace Parameters
                         "End time of laser");
 
       prm.declare_entry("beam orientation",
-                        "z",
-                        Patterns::Selection("x|y|z"),
+                        "z-",
+                        Patterns::Selection("x+|x-|y+|y-|z+|z-"),
                         "Laser beam orientation "
-                        "Choices are <x|y|z>.");
+                        "Choices are <x+|x-|y+|y-|z+|z->.");
     }
     prm.leave_subsection();
   }
@@ -844,27 +844,61 @@ namespace Parameters
 
       std::string op;
       op = prm.get("beam orientation");
-      if (op == "x")
+      if (op == "x+")
         {
-          beam_orientation                   = BeamOrientation::x;
+          beam_direction                     = 1;
+          beam_orientation                   = BeamOrientation::x_plus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
           if constexpr (dim == 3)
             perpendicular_plane_coordinate_two = 2;
         }
-      else if (op == "y")
+      else if (op == "x-")
         {
-          beam_orientation                   = BeamOrientation::y;
+          beam_direction                     = 0;
+          beam_orientation                   = BeamOrientation::x_minus;
+          beam_orientation_coordinate        = 0;
+          perpendicular_plane_coordinate_one = 1;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "y+")
+        {
+          beam_direction                     = 1;
+          beam_orientation                   = BeamOrientation::y_plus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
           if constexpr (dim == 3)
             perpendicular_plane_coordinate_two = 2;
         }
-      else if (op == "z")
+      else if (op == "y-")
+        {
+          beam_direction                     = 0;
+          beam_orientation                   = BeamOrientation::y_minus;
+          perpendicular_plane_coordinate_one = 0;
+          beam_orientation_coordinate        = 1;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "z+")
         {
           if constexpr (dim == 3)
             {
-              beam_orientation                   = BeamOrientation::z;
+              beam_direction                     = 1;
+              beam_orientation                   = BeamOrientation::z_plus;
+              perpendicular_plane_coordinate_one = 0;
+              perpendicular_plane_coordinate_two = 1;
+              beam_orientation_coordinate        = 2;
+            }
+          else if constexpr (dim == 2)
+            Assert(dim == 2, TwoDimensionalLaserError(dim));
+        }
+      else if (op == "z-")
+        {
+          if constexpr (dim == 3)
+            {
+              beam_direction                     = 0;
+              beam_orientation                   = BeamOrientation::z_minus;
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;
               beam_orientation_coordinate        = 2;
