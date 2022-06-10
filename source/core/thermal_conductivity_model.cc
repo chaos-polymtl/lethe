@@ -28,7 +28,6 @@ ThermalConductivityModel::model_cast(const Parameters::Fluid &fluid_properties)
     return std::make_shared<ThermalConductivityPhaseChange>(
       fluid_properties.phase_change_parameters);
   else
-
     return std::make_shared<ConstantThermalConductivity>(
       fluid_properties.thermal_conductivity);
 }

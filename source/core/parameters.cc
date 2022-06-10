@@ -373,6 +373,8 @@ namespace Parameters
       viscosity_s            = prm.get_double("viscosity solid");
       thermal_conductivity_l = prm.get_double("thermal conductivity liquid");
       thermal_conductivity_s = prm.get_double("thermal conductivity solid");
+      thermal_expansion_l    = prm.get_double("thermal expansion liquid");
+      thermal_expansion_s    = prm.get_double("thermal expansion solid");
     }
 
     Assert(T_liquidus > T_solidus,
@@ -419,6 +421,16 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Thermal conductivity of the solid phase");
+
+      prm.declare_entry("thermal expansion liquid",
+                        "1",
+                        Patterns::Double(),
+                        "Thermal expansion coefficient of the liquid phase");
+
+      prm.declare_entry("thermal expansion solid",
+                        "1",
+                        Patterns::Double(),
+                        "Thermal expansion coefficient of the solid phase");
 
       prm.declare_entry("viscosity liquid",
                         "1",
@@ -514,12 +526,12 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-      prm.declare_entry("rheological model",
-                        "newtonian",
-                        Patterns::Selection(
-                          "newtonian|power-law|carreau|phase_change"),
-                        "Rheological model "
-                        "Choices are <newtonian|power-law|carreau>.");
+      prm.declare_entry(
+        "rheological model",
+        "newtonian",
+        Patterns::Selection("newtonian|power-law|carreau|phase_change"),
+        "Rheological model "
+        "Choices are <newtonian|power-law|carreau|phase_change>.");
 
       non_newtonian_parameters.declare_parameters(prm);
 
@@ -544,6 +556,13 @@ namespace Parameters
         Patterns::Selection("constant|linear|phase_change"),
         "Model used for the calculation of the thermal conductivity"
         "Choices are <constant|linear|phase_change>.");
+
+      prm.declare_entry(
+        "thermal expansion model",
+        "constant",
+        Patterns::Selection("constant|phase_change"),
+        "Model used for the calculation of the thermal expansion coefficient"
+        "Choices are <constant|phase_change>.");
 
       prm.declare_entry("k_A0",
                         "0",
@@ -591,6 +610,13 @@ namespace Parameters
       // Linear conductivity model parameters
       k_A0 = prm.get_double("k_A0");
       k_A1 = prm.get_double("k_A1");
+
+      // Thermal expansion
+      op = prm.get("thermal expansion model");
+      if (op == "constant")
+        thermal_expansion_model = ThermalExpansionModel::constant;
+      else if (op == "phase_change")
+        thermal_expansion_model = ThermalExpansionModel::phase_change;
 
       // Specific heat
       op = prm.get("specific heat model");

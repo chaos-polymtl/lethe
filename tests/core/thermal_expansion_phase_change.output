@@ -1,0 +1,24 @@
+
+DEAL::Beggining
+DEAL::Testing thermal expansion coefficient
+DEAL::T = 0.500000 thermal expansion = 20.0000
+DEAL::T = 0.600000 thermal expansion = 20.0000
+DEAL::T = 0.700000 thermal expansion = 20.0000
+DEAL::T = 0.800000 thermal expansion = 20.0000
+DEAL::T = 0.900000 thermal expansion = 20.0000
+DEAL::T = 1.00000 thermal expansion = 20.0000
+DEAL::T = 1.10000 thermal expansion = 19.0000
+DEAL::T = 1.20000 thermal expansion = 18.0000
+DEAL::T = 1.30000 thermal expansion = 17.0000
+DEAL::T = 1.40000 thermal expansion = 16.0000
+DEAL::T = 1.50000 thermal expansion = 15.0000
+DEAL::T = 1.60000 thermal expansion = 14.0000
+DEAL::T = 1.70000 thermal expansion = 13.0000
+DEAL::T = 1.80000 thermal expansion = 12.0000
+DEAL::T = 1.90000 thermal expansion = 11.0000
+DEAL::T = 2.00000 thermal expansion = 10.0000
+DEAL::T = 2.10000 thermal expansion = 10.0000
+DEAL::T = 2.20000 thermal expansion = 10.0000
+DEAL::T = 2.30000 thermal expansion = 10.0000
+DEAL::T = 2.40000 thermal expansion = 10.0000
+DEAL::OK

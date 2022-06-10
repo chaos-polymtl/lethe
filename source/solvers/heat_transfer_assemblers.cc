@@ -209,6 +209,7 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
     scratch_data.grad_specific_heat_temperature;
 
   // Copy data elements
+  // ?? do we need strong residual here??
   auto &strong_residual = copy_data.strong_residual;
   auto &strong_jacobian = copy_data.strong_jacobian;
   auto &local_matrix    = copy_data.local_matrix;
@@ -355,6 +356,7 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
 
               if (GGLS)
                 {
+                  // ?? why rho_cp * rho_cp
                   local_rhs_i -= rho_cp * rho_cp * tau_ggls * grad_phi_T_i *
                                  bdf_coefs[p] * temperature_gradient[p];
                 }

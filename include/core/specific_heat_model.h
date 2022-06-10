@@ -18,29 +18,10 @@
 #define lethe_specific_heat_model_h
 
 
+#include <core/phase_change.h>
 #include <core/physical_property_model.h>
 
 using namespace dealii;
-
-/**
- * @brief calculate_liquid_fraction Calculates the liquid fraction of a phase change material at
- * a temperature T
- *
- * @param T temperature at which to calculate the solid fraction
- * @return value of the liquid_fraction
- *
- */
-inline double
-calculate_liquid_fraction(
-  const double &                 T,
-  const Parameters::PhaseChange &phase_change_parameters)
-{
-  return std::min(std::max((T - phase_change_parameters.T_solidus) /
-                             (phase_change_parameters.T_liquidus -
-                              phase_change_parameters.T_solidus),
-                           0.),
-                  1.);
-}
 
 /**
  * @brief SpecificHeatModel. Abstract class that allows to calculate the

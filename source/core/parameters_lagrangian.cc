@@ -1,5 +1,7 @@
 #include "core/parameters_lagrangian.h"
 
+#include <deal.II/grid/grid_in.h>
+
 namespace Parameters
 {
   namespace Lagrangian
@@ -1122,11 +1124,42 @@ namespace Parameters
       }
       prm.leave_subsection();
     }
+    template <int dim>
+    void
+    FloatingGrid<dim>::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("floating grid");
+      {
+        mesh.declare_parameters(prm);
+        motion.declare_parameters(prm);
+        prm.declare_entry("start time", "0.", Patterns::Double(), "Start time");
+        prm.declare_entry("end time", "0.", Patterns::Double(), "End time");
+      }
+
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    FloatingGrid<dim>::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("floating grid");
+      {
+        mesh.parse_parameters(prm);
+        motion.parse_parameters(prm);
+        time_start = prm.get_double("start time");
+        time_end   = prm.get_double("end time");
+      }
+
+      prm.leave_subsection();
+    }
 
     template class ForceTorqueOnWall<2>;
     template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
+    template class FloatingGrid<2>;
+    template class FloatingGrid<3>;
     template class GridMotion<2>;
     template class GridMotion<3>;
 
