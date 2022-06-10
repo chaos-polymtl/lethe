@@ -14,7 +14,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 	set beam radius            = 0.0
 	set start time             = 0.0
 	set end time               = 1.0
-	set beam orientation       = z
+	set beam orientation       = z-
 	subsection path
 	  set Function expression  =  0.0; 0.0
 	end
@@ -34,7 +34,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``start time`` and ``end time`` parameters define the operation time window of the laser.
 
-* The ``beam orientation`` parameter shows the orientation of the laser beam. For instance, if a laser beam is emitted perpendicular to a plane in x-y coordinates, the orientation of the laser beam will be in the z-direction.
+* The ``beam orientation`` parameter shows the orientation and direction of the laser beam. For instance, if a laser beam is emitted perpendicular to a plane in x-y coordinates, the orientation of the laser beam will be in the z-direction. Negative (-) or positive (+) defines the direction of the laser beam. For instance if the laser beam is emitted in the negative z direction, the value of ``beam orientation`` will be ``z-``.
 
 .. note:: 
     In two-dimensional simulations, the laser beam orientation cannot be in the z-direction.
