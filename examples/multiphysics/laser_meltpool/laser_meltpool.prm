@@ -4,9 +4,9 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  		= bdf2
-  set time end                		= 0.0035
+  set time end                		= 0.005
   set time step               		= 0.000005
-  set output name             		= laser_phase-change
+  set output name             		= laser_meltpool
   set output frequency        		= 1
   set output path                  	= ./output/
 end
@@ -15,7 +15,28 @@ end
 # Multiphysics
 #---------------------------------------------------
 subsection multiphysics
+	set VOF 			= true
 	set heat transfer  		= true
+	set buoyancy force 		= true
+	set fluid dynamics 		= true
+end
+
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+subsection VOF
+  subsection interface sharpening
+    set enable      = true
+    set sharpening threshold	= 0.5
+    set interface sharpness	= 1.4
+    set sharpening frequency	= 50
+  end
+  subsection surface tension force
+ 	set surface tension coefficient 	= 1.5
+	set phase fraction gradient filter 	= 0.000015
+	set curvature filter			= 0.000015
+	set output auxiliary fields 		= true
+end
 end
 
 #---------------------------------------------------
@@ -29,12 +50,23 @@ subsection laser parameters
 	set penetration depth 		= 0.000070
 	set beam radius 		= 0.000050
 	set start time 			= 0
-	set end time 			= 0.0034
+	set end time 			= 0.001
 	set beam orientation 		= y-
 	subsection path
 		set Function expression =  0.5 * t; 0.000500
 	end
 end
+
+# --------------------------------------------------
+# Source term
+#---------------------------------------------------
+subsection source term
+  set enable                 		= true
+    subsection xyz
+            set Function expression 	= 0 ; -9.81 ; 0
+    end
+end
+
 
 #---------------------------------------------------
 # Initial condition
@@ -44,48 +76,68 @@ subsection initial conditions
     subsection uvwp
         set Function expression 	= 0; 0; 0
     end
+    
+    subsection VOF
+            set Function expression = if (y > 0.00055 , 1, 0)
+    end
+    
+    subsection temperature
+    	set Function expression 	= 20
+    end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-  set number of fluids     		= 1
-  subsection fluid 0
-    set thermal conductivity model 	= phase_change
-    set rheological model 		= phase_change
-    set specific heat model 		= phase_change
+  set number of fluids     	= 2
+      	subsection fluid 0
+	    set thermal conductivity model 	= phase_change
+	    set thermal expansion model 	= phase_change
+	    set rheological model 		= phase_change
+	    set specific heat model 		= phase_change
     
-    set density 			= 4300
+	    set density 			= 4420
     
-    subsection phase change
-      # Enthalpy of the phase change
-      set latent enthalpy      		= 286000
+	    	subsection phase change
+		      # Enthalpy of the phase change
+		      set latent enthalpy      		= 286000
 
-      # Temperature of the liquidus
-      set liquidus temperature 		= 1750
+		      # Temperature of the liquidus
+		      set liquidus temperature 		= 1650
 
-      # Temperature of the solidus
-      set solidus temperature  		= 1700
+		      # Temperature of the solidus
+		      set solidus temperature  		= 1604
 
-      # Specific heat of the liquid phase
-      set specific heat liquid 		= 830
+		      # Specific heat of the liquid phase
+		      set specific heat liquid 		= 831
 
-      # Specific heat of the solid phase
-      set specific heat solid  		= 200
-      
-      set thermal conductivity solid 	= 1.5
-      set thermal conductivity liquid 	= 33.4
+		      # Specific heat of the solid phase
+		      set specific heat solid  		= 670
 
-      # viscosity of the liquid phase
-      set viscosity liquid 		= 6
+		      # viscosity of the liquid phase
+		      set viscosity liquid 		= 0.00000069
+			  
+		      # viscosity of the solid phase
+		      set viscosity solid  		= 0.008
+		      
+		      set thermal conductivity solid	= 33.4
+		      set thermal conductivity liquid	= 10.6
+	      
+		      set thermal expansion liquid	= 0.0002
+		      set thermal expansion solid	= 0.0
+		end
+    	end
 
-      # viscosity of the solid phase
-      set viscosity solid  		= 100000
-    end
-
-  end
+  	subsection fluid 1
+		set density              	= 1.784
+		set kinematic viscosity  	= 0.0000123
+		set thermal conductivity 	= 0.00000001
+		set thermal expansion model 	= constant
+		set thermal expansion 		= 0.0
+	end
 end
+
 
 #---------------------------------------------------
 # Mesh
@@ -93,15 +145,15 @@ end
 subsection mesh
         set type = dealii
         set grid type = subdivided_hyper_rectangle
-        set grid arguments 	= 8, 2 : -0.0001, 0 : 0.0019, 0.000500 : true
-        set initial refinement 	= 8
+        set grid arguments 	= 4, 2 : -0.0001, 0 : 0.0009, 0.000500 : true
+        set initial refinement 	= 7
 end
 
 #---------------------------------------------------
 # Mesh Adaptation
 #---------------------------------------------------
 subsection mesh adaptation
-  set type                    = kelly
+  set type                    = none
   set variable                = temperature
   set fraction type           = fraction
   set max refinement level    = 8
@@ -138,30 +190,30 @@ subsection boundary conditions heat transfer
     subsection bc 0
     	set id = 0
 	set type	      = convection-radiation
-        set h	      	      = 15
+        set h	      	      = 80
         set Tinf	      = 20
-        set emissivity        = 0.5
+        set emissivity        = 0.6
     end
     subsection bc 1
     	set id = 1
 	set type	      = convection-radiation
-        set h	              = 15
+        set h	              = 80
         set Tinf	      = 20
-        set emissivity        = 0.5
+        set emissivity        = 0.6
     end
     subsection bc 2
     	set id = 2
 	set type	      = convection-radiation
-        set h	              = 15
+        set h	              = 80
         set Tinf	      = 20
-        set emissivity        = 0.5
+        set emissivity        = 0.6
     end
     subsection bc 3
     	set id = 3
 	set type	      = convection-radiation
-        set h	              = 15
+        set h	              = 80
         set Tinf	      = 20
-        set emissivity        = 0.5
+        set emissivity        = 0.6
     end
 end
 
@@ -179,13 +231,13 @@ end
 subsection non-linear solver
   set tolerance               = 1e-8
   set max iterations          = 100
-  set verbosity               = quiet
+  set verbosity               = verbose
 end
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
 subsection linear solver
-  set verbosity               		     = quiet
+  set verbosity               		     = verbose
   set method                                 = gmres
   set max iters                              = 10000
   set relative residual                      = 1e-3
