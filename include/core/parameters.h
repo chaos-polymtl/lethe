@@ -482,15 +482,15 @@ namespace Parameters
     // if a laser beam is emitted perpendicular on a plane in x-y coordinates,
     // the orientation of the laser beam will be in the z direction. Note that
     // this parameter cannot be equal to z in two-dimensional simulations.
-    // Positive and negative shows the direction of the laser beam
+    // Plus and minus shows the direction of the laser beam
     enum class BeamOrientation
     {
-      positive_x,
-      positive_y,
-      positive_z,
-      negative_x,
-      negative_y,
-      negative_z,
+      x_plus,
+      y_plus,
+      z_plus,
+      x_minus,
+      y_minus,
+      z_minus,
     } beam_orientation;
 
     // beam_orientation_coordinate parameter stores the integer (x = 0, y = 1,

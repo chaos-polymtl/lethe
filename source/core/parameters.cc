@@ -847,7 +847,7 @@ namespace Parameters
       if (op == "x+")
         {
           beam_direction                     = 1;
-          beam_orientation                   = BeamOrientation::positive_x;
+          beam_orientation                   = BeamOrientation::x_plus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
           if constexpr (dim == 3)
@@ -856,7 +856,7 @@ namespace Parameters
       else if (op == "x-")
         {
           beam_direction                     = 0;
-          beam_orientation                   = BeamOrientation::negative_x;
+          beam_orientation                   = BeamOrientation::x_minus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
           if constexpr (dim == 3)
@@ -865,7 +865,7 @@ namespace Parameters
       else if (op == "y+")
         {
           beam_direction                     = 1;
-          beam_orientation                   = BeamOrientation::positive_y;
+          beam_orientation                   = BeamOrientation::y_plus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
           if constexpr (dim == 3)
@@ -874,7 +874,7 @@ namespace Parameters
       else if (op == "y-")
         {
           beam_direction                     = 0;
-          beam_orientation                   = BeamOrientation::negative_y;
+          beam_orientation                   = BeamOrientation::y_minus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
           if constexpr (dim == 3)
@@ -885,7 +885,7 @@ namespace Parameters
           if constexpr (dim == 3)
             {
               beam_direction                     = 1;
-              beam_orientation                   = BeamOrientation::positive_z;
+              beam_orientation                   = BeamOrientation::z_plus;
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;
               beam_orientation_coordinate        = 2;
@@ -898,7 +898,7 @@ namespace Parameters
           if constexpr (dim == 3)
             {
               beam_direction                     = 0;
-              beam_orientation                   = BeamOrientation::negative_z;
+              beam_orientation                   = BeamOrientation::z_minus;
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;
               beam_orientation_coordinate        = 2;
