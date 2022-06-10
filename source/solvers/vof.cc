@@ -159,6 +159,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_system_rhs()
 {
+  // TimerOutput::Scope t(this->computing_timer, "Assemble VOF RHS");
+
   this->system_rhs = 0;
   setup_assemblers();
 
@@ -627,9 +629,9 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
                           .sharpening.threshold_max_deviation;
 
   // Useful definitions for readability
-  const double mass_gap_tol = this->simulation_parameters.multiphysics
-                                .vof_parameters.conservation.tolerance *
-                              this->mass_first_iteration;
+  const double mass_deviation_tol = this->simulation_parameters.multiphysics
+                                      .vof_parameters.conservation.tolerance *
+                                    this->mass_first_iteration;
   const int max_iterations = this->simulation_parameters.multiphysics
                                .vof_parameters.sharpening.max_iterations;
 
@@ -637,9 +639,9 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
     this->simulation_parameters.multiphysics.vof_parameters.conservation
       .id_fluid_monitored;
 
-  double mass_gap      = 0.;
-  int    nb_search_ite = 0;
-  double st_ave        = 0.;
+  double mass_deviation = 0.;
+  int    nb_search_ite  = 0;
+  double st_ave         = 0.;
   // Local variable for the tested sharpening_threshold values
   double st_tested = 0.;
 
@@ -663,14 +665,14 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
       st_ave    = (st_min + st_max) / 2.;
       st_tested = st_ave;
 
-      mass_gap = calculate_mass_gap(id_fluid_monitored, st_tested);
+      mass_deviation = calculate_mass_deviation(id_fluid_monitored, st_tested);
 
       // Adapt searching range
       switch (id_fluid_monitored)
         {
           case 0:
             {
-              if (mass_gap > 0.)
+              if (mass_deviation > 0.)
                 {
                   // Lower the sharpening threshold to reduce the
                   // area occupied by fluid at phase = 0
@@ -686,7 +688,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
             }
           case 1:
             {
-              if (mass_gap > 0.)
+              if (mass_deviation > 0.)
                 {
                   // Increase the sharpening threshold to reduce the
                   // area occupied by fluid at phase = 1
@@ -704,30 +706,32 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
             throw std::runtime_error("Unsupported number of fluids (>2)");
         } // end switch to adapt searching range
     }
-  while (std::abs(mass_gap) > mass_gap_tol && nb_search_ite < max_iterations);
+  while (std::abs(mass_deviation) > mass_deviation_tol &&
+         nb_search_ite < max_iterations);
 
-  // Take minimum gap in between the two endpoints of the last
+  // Take minimum deviation in between the two endpoints of the last
   // interval searched, if out of the do-while loop because max_iterations is
   // reached
-  if (std::abs(mass_gap) > mass_gap_tol)
+  if (std::abs(mass_deviation) > mass_deviation_tol)
     {
-      double mass_gap_endpoint = 0.;
+      double mass_deviation_endpoint = 0.;
       if (st_min == st_ave)
         st_tested = st_max;
       else if (st_max == st_ave)
         st_tested = st_min;
 
-      mass_gap_endpoint = calculate_mass_gap(id_fluid_monitored, st_tested);
+      mass_deviation_endpoint =
+        calculate_mass_deviation(id_fluid_monitored, st_tested);
 
-      // Retake st_ave value if mass gap is not lowered at endpoint
+      // Retake st_ave value if mass deviation is not lowered at endpoint
       // values
-      if (std::abs(mass_gap_endpoint) > std::abs(mass_gap))
+      if (std::abs(mass_deviation_endpoint) > std::abs(mass_deviation))
         {
           st_tested = st_ave;
         }
 
       // Output message
-      if (std::abs(mass_gap_endpoint) > mass_gap_tol)
+      if (std::abs(mass_deviation_endpoint) > mass_deviation_tol)
         {
           this->pcout
             << "  WARNING: Maximum number of iterations (" << nb_search_ite
@@ -762,8 +766,8 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
 
 template <int dim>
 double
-VolumeOfFluid<dim>::calculate_mass_gap(const int    id_fluid_monitored,
-                                       const double sharpening_threshold)
+VolumeOfFluid<dim>::calculate_mass_deviation(const int    id_fluid_monitored,
+                                             const double sharpening_threshold)
 {
   // Copy present solution VOF
   auto mpi_communicator = this->triangulation->get_communicator();
@@ -778,10 +782,10 @@ VolumeOfFluid<dim>::calculate_mass_gap(const int    id_fluid_monitored,
   // Calculate mass of the monitored phase
   calculate_volume_and_mass(solution_copy, id_fluid_monitored);
 
-  // Calculate mass gap
-  double mass_gap = this->mass_monitored - this->mass_first_iteration;
+  // Calculate mass deviation
+  double mass_deviation = this->mass_monitored - this->mass_first_iteration;
 
-  return mass_gap;
+  return mass_deviation;
 }
 
 template <int dim>

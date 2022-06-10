@@ -530,7 +530,7 @@ private:
   find_sharpening_threshold();
 
   /**
-   * @brief Calculate the mass gap of the monitored fluid, between the current
+   * @brief Calculate the mass deviation of the monitored fluid, between the current
    * iteration and the mass at first iteration (mass_first_iteration). Used to
    * test multiple sharpening threshold in the binary search algorithm
    * (adaptative sharpening).
@@ -542,8 +542,8 @@ private:
    * mass conservation level
    */
   double
-  calculate_mass_gap(const int    id_fluid_monitored,
-                     const double sharpening_threshold);
+  calculate_mass_deviation(const int    id_fluid_monitored,
+                           const double sharpening_threshold);
 
   /**
    * @brief Carries out interface sharpening. It is called in the modify solution function.
