@@ -7,8 +7,8 @@ This subsection's purpose is defining the boundary conditions associated to mult
 Heat Transfer
 ^^^^^^^^^^^^^
 
-For heat transfer boundary conditions, the possible ``types`` are ``temperature`` (default) and ``convection-radiation``.
-The default parameters of each are shown: 
+For heat transfer boundary conditions, the possible ``types`` are ``noflux`` (default), ``temperature`` and ``convection-radiation``.
+The default parameters for ``temperature`` and ``convection-radiation`` are shown: 
 
 .. code-block:: text
 
@@ -32,12 +32,18 @@ The default parameters of each are shown:
 * ``number``: This is the number of boundary conditions of the problem. 
 
 .. warning::
-    The number of boundary conditions must be specified explicitly as the ParameterHandler is not able to deduce the number of boundary conditions from the number of ``bc`` subsections. This is often a source of error.
+    The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
+
+.. note::
+    The index in ``subsection bc ..`` must be coherent with the ``number`` of boundary conditions set: if ``number = 2``, ``bc 0`` and ``bc 1`` are created but ``bc 2`` does not exist. 
+
+    Likewise, if ``number = 2`` and there is no ``subsection bc 0`` explicitly stated, the boundary is still created, with ``noflux`` by default.
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
-* ``type``: This is the type of boundary condition been imposed. At the moment, choices are:
-    * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary.
+* ``type``: type of boundary condition being imposed. At the moment, choices are:
+    * ``noflux`` (default) so that there is no heat transfer boundary condition,
+    * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
     * ``convection-radiation`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and emissivity of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation.
 
 .. math::
@@ -46,8 +52,10 @@ The default parameters of each are shown:
 
 where :math:`\mathbf{\sigma}` is the Stefan-Boltzmann constant.
 
-.. note::
-    By default, the boundary condition type is ``temperature`` with ``value = 0``
+.. seealso::
+
+  The :doc:`../../examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid` example uses heat transfer boundary conditions.
+
 
 Tracer
 ^^^^^^
@@ -93,6 +101,13 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
         end
     end
 
+.. warning::
+    The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
+
+.. note::
+    The index in ``subsection bc ..`` must be coherent with the ``number`` of boundary conditions set: if ``number = 2``, ``bc 0`` and ``bc 1`` are created but ``bc 2`` does not exist. 
+
+    Likewise, if ``number = 2`` and there is no ``subsection bc 0`` explicitly stated, the boundary is still created, with ``none`` by default.
 
 * ``number``: This is the number of boundary conditions of the problem. 
 

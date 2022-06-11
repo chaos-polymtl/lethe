@@ -3,6 +3,7 @@ Boundary conditions - CFD
 
 This subsection defines the boundary conditions associated with fluid dynamics physics. Lethe supports the following boundary conditions:
 
+* ``none`` boundary condition (default).
 * ``noslip`` boundary conditions strongly impose the velocity on a boundary to be :math:`\mathbf{u}=[0,0]^T` and :math:`\mathbf{u}=[0,0,0]^T` in 2D and 3D respectively.
 * ``slip`` boundary conditions impose :math:`\mathbf{u} \cdot \mathbf{n}=0`, with :math:`\mathbf{n}` the normal vector of the boundary. Imposing slip boundary conditions strongly is not trivial in FEM. We refer the reader to the deal.II `documentation <https://www.dealii.org/current/doxygen/deal.II/group__constraints.html>`_ for explanations on how this is achieved.
 * ``partial slip`` boundary condition simulates an intermediary between ``slip`` and ``noslip`` boundary conditions, in which the fluid feels an attenuated stress due to the walls. The attenuation is controlled by the  boundary layer thickness (m).
@@ -22,7 +23,7 @@ or in Einstein notation :
 
 where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0,\mathbf{u}\cdot n)`. We refer the reader to the work of `Arndt et al 2015 <https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf>`_  for more detail.
 
-* Finally, Lethe also supports not imposing a boundary condition on an ID. Not imposing a boundary condition is equivalent to the *do nothing* boundary condition, which results in a zero net traction on a boundary. This, in fact, imposes :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0` where :math:`p` is the pressure, :math:`\mathcal{I}` is the identity tensor, :math:`\mathbf{\tau}` is the deviatoric stress tensor  and :math:`\Gamma` is the boundary. 
+* Finally, Lethe also supports not imposing a boundary condition on an ID. Not imposing a boundary condition is equivalent to the *do nothing* boundary condition (``none``), which results in a zero net traction on a boundary. This, in fact, imposes :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0` where :math:`p` is the pressure, :math:`\mathcal{I}` is the identity tensor, :math:`\mathbf{\tau}` is the deviatoric stress tensor  and :math:`\Gamma` is the boundary. 
 
 
 .. code-block:: text
@@ -62,22 +63,27 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
 * ``number`` specifies the number of boundary conditions of the problem. Periodicity between 2 boundaries counts as 1 condition even if it requires two distinct boundary ids.
 
 .. warning::
-    The number of boundary conditions must be specified explicitly as the ParameterHandler is not able to deduce the number of boundary conditions from the number of ``bc`` subsections. This is often a source of error.
+    The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
+
+.. note::
+    The index in ``subsection bc ..`` must be coherent with the ``number`` of boundary conditions set: if ``number = 2``, ``bc 0`` and ``bc 1`` are created but ``bc 2`` does not exist. 
+
+    Likewise, if ``number = 2`` and there is no ``subsection bc 0`` explicitly stated, the boundary is still created, with ``none`` by default.
 
 * ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false```). By default, this parameter is set to ``false``. This is there to improve the computational efficiency for transient cases in which the boundary conditions do not change. 
 
-* Each fluid dynamics boundary condition is stored in a ``bc no`` subsection :
-    * ``id``  is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc. 
+* Each fluid dynamics boundary condition is stored in a ``bc #`` subsection :
+    * ``id``  is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. 
     
-    * ``type`` is the type of the boundary condition. Only slip, no-slip, periodic and function are enabled.
+    * ``type`` is the type of the boundary condition.
     
     * The subsections ``u``, ``v`` and ``w`` are used to specify the individual components of the velocity at the boundary using function expressions. These functions can depend on position (:math:`x,y,z`) and on time (:math:`t`).
 
     * The ``center of rotation`` subsection is only necessary when calculating the torque applied on a boundary. See  See :doc:`force_and_torque` for more information.
 
-    * ``periodic id`` and ``periodic_direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``ìd=0``, ``periodic_id=1`` and ``periodic_direction=0``.
+    * ``periodic id`` and ``periodic_direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic_id = 1`` and ``periodic_direction = 0``.
 
-    * ``beta`` is a penalization parameter used for both the ``outlet``, ``partial slip``, and ``function weak`` boundary conditions. For the outlet boundary conditions ``beta`` should be close to unity, whereas ``beta`` of 10 or a 100 can be appropriate for the ``function weak`` boundary condition. For the ``partial slip`` condition, use high values of ``beta`` (i.e., > 50).
+    * ``beta`` is a penalization parameter used for both the ``outlet``, ``partial slip``, and ``function weak`` boundary conditions. For the outlet boundary conditions ``beta`` should be close to unity, whereas ``beta`` of 10 or a 100 can be appropriate for the ``function weak`` boundary condition. For the ``partial slip`` condition, use high values of ``beta`` (`i.e.` > 50).
 
     * ``boundary layer thickness`` (:math:`d_w`) is the parameter applied to the ``partial slip`` boundary condition. It is used to estimate the tangential shear stress :math:`\tau_t = -\mu \frac{u}{d_w}`. For very high ``boundary layer thicknes``, the boundary layer should behave exactly like the ``slip`` condition.
 
