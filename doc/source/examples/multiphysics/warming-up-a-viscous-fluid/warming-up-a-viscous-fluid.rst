@@ -28,7 +28,7 @@ The following schematic describes the simulation.
     :align: center
 
 * bc = 0 : no slip and thermal insulation boundary condition
-* bc = 1 : flow in the y-direction (v=2) and heating at Tw
+* bc = 1 : flow in the y-direction (:math:`v=2`) and heating at Tw
 
 .. important:: 
     The whole simulation is carried out in the frame of one-way coupling: the fluid velocity influences the heat generated through viscous dissipation, but the heat transfer does not influence the fluid velocity. Moreover, fluid state changes are not considered.
@@ -321,6 +321,59 @@ After the fluid has been heated up by the right plate, the temperature is really
 .. image:: images/domain_t7_water_rescale_nodiss.png
     :alt: Rescaled domain with temperature (t = 7)
     :width: 30%
+
+
+Horizontal domain
+~~~~~~~~~~~~~~~~~
+
+Several adjustments have to be made in the `.prm` to turn the domain clockwise, so that it becomes horizontal, with the upper wall being the no slip and thermal insulation boundary condition, and the lower wall with the flow in the y-direction (:math:`v=2`) and heating at Tw:
+
+* in ``subsection mesh``: ``set grid arguments = 0, 0 : 1, 0.5 : true``
+* in ``subsection analytical solution``, ``subsection temperature``: 
+   ``set Function expression = Tw+(((rho*nu)*v*v)/(2*K))*(1-(y/B)*(y/B))``
+* and most importantly, the ``id`` of ``boundary conditions`` should be adapted to use the bottom and top wall (see the `deal.II documentation on hyper_rectangle grid generator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a56019d263ae45708302d5d7599f0d458>`_ for further details):
+
+.. code-block:: text
+
+	subsection boundary conditions
+	  set number                  = 2
+	    subsection bc 0
+	    set id = 2
+		set type              = noslip
+	    end
+	    subsection bc 1
+	    set id = 3
+		set type              = function
+		subsection u
+		    set Function expression = 2
+		end
+		subsection v
+		    set Function expression = 0
+		end
+	    end
+	end
+
+	subsection boundary conditions heat transfer
+	  set number                  = 4
+	    subsection bc 2
+	    set id = 2
+		set type          = convection-radiation
+		set h             = 0
+		set Tinf	  = 0
+	    end
+	    subsection bc 3
+	    set id = 3
+		set type              = temperature
+		set value             = 80
+	    end
+	end
+
+.. important::
+	For the fluid ``boundary conditions``, we use ``set number = 2``, whereas for ``boundary conditions heat transfer`` we use ``set number = 4``. These two notations are perfectly equivalent, as the boundary conditions are ``none`` by default (or ``noflux`` in the case of heat transfer, see :doc:`../../../parameters/cfd/boundary_conditions_multiphysics`). However, it is important to make sure that:
+
+	* the index in ``subsection bc ..`` is coherent with the ``number`` set (if ``number = 2``, ``bc 0`` and ``bc 1`` are created but ``bc 2`` does not exist),
+	* the index in ``set id = ..`` is coherent with the ``id`` of the boundary in the mesh (here, the deal.II generated mesh).
+
 
 Possibilities for extension
 ----------------------------

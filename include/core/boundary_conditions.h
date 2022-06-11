@@ -35,6 +35,8 @@ namespace BoundaryConditions
 {
   enum class BoundaryType
   {
+    // common
+    none,
     // for fluid
     noslip,
     slip,
@@ -45,13 +47,13 @@ namespace BoundaryConditions
     pressure,
     outlet,
     // for heat transfer
-    temperature,          // - Dirichlet
-    convection_radiation, // - Robin
-                          // for tracer
-    tracer_dirichlet,     // - Dirichlet tracer
-                          // for vof
-    none,                 // - none
-    pw,                   // - peeling/wetting
+    noflux,
+    temperature,
+    convection_radiation,
+    // for tracer
+    tracer_dirichlet,
+    // for vof
+    pw,
   };
 
   /**
@@ -145,16 +147,17 @@ namespace BoundaryConditions
     void
     parse_parameters(ParameterHandler &prm);
     void
-    createDefaultNoSlip();
+    createNoSlip();
   };
 
 
   /**
-   * @brief Creates a default no-slip boundary condition for id=0
+   * @brief Creates a noslip boundary condition for id=0
+   * Used in tests only
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::createDefaultNoSlip()
+  NSBoundaryConditions<dim>::createNoSlip()
   {
     this->id.resize(1);
     this->id[0] = 0;
@@ -180,9 +183,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry(
       "type",
-      "noslip",
+      "none",
       Patterns::Selection(
-        "noslip|slip|function|periodic|pressure|function weak|partial slip|outlet"),
+        "none|noslip|slip|function|periodic|pressure|function weak|partial slip|outlet"),
       "Type of boundary condition"
       "Choices are <noslip|slip|function|periodic|pressure|function weak|partial slip|outlet>.");
 
@@ -258,6 +261,8 @@ namespace BoundaryConditions
                                             unsigned int      i_bc)
   {
     const std::string op = prm.get("type");
+    if (op == "none")
+      this->type[i_bc] = BoundaryType::none;
     if (op == "noslip")
       this->type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
@@ -404,8 +409,12 @@ namespace BoundaryConditions
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    * The members "value", "h" and "Tinf" contain double used for bc calculation:
+   *
+   *  - if bc type is "noflux", no flux is assembled at the boundary
+   *
    *  - if bc type is "temperature" (Dirichlet condition), "value" is the
    * double passed to the deal.ii ConstantFunction
+   *
    *  - if bc type is "convection-radiation" (Robin condition), "h" is the
    * convective heat transfer coefficient and "Tinf" is the
    * environment temperature at the boundary, "emissivity" is the emissivity
@@ -435,7 +444,6 @@ namespace BoundaryConditions
 
   /**
    * @brief Declares the default parameters for a boundary condition id i_bc
-   * i.e. Dirichlet condition (ConstantFunction) with value 0
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
@@ -447,10 +455,11 @@ namespace BoundaryConditions
                                                  unsigned int      i_bc)
   {
     prm.declare_entry("type",
-                      "temperature",
-                      Patterns::Selection("temperature|convection-radiation"),
+                      "noflux",
+                      Patterns::Selection(
+                        "noflux|temperature|convection-radiation"),
                       "Type of boundary condition for heat transfer"
-                      "Choices are <temperature|convection-radiation>.");
+                      "Choices are <noflux|temperature|convection-radiation>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -531,6 +540,10 @@ namespace BoundaryConditions
                                             unsigned int      i_bc)
   {
     const std::string op = prm.get("type");
+    if (op == "noflux")
+      {
+        this->type[i_bc] = BoundaryType::noflux;
+      }
     if (op == "temperature")
       {
         this->type[i_bc]  = BoundaryType::temperature;
@@ -766,7 +779,6 @@ namespace BoundaryConditions
 
   /**
    * @brief Declares the default parameters for a boundary condition id i_bc
-   * i.e. Dirichlet condition (ConstantFunction) with value 0
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
