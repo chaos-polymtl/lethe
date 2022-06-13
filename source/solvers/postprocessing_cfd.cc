@@ -431,11 +431,12 @@ calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
                              const Mapping<dim> &       mapping,
                              PhysicalPropertiesManager &properties_manager)
 {
-  double     integral_viscosity_x_shear_rate = 0;
-  double     integral_shear_rate             = 0;
-  double     shear_rate_magnitude;
-  double     viscosity;
-  const auto rheological_model = properties_manager.get_rheology();
+  double         integral_viscosity_x_shear_rate = 0;
+  double         integral_shear_rate             = 0;
+  double         shear_rate_magnitude;
+  Tensor<2, dim> shear_rate;
+  double         viscosity;
+  const auto     rheological_model = properties_manager.get_rheology();
 
   const FESystem<dim, dim> fe = dof_handler.get_fe();
   FEValues<dim>            fe_values(mapping,
@@ -461,9 +462,20 @@ calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              shear_rate_magnitude = calculate_shear_rate_magnitude(
-                present_velocity_gradients[q] +
-                transpose(present_velocity_gradients[q]));
+              shear_rate = present_velocity_gradients[q] +
+                           transpose(present_velocity_gradients[q]);
+
+              double shear_rate_x_velocity_gradient = 0;
+              for (int i = 0; i < dim; ++i)
+                {
+                  for (int j = 0; j < dim; ++j)
+                    {
+                      shear_rate_x_velocity_gradient +=
+                        shear_rate[i][j] * present_velocity_gradients[q][j][i];
+                    }
+                }
+
+              shear_rate_magnitude = calculate_shear_rate_magnitude(shear_rate);
 
               std::map<field, double> field_values;
               field_values[field::shear_rate] = shear_rate_magnitude;
@@ -471,8 +483,9 @@ calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
               viscosity = rheological_model->value(field_values);
 
               integral_viscosity_x_shear_rate +=
-                viscosity * shear_rate_magnitude * fe_values.JxW(q);
-              integral_shear_rate += shear_rate_magnitude * fe_values.JxW(q);
+                viscosity * shear_rate_x_velocity_gradient * fe_values.JxW(q);
+              integral_shear_rate +=
+                shear_rate_x_velocity_gradient * fe_values.JxW(q);
             }
         }
     }

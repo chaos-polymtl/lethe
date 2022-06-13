@@ -2,12 +2,12 @@ Running on 2 MPI rank(s)...
    Number of active cells:       16
    Number of degrees of freedom: 187
    Volume of triangulation:      1
-Apparent viscosity: 0.781234 m^2/s
+Apparent viscosity: 0.750259 m^2/s
 
 *****************************************************************
 Steady iteration :        1/1
 *****************************************************************
-Apparent viscosity: 0.781234 m^2/s
+Apparent viscosity: 0.750259 m^2/s
 L2 error velocity : 5.19289e-07
 cells error_velocity error_pressure 
    16 5.192891e-07 - 4.658475e-03 - 
