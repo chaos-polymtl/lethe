@@ -273,10 +273,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                                         1);
   for (unsigned int i = 0; i < dim + 1; ++i)
     velocity_gradients_component[i].resize(ib_coef.size());
-  Tensor<2, dim>              fluid_stress;
   Tensor<2, dim>              fluid_viscous_stress;
   Tensor<2, dim>              fluid_pressure;
-  Tensor<2, dim>              fluid_stress_at_ib;
   Tensor<2, dim>              fluid_viscous_stress_at_ib;
   Tensor<2, dim>              fluid_pressure_stress_at_ib;
   Tensor<2, dim>              shear_rate;
@@ -300,7 +298,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   std::vector<Point<dim>> cell_interpolation_points(ib_coef.size());
   std::vector<double>     local_interp_sol(ib_coef.size());
 
-  std::map<unsigned int, std::pair<bool, Tensor<2, dim>>> force_eval_done;
   std::map<unsigned int, std::pair<Tensor<2, dim>, Tensor<2, dim>>> force_eval;
 
   // Define cell iterator
@@ -416,8 +413,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // Check if that dof already have been used to
                           // extrapolate the fluid stress tensor on the IB
                           // surface.
-                          if (force_eval_done[local_face_dof_indices[i]]
-                                .first == false)
+                          if (force_eval.find(local_face_dof_indices[i]) !=
+                              force_eval.end())
                             {
                               if (component_i == 0)
                                 {
@@ -480,7 +477,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                             interpolation_points[j - 1]);
                                     }
 
-                                  fluid_stress_at_ib          = 0;
                                   fluid_viscous_stress_at_ib  = 0;
                                   fluid_pressure_stress_at_ib = 0;
 
@@ -535,12 +531,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       fluid_viscous_stress =
                                         -viscosity * shear_rate;
 
-                                      fluid_stress =
-                                        -fluid_viscous_stress - fluid_pressure;
-
-                                      fluid_stress_at_ib +=
-                                        fluid_stress * ib_coef[k];
-
                                       fluid_viscous_stress_at_ib -=
                                         fluid_viscous_stress * ib_coef[k];
 
@@ -552,14 +542,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   // vector of the IB surface cell and in a map
                                   // that is used if the same extrapolation is
                                   // needed in another face.
-                                  local_face_tensor[i] = fluid_stress_at_ib;
                                   local_face_viscous_stress_tensor[i] =
                                     fluid_viscous_stress_at_ib;
                                   local_face_pressure_tensor[i] =
                                     fluid_pressure_stress_at_ib;
-
-                                  force_eval_done[local_face_dof_indices[i]] =
-                                    std::make_pair(true, fluid_stress_at_ib);
 
                                   force_eval[local_face_dof_indices[i]] =
                                     std::make_pair(fluid_viscous_stress_at_ib,
@@ -572,9 +558,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               // extrapolation. This step comes with an error
                               // due to the curvature of the surface in Q2 and
                               // higher order elements.
-                              local_face_tensor[i] =
-                                force_eval_done[local_face_dof_indices[i]]
-                                  .second;
                               local_face_viscous_stress_tensor[i] =
                                 force_eval[local_face_dof_indices[i]].first;
                               local_face_pressure_tensor[i] =
@@ -584,17 +567,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // Use the extrapolation of fluid stress tensor at the
                       // dof location of the IB surface cell to integrate the
                       // stress tensor on the surface of the IB
-                      auto local_face_tensor_old = local_face_tensor;
                       auto local_face_viscous_stress_tensor_old =
                         local_face_viscous_stress_tensor;
                       auto local_face_pressure_tensor_old =
                         local_face_pressure_tensor;
 
-                      local_face_tensor.clear();
                       local_face_viscous_stress_tensor.clear();
                       local_face_pressure_tensor.clear();
 
-                      local_face_tensor.resize(local_face_dof_indices.size());
                       local_face_viscous_stress_tensor.resize(
                         local_face_dof_indices.size());
                       local_face_pressure_tensor.resize(
@@ -666,10 +646,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                        j < local_face_dof_indices.size();
                                        ++j)
                                     {
-                                      local_face_tensor[i] +=
-                                        inv_interpolation_matrix[i][j] *
-                                        local_face_tensor_old[j];
-
                                       local_face_viscous_stress_tensor[i] +=
                                         inv_interpolation_matrix[i][j] *
                                         local_face_viscous_stress_tensor_old[j];
@@ -681,7 +657,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             }
                           else
                             {
-                              local_face_tensor = local_face_tensor_old;
                               local_face_viscous_stress_tensor =
                                 local_face_viscous_stress_tensor_old;
                               local_face_pressure_tensor =
@@ -697,7 +672,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                 (q_points[q] - particles[p].position) /
                                 (q_points[q] - particles[p].position).norm();
 
-                              fluid_stress         = 0;
                               fluid_viscous_stress = 0;
                               fluid_pressure       = 0;
 
@@ -712,11 +686,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       .first;
                                   if (component_i == 0)
                                     {
-                                      fluid_stress +=
-                                        fe_face_projection_values.shape_value(
-                                          i, q) *
-                                        local_face_tensor[i];
-
                                       fluid_viscous_stress +=
                                         fe_face_projection_values.shape_value(
                                           i, q) *
@@ -737,9 +706,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     }
                                 }
 
-                              auto force = fluid_stress * normal_vector *
-                                           fe_face_projection_values.JxW(q);
-
                               auto viscous_force =
                                 fluid_viscous_stress * normal_vector *
                                 fe_face_projection_values.JxW(q);
@@ -747,6 +713,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               auto pressure_force =
                                 fluid_pressure * normal_vector *
                                 fe_face_projection_values.JxW(q);
+
+                              auto force = viscous_force + pressure_force;
 
                               if (force.norm() > 0)
                                 {
