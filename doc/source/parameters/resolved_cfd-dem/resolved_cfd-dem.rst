@@ -22,7 +22,6 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set DEM coupling frequency                  = 1000
 		set alpha                                   = 1
 		set contact search radius factor            = 0
-
 		
 		subsection gravity
 			set Function expression =0;0;0
@@ -110,7 +109,7 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 
 * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
 
-* The ``contact search radius factor`` parameter is used to create the list of potential contacting particles. If ``contact search radius factor`` > 1, two given particles with respective radius :math:`R_1` and :math:`R_2` are in potential contact if the distance between them is < :math:`(R_1 + R_2) * factor`. Alternatively, if ``contact search radius factor`` < or = 1, all particles are considered in potential contact with each other. If no value is provided this parameter is set to 0.
+* The ``contact search radius factor`` parameter is used to create the list of potential contacting particles. If ``contact search radius factor`` > 1, two given particles with respective radii :math:`R_1` and :math:`R_2` are in potential contact if the distance between them is < :math:`(R_1 + R_2) * factor`. Alternatively, if ``contact search radius factor`` :math:`\leq 1`, all particles are considered in potential contact with each other. If no value is provided this parameter is set to 0.
 
 * The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 

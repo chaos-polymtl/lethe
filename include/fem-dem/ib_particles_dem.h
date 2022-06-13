@@ -123,7 +123,7 @@ public:
                              std::vector<Tensor<1, 3>> &contact_torque);
 
   /**
-   * @brief updates the contact candidates of all the particles
+   * @brief Updates the contact candidates of all the particles
    */
   void
   update_contact_candidates();
@@ -250,7 +250,6 @@ private:
 
   // Empty parameters to initilize particle_wall_contact_force_object
   double triangulation_cell_diameter = 0.0;
-
 
   // Particles contact history
   std::map<unsigned int,

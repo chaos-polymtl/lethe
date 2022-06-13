@@ -99,8 +99,6 @@ IBParticlesDEM<dim>::update_contact_candidates()
             }
         }
     }
-
-
   else
     {
       for (auto &particle_one : dem_particles)
