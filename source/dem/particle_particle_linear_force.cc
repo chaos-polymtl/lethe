@@ -51,16 +51,16 @@ ParticleParticleLinearForce<dim>::ParticleParticleLinearForce(
 
           this->effective_youngs_modulus[i][j] =
             (youngs_modulus_i * youngs_modulus_j) /
-            ((youngs_modulus_j * (1 - poisson_ratio_i * poisson_ratio_i)) +
-             (youngs_modulus_i * (1 - poisson_ratio_j * poisson_ratio_j)) +
+            ((youngs_modulus_j * (1.0 - poisson_ratio_i * poisson_ratio_i)) +
+             (youngs_modulus_i * (1.0 - poisson_ratio_j * poisson_ratio_j)) +
              DBL_MIN);
 
           this->effective_shear_modulus[i][j] =
             (youngs_modulus_i * youngs_modulus_j) /
-            (2 * ((youngs_modulus_j * (2 - poisson_ratio_i) *
-                   (1 + poisson_ratio_i)) +
-                  (youngs_modulus_i * (2 - poisson_ratio_j) *
-                   (1 + poisson_ratio_j))) +
+            (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
+                     (1.0 + poisson_ratio_i)) +
+                    (youngs_modulus_i * (2.0 - poisson_ratio_j) *
+                     (1.0 + poisson_ratio_j))) +
              DBL_MIN);
 
           this->effective_coefficient_of_restitution[i][j] =
@@ -147,11 +147,11 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
 
               // Calculation of normal overlap
               double normal_overlap =
-                0.5 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-                       particle_two_properties[DEM::PropertiesIndex::dp]) -
+                0.5 * (particle_one_properties[PropertiesIndex::dp] +
+                       particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0)
+              if (normal_overlap > 0.0)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -218,7 +218,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0.0;
                     }
                 }
             }
@@ -262,11 +262,11 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
 
               // Calculation of normal overlap
               double normal_overlap =
-                0.5 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-                       particle_two_properties[DEM::PropertiesIndex::dp]) -
+                0.5 * (particle_one_properties[PropertiesIndex::dp] +
+                       particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0)
+              if (normal_overlap > 0.0)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -324,7 +324,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0.0;
                     }
                 }
             }
@@ -367,14 +367,14 @@ ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
       particle_two_location_3d = point_nd_to_3d(particle_two_location);
     }
   auto particle_one_properties = particle_one.get_properties();
-  particle_one_properties[DEM::PropertiesIndex::mass] = particle_one_mass;
-  particle_one_properties[DEM::PropertiesIndex::type] = 0;
-  particle_one_properties[DEM::PropertiesIndex::dp]   = 2 * particle_one_radius;
+  particle_one_properties[PropertiesIndex::mass] = particle_one_mass;
+  particle_one_properties[PropertiesIndex::type] = 0;
+  particle_one_properties[PropertiesIndex::dp]   = 2.0 * particle_one_radius;
 
   auto particle_two_properties = particle_one.get_properties();
-  particle_two_properties[DEM::PropertiesIndex::mass] = particle_two_mass;
-  particle_two_properties[DEM::PropertiesIndex::type] = 0;
-  particle_two_properties[DEM::PropertiesIndex::dp]   = 2 * particle_two_radius;
+  particle_two_properties[PropertiesIndex::mass] = particle_two_mass;
+  particle_two_properties[PropertiesIndex::type] = 0;
+  particle_two_properties[PropertiesIndex::dp]   = 2.0 * particle_two_radius;
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and
   // torque calculations, we need pair-wise properties (such as effective
@@ -382,26 +382,26 @@ ParticleParticleLinearForce<dim>::calculate_IB_particle_particle_contact_force(
   // these pair-wise properties by using the ID of IB particles (using
   // DEM::PropertiesIndex::type) and use them in force calculations.
   const unsigned int particle_one_type =
-    particle_one_properties[DEM::PropertiesIndex::type];
+    particle_one_properties[PropertiesIndex::type];
   const unsigned int particle_two_type =
-    particle_two_properties[DEM::PropertiesIndex::type];
+    particle_two_properties[PropertiesIndex::type];
 
 
 
   this->effective_youngs_modulus[particle_one_type][particle_two_type] =
     (particle_one.youngs_modulus * particle_two.youngs_modulus) /
     ((particle_two.youngs_modulus *
-      (1 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
+      (1.0 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
      (particle_one.youngs_modulus *
-      (1 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
+      (1.0 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
      DBL_MIN);
 
   this->effective_shear_modulus[particle_one_type][particle_two_type] =
     (particle_one.youngs_modulus * particle_two.youngs_modulus) /
-    (2 * ((particle_two.youngs_modulus * (2 - particle_one.poisson_ratio) *
-           (1 + particle_one.poisson_ratio)) +
-          (particle_one.youngs_modulus * (2 - particle_two.poisson_ratio) *
-           (1 + particle_two.poisson_ratio))) +
+    (2.0 * ((particle_two.youngs_modulus * (2.0 - particle_one.poisson_ratio) *
+             (1.0 + particle_one.poisson_ratio)) +
+            (particle_one.youngs_modulus * (2.0 - particle_two.poisson_ratio) *
+             (1.0 + particle_two.poisson_ratio))) +
      DBL_MIN);
 
   this->effective_coefficient_of_restitution[particle_one_type]
@@ -462,16 +462,16 @@ ParticleParticleLinearForce<dim>::calculate_linear_contact_force_and_torque(
   this->find_effective_radius_and_mass(particle_one_properties,
                                        particle_two_properties);
   const unsigned int particle_one_type =
-    particle_one_properties[DEM::PropertiesIndex::type];
+    particle_one_properties[PropertiesIndex::type];
   const unsigned int particle_two_type =
-    particle_two_properties[DEM::PropertiesIndex::type];
+    particle_two_properties[PropertiesIndex::type];
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
   double normal_spring_constant =
     1.0667 * sqrt(this->effective_radius) *
     this->effective_youngs_modulus
-      [particle_one_type][particle_two_properties[DEM::PropertiesIndex::type]] *
+      [particle_one_type][particle_two_properties[PropertiesIndex::type]] *
     pow(
       (0.9375 * this->effective_mass * normal_relative_velocity_value *
        normal_relative_velocity_value /
@@ -490,8 +490,8 @@ ParticleParticleLinearForce<dim>::calculate_linear_contact_force_and_torque(
           0.2) +
     DBL_MIN;
   double normal_damping_constant = sqrt(
-    (4 * this->effective_mass * normal_spring_constant) /
-    (1 +
+    (4.0 * this->effective_mass * normal_spring_constant) /
+    (1.0 +
      (M_PI /
       (log(this->effective_coefficient_of_restitution[particle_one_type]
                                                      [particle_two_type]) +
@@ -544,11 +544,12 @@ ParticleParticleLinearForce<dim>::calculate_linear_contact_force_and_torque(
   // Torque caused by tangential force (tangential_torque)
   particle_one_tangential_torque =
     cross_product_3d(normal_unit_vector,
-                     tangential_force * particle_one_properties[DEM::dp] * 0.5);
+                     tangential_force *
+                       particle_one_properties[PropertiesIndex::dp] * 0.5);
   particle_two_tangential_torque =
     particle_one_tangential_torque *
-    particle_two_properties[DEM::PropertiesIndex::dp] /
-    particle_one_properties[DEM::PropertiesIndex::dp];
+    particle_two_properties[PropertiesIndex::dp] /
+    particle_one_properties[PropertiesIndex::dp];
 
   // Rolling resistance torque
   if (rolling_reistance_model ==
