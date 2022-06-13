@@ -46,13 +46,11 @@ The following schematic describes the geometry and dimensions of the simulation 
 Parameter file
 --------------
 
-Time integration is handled by a 1st order backward differentiation scheme 
-`(bdf1)`, for a :math:`3` s simulation time with an initial 
-time step of :math:`0.001` seconds.
+Time integration is handled by a 1st order backward differentiation scheme `(bdf1)`, for a :math:`3~\text{s}` simulation time with an initial time step of :math:`0.001~\text{s}`.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output control = time``, and ``output time = 0.03`` the simulation results are written every 0.03 s.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output control = time``, and ``output time = 0.03`` the simulation results are written every :math:`0.03~\text{s}`.
 
 .. code-block:: text
 
@@ -80,7 +78,7 @@ time step of :math:`0.001` seconds.
     you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will break.
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
-and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``interface sharpening``, and ``surface tension force`` are enabled in the VOF subsection (see below).
+and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``interface sharpening``, and ``surface tension force`` are enabled in the VOF subsection.
 
 
 .. code-block:: text
@@ -90,53 +88,7 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``interfa
     #---------------------------------------------------
     subsection multiphysics
         set VOF = true
-        set interface sharpening = true
-        set surface tension force 	= true
     end 
-    
-.. warning:: 
-     If the interface sharpening is not selected, the interface 
-     between phases will become blurry (due to diffusion). 
-     The next section defines the interface sharpening 
-     parameters.
-
-The interface sharpening method and its parameters are explained in :doc:`../dam-break-VOF/dam-break-VOF`
-
-.. code-block:: text
-
-	#---------------------------------------------------
-	# VOF
-	#---------------------------------------------------
-	subsection VOF
-	  subsection interface sharpening
-	    set enable      = true
-	    set sharpening threshold	= 0.5
-	    set interface sharpness	= 1.4
-	    set sharpening frequency	= 50
-	  end
-	  subsection surface tension force
-	    set enable      = true
-	  end
-	end
-
-In the ``initial condition``, the initial velocity and initial position 
-of the liquid phase are defined. The light phase is initially 
-defined as a circle with radius :math:`= 0.25` at :math:`0.5, 0.5`.
-
-.. code-block:: text
-
-    #---------------------------------------------------
-    # Initial condition
-    #---------------------------------------------------
-    subsection initial conditions
-        set type = nodal
-        subsection uvwp
-            set Function expression = 0; 0; 0
-        end
-        subsection VOF
-             set Function expression = if if ((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5) < 0.25 * 0.25 , 1, 0)
-        end
-    end
 
 The ``source term`` subsection defines the gravitational acceleration:
 
@@ -151,37 +103,10 @@ The ``source term`` subsection defines the gravitational acceleration:
             set Function expression = 0;-0.98; 0
         end
     end
-
-Two fluids are present in this simulation, hence in the ``physical 
-properties`` subsection, their physical properties should be defined:
-
-
-.. code-block:: text
-
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
-    subsection physical properties
-        set number of fluids         = 2
-        subsection fluid 0
-            set density              = 1000
-            set kinematic viscosity  = 0.01
-        end
-        subsection fluid 1
-            set density              = 100
-            set kinematic viscosity  = 0.01
-        end
-    end
-
-We define two fluids here simply by setting the number of fluids to be :math:`2`.
-In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
-A similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
-
-
+    
 """"""""""""""""""""""""""""""""
-Surface Tension Force
+Volume of Fluid (VOF)
 """"""""""""""""""""""""""""""""
-
 
 In Lethe, the surface tension force (:math:`{\bf{F_{\sigma}}}`) is calculated using the following equation [1, 2]:
 
@@ -209,6 +134,8 @@ where :math:`v`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, :math:`\phi`, :math:`
   3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
   4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\eta` to a larger value (:math:`\eta = h/5`, for example), and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
 
+The interface sharpening method and its parameters are explained in :doc:`../dam-break-VOF/dam-break-VOF`
+
 .. code-block:: text
 
 	#---------------------------------------------------
@@ -217,19 +144,76 @@ where :math:`v`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, :math:`\phi`, :math:`
 	subsection VOF
 	  subsection interface sharpening
 	    set enable      = true
-	    set sharpening threshold	= 0.5
+	    set threshold   = 0.5
 	    set interface sharpness	= 1.4
-	    set sharpening frequency	= 50
+	    set frequency   = 50
 	  end
 	  subsection surface tension force
 	    set enable      = true
-	    set output auxiliary fields  = true
-	    set surface tension coefficient    = 24.5
-	    set phase fraction gradient filter = 0.0005
-	    set curvature filter  = 0.0005
+	    set surface tension coefficient 	= 24.5
+	    set phase fraction gradient filter 	= 0.0005
+	    set curvature filter		= 0.0005
+	    set output auxiliary fields 	= true
 	  end
 	end
 
+.. warning:: 
+     If the interface sharpening is not enabled, the interface between phases will become blurry (due to diffusion). 
+
+""""""""""""""""""""""""""""""""
+Initial condition
+""""""""""""""""""""""""""""""""
+In the ``initial condition``, the initial velocity and initial position 
+of the liquid phase are defined. The light phase is initially 
+defined as a circle with radius :math:`= 0.25` at :math:`0.5, 0.5`.
+
+.. code-block:: text
+
+    #---------------------------------------------------
+    # Initial condition
+    #---------------------------------------------------
+    subsection initial conditions
+        set type = nodal
+        subsection uvwp
+            set Function expression = 0; 0; 0
+        end
+        subsection VOF
+             set Function expression = if if ((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5) < 0.25 * 0.25 , 1, 0)
+        end
+    end
+
+
+""""""""""""""""""""""""""""""""
+Physical Properties
+""""""""""""""""""""""""""""""""
+Two fluids are present in this simulation, hence in the ``physical 
+properties`` subsection, their physical properties should be defined:
+
+
+.. code-block:: text
+
+    #---------------------------------------------------
+    # Physical Properties
+    #---------------------------------------------------
+    subsection physical properties
+        set number of fluids         = 2
+        subsection fluid 0
+            set density              = 1000
+            set kinematic viscosity  = 0.01
+        end
+        subsection fluid 1
+            set density              = 100
+            set kinematic viscosity  = 0.01
+        end
+    end
+
+We define two fluids here simply by setting the number of fluids to be :math:`2`.
+In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
+A similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
+
+""""""""""""""""""""""""""""""""
+Mesh
+""""""""""""""""""""""""""""""""
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
 :math:`[1,2]`. The first :math:`1,2` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
