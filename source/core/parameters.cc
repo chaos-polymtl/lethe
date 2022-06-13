@@ -1839,6 +1839,11 @@ namespace Parameters
         Patterns::Double(),
         "The factor that multiplies the radius to define the region of contact search around the particle");
       prm.declare_entry(
+        "contact search frequency",
+        "1",
+        Patterns::Integer(),
+        "The updating contact list frequency");
+      prm.declare_entry(
         "assemble Navier-Stokes inside particles",
         "false",
         Patterns::Bool(),
@@ -1948,6 +1953,8 @@ namespace Parameters
       alpha                = prm.get_double("alpha");
       contact_search_radius_factor =
         prm.get_double("contact search radius factor");
+      contact_search_frequency =
+        prm.get_double("contact search frequency");
 
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");

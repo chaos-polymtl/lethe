@@ -79,53 +79,30 @@ IBParticlesDEM<dim>::update_contact_candidates()
   // account in the contact search. Otherwise, do it for the particles inside
   // the region of contact search. By default, radius_factor is zero, so all
   // particles are taken into account.
-  if (radius_factor <= 1)
+  
+  for (auto &particle_one : dem_particles)
     {
-      for (auto &particle_one : dem_particles)
+      for (auto &particle_two : dem_particles)
         {
-          for (auto &particle_two : dem_particles)
+          if (particle_one.particle_id != particle_two.particle_id)
             {
-              if (particle_one.particle_id != particle_two.particle_id and
-                  particle_one.particle_id < particle_two.particle_id)
+              const Point<dim> particle_one_location =
+                particle_one.position;
+              const Point<dim> particle_two_location =
+                particle_two.position;
+
+              if ((particle_one_location - particle_two_location).norm() <
+                  (particle_one.radius + particle_two.radius) *
+                    radius_factor)
                 {
-                  const Point<dim> particle_one_location =
-                    particle_one.position;
-                  const Point<dim> particle_two_location =
-                    particle_two.position;
-
-                  particles_contact_candidates[particle_one.particle_id].insert(
-                    particle_two.particle_id);
-                }
-            }
-        }
-    }
-  else
-    {
-      for (auto &particle_one : dem_particles)
-        {
-          for (auto &particle_two : dem_particles)
-            {
-              if (particle_one.particle_id != particle_two.particle_id and
-                  particle_one.particle_id < particle_two.particle_id)
-                {
-                  const Point<dim> particle_one_location =
-                    particle_one.position;
-                  const Point<dim> particle_two_location =
-                    particle_two.position;
-
-
-                  if ((particle_one_location - particle_two_location).norm() <
-                      (particle_one.radius + particle_two.radius) *
-                        radius_factor)
-                    {
-                      particles_contact_candidates[particle_one.particle_id]
-                        .insert(particle_two.particle_id);
-                    }
+                  particles_contact_candidates[particle_one.particle_id]
+                    .insert(particle_two.particle_id);
                 }
             }
         }
     }
 }
+
 
 
 
@@ -144,7 +121,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
            particles_contact_candidates[particle_one.id].end();
            ++particle_contact_candidates_id)
         {
-          auto  particle_contact_id = *particle_contact_candidates_id;
+          const auto &particle_contact_id = *particle_contact_candidates_id;
           auto &particle_two        = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
@@ -257,7 +234,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
            particles_contact_candidates[particle_one.id].end();
            ++particle_contact_candidates_id)
         {
-          auto  particle_contact_id = *particle_contact_candidates_id;
+          const auto &particle_contact_id = *particle_contact_candidates_id;
           auto &particle_two        = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
