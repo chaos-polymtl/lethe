@@ -29,7 +29,7 @@ Location of the example
 Description of the case
 -----------------------------
 
-A Ti-6Al-4 V powder bed (assumed as a solid block in this exmaple) melts using a laser beam that emits perpendicular to the top surface of the block. The laser beam speed is 0.5 m/s. Due to the laser heat source, the solid block melts in the direction of the laser. The corresponding parameter file is 
+A Ti-6Al-4 V powder bed (assumed as a solid block in this example) melts using a laser beam that is emitted perpendicular to the top surface of the block. The laser beam speed is 0.5 m/s. Due to the laser heat source, the solid block melts in the direction of the laser. The corresponding parameter file is 
 ``laser_meltpool.prm``.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
@@ -45,8 +45,8 @@ Parameter file
 --------------
 
 Time integration is handled by a 2nd order backward differentiation scheme 
-`(bdf2)` (for a better temporal accuracy), for a :math:`0.005` s simulation time with a constant
-time step of :math:`0.000005` seconds.
+`(bdf2)` (for a better temporal accuracy), for a :math:`0.005` seconds simulation time with a constant
+time step of :math:`5.0 \times 10^{-6}` seconds.
 
 
 .. code-block:: text
@@ -124,7 +124,7 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
 
 
 The ``multiphysics`` subsection enables to turn on (``true``) 
-and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy force``, ``fluid dynamics``, ``VOF`` are enabled. Note that ``VOF`` is not effective in the current version of the exmple, as the whole domain is filled with fluid 0, but it will be functional in the updated versions of this example.
+and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are enabled.
 
 
 .. code-block:: text
@@ -133,7 +133,6 @@ and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy 
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-        set VOF                    = true
 	    set heat transfer          = true
 	    set buoyancy force         = true
 	    set fluid dynamics         = true
@@ -183,7 +182,7 @@ The laser heat source locally melts the material, which is initially in the soli
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-      set number of fluids                      = 2
+      set number of fluids                      = 1
       	subsection fluid 0
         	    set thermal conductivity model     = phase_change
         	    set thermal expansion model        = phase_change
@@ -221,14 +220,6 @@ The laser heat source locally melts the material, which is initially in the soli
         		      set thermal expansion solid	= 0.0
 		    end
         	end
-
-      	subsection fluid 1
-        		set density              	= 1.784
-        		set kinematic viscosity  	= 0.0000123
-        		set thermal conductivity 	= 0.00000001
-        		set thermal expansion model 	= constant
-        		set thermal expansion 		= 0.0
-    	   end
     end
 
 
@@ -237,8 +228,8 @@ The laser heat source locally melts the material, which is initially in the soli
 
 
 We start the simulation with a rectangular mesh that spans the domain defined by the corner points situated at :math:`[-0.0001, 0]` and
-:math:`[0.0009, 0.0005]`. The first :math:`[4,2]` couple defines the number of initial grid subdivisions along the length and height of the rectangle. 
-This allows for the initial mesh to be composed of perfect squares. We proceed then to redefine the mesh globally eight times by setting
+:math:`[0.0009, 0.0005]`. The first :math:`[4,2]` couple of the ``set grid arguments`` parameter defines the number of initial grid subdivisions along the length and height of the rectangle. 
+This allows for the initial mesh to be composed of perfect squares. We proceed then to redefine the mesh globally seven times by setting
 ``set initial refinement=7``. 
 
 .. code-block:: text
@@ -276,7 +267,7 @@ to run the simulation using twelve CPU cores. Feel free to use more.
 Results
 -------
 
-The following animation shows the temperature distribution in the simulations domain, as well the melted zone (using white lines).
+The following animation shows the temperature distribution in the simulations domain, as well the melted zone (using white contour lines at the liquidus and solidus temperatures).
 
 .. image:: images/laser_meltpool.gif
     :alt: temperature
