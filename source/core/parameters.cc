@@ -1835,13 +1835,14 @@ namespace Parameters
         "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
       prm.declare_entry(
         "contact search radius factor",
-        "0",
+        "3",
         Patterns::Double(),
         "The factor that multiplies the radius to define the region of contact search around the particle");
-      prm.declare_entry("contact search frequency",
-                        "1",
-                        Patterns::Integer(),
-                        "The updating contact list frequency");
+      prm.declare_entry(
+        "contact search frequency",
+        "1",
+        Patterns::Integer(),
+        "The frequency of update in the contact candidates list");
       prm.declare_entry(
         "assemble Navier-Stokes inside particles",
         "false",
@@ -1952,7 +1953,7 @@ namespace Parameters
       alpha                = prm.get_double("alpha");
       contact_search_radius_factor =
         prm.get_double("contact search radius factor");
-      contact_search_frequency = prm.get_double("contact search frequency");
+      contact_search_frequency = prm.get_integer("contact search frequency");
 
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");

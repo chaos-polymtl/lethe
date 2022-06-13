@@ -75,11 +75,6 @@ IBParticlesDEM<dim>::update_contact_candidates()
 
   double radius_factor = parameters->contact_search_radius_factor;
 
-  // If contact_search_radius_factor < 1, all particles are taken into
-  // account in the contact search. Otherwise, do it for the particles inside
-  // the region of contact search. By default, radius_factor is zero, so all
-  // particles are taken into account.
-
   for (auto &particle_one : dem_particles)
     {
       for (auto &particle_two : dem_particles)
