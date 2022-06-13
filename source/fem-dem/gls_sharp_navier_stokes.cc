@@ -2986,7 +2986,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
                                                    this->dof_handler,
                                                    *this->face_quadrature,
                                                    *this->mapping);
-          if (this->simulation_control->get_step_number() %
+          if (this->simulation_control->get_step_number() == 0 || this->simulation_control->get_step_number() %
                 this->simulation_parameters.particlesParameters
                   ->contact_search_frequency !=
               0)
