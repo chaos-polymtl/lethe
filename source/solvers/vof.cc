@@ -159,7 +159,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_system_rhs()
 {
-  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  // TimerOutput::Scope t(this->computing_timer, "Assemble VOF RHS");
+
   this->system_rhs = 0;
   setup_assemblers();
 
@@ -300,8 +301,8 @@ VolumeOfFluid<dim>::calculate_L2_error()
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   const unsigned int  n_q_points = this->error_quadrature->size();
-  std::vector<double> q_exact_solution(n_q_points);
-  std::vector<double> q_scalar_values(n_q_points);
+  std::vector<double> phase_exact_solution(n_q_points);
+  std::vector<double> phase_values(n_q_points);
 
   auto &exact_solution = simulation_parameters.analytical_solution->phase;
   exact_solution.set_time(this->simulation_control->get_current_time());
@@ -314,19 +315,19 @@ VolumeOfFluid<dim>::calculate_L2_error()
         {
           fe_values_vof.reinit(cell);
           fe_values_vof.get_function_values(this->present_solution,
-                                            q_scalar_values);
+                                            phase_values);
 
           // Retrieve the effective "connectivity matrix" for this element
           cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
           exact_solution.value_list(fe_values_vof.get_quadrature_points(),
-                                    q_exact_solution);
+                                    phase_exact_solution);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              double sim   = q_scalar_values[q];
-              double exact = q_exact_solution[q];
+              double sim   = phase_values[q];
+              double exact = phase_exact_solution[q];
               l2error += (sim - exact) * (sim - exact) * fe_values_vof.JxW(q);
             }
         }
@@ -336,8 +337,10 @@ VolumeOfFluid<dim>::calculate_L2_error()
 }
 
 template <int dim>
-double
-VolumeOfFluid<dim>::calculate_volume(int id_fluid_monitored)
+void
+VolumeOfFluid<dim>::calculate_volume_and_mass(
+  const TrilinosWrappers::MPI::Vector &solution,
+  const int                            id_fluid_monitored)
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
@@ -348,17 +351,29 @@ VolumeOfFluid<dim>::calculate_volume(int id_fluid_monitored)
                                 update_JxW_values);
 
   const unsigned int  n_q_points = this->error_quadrature->size();
-  std::vector<double> q_scalar_values(n_q_points);
+  std::vector<double> phase_values(n_q_points);
+  std::vector<double> density_0(n_q_points);
+  std::vector<double> density_1(n_q_points);
 
-  double volume = 0;
+  this->volume_monitored = 0.;
+  this->mass_monitored   = 0.;
+
+  // Physical properties
+  const auto density_models =
+    this->simulation_parameters.physical_properties_manager
+      .get_density_vector();
+  std::map<field, std::vector<double>> fields;
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
           fe_values_vof.reinit(cell);
-          fe_values_vof.get_function_values(this->present_solution,
-                                            q_scalar_values);
+          fe_values_vof.get_function_values(solution, phase_values);
+
+          // Calculate physical properties for the cell
+          density_models[0]->vector_value(fields, density_0);
+          density_models[1]->vector_value(fields, density_1);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -366,15 +381,18 @@ VolumeOfFluid<dim>::calculate_volume(int id_fluid_monitored)
                 {
                   case 0:
                     {
-                      if (q_scalar_values[q] < 0.5)
-                        volume +=
-                          fe_values_vof.JxW(q) * (1 - q_scalar_values[q]);
+                      this->volume_monitored +=
+                        fe_values_vof.JxW(q) * (1 - phase_values[q]);
+                      this->mass_monitored +=
+                        this->volume_monitored * density_0[q];
                       break;
                     }
                   case 1:
                     {
-                      if (q_scalar_values[q] > 0.5)
-                        volume += fe_values_vof.JxW(q) * q_scalar_values[q];
+                      this->volume_monitored +=
+                        fe_values_vof.JxW(q) * phase_values[q];
+                      this->mass_monitored +=
+                        fe_values_vof.JxW(q) * phase_values[q] * density_1[q];
                       break;
                     }
                   default:
@@ -384,8 +402,11 @@ VolumeOfFluid<dim>::calculate_volume(int id_fluid_monitored)
             }
         }
     }
-  volume = Utilities::MPI::sum(volume, mpi_communicator);
-  return volume;
+
+  this->volume_monitored =
+    Utilities::MPI::sum(this->volume_monitored, mpi_communicator);
+  this->mass_monitored =
+    Utilities::MPI::sum(this->mass_monitored, mpi_communicator);
 }
 
 template <int dim>
@@ -400,7 +421,7 @@ VolumeOfFluid<dim>::finish_simulation()
       simulation_parameters.analytical_solution->verbosity ==
         Parameters::Verbosity::verbose)
     {
-      if (simulation_parameters.simulation_control.method ==
+      if (this->simulation_parameters.simulation_control.method ==
           Parameters::SimulationControl::TimeSteppingMethod::steady)
         this->error_table.omit_column_from_convergence_rate_evaluation("cells");
       else
@@ -410,6 +431,12 @@ VolumeOfFluid<dim>::finish_simulation()
       this->error_table.set_precision(
         "error_phase", this->simulation_control->get_log_precision());
       this->error_table.write_text(std::cout);
+    }
+  if (this_mpi_process == 0 &&
+      this->simulation_parameters.multiphysics.vof_parameters.conservation
+          .verbosity == Parameters::Verbosity::extra_verbose)
+    {
+      this->table_monitoring_vof.write_text(std::cout);
     }
 }
 
@@ -459,11 +486,19 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (simulation_parameters.multiphysics.vof_parameters.conservation.monitoring)
+  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+        .monitoring)
     {
-      double volume =
-        calculate_volume(simulation_parameters.multiphysics.vof_parameters
-                           .conservation.id_fluid_monitored);
+      // Calculate volume and mass (this->mass_monitored)
+      calculate_volume_and_mass(
+        this->present_solution,
+        simulation_parameters.multiphysics.vof_parameters.conservation
+          .id_fluid_monitored);
+
+      if (first_iteration)
+        {
+          this->mass_first_iteration = this->mass_monitored;
+        }
 
       auto         mpi_communicator = this->triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -489,8 +524,19 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                            .conservation.id_fluid_monitored,
                          1);
 
-          this->table_monitoring_vof.add_value("volume_" + fluid_id, volume);
+          // Add volume column
+          this->table_monitoring_vof.add_value("volume_" + fluid_id,
+                                               this->volume_monitored);
           this->table_monitoring_vof.set_scientific("volume_" + fluid_id, true);
+
+          // Add mass column
+          this->table_monitoring_vof.add_value("mass_" + fluid_id,
+                                               this->mass_monitored);
+          this->table_monitoring_vof.set_scientific("mass_" + fluid_id, true);
+
+          // Add sharpening threshold column
+          this->table_monitoring_vof.add_value("sharpening_threshold",
+                                               this->sharpening_threshold);
 
           // Save table to .dat
           std::string filename =
@@ -514,7 +560,16 @@ VolumeOfFluid<dim>::modify_solution()
     }
   // Interface sharpening
   if (vof_parameters.sharpening.enable)
-    sharpen_interface();
+    {
+      // Interface sharpening is done at a constant frequency
+      if (this->simulation_control->get_step_number() %
+            this->simulation_parameters.multiphysics.vof_parameters.sharpening
+              .frequency ==
+          0)
+        {
+          handle_interface_sharpening();
+        }
+    }
 
   if (vof_parameters.surface_tension_force.enable)
     {
@@ -525,43 +580,247 @@ VolumeOfFluid<dim>::modify_solution()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::sharpen_interface()
+VolumeOfFluid<dim>::handle_interface_sharpening()
 {
-  // Limit the phase fractions between 0 and 1
-  update_solution_and_constraints(present_solution);
-  for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-    update_solution_and_constraints(previous_solutions[p]);
-
-  // Interface sharpening is done at a constant frequency
-  if (this->simulation_control->get_step_number() %
-        this->simulation_parameters.multiphysics.vof_parameters.sharpening
-          .sharpening_frequency ==
-      0)
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
+          .verbosity != Parameters::Verbosity::quiet ||
+      this->simulation_parameters.multiphysics.vof_parameters.conservation
+          .verbosity != Parameters::Verbosity::quiet)
     {
-      if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-            .verbosity == Parameters::Verbosity::verbose)
+      this->pcout << "Sharpening interface at step "
+                  << this->simulation_control->get_step_number() << std::endl;
+    }
+  if (this->simulation_parameters.multiphysics.vof_parameters.sharpening.type ==
+      Parameters::SharpeningType::adaptative)
+    {
+      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+            .verbosity != Parameters::Verbosity::quiet)
         {
-          this->pcout << "Sharpening interface at step "
-                      << this->simulation_control->get_step_number()
-                      << std::endl;
+          this->pcout << "   Adapting the sharpening threshold" << std::endl;
         }
 
-      // Sharpen the interface of all solutions:
-      {
-        // Assemble matrix and solve the system for interface sharpening
-        assemble_L2_projection_interface_sharpening(present_solution);
-        solve_interface_sharpening(present_solution);
+      this->sharpening_threshold = find_sharpening_threshold();
 
-        for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-          {
-            assemble_L2_projection_interface_sharpening(previous_solutions[p]);
-            solve_interface_sharpening(previous_solutions[p]);
-          }
-      }
+      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+            .verbosity != Parameters::Verbosity::quiet)
+        {
+          this->pcout << "   ... final sharpening" << std::endl;
+        }
+    }
+  else
+    {
+      // Constant sharpening
+      this->sharpening_threshold = this->simulation_parameters.multiphysics
+                                     .vof_parameters.sharpening.threshold;
+    }
 
-      // Re limit the phase fractions between 0 and 1 after interface
-      // sharpening
-      update_solution_and_constraints(present_solution);
+  // Sharpen the interface of all solutions (present and previous)
+  sharpen_interface(this->present_solution, this->sharpening_threshold, true);
+}
+
+template <int dim>
+double
+VolumeOfFluid<dim>::find_sharpening_threshold()
+{
+  // Sharpening threshold (st) search range extrema
+  double st_min = 0.5 - this->simulation_parameters.multiphysics.vof_parameters
+                          .sharpening.threshold_max_deviation;
+  double st_max = 0.5 + this->simulation_parameters.multiphysics.vof_parameters
+                          .sharpening.threshold_max_deviation;
+
+  // Useful definitions for readability
+  const double mass_deviation_tol = this->simulation_parameters.multiphysics
+                                      .vof_parameters.conservation.tolerance *
+                                    this->mass_first_iteration;
+  const int max_iterations = this->simulation_parameters.multiphysics
+                               .vof_parameters.sharpening.max_iterations;
+
+  const int id_fluid_monitored =
+    this->simulation_parameters.multiphysics.vof_parameters.conservation
+      .id_fluid_monitored;
+
+  double mass_deviation = 0.;
+  int    nb_search_ite  = 0;
+  double st_ave         = 0.;
+  // Local variable for the tested sharpening_threshold values
+  double st_tested = 0.;
+
+  // Binary search of an interface sharpening value that would ensure
+  // mass conservation of the monitored phase (do-while loop, see
+  // condition below)
+  do
+    {
+      nb_search_ite++;
+
+      if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+            .verbosity != Parameters::Verbosity::quiet)
+        {
+          this->pcout << "   ... step " << nb_search_ite
+                      << " of the search algorithm" << std::endl;
+        }
+
+      // Define tested sharpening threshold value
+      // NB: the first value tested is always 0.5 (see definition of st_min and
+      // st_max above)
+      st_ave    = (st_min + st_max) / 2.;
+      st_tested = st_ave;
+
+      mass_deviation = calculate_mass_deviation(id_fluid_monitored, st_tested);
+
+      // Adapt searching range
+      switch (id_fluid_monitored)
+        {
+          case 0:
+            {
+              if (mass_deviation > 0.)
+                {
+                  // Lower the sharpening threshold to reduce the
+                  // area occupied by fluid at phase = 0
+                  st_max = st_ave;
+                }
+              else
+                {
+                  // Increase the sharpening threshold to increase
+                  // the area occupied by fluid at phase = 0
+                  st_min = st_ave;
+                }
+              break;
+            }
+          case 1:
+            {
+              if (mass_deviation > 0.)
+                {
+                  // Increase the sharpening threshold to reduce the
+                  // area occupied by fluid at phase = 1
+                  st_min = st_ave;
+                }
+              else
+                {
+                  // Lower the sharpening threshold to increase the
+                  // area occupied by fluid at phase = 1
+                  st_max = st_ave;
+                }
+              break;
+            }
+          default:
+            throw std::runtime_error("Unsupported number of fluids (>2)");
+        } // end switch to adapt searching range
+    }
+  while (std::abs(mass_deviation) > mass_deviation_tol &&
+         nb_search_ite < max_iterations);
+
+  // Take minimum deviation in between the two endpoints of the last
+  // interval searched, if out of the do-while loop because max_iterations is
+  // reached
+  if (std::abs(mass_deviation) > mass_deviation_tol)
+    {
+      double mass_deviation_endpoint = 0.;
+      if (st_min == st_ave)
+        st_tested = st_max;
+      else if (st_max == st_ave)
+        st_tested = st_min;
+
+      mass_deviation_endpoint =
+        calculate_mass_deviation(id_fluid_monitored, st_tested);
+
+      // Retake st_ave value if mass deviation is not lowered at endpoint
+      // values
+      if (std::abs(mass_deviation_endpoint) > std::abs(mass_deviation))
+        {
+          st_tested = st_ave;
+        }
+
+      // Output message
+      if (std::abs(mass_deviation_endpoint) > mass_deviation_tol)
+        {
+          this->pcout
+            << "  WARNING: Maximum number of iterations (" << nb_search_ite
+            << ") reached in the " << std::endl
+            << "  adaptative sharpening threshold algorithm, remaining error"
+            << std::endl
+            << "  on mass conservation is: "
+            << (this->mass_monitored - this->mass_first_iteration) /
+                 this->mass_first_iteration
+            << std::endl
+            << "  Consider increasing the sharpening threshold range or the "
+            << std::endl
+            << "  number of iterations to reach the mass conservation tolerance."
+            << std::endl;
+        }
+    }
+
+  // Output message that mass conservation condition is reached
+  if (this->simulation_parameters.multiphysics.vof_parameters.conservation
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "   ... search algorithm took : " << nb_search_ite
+                  << " step(s) " << std::endl
+                  << "   ... error on mass conservation reached: "
+                  << (this->mass_monitored - this->mass_first_iteration) /
+                       this->mass_first_iteration
+                  << std::endl;
+    }
+
+  return st_tested;
+}
+
+template <int dim>
+double
+VolumeOfFluid<dim>::calculate_mass_deviation(const int    id_fluid_monitored,
+                                             const double sharpening_threshold)
+{
+  // Copy present solution VOF
+  auto mpi_communicator = this->triangulation->get_communicator();
+
+  TrilinosWrappers::MPI::Vector solution_copy;
+  solution_copy.reinit(this->locally_owned_dofs, mpi_communicator);
+  solution_copy = this->present_solution;
+
+  // Sharpen interface using the tested threshold value
+  sharpen_interface(solution_copy, sharpening_threshold, false);
+
+  // Calculate mass of the monitored phase
+  calculate_volume_and_mass(solution_copy, id_fluid_monitored);
+
+  // Calculate mass deviation
+  double mass_deviation = this->mass_monitored - this->mass_first_iteration;
+
+  return mass_deviation;
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
+                                      const double sharpening_threshold,
+                                      const bool   sharpen_previous_solutions)
+{
+  // Limit the phase fractions between 0 and 1
+  update_solution_and_constraints(solution);
+  if (sharpen_previous_solutions)
+    {
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        update_solution_and_constraints(previous_solutions[p]);
+    }
+
+  // Assemble matrix and solve the system for interface sharpening
+  assemble_L2_projection_interface_sharpening(solution, sharpening_threshold);
+  solve_interface_sharpening(solution);
+
+  if (sharpen_previous_solutions)
+    {
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        {
+          assemble_L2_projection_interface_sharpening(previous_solutions[p],
+                                                      sharpening_threshold);
+          solve_interface_sharpening(previous_solutions[p]);
+        }
+    }
+
+  // Re limit the phase fractions between 0 and 1 after interface
+  // sharpening
+  update_solution_and_constraints(solution);
+  if (sharpen_previous_solutions)
+    {
       for (unsigned int p = 0; p < previous_solutions.size(); ++p)
         update_solution_and_constraints(previous_solutions[p]);
     }
@@ -1247,9 +1506,9 @@ VolumeOfFluid<dim>::setup_dofs()
   // system_matrix_phase_fraction is used in
   // assemble_L2_projection_interface_sharpening for assembling the system for
   // sharpening the interface, while complete_system_matrix_phase_fraction is
-  // used in update_solution_and_constraints to limit the phase fraction values
-  // between 0 and 1. Accoring to step-41, to limit the phase fractions we
-  // compute the Lagrange multiplier as the residual of the original linear
+  // used in update_solution_and_constraints to limit the phase fraction
+  // values between 0 and 1. Accoring to step-41, to limit the phase fractions
+  // we compute the Lagrange multiplier as the residual of the original linear
   // system, given via the variables complete_system_matrix_phase_fraction and
   // complete_system_rhs_phase_fraction
   system_matrix_phase_fraction.reinit(this->locally_owned_dofs,
@@ -1464,11 +1723,9 @@ VolumeOfFluid<dim>::update_solution_and_constraints(
 template <int dim>
 void
 VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
-  TrilinosWrappers::MPI::Vector &solution)
+  TrilinosWrappers::MPI::Vector &solution,
+  const double                   sharpening_threshold)
 {
-  const double sharpening_threshold =
-    this->simulation_parameters.multiphysics.vof_parameters.sharpening
-      .sharpening_threshold;
   const double interface_sharpness =
     this->simulation_parameters.multiphysics.vof_parameters.sharpening
       .interface_sharpness;
@@ -1521,9 +1778,10 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                         (phi_phase[j] * phi_phase[i]) * fe_values_vof.JxW(q);
                     }
 
-                  // $$ (if 0 <= \phi <= c)  {\Phi = c ^ (1 - \alpha) * (\phi ^
-                  // \alpha)}$$
-                  // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 - \alpha)
+                  // $$ (if 0 <= \phi <= c)  {\Phi = c ^ (1 - \alpha) * (\phi
+                  // ^ \alpha)}$$
+                  // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 -
+                  // \alpha)
                   // * (1 - \phi) ^ \alpha}
                   if (phase_value >= 0.0 && phase_value <= sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
@@ -1565,7 +1823,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
   const double linear_solver_tolerance = 1e-15;
 
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-        .verbosity != Parameters::Verbosity::quiet)
+        .verbosity == Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1608,7 +1866,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
                *ilu_preconditioner);
 
   if (this->simulation_parameters.multiphysics.vof_parameters.sharpening
-        .verbosity != Parameters::Verbosity::quiet)
+        .verbosity == Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
@@ -1890,8 +2148,8 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                       dim * n_q_points / 2)
                     {
                       // Peel the higher density fluid
-                      // conditions phase_values_cell < 1 or phase_values_cell >
-                      // 0 prevent from treating values outside of the range
+                      // conditions phase_values_cell < 1 or phase_values_cell
+                      // > 0 prevent from treating values outside of the range
                       // [0,1]
                       if ((phase_denser_fluid_cell == 1 &&
                            phase_values_cell > 0.1) ||
