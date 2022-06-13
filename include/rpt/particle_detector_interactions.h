@@ -65,7 +65,6 @@ public:
     , attenuation_coefficient_reactor(
         detector.get_attenuation_coefficient_reactor())
     , parameters(rpt_parameters)
->>>>>>> aacc7202 (Modify code to get multiple  detectors)
   {}
 
   /**
