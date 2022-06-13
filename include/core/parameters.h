@@ -434,6 +434,9 @@ namespace Parameters
     // Prefix for the torque output
     std::string torque_output_name;
 
+    // Enable torque post-processing
+    bool friction_pressure_contributions;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
