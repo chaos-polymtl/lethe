@@ -435,7 +435,7 @@ namespace Parameters
     std::string torque_output_name;
 
     // Enable torque post-processing
-    bool friction_pressure_contributions;
+    bool decomposed_viscous_pressure_contributions;
 
     static void
     declare_parameters(ParameterHandler &prm);
