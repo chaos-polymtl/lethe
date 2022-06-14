@@ -79,7 +79,7 @@ IBParticlesDEM<dim>::update_contact_candidates()
     {
       for (auto &particle_two : dem_particles)
         {
-          if (particle_one.particle_id != particle_two.particle_id)
+          if (particle_one.particle_id < particle_two.particle_id)
             {
               const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
@@ -89,6 +89,8 @@ IBParticlesDEM<dim>::update_contact_candidates()
                 {
                   particles_contact_candidates[particle_one.particle_id].insert(
                     particle_two.particle_id);
+                  particles_contact_candidates[particle_two.particle_id].insert(
+                    particle_one.particle_id);
                 }
             }
         }
