@@ -411,7 +411,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // Check if that dof already have been used to
                           // extrapolate the fluid stress tensor on the IB
                           // surface.
-                          if (force_eval.find(local_face_dof_indices[i]) == force_eval.end())
+                          if (force_eval.find(local_face_dof_indices[i]) ==
+                              force_eval.end())
                             {
                               if (component_i == 0)
                                 {
@@ -786,7 +787,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             this->mpi_communicator) *
         density;
 
-      particles[i].fluid_forces = particles[i].fluid_viscous_forces + particles[i].fluid_pressure_forces;
+      particles[i].fluid_forces =
+        particles[i].fluid_viscous_forces + particles[i].fluid_pressure_forces;
 
       particles[i].fluid_torque =
         Utilities::MPI::sum(particles[i].fluid_torque, this->mpi_communicator) *
