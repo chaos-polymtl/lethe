@@ -607,79 +607,96 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             projection_cell_face);
                           std::vector<Point<dim>> q_points =
                             fe_face_projection_values.get_quadrature_points();
-                          if (this->simulation_parameters.fem_parameters
-                                .velocity_order > 1)
+                          try
                             {
-                              FullMatrix<double> interpolation_matrix(
-                                local_face_dof_indices.size(),
-                                local_face_dof_indices.size());
-                              FullMatrix<double> inv_interpolation_matrix(
-                                local_face_dof_indices.size(),
-                                local_face_dof_indices.size());
-
-                              // Define the interpolation matrix of the surface
-                              // cell
-                              for (unsigned int i = 0;
-                                   i < local_face_dof_indices.size();
-                                   ++i)
+                              if (this->simulation_parameters.fem_parameters
+                                    .velocity_order > 1)
                                 {
-                                  Point<dim> point_projection =
-                                    particles[p].position +
-                                    particles[p].radius *
-                                      (support_points
-                                         [local_face_dof_indices[i]] -
-                                       particles[p].position) /
-                                      (support_points
-                                         [local_face_dof_indices[i]] -
-                                       particles[p].position)
-                                        .norm();
+                                  FullMatrix<double> interpolation_matrix(
+                                    local_face_dof_indices.size(),
+                                    local_face_dof_indices.size());
+                                  FullMatrix<double> inv_interpolation_matrix(
+                                    local_face_dof_indices.size(),
+                                    local_face_dof_indices.size());
 
-                                  auto projected_point_unit =
-                                    local_face_map.transform_real_to_unit_cell(
-                                      projection_cell_face, point_projection);
-                                  for (unsigned int j = 0;
-                                       j < local_face_dof_indices.size();
-                                       ++j)
+                                  // Define the interpolation matrix of the
+                                  // surface cell
+                                  for (unsigned int i = 0;
+                                       i < local_face_dof_indices.size();
+                                       ++i)
                                     {
-                                      interpolation_matrix[i][j] = 0;
-                                      if (this->fe
-                                            ->face_system_to_component_index(j)
-                                            .first ==
-                                          this->fe
-                                            ->face_system_to_component_index(i)
-                                            .first)
-                                        interpolation_matrix[i][j] +=
-                                          local_face_fe.shape_value(
-                                            j, projected_point_unit);
+                                      Point<dim> point_projection =
+                                        particles[p].position +
+                                        particles[p].radius *
+                                          (support_points
+                                             [local_face_dof_indices[i]] -
+                                           particles[p].position) /
+                                          (support_points
+                                             [local_face_dof_indices[i]] -
+                                           particles[p].position)
+                                            .norm();
+
+                                      auto projected_point_unit =
+                                        local_face_map
+                                          .transform_real_to_unit_cell(
+                                            projection_cell_face,
+                                            point_projection);
+                                      for (unsigned int j = 0;
+                                           j < local_face_dof_indices.size();
+                                           ++j)
+                                        {
+                                          interpolation_matrix[i][j] = 0;
+                                          if (
+                                            this->fe
+                                              ->face_system_to_component_index(
+                                                j)
+                                              .first ==
+                                            this->fe
+                                              ->face_system_to_component_index(
+                                                i)
+                                              .first)
+                                            interpolation_matrix[i][j] +=
+                                              local_face_fe.shape_value(
+                                                j, projected_point_unit);
+                                        }
+                                    }
+                                  inv_interpolation_matrix.invert(
+                                    interpolation_matrix);
+                                  // Define the value of the fluid stress tensor
+                                  // on the surface cell at the DOF support
+                                  // points location.
+                                  for (unsigned int i = 0;
+                                       i < local_face_dof_indices.size();
+                                       ++i)
+                                    {
+                                      for (unsigned int j = 0;
+                                           j < local_face_dof_indices.size();
+                                           ++j)
+                                        {
+                                          local_face_tensor[i] +=
+                                            inv_interpolation_matrix[i][j] *
+                                            local_face_tensor_old[j];
+
+                                          local_face_viscous_stress_tensor[i] +=
+                                            inv_interpolation_matrix[i][j] *
+                                            local_face_viscous_stress_tensor_old
+                                              [j];
+                                          local_face_pressure_tensor[i] +=
+                                            inv_interpolation_matrix[i][j] *
+                                            local_face_pressure_tensor_old[j];
+                                        }
                                     }
                                 }
-                              inv_interpolation_matrix.invert(
-                                interpolation_matrix);
-                              // Define the value of the fluid stress tensor on
-                              // the surface cell at the DOF support points
-                              // location.
-                              for (unsigned int i = 0;
-                                   i < local_face_dof_indices.size();
-                                   ++i)
+                              else
                                 {
-                                  for (unsigned int j = 0;
-                                       j < local_face_dof_indices.size();
-                                       ++j)
-                                    {
-                                      local_face_tensor[i] +=
-                                        inv_interpolation_matrix[i][j] *
-                                        local_face_tensor_old[j];
-
-                                      local_face_viscous_stress_tensor[i] +=
-                                        inv_interpolation_matrix[i][j] *
-                                        local_face_viscous_stress_tensor_old[j];
-                                      local_face_pressure_tensor[i] +=
-                                        inv_interpolation_matrix[i][j] *
-                                        local_face_pressure_tensor_old[j];
-                                    }
+                                  local_face_tensor = local_face_tensor_old;
+                                  local_face_viscous_stress_tensor =
+                                    local_face_viscous_stress_tensor_old;
+                                  local_face_pressure_tensor =
+                                    local_face_pressure_tensor_old;
                                 }
                             }
-                          else
+                          catch (...)
                             {
                               local_face_tensor = local_face_tensor_old;
                               local_face_viscous_stress_tensor =
