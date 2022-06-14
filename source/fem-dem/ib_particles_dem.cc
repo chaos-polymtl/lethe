@@ -89,8 +89,6 @@ IBParticlesDEM<dim>::update_contact_candidates()
                 {
                   particles_contact_candidates[particle_one.particle_id].insert(
                     particle_two.particle_id);
-                  particles_contact_candidates[particle_two.particle_id].insert(
-                    particle_one.particle_id);
                 }
             }
         }
