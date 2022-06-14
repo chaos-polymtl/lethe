@@ -1953,9 +1953,9 @@ namespace Parameters
       alpha                = prm.get_double("alpha");
       contact_search_radius_factor =
         prm.get_double("contact search radius factor");
-      if (contact_search_radius_factor < 1)
-        std::logic_error(
-          "Error, the parameter 'contact search radius factor' cannot be < 1");
+      if (contact_search_radius_factor < 1.)
+        throw (std::logic_error(
+          "Error, the parameter 'contact search radius factor' cannot be < 1."));
 
       contact_search_frequency = prm.get_integer("contact search frequency");
 
