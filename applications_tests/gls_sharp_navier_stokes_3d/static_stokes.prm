@@ -269,9 +269,8 @@ end
 #---------------------------------------------------
 subsection forces
 
-  set verbosity               = verbose
-
-
+  set verbosity               			= verbose
+  set decomposed viscous pressure contributions = true
 end
 
 # --------------------------------------------------
