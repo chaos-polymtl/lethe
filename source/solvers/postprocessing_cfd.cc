@@ -554,9 +554,14 @@ calculate_forces(
   Tensor<1, dim>                   normal_vector;
   Tensor<2, dim>                   shear_rate;
   Tensor<2, dim>                   fluid_stress;
+  Tensor<2, dim>                   fluid_viscous_stress;
   Tensor<2, dim>                   fluid_pressure;
+  Tensor<1, dim>                   viscous_force;
+  Tensor<1, dim>                   pressure_force;
   Tensor<1, dim>                   force;
 
+  std::vector<Tensor<1, dim>> viscous_force_vector(boundary_conditions.size);
+  std::vector<Tensor<1, dim>> pressure_force_vector(boundary_conditions.size);
   std::vector<Tensor<1, dim>> force_vector(boundary_conditions.size);
 
   FEFaceValues<dim> fe_face_values(mapping,
@@ -609,8 +614,17 @@ calculate_forces(
 
                                   viscosity =
                                     rheological_model->value(field_values);
+                                  fluid_viscous_stress =
+                                    -viscosity * shear_rate;
                                   fluid_stress =
-                                    viscosity * shear_rate - fluid_pressure;
+                                    -fluid_viscous_stress - fluid_pressure;
+
+                                  viscous_force += fluid_viscous_stress *
+                                                   normal_vector *
+                                                   fe_face_values.JxW(q);
+                                  pressure_force += fluid_pressure *
+                                                    normal_vector *
+                                                    fe_face_values.JxW(q);
                                   force += fluid_stress * normal_vector *
                                            fe_face_values.JxW(q);
                                 }
@@ -620,6 +634,10 @@ calculate_forces(
                 }
             }
         }
+      viscous_force_vector[i_bc] =
+        Utilities::MPI::sum(viscous_force, mpi_communicator);
+      pressure_force_vector[i_bc] =
+        Utilities::MPI::sum(pressure_force, mpi_communicator);
       force_vector[i_bc] = Utilities::MPI::sum(force, mpi_communicator);
     }
   return force_vector;
