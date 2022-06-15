@@ -110,7 +110,7 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 
 * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
 
-* The ``contact search radius factor`` parameter is used to create the list of potential contacting particles. Two given particles with respective radii :math:`R_1` and :math:`R_2` are in potential contact if the distance between them is < :math:`(R_1 + R_2) * factor`. If no value is provided this parameter is set to 3.
+* The ``contact search radius factor`` parameter is used to create the list of potential contacting particles. Two given particles with respective radii :math:`R_1` and :math:`R_2` are in potential contact if the distance between them is < :math:`(R_1 + R_2) * factor`. The default value of this parameter is set to 3.
 
 .. note::
 	If all particles may be taken into account in the contact search, a large value of ``contact search radius factor`` should be set.
