@@ -13,6 +13,7 @@ Launching an application requires an executable of the required solver, and a pa
     dem/dem
     unresolved_cfd-dem/unresolved_cfd-dem
     resolved_cfd-dem/resolved_cfd-dem
+    rpt/rpt
 
 .. tip:: 
 	The complete options for the parameter file, with information regarding the parameters that can be used, can be obtained by doing the following:
