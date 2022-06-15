@@ -428,9 +428,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
             .surface_tension_force.enable)
         this->assemblers.push_back(
           std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
-            this->simulation_control,
-            this->simulation_parameters.multiphysics.vof_parameters
-              .surface_tension_force));
+            this->simulation_control, this->simulation_parameters));
     }
   else
     {

@@ -79,7 +79,7 @@ print(y_list)
 y_list.sort()
 
 #Smooth average y
-smoothed_y = savgol_filter(y_list, 39, 4)
+smoothed_y = savgol_filter(y_list, 41, 3)
 
 #Calculate bubble rise velocity
 t_diff_list = np.diff(time_list)
