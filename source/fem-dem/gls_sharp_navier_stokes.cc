@@ -1762,17 +1762,17 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
                                    particles[p].fluid_viscous_forces[2]);
               table_p[p].add_value("f_zp",
                                    particles[p].fluid_pressure_forces[2]);
-            }
-          if (this->simulation_parameters.particlesParameters->integrate_motion)
-            {
-              table_p[p].add_value("v_z", particles[p].velocity[2]);
-              table_p[p].add_value("p_z", particles[p].position[2]);
               table_p[p].set_precision(
                 "f_zv",
                 this->simulation_parameters.simulation_control.log_precision);
               table_p[p].set_precision(
                 "f_zp",
                 this->simulation_parameters.simulation_control.log_precision);
+            }
+          if (this->simulation_parameters.particlesParameters->integrate_motion)
+            {
+              table_p[p].add_value("v_z", particles[p].velocity[2]);
+              table_p[p].add_value("p_z", particles[p].position[2]);
             }
         }
     }
