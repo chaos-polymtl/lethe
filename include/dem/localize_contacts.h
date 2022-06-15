@@ -26,23 +26,24 @@ using namespace std;
 #  define localize_contacts_h
 
 /**
- * Manages clearing the contact containers when particles are exchanged
- * between processors. If the adjacent pair does not exist in the output of the
- * new (at this step) broad search, it is deleted from the adjacent pair, since
- * it means that the contact is being handled on another processor. If the pair
- * exists in the output of the new broad search, it is deleted from the output
- * of the broad search. This process is performed for local-local
- * particle-particle pairs, local-ghost particle-particle pairs and
- * particle-wall pairs.
+ * Manages removing repetitions and adding new contact pairs to the contact
+ * containers when particles are exchanged between processors. If the contact
+ * pair (in adjacent particles containers) does not exist in the output of the
+ * new (current step) broad search, it is removed from the contact pair
+ * (adjacent containers), since it means that the contact is being handled by
+ * another processor. If the pair exists in the output of the new broad search,
+ * it is removed from the output of the broad search, as the contact is already
+ * being processed. This process is performed for local-local particle-particle
+ * pairs, local-ghost particle-particle pairs and particle-wall pairs.
  *
  * @param local_adjacent_particles Local-local adjacent particle pairs
  * @param ghost_adjacent_particles Local-ghost adjacent particle pairs
  * @param particle_wall_pairs_in_contact Particle-wall contact pairs
  * @param pfw_pairs_in_contact Particle-floating wall contact pairs
  * @param local_contact_pair_candidates Outputs of local-local particle-particle
- * broad search
+ * broad search (contact pair candidates)
  * @param ghost_contact_pair_candidates Outputs of local-ghost particle-particle
- * broad search
+ * broad search (contact pair candidates)
  * @param particle_wall_contact_candidates Outputs of particle-wall broad search
  * @param pfw_contact_candidates Outputs of particle-floating wall broad search
  *
@@ -55,20 +56,20 @@ localize_contacts(
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
-    *local_adjacent_particles,
+    &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
-    *ghost_adjacent_particles,
+    &ghost_adjacent_particles,
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
-    *particle_wall_pairs_in_contact,
+    &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
-    *pfw_pairs_in_contact,
+    &pfw_pairs_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -85,6 +86,6 @@ localize_contacts(
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
-    pfw_contact_candidates);
+    &pfw_contact_candidates);
 
 #endif /* localize_contacts_h */
