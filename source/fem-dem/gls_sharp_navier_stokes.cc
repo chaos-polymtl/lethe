@@ -103,7 +103,6 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 }
 
 
-
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
@@ -2897,6 +2896,8 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
             }
         }
     }
+  // Create the list of contact candidates
+  ib_dem.update_contact_candidates();
   // Finish the time step of the particle.
 }
 
@@ -2987,6 +2988,8 @@ GLSSharpNavierStokesSolver<dim>::solve()
                                                    this->dof_handler,
                                                    *this->face_quadrature,
                                                    *this->mapping);
+          ib_dem.update_contact_candidates();
+
           this->iterate();
         }
       else
@@ -3001,13 +3004,18 @@ GLSSharpNavierStokesSolver<dim>::solve()
                                                    this->dof_handler,
                                                    *this->face_quadrature,
                                                    *this->mapping);
+          if (this->simulation_control->get_step_number() == 0 ||
+              this->simulation_control->get_step_number() %
+                  this->simulation_parameters.particlesParameters
+                    ->contact_search_frequency !=
+                0)
+            ib_dem.update_contact_candidates();
+
           // add initialization
           this->iterate();
         }
 
       this->postprocess_fd(false);
-
-
 
       if (this->simulation_parameters.particlesParameters->calculate_force_ib)
         force_on_ib();

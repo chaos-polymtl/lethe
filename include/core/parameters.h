@@ -988,6 +988,8 @@ namespace Parameters
     bool                         enable_lubrication_force;
     double                       lubrication_range_max;
     double                       lubrication_range_min;
+    double                       contact_search_radius_factor;
+    int                          contact_search_frequency;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 

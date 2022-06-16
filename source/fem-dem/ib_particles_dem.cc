@@ -67,6 +67,35 @@ IBParticlesDEM<dim>::update_particles(
   cfd_time      = time;
 }
 
+template <int dim>
+void
+IBParticlesDEM<dim>::update_contact_candidates()
+{
+  particles_contact_candidates.resize(dem_particles.size());
+
+  double radius_factor = parameters->contact_search_radius_factor;
+
+  for (auto &particle_one : dem_particles)
+    {
+      for (auto &particle_two : dem_particles)
+        {
+          if (particle_one.particle_id < particle_two.particle_id)
+            {
+              const Point<dim> particle_one_location = particle_one.position;
+              const Point<dim> particle_two_location = particle_two.position;
+
+              if ((particle_one_location - particle_two_location).norm() <
+                  (particle_one.radius + particle_two.radius) * radius_factor)
+                {
+                  particles_contact_candidates[particle_one.particle_id].insert(
+                    particle_two.particle_id);
+                }
+            }
+        }
+    }
+}
+
+
 
 template <int dim>
 void
@@ -77,8 +106,14 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
 {
   for (auto &particle_one : dem_particles)
     {
-      for (auto &particle_two : dem_particles)
+      for (auto particle_contact_candidates_id =
+             particles_contact_candidates[particle_one.id].begin();
+           particle_contact_candidates_id !=
+           particles_contact_candidates[particle_one.id].end();
+           ++particle_contact_candidates_id)
         {
+          const auto &particle_contact_id = *particle_contact_candidates_id;
+          auto &      particle_two        = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {
@@ -184,8 +219,14 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   // loop over all particles to find pair of close partilces
   for (auto &particle_one : dem_particles)
     {
-      for (auto &particle_two : dem_particles)
+      for (auto particle_contact_candidates_id =
+             particles_contact_candidates[particle_one.id].begin();
+           particle_contact_candidates_id !=
+           particles_contact_candidates[particle_one.id].end();
+           ++particle_contact_candidates_id)
         {
+          const auto &particle_contact_id = *particle_contact_candidates_id;
+          auto &      particle_two        = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {
@@ -602,6 +643,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
         g[2] =
           this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
     }
+
 
   // Integrate with the sub_time_step
   while (t + 0.5 * dt_dem < dt)
