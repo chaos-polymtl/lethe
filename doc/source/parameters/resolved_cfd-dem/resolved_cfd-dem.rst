@@ -21,7 +21,8 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set particle nonlinear tolerance            = 1e-6
 		set DEM coupling frequency                  = 1000
 		set alpha                                   = 1
-
+		set contact search radius factor            = 3
+		set contact search frequency				= 1
 		
 		subsection gravity
 			set Function expression =0;0;0
@@ -108,6 +109,16 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 * The ``particle nonlinear tolerance`` parameter controls particle dynamics' nonlinear tolerance. The nonlinear solver won't have converged until the residual on the dynamics equations of all the particles is smaller than this threshold.
 
 * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
+
+* The ``contact search radius factor`` parameter is used to create the list of potential contacting particles. Two given particles with respective radii :math:`R_1` and :math:`R_2` are in potential contact if the distance between them is < :math:`(R_1 + R_2) * factor`. The default value of this parameter is set to 3.
+
+.. note::
+	If all particles may be taken into account in the contact search, a large value of ``contact search radius factor`` should be set.
+
+.. warning::
+	If ``contact search radius factor`` :math:`\leq 1`, an error is thrown.
+
+* The ``contact search frequency`` parameter is used to set the updating frequency of the contact search list. By default, it is set to 1, that is, the contact search list is updated at each time-step.
 
 * The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 
