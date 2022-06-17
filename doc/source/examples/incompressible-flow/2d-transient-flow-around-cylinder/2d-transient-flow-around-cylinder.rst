@@ -138,7 +138,7 @@ The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The Reynolds number must be high enough to capture a transient flow and study the evolution of the drag and lift coefficients in time. Therefore, we set Re = 200 through the value of the kinematic viscosity in the same manner as for the `2D Lid-driven cavity flow <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html>`_. Since :math:`U_\infty = 1` and the :math:`D = 1`, we have :math:`Re=\frac{1}{\nu}`, where :math:`\nu` is the kinematic viscosity.
+The Reynolds number must be high enough to create a transient flow and evolution of the drag and lift coefficients in time. Therefore, we set Re = 200 through choosing a kinematic viscosity in the same manner as for the `2D Lid-driven cavity flow <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html>`_. Since :math:`U_\infty = 1` and the :math:`D = 1`, we have :math:`Re=\frac{1}{\nu}`, where :math:`\nu` is the kinematic viscosity.
 
 .. code-block:: text
 
