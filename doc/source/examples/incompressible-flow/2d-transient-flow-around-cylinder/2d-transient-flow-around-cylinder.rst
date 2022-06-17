@@ -7,7 +7,7 @@ This example corresponds to a transient flow around a fixed cylinder at a high R
 Features
 ---------
 
-- Solver: ``gls_navier_stokes_2d`` (with Q2-Q1)
+- Solver: ``gls_navier_stokes_2d`` (with Q2-Q1 elements)
 - Transient problem
 - Usage of Gnuplot and Python scripts for the data post-processing
 
