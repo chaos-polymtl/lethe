@@ -74,6 +74,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        this->dof_handler,
                                        support_points);
   cut_cells_map.clear();
+  cells_inside_map.clear();
   const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -85,7 +86,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
         {
           bool cell_is_cut;
           bool cell_is_inside;
-          unsigned int p_id=0;
+          unsigned int p_id_cut=0;
+          unsigned int p_id_inside=0;
           // is the particle index that cut the cell if it's cut.  If the cell
           // is not cut the default value is stored (0). If the cell is not cut
           // this value will never be used.
@@ -126,25 +128,25 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 {
                   if (nb_dof_inside == local_dof_indices.size())
                     {
-                      std::tie(cell_is_cut, p_id)    = std::make_tuple(false, 0);
-                      std::tie(cell_is_inside, p_id) = std::make_tuple(true, p);
+                      std::tie(cell_is_cut, p_id_cut)    = std::make_tuple(false, 0);
+                      std::tie(cell_is_inside, p_id_inside) = std::make_tuple(true, p);
                       break;
                     }
                   else
                     {
-                      std::tie(cell_is_cut, p_id)    = std::make_tuple(true, p);
-                      std::tie(cell_is_inside, p_id) = std::make_tuple(false, 0);
+                      std::tie(cell_is_cut, p_id_cut)    = std::make_tuple(true, p);
+                      std::tie(cell_is_inside, p_id_inside) = std::make_tuple(false, 0);
                       break;
                     }
                 }
               else
                 {
-                  std::tie(cell_is_cut, p_id)    = std::make_tuple(false, 0);
-                  std::tie(cell_is_inside, p_id) = std::make_tuple(false, 0);
+                  std::tie(cell_is_cut, p_id_cut)    = std::make_tuple(false, 0);
+                  std::tie(cell_is_inside, p_id_inside) = std::make_tuple(false, 0);
                 }
             }
-          cut_cells_map[cell]    = {cell_is_cut, p_id};
-          cells_inside_map[cell] = {cell_is_inside, p_id};
+          cut_cells_map[cell]    = {cell_is_cut, p_id_cut};
+          cells_inside_map[cell] = {cell_is_inside, p_id_inside};
         }
     }
 }
