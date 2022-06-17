@@ -84,6 +84,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
       if (cell->is_locally_owned() || cell->is_ghost())
         {
           bool cell_is_cut;
+          bool cell_is_inside;
+          unsigned int p_id=0;
           // is the particle index that cut the cell if it's cut.  If the cell
           // is not cut the default value is stored (0). If the cell is not cut
           // this value will never be used.
@@ -124,25 +126,25 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 {
                   if (nb_dof_inside == local_dof_indices.size())
                     {
-                      std::tie(cell_is_cut, p)    = std::make_tuple(false, 0);
-                      std::tie(cell_is_inside, p) = std::make_tuple(true, p);
+                      std::tie(cell_is_cut, p_id)    = std::make_tuple(false, 0);
+                      std::tie(cell_is_inside, p_id) = std::make_tuple(true, p);
                       break;
                     }
                   else
                     {
-                      std::tie(cell_is_cut, p)    = std::make_tuple(true, p);
-                      std::tie(cell_is_inside, p) = std::make_tuple(false, 0);
+                      std::tie(cell_is_cut, p_id)    = std::make_tuple(true, p);
+                      std::tie(cell_is_inside, p_id) = std::make_tuple(false, 0);
                       break;
                     }
                 }
               else
                 {
-                  std::tie(cell_is_cut, p)    = std::make_tuple(false, 0);
-                  std::tie(cell_is_inside, p) = std::make_tuple(false, 0);
+                  std::tie(cell_is_cut, p_id)    = std::make_tuple(false, 0);
+                  std::tie(cell_is_inside, p_id) = std::make_tuple(false, 0);
                 }
             }
-          cells_cut_map[cell]    = {cell_is_cut, p};
-          cells_inside_map[cell] = {cell_is_inside, p};
+          cut_cells_map[cell]    = {cell_is_cut, p_id};
+          cells_inside_map[cell] = {cell_is_inside, p_id};
         }
     }
 }
