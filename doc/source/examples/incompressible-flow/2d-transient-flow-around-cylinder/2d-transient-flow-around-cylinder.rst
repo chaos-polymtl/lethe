@@ -192,7 +192,7 @@ The simulation is launched in parallel using 10 CPUs, as explained in `2D Transi
 
 .. warning::
 
-  The estimated time to simulate 200 seconds is about 2 hours 5 minutes with 10 CPUs.
+  The estimated time to simulate 200 seconds is about 2 hours and 5 minutes on 10 CPUs.
 
 Results
 -------
