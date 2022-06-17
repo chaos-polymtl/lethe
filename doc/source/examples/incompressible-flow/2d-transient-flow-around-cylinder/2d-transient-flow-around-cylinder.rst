@@ -7,7 +7,7 @@ This example corresponds to a transient flow around a fixed cylinder at a high R
 Features
 ---------
 
-- Solver: ``gls_navier_stokes_2d`` (with Q2-Q1 elements)
+- Solver: ``gls_navier_stokes_2d`` (with Q2-Q1)
 - Transient problem
 - Usage of Gnuplot and Python scripts for the data post-processing
 
@@ -81,7 +81,7 @@ The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imp
 Mesh adaptation control
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
+While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to well resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
 
 .. code-block:: text
 
@@ -138,7 +138,7 @@ The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The Reynolds number must be high enough to create a transient flow and evolution of the drag and lift coefficients in time. Therefore, we set Re = 200 through choosing a kinematic viscosity in the same manner as for the `2D Lid-driven cavity flow <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html>`_. Since :math:`U_\infty = 1` and the :math:`D = 1`, we have :math:`Re=\frac{1}{\nu}`, where :math:`\nu` is the kinematic viscosity.
+The Reynolds number must be high enough to capture a transient flow and study the evolution of the drag and lift coefficients in time. Therefore, we set Re = 200 through the value of the kinematic viscosity in the same manner as for the `2D Lid-driven cavity flow <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html>`_. Since :math:`U_\infty = 1` and the :math:`D = 1`, we have :math:`Re=\frac{1}{\nu}`, where :math:`\nu` is the kinematic viscosity.
 
 .. code-block:: text
 
@@ -179,7 +179,7 @@ As we set ``calculation frequency`` to 1, the forces on each boundary are comput
 
 .. warning::
 
-  The computational cost of writing this output file at each time step by setting ``output frequency`` to 1 can be significant, as explained in `Force and torque calculation <https://lethe-cfd.github.io/lethe/parameters/cfd/force_and_torque.html>`_. However, in the present example, the computational cost is still fairly low; so ``output frequency = 1`` is used.
+  The computational cost of writing this output file at each time step by setting ``output frequency`` to 1 can be significant, as explained in `Force and torque calculation <https://lethe-cfd.github.io/lethe/parameters/cfd/force_and_torque.html>`_. However, in the present example, the computational cost is still fairly low so ``output frequency = 1`` is used.
 
 
 Running the simulation
@@ -192,27 +192,38 @@ The simulation is launched in parallel using 10 CPUs, as explained in `2D Transi
 
 .. warning::
 
-  The estimated time to simulate 200 seconds is about 2 hours and 5 minutes on 10 CPUs.
+  The estimated time to simulate 200 seconds is about 2 hours 5 minutes with 10 CPUs.
 
 Results
 -------
 
-The time evolution of the drag and lift coefficients is obtained from a Gnuplot script available in the example folder:
+The time evolution of the drag and lift coefficients is obtained from a Gnuplot script available in the example folder by launching:
+
+.. code-block:: text
+
+  gnuplot postprocess.gnu
+
+.. note::
+
+  Gnuplot is a command-line plotting tool supporting scripting. It can be downloaded `here <http://www.gnuplot.info/>`_. The script provided for this example works for the version 5.4 of Gnuplot.
 
 .. image:: images/CL-CD.png
     :alt: CD and CL evolution in time
     :align: center
     :name: CD-CL
 
-
-Using the FFT of the CL for the last 100 seconds, we can obtain the frequency :math:`f_v` at which the vortices are shed :
+Using the fast Fourier transform (FFT) of the CL for the last 100 seconds, we can obtain the frequency :math:`f_v` at which the vortices are shed :
 
 .. image:: images/cylinderFFT.png
     :alt: Strouhal Number
     :align: center
     :name: Strouhal
 
-This corresponds to the frequency at which the peak of amplitude appears in the FFT : :math:`f_v = 0.2`. From this result, we can obtain the Strouhal number, :math:`S_t = 0.2`, using the equation presented above. The python script used to obtain the FFT is available in the example folder.
+This corresponds to the frequency at which the peak of amplitude appears in the FFT : :math:`f_v = 0.2`. From this result, we can obtain the Strouhal number, :math:`S_t = 0.2`, using the equation presented above. The python script used to obtain the FFT is available in the example folder and is launched using the following command :
+
+.. code-block:: text
+
+  python postprocess.py
 
 The obtained values of the drag and lift coefficients as well as the Strouhal number are compared to some results of the literature :
 
