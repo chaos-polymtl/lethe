@@ -9,20 +9,20 @@ localize_contacts(
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
-    *local_adjacent_particles,
+    &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
-    *ghost_adjacent_particles,
+    &ghost_adjacent_particles,
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
-    *particle_wall_pairs_in_contact,
+    &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
-    *pfw_pairs_in_contact,
+    &pfw_pairs_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -39,11 +39,11 @@ localize_contacts(
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
-    pfw_contact_candidates)
+    &pfw_contact_candidates)
 
 {
-  for (auto adjacent_particles_iterator = local_adjacent_particles->begin();
-       adjacent_particles_iterator != local_adjacent_particles->end();
+  for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
+       adjacent_particles_iterator != local_adjacent_particles.end();
        ++adjacent_particles_iterator)
     {
       unsigned int particle_one_id = adjacent_particles_iterator->first;
@@ -88,8 +88,8 @@ localize_contacts(
     }
 
   // The same for local-ghost particle containers
-  for (auto adjacent_particles_iterator = ghost_adjacent_particles->begin();
-       adjacent_particles_iterator != ghost_adjacent_particles->end();
+  for (auto adjacent_particles_iterator = ghost_adjacent_particles.begin();
+       adjacent_particles_iterator != ghost_adjacent_particles.end();
        ++adjacent_particles_iterator)
     {
       unsigned int particle_one_id = adjacent_particles_iterator->first;
@@ -133,9 +133,9 @@ localize_contacts(
 
   // Particle-wall contacts
   for (auto particle_wall_pairs_in_contact_iterator =
-         particle_wall_pairs_in_contact->begin();
+         particle_wall_pairs_in_contact.begin();
        particle_wall_pairs_in_contact_iterator !=
-       particle_wall_pairs_in_contact->end();
+       particle_wall_pairs_in_contact.end();
        ++particle_wall_pairs_in_contact_iterator)
     {
       unsigned int particle_id = particle_wall_pairs_in_contact_iterator->first;
@@ -166,8 +166,8 @@ localize_contacts(
     }
 
   // Particle-floating wall contacts
-  for (auto pfw_pairs_in_contact_iterator = pfw_pairs_in_contact->begin();
-       pfw_pairs_in_contact_iterator != pfw_pairs_in_contact->end();
+  for (auto pfw_pairs_in_contact_iterator = pfw_pairs_in_contact.begin();
+       pfw_pairs_in_contact_iterator != pfw_pairs_in_contact.end();
        ++pfw_pairs_in_contact_iterator)
     {
       unsigned int particle_id = pfw_pairs_in_contact_iterator->first;
@@ -202,20 +202,20 @@ template void localize_contacts(
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<2>>>
-    *local_adjacent_particles,
+    &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<2>>>
-    *ghost_adjacent_particles,
+    &ghost_adjacent_particles,
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<2>>>
-    *particle_wall_pairs_in_contact,
+    &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<2>>>
-    *pfw_pairs_in_contact,
+    &pfw_pairs_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -232,27 +232,27 @@ template void localize_contacts(
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>>
-    pfw_contact_candidates);
+    &pfw_contact_candidates);
 
 template void localize_contacts(
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<3>>>
-    *local_adjacent_particles,
+    &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<3>>>
-    *ghost_adjacent_particles,
+    &ghost_adjacent_particles,
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<3>>>
-    *particle_wall_pairs_in_contact,
+    &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<3>>>
-    *pfw_pairs_in_contact,
+    &pfw_pairs_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -269,4 +269,4 @@ template void localize_contacts(
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>>
-    pfw_contact_candidates);
+    &pfw_contact_candidates);

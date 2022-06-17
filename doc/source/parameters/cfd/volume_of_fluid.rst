@@ -16,10 +16,19 @@ The default values of the VOF parameters are given in the text box below.
 	subsection VOF	
 		subsection interface sharpening
 			set enable 	= false
-			set verbosity 	= quiet
-			set sharpening threshold   = 0.5
+			set frequency   = 10			
 			set interface sharpness    = 2
-			set sharpening frequency   = 10
+
+			set type 	= constant
+
+			# parameter for constant sharpening
+			set threshold   = 0.5
+
+			# parameters for adaptative sharpening
+			set threshold max deviation = 0.20
+			set max iterations = 5
+
+			set verbosity 	= quiet
 		end
 
 		subsection peeling wetting
@@ -37,6 +46,10 @@ The default values of the VOF parameters are given in the text box below.
 			set skip mass conservation in fluid 1 = false
 			set monitoring 		= false
 			set fluid monitored 	= 1
+
+			# parameters used with adaptative sharpening
+			set tolerance		= 1e-2
+			set verbosity 		= quiet
 		end
 
 		subsection surface tension force
@@ -61,14 +74,42 @@ The default values of the VOF parameters are given in the text box below.
 * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
   * ``enable``: controls if interface sharpening is enabled.
-  * ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output) and ``verbose``.
-  * ``sharpening threshold``: phase fraction threshold, between 0 and 1. It is by default equal to :math:`0.5`, the phase fraction at which the interphase is considered located, but its value can be changed to :ref:`counter fluid loss or creation <tip on sharpening threshold>`.
+  * ``frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
   * ``interface sharpness``: sharpness of the moving interface (parameter :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_).
   
   .. tip::
     This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be between 1 and 2.
+
+  * ``type``: defines the interface sharpening type, either ``constant`` or ``adaptative``
+
+    * ``set type = constant``: the sharpening ``threshold`` is the same throughout the simulation. This ``threshold``, between ``0`` and ``1`` (``0.5`` by default), corresponds to the phase fraction at which the interphase is considered located.
+    * ``set type = adaptative``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached (see ``subsection mass conservation``), or if the number of search steps reach the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
+
+    .. warning::
+
+      In case of adaptative interface sharpening (``set type = adaptative``), mass conservation must be monitored (``set monitoring = true`` in ``mass conservation`` subsection).
+
+    .. admonition:: Example of a warning message if sharpening is adaptative but the mass conservation tolerance is not reached:
   
-  * ``sharpening frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
+      .. code-block:: text
+
+	  WARNING: Maximum number of iterations (5) reached in the 
+	  adaptative sharpening threshold algorithm, remaining error
+	  on mass conservation is: 0.02
+	  Consider increasing the sharpening threshold range or the 
+	  number of iterations to reach the mass conservation tolerance.
+
+    .. tip::
+
+      Usually the first iterations with sharpening are the most at risk to reach the ``max iterations`` without the ``tolerance`` being met, particularly if the mesh is quite coarse. 
+
+      As most of the other iterations converge in only one step (corresponding to a final threshold of :math:`0.5`), increasing the sharpening search range through a higher ``threshold max deviation`` will relax the condition on the first iterations with a limited impact on the computational cost.
+
+  * ``verbosity``: enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations, similarly to the ``verbosity`` option in :doc:`linear_solver_control`. Choices are: ``quiet`` (default, no output), ``verbose`` (indicates sharpening steps) and ``extra verbose`` (details of the linear iterations).
+
+    .. tip::
+      
+      The ``adaptive`` sharpening algorithm calls for the sharpening method multiple times to test different values of sharpening threshold. It is therefore advised to avoid using ``set verbosity = extra verbose`` in the ``subsection interface sharpening``.
 
 .. seealso::
 
@@ -79,13 +120,13 @@ The default values of the VOF parameters are given in the text box below.
   * ``enable``: controls if peeling/wetting mechanism is enabled.
   * ``verbosity``: enables the display of the number of peeled and wet cells at each time-step. Choices are: ``quiet`` (default, no output) and ``verbose``.
 
-  .. admonition:: Example of a ``set verbosity = verbose`` output:
+    .. admonition:: Example of a ``set verbosity = verbose`` output:
   
-    .. code-block:: text
+      .. code-block:: text
 
-      Peeling/wetting correction at step 2
-        -number of wet cells: 24
-        -number of peeled cells: 1
+        Peeling/wetting correction at step 2
+          -number of wet cells: 24
+          -number of peeled cells: 1
 
   * Peeling of the higher density fluid occurs where those conditions are met:
 
@@ -114,34 +155,51 @@ The default values of the VOF parameters are given in the text box below.
 
     * ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is 0 to have pure advection. This can be used to :ref:`improve wetting`.
 
+.. warning::
+
+  As peeling/wetting mechanisms result in fluid creation and disparition, is it highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
+
 * ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids. However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to skip mass conservation in one of the fluid, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
 
   * mass conservation can be skipped on the fluid with index 0 or 1, as defined in the subsection `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_, with ``skip mass conservation in fluid 0`` and ``skip mass conservation in fluid 1`` respectively.
   * ``monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid with index ``fluid monitored``. Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
 
-  .. admonition:: Example of file output, `VOF_monitoring_fluid_1.dat`:
+    .. admonition:: Example of file output, `VOF_monitoring_fluid_1.dat`:
 
-    The ``volume_fluid_1`` column gives the surface/volume (2D/3D) occupied by the fluid with index 1.
+      The ``volume_fluid_1`` column gives the surface/volume (2D/3D) occupied by the fluid with index 1, its total mass, and the sharpening threshold used for this iteration.
   
-    .. code-block:: text
+      .. code-block:: text
 
-	 time   volume_fluid_1 
-	 0.0000     4.9067e-01 
-	 0.0100     4.8425e-01 
-	 0.0200     4.8564e-01 
-	 0.0300     4.7858e-01 
-	 0.0400     4.8245e-01 
-	 0.0500     4.7693e-01 
-	 0.0600     4.8154e-01 
-	 0.0700     4.7590e-01 
-	 0.0800     4.8133e-01 
-	 0.0900     4.7604e-01 
-	 0.1000     4.8198e-01 
+	 time  volume_fluid_1 mass_fluid_1 sharpening_threshold 
+	0.0000     4.9067e-01   3.8125e+02               0.5000 
+	0.0050     4.9297e-01   3.8304e+02               0.5000 
+	0.0100     4.9150e-01   3.8189e+02               0.5000 
+	0.0150     4.9001e-01   3.8074e+02               0.5000 
+	0.0200     4.8844e-01   3.7952e+02               0.5000 
+	0.0250     4.9762e-01   3.8665e+02               0.5000 
+	0.0300     4.9588e-01   3.8530e+02               0.5000 
+	0.0350     4.9437e-01   3.8413e+02               0.5000 
+	0.0400     4.9294e-01   3.8302e+02               0.5000 
+	0.0450     4.9144e-01   3.8185e+02               0.5000 
+	0.0500     5.0639e-01   3.9346e+02               0.5000 
 
-.. _tip on sharpening threshold:
+  * ``tolerance``: value for the tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening (see the ``subsection sharpening``). 
+  
+    For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``fluid monitored`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
 
-.. tip::
-  Due to numerical diffusion of the interface, the ``peeling wetting`` mechanism or an added ``diffusivity``, the method used is not strictly conservative at every iteration. The ``sharpening threshold`` can then be adapted to counter fluid loss (e.g. ``set sharpening threshold = 0.45``) or creation (e.g. ``set sharpening threshold = 0.55``).
+  * ``verbosity``: states whether from the mass conservation data should be printed. Choices are quiet (no output), verbose (output information from the ``adaptive`` sharpening threshold) and extra verbose (output of the monitoring table in the terminal at the end of the simulation).
+
+    .. admonition:: Example of mass conservation verbosity output (``verbose`` or ``extra verbose``):
+
+      .. code-block:: text
+
+	Sharpening interface at step 2
+	   Adapting the sharpening threshold
+	   ... step 1 of the search algorithm
+	   ... step 2 of the search algorithm
+	   ... search algorithm took : 2 step(s) 
+	   ... error on mass conservation reached: -0.03
+	   ... final sharpening
 
 
 * ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. 
@@ -178,7 +236,9 @@ The default values of the VOF parameters are given in the text box below.
 
     Use the procedure suggested in: :ref:`choosing values for the surface tension force filters`.
 
+.. seealso::
 
+  The surface tension force is used in the :doc:`../../examples/multiphysics/rising-bubble-VOF/rising-bubble-VOF` example.
 
 
 .. _improve wetting:
@@ -190,8 +250,9 @@ In the framework of incompressible fluids, a layer of the lowest density fluid (
 
 1. Add a small ``diffusivity`` to the transport equation (e.g. ``set diffusivity = 1e-3``), so that the higher density fluid spreads to the boundary location. 
 
+
 .. tip::
-  It is strongly advised to sharpen the interface more often (e.g. ``set sharpening frequency = 2``) to limit interface blurriness due the added diffusivity. As peeling-wetting is handled after the transport equation is solved, but before interface sharpening, this will not prevent the wetting from occuring.
+  It is strongly advised to sharpen the interface more often (e.g. ``set frequency = 2``) to limit interface blurriness due the added diffusivity. As peeling-wetting is handled after the transport equation is solved, but before interface sharpening, this will not prevent the wetting from occuring.
 
 2. Remove the conservation condition on the lowest density fluid (e.g. ``set skip mass conservation in fluid 0 = false``). The mass conservation equation in the cells of interest is replaced by a zero-pressure condition, to allow the fluid to get out of the domain. 
 

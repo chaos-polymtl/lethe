@@ -813,10 +813,10 @@ namespace Parameters
                         "End time of laser");
 
       prm.declare_entry("beam orientation",
-                        "z",
-                        Patterns::Selection("x|y|z"),
+                        "z-",
+                        Patterns::Selection("x+|x-|y+|y-|z+|z-"),
                         "Laser beam orientation "
-                        "Choices are <x|y|z>.");
+                        "Choices are <x+|x-|y+|y-|z+|z->.");
     }
     prm.leave_subsection();
   }
@@ -844,27 +844,61 @@ namespace Parameters
 
       std::string op;
       op = prm.get("beam orientation");
-      if (op == "x")
+      if (op == "x+")
         {
-          beam_orientation                   = BeamOrientation::x;
+          beam_direction                     = 1;
+          beam_orientation                   = BeamOrientation::x_plus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
           if constexpr (dim == 3)
             perpendicular_plane_coordinate_two = 2;
         }
-      else if (op == "y")
+      else if (op == "x-")
         {
-          beam_orientation                   = BeamOrientation::y;
+          beam_direction                     = 0;
+          beam_orientation                   = BeamOrientation::x_minus;
+          beam_orientation_coordinate        = 0;
+          perpendicular_plane_coordinate_one = 1;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "y+")
+        {
+          beam_direction                     = 1;
+          beam_orientation                   = BeamOrientation::y_plus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
           if constexpr (dim == 3)
             perpendicular_plane_coordinate_two = 2;
         }
-      else if (op == "z")
+      else if (op == "y-")
+        {
+          beam_direction                     = 0;
+          beam_orientation                   = BeamOrientation::y_minus;
+          perpendicular_plane_coordinate_one = 0;
+          beam_orientation_coordinate        = 1;
+          if constexpr (dim == 3)
+            perpendicular_plane_coordinate_two = 2;
+        }
+      else if (op == "z+")
         {
           if constexpr (dim == 3)
             {
-              beam_orientation                   = BeamOrientation::z;
+              beam_direction                     = 1;
+              beam_orientation                   = BeamOrientation::z_plus;
+              perpendicular_plane_coordinate_one = 0;
+              perpendicular_plane_coordinate_two = 1;
+              beam_orientation_coordinate        = 2;
+            }
+          else if constexpr (dim == 2)
+            Assert(dim == 2, TwoDimensionalLaserError(dim));
+        }
+      else if (op == "z-")
+        {
+          if constexpr (dim == 3)
+            {
+              beam_direction                     = 0;
+              beam_orientation                   = BeamOrientation::z_minus;
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;
               beam_orientation_coordinate        = 2;
@@ -1807,12 +1841,12 @@ namespace Parameters
         "refine mesh inside radius factor",
         "0.5",
         Patterns::Double(),
-        "The factor that multiplie the radius to define the inside bound for the refinement of the mesh");
+        "The factor that multiplies the radius to define the inside bound for the refinement of the mesh");
       prm.declare_entry(
         "refine mesh outside radius factor",
         "1.5",
         Patterns::Double(),
-        "The factor that multiplie the radius to define the outside bound for the refinement of the mesh");
+        "The factor that multiplies the radius to define the outside bound for the refinement of the mesh");
       prm.declare_entry(
         "calculate force",
         "true",
@@ -1833,6 +1867,16 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
+      prm.declare_entry(
+        "contact search radius factor",
+        "3",
+        Patterns::Double(),
+        "The factor that multiplies the radius to define the region of contact search around the particle");
+      prm.declare_entry(
+        "contact search frequency",
+        "1",
+        Patterns::Integer(),
+        "The frequency of update in the contact candidates list");
       prm.declare_entry(
         "assemble Navier-Stokes inside particles",
         "false",
@@ -1910,7 +1954,7 @@ namespace Parameters
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
-      unsigned int max_ib_particles = 50;
+      unsigned int max_ib_particles = 1000;
       particles.resize(max_ib_particles);
       for (unsigned int i = 0; i < max_ib_particles; ++i)
         {
@@ -1941,6 +1985,13 @@ namespace Parameters
       ib_force_output_file = prm.get("ib force output file");
       integrate_motion     = prm.get_bool("integrate motion");
       alpha                = prm.get_double("alpha");
+      contact_search_radius_factor =
+        prm.get_double("contact search radius factor");
+      if (contact_search_radius_factor < 1.)
+        throw(std::logic_error(
+          "Error, the parameter 'contact search radius factor' cannot be < 1."));
+
+      contact_search_frequency = prm.get_integer("contact search frequency");
 
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");

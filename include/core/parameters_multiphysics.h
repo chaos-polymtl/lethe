@@ -34,6 +34,18 @@ using namespace dealii;
 
 namespace Parameters
 {
+  /** @brief Class to account for different sharpening types:
+   *  - constant: the sharpening threshold is the same throughout the
+   * simulation,
+   *  - adaptative: the sharpening threshold is determined by binary search, to
+   * ensure mass conservation of the monitored phase
+   */
+  enum class SharpeningType
+  {
+    constant,
+    adaptative
+  };
+
   /**
    * @brief Defines the subparameters for free surface peeling/wetting mechanism.
    * Has to be declared before member creation in VOF structure.
@@ -98,6 +110,13 @@ namespace Parameters
     bool monitoring;
     int  id_fluid_monitored;
 
+    // Conservation tolerance on the fluid monitored,
+    // used with adaptative Sharpening
+    double tolerance;
+
+    // Type of verbosity for the interface sharpening calculation
+    Parameters::Verbosity verbosity;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -112,20 +131,23 @@ namespace Parameters
   {
     // Interface sharpening parameters. The sharpening method and parameters are
     // explained in the dam break VOF example:
-    // https://github.com/lethe-cfd/lethe/wiki/Dam-break-VOF
-    // sharpening_threshold is the phase fraction threshold for sharpening. It
-    // should be chosen in the range of (0,1), but generally it is equal to 0.5
-    // interface_sharpness is a parameter which defines the sharpness of the
-    // interface. It should be chosen in the range of (1,2] sharpening_frequency
-    // (integer) is the frequency at which the interface sharpneing is called.
-    // Users may set this variable to 1 to call interface sharpening at every
-    // step, but a larger integer value could be chosen.
+    // https://lethe-cfd.github.io/lethe/examples/multiphysics/dam-break-VOF/dam-break-VOF.html
 
     bool enable;
 
-    double sharpening_threshold;
+    Parameters::SharpeningType type;
+
+    // Parameters for constant sharpening
+    double threshold;
+
+    // Parameters for adaptative sharpening
+    double threshold_max_deviation;
+    int    max_iterations;
+
+    // Other sharpening parameters
     double interface_sharpness;
-    int    sharpening_frequency;
+    int    frequency;
+
     // Type of verbosity for the interface sharpening calculation
     Parameters::Verbosity verbosity;
 

@@ -119,11 +119,11 @@ The phase fraction limiter above will update the phase fraction if it failed to 
         \phi :=
         \begin{cases}
         c^{1-\alpha} \phi^{\alpha} &  (0 \leq \phi < c  ) \\
-        1-(c-1)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
+        1-(1-c)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
         \end{cases}
 
-``Sharpening frequency`` is an integer parameter that defines the 
-frequency of the interface sharpening; ``sharpening threshold`` defines 
+``frequency`` is an integer parameter that defines the 
+frequency of the interface sharpening; ``threshold`` defines 
 a phase fraction threshold for interface sharpening (generally :math:`0.5`);
 and ``interface sharpness`` is a model parameter which is generally in
 the range of :math:`(1,2]`.
@@ -150,9 +150,9 @@ the range of :math:`(1,2]`.
 	subsection VOF
 	  subsection interface sharpening
 	    set enable      = true
-	    set sharpening threshold   = 0.5
+	    set threshold   = 0.5
 	    set interface sharpness    = 2
-	    set sharpening frequency   = 10
+	    set frequency   = 10
 	  end
 	end
 

@@ -1023,10 +1023,10 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Particle-wall broad contact search
       particle_wall_broad_search();
 
-      localize_contacts<dim>(&local_adjacent_particles,
-                             &ghost_adjacent_particles,
-                             &particle_wall_pairs_in_contact,
-                             &pfw_pairs_in_contact,
+      localize_contacts<dim>(local_adjacent_particles,
+                             ghost_adjacent_particles,
+                             particle_wall_pairs_in_contact,
+                             pfw_pairs_in_contact,
                              local_contact_pair_candidates,
                              ghost_contact_pair_candidates,
                              particle_wall_contact_candidates,

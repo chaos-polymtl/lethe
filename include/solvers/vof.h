@@ -163,11 +163,17 @@ public:
   calculate_L2_error();
 
   /**
-   * @brief Calculates the volume for the fluid phase with given id_fluid_monitored.
+   * @brief Calculates the volume and mass for a given fluid phase.
    * Used for conservation monitoring.
+   *
+   * @param solution VOF solution (phase fraction)
+   *
+   * @param id_fluid_monitored Phase value (0 or 1) corresponding to
+   * the phase of interest.
    */
-  double
-  calculate_volume(int id_fluid_monitored);
+  void
+  calculate_volume_and_mass(const TrilinosWrappers::MPI::Vector &solution,
+                            const int id_fluid_monitored);
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -431,10 +437,17 @@ private:
    * \phi <= 1 $$
    * Reference for sharpening method
    * https://www.sciencedirect.com/science/article/pii/S0045782500002000
+   *
+   * @param solution VOF solution (phase fraction)
+   *
+   * @param sharpening_threshold Interface sharpening threshold that represents
+   * the mass conservation level
+   *
    */
   void
   assemble_L2_projection_interface_sharpening(
-    TrilinosWrappers::MPI::Vector &solution);
+    TrilinosWrappers::MPI::Vector &solution,
+    const double                   sharpening_threshold);
 
   /**
    * @brief Solves the assembled system to sharpen the interface. The linear_solver_tolerance
@@ -461,7 +474,7 @@ private:
 
   /**
    * @brief Carries out peeling and wetting. It is called in the modify solution function.
-   * Launches apply_peeling_wetting on affected boundaries and handle output
+   * Launches apply_peeling_wetting on affected boundaries and handles output
    * messages.
    */
   void
@@ -502,9 +515,52 @@ private:
 
   /**
    * @brief Carries out interface sharpening. It is called in the modify solution function.
+   * Launches sharpen_interface with the possibility to ensure conservation and
+   * handles output messages.
    */
   void
-  sharpen_interface();
+  handle_interface_sharpening();
+
+  /**
+   * @brief Find the sharpening threshold to ensure mass conservation of the fluid
+   * monitored, as given in the prm (VOF, subsection monitoring), by binary
+   * search.
+   */
+  double
+  find_sharpening_threshold();
+
+  /**
+   * @brief Calculate the mass deviation of the monitored fluid, between the current
+   * iteration and the mass at first iteration (mass_first_iteration). Used to
+   * test multiple sharpening threshold in the binary search algorithm
+   * (adaptative sharpening).
+   *
+   * @param id_fluid_monitored Phase value (0 or 1) corresponding to
+   * the phase of interest.
+   *
+   * @param sharpening_threshold Interface sharpening threshold that represents the
+   * mass conservation level
+   */
+  double
+  calculate_mass_deviation(const int    id_fluid_monitored,
+                           const double sharpening_threshold);
+
+  /**
+   * @brief Carries out interface sharpening. It is called in the modify solution function.
+   *
+   * @param solution VOF solution (phase fraction)
+   *
+   * @param sharpening_threshold Interface sharpening threshold that represents the mass conservation level
+   *
+   * @param sharpen_previous_solutions Boolean true if sharpening is applied on the present
+   * and past solutions, false if the sharpening is applied on the given
+   * solution vector only. Used to determine the sharpening threshold by binary
+   * search.
+   */
+  void
+  sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
+                    const double                   sharpening_threshold,
+                    const bool                     sharpen_previous_solutions);
 
   /**
    * @brief Carries out finding the gradients of phase fraction. Obtained gradients of phase
@@ -585,7 +641,7 @@ private:
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;
 
-  // Solution storage:
+  // Solution storage
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
@@ -656,6 +712,10 @@ private:
 
   // Conservation Analysis
   TableHandler table_monitoring_vof;
+  double       volume_monitored;
+  double       mass_monitored;
+  double       mass_first_iteration;
+  double       sharpening_threshold;
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;
