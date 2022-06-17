@@ -88,18 +88,21 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           // is not cut the default value is stored (0). If the cell is not cut
           // this value will never be used.
 
-          // Check if a cell is cut and if it's rerun the particle by which it's cut and
-          // the local DOFs index. The check is done by counting the number of DOFs that
-          // is on either side of the boundary define by a particle.
+          // Check if a cell is cut and if it's rerun the particle by which it's
+          // cut and the local DOFs index. The check is done by counting the
+          // number of DOFs that is on either side of the boundary define by a
+          // particle.
 
           cell->get_dof_indices(local_dof_indices);
 
-          // Check if a cell is cut and if it's rerun the particle by which it's cut and
+          // Check if a cell is cut and if it's rerun the particle by which it's
+          // cut and
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-              // the local DOFs index. The check is done by counting the number of DOFs that
-              // is on either side of the boundary define by a particle.
+              // the local DOFs index. The check is done by counting the number
+              // of DOFs that is on either side of the boundary define by a
+              // particle.
 
               unsigned int nb_dof_inside = 0;
 
@@ -108,35 +111,37 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   // Count the number of DOFs that are inside
                   // of the particles. If all the DOfs are on one side
                   // the cell is not cut by the boundary.
-                  if ((support_points[local_dof_indices[j]] - particles[p].position)
+                  if ((support_points[local_dof_indices[j]] -
+                       particles[p].position)
                         .norm() <= particles[p].radius)
                     ++nb_dof_inside;
                 }
-              
-              // If some of the DOFs are inside the boundary, some are outside, the cell is cut.
+
+              // If some of the DOFs are inside the boundary, some are outside,
+              // the cell is cut.
 
               if (nb_dof_inside != 0)
                 {
                   if (nb_dof_inside == local_dof_indices.size())
                     {
-                      std::tie(cell_is_cut, p) = std::make_tuple(false, 0);
+                      std::tie(cell_is_cut, p)    = std::make_tuple(false, 0);
                       std::tie(cell_is_inside, p) = std::make_tuple(true, p);
                       break;
                     }
                   else
                     {
-                      std::tie(cell_is_cut, p) =  std::make_tuple(true, p);
+                      std::tie(cell_is_cut, p)    = std::make_tuple(true, p);
                       std::tie(cell_is_inside, p) = std::make_tuple(false, 0);
                       break;
                     }
-                } 
+                }
               else
                 {
-                  std::tie(cell_is_cut, p) = std::make_tuple(false, 0);
+                  std::tie(cell_is_cut, p)    = std::make_tuple(false, 0);
                   std::tie(cell_is_inside, p) = std::make_tuple(false, 0);
                 }
             }
-          cells_cut_map[cell] = {cell_is_cut, p};
+          cells_cut_map[cell]    = {cell_is_cut, p};
           cells_inside_map[cell] = {cell_is_inside, p};
         }
     }
