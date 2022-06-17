@@ -9,11 +9,12 @@ subsection simulation control
   set method                  = bdf2
   set output name             = cylinder-output
   set output frequency        = 1
-  set output path             = ./bdf2_Q2-Q1_refined/
+  set output path             = ./Re200/
   set time end                = 200.0
   set time step		            = 0.05
   set subdivision             = 1
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
@@ -21,12 +22,14 @@ subsection FEM
     set velocity order        = 2
     set pressure order        = 1
 end
+
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
 subsection timer
     set type    = iteration                                  # <none|iteration|end>
 end
+
 #---------------------------------------------------
 # Force
 #---------------------------------------------------
@@ -39,6 +42,7 @@ subsection forces
     set calculation frequency = 1
     set output frequency      = 1
 end
+
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
@@ -48,6 +52,7 @@ subsection initial conditions
             set Function expression = 1; 0; 0
     end
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
@@ -56,13 +61,14 @@ subsection physical properties
     set kinematic viscosity            = 0.005
   end
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 subsection mesh
     set type                 = gmsh
     set file name            = cylinder_structured.msh
-    set initial refinement   = 2
+    set initial refinement   = 1
 end
 
 # --------------------------------------------------
@@ -89,6 +95,7 @@ subsection boundary conditions
         set type              = slip
     end
 end
+
 # --------------------------------------------------
 # Manifolds
 #---------------------------------------------------
@@ -101,19 +108,20 @@ subsection manifolds
         set arg2              = 8
     end
 end
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
   set type                    = kelly
-  set variable                = velocity
+  set variable                = pressure
   set fraction type           = number
   set max number elements     = 70000
   set max refinement level    = 3
-  set min refinement level    = 0
+  set min refinement level    = 1
   set frequency               = 1
-  set fraction refinement     = 0.3
-  set fraction coarsening     = 0.1
+  set fraction refinement     = 0.02
+  set fraction coarsening     = 0.01
 end
 
 # --------------------------------------------------
@@ -133,7 +141,7 @@ subsection linear solver
   set method                  = gmres
   set max iters               = 5000
   set relative residual       = 1e-4
-  set minimum residual        = 1e-9
+  set minimum residual        = 1e-6
   set ilu preconditioner fill = 1
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00

@@ -9,6 +9,7 @@ Features
 
 - Solver: ``gls_navier_stokes_2d`` (with Q2-Q1)
 - Transient problem
+- Usage of Gnuplot and Python scripts for the data post-processing
 
 Location of the example
 ------------------------
@@ -26,7 +27,7 @@ We simulate the flow around a fixed cylinder with a constant upstream fluid velo
     :align: center
     :name: geometry_description
 
-The flow field features a stable laminar boundary layer at the cylinder leading edge and a recirculation zone behind it formed by two unstable vortices of opposite signs. These vortices successively detach from the cylinder in a periodic manner (vortex shedding), leading to the genaration of the von Kármán vortex street pattern in the wake. This vortex shedding causes a fluctuating pressure force acting on the cylinder, resulting oscillations of the drag and lift coefficients in time. The frequency of vortex shedding is related to the Strouhal number:
+The flow field features a stable laminar boundary layer at the cylinder leading edge and a recirculation zone behind it formed by two unstable vortices of opposite signs. These vortices successively detach from the cylinder in a periodic manner (vortex shedding), leading to the genaration of the von Kármán vortex street pattern in the wake. This vortex shedding causes a fluctuating pressure force acting on the cylinder, resulting in oscillations of the drag and lift coefficients in time. The frequency of vortex shedding is related to the Strouhal number:
 
 .. math::
  S_t = \frac{D f_v}{U_\infty}
@@ -36,6 +37,34 @@ where :math:`D` is the diameter of the cylinder, :math:`f_v` is the frequency of
 Parameter file
 --------------
 
+Simulation control
+~~~~~~~~~~~~~~~~~~
+This exemple uses a 2nd order backward differentiation (``method = bdf2``) for the time integration scheme. The simulation time is set to 200 seconds with the ``time end`` parameter and a time step of 0.05 second is used (``time step = 0.05``).
+
+.. code-block:: text
+
+    subsection simulation control
+        set method                = bdf2
+        set output name           = cylinder-output
+        set output frequency      = 1
+        set output path           = ./Re200/
+        set time end              = 200.0
+        set time step		          = 0.05
+        set subdivision           = 1
+    end
+
+FEM interpolation
+~~~~~~~~~~~~~~~~~
+
+The interpolation orders for the velocity and pressure are set to Q2-Q1 in the ``FEM`` subsection:
+
+.. code-block:: text
+
+    subsection FEM
+        set velocity order  = 2
+        set pressure order  = 1
+    end
+
 Mesh
 ~~~~~
 
@@ -43,64 +72,46 @@ The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imp
 
 .. code-block:: text
 
-  #---------------------------------------------------
-  # Mesh
-  #---------------------------------------------------
-  subsection mesh
-      set type                 = gmsh
-      set file name            = cylinder_structured.msh
-      set initial refinement   = 1
-  end
+    subsection mesh
+        set type                = gmsh
+        set file name           = cylinder_structured.msh
+        set initial refinement  = 1
+    end
 
 Mesh adaptation control
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The parameters used are specified in the mesh adaptation control subsection:
+While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to well resolve the wake in order to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and in the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
 
 .. code-block:: text
 
- # --------------------------------------------------
- # Mesh Adaptation Control
- #---------------------------------------------------
- subsection mesh adaptation
-   set type                    = kelly
-   set variable                = pressure
-   set fraction type           = number
-   set max number elements     = 70000
-   set max refinement level    = 3
-   set min refinement level    = 0
-   set frequency               = 1
-   set fraction refinement     = 0.02
-   set fraction coarsening     = 0.01
- end
+   subsection mesh adaptation
+       set type                   = kelly
+       set variable               = pressure
+       set fraction type          = number
+       set max number elements    = 70000
+       set max refinement level   = 3
+       set min refinement level   = 1
+       set frequency              = 1
+       set fraction refinement    = 0.02
+       set fraction coarsening    = 0.01
+   end
 
-Initial conditions
-~~~~~~~~~~~~~~~~~~
-Despite this problem being a steady-state problem, one known strategy to improve convergence is to set a coherent initial condition. In Lethe, this can be achieved by the initial conditions subsection:
+Here, we are using the pressure as the variable for `kelly error estimator <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh_adaptation_control.html>`_, unlike the previous examples which were using the velocity. Additionally, the ``fraction refinement`` and ``fraction coarsening`` are set to lower values than the previous examples (i.e., respectively 0.02 and 0.01) to enable a gradual growth of the mesh size.
+
+
+Initial and boundary conditions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://lethe-cfd.github.io/lethe/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
 .. code-block:: text
 
     subsection initial conditions
         set type = nodal
         subsection uvwp
-            set Function expression = 1; 0; 0
+                set Function expression = 1; 0; 0
         end
     end
-
-In this case we use the ``nodal`` initial condition and the ``subsection uvwp`` allows the description of a velocity-pressure vector-valued function. It can be seen that the individual components of the function are separated by semicolons in the ``set Function expression``. In this case, the velocity in the x-direction is set to ``1``, the velocity in the y-direction is set to ``0``, and the pressure is set to ``0``. If the problem was in three dimensions, four values should be specified, velocity in x, y and z and the pressure.
-
-
-Boundary conditions
-~~~~~~~~~~~~~~~~~~~~
-In this section, we specify the boundary conditions taking into account the IDs presented in the following schematic:
-
-.. image:: images/geometry_bc.png
-    :alt: The boundary conditions
-    :align: center
-    :name: geometry_bc
-
-
-.. code-block:: text
 
     subsection boundary conditions
         set number                  = 3
@@ -124,117 +135,132 @@ In this section, we specify the boundary conditions taking into account the IDs 
         end
     end
 
-* ``bc 0`` identifies the cylinder where we apply ``noslip`` boundary conditions on its walls. This leads to a velocity of 0 for the fluid directly in contact with the walls of the cylinder.
-* ``bc 1`` determines the flow of the fluid from the left wall. As mentioned before, the fluid is moving in the x-direction and therefore its boundary condition is defined with a function having a ``u`` velocity equals to 1. The rest of the velocity components are set to 0.
-* ``bc2`` is applied at the top and bottom walls. This condition allows the simulation to be performed in a finite sized domain. In real life, the cylinder would be placed in a relatively infinite domain. Using ``slip`` condition, we assume that the fluid cannot go out in the normal direction, but that it can still flow from left to right without friction. Thus, the walls have no effect on the flow of the fluid.
-
-.. note::
-    An implicit fourth boundary condition is implemented on the right wall which represents the outlet of the flow. We do not specify anything explicitly, because this corresponds to a natural boundary condition where the pressure :math:`p` becomes close to 0 due to the imposed :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0`. For more details, refer to :doc:`../../../parameters/cfd/boundary_conditions_cfd` section.
-
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The Reynolds number must be high enough to capture a transient flow and study the evolution of the drag and lift coefficients in time. Therefore, we set Re = 200 through the value of the kinematic viscosity in the same manner as `2D Lid-driven cavity flow <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html>`_ , since :math:`U_\infty = 1` and the :math:`D = 1`: :math:`Re=\frac{1}{\nu}` where :math:`\nu` is the kinematic viscosity.
+The Reynolds number must be high enough to capture a transient flow and study the evolution of the drag and lift coefficients in time. Therefore, we set Re = 200 through the value of the kinematic viscosity in the same manner as for the `2D Lid-driven cavity flow <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html>`_. Since :math:`U_\infty = 1` and the :math:`D = 1`, we have :math:`Re=\frac{1}{\nu}`, where :math:`\nu` is the kinematic viscosity.
 
 .. code-block:: text
 
-  #---------------------------------------------------
-  # Physical Properties
-  #---------------------------------------------------
-  subsection physical properties
-    subsection fluid 0
-      set kinematic viscosity            = 0.005
+    subsection physical properties
+        subsection fluid 0
+          set kinematic viscosity            = 0.005
+        end
     end
-  end
 
 Forces
 ~~~~~~
 
-To calculate forces acting on the boundary conditions, for example, the forces acting on the cylinder, we can use the ``forces`` subsection:
+Since we want to study the time evolution of the drag and lift coefficients, the force acting on the boundaries must be computed. We thus use the ``forces`` subsection:
 
 .. code-block:: text
 
- #---------------------------------------------------
- # Forces
- #---------------------------------------------------
- subsection forces
-     set verbosity             = verbose
-     set calculate force       = true
-     set calculate torque      = false
-     set force name            = force
-     set output precision      = 10
-     set calculation frequency = 1
-     set output frequency      = 1
- end
+   subsection forces
+      set verbosity             = verbose
+      set calculate force       = true
+      set calculate torque      = false
+      set force name            = force
+      set output precision      = 10
+      set calculation frequency = 1
+      set output frequency      = 1
+   end
 
-To print the values of the forces in the terminal we set ``verbosity`` to ``verbose``. The calculation of the forces in all boundaries is set by the ``set calculate force = true`` line. A ``.dat`` file is created with the corresponding data. Therefore, one can specify the prefix of the file by the ``force name`` parameter, the number of significant digits for the force values by the ``output precision`` and the frequency of calculation and output which are set to ``1``.
+As we set ``calculation frequency`` to 1, the forces on each boundary are computed at each time step and written in the file specified by the field ``force name``.
+
+.. note::
+
+  The drag and lift coefficients are obtained with the forces acting on the wall of the cylinder (i.e., ``f_x`` and ``f_y``  written in the file ``forces.00.dat``) :
+
+  .. math::
+
+    C_D = \frac{2 f_x}{\rho U_\infty^2 D} \text{ and } C_L = \frac{2 f_y}{\rho U_\infty^2 D}
+
+  where :math:`\rho = 1`. This way, we can obtained the evolution in time of both coefficients.
+
+.. warning::
+
+  The computational cost of writing this output file at each time step by setting ``output frequency`` to 1 can be significant, as explained in `Force and torque calculation <https://lethe-cfd.github.io/lethe/parameters/cfd/force_and_torque.html>`_. However, in the present example, the computational cost is still fairly low so ``output frequency = 1`` is used.
+
 
 Running the simulation
 ----------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_2d`` executable is within your path, the simulation can be launched by typing:
+The simulation is launched in parallel using 10 CPUs, as explained in `2D Transient flow around an Ahmed body <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html>`_ :
 
 .. code-block:: text
 
-  gls_navier_stokes_2d cylinder.prm
+  mpirun -np 10 gls_navier_stokes_2d cylinder.prm
 
-Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
+.. warning::
 
+  The estimated time to simulate 200 seconds is about 2 hours 5 minutes with 10 CPUs.
 
 Results
 -------
 
-Using Paraview the following steady-state velocity and pressure profiles can be visualized:
+The time evolution of the drag and lift coefficients is obtained from a Gnuplot script available in the example folder:
 
-.. image:: images/velocity.png
+.. image:: images/CL-CD.png
+    :alt: CD and CL evolution in time
+    :align: center
+    :name: CD-CL
+
+
+Using the FFT of the CL for the last 100 seconds, we can obtained the frequency :math:`f_v` at which the vortices are shed :
+
+.. image:: images/cylinderFFT.png
+    :alt: Strouhal Number
+    :align: center
+    :name: Strouhal
+
+This corresponds to the frequency at which the peak of amplitude appears in the FFT : :math:`f_v = 0.2`. From this result, we can obtain the Strouhal number, :math:`S_t = 0.2`, using the equation presented above. The python script used to obtained the FFT is available in the example folder.
+
+The obtained values of the drag and lift coefficients as well as the Strouhal number are compared to results of the literature :
+
+.. list-table::
+   :widths: 20 20 20 20
+   :header-rows: 1
+
+   * - Study
+     - :math:`C_D`
+     - :math:`C_L`
+     - :math:`S_t`
+   * - Lethe example
+     - 1.392 :math:`\pm` 0.048
+     - -0.006 :math:`\pm` 0.072
+     - 0.2
+   * - Lethe Sharp [2]
+     - 1.395 :math:`\pm` 0.047
+     - :math:`\pm` 0.071
+     - 0.2
+   * - Braza et al. [3]
+     - 1.400 :math:`\pm` 0.050
+     - :math:`\pm` 0.075
+     - 0.2
+
+
+Using Paraview the following velocity and pressure fields can be visualized in time:
+
+.. image:: images/cylinderVelocity.gif
     :alt: Velocity profile
     :align: center
     :name: velocity
 
-.. image:: images/pressure.png
+.. image:: images/cylinderPressure.gif
     :alt: Pressure profile
     :align: center
     :name: pressure
 
-From the velocity distribution, we notice how the velocity of the fluid is 0 at the boundaries of the cylinder and how it increases gradually if we move further away from it. In the case of the pressure, the difference between the inlet and outlet is visible and we can see how the pressure is near to 0 close to the outlet.
-
-In addition to these profiles, we also obtain the values of the forces acting on the cylinder. These values can be found on the ``forces.00.dat`` file produced by the simulation and correspond to the forces acting on the ``bc 0`` (the cylinder):
-
-.. code-block:: text
-
-  cells     f_x           f_y          f_z
-   1167 6.6047203044  0.0000001031 0.0000000000
-   2247 6.9679298724 -0.0000000103 0.0000000000
-   4302 7.0779158358  0.0000817047 0.0000000000
-   8268 7.1160652038  0.0001911781 0.0000000000
-  15990 7.1227744092 -0.0000746224 0.0000000000
-
-The force in the x direction is the parallel or drag force, while the force in the y direction is the perpendicular or lift force. The drag and lift coefficients can be calculated as follows:
-
-.. math::
-
- C_D = \frac{2 f_x}{\rho U_\infty^2 D},  C_L = \frac{2 f_y}{\rho U_\infty^2 D}
-
-where :math:`U_\infty` is the upstream velocity and :math:`D` is the diameter of the cylinder. Considering the small values of the lift force, we calculate only the drag coefficients:
-
-.. code-block:: text
-
-  cells     C_D
-   1167    13.20
-   2247    13.93
-   4302    14.15
-   8268    14.23
-  15990    14.24
-
-We can see that the simulation is mesh convergent, as the last three values of the force in the x-direction and therefore the drag coefficient differ in less than 1%. An experimental value of the drag coefficient as a function of the Reynolds number is available in the `Drag Coefficient Calculator <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_ , and for a Reynolds number of 1, it corresponds to a value of :math:`C_D = 11.9`. The value calculated by Lethe differs from the theoretical value because of the slip boundary condition at the top and bottom walls, along with the short distance to them from the surface of the cylinder. To obtain a more accurate drag coefficient, the geometry should be enlarged.
-
 Possibilities for extension
 ----------------------------
-- Play with the size of geometry to observe the effect on the calculation of the drag forces.
-- Increase the Reynolds number and perform an unsteady simulation to observe the famous von Kármán vortex street pattern.
-- It would be interesting to try the same example in 3D and observe what happens with the drag and lift forces.
+- Study the vortex shedding of other bluff bodies.
+- Increase the Reynolds number to study a completely turbulent wake and the drag crisis phenomenon.
+- Repeat the same example in 3D for a cylinder/sphere and study the effect on the drag and lift forces.
 
 References
 ----------
 [1] Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146.
+
 [2] Barbeau, L., Étienne, S., Béguin, C., & Blais, B. (2022). Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,
-Computers & Fluids, Volume 239, 105415, https://doi.org/10.1016/j.compfluid.2022.105415.
+Computers & Fluids, Volume 239, 105415, https://doi.org/10.1016/j.compfluid.2022.105415
+
+[3] Braza, M., Chassaing, P. & Ha Minh, H. (1986). Numerical Study and Physical Analysis of the Pressure and Velocity Field in the Near Wake of a Circular Cylinder. Journal of Fluid Mechanics. Volume 165. 79-130, https://doi.org/10.1017/S0022112086003014
