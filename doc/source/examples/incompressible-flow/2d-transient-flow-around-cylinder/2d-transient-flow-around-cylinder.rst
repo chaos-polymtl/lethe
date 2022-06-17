@@ -2,7 +2,7 @@
 2D Transient flow around a cylinder
 ======================================
 
-This example corresponds to a transient flow around a fixed cylinder at high Reynolds number.
+This example corresponds to a transient flow around a fixed cylinder at a high Reynolds number.
 
 Features
 ---------
@@ -27,7 +27,7 @@ We simulate the flow around a fixed cylinder with a constant upstream fluid velo
     :align: center
     :name: geometry_description
 
-The flow field features a stable laminar boundary layer at the cylinder leading edge and a recirculation zone behind it formed by two unstable vortices of opposite signs. These vortices successively detach from the cylinder in a periodic manner (vortex shedding), leading to the genaration of the von Kármán vortex street pattern in the wake. This vortex shedding causes a fluctuating pressure force acting on the cylinder, resulting in oscillations of the drag and lift coefficients in time. The frequency of vortex shedding is related to the Strouhal number:
+The flow field features a stable laminar boundary layer at the cylinder leading edge and a recirculation zone behind it formed by two unstable vortices of opposite signs. These vortices successively detach from the cylinder in a periodic manner (vortex shedding), leading to the generation of the von Kármán vortex street pattern in the wake. This vortex shedding causes a fluctuating pressure force acting on the cylinder, resulting in oscillations of the drag and lift coefficients in time. The frequency of vortex shedding is related to the Strouhal number:
 
 .. math::
  S_t = \frac{D f_v}{U_\infty}
@@ -39,7 +39,7 @@ Parameter file
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~
-This exemple uses a 2nd order backward differentiation (``method = bdf2``) for the time integration scheme. The simulation time is set to 200 seconds with the ``time end`` parameter and a time step of 0.05 second is used (``time step = 0.05``).
+This example uses a 2nd order backward differentiation (``method = bdf2``) for the time integration scheme. The simulation time is set to 200 seconds with the ``time end`` parameter and a time step of 0.05 seconds is used (``time step = 0.05``).
 
 .. code-block:: text
 
@@ -81,7 +81,7 @@ The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imp
 Mesh adaptation control
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to well resolve the wake in order to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and in the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
+While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to well resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
 
 .. code-block:: text
 
@@ -97,7 +97,7 @@ While the discretization in the wake of the cylinder has less impact on the forc
        set fraction coarsening    = 0.01
    end
 
-Here, we are using the pressure as the variable for `kelly error estimator <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh_adaptation_control.html>`_, unlike the previous examples which were using the velocity. Additionally, the ``fraction refinement`` and ``fraction coarsening`` are set to lower values than the previous examples (i.e., respectively 0.02 and 0.01) to enable a gradual growth of the mesh size.
+Here, we are using the pressure as the variable for the `kelly error estimator <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh_adaptation_control.html>`_, unlike the previous examples which were using the velocity. Additionally, the ``fraction refinement`` and ``fraction coarsening`` are set to lower values than the previous examples (i.e., respectively 0.02 and 0.01) to enable a gradual growth of the mesh size.
 
 
 Initial and boundary conditions
@@ -175,7 +175,7 @@ As we set ``calculation frequency`` to 1, the forces on each boundary are comput
 
     C_D = \frac{2 f_x}{\rho U_\infty^2 D} \text{ and } C_L = \frac{2 f_y}{\rho U_\infty^2 D}
 
-  where :math:`\rho = 1`. This way, we can obtained the evolution in time of both coefficients.
+  where :math:`\rho = 1`. This way, we can obtain the evolution in time of both coefficients.
 
 .. warning::
 
@@ -205,16 +205,16 @@ The time evolution of the drag and lift coefficients is obtained from a Gnuplot 
     :name: CD-CL
 
 
-Using the FFT of the CL for the last 100 seconds, we can obtained the frequency :math:`f_v` at which the vortices are shed :
+Using the FFT of the CL for the last 100 seconds, we can obtain the frequency :math:`f_v` at which the vortices are shed :
 
 .. image:: images/cylinderFFT.png
     :alt: Strouhal Number
     :align: center
     :name: Strouhal
 
-This corresponds to the frequency at which the peak of amplitude appears in the FFT : :math:`f_v = 0.2`. From this result, we can obtain the Strouhal number, :math:`S_t = 0.2`, using the equation presented above. The python script used to obtained the FFT is available in the example folder.
+This corresponds to the frequency at which the peak of amplitude appears in the FFT : :math:`f_v = 0.2`. From this result, we can obtain the Strouhal number, :math:`S_t = 0.2`, using the equation presented above. The python script used to obtain the FFT is available in the example folder.
 
-The obtained values of the drag and lift coefficients as well as the Strouhal number are compared to results of the literature :
+The obtained values of the drag and lift coefficients as well as the Strouhal number are compared to some results of the literature :
 
 .. list-table::
    :widths: 20 20 20 20
