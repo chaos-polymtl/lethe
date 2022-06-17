@@ -162,8 +162,10 @@ public:
 /**
  * @brief Class that assembles the marangoni effect for the
  * Navier-Stokes equations. The following equation is assembled
- * ** CORRECT THIS
- * $$\mathbf{F_{CSV}}=\sigma \rho k \nabla \phi
+ *
+ * $$\mathbf{F_{Ma}}= \frac{\partial \sigma}{\partial T} \left[ \nabla T
+ * - \frac{\nabla \phi}{| \nabla \phi |} \left( \frac{ \nabla \phi }
+ * {| \nabla \phi |} \cdot \nabla T \right) | \nabla \phi |  \right]
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
