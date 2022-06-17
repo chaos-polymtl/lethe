@@ -179,7 +179,7 @@ As we set ``calculation frequency`` to 1, the forces on each boundary are comput
 
 .. warning::
 
-  The computational cost of writing this output file at each time step by setting ``output frequency`` to 1 can be significant, as explained in `Force and torque calculation <https://lethe-cfd.github.io/lethe/parameters/cfd/force_and_torque.html>`_. However, in the present example, the computational cost is still fairly low so ``output frequency = 1`` is used.
+  The computational cost of writing this output file at each time step by setting ``output frequency`` to 1 can be significant, as explained in `Force and torque calculation <https://lethe-cfd.github.io/lethe/parameters/cfd/force_and_torque.html>`_. However, in the present example, the computational cost is still fairly low; so ``output frequency = 1`` is used.
 
 
 Running the simulation
