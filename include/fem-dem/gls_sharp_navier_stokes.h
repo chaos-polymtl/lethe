@@ -379,6 +379,13 @@ private:
   virtual void
   read_checkpoint() override;
 
+
+  /*
+   * @brief Read file to load particles.
+   * */
+  void
+  load_particles_from_file();
+
   /**
 * @brief
 Return a bool that describes  if a cell contains a specific point
@@ -444,6 +451,9 @@ Return a bool that describes  if a cell contains a specific point
                  std::string,
                  DataComponentInterpretation::DataComponentInterpretation>>
     get_nonscalar_data_ranges() const;
+
+
+
 
 
     /**

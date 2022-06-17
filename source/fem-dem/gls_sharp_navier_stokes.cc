@@ -74,7 +74,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        this->dof_handler,
                                        support_points);
   cut_cells_map.clear();
-  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -108,6 +108,7 @@ void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
   // initialized the particles
+  if(this->simulation_parameters.particlesParameters->load_particles_from_file==false){
 
   particles.resize(this->simulation_parameters.particlesParameters->nb);
   for (unsigned int i = 0;
@@ -116,6 +117,10 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
     {
       particles[i] =
         this->simulation_parameters.particlesParameters->particles[i];
+    }
+    }
+  else{
+      load_particles_from_file();
     }
 
   table_p.resize(particles.size());
@@ -827,16 +832,16 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   TimerOutput::Scope t(this->computing_timer, "error");
   QGauss<dim>        quadrature_formula(this->number_quadrature_points + 1);
   FEValues<dim>      fe_values(*this->mapping,
-                          *this->fe,
-                          quadrature_formula,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
+                               *this->fe,
+                               quadrature_formula,
+                               update_values | update_gradients |
+                                 update_quadrature_points | update_JxW_values);
   FEFaceValues<dim>  fe_face_values(*this->mapping,
-                                   *this->fe,
-                                   *this->face_quadrature,
-                                   update_values | update_gradients |
-                                     update_quadrature_points |
-                                     update_JxW_values);
+                                    *this->fe,
+                                    *this->face_quadrature,
+                                    update_values | update_gradients |
+                                      update_quadrature_points |
+                                      update_JxW_values);
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -1126,7 +1131,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
   const auto rheological_model =
     this->simulation_parameters.physical_properties_manager.get_rheology();
+  this->pcout<<"update particle"<<std::endl;
   ib_dem.update_particles(particles, time);
+  this->pcout<<"update particledone"<<std::endl;
   std::map<field, double> field_values;
   field_values[field::shear_rate]  = 1;
   field_values[field::temperature] = 1;
@@ -1170,7 +1177,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
+      this->pcout<<"ib_dem "<<std::endl;
       ib_dem.integrate_particles_motion(dt, h_max, h_min, density, viscosity);
+      this->pcout<<"ib_dem done"<<std::endl;
       unsigned int worst_residual_particle_id;
 
       for (unsigned int p = 0; p < particles.size(); ++p)
@@ -1403,6 +1412,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
         }
       particle_residual = 0;
     }
+  this->pcout<<"dem done"<<std::endl;
 }
 
 
@@ -1680,7 +1690,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p(
-  std::vector<types::global_dof_index> &         local_dof_indices,
+  std::vector<types::global_dof_index>          &local_dof_indices,
   std::map<types::global_dof_index, Point<dim>> &support_points,
   unsigned int                                   p)
 {
@@ -1714,8 +1724,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_cut(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index> &                local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>> &       support_points)
+  std::vector<types::global_dof_index>                 &local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>>        &support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -1737,8 +1747,8 @@ template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_inside(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::vector<types::global_dof_index> &                local_dof_indices,
-  std::map<types::global_dof_index, Point<dim>> &       support_points)
+  std::vector<types::global_dof_index>                 &local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>>        &support_points)
 {
   // Check if a cell is cut and if it's rerun the particle by which it's cut and
   // the local DOFs index. The check is done by counting the number of DOFs that
@@ -1801,8 +1811,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);
   FEValues<dim>      fe_values(*this->fe,
-                          q_formula,
-                          update_quadrature_points | update_JxW_values);
+                               q_formula,
+                               update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   int    order = this->simulation_parameters.particlesParameters->order;
@@ -2449,8 +2459,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2543,8 +2553,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2901,6 +2911,118 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   // Finish the time step of the particle.
 }
 
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
+{
+  using numbers::PI;
+  TimerOutput::Scope t(this->computing_timer,
+                       "Reset Sharp-Edge particle information");
+
+  this->pcout<<"start"<<std::endl;
+
+  std::string filename =
+    this->simulation_parameters.particlesParameters->particles_file ;
+
+
+  // Read the data of each particle and put the relevant information in a
+  // vector.
+  std::map<std::string, std::vector<double>> restart_data;
+  fill_vectors_from_file(restart_data, filename);
+  this->pcout<<"load_vector"<<std::endl;
+  particles.resize(restart_data["ID"].size());
+  // Implement the data  in the particles.
+  if (dim == 2)
+    {
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          particles[p_i].initialise_all();
+          particles[p_i].position[0] = restart_data["p_x"][p_i];
+          particles[p_i].position[1] = restart_data["p_y"][p_i];
+          particles[p_i].velocity[0] = restart_data["v_x"][p_i];
+          particles[p_i].velocity[1] = restart_data["v_y"][p_i];
+
+          particles[p_i].radius = restart_data["radius"][p_i];
+          particles[p_i].mass   = PI * particles[p_i].radius *
+                                    particles[p_i].radius *
+                                    restart_data["density"][p_i];
+
+          particles[p_i].omega[2]      = restart_data["omega_z"][p_i];
+              particles[p_i].inertia[0][0] = restart_data["inertia"][p_i];
+              particles[p_i].inertia[1][1] = restart_data["inertia"][p_i];
+              particles[p_i].inertia[2][2] = restart_data["inertia"][p_i];
+
+              particles[p_i].pressure_location[0] =
+                restart_data["pressure_x"][p_i];
+              particles[p_i].pressure_location[1] =
+                restart_data["pressure_y"][p_i];
+              particles[p_i].youngs_modulus =
+                restart_data["youngs_modulus"][p_i];
+              particles[p_i].restitution_coefficient =
+                restart_data["restitution_coefficient"][p_i];
+              particles[p_i].friction_coefficient =
+                restart_data["friction_coefficient"][p_i];
+              particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
+              particles[p_i].rolling_friction_coefficient =
+                restart_data["rolling_friction_coefficient"][p_i];
+              particles[p_i].initialise_last();
+        }
+    }
+  if (dim == 3)
+    {
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          particles[p_i].initialise_all();
+          particles[p_i].position[0] = restart_data["p_x"][p_i];
+          particles[p_i].position[1] = restart_data["p_y"][p_i];
+          particles[p_i].position[2] = restart_data["p_z"][p_i];
+          particles[p_i].velocity[0] = restart_data["v_x"][p_i];
+          particles[p_i].velocity[1] = restart_data["v_y"][p_i];
+          particles[p_i].velocity[2] = restart_data["v_z"][p_i];
+
+          particles[p_i].radius = restart_data["radius"][p_i];
+          particles[p_i].mass   = 4.0 / 3.0 * PI * particles[p_i].radius *
+                                particles[p_i].radius * particles[p_i].radius *
+                                restart_data["density"][p_i];
+
+          particles[p_i].omega[0]      = restart_data["omega_x"][p_i];
+          particles[p_i].omega[1]      = restart_data["omega_y"][p_i];
+          particles[p_i].omega[2]      = restart_data["omega_z"][p_i];
+
+          particles[p_i].inertia[0][0] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[1][1] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[2][2] = restart_data["inertia"][p_i];
+
+          particles[p_i].pressure_location[0] =
+            restart_data["pressure_x"][p_i];
+          particles[p_i].pressure_location[1] =
+            restart_data["pressure_y"][p_i];
+          particles[p_i].pressure_location[2] =
+            restart_data["pressure_z"][p_i];
+
+          particles[p_i].youngs_modulus =
+            restart_data["youngs_modulus"][p_i];
+
+          particles[p_i].restitution_coefficient =
+            restart_data["restitution_coefficient"][p_i];
+
+          particles[p_i].friction_coefficient =
+            restart_data["friction_coefficient"][p_i];
+
+          particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
+
+          this->pcout<<"poisson_ratio" <<particles[p_i].poisson_ratio <<std::endl;
+
+          particles[p_i].rolling_friction_coefficient =
+            restart_data["rolling_friction_coefficient"][p_i];
+
+          particles[p_i].initialise_last();
+        }
+    }
+
+// Finish the time step of the particle.
+}
+
 
 
 template <int dim>
@@ -2979,9 +3101,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
         integrate_particles();
 
 
-
       if (this->simulation_control->is_at_start())
         {
+
           vertices_cell_mapping();
           generate_cut_cells_map();
           ib_dem.update_particles_boundary_contact(this->particles,
@@ -2989,7 +3111,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
                                                    *this->face_quadrature,
                                                    *this->mapping);
           ib_dem.update_contact_candidates();
-
           this->iterate();
         }
       else
