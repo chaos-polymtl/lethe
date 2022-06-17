@@ -1,0 +1,38 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       4096
+   Number of degrees of freedom: 12675
+   Volume of triangulation:      0.0064
+   Number of VOF degrees of freedom: 4225
+   Number of thermal degrees of freedom: 4225
+Enstrophy  : 0
+Kinetic energy : 0
+
+*****************************************************************
+Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0       
+*****************************************************************
+Enstrophy  : 0.543402
+Kinetic energy : 2.06454e-05
+
+*****************************************************************
+Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.00936298
+*****************************************************************
+Enstrophy  : 157.599
+Kinetic energy : 0.00213129
+
+*****************************************************************
+Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.210905
+*****************************************************************
+Enstrophy  : 444.117
+Kinetic energy : 0.0072129
+
+*****************************************************************
+Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 0.347591
+*****************************************************************
+Enstrophy  : 716.982
+Kinetic energy : 0.0131175
+
+*****************************************************************
+Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 0.431758
+*****************************************************************
+Enstrophy  : 958.262
+Kinetic energy : 0.018952

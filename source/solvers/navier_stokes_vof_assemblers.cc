@@ -635,7 +635,8 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
         filtered_phase_fraction_gradient_value.norm();
 
       const Tensor<1, dim> normalized_filtered_phase_fraction_gradient =
-        filtered_phase_fraction_gradient_value / phase_fraction_gradient_norm;
+        filtered_phase_fraction_gradient_value /
+        (phase_fraction_gradient_norm + DBL_MIN);
 
       // Gather temperature gradient
       const Tensor<1, dim> temperature_gradient =
@@ -649,7 +650,6 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
                                   (normalized_filtered_phase_fraction_gradient *
                                    temperature_gradient)) *
         phase_fraction_gradient_norm;
-
 
       strong_residual[q] += tmp_marangoni;
 
