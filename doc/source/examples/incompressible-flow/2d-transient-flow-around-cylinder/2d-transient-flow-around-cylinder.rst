@@ -97,7 +97,7 @@ While the discretization in the wake of the cylinder has less impact on the forc
        set fraction coarsening    = 0.01
    end
 
-Here, we are using the pressure as the variable for the `kelly error estimator <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh_adaptation_control.html>`_, unlike the previous examples which were using the velocity. Additionally, the ``fraction refinement`` and ``fraction coarsening`` are set to lower values than the previous examples (i.e., respectively 0.02 and 0.01) to enable a gradual growth of the mesh size.
+Here, we are using the pressure as the variable for the `Kelly error estimator <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh_adaptation_control.html>`_, unlike the previous examples which were using the velocity. Indeed, we have observed that the refinement has less tendency to follow the vortices as they move through the wake with the pressure as the refinement indicator than if we select the velocity. Additionally, the ``fraction refinement`` and ``fraction coarsening`` are set to lower values than the previous examples (i.e., respectively 0.02 and 0.01) to enable a gradual growth of the mesh size.
 
 
 Initial and boundary conditions
@@ -197,11 +197,13 @@ The simulation is launched in parallel using 10 CPUs, as explained in `2D Transi
 Results
 -------
 
-The time evolution of the drag and lift coefficients is obtained from a Gnuplot script available in the example folder by launching:
+The time evolution of the drag and lift coefficients is obtained from a Gnuplot script available in the example folder by launching in the same directory the following command:
 
 .. code-block:: text
 
-  gnuplot postprocess.gnu
+  gnuplot -c "./postprocess.gnu" "./Re200"
+
+where ``./postprocess.gnu`` is the path to the provided script and ``./Re200`` is the path to the directory that contains the simulation results (specified in the ``simulation control`` subsection). The figure, named ``CL-CD.png``, is outputted in the directory ``./Re200``.
 
 .. note::
 
@@ -219,11 +221,13 @@ Using the fast Fourier transform (FFT) of the CL for the last 100 seconds, we ca
     :align: center
     :name: Strouhal
 
-This corresponds to the frequency at which the peak of amplitude appears in the FFT : :math:`f_v = 0.2`. From this result, we can obtain the Strouhal number, :math:`S_t = 0.2`, using the equation presented above. The python script used to obtain the FFT is available in the example folder and is launched using the following command :
+This corresponds to the frequency at which the peak of amplitude appears in the FFT : :math:`f_v = 0.2`. From this result, we can obtain the Strouhal number, :math:`S_t = 0.2`, using the equation presented above. The python script used to obtain the FFT is available in the example folder and is launched in the same directory using the following command:
 
 .. code-block:: text
 
-  python postprocess.py
+  python ./postprocess.py ./Re200
+
+where ``./postprocess.py`` is the path to the provided script  and ``./Re200`` is the path to the directory that contains the simulation results (specified in the ``simulation control`` subsection). The figure, named ``cylinderFFT.png``, is outputted in the directory ``./Re200``.
 
 The obtained values of the drag and lift coefficients as well as the Strouhal number are compared to some results of the literature :
 

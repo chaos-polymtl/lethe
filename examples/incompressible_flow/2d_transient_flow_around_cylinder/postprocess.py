@@ -1,8 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import fft, fftfreq
+import sys
 
-f = open('./Re200Ref/force.00.dat', 'r')
+currentPath = sys.argv[1]
+
+filename = currentPath + '/force.00.dat'
+
+f = open(filename, 'r')
 
 lines = f.readlines()[2001:]
 
@@ -41,4 +46,5 @@ plt.ylabel('FFT Amplitude [-]')
 plt.grid(which='major')
 plt.grid(which='minor', ls=':')
 plt.axis([0.01,10,0.00001,1])
-plt.savefig('cylinderFFT.png')
+plt.savefig(sys.argv[1] + '/cylinderFFT.png')
+plt.show()
