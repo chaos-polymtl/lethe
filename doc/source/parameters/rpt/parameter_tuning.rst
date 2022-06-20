@@ -1,0 +1,43 @@
+Parameter tuning
+-------------------
+.. role:: raw-html(raw)
+    :format: html
+
+This subsection contains information regarding the tuning parameters with NOMAD. Enable tuning parameters requires the ``verbosity parameter`` in the subsection ``rpt parameters`` to be disabled by setting it as ``quiet`` otherwise it will interact with `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ since it needs the cost function value only. So far there are 3 types of cost functions implemented, one from the `Larachi <https://www.sciencedirect.com/science/article/abs/pii/0168900294913439?via%3Dihub>`_, the L1 function, and the L2 function. To tune parameters, the cost function compares the calculated counts with the Monte Carlo technique and the measured counts that are provided in the ``.experimental`` file.
+
+.. code-block:: text
+
+    # --------------------------------------------------
+    # Tuning with NOMAD
+    #---------------------------------------------------
+    subsection parameter tuning
+        set tuning                           = true
+        set cost function type               = larachi
+        set experimental data file           = real_counts.experimental
+    end
+
+
+
+- ``tuning``: Enable to tune parameters with NOMAD by showing the cost function in terminal
+    Options: ``true`` or ``false`` (by default)
+- ``cost function type``: Type of cost function to evaluate
+    Options: ``larachi`` (by default), ``l1`` or ``l2``
+
+    - Larachi cost function :
+        .. math::
+
+            f=\sum_{i=n}^{N}\left(\frac{C_i - M_i}{C_i + M_i}\right)^2
+
+    - L1 cost function :
+        .. math::
+
+            f=\frac{1}{N}\sum_{i=n}^{N}\left|C_i - M_i\right|
+
+    - L2 cost function :
+        .. math::
+
+            f=\frac{1}{N}\sum_{i=n}^{N}\left(C_i - M_i\right)^2
+
+- ``experimental data file``: Filename of the text file with experimental/artificial counts
+    Options: Any text file with ``.experimental`` extension with the
+    **required header**: *experimental_counts*
