@@ -167,7 +167,7 @@ private:
       {
         force_on_ib();
         integrate_particles();
-        generate_cut_cells_map();
+        optimized_generate_cut_cells_map();
       }
     // this->simulation_control->set_assembly_method(this->time_stepping_method);
     {
@@ -296,6 +296,15 @@ private:
    */
   void
   refine_ib();
+
+  /**
+   * @brief
+   *This function create a map (cut_cells_map) that indicates if a cell is cut,
+   *and the particle id of the particle that cut it.
+   */
+  void
+  optimized_generate_cut_cells_map();
+
 
   /**
    * @brief
