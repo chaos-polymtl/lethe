@@ -135,8 +135,6 @@ Transfinite Surface {41:44,50:57};
 Recombine Surface{41:44,50:57};
 
 
-//Plane Surface(2) = {2};
-//Plane Surface(3) = {3};
 Physical Surface(1) = {41:44,50:57};
 Physical Line(0)={40,41,42,43};
 Physical Line(1)={60,10,63};
