@@ -117,7 +117,7 @@ public:
  * @brief Class that assembles the Surface Tension Force (STF) for the
  * Navier-Stokes equations. The following equation is assembled
  *
- * $$\mathbf{F_{CSV}}=\sigma \rho k \nabla \phi
+ * $$\mathbf{F_{CSV}}=\sigma k \nabla \phi \frac{2 \rho}{\rho_1 + \rho_2}
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -165,7 +165,8 @@ public:
  *
  * $$\mathbf{F_{Ma}}= \frac{\partial \sigma}{\partial T} \left[ \nabla T
  * - \frac{\nabla \phi}{| \nabla \phi |} \left( \frac{ \nabla \phi }
- * {| \nabla \phi |} \cdot \nabla T \right) | \nabla \phi |  \right]
+ * {| \nabla \phi |} \cdot \nabla T \right) \right] | \nabla \phi |
+ * \frac{2 \rho}{\rho_1 + \rho_2}
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

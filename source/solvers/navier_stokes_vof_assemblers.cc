@@ -615,6 +615,15 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   const double surface_tension_gradient =
     STF_properties.surface_tension_gradient;
 
+  // Densities of phases
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+
+  const double phase_0_density = scratch_data.density_0[0];
+  const double phase_1_density = scratch_data.density_1[0];
+
   // Loop and quadrature informations
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -627,6 +636,9 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Gather density
+      double density_eq = scratch_data.density[q];
+
       // Gather filtered phase fraction gradient
       const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
         scratch_data.filtered_phase_fraction_gradient_values[q];
@@ -644,21 +656,22 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 
       const double JxW_value = JxW[q];
 
-      const Tensor<1, dim> tmp_marangoni =
+      const Tensor<1, dim> marangoni_effect =
         -1.0 * surface_tension_gradient *
         (temperature_gradient - normalized_filtered_phase_fraction_gradient *
                                   (normalized_filtered_phase_fraction_gradient *
                                    temperature_gradient)) *
-        phase_fraction_gradient_norm;
+        phase_fraction_gradient_norm *
+        (density_eq / (phase_0_density + phase_1_density));
 
-      strong_residual[q] += tmp_marangoni;
+      strong_residual[q] += marangoni_effect;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           double     local_rhs_i = 0;
 
-          local_rhs_i -= tmp_marangoni * phi_u_i;
+          local_rhs_i -= marangoni_effect * phi_u_i;
           local_rhs(i) += local_rhs_i * JxW_value;
         }
     }

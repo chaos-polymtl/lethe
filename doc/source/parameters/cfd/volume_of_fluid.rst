@@ -60,10 +60,10 @@ The default values of the VOF parameters are given in the text box below.
 			set phase fraction gradient filter = 0.5
 			set curvature filter 		= 0.5	
             
-            subsection marangoni effect
-                set enable = false
-                set surface tension gradient = 0.0
-            end subsection		
+			subsection marangoni effect
+			     set enable = false
+			     set surface tension gradient = 0.0
+			end		
 		end
 
 	end
@@ -207,7 +207,7 @@ The default values of the VOF parameters are given in the text box below.
 	   ... final sharpening
 
 
-* ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. ``subsection marangoni effect`` in the ``subsection surface tension force`` enables the calculation of marangoni effect (thermocapillary effect) in simulations where the surface tension gradient (:math:`\frac{\partial \sigma}{\partial \T}`) is not equal to zero.
+* ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. ``subsection marangoni effect`` in the ``subsection surface tension force`` enables the calculation of marangoni effect (thermocapillary effect) in simulations where the ``surface tension gradient`` (:math:`\frac{\partial \sigma}{\partial T}`) is not equal to zero.
 
   * ``enable``: controls if ``surface tension force`` is considered.
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
