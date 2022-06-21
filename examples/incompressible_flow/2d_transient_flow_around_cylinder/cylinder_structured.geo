@@ -117,12 +117,6 @@ Line Loop (55) = {-31,5,64,-21};
 Line Loop (56) = {-20,21,22,-23};
 Line Loop (57) = {-35,23,66,-6};
 
-// Creates a physical entity 1 (i.e. for a BC)
-//Physical Point(1) = {1,2} ;
-//Physical Line(0)={5,6,7,8};
-//Physical Line(1)={1};
-//Physical Line(2)={2,4};
-//Physical Line(3)={3};
 
 
 Plane Surface(41) = {41};
