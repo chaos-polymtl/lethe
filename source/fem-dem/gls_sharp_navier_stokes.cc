@@ -64,7 +64,7 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
+GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 {
   // check all the cells if they are cut or not. Put the information in a map
   // with the key being the cell.
@@ -159,7 +159,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
+GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 {
   TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
   MappingQ1<dim> mapping;
@@ -181,15 +181,15 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
     }
 
 
-  this->pcout <<"hi"<<std::endl;
+  //this->pcout <<"hi"<<std::endl;
   // Loop over particles
-  for (unsigned int p = 0; p < particles.size(); ++p)
+  for (int p = particles.size()-1; p >= 0; --p)
     {
       // Loop over the cells on level 0 of the mesh
       for (const auto &cell : cell_iterator)
         {
           auto is_candidate = generate_cut_cells_candidate(cell, p);
-          this->pcout <<"hi2 "<<std::endl;
+          //this->pcout <<"hi2 "<<std::endl;
           if (is_candidate.first)
             {
               all_cells_candidates.insert(cell);
@@ -218,7 +218,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                       if (cell->is_active())
                         {
                           cells_inside_map[cell]    = {true, p};
-                          this->pcout <<"hi3 "<<std::endl;
+                        //  this->pcout <<"hi3 "<<std::endl;
                         }
                       else
                         {
@@ -238,7 +238,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                       if (cell->is_active())
                         {
                           cut_cells_map[cell]    = {true, p};
-                          this->pcout <<"hi4"<<std::endl;
+                         // this->pcout <<"hi4"<<std::endl;
                         }
                       else
                         {
@@ -266,9 +266,22 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int                                    p_id)
 {
-  this->pcout <<"hello  "<<std::endl;
+  //this->pcout <<"hello  "<<std::endl;
   bool cell_is_inside = false;
   bool cell_is_cut    = false;
+
+  /*FESystem<dim - 1, dim> local_face_fe(
+    FE_Q<dim - 1, dim>(
+      this->simulation_parameters.fem_parameters.velocity_order),
+    dim,
+    FE_Q<dim - 1, dim>(
+      this->simulation_parameters.fem_parameters.pressure_order),
+    1);
+  DoFHandler<dim - 1, dim>    local_face_dof_handler;
+  Triangulation<dim - 1, dim> local_face_projection_triangulation;
+
+  std::vector<Point<dim>>        vertices_of_face_projection( GeometryInfo<dim - 1>::vertices_per_cell);
+  std::vector<CellData<dim - 1>> local_face_cell_data(1);*/
 
   double radius   = particles[p_id].radius;
   auto   position = particles[p_id].position;
@@ -278,7 +291,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
 
   // Check how many vertices are inside the particle
   unsigned int nb_vertices_inside = 0;
-  this->pcout <<"hello 1 "<<std::endl;
+  //this->pcout <<"hello 1 "<<std::endl;
   for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
     {
       if ((cell->vertex(i) - position).norm() <= radius)
@@ -303,7 +316,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
         }
       return std::pair(cell_is_inside, cell_is_cut);
     }
-  this->pcout <<"hello 3 "<<std::endl;
+ // this->pcout <<"hello 3 "<<std::endl;
 
   // If the particles is inside the cell and it is not known whether all
   // vertices are inside the particles or not, set all true by default
@@ -313,17 +326,17 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
       cell_is_cut    = true;
       return std::pair(cell_is_inside, cell_is_cut);
     }
-  this->pcout <<"hello 4 "<<std::endl;
+  //this->pcout <<"hello 4 "<<std::endl;
 
   // Initialize superpoint of manifold
   std::vector<Point<dim>> manifold_points(
     GeometryInfo<dim - 1>::vertices_per_cell);
-  this->pcout <<"hello 5 "<<std::endl;
+  //this->pcout <<"hello 5 "<<std::endl;
   for (const auto face : cell->face_indices())
     {
       auto  face_iter           = cell->face(face);
       auto &local_face_manifold = face_iter->get_manifold();
-      this->pcout <<"hello 6 "<<std::endl;
+      //this->pcout <<"hello 6 "<<std::endl;
       for (unsigned int i = 0; i < GeometryInfo<dim - 1>::vertices_per_cell;
            ++i)
         {
@@ -331,46 +344,81 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
         }
       auto surrounding_points_face =
         make_array_view(manifold_points.begin(), manifold_points.end());
-      this->pcout <<"hello 7 "<<std::endl;
+      //this->pcout <<"hello 7 "<<std::endl;
       for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i)
         {
           Point<dim> projected_point =
             local_face_manifold.project_to_manifold(surrounding_points_face,
                                                     position);
-          this->pcout <<"hello 8 "<<std::endl;
 
-          bool       projected_point_inside_face = true;
-          Point<dim> unit_cell_projected_point;
-          try
-            {
-              unit_cell_projected_point =
-                this->mapping->transform_real_to_unit_cell(face_iter,projected_point);
-            }
-          catch (...)
-            {
-              projected_point_inside_face = false;
-            }
-          this->pcout <<"hello 9 "<<std::endl;
 
-          for (unsigned int d = 0; d != dim; d++)
+         /* for (unsigned int j = 0; j < GeometryInfo<dim>::vertices_per_face;
+               ++j)
             {
-              if (unit_cell_projected_point[d] < 0 ||
-                  unit_cell_projected_point[d] > 1)
+              // Define the vertices of the surface cell.
+              Tensor<1, dim, double> vertex_projection = face_iter->vertex(i);
+              // Create the list of vertices
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  vertices_of_face_projection[j][k] = vertex_projection[k];
+                }
+              // Create the connectivity of the vertices of the cell
+              local_face_cell_data[0].vertices[j] = j;
+            }
+
+          local_face_cell_data[0].material_id = 0;
+          //this->pcout << "hello 7.1 " << std::endl;
+          local_face_projection_triangulation = Triangulation<dim - 1, dim>();
+          // Create a dof handler that contains the triangulation of
+          // the projection of the face on the IB. This create the
+          // surface cell on the IB
+          local_face_projection_triangulation.create_triangulation(
+            vertices_of_face_projection, local_face_cell_data, SubCellData());
+          local_face_dof_handler.reinit(local_face_projection_triangulation);
+          local_face_dof_handler.distribute_dofs(local_face_fe);*/
+          //this->pcout << "hello 7.2 " << std::endl;
+
+          /*for (const auto &projection_cell_face :
+               local_face_dof_handler.active_cell_iterators())
+            {*/
+              //this->pcout << "hello 8 " << std::endl;
+
+              bool       projected_point_inside_face = true;
+              Point<dim> unit_cell_projected_point;
+              Tensor<1,dim> projected_point_tensor(projected_point);
+
+              try
+                {
+                  //unit_cell_projected_point=this->mapping->transform_real_to_unit_cell(face_iter,projected_point);
+                  projected_point_inside_face=cell->point_inside(projected_point);
+                }
+              catch (...)
                 {
                   projected_point_inside_face = false;
                 }
-            }
-          this->pcout <<"hello 10 "<<std::endl;
 
-          if ((position - projected_point).norm() <= radius &&
-              projected_point_inside_face == true)
-            {
-              cell_is_inside = true;
-              cell_is_cut    = true;
-              return std::pair(cell_is_inside, cell_is_cut);
+             // this->pcout << "hello 9 " << std::endl;
+
+              for (unsigned int d = 0; d != dim; d++)
+                {
+                  if (unit_cell_projected_point[d] < 0 ||
+                      unit_cell_projected_point[d] > 1)
+                    {
+                      projected_point_inside_face = false;
+                    }
+                }
+              //this->pcout << "hello 10 " << std::endl;
+
+              if ((position - projected_point).norm() <= radius &&
+                  projected_point_inside_face == true)
+                {
+                  cell_is_inside = true;
+                  cell_is_cut    = true;
+                  return std::pair(cell_is_inside, cell_is_cut);
+                }
+              //this->pcout << "hello 10 " << std::endl;
             }
-          this->pcout <<"hello 10 "<<std::endl;
-        }
+        //}
     }
   return std::pair(cell_is_inside, cell_is_cut);
 }
