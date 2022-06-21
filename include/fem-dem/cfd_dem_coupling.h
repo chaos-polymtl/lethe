@@ -319,6 +319,7 @@ private:
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
   PVDHandler      particles_pvdhandler;
+  TableHandler    particle_velocity_table;
 
   DEMSolverParameters<dim>      dem_parameters;
   double                        dem_time_step;
