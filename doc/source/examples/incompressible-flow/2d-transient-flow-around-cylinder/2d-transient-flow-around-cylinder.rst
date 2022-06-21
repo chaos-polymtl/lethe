@@ -2,7 +2,7 @@
 2D Transient flow around a cylinder
 ======================================
 
-This example corresponds to a transient flow around a fixed cylinder at a high Reynolds number.
+This example corresponds to a transient flow around a fixed cylinder at a Reynolds number of 200.
 
 Features
 ---------
