@@ -81,7 +81,7 @@ The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imp
 Mesh adaptation control
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to well resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
+While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to accurately resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
 
 .. code-block:: text
 
