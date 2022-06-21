@@ -161,55 +161,196 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 {
-  // check all the cells if they are cut or not. Put the information in a map
-  // with the key being the cell.
-  TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
-  std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(*this->mapping,
-                                       this->dof_handler,
-                                       support_points);
-  cut_cells_map.clear();
-  cells_inside_map.clear();
-  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
-  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  MappingQ1<dim> mapping;
+  const auto &   cell_iterator = this->dof_handler.cell_iterators_on_level(0);
+  unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
 
-  // // Loop on all the cells and check if they are cut.
-  for (const auto &cell : cell_iterator)
+  std::set<typename DoFHandler<dim>::cell_iterator> boundary_cells_candidates;
+  std::set<typename DoFHandler<dim>::cell_iterator>
+                                                    last_boundary_cells_candidates;
+  std::set<typename DoFHandler<dim>::cell_iterator> cells_at_boundary;
+  // Loop over particles
+  for (unsigned int p = 0; p < particles.size(); ++p)
     {
-      if (cell->is_locally_owned() || cell->is_ghost())
+      // Loop over the cells on level 0 of the mesh
+      for (const auto &cell : cell_iterator)
         {
-          bool         cell_is_cut;
-          bool         cell_is_inside;
-          unsigned int p_id_cut    = 0;
-          unsigned int p_id_inside = 0;
-          
-          cell->get_dof_indices(local_dof_indices);
-
-          // Check if a cell is cut and if it's rerun the particle by which it's
-          // cut and
-
-          for (unsigned int p = 0; p < particles.size(); ++p)
+          if (cell->at_boundary())
             {
-              // the local DOFs index. The check is done by counting the number
-              // of DOFs that is on either side of the boundary define by a
-              // particle.
-
-              unsigned int nb_dof_inside = 0;
-
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+              for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell;
+                   ++i)
                 {
-                  // Count the number of DOFs that are inside
-                  // of the particles. If all the DOfs are on one side
-                  // the cell is not cut by the boundary.
-                  if ((support_points[local_dof_indices[j]] -
-                       particles[p].position)
-                        .norm() <= particles[p].radius)
-                    ;
+                  if ((cell->vertex(i) - center).norm() <= radius ||
+                      cell->point_inside(center))
+                    {
+                      boundary_cells_candidates.insert(cell);
+                      break;
+                    }
                 }
             }
         }
+      // Loop over the boundary cells on level 0 to check their children.
+      last_boundary_cells_candidates = boundary_cells_candidates;
+      if (boundary_cells_candidates.size() != 0)
+        {
+          bool all_cell_are_active = false;
+          while (!all_cell_are_active)
+            {
+              // Only stop when all the candidate cell are active
+              all_cell_are_active = true;
+              boundary_cells_candidates.clear();
+              // loop over the last set of candidates.
+              for (auto cell : last_boundary_cells_candidates)
+                {
+                  if (cell->at_boundary())
+                    {
+                      for (unsigned int i = 0;
+                           i < GeometryInfo<dim>::vertices_per_cell;
+                           ++i)
+                        {
+                          // Check if the cell is in the sphere.
+                          if ((cell->vertex(i) - center).norm() <= radius ||
+                              cell->point_inside(center))
+                            {
+                              if (cell->is_active())
+                                {
+                                  cells_at_boundary.insert(cell);
+                                }
+                              else
+                                {
+                                  // If we are here, the cell has children.
+                                  all_cell_are_active = false;
+                                  for (unsigned int j = 0; j < max_childs; ++j)
+                                    {
+                                      // Store the children of the cell for
+                                      // further checks.
+                                      boundary_cells_candidates.insert(
+                                        cell->child(j));
+                                    }
+                                }
+                              break;
+                            }
+                        }
+                    }
+                }
+              last_boundary_cells_candidates.clear();
+              last_boundary_cells_candidates = boundary_cells_candidates;
+            }
+        }
+      std::vector<typename DoFHandler<dim>::active_cell_iterator>
+        cells_at_boundary_v(cells_at_boundary.begin(), cells_at_boundary.end());
+      // Output all the active cells in the sphere radius that are at a
+      // boundary.
+      return cells_at_boundary_v;
     }
+}
+
+template <int dim>
+std::pair<bool, bool>
+GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  const unsigned int                                    p_id)
+{
+  bool cell_is_inside = false;
+  bool cell_is_cut    = false;
+
+  double radius   = particles[p_id].radius;
+  auto   position = particles[p_id].position;
+
+  bool point_inside_cell = cell->point_inside(position);
+
+
+  // Check how many vertices are inside the particle
+  unsigned int nb_vertices_inside = 0;
+
+  for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
+    {
+      if ((cell->vertex(i) - position).norm() <= radius)
+        ++nb_vertices_inside;
+    }
+
+  // If vertices are found inside the particle
+  if (nb_vertices_inside > 0)
+    {
+      // If the number of vertices inside the cell is equal to the number of vertices per cell, the cell is inside the particle 
+      if (nb_vertices_inside == GeometryInfo<dim>::vertices_per_cell)
+        {
+          cell_is_inside = true;
+          cell_is_cut    = false;
+        }
+      // Otherwise, the cell is cut
+      else
+        {
+          cell_is_inside = false;
+          cell_is_cut    = true;
+        }
+      return std::pair(cell_is_inside, cell_is_cut);
+    }
+
+
+  // If the particles is inside the cell and it is not known whether all vertices are inside the particles or not, set all true by default
+  if (point_inside_cell)
+  {
+    cell_is_inside = true;
+    cell_is_cut    = true;
+    return std::pair(cell_is_inside, cell_is_cut);
+  }
+
+
+    // Start vector of points
+    std::vector<Point<dim>> manifold_points(
+    GeometryInfo<dim - 1>::vertices_per_cell);
+
+
+    for (const auto face : cell->face_indices())
+        {
+          auto face_iter = cell->face(face);
+          last_normal.clear();
+          auto &local_face_manifold = face_iter->get_manifold();
+
+          for (unsigned int i = 0; i < GeometryInfo<dim - 1>::vertices_per_cell;
+               ++i)
+            {
+              manifold_points[i] = face_iter->vertex(i);
+            }
+          auto surrounding_points_face =
+            make_array_view(manifold_points.begin(), manifold_points.end());
+
+          for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face;
+               ++i)
+            {
+              Point<dim> projected_point =
+                local_face_manifold.project_to_manifold(surrounding_points_face,
+                                                        position);
+
+              bool projected_point_inside_face = true;
+              
+              try
+              {
+                Point<dim> unit_cell_projected_point = face_iter->real_to_unit_cell_affine_approximation(projected_point);
+              }
+              catch(...)
+              {
+                projected_point_inside_face = false;
+              }
+              
+              for (unsigned int d = 0, d != dim, d++)
+              {
+                if (unit_cell_projected_point[d] < 0 || unit_cell_projected_point[d] > 1)
+                {
+                  projected_point_inside_face = false;
+                }
+              }
+
+              if ((position - projected_point).norm() <= radius && projected_point_inside_face == true)
+              {
+                    cell_is_inside = true;
+                    cell_is_cut    = true;
+                    return std::pair(cell_is_inside, cell_is_cut);
+              }
+            }
+        }
+  return std::pair(cell_cut, cell_inside);
 }
 
 template <int dim>

@@ -306,6 +306,11 @@ private:
   optimized_generate_cut_cells_map();
 
 
+  std::pair<bool, bool>
+  generate_cut_cells_candidate(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                    p_id);
+
   /**
    * @brief
    *This function create a map (cut_cells_map) that indicates if a cell is cut,
