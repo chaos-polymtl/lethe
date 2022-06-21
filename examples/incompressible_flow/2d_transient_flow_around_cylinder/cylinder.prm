@@ -12,7 +12,6 @@ subsection simulation control
   set output path             = ./Re200/
   set time end                = 200.0
   set time step		            = 0.05
-  set subdivision             = 1
 end
 
 #---------------------------------------------------
@@ -40,7 +39,7 @@ subsection forces
     set force name            = force
     set output precision      = 10
     set calculation frequency = 1
-    set output frequency      = 1
+    set output frequency      = 10
 end
 
 #---------------------------------------------------

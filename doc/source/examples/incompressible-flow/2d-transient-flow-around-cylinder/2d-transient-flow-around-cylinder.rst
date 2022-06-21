@@ -2,7 +2,7 @@
 2D Transient flow around a cylinder
 ======================================
 
-This example corresponds to a transient flow around a fixed cylinder at a Reynolds number of 200.
+This example corresponds to a transient flow around a fixed cylinder at a high Reynolds number.
 
 Features
 ---------
@@ -50,7 +50,6 @@ This example uses a 2nd order backward differentiation (``method = bdf2``) for t
         set output path           = ./Re200/
         set time end              = 200.0
         set time step		          = 0.05
-        set subdivision           = 1
     end
 
 FEM interpolation
@@ -81,7 +80,7 @@ The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imp
 Mesh adaptation control
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to accurately resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
+While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to well resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
 
 .. code-block:: text
 
@@ -162,7 +161,7 @@ Since we want to study the time evolution of the drag and lift coefficients, the
       set force name            = force
       set output precision      = 10
       set calculation frequency = 1
-      set output frequency      = 1
+      set output frequency      = 10
    end
 
 As we set ``calculation frequency`` to 1, the forces on each boundary are computed at each time step and written in the file specified by the field ``force name``.
@@ -192,7 +191,7 @@ The simulation is launched in parallel using 10 CPUs, as explained in `2D Transi
 
 .. warning::
 
-  The estimated time to simulate 200 seconds is about 2 hours and 5 minutes on 10 CPUs.
+  The estimated time to simulate 200 seconds is about 3 hours 45 minutes with 10 CPUs.
 
 Results
 -------
@@ -270,6 +269,7 @@ Possibilities for extension
 - Study the vortex shedding of other bluff bodies.
 - Increase the Reynolds number to study a completely turbulent wake and the drag crisis phenomenon.
 - Repeat the same example in 3D for a cylinder/sphere and study the effect on the drag and lift forces.
+- Investigate the impact of the time-step and the time-stepping scheme (e.g., sdirk 3 or bdf 3)
 
 References
 ----------
