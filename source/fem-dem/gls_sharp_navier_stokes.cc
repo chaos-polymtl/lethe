@@ -64,7 +64,7 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
+GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 {
   // check all the cells if they are cut or not. Put the information in a map
   // with the key being the cell.
@@ -159,7 +159,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
+GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 {
   TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
   MappingQ1<dim> mapping;
