@@ -161,6 +161,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 {
+  TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
   MappingQ1<dim> mapping;
   const auto    &cell_iterator = this->dof_handler.cell_iterators_on_level(0);
   unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
@@ -180,6 +181,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
     }
 
 
+  this->pcout <<"hi"<<std::endl;
   // Loop over particles
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
@@ -187,6 +189,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
       for (const auto &cell : cell_iterator)
         {
           auto is_candidate = generate_cut_cells_candidate(cell, p);
+          this->pcout <<"hi2 "<<std::endl;
           if (is_candidate.first)
             {
               all_cells_candidates.insert(cell);
@@ -214,7 +217,8 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                     {
                       if (cell->is_active())
                         {
-                          cells_inside_map[cell]    = {false, 0};
+                          cells_inside_map[cell]    = {true, p};
+                          this->pcout <<"hi3 "<<std::endl;
                         }
                       else
                         {
@@ -233,7 +237,8 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                     {
                       if (cell->is_active())
                         {
-                          cut_cells_map[cell]    = {false, 0};
+                          cut_cells_map[cell]    = {true, p};
+                          this->pcout <<"hi4"<<std::endl;
                         }
                       else
                         {
@@ -261,6 +266,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int                                    p_id)
 {
+  this->pcout <<"hello  "<<std::endl;
   bool cell_is_inside = false;
   bool cell_is_cut    = false;
 
@@ -272,7 +278,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
 
   // Check how many vertices are inside the particle
   unsigned int nb_vertices_inside = 0;
-
+  this->pcout <<"hello 1 "<<std::endl;
   for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
     {
       if ((cell->vertex(i) - position).norm() <= radius)
@@ -297,7 +303,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
         }
       return std::pair(cell_is_inside, cell_is_cut);
     }
-
+  this->pcout <<"hello 3 "<<std::endl;
 
   // If the particles is inside the cell and it is not known whether all
   // vertices are inside the particles or not, set all true by default
@@ -307,17 +313,17 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
       cell_is_cut    = true;
       return std::pair(cell_is_inside, cell_is_cut);
     }
-
+  this->pcout <<"hello 4 "<<std::endl;
 
   // Initialize superpoint of manifold
   std::vector<Point<dim>> manifold_points(
     GeometryInfo<dim - 1>::vertices_per_cell);
-
+  this->pcout <<"hello 5 "<<std::endl;
   for (const auto face : cell->face_indices())
     {
       auto  face_iter           = cell->face(face);
       auto &local_face_manifold = face_iter->get_manifold();
-
+      this->pcout <<"hello 6 "<<std::endl;
       for (unsigned int i = 0; i < GeometryInfo<dim - 1>::vertices_per_cell;
            ++i)
         {
@@ -325,12 +331,13 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
         }
       auto surrounding_points_face =
         make_array_view(manifold_points.begin(), manifold_points.end());
-
+      this->pcout <<"hello 7 "<<std::endl;
       for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i)
         {
           Point<dim> projected_point =
             local_face_manifold.project_to_manifold(surrounding_points_face,
                                                     position);
+          this->pcout <<"hello 8 "<<std::endl;
 
           bool       projected_point_inside_face = true;
           Point<dim> unit_cell_projected_point;
@@ -343,6 +350,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
             {
               projected_point_inside_face = false;
             }
+          this->pcout <<"hello 9 "<<std::endl;
 
           for (unsigned int d = 0; d != dim; d++)
             {
@@ -352,6 +360,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
                   projected_point_inside_face = false;
                 }
             }
+          this->pcout <<"hello 10 "<<std::endl;
 
           if ((position - projected_point).norm() <= radius &&
               projected_point_inside_face == true)
@@ -360,6 +369,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
               cell_is_cut    = true;
               return std::pair(cell_is_inside, cell_is_cut);
             }
+          this->pcout <<"hello 10 "<<std::endl;
         }
     }
   return std::pair(cell_is_inside, cell_is_cut);
