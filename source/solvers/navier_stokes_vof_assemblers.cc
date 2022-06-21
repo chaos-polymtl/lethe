@@ -657,7 +657,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> marangoni_effect =
-        -1.0 * surface_tension_gradient *
+        -2.0 * surface_tension_gradient *
         (temperature_gradient - normalized_filtered_phase_fraction_gradient *
                                   (normalized_filtered_phase_fraction_gradient *
                                    temperature_gradient)) *
