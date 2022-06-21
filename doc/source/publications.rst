@@ -25,4 +25,8 @@ Preprints
 
 This section regroups preprints of journal articles already submitted, but which are still under review.
 
+* `T. E. Geitani, S. Golshan and B. Blais, "A High Order Stabilized Solver for the Volume Averaged Navier-Stokes Equations", June 2022 <https://doi.org/10.48550/arXiv.2206.02842>`_.
+
+* `L. Prieto Saavedra, C. E. N. Radburn, A. Collard-Daigneault and B. Blais, "An implicit large-eddy simulation perspective on the flow over periodic hills", June 2022 <https://doi.org/10.48550/arXiv.2206.08145>`_.
+
 

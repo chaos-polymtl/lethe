@@ -1,6 +1,6 @@
 #include <dem/read_mesh.h>
 
-template <int dim, int spacedim = dim>
+template <int dim, int spacedim>
 void
 read_mesh(const Parameters::Mesh &      mesh_params,
           const bool &                  restart,
