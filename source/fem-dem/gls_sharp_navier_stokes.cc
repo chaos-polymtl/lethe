@@ -297,10 +297,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
   }
 
 
-    // Start vector of points
+    // Initialize superpoint of manifold
     std::vector<Point<dim>> manifold_points(
     GeometryInfo<dim - 1>::vertices_per_cell);
-
 
     for (const auto face : cell->face_indices())
         {
