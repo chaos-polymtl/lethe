@@ -111,9 +111,9 @@ Volume of Fluid (VOF)
 In Lethe, the surface tension force (:math:`{\bf{F_{\sigma}}}`) is calculated using the following equation [1, 2]:
 
     .. math::
-        {\bf{F_{\sigma}}} = 2 \sigma k {\bf{\psi}}
+        {\bf{F_{\sigma}}} = 2 \frac{\rho}{\rho_0 + \rho_1} \sigma k {\bf{\psi}}
 
-where :math:`\sigma`, :math:`k` and :math:`\bf{\psi}` denote surface tension coefficient, filtered curvature and filtered phase fraction gradient.
+where :math:`\sigma`, :math:`k` and :math:`\bf{\psi}` denote respectively the surface tension coefficient, the filtered curvature and the filtered phase fraction gradient. :math:`\rho`, :math:`\rho_1`, and :math:`\rho_2` are the density of the flow, the density of phase 0, and the density of phase 1, respectively.
 
 The following equations calculate the filtered phase fraction gradient and filtered curvature, respectively.
 
