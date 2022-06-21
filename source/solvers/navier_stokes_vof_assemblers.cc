@@ -544,7 +544,16 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Surface tension coefficient
-  const double surface_tension_coef = STF_properties.surface_tension_coef;
+  const double surface_tension_coef = STF_parameters.surface_tension_coef;
+
+  // Densities of phases
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+
+  const double phase_0_density = scratch_data.density_0[0];
+  const double phase_1_density = scratch_data.density_1[0];
 
   // Loop and quadrature informations
   const auto &       JxW        = scratch_data.JxW;
@@ -558,14 +567,19 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Gather density
+      double density_eq = scratch_data.density[q];
+
       // Gather pfg and curvature values
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
         scratch_data.filtered_phase_fraction_gradient_values[q];
-      const double         JxW_value = JxW[q];
-      const Tensor<1, dim> tmp_STF   = -2.0 * surface_tension_coef *
-                                     curvature_value *
-                                     filtered_phase_fraction_gradient_value;
+      const double JxW_value = JxW[q];
+
+      const Tensor<1, dim> tmp_STF =
+        -2.0 * surface_tension_coef * curvature_value *
+        filtered_phase_fraction_gradient_value *
+        (density_eq / (phase_0_density + phase_1_density));
 
       strong_residual[q] += tmp_STF;
 
