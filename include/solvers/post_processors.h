@@ -248,5 +248,41 @@ public:
   }
 };
 
+/**
+ * @brief ScalarFunctionPostprocessor Post-processor class used to calculate
+ * the scalar field for a given function within the domain.
+ */
+template <int dim>
+class ScalarFunctionPostprocessor : public DataPostprocessorScalar<dim>
+{
+public:
+  ScalarFunctionPostprocessor(
+    const std::shared_ptr<Function<dim>> scalar_function)
+    : DataPostprocessorScalar<dim>("scalar", update_quadrature_points)
+  {
+    this->scalar_function = scalar_function;
+  }
+
+  virtual void
+  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &input_data,
+                        std::vector<Vector<double>> &computed_quantities) const
+  {
+    const unsigned int n_quadrature_points =
+      input_data.evaluation_points.size();
+
+    for (unsigned int q = 0; q < n_quadrature_points; ++q)
+      {
+        AssertDimension(computed_quantities[q].size(), 1);
+
+        const Point<dim> evaluation_point = input_data.evaluation_points[q];
+        computed_quantities[q] = scalar_function->value(evaluation_point);
+      }
+  }
+
+private:
+  std::shared_ptr<Function<dim>> scalar_function;
+};
+
+
 
 #endif

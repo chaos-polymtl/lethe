@@ -1751,6 +1751,24 @@ namespace Parameters
     if (dim == 3)
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
+
+    prm.enter_subsection("orientation");
+    particles[index].f_orientation =
+      std::make_shared<Functions::ParsedFunction<dim>>(3);
+    particles[index].f_orientation->declare_parameters(prm, dim);
+    prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+
+    prm.enter_subsection("center of mass offset");
+    particles[index].f_center_of_mass_offset =
+      std::make_shared<Functions::ParsedFunction<dim>>(dim);
+    particles[index].f_center_of_mass_offset->declare_parameters(prm, dim);
+    if (dim == 2)
+      prm.set("Function expression", "0; 0");
+    if (dim == 3)
+      prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+
     prm.enter_subsection("velocity");
     particles[index].f_velocity =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
@@ -1760,6 +1778,7 @@ namespace Parameters
     if (dim == 3)
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
+
     prm.enter_subsection("omega");
     particles[index].f_omega =
       std::make_shared<Functions::ParsedFunction<dim>>(3);
@@ -1768,21 +1787,48 @@ namespace Parameters
     prm.leave_subsection();
 
     prm.declare_entry(
+      "type",
+      "sphere",
+      Patterns::Selection(
+        "sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star"),
+      "The type of solid considered."
+      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star>."
+      "Parameters for a sphere are, in order: radius,"
+      " [none], [none]. "
+      "Parameters for a rectangle are, in order: x half length,"
+      "y half length, z half length."
+      "Parameters for an ellipsoid are, in order: x radius,"
+      "y radius, z radius. "
+      "Parameters for a torus are, in order: torus radius,"
+      "torus thickness radius, [none]. "
+      "Parameters for a cone are, in order: sin(angle),"
+      "cos(angle), height. "
+      "Parameters for a cut hollow sphere are, in order: sphere radius,"
+      "cut thickness, wall thickness. "
+      "Parameters for a death star are, in order: sphere radius,"
+      "smaller sphere radius, distance between centers.");
+    prm.enter_subsection("solid arguments");
+    particles[index].f_solid_arguments =
+      std::make_shared<Functions::ParsedFunction<3>>(3);
+    particles[index].f_solid_arguments->declare_parameters(prm, 3);
+    prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+
+    prm.declare_entry(
       "pressure x",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in x ");
+      "position relative to the center of the particle  for the location of the point where the pressure is imposed inside the particle  in x ");
     prm.declare_entry(
       "pressure y",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in y ");
+      "position relative to the center of the particle  for the location of the point where the pressure is imposed inside the particle  in y ");
     prm.declare_entry(
       "pressure z",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in z ");
-    prm.declare_entry("radius", "0.2", Patterns::Double(), "Particles radius ");
+      "position relative to the center of the particle  for the location of the point where the pressure is imposed inside the particle  in z ");
     prm.declare_entry("density",
                       "1",
                       Patterns::Double(),
@@ -2026,10 +2072,38 @@ namespace Parameters
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
 
+          const std::string solid_type = prm.get("type");
+          prm.enter_subsection("solid arguments");
+          particles[i].f_solid_arguments->parse_parameters(prm);
+          particles[i].f_solid_arguments->set_time(0);
+          // The solid argument function requires an evaluation point, but it
+          // doesn't make sense. The function interface is only used for
+          // parsing.
+          Point<3> dummy({0., 0., 0.});
+          particles[i].solid_arguments[0] =
+            particles[i].f_solid_arguments->value(dummy, 0);
+          particles[i].solid_arguments[1] =
+            particles[i].f_solid_arguments->value(dummy, 1);
+          particles[i].solid_arguments[2] =
+            particles[i].f_solid_arguments->value(dummy, 2);
+          particles[i].initialize_shape(solid_type,
+                                        particles[i].solid_arguments);
+          prm.leave_subsection();
+
           prm.enter_subsection("position");
           particles[i].f_position->parse_parameters(prm);
           particles[i].f_position->set_time(0);
           prm.leave_subsection();
+          prm.enter_subsection("orientation");
+          particles[i].f_orientation->parse_parameters(prm);
+          particles[i].f_orientation->set_time(0);
+          prm.leave_subsection();
+
+          prm.enter_subsection("center of mass offset");
+          particles[i].f_center_of_mass_offset->parse_parameters(prm);
+          particles[i].f_center_of_mass_offset->set_time(0);
+          prm.leave_subsection();
+
           prm.enter_subsection("velocity");
           particles[i].f_velocity->parse_parameters(prm);
           particles[i].f_velocity->set_time(0);
@@ -2042,6 +2116,18 @@ namespace Parameters
             particles[i].f_position->value(particles[i].position, 0);
           particles[i].position[1] =
             particles[i].f_position->value(particles[i].position, 1);
+          particles[i].center_of_mass_offset[0] =
+            particles[i].f_center_of_mass_offset->value(particles[i].position,
+                                                        0);
+          particles[i].center_of_mass_offset[1] =
+            particles[i].f_center_of_mass_offset->value(particles[i].position,
+                                                        1);
+          particles[i].orientation[0] =
+            particles[i].f_orientation->value(particles[i].position, 0);
+          particles[i].orientation[1] =
+            particles[i].f_orientation->value(particles[i].position, 1);
+          particles[i].orientation[2] =
+            particles[i].f_orientation->value(particles[i].position, 2);
           particles[i].velocity[0] =
             particles[i].f_velocity->value(particles[i].position, 0);
           particles[i].velocity[1] =
@@ -2053,11 +2139,11 @@ namespace Parameters
           particles[i].omega[2] =
             particles[i].f_omega->value(particles[i].position, 2);
 
-          particles[i].particle_id          = i;
-          particles[i].radius               = prm.get_double("radius");
-          particles[i].inertia[0][0]        = prm.get_double("inertia");
-          particles[i].inertia[1][1]        = prm.get_double("inertia");
-          particles[i].inertia[2][2]        = prm.get_double("inertia");
+          particles[i].particle_id   = i;
+          particles[i].radius        = particles[i].shape->effective_radius;
+          particles[i].inertia[0][0] = prm.get_double("inertia");
+          particles[i].inertia[1][1] = prm.get_double("inertia");
+          particles[i].inertia[2][2] = prm.get_double("inertia");
           particles[i].pressure_location[0] = prm.get_double("pressure x");
           particles[i].pressure_location[1] = prm.get_double("pressure y");
           particles[i].youngs_modulus       = prm.get_double("youngs modulus");
@@ -2073,6 +2159,9 @@ namespace Parameters
             {
               particles[i].position[2] =
                 particles[i].f_position->value(particles[i].position, 2);
+              particles[i].center_of_mass_offset[2] =
+                particles[i].f_center_of_mass_offset->value(
+                  particles[i].position, 2);
               particles[i].velocity[2] =
                 particles[i].f_velocity->value(particles[i].position, 2);
               particles[i].pressure_location[2] = prm.get_double("pressure z");
@@ -2080,6 +2169,12 @@ namespace Parameters
                                   particles[i].radius * particles[i].radius *
                                   prm.get_double("density");
             }
+
+          particles[i].set_position(particles[i].position);
+          particles[i].set_center_of_rotation_offset(
+            particles[i].center_of_mass_offset);
+          particles[i].set_orientation(particles[i].orientation);
+
           if (dim == 2)
             {
               particles[i].mass = PI * particles[i].radius *

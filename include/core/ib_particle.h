@@ -16,8 +16,14 @@
  * Author: Lucka Barbeau, Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
+#include <core/shape.h>
+
+#include <deal.II/base/auto_derivative_function.h>
+#include <deal.II/base/function_signed_distance.h>
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/point.h>
+
+#include <deal.II/physics/transformations.h>
 
 #include <vector>
 
@@ -89,12 +95,93 @@ public:
   unsigned int
   get_number_properties();
 
+  /**
+   * @brief
+   * Return the evaluation of the signed distance function of this solid at the
+   * given point p
+   * Most levelset functions come from Inigo Quilez:
+   * iquilezles.org/articles/distfunctions
+   */
+  double
+  get_levelset(const Point<dim> &p);
+
+  /**
+   * @brief
+   * Return the point on the surface of the solid which has the minimal distance
+   * from the given point p
+   */
+  void
+  closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
+
+  /**
+   * @brief
+   * Return true if the given point is inside the crown whose limits are defined
+   * by inner and outer radius factors. An effective radius is used for
+   * non spherical shapes.
+   */
+  bool
+  is_inside_crown(const Point<dim> &evaluation_pt,
+                  const double      outer_radius,
+                  const double      inside_radius);
+
+  /**
+   * @brief
+   * Sets up a default shape
+   */
+  void
+  initialize_shape();
+
+  /**
+   * @brief
+   * Sets up a shape in accordance with the given type and arguments
+   */
+  void
+  initialize_shape(const std::string type, Tensor<1, 3> solid_arguments);
+
+  /**
+   * @brief
+   * Sets the position of the particle and dependant members to the argument
+   */
+  void
+  set_position(const Point<dim> position);
+
+  /**
+   * @brief
+   * Increments one component of the position and updates the relevant members
+   */
+  void
+  move(const double position_update, const unsigned int component = 0);
+
+  /**
+   * @brief
+   * Sets the orientation of the particle and dependant members to the argument
+   */
+  void
+  set_orientation(const Tensor<1, 3> orientation);
+
+  /**
+   * @brief
+   * Sets the center of rotation offset of the particle and dependant members to
+   * the argument
+   */
+  void
+  set_center_of_rotation_offset(const Point<dim> cor_offset);
+
+
   // This class defines values related to a particle used in the sharp interface
   // IB. Each particle defined will have these value used in the solver.
 
   // The unique identification number of the particle.
   unsigned int particle_id;
-  // The particle radius.
+
+  // The geometrical information regarding the particle
+  std::shared_ptr<Shape<dim>> shape;
+  // The function from which the solid arguments are parsed
+  std::shared_ptr<Functions::ParsedFunction<3>> f_solid_arguments;
+  // The arguments defining the shape. Their meaning depend of the shape type.
+  Tensor<1, 3> solid_arguments;
+
+  // The particle effective radius. It is the actual radius for spheres.
   double radius;
   // The particle Young's modulus. Used in case of contact.
   double youngs_modulus;
@@ -114,6 +201,11 @@ public:
   Point<dim> position;
   // The vector of particle positions at the end of the last n time steps.
   std::vector<Point<dim>> previous_positions;
+  // The center of mass offset of the solid.
+  Point<dim> center_of_mass_offset;
+  // The vector of solid center of mass offset at the end of the last n time
+  // steps.
+  std::vector<Point<dim>> previous_center_of_mass_offset;
   // The fluid force applied on the particle.
   Tensor<1, 3> fluid_forces;
   // The fluid force applied on the particle at the end of the last time step.
@@ -170,10 +262,17 @@ public:
   // If the dynamic is not resolved, this function determines the position at
   // every time step.
   std::shared_ptr<Functions::ParsedFunction<dim>> f_position;
+  // The function from which the particle center of mass offset is
+  // determined.
+  std::shared_ptr<Functions::ParsedFunction<dim>> f_center_of_mass_offset;
   // The function from which the particle initial angular velocity is
   // determined. If the dynamic is not resolved, this function determines the
   // angular velocity at every time step.
   std::shared_ptr<Functions::ParsedFunction<dim>> f_omega;
+  // The function from which the initial particle angular position is
+  // determined. If the dynamic is not resolved, this function determines the
+  // angular position at every time step.
+  std::shared_ptr<Functions::ParsedFunction<dim>> f_orientation;
 
   // Allow the definition of a local relaxation parameter for each particle in
   // the integration process.

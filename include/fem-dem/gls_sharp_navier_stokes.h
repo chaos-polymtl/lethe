@@ -22,6 +22,7 @@
 
 #include <core/ib_particle.h>
 #include <core/ib_stencil.h>
+#include <core/shape.h>
 
 #include <solvers/gls_navier_stokes.h>
 
@@ -404,8 +405,6 @@ Return a bool that describes  if a cell contains a specific point
                         ->particle_nonlinear_tolerance;
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
   }
-
-
 
   /**
    * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.

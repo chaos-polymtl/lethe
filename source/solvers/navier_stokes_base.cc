@@ -1424,7 +1424,8 @@ NavierStokesBase<dim, VectorType, DofsType>::output_field_hook(
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
-  const VectorType &solution)
+  const VectorType &                   solution,
+  const std::shared_ptr<Function<dim>> additional_scalar)
 {
   TimerOutput::Scope t(this->computing_timer, "output");
 
@@ -1539,6 +1540,16 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   QCriterionPostprocessor<dim> qcriterion;
   data_out.add_data_vector(solution, qcriterion);
 
+  if (additional_scalar != nullptr)
+    {
+      this->additional_scalar = additional_scalar;
+    }
+  ScalarFunctionPostprocessor<dim> scalar_function(this->additional_scalar);
+  if (this->additional_scalar != nullptr)
+    {
+      data_out.add_data_vector(solution, scalar_function);
+    }
+
   SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
                             simulation_parameters.velocity_sources.omega_y,
                             simulation_parameters.velocity_sources.omega_z);
@@ -1557,7 +1568,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       data_out.add_data_vector(solution, non_newtonian_viscosity);
       data_out.add_data_vector(solution, shear_rate_processor);
     }
-
 
   output_field_hook(data_out);
 

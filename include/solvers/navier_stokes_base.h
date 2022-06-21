@@ -370,7 +370,9 @@ protected:
    * Post-processing as parallel VTU files
    */
   void
-  write_output_results(const VectorType &solution);
+  write_output_results(
+    const VectorType &             solution,
+    std::shared_ptr<Function<dim>> additional_scalar = nullptr);
 
   /**
    * @brief write_output_forces
@@ -406,6 +408,9 @@ protected:
 
   SimulationParameters<dim> simulation_parameters;
   PVDHandler                pvdhandler;
+
+  // A scalar function that doesn't require solving, just evaluation
+  std::shared_ptr<Function<dim>> additional_scalar;
 
   // Functions used for source term and error analysis
   Function<dim> *exact_solution;

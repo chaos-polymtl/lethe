@@ -114,7 +114,10 @@ subsection particles
 	    set pressure x =0.00001
 	    set pressure y =0.00001
 	    set pressure z =0.00001
-	    set radius = 0.75
+	    set type       = sphere
+        subsection solid arguments
+            set Function expression = 0.75;0;0
+        end
 	    set density = 0.0011
     end
     subsection particle info 1 
@@ -130,7 +133,10 @@ subsection particles
 	    set pressure x =0.00001
 	    set pressure y =0.00001
 	    set pressure z =0.00001
-	    set radius = 0.75
+	    set type       = sphere
+        subsection solid arguments
+            set Function expression = 0.75;0;0
+        end
 	    set density = 0.0009
     end
 
