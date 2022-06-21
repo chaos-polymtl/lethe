@@ -530,7 +530,7 @@ calculate_apparent_viscosity<3, TrilinosWrappers::MPI::BlockVector>(
   PhysicalPropertiesManager &               properties_manager);
 
 template <int dim, typename VectorType>
-std::vector<Tensor<1, dim>>
+std::vector<std::vector<Tensor<1, dim>>>
 calculate_forces(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
@@ -574,6 +574,8 @@ calculate_forces(
   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
       unsigned int boundary_id = boundary_conditions.id[i_bc];
+      viscous_force = 0;
+      pressure_force = 0;
       force                    = 0;
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
@@ -640,10 +642,11 @@ calculate_forces(
         Utilities::MPI::sum(pressure_force, mpi_communicator);
       force_vector[i_bc] = Utilities::MPI::sum(force, mpi_communicator);
     }
-  return force_vector;
+  std::vector<std::vector<Tensor<1, dim>>> forces {viscous_force_vector, pressure_force_vector, force_vector};
+  return forces;
 }
 
-template std::vector<Tensor<1, 2>>
+template std::vector<std::vector<Tensor<1, 2>>>
 calculate_forces<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
@@ -651,7 +654,7 @@ calculate_forces<2, TrilinosWrappers::MPI::Vector>(
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
-template std::vector<Tensor<1, 3>>
+template std::vector<std::vector<Tensor<1, 3>>>
 calculate_forces<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
@@ -660,7 +663,7 @@ calculate_forces<3, TrilinosWrappers::MPI::Vector>(
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);
 
-template std::vector<Tensor<1, 2>>
+template std::vector<std::vector<Tensor<1, 2>>>
 calculate_forces<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
@@ -669,7 +672,7 @@ calculate_forces<2, TrilinosWrappers::MPI::BlockVector>(
   const Quadrature<1> &                              face_quadrature_formula,
   const Mapping<2> &                                 mapping);
 
-template std::vector<Tensor<1, 3>>
+template std::vector<std::vector<Tensor<1, 3>>>
 calculate_forces<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,

@@ -178,7 +178,7 @@ calculate_apparent_viscosity(const DoFHandler<dim> &    dof_handler,
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
-std::vector<Tensor<1, dim>>
+std::vector<std::vector<Tensor<1, dim>>>
 calculate_forces(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
