@@ -574,8 +574,8 @@ calculate_forces(
   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
       unsigned int boundary_id = boundary_conditions.id[i_bc];
-      viscous_force = 0;
-      pressure_force = 0;
+      viscous_force            = 0;
+      pressure_force           = 0;
       force                    = 0;
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
@@ -642,7 +642,9 @@ calculate_forces(
         Utilities::MPI::sum(pressure_force, mpi_communicator);
       force_vector[i_bc] = Utilities::MPI::sum(force, mpi_communicator);
     }
-  std::vector<std::vector<Tensor<1, dim>>> forces {viscous_force_vector, pressure_force_vector, force_vector};
+  std::vector<std::vector<Tensor<1, dim>>> forces{viscous_force_vector,
+                                                  pressure_force_vector,
+                                                  force_vector};
   return forces;
 }
 
