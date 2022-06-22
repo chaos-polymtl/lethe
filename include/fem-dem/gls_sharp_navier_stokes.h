@@ -381,7 +381,10 @@ private:
 
 
   /*
-   * @brief Read file to load particles.
+   * @brief Read file to load particles. The file must contain the following information for each particles and the header of the file must be defined as such:
+   * ID p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z radius density inertia
+   * pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient
+   * friction_coefficient poisson_ratio rolling_friction_coefficient
    * */
   void
   load_particles_from_file();
