@@ -19,7 +19,10 @@
 #include <core/shape.h>
 
 #include <deal.II/base/auto_derivative_function.h>
-#include <deal.II/base/function_signed_distance.h>
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+#else
+#  include <deal.II/base/function_signed_distance.h>
+#endif
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/point.h>
 
