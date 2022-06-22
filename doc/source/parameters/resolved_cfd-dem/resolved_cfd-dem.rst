@@ -23,11 +23,11 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set alpha                                   = 1
 		set contact search radius factor            = 3
 		set contact search frequency				= 1
-		
+
 		subsection gravity
 			set Function expression =0;0;0
 		end
-		
+
 		set wall friction coefficient               = 0
 		set wall poisson ratio                      = 0.3
 		set wall restitution coefficient            = 1
@@ -36,7 +36,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set enable lubrication force		    = true
 		set lubrication range max		    = 2
 		set lubrication range min		    = 0.1
-		
+
 		subsection particle info 0
 			set density    = 1
 			subsection position
@@ -60,7 +60,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		    	set youngs modulus               = 100000000
 		end
 	end
-	
+
 * The ``number of particles`` is the number of particles simulated by the sharp-edge IB.
 
 * The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of interpolation of the underlying FEM scheme (e.g. for Q2Q2 elements use ``stencil order=2``). We suggest using the same order as the velocity field in most cases since it improves the condition number of the matrix.
@@ -73,9 +73,9 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 .. tip::
 	A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme.
 
-* The ``assemble Navier-Stokes inside particles`` parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier-Stokes equations are not solved (the parameter is false), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure. 
+* The ``assemble Navier-Stokes inside particles`` parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier-Stokes equations are not solved (the parameter is false), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure.
 
-* The ``calculate force`` parameter controls if the force is evaluated on each particle. 
+* The ``calculate force`` parameter controls if the force is evaluated on each particle.
 
 * The ``ib force output file`` parameter is the file name where the variables associated with each particle are stored. One file will be created for each particle in the simulation.
 
@@ -85,7 +85,7 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 
 * The ``refine mesh inside radius factor`` parameter defines the inside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6 (see example below).
 
-* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3 (see example below). 
+* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3 (see example below).
 
 .. warning::
 	When you want to use the hypershell refinement zone around particles, the mesh adaptation type used must be ``kelly``, otherwise no hypershell refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
@@ -100,7 +100,7 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 	:align: center
 
 
-* The ``initial refinement`` parameter controls the number of refinement cycles in the hypershell refinement zone around every particle before the simulation starts. 
+* The ``initial refinement`` parameter controls the number of refinement cycles in the hypershell refinement zone around every particle before the simulation starts.
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles remain static.  If ``ìntegrate motion=true`` the position and the velocity will be defined by the particles' position and velocity function.
 
@@ -139,12 +139,12 @@ The following properties are used if the particle impact one of the boundaries o
 * The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.
 
 .. note::
-	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
+	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.
 
 * The ``lubrication range min`` parameter defines the minimal distance used in the lubrication force calculation. The range is defined as a multiple of the smallest cell. This limits the force that can be applied on a particle since the lubrification force has a singularity when the distance between 2 particles is 0. We use this parameter to define a lower bound on the distance between 2 particles for the force calculation to avoid this singularity. Physically, this distance can be interpreted as the surface roughness of the particles.
 
 .. note::
-    The lubrication force between two particles is expressed by the equation :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`. Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter of the first particle, :math:`d_{p_j}` the diameter of the second particle, :math:`y` the gap between the two particles, :math:`\mathbf{v_{ij}}` the relative velocity of the two particles, :math:`\mathbf{e_{ij}}` the unit vector along the line that joint the centroide of the two particles. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity `[1] <https://doi.org/10.1002/aic.690400418>`_. 
+    The lubrication force between two particles is expressed by the equation :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`. Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter of the first particle, :math:`d_{p_j}` the diameter of the second particle, :math:`y` the gap between the two particles, :math:`\mathbf{v_{ij}}` the relative velocity of the two particles, :math:`\mathbf{e_{ij}}` the unit vector along the line that joint the centroide of the two particles. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity `[1] <https://doi.org/10.1002/aic.690400418>`_.
     This model requires a constant viscosity and density of the fluid.
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
@@ -153,7 +153,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 
 
-* The subsection ``position`` defines the initial value of the particle position if the parameter ``integrate motion=true``. Otherwise, it defines the particle's position at all points in time. This position is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of coordinate X, Y, and Z. 
+* The subsection ``position`` defines the initial value of the particle position if the parameter ``integrate motion=true``. Otherwise, it defines the particle's position at all points in time. This position is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of coordinate X, Y, and Z.
 
 * The subsection ``velocity`` defines the initial value of the particle velocity if the parameter ``integrate motion=true``. Otherwise, it defines the particle's velocity at all points in time. This velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z direction.
 
@@ -182,14 +182,13 @@ The following properties are used if the particle impact one of the boundaries o
 
 Mesh refinement
 ---------------------
-The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The one that occurs first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection. 
+The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The one that occurs first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection.
 The second refinement occuring is inside the **box refinement zone**, set by the ``initial refinement`` in the ``box refinement`` subsection. Lastly, the **particle hypershell zone** is refined, defined by the ``initial refinement`` parameter in the ``particles`` subsection.
 Therefore, the hypershell zone around each particle is refined ``mesh``:``initial refinement`` + ``box``:``initial refinement`` + ``particle``:``initial refinement`` times before the simulations starts.
 
 .. note::
-	If the ``max refinement level`` parameter in the ``adaptation control`` subsection is smaller than the summation of all initial refinement parameters, no cell can be refined more than ``max refinement level``. Note that it does not mean that the refinement stops, meaning that there can be other cells that are refined to the ``max refinement level``, but no cell can be refined more than this. 
+	If the ``max refinement level`` parameter in the ``adaptation control`` subsection is smaller than the summation of all initial refinement parameters, no cell can be refined more than ``max refinement level``. Note that it does not mean that the refinement stops, meaning that there can be other cells that are refined to the ``max refinement level``, but no cell can be refined more than this.
 
 Reference
 ---------------
 [1] Kim, Sangtae, and Seppo J. Karrila. Microhydrodynamics: principles and selected applications. Courier Corporation, 2013. `DOI <https://doi.org/10.1002/aic.690400418>`_.
-
