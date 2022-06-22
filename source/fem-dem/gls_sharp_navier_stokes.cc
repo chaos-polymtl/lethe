@@ -1689,91 +1689,80 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
             this->simulation_parameters.simulation_control.log_precision);
         }
 
-
-
+      // Output forces and intergrated motion
       table_p[p].add_value("f_x", particles[p].fluid_forces[0]);
       table_p[p].set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
-      if (this->simulation_parameters.forces_parameters
-            .decomposed_viscous_pressure_contributions == true)
-        {
-          table_p[p].add_value("f_xv", particles[p].fluid_viscous_forces[0]);
-          table_p[p].add_value("f_xp", particles[p].fluid_pressure_forces[0]);
-          table_p[p].set_precision(
-            "f_xv",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_p[p].set_precision(
-            "f_xp",
-            this->simulation_parameters.simulation_control.log_precision);
-        }
+
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_x", particles[p].velocity[0]);
           table_p[p].add_value("p_x", particles[p].position[0]);
+          table_p[p].set_precision(
+            "v_x",
+            this->simulation_parameters.simulation_control.log_precision);
+
+          table_p[p].set_precision(
+            "p_x",
+            this->simulation_parameters.simulation_control.log_precision);
         }
+
       table_p[p].add_value("f_y", particles[p].fluid_forces[1]);
       table_p[p].set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
-      if (this->simulation_parameters.forces_parameters
-            .decomposed_viscous_pressure_contributions == true)
-        {
-          table_p[p].add_value("f_yv", particles[p].fluid_viscous_forces[1]);
-          table_p[p].add_value("f_yp", particles[p].fluid_pressure_forces[1]);
-          table_p[p].set_precision(
-            "f_yv",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_p[p].set_precision(
-            "f_yp",
-            this->simulation_parameters.simulation_control.log_precision);
-        }
 
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_y", particles[p].velocity[1]);
           table_p[p].add_value("p_y", particles[p].position[1]);
-        }
-
-
-      if (this->simulation_parameters.particlesParameters->integrate_motion)
-        {
-          table_p[p].set_precision(
-            "v_x",
-            this->simulation_parameters.simulation_control.log_precision);
           table_p[p].set_precision(
             "v_y",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_p[p].set_precision(
-            "p_x",
             this->simulation_parameters.simulation_control.log_precision);
           table_p[p].set_precision(
             "p_y",
             this->simulation_parameters.simulation_control.log_precision);
         }
+
       if (dim == 3)
         {
           table_p[p].add_value("f_z", particles[p].fluid_forces[2]);
           table_p[p].set_precision(
             "f_z",
             this->simulation_parameters.simulation_control.log_precision);
-          if (this->simulation_parameters.forces_parameters
-                .decomposed_viscous_pressure_contributions == true)
-            {
-              table_p[p].add_value("f_zv",
-                                   particles[p].fluid_viscous_forces[2]);
-              table_p[p].add_value("f_zp",
-                                   particles[p].fluid_pressure_forces[2]);
-              table_p[p].set_precision(
-                "f_zv",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_p[p].set_precision(
-                "f_zp",
-                this->simulation_parameters.simulation_control.log_precision);
-            }
           if (this->simulation_parameters.particlesParameters->integrate_motion)
             {
               table_p[p].add_value("v_z", particles[p].velocity[2]);
               table_p[p].add_value("p_z", particles[p].position[2]);
             }
+        }
+
+      table_p[p].add_value("f_xv", particles[p].fluid_viscous_forces[0]);
+      table_p[p].add_value("f_yv", particles[p].fluid_viscous_forces[1]);
+
+      table_p[p].set_precision(
+        "f_xv", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
+        "f_yv", this->simulation_parameters.simulation_control.log_precision);
+      if (dim == 3)
+        {
+          table_p[p].add_value("f_zv", particles[p].fluid_viscous_forces[2]);
+          table_p[p].set_precision(
+            "f_zv",
+            this->simulation_parameters.simulation_control.log_precision);
+        }
+
+      table_p[p].add_value("f_xp", particles[p].fluid_pressure_forces[0]);
+      table_p[p].add_value("f_yp", particles[p].fluid_pressure_forces[1]);
+      table_p[p].set_precision(
+        "f_xp", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
+        "f_yp", this->simulation_parameters.simulation_control.log_precision);
+      if (dim == 3)
+        {
+          table_p[p].add_value("f_zp", particles[p].fluid_pressure_forces[2]);
+          table_p[p].set_precision(
+            "f_zp",
+            this->simulation_parameters.simulation_control.log_precision);
         }
     }
   if (this->this_mpi_process == 0)
