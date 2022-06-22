@@ -138,7 +138,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.
 
-* The ``load particles from a file`` boolean defines whether the particles are generated from a file instead of the parameter function. If this parameter is activated, the particles defined in the particle's subsection and the number of particles are ignored. The number of particles is defined directly from the file.
+* The ``load particles from file`` boolean defines whether the particles are generated from an external file instead of the prm file. If this parameter is activated, the number of particles is defined directly from the file, that is, the particle's subsection and the number of particles are ignored. 
 
 * The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): ID p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z radius density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient
 
