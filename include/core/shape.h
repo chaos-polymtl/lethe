@@ -181,9 +181,13 @@ public:
   double
   value(const Point<dim> &p, const unsigned int component = 0) const override
   {
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+    return p.distance(this->position) - this->effective_radius;
+#else
     Functions::SignedDistance::Sphere<dim> sphere_function(
       this->position, this->effective_radius);
     return sphere_function.value(p);
+#endif
   }
 
   std::shared_ptr<Shape<dim>>
@@ -200,9 +204,15 @@ public:
   Tensor<1, dim>
   gradient(const Point<dim> &p, const unsigned int component = 0) const override
   {
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+    const Tensor<1, dim> center_to_point = p - this->position;
+    const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
+    return grad;
+#else
     Functions::SignedDistance::Sphere<dim> sphere_function(
       this->position, this->effective_radius);
     return sphere_function.gradient(p);
+#endif
   }
 
   double
