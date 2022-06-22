@@ -621,10 +621,10 @@ calculate_forces(
                                   fluid_stress =
                                     -fluid_viscous_stress - fluid_pressure;
 
-                                  viscous_force += fluid_viscous_stress *
+                                  viscous_force -= fluid_viscous_stress *
                                                    normal_vector *
                                                    fe_face_values.JxW(q);
-                                  pressure_force += fluid_pressure *
+                                  pressure_force -= fluid_pressure *
                                                     normal_vector *
                                                     fe_face_values.JxW(q);
                                   force += fluid_stress * normal_vector *
