@@ -75,10 +75,13 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        support_points);
   cut_cells_map.clear();
   cells_inside_map.clear();
-  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
+  auto &             v_x_fe                  = this->fe->get_sub_fe(0, 1);
+  const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
     {
@@ -92,22 +95,10 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           // is not cut the default value is stored (0). If the cell is not cut
           // this value will never be used.
 
-          // Check if a cell is cut and if it's rerun the particle by which it's
-          // cut and the local DOFs index. The check is done by counting the
-          // number of DOFs that is on either side of the boundary define by a
-          // particle.
-
           cell->get_dof_indices(local_dof_indices);
-
-          // Check if a cell is cut and if it's rerun the particle by which it's
-          // cut and
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-              // the local DOFs index. The check is done by counting the number
-              // of DOFs that is on either side of the boundary define by a
-              // particle.
-
               unsigned int nb_dof_inside = 0;
 
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
@@ -115,10 +106,13 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   // Count the number of DOFs that are inside
                   // of the particles. If all the DOfs are on one side
                   // the cell is not cut by the boundary.
-                  if ((support_points[local_dof_indices[j]] -
-                       particles[p].position)
-                        .norm() <= particles[p].radius)
-                    ++nb_dof_inside;
+                  if (0 == this->fe->system_to_component_index(j).first)
+                    {
+                      if ((support_points[local_dof_indices[j]] -
+                           particles[p].position)
+                            .norm() <= particles[p].radius)
+                        ++nb_dof_inside;
+                    }
                 }
 
               // If some of the DOFs are inside the boundary, some are outside,
@@ -126,28 +120,29 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
               if (nb_dof_inside != 0)
                 {
-                  if (nb_dof_inside == local_dof_indices.size())
+                  if (nb_dof_inside == dofs_per_cell_local_v_x)
                     {
-                      std::tie(cell_is_cut, p_id_cut) =
-                        std::make_tuple(false, 0);
-                      std::tie(cell_is_inside, p_id_inside) =
-                        std::make_tuple(true, p);
+                      cell_is_cut    = false;
+                      p_id_cut       = 0;
+                      cell_is_inside = true;
+                      p_id_inside    = p;
                       break;
                     }
                   else
                     {
-                      std::tie(cell_is_cut, p_id_cut) =
-                        std::make_tuple(true, p);
-                      std::tie(cell_is_inside, p_id_inside) =
-                        std::make_tuple(false, 0);
+                      cell_is_cut    = true;
+                      p_id_cut       = p;
+                      cell_is_inside = false;
+                      p_id_inside    = 0;
                       break;
                     }
                 }
               else
                 {
-                  std::tie(cell_is_cut, p_id_cut) = std::make_tuple(false, 0);
-                  std::tie(cell_is_inside, p_id_inside) =
-                    std::make_tuple(false, 0);
+                  cell_is_cut    = false;
+                  p_id_cut       = 0;
+                  cell_is_inside = false;
+                  p_id_inside    = 0;
                 }
             }
           cut_cells_map[cell]    = {cell_is_cut, p_id_cut};

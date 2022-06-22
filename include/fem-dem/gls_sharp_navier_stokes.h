@@ -297,15 +297,6 @@ private:
   void
   refine_ib();
 
-  /**
-   * @brief
-   *This function create a map (cut_cells_map) that indicates if a cell is cut,
-   *and the particle id of the particle that cut it.
-   */
-  void
-  optimized_generate_cut_cells_map();
-
-
   std::pair<bool, bool>
   generate_cut_cells_candidate(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -318,6 +309,15 @@ private:
    */
   void
   generate_cut_cells_map();
+
+    /**
+   * @brief
+   *This function create a map (cut_cells_map) that indicates if a cell is cut,
+   *and the particle id of the particle that cut it.
+   *The algorithm was optimized to reduce the cost of this step.
+   */
+  void
+  optimized_generate_cut_cells_map();
 
 
   /**
