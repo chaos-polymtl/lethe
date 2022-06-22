@@ -1619,8 +1619,10 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       particles[p].previous_omega[0]     = particles[p].omega;
 
       particles[p].previous_fluid_forces = particles[p].fluid_forces;
-      particles[p].previous_fluid_viscous_forces = particles[p].fluid_viscous_forces;
-      particles[p].previous_fluid_pressure_forces = particles[p].fluid_pressure_forces;
+      particles[p].previous_fluid_viscous_forces =
+        particles[p].fluid_viscous_forces;
+      particles[p].previous_fluid_pressure_forces =
+        particles[p].fluid_pressure_forces;
       particles[p].previous_fluid_torque = particles[p].fluid_torque;
 
       particles[p].velocity_iter        = particles[p].velocity;
@@ -2825,21 +2827,25 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
               if (dim == 3)
                 {
                   particles_information_table.add_value(
-                    "f_zv", particles[i_particle].previous_fluid_viscous_forces[2]);
+                    "f_zv",
+                    particles[i_particle].previous_fluid_viscous_forces[2]);
                   particles_information_table.set_precision("f_zv", 16);
                 }
-              
+
               particles_information_table.add_value(
-                "f_xp", particles[i_particle].previous_fluid_pressure_forces[0]);
+                "f_xp",
+                particles[i_particle].previous_fluid_pressure_forces[0]);
               particles_information_table.set_precision("f_xp", 16);
               particles_information_table.add_value(
-                "f_yp", particles[i_particle].previous_fluid_pressure_forces[1]);
+                "f_yp",
+                particles[i_particle].previous_fluid_pressure_forces[1]);
               particles_information_table.set_precision("f_yp", 16);
 
               if (dim == 3)
                 {
                   particles_information_table.add_value(
-                    "f_zp", particles[i_particle].previous_fluid_pressure_forces[2]);
+                    "f_zp",
+                    particles[i_particle].previous_fluid_pressure_forces[2]);
                   particles_information_table.set_precision("f_zp", 16);
                 }
 
@@ -2924,10 +2930,14 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                   particles[p_i].velocity[1]     = restart_data["v_y"][row];
                   particles[p_i].fluid_forces[0] = restart_data["f_x"][row];
                   particles[p_i].fluid_forces[1] = restart_data["f_y"][row];
-                  particles[p_i].fluid_viscous_forces[0] = restart_data["f_xv"][row];
-                  particles[p_i].fluid_viscous_forces[1] = restart_data["f_yv"][row];
-                  particles[p_i].fluid_pressure_forces[0] = restart_data["f_xp"][row];
-                  particles[p_i].fluid_pressure_forces[1] = restart_data["f_yp"][row];
+                  particles[p_i].fluid_viscous_forces[0] =
+                    restart_data["f_xv"][row];
+                  particles[p_i].fluid_viscous_forces[1] =
+                    restart_data["f_yv"][row];
+                  particles[p_i].fluid_pressure_forces[0] =
+                    restart_data["f_xp"][row];
+                  particles[p_i].fluid_pressure_forces[1] =
+                    restart_data["f_yp"][row];
                   particles[p_i].omega[2]        = restart_data["omega_z"][row];
                   particles[p_i].fluid_torque[2] = restart_data["T_z"][row];
 
@@ -2982,12 +2992,18 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                   particles[p_i].fluid_forces[0] = restart_data["f_x"][row];
                   particles[p_i].fluid_forces[1] = restart_data["f_y"][row];
                   particles[p_i].fluid_forces[2] = restart_data["f_z"][row];
-                  particles[p_i].fluid_viscous_forces[0] = restart_data["f_xv"][row];
-                  particles[p_i].fluid_viscous_forces[1] = restart_data["f_yv"][row];
-                  particles[p_i].fluid_viscous_forces[2] = restart_data["f_zv"][row];
-                  particles[p_i].fluid_pressure_forces[0] = restart_data["f_xp"][row];
-                  particles[p_i].fluid_pressure_forces[1] = restart_data["f_yp"][row];
-                  particles[p_i].fluid_pressure_forces[2] = restart_data["f_zp"][row];
+                  particles[p_i].fluid_viscous_forces[0] =
+                    restart_data["f_xv"][row];
+                  particles[p_i].fluid_viscous_forces[1] =
+                    restart_data["f_yv"][row];
+                  particles[p_i].fluid_viscous_forces[2] =
+                    restart_data["f_zv"][row];
+                  particles[p_i].fluid_pressure_forces[0] =
+                    restart_data["f_xp"][row];
+                  particles[p_i].fluid_pressure_forces[1] =
+                    restart_data["f_yp"][row];
+                  particles[p_i].fluid_pressure_forces[2] =
+                    restart_data["f_zp"][row];
                   particles[p_i].omega[0]        = restart_data["omega_x"][row];
                   particles[p_i].omega[1]        = restart_data["omega_y"][row];
                   particles[p_i].omega[2]        = restart_data["omega_z"][row];
