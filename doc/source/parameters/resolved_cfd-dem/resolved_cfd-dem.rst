@@ -140,8 +140,7 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``load particles from a file`` boolean that define if the particles are generated from a file instead of the parameter function. If this parameter is activated the particle defined in the particle's subsection are ignore as well as the number of particles. The number of particles is define directly from the file.
 
-* The ``particles file`` The file from which the particles are define. Each lines correspond to a particles and all the relevant variables. The file must contain the following information for each particles and the header of the file must be defined as such:
-ID p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z radius density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient
+* The ``particles file`` The file from which the particles are define. Each lines correspond to a particles and all the relevant variables. The file must contain the following information for each particles and the header of the file must be defined as such: ID p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z radius density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient
 
 
 .. note::
