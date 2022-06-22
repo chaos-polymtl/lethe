@@ -815,6 +815,10 @@ public:
     // Gather temperature
     this->fe_values_temperature->get_function_values(current_solution,
                                                      this->temperature_values);
+
+    // Gather temperature gradient
+    this->fe_values_temperature->get_function_gradients(
+      current_solution, this->temperature_gradients);
   }
 
   /** @brief Calculates the physical properties. This function calculates the physical properties
@@ -930,9 +934,10 @@ public:
   /**
    * Scratch component for the heat transfer
    */
-  bool                gather_temperature;
-  unsigned int        n_dofs_heat_transfer;
-  std::vector<double> temperature_values;
+  bool                        gather_temperature;
+  unsigned int                n_dofs_heat_transfer;
+  std::vector<double>         temperature_values;
+  std::vector<Tensor<1, dim>> temperature_gradients;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
 
