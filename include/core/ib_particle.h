@@ -120,6 +120,8 @@ public:
   Tensor<1, 3> fluid_pressure_forces;
   // The fluid force applied on the particle at the end of the last time step.
   Tensor<1, 3> previous_fluid_forces;
+  Tensor<1, 3> previous_fluid_viscous_forces;
+  Tensor<1, 3> previous_fluid_pressure_forces;
   // The fluid torque applied on the particle.
   Tensor<1, 3> fluid_torque;
   // The fluid torque is applied on the particle at the end of the last time
