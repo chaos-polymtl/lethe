@@ -163,7 +163,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The subsection ``velocity`` defines the initial value of the particle velocity if the parameter ``integrate motion=true``. Otherwise, it defines the particle's velocity at all points in time. This velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z direction.
 
-* The subsection ``omega`` defines the initial value of the particle rotational velocity if the parameter ``integrate motion=true``. Otherwise, it defines the particle's rotational velocity at all times. This rotational velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z direction. It's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity.
+* If the parameter ``integrate motion`` is set to ``true``, the subsection ``omega`` defines the initial value of the particle's rotational velocity. Otherwise, it defines the particle's rotational velocity at all time steps. This rotational velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z directions. It's important to note that even the 2D solver uses the rotational velocity in 3D. In this case, it will only use the Z component of the rotational velocity.
 
 * The subsection ``orientation`` defines the initial value of the particle angular position around each of the axes X, then Y and then Z.
 
