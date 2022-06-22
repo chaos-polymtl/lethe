@@ -199,8 +199,7 @@ IBParticle<dim>::initialize_shape(const std::string type,
       std::make_shared<Torus<dim>>(solid_arguments[0], solid_arguments[1]);
   else if (type == "cone")
     shape = std::make_shared<Cone<dim>>(solid_arguments[0],
-                                        solid_arguments[1],
-                                        solid_arguments[2]);
+                                        solid_arguments[1]);
   else if (type == "cut hollow sphere")
     shape = std::make_shared<CutHollowSphere<dim>>(solid_arguments[0],
                                                    solid_arguments[1],

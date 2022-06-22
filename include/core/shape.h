@@ -364,11 +364,10 @@ template <int dim>
 class Cone : public Shape<dim>
 {
 public:
-  Cone<dim>(double sin_theta, double cos_theta, double height)
+  Cone<dim>(double tan_theta, double height)
     : Shape<dim>(height)
   {
-    this->sin_theta = sin_theta;
-    this->cos_theta = cos_theta;
+    this->tan_theta = tan_theta;
     this->height    = height;
   }
 
@@ -380,8 +379,8 @@ public:
     double     levelset;
     Point<dim> centered_pt = this->real_to_centered(p);
 
-    // For a cone, the parameters sin(tip_angle) and cos(tip_angle)
-    Point<2> q({height * (sin_theta / cos_theta), -height});
+    // For a cone, the parameters are tan(base angle) and height
+    Point<2> q({height * tan_theta, -height});
     Point<2> p_xz({centered_pt[0], centered_pt[2]});
     Point<2> w({p_xz.norm(), centered_pt[1]});
     double   dot_w_q = scalar_product<1, 2, double>(w, q);
@@ -407,8 +406,7 @@ public:
   static_copy() const override
   {
     std::shared_ptr<Shape<dim>> copy =
-      std::make_shared<Cone<dim>>(this->sin_theta,
-                                  this->cos_theta,
+      std::make_shared<Cone<dim>>(this->tan_theta,
                                   this->height);
     copy->position    = this->position;
     copy->cor_offset  = this->cor_offset;
@@ -417,8 +415,7 @@ public:
   }
 
 private:
-  double sin_theta;
-  double cos_theta;
+  double tan_theta;
   double height;
 };
 

@@ -184,7 +184,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Torus: torus radius, torus thickness radius, [none];
 
-    * Cone: sin(angle), cos(angle), height;
+    * Cone: tan(base angle), height, [none];
 
     * Cut Hollow Sphere: radius, cut height, wall thickness;
 

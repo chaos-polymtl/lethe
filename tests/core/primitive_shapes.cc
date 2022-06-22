@@ -18,8 +18,7 @@ test()
   double                    radius    = 2;
   double                    thickness = 0.2;
   Tensor<1, 3>              half_lengths({1., 1., 3.});
-  double                    sin_theta = 2;
-  double                    cos_theta = 1;
+  double                    tan_theta = 2.;
   double                    height    = 1.5;
   std::shared_ptr<Shape<3>> sphere    = std::make_shared<Sphere<3>>(radius);
   std::shared_ptr<Shape<3>> rectangle =
@@ -29,7 +28,7 @@ test()
   std::shared_ptr<Shape<3>> torus =
     std::make_shared<Torus<3>>(radius, thickness);
   std::shared_ptr<Shape<3>> cone =
-    std::make_shared<Cone<3>>(sin_theta, cos_theta, height);
+    std::make_shared<Cone<3>>(tan_theta, height);
   std::shared_ptr<Shape<3>> cut_sphere =
     std::make_shared<CutHollowSphere<3>>(radius, height, thickness);
   std::shared_ptr<Shape<3>> death_star =
