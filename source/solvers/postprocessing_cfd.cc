@@ -642,9 +642,9 @@ calculate_forces(
         Utilities::MPI::sum(pressure_force, mpi_communicator);
       force_vector[i_bc] = Utilities::MPI::sum(force, mpi_communicator);
     }
-  std::vector<std::vector<Tensor<1, dim>>> forces{viscous_force_vector,
-                                                  pressure_force_vector,
-                                                  force_vector};
+  std::vector<std::vector<Tensor<1, dim>>> forces{force_vector,
+                                                  viscous_force_vector,
+                                                  pressure_force_vector};
   return forces;
 }
 

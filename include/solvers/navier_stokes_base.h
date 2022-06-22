@@ -466,10 +466,10 @@ protected:
   ConvergenceTable error_table;
 
   // Force analysis
-  std::vector<Tensor<1, dim>> forces_on_boundaries;
-  std::vector<Tensor<1, 3>>   torques_on_boundaries;
-  std::vector<TableHandler>   forces_tables;
-  std::vector<TableHandler>   torques_tables;
+  std::vector<std::vector<Tensor<1, dim>>> forces_on_boundaries;
+  std::vector<Tensor<1, 3>>                torques_on_boundaries;
+  std::vector<TableHandler>                forces_tables;
+  std::vector<TableHandler>                torques_tables;
 };
 
 #endif

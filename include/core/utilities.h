@@ -53,6 +53,16 @@ make_table_scalars_tensors(
   const std::vector<std::string> &   dependent_column_name,
   const unsigned int                 display_precision);
 
+
+template <int dim, typename T>
+TableHandler
+make_table_scalars_tensors(
+  const std::vector<T> &                          independent_values,
+  const std::string &                             independent_column_name,
+  const std::vector<std::vector<Tensor<1, dim>>> &dependent_vector,
+  const std::vector<std::string> &                dependent_column_name,
+  const unsigned int                              display_precision);
+
 /**
  * @brief Generate a table from a vector of tensor<1,dim> and a vector of tensor<1,dim>
  *
@@ -68,6 +78,8 @@ make_table_scalars_tensors(
  * @param display_precision. An integer which indicate the precision at which the tables are written.
  *
  */
+
+
 template <int dim>
 TableHandler
 make_table_tensors_tensors(

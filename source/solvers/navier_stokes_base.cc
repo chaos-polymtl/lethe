@@ -303,6 +303,14 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       dependent_column_names.push_back("f_y");
       if (dim == 3)
         dependent_column_names.push_back("f_z");
+      dependent_column_names.push_back("f_xv");
+      dependent_column_names.push_back("f_yv");
+      if (dim == 3)
+        dependent_column_names.push_back("f_zv");
+      dependent_column_names.push_back("f_xp");
+      dependent_column_names.push_back("f_yp");
+      if (dim == 3)
+        dependent_column_names.push_back("f_zp");
 
       TableHandler table = make_table_scalars_tensors(
         simulation_parameters.boundary_conditions.id,
@@ -335,12 +343,32 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
         }
 
       this->forces_tables[i_boundary].add_value(
-        "f_x", this->forces_on_boundaries[i_boundary][0]);
+        "f_x", this->forces_on_boundaries[0][i_boundary][0]);
       this->forces_tables[i_boundary].add_value(
-        "f_y", this->forces_on_boundaries[i_boundary][1]);
+        "f_y", this->forces_on_boundaries[0][i_boundary][1]);
       if (dim == 3)
         this->forces_tables[i_boundary].add_value(
-          "f_z", this->forces_on_boundaries[i_boundary][2]);
+          "f_z", this->forces_on_boundaries[0][i_boundary][2]);
+      else
+        this->forces_tables[i_boundary].add_value("f_z", 0.);
+
+      this->forces_tables[i_boundary].add_value(
+        "f_xv", this->forces_on_boundaries[1][i_boundary][0]);
+      this->forces_tables[i_boundary].add_value(
+        "f_yv", this->forces_on_boundaries[1][i_boundary][1]);
+      if (dim == 3)
+        this->forces_tables[i_boundary].add_value(
+          "f_zv", this->forces_on_boundaries[1][i_boundary][2]);
+      else
+        this->forces_tables[i_boundary].add_value("f_z", 0.);
+
+      this->forces_tables[i_boundary].add_value(
+        "f_xp", this->forces_on_boundaries[2][i_boundary][0]);
+      this->forces_tables[i_boundary].add_value(
+        "f_yp", this->forces_on_boundaries[2][i_boundary][1]);
+      if (dim == 3)
+        this->forces_tables[i_boundary].add_value(
+          "f_zp", this->forces_on_boundaries[2][i_boundary][2]);
       else
         this->forces_tables[i_boundary].add_value("f_z", 0.);
 
@@ -351,6 +379,20 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
         "f_y", simulation_parameters.forces_parameters.output_precision);
       this->forces_tables[i_boundary].set_precision(
         "f_z", simulation_parameters.forces_parameters.output_precision);
+
+      this->forces_tables[i_boundary].set_precision(
+        "f_xv", simulation_parameters.forces_parameters.output_precision);
+      this->forces_tables[i_boundary].set_precision(
+        "f_yv", simulation_parameters.forces_parameters.output_precision);
+      this->forces_tables[i_boundary].set_precision(
+        "f_zv", simulation_parameters.forces_parameters.output_precision);
+
+      this->forces_tables[i_boundary].set_precision(
+        "f_xp", simulation_parameters.forces_parameters.output_precision);
+      this->forces_tables[i_boundary].set_precision(
+        "f_yp", simulation_parameters.forces_parameters.output_precision);
+      this->forces_tables[i_boundary].set_precision(
+        "f_zp", simulation_parameters.forces_parameters.output_precision);
     }
 }
 
