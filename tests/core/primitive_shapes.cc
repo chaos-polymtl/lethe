@@ -27,8 +27,7 @@ test()
     std::make_shared<Ellipsoid<3>>(half_lengths);
   std::shared_ptr<Shape<3>> torus =
     std::make_shared<Torus<3>>(radius, thickness);
-  std::shared_ptr<Shape<3>> cone =
-    std::make_shared<Cone<3>>(tan_theta, height);
+  std::shared_ptr<Shape<3>> cone = std::make_shared<Cone<3>>(tan_theta, height);
   std::shared_ptr<Shape<3>> cut_sphere =
     std::make_shared<CutHollowSphere<3>>(radius, height, thickness);
   std::shared_ptr<Shape<3>> death_star =

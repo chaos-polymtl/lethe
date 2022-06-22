@@ -406,8 +406,7 @@ public:
   static_copy() const override
   {
     std::shared_ptr<Shape<dim>> copy =
-      std::make_shared<Cone<dim>>(this->tan_theta,
-                                  this->height);
+      std::make_shared<Cone<dim>>(this->tan_theta, this->height);
     copy->position    = this->position;
     copy->cor_offset  = this->cor_offset;
     copy->orientation = this->orientation;
