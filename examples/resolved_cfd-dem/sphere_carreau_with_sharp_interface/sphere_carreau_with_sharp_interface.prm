@@ -150,7 +150,9 @@ subsection particles
 	subsection position
 	    set Function expression =0;0;0
 	end
-	set radius = 0.5
+    set type       = sphere
+    subsection solid arguments
+        set Function expression = 0.5;0;0
     end
 end
 # --------------------------------------------------
