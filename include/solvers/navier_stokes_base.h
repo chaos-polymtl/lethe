@@ -409,7 +409,7 @@ protected:
   SimulationParameters<dim> simulation_parameters;
   PVDHandler                pvdhandler;
 
-  // A scalar function that doesn't require solving, just evaluation
+  // A scalar function that doesn't require solving, just evaluation. This attribute is currently only used for representing an object shape (using the sharp interface fem-dem)
   std::shared_ptr<Function<dim>> additional_scalar;
 
   // Functions used for source term and error analysis
