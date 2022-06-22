@@ -1861,7 +1861,7 @@ namespace Parameters
         "load particles from a file",
         "false",
         Patterns::Bool(),
-        "Bool to declare if we load or not the particle from a file");
+        "Bool to define if particles are loaded from an external file");
       prm.declare_entry("particles file",
                         "particles",
                         Patterns::FileName(),
