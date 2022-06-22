@@ -6,7 +6,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 .. code-block:: text
 
-subsection particles
+    subsection particles
         set number of particles                     = 1
         set stencil order                           = 2
         set length ratio                            = 4
@@ -51,7 +51,6 @@ subsection particles
             subsection orientation
                 set Function expression =0;0;0
             end
-
             set inertia    = 1
             set pressure x = 0
             set pressure y = 0
