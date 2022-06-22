@@ -710,7 +710,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                          mu,
                                          lubrication_wall_force,
                                          lubrication_wall_torque);
-          
+
           // define local time of the rk step
           double local_dt = dt_dem * 0.5;
           if (step == 3)

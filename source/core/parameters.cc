@@ -1858,15 +1858,14 @@ namespace Parameters
         Patterns::FileName(),
         "The name of the file where the data on the force of each particle is stored");
       prm.declare_entry(
-        "load particles from file",
+        "load particles from a file",
         "false",
         Patterns::Bool(),
         "Bool to declare if we load or not the particle from a file");
-      prm.declare_entry(
-        "particles file",
-        "particles",
-        Patterns::FileName(),
-        "The file name from which we load the particles");
+      prm.declare_entry("particles file",
+                        "particles",
+                        Patterns::FileName(),
+                        "The file name from which we load the particles");
       prm.declare_entry(
         "ib particles pvd file",
         "ib_particles_data",
@@ -2003,8 +2002,8 @@ namespace Parameters
 
       contact_search_frequency = prm.get_integer("contact search frequency");
 
-      load_particles_from_file =prm.get_bool("load particles from file");
-      particles_file = prm.get("particles file");
+      load_particles_from_file = prm.get_bool("load particles from a file");
+      particles_file           = prm.get("particles file");
 
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
@@ -2029,7 +2028,6 @@ namespace Parameters
       enable_lubrication_force = prm.get_bool("enable lubrication force");
       lubrication_range_max    = prm.get_double("lubrication range max");
       lubrication_range_min    = prm.get_double("lubrication range min");
-
 
 
 

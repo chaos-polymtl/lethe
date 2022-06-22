@@ -454,8 +454,6 @@ Return a bool that describes  if a cell contains a specific point
 
 
 
-
-
     /**
      * Output information that is filled by build_patches() and
      * written by the write function of the base class.
