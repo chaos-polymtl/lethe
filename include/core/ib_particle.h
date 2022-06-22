@@ -118,7 +118,7 @@ public:
 
   /**
    * @brief
-   * Return true if the given point is inside the crown whose limits are defined
+   * Return true if the given point is inside the crown for which the limits are defined
    * by inner and outer radius factors. An effective radius is used for
    * non spherical shapes.
    */
