@@ -110,7 +110,7 @@ public:
 
   /**
    * @brief
-   * Return the point on the surface of the solid which has the minimal distance
+   * Sets the closest_point parameter to be the point on the surface of the solid which has the minimal distance
    * from the given point p
    */
   void
