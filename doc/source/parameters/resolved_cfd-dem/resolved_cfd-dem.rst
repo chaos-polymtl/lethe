@@ -91,7 +91,7 @@ To sharpen the immersed boundary of each particles, a layer of cells around the 
 
 * The ``refine mesh inside radius factor`` parameter defines the lower factor by which the effective radius will be multiplied to establish if a cell can be pre-refined. If the absolute distance to the surface is below :math:`(1 - \textit{factor}) * \textit{radius}`, then one of the two conditions is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6 (see example below).
 
-* The ``refine mesh outside radius factor`` parameter defines the upper limit of the near-particle refinement zone. If the absolute distance to the surface is below :math:`(\textit{factor} - 1) * \textit{radius}`, then the second condition is met. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3 (see example below).
+* The ``refine mesh outside radius factor`` parameter defines the higher limit of the near-particle refinement zone. If the absolute distance to the surface is below :math:`(\textit{factor} - 1) * \textit{radius}`, then the second condition is met. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3 (see example below).
 
 .. warning::
 	When you want to use the near-particle refinement zone around particles, the mesh adaptation type used must be ``kelly``, otherwise no near-particle refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
