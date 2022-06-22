@@ -87,9 +87,9 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
 
-To sharpen the immersed boundary of each particles, a layer of cells around the immersed boundary can be refined forming a near-particle zone of refined cells.
+To sharpen the immersed boundary of each particles, a layer of cells around the immersed boundary can be refined forming a near-particle zone of refined cells. An effective radius, dependent on the shape, is calculated at the shape initialization. Its definition is chosen so that the refinement zone is close to the surface. For example, a torus' effective radius is the ring thickness radius. For a rectangle (or box), it's the mean of the half-lengths. For a sphere, it's the actual radius.
 
-* The ``refine mesh inside radius factor`` parameter defines the lower factor by which the effective radius will be multiplied to establish if a cell can be pre-refined. The effective radius is dependent on the geometry type. If the absolute distance to the surface is below :math:`(1 - \textit{factor}) * \textit{radius}`, then one of the two conditions is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6 (see example below).
+* The ``refine mesh inside radius factor`` parameter defines the lower factor by which the effective radius will be multiplied to establish if a cell can be pre-refined. If the absolute distance to the surface is below :math:`(1 - \textit{factor}) * \textit{radius}`, then one of the two conditions is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6 (see example below).
 
 * The ``refine mesh outside radius factor`` parameter defines the upper limit of the near-particle refinement zone. If the absolute distance to the surface is below :math:`(\textit{factor} - 1) * \textit{radius}`, then the second condition is met. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3 (see example below).
 
@@ -165,7 +165,10 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The subsection ``omega`` defines the initial value of the particle rotational velocity if the parameter ``integrate motion=true``. Otherwise, it defines the particle's rotational velocity at all times. This rotational velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z direction. It's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity.
 
-* The subsection ``orientation`` defines the initial value of the particle angular position around each of the axes X, then Y and then Z. This angular position is expressed as a function that can evolve in time. It's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity, but all three should be defined.
+* The subsection ``orientation`` defines the initial value of the particle angular position around each of the axes X, then Y and then Z.
+
+.. note::
+    It's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity, but all three should be defined.
 
 * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
 
@@ -174,7 +177,6 @@ The following parameter and subsection are all inside the subsection ``particle 
 * The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: sphere, ellipsoid, rectangle. Additional alternatives include: cone, death star, cut hollow sphere, torus.
 
 * The subsection ``solid arguments`` is used to define the solid parameters in the form of a tri-components function. The arguments, which must be written in triplets, are:
-
     * Sphere: radius, [none], [none];
 
     * Rectangle: x half length, y half length, z half length;

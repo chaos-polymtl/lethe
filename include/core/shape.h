@@ -84,6 +84,10 @@ public:
 
   /**
    * @brief
+   * Most value functions assume that the particle position is at the origin and
+   * that the shape is aligned with one of the main axes. This function moves
+   * the evaluation point so that the value function can be kept simple.
+   *
    * Returns the centered and aligned point to evaluate properly the levelset
    * afterwards
    */
