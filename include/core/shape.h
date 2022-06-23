@@ -89,7 +89,6 @@ public:
    * the evaluation point so that the value function can be kept simple.
    *
    * Returns the centered and aligned point to evaluate properly the levelset
-   * afterwards
    */
   Point<dim>
   real_to_centered(const Point<dim> &evaluation_pt) const
