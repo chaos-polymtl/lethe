@@ -47,7 +47,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       const double rho_cp = density[q] * specific_heat[q];
-      const double alpha  = thermal_conductivity[q] / rho_cp;
+      const double alpha  = thermal_conductivity[q] / (rho_cp + DBL_MIN);
 
       const auto method = this->simulation_control->get_assembly_method();
 
@@ -140,7 +140,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       // Gather physical properties in case of mono fluids simulations (to be
       // modified by cell in case of multiple fluids simulations)
       double rho_cp = density[q] * specific_heat[q];
-      double alpha  = thermal_conductivity[q] / rho_cp;
+      double alpha  = thermal_conductivity[q] / (rho_cp + DBL_MIN);
 
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
@@ -255,7 +255,7 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
         }
 
       const double tau_ggls =
-        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / rho_cp;
+        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / (rho_cp + DBL_MIN);
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -325,7 +325,7 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
       const double rho_cp = density[q] * specific_heat[q];
 
       const double tau_ggls =
-        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / rho_cp;
+        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / (rho_cp + DBL_MIN);
 
 
       temperature[0]          = scratch_data.present_temperature_values[q];
