@@ -360,7 +360,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
         this->forces_tables[i_boundary].add_value(
           "f_zv", this->forces_on_boundaries[1][i_boundary][2]);
       else
-        this->forces_tables[i_boundary].add_value("f_z", 0.);
+        this->forces_tables[i_boundary].add_value("f_zv", 0.);
 
       this->forces_tables[i_boundary].add_value(
         "f_xp", this->forces_on_boundaries[2][i_boundary][0]);
@@ -370,7 +370,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
         this->forces_tables[i_boundary].add_value(
           "f_zp", this->forces_on_boundaries[2][i_boundary][2]);
       else
-        this->forces_tables[i_boundary].add_value("f_z", 0.);
+        this->forces_tables[i_boundary].add_value("f_zp", 0.);
 
       // Precision
       this->forces_tables[i_boundary].set_precision(
