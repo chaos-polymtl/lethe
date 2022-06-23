@@ -25,22 +25,20 @@ Shape<dim>::displaced_volume(const double fluid_density)
 
 template <int dim>
 Point<dim>
-Shape<dim>::align_and_center(const Point<dim> &evaluation_pt) const
+Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
 {
-  Point<dim> corrected_pt;
-
   // Translation and rotation to standard position and orientation for
   // distance calculations
   Point<dim> center_of_rotation = position + center_of_rotation_offset;
 
-  Point<dim> rotated_pt;
-  Point<dim> translated_pt;
+  Point<dim> rotated_point;
+  Point<dim> translated_point;
 
   // Rotation from the solid orientation
   // Angular position around x, y and z axis
   Tensor<1, 3> theta = orientation;
   Point<dim>   centralized_point;
-  centralized_point              = evaluation_pt - center_of_rotation;
+  centralized_point              = evaluation_point - center_of_rotation;
   Point<dim> centralized_rotated = centralized_point;
   // Selection of the first axis around which to rotate:
   // x -> 0, y -> 1, z -> 2
@@ -91,24 +89,25 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_pt) const
             }
         }
     }
-  rotated_pt = centralized_rotated + center_of_rotation;
+  rotated_point = centralized_rotated + center_of_rotation;
 
   // Translation from the solid position
-  translated_pt = rotated_pt - position;
+  translated_point = rotated_point - position;
 
-  return translated_pt;
+  return translated_point;
 }
 
 template <int dim>
 double
-Sphere<dim>::value(const Point<dim> &p, const unsigned int component) const
+Sphere<dim>::value(const Point<dim> & evaluation_point,
+                   const unsigned int component) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   return p.distance(this->position) - this->effective_radius;
 #else
   Functions::SignedDistance::Sphere<dim> sphere_function(
     this->position, this->effective_radius);
-  return sphere_function.value(p);
+  return sphere_function.value(evaluation_point);
 #endif
 }
 
@@ -126,7 +125,8 @@ Sphere<dim>::static_copy() const
 
 template <int dim>
 Tensor<1, dim>
-Sphere<dim>::gradient(const Point<dim> &p, const unsigned int component) const
+Sphere<dim>::gradient(const Point<dim> & evaluation_point,
+                      const unsigned int component) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   const Tensor<1, dim> center_to_point = p - this->position;
@@ -135,7 +135,7 @@ Sphere<dim>::gradient(const Point<dim> &p, const unsigned int component) const
 #else
   Functions::SignedDistance::Sphere<dim> sphere_function(
     this->position, this->effective_radius);
-  return sphere_function.gradient(p);
+  return sphere_function.gradient(evaluation_point);
 #endif
 }
 
@@ -157,16 +157,17 @@ Sphere<dim>::displaced_volume(const double fluid_density)
 
 template <int dim>
 double
-Rectangle<dim>::value(const Point<dim> &p, const unsigned int component) const
+Rectangle<dim>::value(const Point<dim> & evaluation_point,
+                      const unsigned int component) const
 {
   double     levelset;
-  Point<dim> centered_pt = this->align_and_center(p);
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   Point<dim> abs_p;
   Point<dim> half_lengths_dim;
   for (unsigned int i = 0; i < dim; ++i)
     {
-      abs_p[i]            = std::abs(centered_pt[i]);
+      abs_p[i]            = std::abs(centered_point[i]);
       half_lengths_dim[i] = half_lengths[i];
     }
   Point<dim> q;
@@ -196,18 +197,19 @@ Rectangle<dim>::static_copy() const
 
 template <int dim>
 double
-Ellipsoid<dim>::value(const Point<dim> &p, const unsigned int component) const
+Ellipsoid<dim>::value(const Point<dim> & evaluation_point,
+                      const unsigned int component) const
 {
   double     levelset;
-  Point<dim> centered_pt = this->align_and_center(p);
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   Point<dim> v_k0;
   Point<dim> v_k1;
   for (unsigned int i = 0; i < dim; ++i)
     {
       // Ellipsoid parameters[0->2]:= radii x, y, z
-      v_k0[i] = centered_pt[i] / radii[i];
-      v_k1[i] = centered_pt[i] / (radii[i] * radii[i]);
+      v_k0[i] = centered_point[i] / radii[i];
+      v_k1[i] = centered_point[i] / (radii[i] * radii[i]);
     }
   double k0 = v_k0.norm();
   double k1 = v_k1.norm();
@@ -230,15 +232,16 @@ Ellipsoid<dim>::static_copy() const
 
 template <int dim>
 double
-Torus<dim>::value(const Point<dim> &p, const unsigned int component) const
+Torus<dim>::value(const Point<dim> & evaluation_point,
+                  const unsigned int component) const
 {
   AssertDimension(dim, 3);
 
   double     levelset;
-  Point<dim> centered_pt = this->align_and_center(p);
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  Point<2> p_xz({centered_pt[0], centered_pt[2]});
-  Point<2> q({p_xz.norm() - ring_radius, centered_pt[1]});
+  Point<2> p_xz({centered_point[0], centered_point[2]});
+  Point<2> q({p_xz.norm() - ring_radius, centered_point[1]});
   levelset = q.norm() - ring_thickness;
 
   return levelset;
@@ -258,17 +261,18 @@ Torus<dim>::static_copy() const
 
 template <int dim>
 double
-Cone<dim>::value(const Point<dim> &p, const unsigned int component) const
+Cone<dim>::value(const Point<dim> & evaluation_point,
+                 const unsigned int component) const
 {
   AssertDimension(dim, 3);
 
   double     levelset;
-  Point<dim> centered_pt = this->align_and_center(p);
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   // For a cone, the parameters are tan(base angle) and height
-  Point<2> q({height * tan_theta, -height});
-  Point<2> p_xz({centered_pt[0], centered_pt[2]});
-  Point<2> w({p_xz.norm(), centered_pt[1]});
+  Point<2> q({height * tan_base_angle, -height});
+  Point<2> p_xz({centered_point[0], centered_point[2]});
+  Point<2> w({p_xz.norm(), centered_point[1]});
   double   dot_w_q = scalar_product<1, 2, double>(w, q);
   double   dot_q_q = scalar_product<1, 2, double>(q, q);
   Point<2> a;
@@ -293,7 +297,7 @@ std::shared_ptr<Shape<dim>>
 Cone<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Cone<dim>>(this->tan_theta, this->height);
+    std::make_shared<Cone<dim>>(this->tan_base_angle, this->height);
   copy->position                  = this->position;
   copy->center_of_rotation_offset = this->center_of_rotation_offset;
   copy->orientation               = this->orientation;
@@ -302,26 +306,26 @@ Cone<dim>::static_copy() const
 
 template <int dim>
 double
-CutHollowSphere<dim>::value(const Point<dim> & p,
+CutHollowSphere<dim>::value(const Point<dim> & evaluation_point,
                             const unsigned int component) const
 {
   AssertDimension(dim, 3);
 
   double     levelset;
-  Point<dim> centered_pt = this->align_and_center(p);
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  double   w = sqrt(r * r - h * h);
-  Point<2> p_xz({centered_pt[0], centered_pt[2]});
-  Point<2> q({p_xz.norm(), centered_pt[1]});
+  double   w = sqrt(radius * radius - cut_depth * cut_depth);
+  Point<2> p_xz({centered_point[0], centered_point[2]});
+  Point<2> q({p_xz.norm(), centered_point[1]});
 
-  if (h * q[0] < w * q[1])
+  if (cut_depth * q[0] < w * q[1])
     {
-      Point<2> wh({w, h});
+      Point<2> wh({w, cut_depth});
       levelset = (q - wh).norm();
     }
   else
     {
-      levelset = std::abs(q.norm() - r) - t;
+      levelset = std::abs(q.norm() - radius) - shell_thickness;
     }
 
   return levelset;
@@ -332,7 +336,9 @@ std::shared_ptr<Shape<dim>>
 CutHollowSphere<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<CutHollowSphere<dim>>(this->r, this->h, this->t);
+    std::make_shared<CutHollowSphere<dim>>(this->radius,
+                                           this->cut_depth,
+                                           this->shell_thickness);
   copy->position                  = this->position;
   copy->center_of_rotation_offset = this->center_of_rotation_offset;
   copy->orientation               = this->orientation;
@@ -341,29 +347,32 @@ CutHollowSphere<dim>::static_copy() const
 
 template <int dim>
 double
-DeathStar<dim>::value(const Point<dim> &p, const unsigned int component) const
+DeathStar<dim>::value(const Point<dim> & evaluation_point,
+                      const unsigned int component) const
 {
   AssertDimension(dim, 3);
 
   double     levelset;
-  Point<dim> centered_pt = this->align_and_center(p);
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  double a = (ra * ra - rb * rb + d * d) / (2. * d);
-  double b = sqrt(std::max(ra * ra - a * a, 0.));
+  double a = (radius * radius - hole_radius * hole_radius +
+              spheres_distance * spheres_distance) /
+             (2. * spheres_distance);
+  double b = sqrt(std::max(radius * radius - a * a, 0.));
 
-  Point<2> p_yz({centered_pt[1], centered_pt[2]});
-  Point<2> corrected_p_2d({centered_pt[0], p_yz.norm()});
+  Point<2> p_yz({centered_point[1], centered_point[2]});
+  Point<2> corrected_p_2d({centered_point[0], p_yz.norm()});
   if (corrected_p_2d[0] * b - corrected_p_2d[1] * a >
-      d * std::max(b - corrected_p_2d[1], 0.))
+      spheres_distance * std::max(b - corrected_p_2d[1], 0.))
     {
       Point<2> ab({a, b});
       levelset = (corrected_p_2d - ab).norm();
     }
   else
     {
-      Point<2> d0({d, 0.});
-      levelset = std::max(corrected_p_2d.norm() - ra,
-                          -((corrected_p_2d - d0).norm() - rb));
+      Point<2> d0({spheres_distance, 0.});
+      levelset = std::max(corrected_p_2d.norm() - radius,
+                          -((corrected_p_2d - d0).norm() - hole_radius));
     }
 
   return levelset;
@@ -374,7 +383,9 @@ std::shared_ptr<Shape<dim>>
 DeathStar<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<DeathStar<dim>>(this->ra, this->rb, this->d);
+    std::make_shared<DeathStar<dim>>(this->radius,
+                                     this->hole_radius,
+                                     this->spheres_distance);
   copy->position                  = this->position;
   copy->center_of_rotation_offset = this->center_of_rotation_offset;
   copy->orientation               = this->orientation;
@@ -383,13 +394,13 @@ DeathStar<dim>::static_copy() const
 
 template <int dim>
 double
-CompositeShape<dim>::value(const Point<dim> & p,
+CompositeShape<dim>::value(const Point<dim> & evaluation_point,
                            const unsigned int component) const
 {
   double levelset = DBL_MAX;
   for (const std::shared_ptr<Shape<dim>> &elem : components)
     {
-      levelset = std::min(elem->value(p), levelset);
+      levelset = std::min(elem->value(evaluation_point), levelset);
     }
   return levelset;
 }

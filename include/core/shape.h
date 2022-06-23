@@ -50,14 +50,22 @@ public:
     , effective_radius(radius)
   {}
 
+
+  /**
+   * @brief An partial constructor for the Shapes. The effective radius needs to be set afterwards
+   */
+  Shape()
+    : AutoDerivativeFunction<dim>(1e-8)
+  {}
+
   /**
    * @brief Return the evaluation of the signed distance function of this solid
-   * at the given point p
+   * at the given point evaluation point
    * Most levelset functions implemented come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
    */
   virtual double
-  value(const Point<dim> & p,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override = 0;
 
   /**
@@ -86,7 +94,7 @@ public:
    * Returns the centered and aligned point used on the levelset evaluation.
    */
   Point<dim>
-  align_and_center(const Point<dim> &evaluation_pt) const;
+  align_and_center(const Point<dim> &evaluation_point) const;
 
   // Position of the center of the Shape. It doesn't always correspond to the
   // center of mass
@@ -110,13 +118,14 @@ public:
   {}
 
   double
-  value(const Point<dim> &p, const unsigned int component = 0) const override;
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
   Tensor<1, dim>
-  gradient(const Point<dim> & p,
+  gradient(const Point<dim> & evaluation_point,
            const unsigned int component = 0) const override;
 
   double
@@ -133,7 +142,8 @@ public:
   {}
 
   double
-  value(const Point<dim> &p, const unsigned int component = 0) const override;
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
@@ -152,7 +162,8 @@ public:
   {}
 
   double
-  value(const Point<dim> &p, const unsigned int component = 0) const override;
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
@@ -172,7 +183,8 @@ public:
   {}
 
   double
-  value(const Point<dim> &p, const unsigned int component = 0) const override;
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
@@ -186,20 +198,21 @@ template <int dim>
 class Cone : public Shape<dim>
 {
 public:
-  Cone<dim>(double tan_theta, double height)
+  Cone<dim>(double tan_base_angle, double height)
     : Shape<dim>(height)
-    , tan_theta(tan_theta)
+    , tan_base_angle(tan_base_angle)
     , height(height)
   {}
 
   double
-  value(const Point<dim> &p, const unsigned int component = 0) const override;
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
 private:
-  double tan_theta;
+  double tan_base_angle;
   double height;
 };
 
@@ -207,46 +220,48 @@ template <int dim>
 class CutHollowSphere : public Shape<dim>
 {
 public:
-  CutHollowSphere<dim>(double r, double h, double t)
-    : Shape<dim>(r)
-    , r(r)
-    , h(h)
-    , t(t)
+  CutHollowSphere<dim>(double radius, double cut_depth, double shell_thickness)
+    : Shape<dim>(radius)
+    , radius(radius)
+    , cut_depth(cut_depth)
+    , shell_thickness(shell_thickness)
   {}
 
   double
-  value(const Point<dim> &p, const unsigned int component = 0) const override;
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
 private:
-  double r;
-  double h;
-  double t;
+  double radius;
+  double cut_depth;
+  double shell_thickness;
 };
 
 template <int dim>
 class DeathStar : public Shape<dim>
 {
 public:
-  DeathStar<dim>(double ra, double rb, double d)
-    : Shape<dim>(ra)
-    , ra(ra)
-    , rb(rb)
-    , d(d)
+  DeathStar<dim>(double radius, double hole_radius, double spheres_distance)
+    : Shape<dim>(radius)
+    , radius(radius)
+    , hole_radius(hole_radius)
+    , spheres_distance(spheres_distance)
   {}
 
   double
-  value(const Point<dim> &p, const unsigned int component = 0) const override;
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
 private:
-  double ra;
-  double rb;
-  double d;
+  double radius;
+  double hole_radius;
+  double spheres_distance;
 };
 
 // Composite Shapes are currently used only to output the signed distance of
@@ -258,7 +273,7 @@ class CompositeShape : public Shape<dim>
 {
 public:
   CompositeShape<dim>(std::vector<std::shared_ptr<Shape<dim>>> components)
-    : Shape<dim>(1.)
+    : Shape<dim>()
     , components(components)
   {
     double radius = 0.;
@@ -270,7 +285,8 @@ public:
   }
 
   double
-  value(const Point<dim> &p, const unsigned int component = 0) const override;
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
