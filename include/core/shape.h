@@ -88,7 +88,7 @@ public:
    * that the shape is aligned with one of the main axes. This function moves
    * the evaluation point so that the value function can be kept simple.
    *
-   * Returns the centered and aligned point to evaluate properly the levelset
+   * Returns the centered and aligned point used on the levelset evaluation.
    */
   Point<dim>
   real_to_centered(const Point<dim> &evaluation_pt) const
