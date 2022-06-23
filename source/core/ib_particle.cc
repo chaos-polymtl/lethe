@@ -72,9 +72,6 @@ IBParticle<dim>::initialise_all()
     }
   residual_velocity = DBL_MAX;
   residual_omega    = DBL_MAX;
-
-
-  initialize_shape();
 }
 
 template <int dim>
@@ -165,13 +162,6 @@ double
 IBParticle<dim>::get_levelset(const Point<dim> &p)
 {
   return shape->value(p);
-}
-
-template <int dim>
-void
-IBParticle<dim>::initialize_shape()
-{
-  shape = std::make_shared<Sphere<dim>>(1.);
 }
 
 template <int dim>

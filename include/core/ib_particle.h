@@ -129,13 +129,6 @@ public:
 
   /**
    * @brief
-   * Sets up a default shape
-   */
-  void
-  initialize_shape();
-
-  /**
-   * @brief
    * Sets up a shape in accordance with the given type and arguments
    */
   void
