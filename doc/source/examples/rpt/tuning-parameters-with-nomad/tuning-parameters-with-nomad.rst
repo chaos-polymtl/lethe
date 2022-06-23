@@ -1,114 +1,137 @@
-==================================================
-Tuning Parameters with NOMAD
-==================================================
+.. role:: raw-html(raw)
+    :format: html
 
+=======================================================
+Tuning Count Calculation Model Parameters with NOMAD
+=======================================================
 
+In this example, `NOMAD <https://www.gerad.ca/en/software/nomad/>`_, the blackbox optimization software is used to estimate the unknown variables of the `Beam <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_ model. The three unknowns of our studied system are :
+
+- the detector's ``dead time`` (:math:`\tau`)
+- the source's ``activity`` (:math:`R`), and
+- the reactor's attenuation coefficient (``attenuation coefficient reactor`` (:math:`\mu_r`)).
 
 Features
 ----------------------------------
 - Solver: ``rpt_3d``
-- 
+- Displays the use of NOMAD in parameter tuning
 
 Locations of files used in the example
 ---------------------------------------
-- Parameter file: ``examples/rpt/count_calculation/rpt_count_calculation.prm``
-- 
+- Parameter file: ``examples/rpt/parameters_tuning/rpt_parameters.prm``
+- Python script for NOMAD: ``examples/rpt/parameters_tuning/rpt_lethe_nomad.py``
+- Text file used when running NOMAD: ``examples/rpt/parameters_tuning/param_nomad.txt``
+- File containing particle positions: ``examples/rpt/parameters_tuning/real_positions.particle``
+- File containing experimental particle counts: ``examples/rpt/parameters_tuning/counts.experimental``
+- File containing the detector positions: ``examples/rpt/parameters_tuning/positions.detector``
 
 Description of the case
 -------------------------
-In this example,
+In this example, using the NOMAD optimization software and the experimental data, we are going to tune the three unknowns (:math:`R, \tau`, and :math:`\mu_r`) of our studied system.
 
+The illustration below depicts the geometry of the vessel, the detector, and the particle positioning of our system:
 
-The illustration below depicts the geometry of the vessel, the detector and the particle positioning for each case:
+.. image:: images/system.png
+    :alt: The geometry
+    :align: center
+    :name: geometry_description
 
-<insert image>
- <!-- ..image:: images/rpt_cases.png
-	:alt: The geometry
-	:align: center
-	:name: geometry_description -->
-	
-As a particle travels in the cylindrical vessel, its photon count (:math:`C`) mesured by the detector varies according to the following relation:
+As discussed in the previous example (`Photon Count Calculation in a Cylindrical Vessel <../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html>`_), when a particle travels in the cylindrical reactor, its corresponding photon count (:math:`C`) measured by the detector varies according to the following relation:
 
 .. math::
-	\begin{align}
-	C = \frac{T \nu R \phi \xi_i (\vec{X})}{1 + \tau \nu R \phi \xi_i (\vec{X})}
-	\end{align}
+    C = \frac{T \nu R \phi \xi_i (\vec{X})}{1 + \tau \nu R \phi \xi_i (\vec{X})}
+
 		
 In the previous expression, 
 
-- :math:`T` is the sampling time (:math:`s`);
+- :math:`T` is the sampling time [:math:`s`];
 - :math:`\nu` is the number of :math:`\gamma`-rays emmited by each disintegration;
-- :math:`R` is the activity of the tracer (:math:`Beq`);
+- :math:`R` is the activity of the tracer [:math:`Beq`] *(the first unknown parameter)*;
 - :math:`\phi` is the peak-to-total ratio;
-- :math:`\tau` is the dead time of the detector (:math:`s`) and 
+- :math:`\tau` is the dead time of the detector [:math:`s`] *(the second unknown parameter)*;
+- :math:`\vec{X}` is the tracer particle's position, and
 - :math:`\xi_i(\vec{X})` is the efficiency of the :math:`i_{th}` detector related to the position :math:`\vec{X}`.
 
-The efficiency of the detector
+The efficiency of the detector is calculated using the Monte Carlo technic, with the following expression:
 
-Parameter file
+.. math::
+
+    \xi_i (\vec{X}) = \frac{1}{N} \sum_{j=1}^{N} \omega(\alpha) \omega(\theta) f_a(\alpha_j, \theta_j) f_d(\alpha_j, \theta_j)
+
+where
+
+- :math:`N` is the number of randomly generated photons;
+- :math:`\alpha_j` and :math:`\theta_j` are randomly generated angles that describe the direction of a ray emitted by a tracer particle;
+- :math:`\omega(\alpha)` is the weighting factor associated with the angle :math:`\alpha`, and
+- :math:`\omega(\theta)` is the weighting factor associated with the angle :math:`\theta`.
+- :math:`f_a(\alpha_j, \theta_j)` is the probability function of hte non-interaction between the :math:`\gamma`-rays emitted whithin :math:`\Omega` and the material inside the vessel, and
+- :math:`f_d(\alpha_j, \theta_j)` is the probability function of the interaction of the :math:`\gamma`-rays with the detector.
+
+The two last functions may be re-written the following way :
+
+.. math::
+
+    f_a(\alpha_j, \theta_j) = exp\{-\mu_r \ e(\alpha_j, \theta_j)\}
+
+where :math:`\mu_r` is the reactor's attenuation coefficient *(the third unknown parameter)* and :math:`e(\alpha_j, \theta_j)` is the length of the path travelled by the photon inside the reactor.
+
+And
+
+.. math::
+
+    f_d(\alpha_j, \theta_j) = 1 - exp\{ -\mu_d \ d(\alpha_j,\theta_j)\}
+
+where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alpha_j,\theta_j)` is the length of the path travelled by the photon inside the detector.
+
+
+Parameter files
 ----------------
 
+``rpt_parameters.prm`` file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 RPT Parameters
-~~~~~~~~~~~~~~~
-
-In the subsection *rpt parameters*, we define the values of the set of parameters that is necessary for the calculation of the counts using the Monte Carlo method.  Amoung these parmeters, we have, the name of the file in which is found a set of different positions of the particle inside the vessel (``particle position file``), the number of Monte Carlo iterations (``monte carlo iteration``), the seed that is used to generate a random number (``random number seed``) and other parameters that describe the studied gamma-ray model. We also define the name of the file in which the counts for each position will be exported with the parameter ``counts file``. These common parameters used for the RPT simulutation are discribed in the **RPT Parameters**  subsection in the `RPT parameters <../../../parameters/rpt/rpt.html>`_ documentation page.
+^^^^^^^^^^^^^^^^
 
 .. code-block:: text
 
-	subsection rpt parameters
-		set particle positions file           = positions_diagonal.particle
-		set verbosity                         = verbose
-		set export counts                     = true
-		set counts file                       = counts_diagonal.csv
-		set monte carlo iteration             = 100000
-		set random number seed                = 0
-		set reactor radius                    = 0.1
-		set peak-to-total ratio               = 0.4
-		set sampling time                     = 1
-		set gamma-rays emitted                = 2
-		set attenuation coefficient detector  = 21.477
-	end
+    # --------------------------------------------------
+    # RPT Monte Carlo technique
+    #---------------------------------------------------
+    subsection rpt parameters
+        set particle positions file          = positions.particle
+        set verbosity                        = quiet
+        set export counts                    = false
+        set counts file                      = run.csv
+        set monte carlo iteration            = 10000
+        set random number seed               = 0
+        set reactor height                   = 0.3
+        set reactor radius                   = 0.4
+        set peak-to-total ratio              = 0.4
+        set sampling time                    = 0.01
+        set gamma-rays emitted               = 2
+        set attenuation coefficient detector = 21.477
+    end
 
-
-Detector Parameters
-~~~~~~~~~~~~~~~~~~~~
-
-In the subsection *detector parameters*, we specify the file that contains two positions located on the axis of symmetry of the detector. The first point is on the surface facing the vessel (face of the detector) and the second point can be any point located inside the detector. In the current example, the center position of the face is [0.15, 0, 0.08] and the second point located on the axis is [0.2, 0, 0.08]. We also specify the radius (``radius``) and the length (``length``) of the detector. Detailed description of these parameters can be found in the **Detector Parameters** subsection in the `RPT parameters <../../../parameters/rpt/rpt.html>`_ documentation page.
-
-.. code-block:: text
-
-	subsection detector parameters
-		set detector positions file         = positions.detector
-		set radius                          = 0.0381 
-		set length                          = 0.0762
-		set dead time                       = 1e-5
-		set activity                        = 2e6
-		set attenuation coefficient reactor = 10
-	end
-
-.. note::
-	The parameters ``dead time``, ``activity`` and ``attenuation coefficient reactor`` are obtained using the blackbox optimization software `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ . The second example `Tuning Parameters with NOMAD <insert link>`_ explains how we can obtain the values of those parameters using NOMAD.
+.. attention::
+    ``verbosity`` **must** be set to **quiet** since NOMAD gets the cost function value from the terminal for its MADS algorithm.
 
 
 
+``param_nomad.txt`` file
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+Running the simulation
+----------------------------------
 
 
 Results
 --------
 
 
-Senario 1 : Horizontal translation of a particle on the x-axis 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Senario 2 : Horizontal translation of a particle on the y-axis 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Senario 3 : Vertical translation of a particle 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-Senario 4 : Particle going across the vessel on a diagonal line
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 References
