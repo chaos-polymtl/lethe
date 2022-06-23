@@ -1,7 +1,8 @@
-Parameter tuning
--------------------
 .. role:: raw-html(raw)
     :format: html
+
+Parameter tuning
+-------------------
 
 This subsection contains information regarding the tuning parameters with NOMAD. Enable tuning parameters requires the ``verbosity parameter`` in the subsection ``rpt parameters`` to be disabled by setting it as ``quiet`` otherwise it will interact with `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ since it needs the cost function value only. So far there are 3 types of cost functions implemented, one from the `Larachi <https://www.sciencedirect.com/science/article/abs/pii/0168900294913439?via%3Dihub>`_, the L1 function, and the L2 function. To tune parameters, the cost function compares the calculated counts with the Monte Carlo technique and the measured counts that are provided in the ``.experimental`` file.
 
@@ -19,9 +20,9 @@ This subsection contains information regarding the tuning parameters with NOMAD.
 
 
 - ``tuning``: Enable to tune parameters with NOMAD by showing the cost function in terminal
-    Options: ``true`` or ``false`` (by default)
+    Options: ``true`` or ``false`` *(by default)*
 - ``cost function type``: Type of cost function to evaluate
-    Options: ``larachi`` (by default), ``l1`` or ``l2``
+    Options: ``larachi`` *(by default)*, ``l1`` or ``l2``
 
     - Larachi cost function :
         .. math::
@@ -40,4 +41,4 @@ This subsection contains information regarding the tuning parameters with NOMAD.
 
 - ``experimental data file``: Filename of the text file with experimental/artificial counts
     Options: Any text file with ``.experimental`` extension with the
-    **required header**: *experimental_counts*
+    **required header**: :raw-html:`<br />` *experimental_counts*

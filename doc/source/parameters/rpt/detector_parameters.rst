@@ -1,7 +1,8 @@
-Detector parameters
---------------------
 .. role:: raw-html(raw)
     :format: html
+
+Detector parameters
+--------------------
 
 This subsection contains the specific information of the detector. ``Detector position file`` defines the files that Lethe uses to read the detector positions. This file includes the position of the detector face's center and the position of a point inside the detector on its axis.
 
@@ -21,8 +22,8 @@ This subsection contains the specific information of the detector. ``Detector po
 
 
 - ``detector positions file``: Filename of the text file with positions of detector(s)
-    Options: Any text file with ``.detector`` extension with the **required header** :
-    face_positions_x face_positions_y face_positions_z middle_positions_x middle_positions_y middle_positions_z
+    Options: Any text file with ``.detector`` extension with the **required header**: :raw-html:`<br />`
+    *face_positions_x face_positions_y face_positions_z middle_positions_x middle_positions_y middle_positions_z*
 - ``radius``: Radius of detector(s) (all detectors must have the same dimensions)
     Options: Any positive float *(default value: 1)*
 - ``length``: Length of detector(s) (all detectors must have the same dimensions)
@@ -34,5 +35,7 @@ The following parameters are variables in the gamma-ray Monte-Carlo model from `
 
 - ``activity``: Radioactive source activity of the tracer [Beq]
     Options: Any positive float *(default value: 1)*
-- ``attenuation coefficient reactor``: Total linear attenuation of light coefficient of the medium, reactor wall, and air []
+- ``dead time``: Dead time of the detector per accepted pulse [s]
+    Options : Any positive float *(default value: 1)*
+- ``attenuation coefficient reactor``: Total linear attenuation of light coefficient of the medium and reactor wall []
     Options: Any positive float *(default value: 1)*
