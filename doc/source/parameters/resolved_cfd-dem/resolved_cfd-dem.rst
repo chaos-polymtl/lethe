@@ -176,7 +176,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: sphere, ellipsoid, rectangle. Additional alternatives include: cone, death star, cut hollow sphere, torus.
 
-* The subsection ``solid arguments`` is used to define the solid parameters in the form of a tri-components function. The arguments, which must be written in triplets, are:
+* The subsection ``solid arguments`` is used to define the parameters of the solid in the form of a tri-components function. The arguments, which must be written in triplets, are:
     * Sphere: radius, [none], [none];
 
     * Rectangle: x half length, y half length, z half length;
