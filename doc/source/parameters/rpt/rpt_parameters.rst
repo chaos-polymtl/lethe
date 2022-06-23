@@ -26,6 +26,7 @@ This subsection contains the general information required for the photon count c
         set attenuation coefficient detector  = 21.477
     end
 
+
 - ``particle positions file``: Filename of the file with a set of particle positions inside the reactor.
 - ``verbosity``: Enable with ``verbose`` to show photon counts numbers results in realtime in terminal
     Options: ``quiet`` *(by default)* or ``verbose``
@@ -47,6 +48,7 @@ This subsection contains the general information required for the photon count c
 The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
 
 - ``peak-to-total ratio``: The proportion of the events appearing in the full energy peak to the total number of events []
+<<<<<<< HEAD
     Options: Any positive float *(default value: 1)*
 - ``sampling time``: The amount of time for which the RPT hardware records the photon count at each position [s]
     Options: Any positive float *(default value: 1)*
@@ -57,3 +59,4 @@ The following parameters are variables in the gamma-ray Monte-Carlo model from `
 
 References
 -------------------
+

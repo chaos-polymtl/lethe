@@ -7,6 +7,7 @@ Photon Count Calculation in a Cylindrical Vessel
 
 In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-ray. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector.
 
+
 :raw-html:`<br />`
 
 Features
@@ -25,6 +26,7 @@ Locations of files used in the example
 - File containing particle positions for the third scenario:  ``examples/rpt/count_calculation/positions_vertical.particle``
 - File containing particle positions for the fourth scenario:  ``examples/rpt/count_calculation/positions_diagonal.particle``
 
+
 :raw-html:`<br />`
 
 Description of the case
@@ -38,6 +40,7 @@ In this example, four different sets of particle positions are studied for a giv
 
 
 The illustration below depicts the geometry of the vessel, the detector, and the particle positioning for each scenario:
+
 
 .. image:: images/scenarios.png
     :alt: Scenarios
@@ -59,7 +62,9 @@ where
 - :math:`\phi` is the peak-to-total ratio;
 - :math:`\tau` is the dead time of the detector (:math:`s`);
 - :math:`\vec{X}` is the tracer particle's position, and
+
 - :math:`\xi_i(\vec{X})` is the efficiency of the :math:`i_{th}` detector related to the position :math:`\vec{X}`.
+
 
 :raw-html:`<br />`
 
@@ -69,6 +74,7 @@ The efficiency of the detector may be expressed by means of the following equati
 	
     \xi_i (\vec{X}) = \oiint_{\Omega } \frac{\vec{r}\cdot d\overrightarrow{A}}{\left \| \vec{r} \right \|^{3}}f_{a}(\alpha ,\theta )f_{d}(\alpha ,\theta )
 	
+
 where
 
 - :math:`\vec{r}` is a vector going from the position of the tracer particle (:math:`\vec{X}`) to a variable point (:math:`\vec{P}`) on the exposed surface of the detector;
@@ -101,6 +107,7 @@ Thus, the efficiency of the :math:`i_{th}` detector is calculated as follows :
 .. math::
 
     \xi_i (\vec{X}) = \frac{1}{N} \sum_{j=1}^{N} \omega(\alpha) \omega(\theta) f_a(\alpha_j, \theta_j) f_d(\alpha_j, \theta_j)
+
 
 where
 
@@ -163,6 +170,7 @@ In the subsection *detector parameters*, we specify the file that contains two p
 .. note::
     The parameters ``dead time``, ``activity`` and ``attenuation coefficient reactor`` are obtained using the blackbox optimization software `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ . The second example `Tuning Parameters with NOMAD <../tuning-parameters-with-nomad/tuning-parameters-with-nomad.html>`_ explains how we can obtain the values of these parameters using NOMAD.
 	
+
 :raw-html:`<br />`
 
 Running the simulation
@@ -190,6 +198,7 @@ Scenario 1: Horizontal translation of a particle along the x-axis
     :alt: Scenario 1 results
     :align: center
     :name: Results of the 1st scenario
+
 
 In the figure shown above, as one would expect, as the particle approaches the detector, the photon count grows. Such evolution may be explained by the efficiency of the detector getting greater as the particle advances toward the detector's exposed surface. Since the photon's path length in the vessel decreases, :math:`f_a(\alpha, \theta)` increases, and therefore the efficiency gets greater.
 
@@ -265,4 +274,6 @@ After analyzing the past three scenarios, we get much-expected results for this 
 
 References
 -----------
+
 [1] Larachi F., Kennedy G., & Chaouki J. (1994). A γ-ray detection system for 3-D particle tracking in multiphase reactors. *Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment*. 338(2), 568-576. https://doi.org/10.1016/0168-9002(94)91343-9
+

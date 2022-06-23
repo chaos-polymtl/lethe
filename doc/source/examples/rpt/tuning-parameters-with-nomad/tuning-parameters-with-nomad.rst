@@ -1,6 +1,3 @@
-.. role:: raw-html(raw)
-    :format: html
-
 =======================================================
 Tuning Count Calculation Model Parameters with NOMAD
 =======================================================
@@ -10,6 +7,7 @@ In this example, `NOMAD <https://www.gerad.ca/en/software/nomad/>`_, the blackbo
 - the detector's ``dead time`` (:math:`\tau`)
 - the source's ``activity`` (:math:`R`), and
 - the reactor's attenuation coefficient (``attenuation coefficient reactor`` (:math:`\mu_r`)).
+
 
 Features
 ----------------------------------
@@ -117,7 +115,6 @@ RPT Parameters
     ``verbosity`` **must** be set to **quiet** since NOMAD gets the cost function value from the terminal for its MADS algorithm.
 
 
-
 ``param_nomad.txt`` file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -128,9 +125,9 @@ Running the simulation
 ----------------------------------
 
 
+
 Results
 --------
-
 
 
 
