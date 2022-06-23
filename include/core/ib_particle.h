@@ -100,7 +100,7 @@ public:
 
   /**
    * @brief
-   * Return the evaluation of the signed distance function of this solid at the
+   * Returns the evaluation of the signed distance function of this solid at the
    * given point p
    * Most levelset functions come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
