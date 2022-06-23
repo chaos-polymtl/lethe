@@ -110,7 +110,7 @@ public:
 
     // Selection of the first axis around which to rotate:
     // x -> 0, y -> 1, z -> 2
-    // In 2D, rotation is only possible around the z axis
+    // In 2D, only rotation around the z axis is possible
     unsigned int first_rotation_axis = 0;
     if (dim == 2)
       {
