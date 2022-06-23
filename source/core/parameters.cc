@@ -1759,16 +1759,6 @@ namespace Parameters
     prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
 
-    prm.enter_subsection("center of rotation offset");
-    particles[index].f_center_of_rotation_offset =
-      std::make_shared<Functions::ParsedFunction<dim>>(dim);
-    particles[index].f_center_of_rotation_offset->declare_parameters(prm, dim);
-    if (dim == 2)
-      prm.set("Function expression", "0; 0");
-    if (dim == 3)
-      prm.set("Function expression", "0; 0; 0");
-    prm.leave_subsection();
-
     prm.enter_subsection("velocity");
     particles[index].f_velocity =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
@@ -2099,11 +2089,6 @@ namespace Parameters
           particles[i].f_orientation->set_time(0);
           prm.leave_subsection();
 
-          prm.enter_subsection("center of rotation offset");
-          particles[i].f_center_of_rotation_offset->parse_parameters(prm);
-          particles[i].f_center_of_rotation_offset->set_time(0);
-          prm.leave_subsection();
-
           prm.enter_subsection("velocity");
           particles[i].f_velocity->parse_parameters(prm);
           particles[i].f_velocity->set_time(0);
@@ -2116,12 +2101,6 @@ namespace Parameters
             particles[i].f_position->value(particles[i].position, 0);
           particles[i].position[1] =
             particles[i].f_position->value(particles[i].position, 1);
-          particles[i].center_of_rotation_offset[0] =
-            particles[i].f_center_of_rotation_offset->value(
-              particles[i].position, 0);
-          particles[i].center_of_rotation_offset[1] =
-            particles[i].f_center_of_rotation_offset->value(
-              particles[i].position, 1);
           particles[i].orientation[0] =
             particles[i].f_orientation->value(particles[i].position, 0);
           particles[i].orientation[1] =
@@ -2159,9 +2138,6 @@ namespace Parameters
             {
               particles[i].position[2] =
                 particles[i].f_position->value(particles[i].position, 2);
-              particles[i].center_of_rotation_offset[2] =
-                particles[i].f_center_of_rotation_offset->value(
-                  particles[i].position, 2);
               particles[i].velocity[2] =
                 particles[i].f_velocity->value(particles[i].position, 2);
               particles[i].pressure_location[2] = prm.get_double("pressure z");
@@ -2171,8 +2147,6 @@ namespace Parameters
             }
 
           particles[i].set_position(particles[i].position);
-          particles[i].set_center_of_rotation_offset(
-            particles[i].center_of_rotation_offset);
           particles[i].set_orientation(particles[i].orientation);
 
           if (dim == 2)

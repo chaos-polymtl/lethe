@@ -629,9 +629,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
   // Initialize the particles
   for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
     {
-      dem_particles[p_i].position = dem_particles[p_i].previous_positions[0];
-      dem_particles[p_i].center_of_rotation_offset =
-        dem_particles[p_i].previous_center_of_rotation_offset[0];
+      dem_particles[p_i].position  = dem_particles[p_i].previous_positions[0];
       dem_particles[p_i].velocity  = dem_particles[p_i].previous_velocity[0];
       dem_particles[p_i].omega     = dem_particles[p_i].previous_omega[0];
       dem_particles[p_i].impulsion = 0;
@@ -646,8 +644,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
       dem_particles[p_i].set_position(dem_particles[p_i].position);
       dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
-      dem_particles[p_i].set_center_of_rotation_offset(
-        dem_particles[p_i].center_of_rotation_offset);
     }
 
 
@@ -863,8 +859,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
           dem_particles[p_i].set_position(dem_particles[p_i].position);
           dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
-          dem_particles[p_i].set_center_of_rotation_offset(
-            dem_particles[p_i].center_of_rotation_offset);
         }
 
       t += dt_dem;

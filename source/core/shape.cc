@@ -29,7 +29,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
 {
   // Translation and rotation to standard position and orientation for
   // distance calculations
-  Point<dim> center_of_rotation = position + center_of_rotation_offset;
+  Point<dim> center_of_rotation = position;
 
   Point<dim> rotated_point;
   Point<dim> translated_point;
@@ -117,9 +117,8 @@ Sphere<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<Sphere<dim>>(this->effective_radius);
-  copy->position                  = this->position;
-  copy->center_of_rotation_offset = this->center_of_rotation_offset;
-  copy->orientation               = this->orientation;
+  copy->position    = this->position;
+  copy->orientation = this->orientation;
   return copy;
 }
 
@@ -189,9 +188,8 @@ Rectangle<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<Rectangle<dim>>(this->half_lengths);
-  copy->position                  = this->position;
-  copy->center_of_rotation_offset = this->center_of_rotation_offset;
-  copy->orientation               = this->orientation;
+  copy->position    = this->position;
+  copy->orientation = this->orientation;
   return copy;
 }
 
@@ -224,9 +222,8 @@ Ellipsoid<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<Ellipsoid<dim>>(this->radii);
-  copy->position                  = this->position;
-  copy->center_of_rotation_offset = this->center_of_rotation_offset;
-  copy->orientation               = this->orientation;
+  copy->position    = this->position;
+  copy->orientation = this->orientation;
   return copy;
 }
 
@@ -253,9 +250,8 @@ Torus<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<Torus<dim>>(this->ring_radius, ring_thickness);
-  copy->position                  = this->position;
-  copy->center_of_rotation_offset = this->center_of_rotation_offset;
-  copy->orientation               = this->orientation;
+  copy->position    = this->position;
+  copy->orientation = this->orientation;
   return copy;
 }
 
@@ -298,9 +294,8 @@ Cone<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<Cone<dim>>(this->tan_base_angle, this->height);
-  copy->position                  = this->position;
-  copy->center_of_rotation_offset = this->center_of_rotation_offset;
-  copy->orientation               = this->orientation;
+  copy->position    = this->position;
+  copy->orientation = this->orientation;
   return copy;
 }
 
@@ -339,9 +334,8 @@ CutHollowSphere<dim>::static_copy() const
     std::make_shared<CutHollowSphere<dim>>(this->radius,
                                            this->cut_depth,
                                            this->shell_thickness);
-  copy->position                  = this->position;
-  copy->center_of_rotation_offset = this->center_of_rotation_offset;
-  copy->orientation               = this->orientation;
+  copy->position    = this->position;
+  copy->orientation = this->orientation;
   return copy;
 }
 
@@ -386,9 +380,8 @@ DeathStar<dim>::static_copy() const
     std::make_shared<DeathStar<dim>>(this->radius,
                                      this->hole_radius,
                                      this->spheres_distance);
-  copy->position                  = this->position;
-  copy->center_of_rotation_offset = this->center_of_rotation_offset;
-  copy->orientation               = this->orientation;
+  copy->position    = this->position;
+  copy->orientation = this->orientation;
   return copy;
 }
 
@@ -411,9 +404,8 @@ CompositeShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<CompositeShape<dim>>(this->components);
-  copy->position                  = this->position;
-  copy->center_of_rotation_offset = this->center_of_rotation_offset;
-  copy->orientation               = this->orientation;
+  copy->position    = this->position;
+  copy->orientation = this->orientation;
   return copy;
 }
 

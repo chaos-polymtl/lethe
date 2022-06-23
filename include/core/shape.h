@@ -99,8 +99,6 @@ public:
   // Position of the center of the Shape. It doesn't always correspond to the
   // center of mass
   Point<dim> position;
-  // The offset of the center of rotation in relation to the position
-  Point<dim> center_of_rotation_offset;
   // The solid orientation, which is defined as the sequential rotation around
   // the axes x->y->z by each of the tensor components, in radian
   Tensor<1, 3> orientation;

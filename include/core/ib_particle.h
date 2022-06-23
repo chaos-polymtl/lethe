@@ -164,14 +164,6 @@ public:
   void
   set_orientation(const Tensor<1, 3> orientation);
 
-  /**
-   * @brief
-   * Sets the center of rotation offset of the particle and dependent members to
-   * the argument
-   */
-  void
-  set_center_of_rotation_offset(const Point<dim> cor_offset);
-
 
   // This class defines values related to a particle used in the sharp interface
   // IB. Each particle defined will have these value used in the solver.
@@ -206,11 +198,6 @@ public:
   Point<dim> position;
   // The vector of particle positions at the end of the last n time steps.
   std::vector<Point<dim>> previous_positions;
-  // The center of rotation offset of the shape.
-  Point<dim> center_of_rotation_offset;
-  // The vector of shape center of rotation offset at the end of the last n time
-  // steps.
-  std::vector<Point<dim>> previous_center_of_rotation_offset;
   // The fluid force applied on the particle.
   Tensor<1, 3> fluid_forces;
   // The fluid force applied on the particle at the end of the last time step.
@@ -267,9 +254,6 @@ public:
   // If the dynamic is not resolved, this function determines the position at
   // every time step.
   std::shared_ptr<Functions::ParsedFunction<dim>> f_position;
-  // The function from which the particle center of rotation offset is
-  // determined.
-  std::shared_ptr<Functions::ParsedFunction<dim>> f_center_of_rotation_offset;
   // The function from which the particle initial angular velocity is
   // determined. If the dynamic is not resolved, this function determines the
   // angular velocity at every time step.

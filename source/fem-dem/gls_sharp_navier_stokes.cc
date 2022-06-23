@@ -1420,19 +1420,12 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
           particles[p].f_position->set_time(time);
-          particles[p].f_center_of_rotation_offset->set_time(time);
           particles[p].f_velocity->set_time(time);
           particles[p].f_omega->set_time(time);
           particles[p].position[0] =
             particles[p].f_position->value(particles[p].position, 0);
           particles[p].position[1] =
             particles[p].f_position->value(particles[p].position, 1);
-          particles[p].center_of_rotation_offset[0] =
-            particles[p].f_center_of_rotation_offset->value(
-              particles[p].position, 0);
-          particles[p].center_of_rotation_offset[1] =
-            particles[p].f_center_of_rotation_offset->value(
-              particles[p].position, 1);
           particles[p].velocity[0] =
             particles[p].f_velocity->value(particles[p].position, 0);
           particles[p].velocity[1] =
@@ -1447,16 +1440,11 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             {
               particles[p].position[2] =
                 particles[p].f_position->value(particles[p].position, 2);
-              particles[p].center_of_rotation_offset[2] =
-                particles[p].f_center_of_rotation_offset->value(
-                  particles[p].position, 2);
               particles[p].velocity[2] =
                 particles[p].f_velocity->value(particles[p].position, 2);
             }
           particles[p].set_position(particles[p].position);
           particles[p].set_orientation(particles[p].orientation);
-          particles[p].set_center_of_rotation_offset(
-            particles[p].center_of_rotation_offset);
         }
       particle_residual = 0;
     }
@@ -1589,18 +1577,14 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
         {
           particles[p].previous_positions[i] =
             particles[p].previous_positions[i - 1];
-          particles[p].previous_center_of_rotation_offset[i] =
-            particles[p].previous_center_of_rotation_offset[i - 1];
           particles[p].previous_velocity[i] =
             particles[p].previous_velocity[i - 1];
           particles[p].previous_omega[i] = particles[p].previous_omega[i - 1];
         }
 
       particles[p].previous_positions[0] = particles[p].position;
-      particles[p].previous_center_of_rotation_offset[0] =
-        particles[p].center_of_rotation_offset;
-      particles[p].previous_velocity[0] = particles[p].velocity;
-      particles[p].previous_omega[0]    = particles[p].omega;
+      particles[p].previous_velocity[0]  = particles[p].velocity;
+      particles[p].previous_omega[0]     = particles[p].omega;
 
       particles[p].previous_fluid_forces = particles[p].fluid_forces;
       particles[p].previous_fluid_torque = particles[p].fluid_torque;
@@ -2763,8 +2747,6 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
 
                   particles[p_i].set_position(particles[p_i].position);
                   particles[p_i].set_orientation(particles[p_i].orientation);
-                  particles[p_i].set_center_of_rotation_offset(
-                    particles[p_i].center_of_rotation_offset);
                 }
               else
                 {
@@ -2834,8 +2816,6 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
 
                   particles[p_i].set_position(particles[p_i].position);
                   particles[p_i].set_orientation(particles[p_i].orientation);
-                  particles[p_i].set_center_of_rotation_offset(
-                    particles[p_i].center_of_rotation_offset);
                 }
               else
                 {
