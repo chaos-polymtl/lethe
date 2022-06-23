@@ -191,6 +191,9 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Death Star: sphere radius, hole radius, distance between centers.
 
+.. note::
+    Since the ``solid arguments`` need to be a triplet, you must add any numerical value in the [none] places, but they won't be used.
+
 The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
 
 * The ``friction coefficient`` parameter is the coefficient of friction of the particle. This parameter is used to define the effective coefficient of friction between the wall and the particles.

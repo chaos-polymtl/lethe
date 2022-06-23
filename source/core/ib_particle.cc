@@ -23,8 +23,8 @@ IBParticle<dim>::initialise_all()
   position[0] = 0;
   position[1] = 0;
 
-  center_of_mass_offset[0] = 0;
-  center_of_mass_offset[1] = 0;
+  center_of_rotation_offset[0] = 0;
+  center_of_rotation_offset[1] = 0;
 
   fluid_torque[0] = 0;
   fluid_torque[1] = 0;
@@ -44,10 +44,10 @@ IBParticle<dim>::initialise_all()
 
   if (dim == 3)
     {
-      fluid_forces[2]          = 0;
-      velocity[2]              = 0;
-      position[2]              = 0;
-      center_of_mass_offset[2] = 0;
+      fluid_forces[2]              = 0;
+      velocity[2]                  = 0;
+      position[2]                  = 0;
+      center_of_rotation_offset[2] = 0;
     }
 
   // Fill the vectors with default value
@@ -63,18 +63,18 @@ IBParticle<dim>::initialise_all()
   contact_impulsion    = 0;
 
   previous_positions.resize(3);
-  previous_center_of_mass_offset.resize(3);
+  previous_center_of_rotation_offset.resize(3);
   previous_velocity.resize(3);
   previous_orientation.resize(3);
   previous_omega.resize(3);
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      previous_positions[i]             = position;
-      previous_center_of_mass_offset[i] = center_of_mass_offset;
-      previous_velocity[i]              = velocity;
-      previous_orientation[i]           = orientation;
-      previous_omega[i]                 = omega;
+      previous_positions[i]                 = position;
+      previous_center_of_rotation_offset[i] = center_of_rotation_offset;
+      previous_velocity[i]                  = velocity;
+      previous_orientation[i]               = orientation;
+      previous_omega[i]                     = omega;
     }
   residual_velocity = DBL_MAX;
   residual_omega    = DBL_MAX;
@@ -96,11 +96,11 @@ IBParticle<dim>::initialise_last()
 
   for (unsigned int i = 0; i < 3; ++i)
     {
-      previous_positions[i]             = position;
-      previous_center_of_mass_offset[i] = center_of_mass_offset;
-      previous_velocity[i]              = velocity;
-      previous_orientation[i]           = orientation;
-      previous_omega[i]                 = omega;
+      previous_positions[i]                 = position;
+      previous_center_of_rotation_offset[i] = center_of_rotation_offset;
+      previous_velocity[i]                  = velocity;
+      previous_orientation[i]               = orientation;
+      previous_omega[i]                     = omega;
     }
 }
 
@@ -248,14 +248,13 @@ IBParticle<dim>::set_position(const Point<dim> position)
   this->shape->position = position;
 }
 
-
 template <int dim>
 void
-IBParticle<dim>::move(const double       position_update,
-                      const unsigned int component)
+IBParticle<dim>::set_position(const double       position_component,
+                              const unsigned int component)
 {
-  this->position[component] += position_update;
-  set_position(this->position);
+  this->position[component]        = position_component;
+  this->shape->position[component] = position_component;
 }
 
 template <int dim>
@@ -269,7 +268,7 @@ template <int dim>
 void
 IBParticle<dim>::set_center_of_rotation_offset(const Point<dim> cor_offset)
 {
-  this->center_of_mass_offset            = cor_offset;
+  this->center_of_rotation_offset        = cor_offset;
   this->shape->center_of_rotation_offset = cor_offset;
 }
 

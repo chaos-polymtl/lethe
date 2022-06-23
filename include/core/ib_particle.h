@@ -143,28 +143,30 @@ public:
 
   /**
    * @brief
-   * Sets the position of the particle and dependant members to the argument
+   * Sets the position of the particle and dependent members to the argument
    */
   void
   set_position(const Point<dim> position);
 
   /**
    * @brief
-   * Increments one component of the position and updates the relevant members
+   * Sets the position of the particle and dependent members to the argument for
+   * one component
    */
   void
-  move(const double position_update, const unsigned int component = 0);
+  set_position(const double       position_component,
+               const unsigned int component = 0);
 
   /**
    * @brief
-   * Sets the orientation of the particle and dependant members to the argument
+   * Sets the orientation of the particle and dependent members to the argument
    */
   void
   set_orientation(const Tensor<1, 3> orientation);
 
   /**
    * @brief
-   * Sets the center of rotation offset of the particle and dependant members to
+   * Sets the center of rotation offset of the particle and dependent members to
    * the argument
    */
   void
@@ -204,11 +206,11 @@ public:
   Point<dim> position;
   // The vector of particle positions at the end of the last n time steps.
   std::vector<Point<dim>> previous_positions;
-  // The center of mass offset of the solid.
-  Point<dim> center_of_mass_offset;
-  // The vector of solid center of mass offset at the end of the last n time
+  // The center of rotation offset of the solid.
+  Point<dim> center_of_rotation_offset;
+  // The vector of solid center of rotation offset at the end of the last n time
   // steps.
-  std::vector<Point<dim>> previous_center_of_mass_offset;
+  std::vector<Point<dim>> previous_center_of_rotation_offset;
   // The fluid force applied on the particle.
   Tensor<1, 3> fluid_forces;
   // The fluid force applied on the particle at the end of the last time step.
@@ -265,9 +267,9 @@ public:
   // If the dynamic is not resolved, this function determines the position at
   // every time step.
   std::shared_ptr<Functions::ParsedFunction<dim>> f_position;
-  // The function from which the particle center of mass offset is
+  // The function from which the particle center of rotation offset is
   // determined.
-  std::shared_ptr<Functions::ParsedFunction<dim>> f_center_of_mass_offset;
+  std::shared_ptr<Functions::ParsedFunction<dim>> f_center_of_rotation_offset;
   // The function from which the particle initial angular velocity is
   // determined. If the dynamic is not resolved, this function determines the
   // angular velocity at every time step.
