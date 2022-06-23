@@ -1219,7 +1219,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
           // calculate the volume of fluid displaced by the particle.
-          double volume = particles[p].shape->volume(fluid_density);
+          double volume = particles[p].shape->displaced_volume(fluid_density);
 
           // Transfers the impulsion evaluated in the sub-time-stepping scheme
           // to the particle at the CFD time scale.

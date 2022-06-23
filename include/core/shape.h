@@ -76,7 +76,7 @@ public:
    *
    */
   virtual double
-  volume(const double fluid_density)
+  displaced_volume(const double fluid_density)
   {
     StandardExceptions::ExcNotImplemented();
     return 1.;
@@ -84,33 +84,36 @@ public:
 
   /**
    * @brief
-   * Most value functions assume that the particle's position is at the origin and
-   * that the shape is aligned with one of the main axes. This function moves
-   * the evaluation point so that the value function can be kept simple.
+   * Most value functions assume that the particle's position is at the origin
+   * and that the shape is aligned with one of the main axes. This function
+   * returns a point that is rotated and translated, in accordance with the
+   * current shape position and orientation, so that subsequent calculations for
+   * the value function are made more easily; it abstract a step that is
+   * required in the value function for most shapes.
    *
    * Returns the centered and aligned point used on the levelset evaluation.
    */
   Point<dim>
-  real_to_centered(const Point<dim> &evaluation_pt) const
+  align_and_center(const Point<dim> &evaluation_pt) const
   {
     Point<dim> corrected_pt;
 
-    Point<dim> cor = position + cor_offset;
     // Translation and rotation to standard position and orientation for
     // distance calculations
+    Point<dim> center_of_rotation = position + center_of_rotation_offset;
+
     Point<dim> rotated_pt;
     Point<dim> translated_pt;
+
     // Rotation from the solid orientation
     // Angular position around x, y and z axis
     Tensor<1, 3> theta = orientation;
     Point<dim>   centralized_point;
-    centralized_point              = evaluation_pt - cor;
+    centralized_point              = evaluation_pt - center_of_rotation;
     Point<dim> centralized_rotated = centralized_point;
-
     // Selection of the first axis around which to rotate:
     // x -> 0, y -> 1, z -> 2
     // In 2D, only rotation around the z axis is possible
-    unsigned int first_rotation_axis = 0;
     if (dim == 2)
       {
         if (std::abs(theta[2]) > 1e-10)
@@ -131,7 +134,6 @@ public:
             centralized_point = centralized_rotated;
           }
       }
-
     else if (dim == 3)
       {
         for (unsigned int i = 0; i < 3; ++i)
@@ -158,8 +160,9 @@ public:
               }
           }
       }
-    rotated_pt = centralized_rotated + cor;
-    // Translate
+    rotated_pt = centralized_rotated + center_of_rotation;
+
+    // Translation from the solid position
     translated_pt = rotated_pt - position;
 
     return translated_pt;
@@ -169,7 +172,7 @@ public:
   // center of mass
   Point<dim> position;
   // The offset of the center of rotation in relation to the position
-  Point<dim> cor_offset;
+  Point<dim> center_of_rotation_offset;
   // The solid orientation, which is defined as the sequential rotation around
   // the axes x->y->z by each of the tensor components, in radian
   Tensor<1, 3> orientation;
@@ -203,9 +206,9 @@ public:
   {
     std::shared_ptr<Shape<dim>> copy =
       std::make_shared<Sphere<dim>>(this->effective_radius);
-    copy->position    = this->position;
-    copy->cor_offset  = this->cor_offset;
-    copy->orientation = this->orientation;
+    copy->position                  = this->position;
+    copy->center_of_rotation_offset = this->center_of_rotation_offset;
+    copy->orientation               = this->orientation;
     return copy;
   }
 
@@ -224,7 +227,7 @@ public:
   }
 
   double
-  volume(const double fluid_density) override
+  displaced_volume(const double fluid_density) override
   {
     double solid_volume;
     using numbers::PI;
@@ -253,7 +256,7 @@ public:
   value(const Point<dim> &p, const unsigned int component = 0) const override
   {
     double     levelset;
-    Point<dim> centered_pt = this->real_to_centered(p);
+    Point<dim> centered_pt = this->align_and_center(p);
 
     Point<dim> abs_p;
     Point<dim> half_lengths_dim;
@@ -280,9 +283,9 @@ public:
   {
     std::shared_ptr<Shape<dim>> copy =
       std::make_shared<Rectangle<dim>>(this->half_lengths);
-    copy->position    = this->position;
-    copy->cor_offset  = this->cor_offset;
-    copy->orientation = this->orientation;
+    copy->position                  = this->position;
+    copy->center_of_rotation_offset = this->center_of_rotation_offset;
+    copy->orientation               = this->orientation;
     return copy;
   }
 
@@ -304,7 +307,7 @@ public:
   value(const Point<dim> &p, const unsigned int component = 0) const override
   {
     double     levelset;
-    Point<dim> centered_pt = this->real_to_centered(p);
+    Point<dim> centered_pt = this->align_and_center(p);
 
     Point<dim> v_k0;
     Point<dim> v_k1;
@@ -326,9 +329,9 @@ public:
   {
     std::shared_ptr<Shape<dim>> copy =
       std::make_shared<Ellipsoid<dim>>(this->radii);
-    copy->position    = this->position;
-    copy->cor_offset  = this->cor_offset;
-    copy->orientation = this->orientation;
+    copy->position                  = this->position;
+    copy->center_of_rotation_offset = this->center_of_rotation_offset;
+    copy->orientation               = this->orientation;
     return copy;
   }
 
@@ -353,7 +356,7 @@ public:
     AssertDimension(dim, 3);
 
     double     levelset;
-    Point<dim> centered_pt = this->real_to_centered(p);
+    Point<dim> centered_pt = this->align_and_center(p);
 
     Point<2> p_xz({centered_pt[0], centered_pt[2]});
     Point<2> q({p_xz.norm() - ring_radius, centered_pt[1]});
@@ -367,9 +370,9 @@ public:
   {
     std::shared_ptr<Shape<dim>> copy =
       std::make_shared<Torus<dim>>(this->ring_radius, ring_thickness);
-    copy->position    = this->position;
-    copy->cor_offset  = this->cor_offset;
-    copy->orientation = this->orientation;
+    copy->position                  = this->position;
+    copy->center_of_rotation_offset = this->center_of_rotation_offset;
+    copy->orientation               = this->orientation;
     return copy;
   }
 
@@ -395,7 +398,7 @@ public:
     AssertDimension(dim, 3);
 
     double     levelset;
-    Point<dim> centered_pt = this->real_to_centered(p);
+    Point<dim> centered_pt = this->align_and_center(p);
 
     // For a cone, the parameters are tan(base angle) and height
     Point<2> q({height * tan_theta, -height});
@@ -425,9 +428,9 @@ public:
   {
     std::shared_ptr<Shape<dim>> copy =
       std::make_shared<Cone<dim>>(this->tan_theta, this->height);
-    copy->position    = this->position;
-    copy->cor_offset  = this->cor_offset;
-    copy->orientation = this->orientation;
+    copy->position                  = this->position;
+    copy->center_of_rotation_offset = this->center_of_rotation_offset;
+    copy->orientation               = this->orientation;
     return copy;
   }
 
@@ -454,7 +457,7 @@ public:
     AssertDimension(dim, 3);
 
     double     levelset;
-    Point<dim> centered_pt = this->real_to_centered(p);
+    Point<dim> centered_pt = this->align_and_center(p);
 
     double   w = sqrt(r * r - h * h);
     Point<2> p_xz({centered_pt[0], centered_pt[2]});
@@ -478,9 +481,9 @@ public:
   {
     std::shared_ptr<Shape<dim>> copy =
       std::make_shared<CutHollowSphere<dim>>(this->r, this->h, this->t);
-    copy->position    = this->position;
-    copy->cor_offset  = this->cor_offset;
-    copy->orientation = this->orientation;
+    copy->position                  = this->position;
+    copy->center_of_rotation_offset = this->center_of_rotation_offset;
+    copy->orientation               = this->orientation;
     return copy;
   }
 
@@ -508,7 +511,7 @@ public:
     AssertDimension(dim, 3);
 
     double     levelset;
-    Point<dim> centered_pt = this->real_to_centered(p);
+    Point<dim> centered_pt = this->align_and_center(p);
 
     double a = (ra * ra - rb * rb + d * d) / (2. * d);
     double b = sqrt(std::max(ra * ra - a * a, 0.));
@@ -536,9 +539,9 @@ public:
   {
     std::shared_ptr<Shape<dim>> copy =
       std::make_shared<DeathStar<dim>>(this->ra, this->rb, this->d);
-    copy->position    = this->position;
-    copy->cor_offset  = this->cor_offset;
-    copy->orientation = this->orientation;
+    copy->position                  = this->position;
+    copy->center_of_rotation_offset = this->center_of_rotation_offset;
+    copy->orientation               = this->orientation;
     return copy;
   }
 
@@ -548,6 +551,10 @@ private:
   double d;
 };
 
+// Composite Shapes are currently used only to output the signed distance of
+// particles in the GLS Sharp Navier Stokes solver. The class was however
+// designed so that specific composite shapes could be defined through the
+// parameter file, although this functionality has not been implemented yet.
 template <int dim>
 class CompositeShape : public Shape<dim>
 {
@@ -580,9 +587,9 @@ public:
   {
     std::shared_ptr<Shape<dim>> copy =
       std::make_shared<CompositeShape<dim>>(this->components);
-    copy->position    = this->position;
-    copy->cor_offset  = this->cor_offset;
-    copy->orientation = this->orientation;
+    copy->position                  = this->position;
+    copy->center_of_rotation_offset = this->center_of_rotation_offset;
+    copy->orientation               = this->orientation;
     return copy;
   }
 

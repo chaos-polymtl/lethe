@@ -110,17 +110,17 @@ public:
 
   /**
    * @brief
-   * Sets the closest_point parameter to be the point on the surface of the solid which has the minimal distance
-   * from the given point p
+   * Sets the closest_point parameter to be the point on the surface of the
+   * solid which has the minimal distance from the given point p
    */
   void
   closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
 
   /**
    * @brief
-   * Returns true if the given point is inside the crown for which the limits are defined
-   * by inner and outer radius factors. An effective radius is used for
-   * non spherical shapes.
+   * Returns true if the given point is inside the crown for which the limits
+   * are defined by inner and outer radius factors. An effective radius is used
+   * for non spherical shapes.
    */
   bool
   is_inside_crown(const Point<dim> &evaluation_pt,

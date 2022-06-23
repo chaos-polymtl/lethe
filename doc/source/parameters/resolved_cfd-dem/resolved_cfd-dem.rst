@@ -167,14 +167,14 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The subsection ``orientation`` defines the initial value of the particle's angular position around each of the axes X, then Y, and lastly Z.
 
-.. note::
+.. warning::
     It's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity, but all three should be defined.
 
 * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
 
 * The ``pressure x``, ``pressure y``, and ``pressure z`` parameters are used to define the X, Y, and Z coordinate offset of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to true to define the pressure reference point.
 
-* The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: sphere, ellipsoid, rectangle. Additional alternatives include: cone, death star, cut hollow sphere, torus.
+* The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``.
 
 * The subsection ``solid arguments`` is used to define the parameters of the solid in the form of a tri-components function. The arguments, which must be written in triplets, are:
     * Sphere: radius, [none], [none];
@@ -191,7 +191,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Death Star: sphere radius, hole radius, distance between centers.
 
-The following properties are used if the particle impact one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are calculated using a harmonic mean of the properties of the particle and the object it impacts.
+The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
 
 * The ``friction coefficient`` parameter is the coefficient of friction of the particle. This parameter is used to define the effective coefficient of friction between the wall and the particles.
 
@@ -204,10 +204,10 @@ The following properties are used if the particle impact one of the boundaries o
 * The ``youngs modulus`` parameter is the Young's modulus of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
 
 .. tip::
-	For a particle to be accounted for in the fluid mesh, it has to overlap one or more vertices of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls. To avoid this, a box refinement can be added around the particle (See Box refinement documentation).
+	For a particle to be accounted for in the fluid mesh, it has to overlap at least one vertex of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls. To avoid this, a box refinement can be added around the particle (See Box refinement documentation).
 
 Mesh refinement
-The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The one that occurs first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection.
+The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection.
 The second refinement is inside the **box refinement zone**, set by the ``initial refinement`` in the ``box refinement`` subsection. Lastly, the **near-particle zone** is refined, defined by the ``initial refinement`` parameter in the ``particles`` subsection.
 Therefore, the near-particle zone around each particle is refined ``mesh``:``initial refinement`` + ``box``:``initial refinement`` + ``particle``:``initial refinement`` times before the simulations starts.
 

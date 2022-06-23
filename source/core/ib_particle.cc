@@ -269,23 +269,9 @@ template <int dim>
 void
 IBParticle<dim>::set_center_of_rotation_offset(const Point<dim> cor_offset)
 {
-  this->center_of_mass_offset = cor_offset;
-  this->shape->cor_offset     = cor_offset;
+  this->center_of_mass_offset            = cor_offset;
+  this->shape->center_of_rotation_offset = cor_offset;
 }
 
-template class Sphere<2>;
-template class Sphere<3>;
-template class Rectangle<2>;
-template class Rectangle<3>;
-template class Ellipsoid<2>;
-template class Ellipsoid<3>;
-template class Torus<2>;
-template class Torus<3>;
-template class Cone<2>;
-template class Cone<3>;
-template class CutHollowSphere<2>;
-template class CutHollowSphere<3>;
-template class DeathStar<2>;
-template class DeathStar<3>;
 template class IBParticle<2>;
 template class IBParticle<3>;
