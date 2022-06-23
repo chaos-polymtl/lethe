@@ -7,7 +7,7 @@
 
 template <int dim>
 unsigned int
-IBStencil<dim>::nb_points(unsigned int order)
+IBStencil<dim>::nb_points(const unsigned int order)
 {
   // The number of points used in the stencil excluding the DOF is equal to the
   // order.
@@ -21,7 +21,7 @@ IBStencil<dim>::nb_points(unsigned int order)
 
 template <int dim>
 void
-IBStencil<dim>::p_base(unsigned int order)
+IBStencil<dim>::p_base(const unsigned int order)
 {
   using numbers::PI;
   // define the sampling point position of the stencil on the reference 1D
@@ -37,7 +37,8 @@ IBStencil<dim>::p_base(unsigned int order)
 
 template <int dim>
 std::vector<double>
-IBStencil<dim>::coefficients(unsigned int order, double length_ratio)
+IBStencil<dim>::coefficients(const unsigned int order,
+                             const double       length_ratio)
 {
   p_base(order);
   // Initialize the coefficient vector
@@ -93,10 +94,10 @@ IBStencil<dim>::coefficients(unsigned int order, double length_ratio)
 
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
-IBStencil<dim>::points(unsigned int    order,
-                       double          length_ratio,
-                       IBParticle<dim> p,
-                       Point<dim>      dof_point)
+IBStencil<dim>::points(const unsigned int order,
+                       const double       length_ratio,
+                       IBParticle<dim> &  p,
+                       const Point<dim> & dof_point)
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
@@ -138,8 +139,8 @@ IBStencil<dim>::points(unsigned int    order,
 
 template <int dim>
 Point<dim>
-IBStencil<dim>::point_for_cell_detection(IBParticle<dim> p,
-                                         Point<dim>      dof_point)
+IBStencil<dim>::point_for_cell_detection(IBParticle<dim> & p,
+                                         const Point<dim> &dof_point)
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
@@ -155,9 +156,9 @@ IBStencil<dim>::point_for_cell_detection(IBParticle<dim> p,
 
 template <int dim>
 double
-IBStencil<dim>::ib_velocity(IBParticle<dim> p,
-                            Point<dim>      dof_point,
-                            unsigned int    component)
+IBStencil<dim>::ib_velocity(IBParticle<dim> & p,
+                            const Point<dim> &dof_point,
+                            unsigned int      component)
 {
   // Return the value of the IB condition for that specific stencil.
   double v_ib = 0;
