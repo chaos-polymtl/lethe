@@ -43,3 +43,8 @@ This subsection contains information regarding the tuning parameters with NOMAD.
     Options: Any text file with ``.experimental`` extension with the
     **required header**: :raw-html:`<br />` *experimental_counts*
 
+
+References
+~~~~~~~~~~~
+
+[1] Larachi, F., Kennedy, G., & Chaouki, J. (1994). A γ-ray detection system for 3-D particle tracking in multiphase reactors. *Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment*. 338(2), 568-576. https://doi.org/10.1016/0168-9002(94)91343-9

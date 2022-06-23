@@ -48,7 +48,6 @@ This subsection contains the general information required for the photon count c
 The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
 
 - ``peak-to-total ratio``: The proportion of the events appearing in the full energy peak to the total number of events []
-<<<<<<< HEAD
     Options: Any positive float *(default value: 1)*
 - ``sampling time``: The amount of time for which the RPT hardware records the photon count at each position [s]
     Options: Any positive float *(default value: 1)*
@@ -58,5 +57,6 @@ The following parameters are variables in the gamma-ray Monte-Carlo model from `
     Options: Any positive float *(default value: 1)*
 
 References
--------------------
+~~~~~~~~~~~
 
+[1] Beam, G.B., Wielopolski, L., Gardner,  R.P., & Verghese, K. (1978). Monte Carlo calculation of efficiencies of right-circular cylindrical NaI detectors for arbitrarily located point sources. *Nuclear Instruments and Methods*. 154(3), 501-508. https://doi.org/10.1016/0029-554X(78)90081-2
