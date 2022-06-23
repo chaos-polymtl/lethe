@@ -83,7 +83,7 @@ subsection particles
 	set assemble Navier-Stokes inside particles = false
 	subsection particle info 0
 		set type = rectangle
-		subsection solid arguments
+		subsection shape arguments
 			set Function expression = 1;0.5;0
 		end
 		subsection position
@@ -92,7 +92,7 @@ subsection particles
 	end
 	subsection particle info 1
 		set type = ellipsoid
-		subsection solid arguments
+		subsection shape arguments
 			set Function expression = 0.75;0.25;0
 		end
 		subsection position
@@ -104,7 +104,7 @@ subsection particles
 	end
 	subsection particle info 2
 		set type = sphere
-		subsection solid arguments
+		subsection shape arguments
 			set Function expression = 0.75;0;0
 		end
 		subsection position

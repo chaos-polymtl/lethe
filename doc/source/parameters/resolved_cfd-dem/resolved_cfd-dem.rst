@@ -56,7 +56,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
             set pressure y = 0
             set pressure z = 0
             set type       = sphere
-            subsection solid arguments
+            subsection shape arguments
                 set Function expression = 0.5;0;0
             end
             set friction coefficient         = 0
@@ -176,7 +176,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``.
 
-* The subsection ``solid arguments`` is used to define the parameters of the solid in the form of a tri-components function. The arguments, which must be written in triplets, are:
+* The subsection ``shape arguments`` is used to define the parameters of the shape in the form of a tri-components function. The arguments, which must be written in triplets, are:
     * Sphere: radius, [none], [none];
 
     * Rectangle: x half length, y half length, z half length;
@@ -192,7 +192,7 @@ The following parameter and subsection are all inside the subsection ``particle 
     * Death Star: sphere radius, hole radius, distance between centers.
 
 .. note::
-    Since the ``solid arguments`` need to be a triplet, you must add any numerical value in the [none] places, but they won't be used.
+    Since the ``shape arguments`` need to be a triplet, you must add any numerical value in the [none] places, but they won't be used.
 
 The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
 

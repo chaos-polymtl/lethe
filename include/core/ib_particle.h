@@ -100,7 +100,7 @@ public:
 
   /**
    * @brief
-   * Returns the evaluation of the signed distance function of this solid at the
+   * Returns the evaluation of the signed distance function of this shape at the
    * given point p
    * Most levelset functions come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
@@ -111,7 +111,7 @@ public:
   /**
    * @brief
    * Sets the closest_point parameter to be the point on the surface of the
-   * solid which has the minimal distance from the given point p
+   * shape which has the minimal distance from the given point p
    */
   void
   closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
@@ -139,7 +139,7 @@ public:
    * Sets up a shape in accordance with the given type and arguments
    */
   void
-  initialize_shape(const std::string type, Tensor<1, 3> solid_arguments);
+  initialize_shape(const std::string type, Tensor<1, 3> shape_arguments);
 
   /**
    * @brief
@@ -181,10 +181,10 @@ public:
 
   // The geometrical information regarding the particle
   std::shared_ptr<Shape<dim>> shape;
-  // The function from which the solid arguments are parsed
-  std::shared_ptr<Functions::ParsedFunction<3>> f_solid_arguments;
+  // The function from which the shape arguments are parsed
+  std::shared_ptr<Functions::ParsedFunction<3>> f_shape_arguments;
   // The arguments defining the shape. Their meaning depend of the shape type.
-  Tensor<1, 3> solid_arguments;
+  Tensor<1, 3> shape_arguments;
 
   // The particle effective radius. It is the actual radius for spheres.
   double radius;
@@ -206,9 +206,9 @@ public:
   Point<dim> position;
   // The vector of particle positions at the end of the last n time steps.
   std::vector<Point<dim>> previous_positions;
-  // The center of rotation offset of the solid.
+  // The center of rotation offset of the shape.
   Point<dim> center_of_rotation_offset;
-  // The vector of solid center of rotation offset at the end of the last n time
+  // The vector of shape center of rotation offset at the end of the last n time
   // steps.
   std::vector<Point<dim>> previous_center_of_rotation_offset;
   // The fluid force applied on the particle.

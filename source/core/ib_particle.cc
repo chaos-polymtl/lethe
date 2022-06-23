@@ -34,9 +34,9 @@ IBParticle<dim>::initialise_all()
   orientation[1] = 0;
   orientation[2] = 0;
 
-  solid_arguments[0] = 0;
-  solid_arguments[1] = 0;
-  solid_arguments[2] = 0;
+  shape_arguments[0] = 0;
+  shape_arguments[1] = 0;
+  shape_arguments[2] = 0;
 
   omega[0] = 0;
   omega[1] = 0;
@@ -184,29 +184,29 @@ IBParticle<dim>::initialize_shape()
 template <int dim>
 void
 IBParticle<dim>::initialize_shape(const std::string type,
-                                  Tensor<1, 3>      solid_arguments)
+                                  Tensor<1, 3>      shape_arguments)
 {
   if (type == "sphere")
-    shape = std::make_shared<Sphere<dim>>(solid_arguments[0]);
+    shape = std::make_shared<Sphere<dim>>(shape_arguments[0]);
   else if (type == "rectangle")
     shape = std::make_shared<Rectangle<dim>>(Tensor<1, 3>(
-      {solid_arguments[0], solid_arguments[1], solid_arguments[2]}));
+      {shape_arguments[0], shape_arguments[1], shape_arguments[2]}));
   else if (type == "ellipsoid")
     shape = std::make_shared<Ellipsoid<dim>>(Tensor<1, 3>(
-      {solid_arguments[0], solid_arguments[1], solid_arguments[2]}));
+      {shape_arguments[0], shape_arguments[1], shape_arguments[2]}));
   else if (type == "torus")
     shape =
-      std::make_shared<Torus<dim>>(solid_arguments[0], solid_arguments[1]);
+      std::make_shared<Torus<dim>>(shape_arguments[0], shape_arguments[1]);
   else if (type == "cone")
-    shape = std::make_shared<Cone<dim>>(solid_arguments[0], solid_arguments[1]);
+    shape = std::make_shared<Cone<dim>>(shape_arguments[0], shape_arguments[1]);
   else if (type == "cut hollow sphere")
-    shape = std::make_shared<CutHollowSphere<dim>>(solid_arguments[0],
-                                                   solid_arguments[1],
-                                                   solid_arguments[2]);
+    shape = std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
+                                                   shape_arguments[1],
+                                                   shape_arguments[2]);
   else if (type == "death star")
-    shape = std::make_shared<DeathStar<dim>>(solid_arguments[0],
-                                             solid_arguments[1],
-                                             solid_arguments[2]);
+    shape = std::make_shared<DeathStar<dim>>(shape_arguments[0],
+                                             shape_arguments[1],
+                                             shape_arguments[2]);
   else
     StandardExceptions::ExcNotImplemented();
 }

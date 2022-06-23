@@ -97,7 +97,7 @@ subsection particles
 	    set pressure x =0.00001
 	    set pressure y =0.00001
 	    set type       = sphere
-        subsection solid arguments
+        subsection shape arguments
             set Function expression = 0.25;0;0
         end
     end
@@ -114,7 +114,7 @@ subsection particles
 	    set pressure x =0.40001
 	    set pressure y =0.00001
 	    set type       = sphere
-        subsection solid arguments
+        subsection shape arguments
             set Function expression = 0.5;0;0
         end
     end

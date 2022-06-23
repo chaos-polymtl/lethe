@@ -1791,7 +1791,7 @@ namespace Parameters
       "sphere",
       Patterns::Selection(
         "sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star"),
-      "The type of solid considered."
+      "The type of shape considered."
       "Choices are <sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star>."
       "Parameters for a sphere are, in order: radius,"
       " [none], [none]. "
@@ -1807,10 +1807,10 @@ namespace Parameters
       "cut thickness, wall thickness. "
       "Parameters for a death star are, in order: sphere radius,"
       "smaller sphere radius, distance between centers.");
-    prm.enter_subsection("solid arguments");
-    particles[index].f_solid_arguments =
+    prm.enter_subsection("shape arguments");
+    particles[index].f_shape_arguments =
       std::make_shared<Functions::ParsedFunction<3>>(3);
-    particles[index].f_solid_arguments->declare_parameters(prm, 3);
+    particles[index].f_shape_arguments->declare_parameters(prm, 3);
     prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
 
@@ -2072,22 +2072,22 @@ namespace Parameters
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
 
-          const std::string solid_type = prm.get("type");
-          prm.enter_subsection("solid arguments");
-          particles[i].f_solid_arguments->parse_parameters(prm);
-          particles[i].f_solid_arguments->set_time(0);
-          // The solid argument function requires an evaluation point, but it
+          const std::string shape_type = prm.get("type");
+          prm.enter_subsection("shape arguments");
+          particles[i].f_shape_arguments->parse_parameters(prm);
+          particles[i].f_shape_arguments->set_time(0);
+          // The shape argument function requires an evaluation point, but it
           // doesn't make sense. The function interface is only used for
           // parsing.
           Point<3> dummy({0., 0., 0.});
-          particles[i].solid_arguments[0] =
-            particles[i].f_solid_arguments->value(dummy, 0);
-          particles[i].solid_arguments[1] =
-            particles[i].f_solid_arguments->value(dummy, 1);
-          particles[i].solid_arguments[2] =
-            particles[i].f_solid_arguments->value(dummy, 2);
-          particles[i].initialize_shape(solid_type,
-                                        particles[i].solid_arguments);
+          particles[i].shape_arguments[0] =
+            particles[i].f_shape_arguments->value(dummy, 0);
+          particles[i].shape_arguments[1] =
+            particles[i].f_shape_arguments->value(dummy, 1);
+          particles[i].shape_arguments[2] =
+            particles[i].f_shape_arguments->value(dummy, 2);
+          particles[i].initialize_shape(shape_type,
+                                        particles[i].shape_arguments);
           prm.leave_subsection();
 
           prm.enter_subsection("position");
