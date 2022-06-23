@@ -87,7 +87,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
 
-To sharpen the immersed boundary of each particle, a layer of cells around the immersed boundary can be refined forming a near-particle zone of refined cells. An effective radius, dependent on the shape, is calculated at the shape initialization. Its definition is chosen so that the refinement zone is close to the surface. For example: the torus' effective radius is the ring thickness. For the rectangle (or box), it is the average of the half-lengths. For a sphere, it is the actual radius.
+To sharpen the immersed boundary of each particle, a layer of cells around the immersed boundary can be refined forming a near-particle zone of refined cells. An effective radius, dependent on the shape, is calculated at the shape initialization. Its definition is chosen so that the refinement zone is close to the surface. For example: the torus' effective radius is the ring thickness. For the rectangle (or box), it is the average of the half-lengths. For a sphere, it is the radius of the sphere.
 
 * The ``refine mesh inside radius factor`` parameter defines the lower factor by which the effective radius will be multiplied to establish if a cell can be pre-refined. If the absolute distance to the surface is below :math:`(1 - \textit{factor}) * \textit{radius}`, then one of the two conditions is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6 (see example below).
 

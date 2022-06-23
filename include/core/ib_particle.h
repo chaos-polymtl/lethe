@@ -13,7 +13,6 @@
  *
  * ---------------------------------------------------------------------
  *
- * Author: Lucka Barbeau, Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
 #include <core/shape.h>
