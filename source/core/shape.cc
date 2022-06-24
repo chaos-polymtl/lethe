@@ -176,8 +176,7 @@ Rectangle<dim>::value(const Point<dim> & evaluation_point,
       max_q_0[i] = std::max(q[i], 0.);
     }
   double max_q = std::max(q[0], std::max(q[1], q[dim - 1]));
- return max_q_0.norm() + std::min(max_q, 0.);
-
+  return max_q_0.norm() + std::min(max_q, 0.);
 }
 
 template <int dim>
@@ -233,8 +232,7 @@ Torus<dim>::value(const Point<dim> & evaluation_point,
 
   Point<2> p_xz({centered_point[0], centered_point[2]});
   Point<2> q({p_xz.norm() - ring_radius, centered_point[1]});
-return q.norm() - ring_thickness;
-
+  return q.norm() - ring_thickness;
 }
 
 template <int dim>
@@ -276,7 +274,6 @@ Cone<dim>::value(const Point<dim> & evaluation_point,
   double s = std::max(k * (w[0] * q[1] - w[1] * q[0]), k * (w[1] - q[1]));
 
   return sqrt(d) * ((s > 0) ? 1 : ((s < 0) ? -1 : 0));
-
 }
 
 template <int dim>
@@ -310,9 +307,8 @@ CutHollowSphere<dim>::value(const Point<dim> & evaluation_point,
     }
   else
     {
-    return std::abs(q.norm() - radius) - shell_thickness;
+      return std::abs(q.norm() - radius) - shell_thickness;
     }
-
 }
 
 template <int dim>
@@ -348,15 +344,14 @@ DeathStar<dim>::value(const Point<dim> & evaluation_point,
       spheres_distance * std::max(b - corrected_p_2d[1], 0.))
     {
       Point<2> ab({a, b});
-     return (corrected_p_2d - ab).norm();
+      return (corrected_p_2d - ab).norm();
     }
   else
     {
       Point<2> d0({spheres_distance, 0.});
       return std::max(corrected_p_2d.norm() - radius,
-                          -((corrected_p_2d - d0).norm() - hole_radius));
+                      -((corrected_p_2d - d0).norm() - hole_radius));
     }
-
 }
 
 template <int dim>
