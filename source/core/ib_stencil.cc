@@ -166,17 +166,17 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> & p,
   Tensor<1, 3, double> radial_vector;
   Point<dim>           closest_point;
   p.closest_surface_point(dof_point, closest_point);
-  double radial_distance = (closest_point - p.position).norm();
+  Point<dim> position_to_surface;
+  position_to_surface    = closest_point - p.position;
+  double radial_distance = position_to_surface.norm();
   if (dim == 2)
     {
       // have to do that conversion as there is no proper conversion from tensor
       // of dim 2 to 3.
       radial_vector[0] =
-        radial_distance *
-        ((closest_point - p.position) / (closest_point - p.position).norm())[0];
+        radial_distance * (position_to_surface / radial_distance)[0];
       radial_vector[1] =
-        radial_distance *
-        ((closest_point - p.position) / (closest_point - p.position).norm())[1];
+        radial_distance * (position_to_surface / radial_distance)[1];
       radial_vector[2]   = 0;
       Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
       if (component == 0)
@@ -193,14 +193,11 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> & p,
   if (dim == 3)
     {
       radial_vector[0] =
-        radial_distance *
-        ((closest_point - p.position) / (closest_point - p.position).norm())[0];
+        radial_distance * (position_to_surface / radial_distance)[0];
       radial_vector[1] =
-        radial_distance *
-        ((closest_point - p.position) / (closest_point - p.position).norm())[1];
+        radial_distance * (position_to_surface / radial_distance)[1];
       radial_vector[2] =
-        radial_distance *
-        ((closest_point - p.position) / (closest_point - p.position).norm())[2];
+        radial_distance * (position_to_surface / radial_distance)[2];
       Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {
