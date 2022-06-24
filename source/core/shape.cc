@@ -136,7 +136,7 @@ Sphere<dim>::value(const Point<dim> & evaluation_point,
                    const unsigned int component) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  return p.distance(this->position) - this->effective_radius;
+  return evaluation_point.distance(this->position) - this->effective_radius;
 #else
   return sphere_function->value(evaluation_point);
 #endif
@@ -159,7 +159,7 @@ Sphere<dim>::gradient(const Point<dim> & evaluation_point,
                       const unsigned int component) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  const Tensor<1, dim> center_to_point = p - this->position;
+  const Tensor<1, dim> center_to_point = evaluation_point - this->position;
   const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
   return grad;
 #else
