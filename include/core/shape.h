@@ -50,14 +50,6 @@ public:
     , effective_radius(radius)
   {}
 
-
-  /**
-   * @brief An partial constructor for the Shapes. The effective radius needs to be set afterwards
-   */
-  Shape()
-    : AutoDerivativeFunction<dim>(1e-8)
-  {}
-
   /**
    * @brief Return the evaluation of the signed distance function of this solid
    * at the given point evaluation point
@@ -134,7 +126,7 @@ template <int dim>
 class Rectangle : public Shape<dim>
 {
 public:
-  Rectangle<dim>(Tensor<1, 3> half_lengths)
+  Rectangle<dim>(Tensor<1, dim> half_lengths)
     : Shape<dim>(half_lengths.norm())
     , half_lengths(half_lengths)
   {}
@@ -147,14 +139,14 @@ public:
   static_copy() const override;
 
 private:
-  Tensor<1, 3> half_lengths;
+  Tensor<1, dim> half_lengths;
 };
 
 template <int dim>
 class Ellipsoid : public Shape<dim>
 {
 public:
-  Ellipsoid<dim>(Tensor<1, 3> radii)
+  Ellipsoid<dim>(Tensor<1, dim> radii)
     : Shape<dim>(radii.norm())
     , radii(radii)
   {}
@@ -167,7 +159,7 @@ public:
   static_copy() const override;
 
 private:
-  Tensor<1, 3> radii;
+  Tensor<1, dim> radii;
 };
 
 template <int dim>
@@ -271,15 +263,15 @@ class CompositeShape : public Shape<dim>
 {
 public:
   CompositeShape<dim>(std::vector<std::shared_ptr<Shape<dim>>> components)
-    : Shape<dim>()
+    : Shape<dim>(0.)
     , components(components)
   {
-    double radius = 0.;
+    // Calculation of the effective radius
     for (const std::shared_ptr<Shape<dim>> &elem : components)
       {
-        radius = std::max(radius, elem->effective_radius);
+        this->effective_radius =
+          std::max(this->effective_radius, elem->effective_radius);
       }
-    this->effective_radius = radius;
   }
 
   double
