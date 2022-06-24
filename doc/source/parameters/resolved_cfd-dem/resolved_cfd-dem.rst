@@ -166,6 +166,9 @@ The following parameter and subsection are all inside the subsection ``particle 
 * The subsection ``orientation`` defines the initial value of the particle's angular position around each of the axes X, then Y, and lastly Z.
 
 .. warning::
+    The way position and orientation are defined is that the position of the solid is taken into account first, and then the orientation is considered. The orientation is considered as a rotation around each main axis, in the order X, then Y, and finally Z. The center of rotation for this rotation is the position point of the solid.
+
+.. warning::
     It's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity, but all three should be defined.
 
 * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
@@ -175,19 +178,19 @@ The following parameter and subsection are all inside the subsection ``particle 
 * The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``.
 
 * The ``shape arguments`` parameter is used to define the parameters of the shape in the form of a list separated by ``,``. The required arguments and the effective radius, used for near-particle refinement, are:
-    * Sphere: radius; the effective radius is the radius;
+    * Sphere: *radius*; the effective radius is the *radius*;
 
-    * Rectangle: x half length, y half length, [z half length (if 3D)]; the effective radius is the Euclidian norm of the half lengths;
+    * Rectangle: *x half length*, *y half length*, [*z half length* (if 3D)]; the effective radius is the Euclidian norm of the half lengths;
 
-    * Ellipsoid: x radius, y radius, [z radius (if 3D)]; the effective radius is the Euclidian norm of the radii;
+    * Ellipsoid: *x radius*, *y radius*, [*z radius* (if 3D)]; the effective radius is the Euclidian norm of the radii;
 
-    * Torus: torus radius, torus thickness radius; the effective radius is the torus thickness radius;
+    * Torus: *torus radius*, *torus thickness radius*; the effective radius is the *torus thickness radius*;
 
-    * Cone: tan(base angle), height; the effective radius is the height;
+    * Cone: *tan(base angle)*, *height*; the effective radius is the *height*;
 
-    * Cut Hollow Sphere: radius, cut height, wall thickness; the effective radius is the radius;
+    * Cut Hollow Sphere: *radius*, *cut height*, *wall thickness*; the effective radius is the *radius*;
 
-    * Death Star: sphere radius, hole radius, distance between centers; the effective radius is the sphere radius.
+    * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*.
 
 The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
 
