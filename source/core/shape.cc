@@ -42,7 +42,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   // each rotation around one axis The centralized rotated point is the result
   // of each rotation, and it is initialized in case no rotation is performed
   Point<dim> centralized_point;
-  centralized_point = evaluation_point - center_of_rotation;
+  centralized_point              = evaluation_point - center_of_rotation;
   Point<dim> centralized_rotated = centralized_point;
 
   // Selection of the first axis around which to rotate:
