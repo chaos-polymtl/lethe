@@ -37,9 +37,14 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   // Rotation from the solid orientation
   // Angular position around x, y and z axis
   Tensor<1, 3> theta = orientation;
-  Point<dim>   centralized_point;
-  centralized_point              = evaluation_point - center_of_rotation;
+
+  // The centralized point is the one to be rotated, and it is updated after
+  // each rotation around one axis The centralized rotated point is the result
+  // of each rotation, and it is initialized in case no rotation is performed
+  Point<dim> centralized_point;
+  centralized_point = evaluation_point - center_of_rotation;
   Point<dim> centralized_rotated = centralized_point;
+
   // Selection of the first axis around which to rotate:
   // x -> 0, y -> 1, z -> 2
   // In 2D, only rotation around the z axis is possible
