@@ -99,14 +99,14 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
 
 template <int dim>
 void
-Shape<dim>::set_position(const Point<dim> position)
+Shape<dim>::set_position(const Point<dim> &position)
 {
   this->position = position;
 }
 
 template <int dim>
 void
-Shape<dim>::set_orientation(const Tensor<1, 3> orientation)
+Shape<dim>::set_orientation(const Tensor<1, 3> &orientation)
 {
   this->orientation = orientation;
 }
@@ -180,11 +180,14 @@ Sphere<dim>::displaced_volume(const double fluid_density)
 
 template <int dim>
 void
-Sphere<dim>::set_position(const Point<dim> position)
+Sphere<dim>::set_position(const Point<dim> &position)
 {
   this->Shape<dim>::set_position(position);
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+#else
   sphere_function = std::make_shared<Functions::SignedDistance::Sphere<dim>>(
     position, this->effective_radius);
+#endif
 }
 
 template <int dim>

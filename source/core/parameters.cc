@@ -2120,9 +2120,6 @@ namespace Parameters
               particles[i].velocity[2] =
                 particles[i].f_velocity->value(particles[i].position, 2);
               particles[i].pressure_location[2] = prm.get_double("pressure z");
-              particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
-                                  particles[i].radius * particles[i].radius *
-                                  prm.get_double("density");
             }
 
           std::string shape_type          = prm.get("type");
@@ -2133,14 +2130,18 @@ namespace Parameters
             Utilities::string_to_double(shape_arguments_str_list);
           particles[i].initialize_shape(shape_type, shape_arguments);
 
-          particles[i].set_position(particles[i].position);
-          particles[i].set_orientation(particles[i].orientation);
-
           particles[i].radius = particles[i].shape->effective_radius;
+
           if (dim == 2)
             {
               particles[i].mass = PI * particles[i].radius *
                                   particles[i].radius *
+                                  prm.get_double("density");
+            }
+          else if (dim == 3)
+            {
+              particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
+                                  particles[i].radius * particles[i].radius *
                                   prm.get_double("density");
             }
           particles[i].initialise_last();
