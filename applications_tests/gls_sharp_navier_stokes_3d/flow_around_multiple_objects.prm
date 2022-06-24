@@ -83,45 +83,35 @@ subsection particles
 	set assemble Navier-Stokes inside particles = false
 	subsection particle info 0
 		set type = cone
-		subsection shape arguments
-			set Function expression = 1;1;0
-		end
+		set shape arguments = 1,1
 		subsection position
 		    set Function expression =0.01;0.01;0.01
 		end
 	end
 	subsection particle info 1
 		set type = torus
-		subsection shape arguments
-			set Function expression = 0.75;0.25;0
-		end
+		set shape arguments = 0.75,0.25
 		subsection position
 		    set Function expression =0.01;2.01;2.01
 		end
 	end
 	subsection particle info 2
 		set type = rectangle
-		subsection shape arguments
-			set Function expression = 1;0.5;0.6
-		end
+		set shape arguments = 1,0.5,0.6
 		subsection position
 		    set Function expression =0.01;2.01;0.01
 		end
 	end
 	subsection particle info 3
 		set type = ellipsoid
-		subsection shape arguments
-			set Function expression = 0.75;0.65;0.25
-		end
+		set shape arguments = 0.75,0.65,0.25
 		subsection position
 		    set Function expression =0.01;2.01;-2.01
 		end
 	end
 	subsection particle info 4
 		set type = cut hollow sphere
-		subsection shape arguments
-			set Function expression =0.75;0.4;0.15
-		end
+		set shape arguments = 0.75,0.4,0.15
 		subsection position
 		    set Function expression =0.01;-2.01;-2.01
 		end
@@ -131,18 +121,14 @@ subsection particles
 	end
 	subsection particle info 5
 		set type = sphere
-		subsection shape arguments
-			set Function expression = 0.75;0;0
-		end
+		set shape arguments = 0.75
 		subsection position
 		    set Function expression =0.01;-2.01;0.01
 		end
 	end
 	subsection particle info 6
 		set type = death star
-		subsection shape arguments
-			set Function expression = 0.75;0.75;1
-		end
+		set shape arguments = 0.75,0.75,1
 		subsection position
 		    set Function expression =0.01;-2.01;2.01
 		end

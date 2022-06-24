@@ -131,7 +131,8 @@ public:
    * Sets up a shape in accordance with the given type and arguments
    */
   void
-  initialize_shape(const std::string type, Tensor<1, 3> shape_arguments);
+  initialize_shape(const std::string         type,
+                   const std::vector<double> shape_arguments);
 
   /**
    * @brief
@@ -165,10 +166,6 @@ public:
 
   // The geometrical information regarding the particle
   std::shared_ptr<Shape<dim>> shape;
-  // The function from which the shape arguments are parsed
-  std::shared_ptr<Functions::ParsedFunction<3>> f_shape_arguments;
-  // The arguments defining the shape. Their meaning depend of the shape type.
-  Tensor<1, 3> shape_arguments;
 
   // The particle effective radius. It is the actual radius for spheres.
   double radius;

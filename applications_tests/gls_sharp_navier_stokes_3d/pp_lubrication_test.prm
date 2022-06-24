@@ -110,9 +110,7 @@ subsection particles
 	    set pressure y =0.00001
 	    set pressure z =0.00001
 	    set type       = sphere
-        subsection shape arguments
-            set Function expression = 0.75;0;0
-        end
+        set shape arguments = 0.75
 	    set density = 0.0011
     end
     subsection particle info 1 
@@ -129,9 +127,7 @@ subsection particles
 	    set pressure y =0.00001
 	    set pressure z =0.00001
 	    set type       = sphere
-        subsection shape arguments
-            set Function expression = 0.75;0;0
-        end
+        set shape arguments = 0.75
 	    set density = 0.0009
     end
 

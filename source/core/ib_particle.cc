@@ -31,10 +31,6 @@ IBParticle<dim>::initialise_all()
   orientation[1] = 0;
   orientation[2] = 0;
 
-  shape_arguments[0] = 0;
-  shape_arguments[1] = 0;
-  shape_arguments[2] = 0;
-
   omega[0] = 0;
   omega[1] = 0;
   omega[2] = 0;
@@ -166,17 +162,29 @@ IBParticle<dim>::get_levelset(const Point<dim> &p)
 
 template <int dim>
 void
-IBParticle<dim>::initialize_shape(const std::string type,
-                                  Tensor<1, 3>      shape_arguments)
+IBParticle<dim>::initialize_shape(const std::string         type,
+                                  const std::vector<double> shape_arguments)
 {
   if (type == "sphere")
     shape = std::make_shared<Sphere<dim>>(shape_arguments[0]);
   else if (type == "rectangle")
-    shape = std::make_shared<Rectangle<dim>>(Tensor<1, 3>(
-      {shape_arguments[0], shape_arguments[1], shape_arguments[2]}));
+    {
+      Tensor<1, dim> half_lengths;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          half_lengths[i] = shape_arguments[i];
+        }
+      shape = std::make_shared<Rectangle<dim>>(half_lengths);
+    }
   else if (type == "ellipsoid")
-    shape = std::make_shared<Ellipsoid<dim>>(Tensor<1, 3>(
-      {shape_arguments[0], shape_arguments[1], shape_arguments[2]}));
+    {
+      Tensor<1, dim> radii;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          radii[i] = shape_arguments[i];
+        }
+      shape = std::make_shared<Ellipsoid<dim>>(radii);
+    }
   else if (type == "torus")
     shape =
       std::make_shared<Torus<dim>>(shape_arguments[0], shape_arguments[1]);
