@@ -98,6 +98,34 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
 }
 
 template <int dim>
+void
+Shape<dim>::set_position(const Point<dim> position)
+{
+  this->position = position;
+}
+
+template <int dim>
+void
+Shape<dim>::set_orientation(const Tensor<1, 3> orientation)
+{
+  this->orientation = orientation;
+}
+
+template <int dim>
+Point<dim>
+Shape<dim>::get_position()
+{
+  return position;
+}
+
+template <int dim>
+Tensor<1, 3>
+Shape<dim>::get_orientation()
+{
+  return orientation;
+}
+
+template <int dim>
 double
 Sphere<dim>::value(const Point<dim> & evaluation_point,
                    const unsigned int component) const
@@ -105,9 +133,7 @@ Sphere<dim>::value(const Point<dim> & evaluation_point,
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   return p.distance(this->position) - this->effective_radius;
 #else
-  Functions::SignedDistance::Sphere<dim> sphere_function(
-    this->position, this->effective_radius);
-  return sphere_function.value(evaluation_point);
+  return sphere_function->value(evaluation_point);
 #endif
 }
 
@@ -116,9 +142,9 @@ std::shared_ptr<Shape<dim>>
 Sphere<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Sphere<dim>>(this->effective_radius);
-  copy->position    = this->position;
-  copy->orientation = this->orientation;
+    std::make_shared<Sphere<dim>>(this->effective_radius,
+                                  this->position,
+                                  this->orientation);
   return copy;
 }
 
@@ -132,9 +158,7 @@ Sphere<dim>::gradient(const Point<dim> & evaluation_point,
   const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
   return grad;
 #else
-  Functions::SignedDistance::Sphere<dim> sphere_function(
-    this->position, this->effective_radius);
-  return sphere_function.gradient(evaluation_point);
+  return sphere_function->gradient(evaluation_point);
 #endif
 }
 
@@ -152,6 +176,15 @@ Sphere<dim>::displaced_volume(const double fluid_density)
     solid_volume = 4.0 / 3.0 * this->effective_radius * this->effective_radius *
                    this->effective_radius * PI;
   return solid_volume;
+}
+
+template <int dim>
+void
+Sphere<dim>::set_position(const Point<dim> position)
+{
+  this->Shape<dim>::set_position(position);
+  sphere_function = std::make_shared<Functions::SignedDistance::Sphere<dim>>(
+    position, this->effective_radius);
 }
 
 template <int dim>
@@ -184,9 +217,9 @@ std::shared_ptr<Shape<dim>>
 Rectangle<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Rectangle<dim>>(this->half_lengths);
-  copy->position    = this->position;
-  copy->orientation = this->orientation;
+    std::make_shared<Rectangle<dim>>(half_lengths,
+                                     this->position,
+                                     this->orientation);
   return copy;
 }
 
@@ -215,9 +248,7 @@ std::shared_ptr<Shape<dim>>
 Ellipsoid<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Ellipsoid<dim>>(this->radii);
-  copy->position    = this->position;
-  copy->orientation = this->orientation;
+    std::make_shared<Ellipsoid<dim>>(radii, this->position, this->orientation);
   return copy;
 }
 
@@ -239,10 +270,8 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 Torus<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Torus<dim>>(this->ring_radius, ring_thickness);
-  copy->position    = this->position;
-  copy->orientation = this->orientation;
+  std::shared_ptr<Shape<dim>> copy = std::make_shared<Torus<dim>>(
+    ring_radius, ring_thickness, this->position, this->orientation);
   return copy;
 }
 
@@ -280,10 +309,8 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 Cone<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Cone<dim>>(this->tan_base_angle, this->height);
-  copy->position    = this->position;
-  copy->orientation = this->orientation;
+  std::shared_ptr<Shape<dim>> copy = std::make_shared<Cone<dim>>(
+    tan_base_angle, height, this->position, this->orientation);
   return copy;
 }
 
@@ -315,12 +342,8 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 CutHollowSphere<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<CutHollowSphere<dim>>(this->radius,
-                                           this->cut_depth,
-                                           this->shell_thickness);
-  copy->position    = this->position;
-  copy->orientation = this->orientation;
+  std::shared_ptr<Shape<dim>> copy = std::make_shared<CutHollowSphere<dim>>(
+    radius, cut_depth, shell_thickness, this->position, this->orientation);
   return copy;
 }
 
@@ -358,12 +381,8 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 DeathStar<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<DeathStar<dim>>(this->radius,
-                                     this->hole_radius,
-                                     this->spheres_distance);
-  copy->position    = this->position;
-  copy->orientation = this->orientation;
+  std::shared_ptr<Shape<dim>> copy = std::make_shared<DeathStar<dim>>(
+    radius, hole_radius, spheres_distance, this->position, this->orientation);
   return copy;
 }
 
@@ -386,8 +405,6 @@ CompositeShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<CompositeShape<dim>>(this->components);
-  copy->position    = this->position;
-  copy->orientation = this->orientation;
   return copy;
 }
 

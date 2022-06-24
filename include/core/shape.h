@@ -45,9 +45,11 @@ public:
   /**
    * @brief A general constructor for the Shapes
    */
-  Shape(double radius)
+  Shape(double radius, Point<dim> position, Tensor<1, 3> orientation)
     : AutoDerivativeFunction<dim>(1e-8)
     , effective_radius(radius)
+    , position(position)
+    , orientation(orientation)
   {}
 
   /**
@@ -76,6 +78,38 @@ public:
 
   /**
    * @brief
+   * Sets a new position for the shape
+   *
+   */
+  virtual void
+  set_position(const Point<dim> position);
+
+  /**
+   * @brief
+   * Sets a new orientation for the shape
+   *
+   */
+  virtual void
+  set_orientation(const Tensor<1, 3> orientation);
+
+  /**
+   * @brief
+   * Returns the position of the shape
+   *
+   */
+  virtual Point<dim>
+  get_position();
+
+  /**
+   * @brief
+   * Returns the orientation of the shape
+   *
+   */
+  virtual Tensor<1, 3>
+  get_orientation();
+
+  /**
+   * @brief
    * Most value functions assume that the particle's position is at the origin
    * and that the shape is aligned with one of the main axes. This function
    * returns a point that is rotated and translated, in accordance with the
@@ -87,15 +121,16 @@ public:
    */
   Point<dim>
   align_and_center(const Point<dim> &evaluation_point) const;
+  // Effective radius used for crown refinement
+  double effective_radius;
 
+protected:
   // Position of the center of the Shape. It doesn't always correspond to the
   // center of mass
   Point<dim> position;
   // The solid orientation, which is defined as the sequential rotation around
   // the axes x->y->z by each of the tensor components, in radian
   Tensor<1, 3> orientation;
-  // Effective radius used for crown refinement
-  double effective_radius;
 };
 
 
@@ -103,9 +138,16 @@ template <int dim>
 class Sphere : public Shape<dim>
 {
 public:
-  Sphere<dim>(double radius)
-    : Shape<dim>(radius)
-  {}
+  Sphere<dim>(double radius, Point<dim> position, Tensor<1, 3> orientation)
+    : Shape<dim>(radius, position, orientation)
+  {
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+#else
+    sphere_function =
+      std::make_shared<Functions::SignedDistance::Sphere<dim>>(position,
+                                                               radius);
+#endif
+  }
 
   double
   value(const Point<dim> & evaluation_point,
@@ -120,14 +162,25 @@ public:
 
   double
   displaced_volume(const double fluid_density) override;
+
+  void
+  set_position(const Point<dim> position) override;
+
+private:
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+#else
+  std::shared_ptr<Functions::SignedDistance::Sphere<dim>> sphere_function;
+#endif
 };
 
 template <int dim>
 class Rectangle : public Shape<dim>
 {
 public:
-  Rectangle<dim>(Tensor<1, dim> half_lengths)
-    : Shape<dim>(half_lengths.norm())
+  Rectangle<dim>(Tensor<1, dim> half_lengths,
+                 Point<dim>     position,
+                 Tensor<1, 3>   orientation)
+    : Shape<dim>(half_lengths.norm(), position, orientation)
     , half_lengths(half_lengths)
   {}
 
@@ -146,8 +199,10 @@ template <int dim>
 class Ellipsoid : public Shape<dim>
 {
 public:
-  Ellipsoid<dim>(Tensor<1, dim> radii)
-    : Shape<dim>(radii.norm())
+  Ellipsoid<dim>(Tensor<1, dim> radii,
+                 Point<dim>     position,
+                 Tensor<1, 3>   orientation)
+    : Shape<dim>(radii.norm(), position, orientation)
     , radii(radii)
   {}
 
@@ -166,8 +221,11 @@ template <int dim>
 class Torus : public Shape<dim>
 {
 public:
-  Torus<dim>(double ring_radius, double ring_thickness)
-    : Shape<dim>(ring_thickness)
+  Torus<dim>(double       ring_radius,
+             double       ring_thickness,
+             Point<dim>   position,
+             Tensor<1, 3> orientation)
+    : Shape<dim>(ring_thickness, position, orientation)
     , ring_radius(ring_radius)
     , ring_thickness(ring_thickness)
   {}
@@ -188,8 +246,11 @@ template <int dim>
 class Cone : public Shape<dim>
 {
 public:
-  Cone<dim>(double tan_base_angle, double height)
-    : Shape<dim>(height)
+  Cone<dim>(double       tan_base_angle,
+            double       height,
+            Point<dim>   position,
+            Tensor<1, 3> orientation)
+    : Shape<dim>(height, position, orientation)
     , tan_base_angle(tan_base_angle)
     , height(height)
   {}
@@ -210,8 +271,12 @@ template <int dim>
 class CutHollowSphere : public Shape<dim>
 {
 public:
-  CutHollowSphere<dim>(double radius, double cut_depth, double shell_thickness)
-    : Shape<dim>(radius)
+  CutHollowSphere<dim>(double       radius,
+                       double       cut_depth,
+                       double       shell_thickness,
+                       Point<dim>   position,
+                       Tensor<1, 3> orientation)
+    : Shape<dim>(radius, position, orientation)
     , radius(radius)
     , cut_depth(cut_depth)
     , shell_thickness(shell_thickness)
@@ -234,8 +299,12 @@ template <int dim>
 class DeathStar : public Shape<dim>
 {
 public:
-  DeathStar<dim>(double radius, double hole_radius, double spheres_distance)
-    : Shape<dim>(radius)
+  DeathStar<dim>(double       radius,
+                 double       hole_radius,
+                 double       spheres_distance,
+                 Point<dim>   position,
+                 Tensor<1, 3> orientation)
+    : Shape<dim>(radius, position, orientation)
     , radius(radius)
     , hole_radius(hole_radius)
     , spheres_distance(spheres_distance)
@@ -263,7 +332,7 @@ class CompositeShape : public Shape<dim>
 {
 public:
   CompositeShape<dim>(std::vector<std::shared_ptr<Shape<dim>>> components)
-    : Shape<dim>(0.)
+    : Shape<dim>(0., components[0]->get_position(), components[0]->get_orientation())
     , components(components)
   {
     // Calculation of the effective radius

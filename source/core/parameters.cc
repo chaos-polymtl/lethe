@@ -2060,14 +2060,6 @@ namespace Parameters
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
 
-          std::string shape_type          = prm.get("type");
-          std::string shape_arguments_str = prm.get("shape arguments");
-          std::vector<std::string> shape_arguments_str_list(
-            Utilities::split_string_list(shape_arguments_str));
-          std::vector<double> shape_arguments =
-            Utilities::string_to_double(shape_arguments_str_list);
-          particles[i].initialize_shape(shape_type, shape_arguments);
-
           prm.enter_subsection("position");
           particles[i].f_position->parse_parameters(prm);
           particles[i].f_position->set_time(0);
@@ -2106,11 +2098,10 @@ namespace Parameters
           particles[i].omega[2] =
             particles[i].f_omega->value(particles[i].position, 2);
 
-          particles[i].particle_id   = i;
-          particles[i].radius        = particles[i].shape->effective_radius;
-          particles[i].inertia[0][0] = prm.get_double("inertia");
-          particles[i].inertia[1][1] = prm.get_double("inertia");
-          particles[i].inertia[2][2] = prm.get_double("inertia");
+          particles[i].particle_id          = i;
+          particles[i].inertia[0][0]        = prm.get_double("inertia");
+          particles[i].inertia[1][1]        = prm.get_double("inertia");
+          particles[i].inertia[2][2]        = prm.get_double("inertia");
           particles[i].pressure_location[0] = prm.get_double("pressure x");
           particles[i].pressure_location[1] = prm.get_double("pressure y");
           particles[i].youngs_modulus       = prm.get_double("youngs modulus");
@@ -2134,9 +2125,18 @@ namespace Parameters
                                   prm.get_double("density");
             }
 
+          std::string shape_type          = prm.get("type");
+          std::string shape_arguments_str = prm.get("shape arguments");
+          std::vector<std::string> shape_arguments_str_list(
+            Utilities::split_string_list(shape_arguments_str));
+          std::vector<double> shape_arguments =
+            Utilities::string_to_double(shape_arguments_str_list);
+          particles[i].initialize_shape(shape_type, shape_arguments);
+
           particles[i].set_position(particles[i].position);
           particles[i].set_orientation(particles[i].orientation);
 
+          particles[i].radius = particles[i].shape->effective_radius;
           if (dim == 2)
             {
               particles[i].mass = PI * particles[i].radius *

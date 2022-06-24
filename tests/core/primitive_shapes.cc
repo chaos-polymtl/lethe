@@ -20,18 +20,22 @@ test()
   Tensor<1, 3>              half_lengths({1., 1., 3.});
   double                    tan_theta = 2.;
   double                    height    = 1.5;
-  std::shared_ptr<Shape<3>> sphere    = std::make_shared<Sphere<3>>(radius);
+  Point<3>                  position({0., 0., 0.});
+  Tensor<1, 3>              orientation({0., 0., 0.});
+  std::shared_ptr<Shape<3>> sphere =
+    std::make_shared<Sphere<3>>(radius, position, orientation);
   std::shared_ptr<Shape<3>> rectangle =
-    std::make_shared<Rectangle<3>>(half_lengths);
+    std::make_shared<Rectangle<3>>(half_lengths, position, orientation);
   std::shared_ptr<Shape<3>> ellipsoid =
-    std::make_shared<Ellipsoid<3>>(half_lengths);
+    std::make_shared<Ellipsoid<3>>(half_lengths, position, orientation);
   std::shared_ptr<Shape<3>> torus =
-    std::make_shared<Torus<3>>(radius, thickness);
-  std::shared_ptr<Shape<3>> cone = std::make_shared<Cone<3>>(tan_theta, height);
-  std::shared_ptr<Shape<3>> cut_sphere =
-    std::make_shared<CutHollowSphere<3>>(radius, height, thickness);
-  std::shared_ptr<Shape<3>> death_star =
-    std::make_shared<DeathStar<3>>(radius, radius, thickness);
+    std::make_shared<Torus<3>>(radius, thickness, position, orientation);
+  std::shared_ptr<Shape<3>> cone =
+    std::make_shared<Cone<3>>(tan_theta, height, position, orientation);
+  std::shared_ptr<Shape<3>> cut_sphere = std::make_shared<CutHollowSphere<3>>(
+    radius, height, thickness, position, orientation);
+  std::shared_ptr<Shape<3>> death_star = std::make_shared<DeathStar<3>>(
+    radius, radius, thickness, position, orientation);
 
 
   deallog << "Testing value" << std::endl;
@@ -50,8 +54,8 @@ test()
   // Only on one shape: rectangle
   Tensor<1, 3> rotation({1., 0.5, 0.});
   Point<3>     translation({0.2, 0., 0.3});
-  rectangle->orientation = rotation;
-  rectangle->position    = translation;
+  rectangle->set_orientation(rotation);
+  rectangle->set_position(translation);
   deallog << " New distance for rectangle , SD = " << rectangle->value(p)
           << std::endl;
   deallog << "OK" << std::endl;
@@ -75,19 +79,19 @@ test()
 
   deallog << "Testing copy" << std::endl;
   std::shared_ptr<Shape<3>> copy_cone = cone->static_copy();
-  copy_cone->position                 = translation;
-  deallog << " Position of original cone[0] = " << cone->position[0]
+  copy_cone->set_position(translation);
+  deallog << " Position of original cone[0] = " << cone->get_position()[0]
           << std::endl;
-  deallog << " Position of original cone[1] = " << cone->position[1]
+  deallog << " Position of original cone[1] = " << cone->get_position()[1]
           << std::endl;
-  deallog << " Position of original cone[2] = " << cone->position[2]
+  deallog << " Position of original cone[2] = " << cone->get_position()[2]
           << std::endl;
   deallog << " Translation of copy cone" << std::endl;
-  deallog << " Position of copy cone[0] = " << copy_cone->position[0]
+  deallog << " Position of copy cone[0] = " << copy_cone->get_position()[0]
           << std::endl;
-  deallog << " Position of copy cone[1] = " << copy_cone->position[1]
+  deallog << " Position of copy cone[1] = " << copy_cone->get_position()[1]
           << std::endl;
-  deallog << " Position of copy cone[2] = " << copy_cone->position[2]
+  deallog << " Position of copy cone[2] = " << copy_cone->get_position()[2]
           << std::endl;
   deallog << "OK" << std::endl;
 }
