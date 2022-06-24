@@ -56,9 +56,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
             set pressure y = 0
             set pressure z = 0
             set type       = sphere
-            subsection shape arguments
-                set Function expression = 0.5;0;0
-            end
+            set shape arguments = 0
             set friction coefficient         = 0
             set poisson ratio                = 0.3
             set restitution coefficient      = 1
@@ -87,7 +85,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
 
-To sharpen the immersed boundary of each particle, a layer of cells around the immersed boundary can be refined forming a near-particle zone of refined cells. An effective radius, dependent on the shape, is calculated at the shape initialization. Its definition is chosen so that the refinement zone is close to the surface. For example: the torus' effective radius is the ring thickness. For the rectangle (or box), it is the average of the half-lengths. For a sphere, it is the radius of the sphere.
+To sharpen the immersed boundary of each particle, a layer of cells around the immersed boundary can be refined forming a near-particle zone of refined cells. An effective radius, dependent on the shape, is calculated at the shape initialization. The definition of the effective radius for each shape is available below.
 
 * The ``refine mesh inside radius factor`` parameter defines the lower factor by which the effective radius will be multiplied to establish if a cell can be pre-refined. If the absolute distance to the surface is below :math:`(1 - \textit{factor}) * \textit{radius}`, then one of the two conditions is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6 (see example below).
 
@@ -176,23 +174,20 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``.
 
-* The subsection ``shape arguments`` is used to define the parameters of the shape in the form of a tri-components function. The arguments, which must be written in triplets, are:
-    * Sphere: radius, [none], [none];
+* The ``shape arguments`` parameter is used to define the parameters of the shape in the form of a list separated by ``,``. The required arguments and the effective radius, used for near-particle refinement, are:
+    * Sphere: radius; the effective radius is the radius;
 
-    * Rectangle: x half length, y half length, z half length;
+    * Rectangle: x half length, y half length, [z half length (if 3D)]; the effective radius is the Euclidian norm of the half lengths;
 
-    * Ellipsoid: x radius, y radius, z radius;
+    * Ellipsoid: x radius, y radius, [z radius (if 3D)]; the effective radius is the Euclidian norm of the radii;
 
-    * Torus: torus radius, torus thickness radius, [none];
+    * Torus: torus radius, torus thickness radius; the effective radius is the torus thickness radius;
 
-    * Cone: tan(base angle), height, [none];
+    * Cone: tan(base angle), height; the effective radius is the height;
 
-    * Cut Hollow Sphere: radius, cut height, wall thickness;
+    * Cut Hollow Sphere: radius, cut height, wall thickness; the effective radius is the radius;
 
-    * Death Star: sphere radius, hole radius, distance between centers.
-
-.. note::
-    Since the ``shape arguments`` need to be a triplet, you must add any numerical value in the [none] places, but they won't be used.
+    * Death Star: sphere radius, hole radius, distance between centers; the effective radius is the sphere radius.
 
 The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
 
