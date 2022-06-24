@@ -159,7 +159,6 @@ double
 Rectangle<dim>::value(const Point<dim> & evaluation_point,
                       const unsigned int component) const
 {
-  double     levelset;
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   Point<dim> abs_p;
@@ -177,9 +176,8 @@ Rectangle<dim>::value(const Point<dim> & evaluation_point,
       max_q_0[i] = std::max(q[i], 0.);
     }
   double max_q = std::max(q[0], std::max(q[1], q[dim - 1]));
-  levelset     = max_q_0.norm() + std::min(max_q, 0.);
+ return max_q_0.norm() + std::min(max_q, 0.);
 
-  return levelset;
 }
 
 template <int dim>
@@ -198,7 +196,6 @@ double
 Ellipsoid<dim>::value(const Point<dim> & evaluation_point,
                       const unsigned int component) const
 {
-  double     levelset;
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   Point<dim> v_k0;
@@ -211,9 +208,7 @@ Ellipsoid<dim>::value(const Point<dim> & evaluation_point,
     }
   double k0 = v_k0.norm();
   double k1 = v_k1.norm();
-  levelset  = k0 * (k0 - 1.) / k1;
-
-  return levelset;
+  return k0 * (k0 - 1.) / k1;
 }
 
 template <int dim>
@@ -234,14 +229,12 @@ Torus<dim>::value(const Point<dim> & evaluation_point,
 {
   AssertDimension(dim, 3);
 
-  double     levelset;
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   Point<2> p_xz({centered_point[0], centered_point[2]});
   Point<2> q({p_xz.norm() - ring_radius, centered_point[1]});
-  levelset = q.norm() - ring_thickness;
+return q.norm() - ring_thickness;
 
-  return levelset;
 }
 
 template <int dim>
@@ -262,7 +255,6 @@ Cone<dim>::value(const Point<dim> & evaluation_point,
 {
   AssertDimension(dim, 3);
 
-  double     levelset;
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   // For a cone, the parameters are tan(base angle) and height
@@ -283,9 +275,8 @@ Cone<dim>::value(const Point<dim> & evaluation_point,
                       scalar_product<1, 2, double>(b, b));
   double s = std::max(k * (w[0] * q[1] - w[1] * q[0]), k * (w[1] - q[1]));
 
-  levelset = sqrt(d) * ((s > 0) ? 1 : ((s < 0) ? -1 : 0));
+  return sqrt(d) * ((s > 0) ? 1 : ((s < 0) ? -1 : 0));
 
-  return levelset;
 }
 
 template <int dim>
@@ -306,7 +297,6 @@ CutHollowSphere<dim>::value(const Point<dim> & evaluation_point,
 {
   AssertDimension(dim, 3);
 
-  double     levelset;
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   double   w = sqrt(radius * radius - cut_depth * cut_depth);
@@ -316,14 +306,13 @@ CutHollowSphere<dim>::value(const Point<dim> & evaluation_point,
   if (cut_depth * q[0] < w * q[1])
     {
       Point<2> wh({w, cut_depth});
-      levelset = (q - wh).norm();
+      return (q - wh).norm();
     }
   else
     {
-      levelset = std::abs(q.norm() - radius) - shell_thickness;
+    return std::abs(q.norm() - radius) - shell_thickness;
     }
 
-  return levelset;
 }
 
 template <int dim>
@@ -346,7 +335,6 @@ DeathStar<dim>::value(const Point<dim> & evaluation_point,
 {
   AssertDimension(dim, 3);
 
-  double     levelset;
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   double a = (radius * radius - hole_radius * hole_radius +
@@ -360,16 +348,15 @@ DeathStar<dim>::value(const Point<dim> & evaluation_point,
       spheres_distance * std::max(b - corrected_p_2d[1], 0.))
     {
       Point<2> ab({a, b});
-      levelset = (corrected_p_2d - ab).norm();
+     return (corrected_p_2d - ab).norm();
     }
   else
     {
       Point<2> d0({spheres_distance, 0.});
-      levelset = std::max(corrected_p_2d.norm() - radius,
+      return std::max(corrected_p_2d.norm() - radius,
                           -((corrected_p_2d - d0).norm() - hole_radius));
     }
 
-  return levelset;
 }
 
 template <int dim>
