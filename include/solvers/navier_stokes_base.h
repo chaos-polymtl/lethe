@@ -370,17 +370,20 @@ protected:
    * Post-processing as parallel VTU files
    */
   void
-  write_output_results(
-    const VectorType &             solution,
-    std::shared_ptr<Function<dim>> additional_scalar = nullptr);
+  write_output_results(const VectorType &solution);
+
+  /**
+   * @brief output_field_hook
+   * This function is to be redefined in specialized classes to adapt the output
+   * to each solver.
+   */
+  virtual void
+  output_field_hook(DataOut<dim> &);
 
   /**
    * @brief write_output_forces
    * Writes the forces per boundary condition to a text file output
    */
-  virtual void
-  output_field_hook(DataOut<dim> &);
-
   void
   write_output_forces();
 

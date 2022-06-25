@@ -786,18 +786,29 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
 
 template <int dim>
 void
+GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
+{
+  std::vector<std::shared_ptr<Shape<dim>>> all_shapes;
+  for (const IBParticle<dim> &particle : particles)
+    {
+      all_shapes.push_back(particle.shape);
+    }
+  std::shared_ptr<Function<dim>> combined_shapes =
+    std::make_shared<CompositeShape<dim>>(all_shapes);
+
+  scalar_function =
+    std::make_shared<ScalarFunctionPostprocessor<dim>>("levelset",
+                                                       combined_shapes);
+  data_out.add_data_vector(this->present_solution, *scalar_function);
+}
+
+template <int dim>
+void
 GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
 {
   if (this->simulation_control->is_output_iteration())
     {
-      std::vector<std::shared_ptr<Shape<dim>>> all_shapes;
-      for (const IBParticle<dim> &particle : particles)
-        {
-          all_shapes.push_back(particle.shape);
-        }
-      std::shared_ptr<Function<dim>> combined_shapes =
-        std::make_shared<CompositeShape<dim>>(all_shapes);
-      this->write_output_results(this->present_solution, combined_shapes);
+      this->write_output_results(this->present_solution);
     }
 
   bool enable =

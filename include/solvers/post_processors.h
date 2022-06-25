@@ -257,8 +257,9 @@ class ScalarFunctionPostprocessor : public DataPostprocessorScalar<dim>
 {
 public:
   ScalarFunctionPostprocessor(
+    std::string                          name,
     const std::shared_ptr<Function<dim>> scalar_function)
-    : DataPostprocessorScalar<dim>("scalar", update_quadrature_points)
+    : DataPostprocessorScalar<dim>(name, update_quadrature_points)
   {
     this->scalar_function = scalar_function;
   }

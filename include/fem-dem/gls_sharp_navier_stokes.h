@@ -285,6 +285,14 @@ private:
   virtual void
   postprocess_fd(bool firstIter) override;
 
+
+  /**
+   * @brief output_field_hook
+   * Adds the levelset output field to the output
+   */
+  virtual void
+  output_field_hook(DataOut<dim> &data_out) override;
+
   /**
    * @brief
    * Allow a refinement around each of the particles.
@@ -518,6 +526,9 @@ private:
   // Object used to sub-time step the particle dynamics to allow contact between
   // particles.
   IBParticlesDEM<dim> ib_dem;
+
+  // Postprocessor to output the signed distance function of the immersed solids
+  std::shared_ptr<ScalarFunctionPostprocessor<dim>> scalar_function;
 };
 
 
