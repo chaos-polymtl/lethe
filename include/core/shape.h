@@ -44,6 +44,10 @@ class Shape : public AutoDerivativeFunction<dim>
 public:
   /**
    * @brief A general constructor for the Shapes
+   *
+   * @param radius The effective radius to be set for the shape. It's necessary for some calculations since not all shapes are spheres.
+   * @param position The position to set the shape at
+   * @param orientation The orientation to set the shape at
    */
   Shape(double              radius,
         const Point<dim> &  position,
@@ -59,6 +63,9 @@ public:
    * at the given point evaluation point
    * Most levelset functions implemented come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
    */
   virtual double
   value(const Point<dim> & evaluation_point,
@@ -74,6 +81,7 @@ public:
    * @brief
    * Return the volume displaced by the solid
    *
+   * @param fluid_density The density of the fluid that is displaced
    */
   virtual double
   displaced_volume(const double fluid_density);
@@ -82,6 +90,7 @@ public:
    * @brief
    * Sets a new position for the shape
    *
+   * @param The new position the shape will be placed at
    */
   virtual void
   set_position(const Point<dim> &position);
@@ -90,6 +99,7 @@ public:
    * @brief
    * Sets a new orientation for the shape
    *
+   * @param The new orientation the shape will be set at
    */
   virtual void
   set_orientation(const Tensor<1, 3> &orientation);
@@ -120,6 +130,9 @@ public:
    * required in the value function for most shapes.
    *
    * Returns the centered and aligned point used on the levelset evaluation.
+   *
+   * @param evaluation_point The point that will be recentered and realigned
+   * @return The aligned and centered point
    */
   Point<dim>
   align_and_center(const Point<dim> &evaluation_point) const;
@@ -140,6 +153,11 @@ template <int dim>
 class Sphere : public Shape<dim>
 {
 public:
+  /**
+   * @param radius The sphere radius
+   * @param position The sphere center
+   * @param orientation The sphere orientation
+   */
   Sphere<dim>(double              radius,
               const Point<dim> &  position,
               const Tensor<1, 3> &orientation)
@@ -181,6 +199,11 @@ template <int dim>
 class Rectangle : public Shape<dim>
 {
 public:
+  /**
+   * @param half_lengths The half lengths of each direction
+   * @param position The rectangle center
+   * @param orientation The rectangle orientation
+   */
   Rectangle<dim>(const Tensor<1, dim> &half_lengths,
                  const Point<dim> &    position,
                  const Tensor<1, 3> &  orientation)
@@ -203,6 +226,11 @@ template <int dim>
 class Ellipsoid : public Shape<dim>
 {
 public:
+  /**
+   * @param radii The radii of each direction
+   * @param position The ellipsoid center
+   * @param orientation The ellipsoid orientation
+   */
   Ellipsoid<dim>(const Tensor<1, dim> &radii,
                  const Point<dim> &    position,
                  const Tensor<1, 3> &  orientation)
@@ -225,6 +253,12 @@ template <int dim>
 class Torus : public Shape<dim>
 {
 public:
+  /**
+   * @param ring_radius The ring radius
+   * @param ring_thickness The ring thickness radius/half-thickness
+   * @param position The torus center
+   * @param orientation The orientation of the axis at the center of the torus
+   */
   Torus<dim>(double              ring_radius,
              double              ring_thickness,
              const Point<dim> &  position,
@@ -250,6 +284,12 @@ template <int dim>
 class Cone : public Shape<dim>
 {
 public:
+  /**
+   * @param tan_base_angle The tangent of the angle between the base of the cone and its curve side
+   * @param height The height of the cone
+   * @param position The position of the center of cone's base
+   * @param orientation The orientation of the cone axis, from its base to its tip
+   */
   Cone<dim>(double              tan_base_angle,
             double              height,
             const Point<dim> &  position,
@@ -275,6 +315,13 @@ template <int dim>
 class CutHollowSphere : public Shape<dim>
 {
 public:
+  /**
+   * @param radius The radius of the smallest sphere containing the cut hollow sphere
+   * @param cut_depth The height of the slice removed from the sphere
+   * @param shell_thickness The thickness of the hollow sphere shell
+   * @param position The center of the sphere
+   * @param orientation The orientation of the sphere, from it's center to the cut's center
+   */
   CutHollowSphere<dim>(double              radius,
                        double              cut_depth,
                        double              shell_thickness,
@@ -303,6 +350,15 @@ template <int dim>
 class DeathStar : public Shape<dim>
 {
 public:
+  /**
+   * The Death Star is the result of a boolean substraction of one sphere from
+   * another
+   * @param radius The main sphere radius
+   * @param hole_radius The removed sphere radius
+   * @param spheres_distance The distance between the centers of the sphere
+   * @param position The main sphere's center
+   * @param orientation The orientation from the main sphere's center to the removed sphere's center
+   */
   DeathStar<dim>(double              radius,
                  double              hole_radius,
                  double              spheres_distance,
@@ -335,6 +391,9 @@ template <int dim>
 class CompositeShape : public Shape<dim>
 {
 public:
+  /**
+   * @param components The shapes from which this composite sphere will be composed
+   */
   CompositeShape<dim>(std::vector<std::shared_ptr<Shape<dim>>> components)
     : Shape<dim>(0.,
                  components[0]->get_position(),

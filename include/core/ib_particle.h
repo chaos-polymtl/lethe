@@ -71,38 +71,34 @@ public:
   /**
    * @brief
    * initialize the value of the last state of the particle
-   *
    */
   void
   initialise_last();
   /**
    * @brief
    * Return the names of properties of the IB_particle for visualisation.
-   *
    */
   std::vector<std::pair<std::string, int>>
   get_properties_name();
   /**
    * @brief
    * Return the value of the properties of the particle for visualisation.
-   *
    */
   std::vector<double>
   get_properties();
   /**
    * @brief
    * Return the number of properties of the particle for visualisation.
-   *
    */
   unsigned int
   get_number_properties();
-
   /**
    * @brief
-   * Returns the evaluation of the signed distance function of this shape at the
-   * given point p
+   * Returns the evaluation of the signed distance function of this shape
    * Most levelset functions come from Inigo Quilez:
    * iquilezles.org/articles/distfunctions
+   *
+   * @param p The point at which the evaluation is performed
    */
   double
   get_levelset(const Point<dim> &p);
@@ -111,6 +107,9 @@ public:
    * @brief
    * Sets the closest_point parameter to be the point on the surface of the
    * shape which has the minimal distance from the given point p
+   *
+   * @param p The point at which the evaluation is performed
+   * @param closest_point The reference to the closest point. This point will be modified by the function.
    */
   void
   closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
@@ -120,15 +119,21 @@ public:
    * Returns true if the given point is inside the crown for which the limits
    * are defined by inner and outer radius factors. An effective radius is used
    * for non spherical shapes.
+   *
+   *  @param evaluation_point The point at which the evaluation is performed
+   *  @param outer_radius The factor to be multiplied by the effective radius to check if the evaluation point is inside the outer limits
+   *  @param inside_radius The factor to be multiplied by the effective radius to check if the evaluation point is outside the inner limits
    */
   bool
-  is_inside_crown(const Point<dim> &evaluation_pt,
+  is_inside_crown(const Point<dim> &evaluation_point,
                   const double      outer_radius,
                   const double      inside_radius);
 
   /**
    * @brief
    * Sets the position of the particle and dependent members to the argument
+   *
+   * @param position The new position to set the particle at
    */
   void
   set_position(const Point<dim> position);
@@ -137,6 +142,9 @@ public:
    * @brief
    * Sets the position of the particle and dependent members to the argument for
    * one component
+   *
+   * @param position_component The component of the new position to set the particle at
+   * @param component The component index for which the position will be updated
    */
   void
   set_position(const double       position_component,
@@ -145,6 +153,8 @@ public:
   /**
    * @brief
    * Sets the orientation of the particle and dependent members to the argument
+   *
+   * @param orientation The new orientation to set the particle at
    */
   void
   set_orientation(const Tensor<1, 3> orientation);
