@@ -522,6 +522,7 @@ private:
   double                       particle_residual;
 
   std::vector<TableHandler> table_p;
+  TableHandler              table_all_p;
 
   // Object used to sub-time step the particle dynamics to allow contact between
   // particles.

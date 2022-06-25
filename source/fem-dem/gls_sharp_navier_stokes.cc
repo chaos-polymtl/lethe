@@ -1581,6 +1581,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
                             group_files,
                             this->mpi_communicator);
 
+  table_all_p.clear();
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       for (unsigned int i = particles[p].previous_velocity.size() - 1; i > 0;
@@ -1626,14 +1627,21 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
             }
         }
       table_p[p].add_value("particle_ID", p);
+      table_all_p.add_value("particle_ID", p);
       if (this->simulation_parameters.simulation_control.method !=
           Parameters::SimulationControl::TimeSteppingMethod::steady)
         table_p[p].add_value("time",
                              this->simulation_control->get_current_time());
+      table_all_p.add_value("time",
+                            this->simulation_control->get_current_time());
       if (dim == 3)
         {
           table_p[p].add_value("T_x", particles[p].fluid_torque[0]);
           table_p[p].set_precision(
+            "T_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("T_x", particles[p].fluid_torque[0]);
+          table_all_p.set_precision(
             "T_x",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters->integrate_motion)
@@ -1642,10 +1650,18 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
               table_p[p].set_precision(
                 "omega_x",
                 this->simulation_parameters.simulation_control.log_precision);
+              table_all_p.add_value("omega_x", particles[p].omega[0]);
+              table_all_p.set_precision(
+                "omega_x",
+                this->simulation_parameters.simulation_control.log_precision);
             }
 
           table_p[p].add_value("T_y", particles[p].fluid_torque[1]);
           table_p[p].set_precision(
+            "T_y",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("T_y", particles[p].fluid_torque[1]);
+          table_all_p.set_precision(
             "T_y",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters->integrate_motion)
@@ -1654,11 +1670,18 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
               table_p[p].set_precision(
                 "omega_y",
                 this->simulation_parameters.simulation_control.log_precision);
+              table_all_p.add_value("omega_y", particles[p].omega[1]);
+              table_all_p.set_precision(
+                "omega_y",
+                this->simulation_parameters.simulation_control.log_precision);
             }
         }
 
       table_p[p].add_value("T_z", particles[p].fluid_torque[2]);
       table_p[p].set_precision(
+        "T_z", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.add_value("T_z", particles[p].fluid_torque[2]);
+      table_all_p.set_precision(
         "T_z", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
@@ -1666,25 +1689,37 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_p[p].set_precision(
             "omega_z",
             this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("omega_z", particles[p].omega[2]);
+          table_all_p.set_precision(
+            "omega_z",
+            this->simulation_parameters.simulation_control.log_precision);
         }
 
-
-
       table_p[p].add_value("f_x", particles[p].fluid_forces[0]);
+      table_all_p.add_value("f_x", particles[p].fluid_forces[0]);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_x", particles[p].velocity[0]);
           table_p[p].add_value("p_x", particles[p].position[0]);
+          table_all_p.add_value("v_x", particles[p].velocity[0]);
+          table_all_p.add_value("p_x", particles[p].position[0]);
         }
       table_p[p].add_value("f_y", particles[p].fluid_forces[1]);
+      table_all_p.add_value("f_y", particles[p].fluid_forces[1]);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_y", particles[p].velocity[1]);
           table_p[p].add_value("p_y", particles[p].position[1]);
+          table_all_p.add_value("v_y", particles[p].velocity[1]);
+          table_all_p.add_value("p_y", particles[p].position[1]);
         }
       table_p[p].set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
       table_p[p].set_precision(
+        "f_y", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_x", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
@@ -1700,6 +1735,18 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_p[p].set_precision(
             "p_y",
             this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "v_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "v_y",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "p_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "p_y",
+            this->simulation_parameters.simulation_control.log_precision);
         }
       if (dim == 3)
         {
@@ -1707,10 +1754,16 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_p[p].set_precision(
             "f_z",
             this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("f_z", particles[p].fluid_forces[2]);
+          table_all_p.set_precision(
+            "f_z",
+            this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters->integrate_motion)
             {
               table_p[p].add_value("v_z", particles[p].velocity[2]);
               table_p[p].add_value("p_z", particles[p].position[2]);
+              table_all_p.add_value("v_z", particles[p].velocity[2]);
+              table_all_p.add_value("p_z", particles[p].position[2]);
             }
         }
     }
@@ -1719,16 +1772,13 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       if (this->simulation_parameters.forces_parameters.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          for (unsigned int p = 0; p < particles.size(); ++p)
-            {
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              std::cout << "|  Force  summary particle " << p
-                        << "               |" << std::endl;
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              table_p[p].write_text(std::cout);
-            }
+          std::cout << "+------------------------------------------+"
+                    << std::endl;
+          std::cout << "|  Force  summary particles  "
+                    << "              |" << std::endl;
+          std::cout << "+------------------------------------------+"
+                    << std::endl;
+          table_all_p.write_text(std::cout);
         }
     }
 }
