@@ -108,7 +108,7 @@ subsection particles
 	    set type       = sphere
         set shape arguments = 0.25
     end
-subsection particle info 1 
+    subsection particle info 1
         subsection position
             set Function expression =0;0;0
         end

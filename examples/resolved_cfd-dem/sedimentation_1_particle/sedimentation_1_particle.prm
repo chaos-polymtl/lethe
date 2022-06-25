@@ -102,11 +102,10 @@ subsection particles
 		subsection velocity
 		    set Function expression =0;0;0
 		end
-	    set type       = sphere
+        set type       = sphere
         set shape arguments = 0.75
 		set density= 0.001120
     	end
-
 end
 
 

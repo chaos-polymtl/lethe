@@ -131,7 +131,7 @@ protected:
   // The method use to start high order bdf scheme
   Parameters::SimulationControl::BDFStartupMethods bdf_start_method;
 
-  // The time scalling use to do small time step at te
+  // The time scaling use to do small time step at te
   double startup_timestep_scaling;
 
 

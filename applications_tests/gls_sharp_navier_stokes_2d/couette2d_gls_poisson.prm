@@ -78,10 +78,6 @@ subsection analytical solution
 
             set Function constants = eta=0.50, ri=0.25
 	    set Function expression = if(sqrt(x*x+y*y)>ri, if (sqrt(x*x+y*y)<ri/eta,-sin(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)),0) , sqrt(x*x+y*y)/ri*-sin(atan2(y,x))*ri) ; if(sqrt(x*x+y*y)>ri,if (sqrt(x*x+y*y)<ri/eta,cos(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)),0), sqrt(x*x+y*y)/ri*cos(atan2(y,x))*ri) ; 0
-
-
-
-
 	end
 end
 
