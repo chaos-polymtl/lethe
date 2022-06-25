@@ -177,16 +177,13 @@ IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
                                  const double      outer_radius,
                                  const double      inside_radius)
 {
-  bool is_inside;
-
   const double radius = shape->effective_radius;
 
   double distance              = shape->value(evaluation_point);
   bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
   bool   is_outside_inner_ring = distance >= radius * (inside_radius - 1);
 
-  is_inside = is_inside_outer_ring && is_outside_inner_ring;
-  return is_inside;
+  return is_inside_outer_ring && is_outside_inner_ring;
 }
 
 template <int dim>

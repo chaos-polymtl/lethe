@@ -260,9 +260,8 @@ public:
     std::string                          name,
     const std::shared_ptr<Function<dim>> scalar_function)
     : DataPostprocessorScalar<dim>(name, update_quadrature_points)
-  {
-    this->scalar_function = scalar_function;
-  }
+    , scalar_function(scalar_function)
+  {}
 
   virtual void
   evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &input_data,

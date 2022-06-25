@@ -278,9 +278,7 @@ IB particles
                 set Function expression =0;0;0
             end
             set type       = sphere
-            subsection shape arguments
-                set Function expression = 0.75;0;0
-            end
+            set shape arguments = 0.75
             set density= 0.001120
         end
     end

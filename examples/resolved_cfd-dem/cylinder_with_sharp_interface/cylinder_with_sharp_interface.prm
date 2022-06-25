@@ -106,9 +106,7 @@ end
                     set Function expression =0;0
                 end
                 set type       = sphere
-                subsection shape arguments
-                    set Function expression = 0.5;0;0
-                end
+                set shape arguments = 0.5
             end
         end
         

@@ -1783,19 +1783,18 @@ namespace Parameters
         "sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star"),
       "The type of shape considered."
       "Choices are <sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star>."
-      "Parameters for a sphere are, in order: radius,"
-      " [none], [none]. "
-      "Parameters for a rectangle are, in order: x half length,"
+      "The parameter for a sphere is: radius. "
+      "The parameters for a rectangle are, in order: x half length,"
       "y half length, z half length."
-      "Parameters for an ellipsoid are, in order: x radius,"
+      "The parameters for an ellipsoid are, in order: x radius,"
       "y radius, z radius. "
-      "Parameters for a torus are, in order: torus radius,"
-      "torus thickness radius, [none]. "
-      "Parameters for a cone are, in order: tan(base angle),"
-      " height, [none]. "
-      "Parameters for a cut hollow sphere are, in order: sphere radius,"
+      "The parameters for a torus are, in order: torus radius,"
+      "torus thickness radius. "
+      "The parameters for a cone are, in order: tan(base angle),"
+      " height. "
+      "The parameters for a cut hollow sphere are, in order: sphere radius,"
       "cut thickness, wall thickness. "
-      "Parameters for a death star are, in order: sphere radius,"
+      "The parameters for a death star are, in order: sphere radius,"
       "smaller sphere radius, distance between centers.");
     prm.declare_entry("shape arguments",
                       "0",

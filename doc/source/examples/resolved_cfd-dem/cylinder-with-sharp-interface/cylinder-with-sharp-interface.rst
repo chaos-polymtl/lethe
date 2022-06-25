@@ -117,9 +117,7 @@ In this case, we want to define a circular boundary of radius 0.5 center at (8,8
                     set Function expression =0;0
                 end
                 set type       = sphere
-                subsection shape arguments
-                    set Function expression = 0.5;0;0
-                end
+                set shape arguments = 0.5
             end
         end
 
