@@ -968,6 +968,15 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
 
+    /**
+     * @brief
+     * Sets up a shape in accordance with the given type and arguments
+     */
+    void
+    initialize_shape(const unsigned int        i,
+                     const std::string         type,
+                     const std::vector<double> shape_arguments);
+
     unsigned int                 nb;
     unsigned int                 order;
     unsigned int                 initial_refinement;

@@ -2128,7 +2128,7 @@ namespace Parameters
             Utilities::split_string_list(shape_arguments_str));
           std::vector<double> shape_arguments =
             Utilities::string_to_double(shape_arguments_str_list);
-          particles[i].initialize_shape(shape_type, shape_arguments);
+          initialize_shape(i, shape_type, shape_arguments);
 
           particles[i].radius = particles[i].shape->effective_radius;
 
@@ -2149,6 +2149,71 @@ namespace Parameters
         }
       prm.leave_subsection();
     }
+  }
+
+  template <int dim>
+  void
+  IBParticles<dim>::initialize_shape(const unsigned int        i,
+                                     const std::string         type,
+                                     const std::vector<double> shape_arguments)
+  {
+    if (type == "sphere")
+      particles[i].shape =
+        std::make_shared<Sphere<dim>>(shape_arguments[0],
+                                      particles[i].position,
+                                      particles[i].orientation);
+    else if (type == "rectangle")
+      {
+        Tensor<1, dim> half_lengths;
+        for (unsigned int i = 0; i < dim; ++i)
+          {
+            half_lengths[i] = shape_arguments[i];
+          }
+        particles[i].shape =
+          std::make_shared<Rectangle<dim>>(half_lengths,
+                                           particles[i].position,
+                                           particles[i].orientation);
+      }
+    else if (type == "ellipsoid")
+      {
+        Tensor<1, dim> radii;
+        for (unsigned int i = 0; i < dim; ++i)
+          {
+            radii[i] = shape_arguments[i];
+          }
+        particles[i].shape =
+          std::make_shared<Ellipsoid<dim>>(radii,
+                                           particles[i].position,
+                                           particles[i].orientation);
+      }
+    else if (type == "torus")
+      particles[i].shape =
+        std::make_shared<Torus<dim>>(shape_arguments[0],
+                                     shape_arguments[1],
+                                     particles[i].position,
+                                     particles[i].orientation);
+    else if (type == "cone")
+      particles[i].shape =
+        std::make_shared<Cone<dim>>(shape_arguments[0],
+                                    shape_arguments[1],
+                                    particles[i].position,
+                                    particles[i].orientation);
+    else if (type == "cut hollow sphere")
+      particles[i].shape =
+        std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
+                                               shape_arguments[1],
+                                               shape_arguments[2],
+                                               particles[i].position,
+                                               particles[i].orientation);
+    else if (type == "death star")
+      particles[i].shape =
+        std::make_shared<DeathStar<dim>>(shape_arguments[0],
+                                         shape_arguments[1],
+                                         shape_arguments[2],
+                                         particles[i].position,
+                                         particles[i].orientation);
+    else
+      StandardExceptions::ExcNotImplemented();
   }
 
   void
