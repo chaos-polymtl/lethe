@@ -85,24 +85,23 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
 
-To sharpen the immersed boundary of each particle, a layer of cells around the immersed boundary can be refined forming a near-particle zone of refined cells. An effective radius, dependent on the shape, is calculated at the shape initialization. The definition of the effective radius for each shape is available below.
+To sharpen the immersed boundary of each particle, a layer of cells around the immersed boundary can be refined forming a near-surface zone of refined cells between two thresholds: :math:`\textit{inside factor} * \textit{radius}` and :math:`\textit{outside factor} * \textit{radius}`. An effective radius, for non spheres, is calculated at the shape initialization and its definition is given further below.
 
-* The ``refine mesh inside radius factor`` parameter defines the lower factor by which the effective radius will be multiplied to establish if a cell can be pre-refined. If the absolute distance to the surface is below :math:`(1 - \textit{factor}) * \textit{radius}`, then one of the two conditions is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6 (see example below).
+* The ``refine mesh inside radius factor`` parameter defines how deep inside the solid that cells can be refined. If the absolute distance between a cell's degree of freedom and the solid's surface is lower than :math:`(1 - \textit{inside factor}) * \textit{radius}`, one of the two required conditions to refine this cell is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside reach of the refinement zone would be 0.4 (see example below).
 
-* The ``refine mesh outside radius factor`` parameter defines the higher limit of the near-particle refinement zone. If the absolute distance to the surface is below :math:`(\textit{factor} - 1) * \textit{radius}`, then the second condition is met. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3 (see example below).
+* The ``refine mesh outside radius factor`` parameter defines how far outside the solid that cells can be refined. If the absolute distance between a cell's degree of freedom and the solid's surface is lower than :math:`(\textit{outside factor} - 1) * \textit{radius}`, the second of the two required conditions to refine this cell is met. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside reach of the refinement zone would be 1 (see example below).
+
+.. image:: images/particle_hypershell.png
+	:align: center
 
 .. warning::
-	The ``mesh adaptation type`` must be ``kelly`` to use the near-particle refinement zone around particles, otherwise, no near-particle refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
+	The ``mesh adaptation type`` must be ``kelly`` to use the near-particle refinement zone around particles; otherwise, no near-particle refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
 
 .. note::
 	The refined cells are all those for which at least one of the degrees of freedom (dof) location satisfies both the ``refine mesh inside radius factor`` and the ``refine mesh outside radius factor`` thresholds. Each application of the refinement zone reduces the size of the elements by a factor two.
 
 .. note::
 	This near-particle zone will be systematically refined at each refinement step until reaching the ``max refinement level`` parameter (:doc:`../cfd/mesh_adaptation_control`).
-
-.. image:: images/particle_hypershell.png
-	:align: center
-
 
 * The ``initial refinement`` parameter controls the number of refinement cycles in the near-particle refinement zone around every particle before the simulation starts.
 
