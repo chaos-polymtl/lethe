@@ -160,7 +160,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The subsection ``velocity`` defines the initial value of the particle velocity if the parameter ``integrate motion=true``. Otherwise, it defines the particle's velocity at all points in time. This velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z direction.
 
-* If the parameter ``integrate motion`` is set to ``true``, the subsection ``omega`` defines the initial value of the particle's rotational velocity. Otherwise, it defines the particle's rotational velocity at all time steps. This rotational velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z directions. It's important to note that even the 2D solver uses the rotational velocity in 3D. In this case, it will only use the Z component of the rotational velocity.
+* If the parameter ``integrate motion`` is set to ``true``, the subsection ``omega`` defines the initial value of the particle's rotational velocity. Otherwise, it defines the particle's rotational velocity at all time steps. This rotational velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z directions.
 
 * The subsection ``orientation`` defines the initial value of the particle's angular position around each of the axes X, then Y, and lastly Z.
 
@@ -168,7 +168,7 @@ The following parameter and subsection are all inside the subsection ``particle 
     The way position and orientation are defined is that the position of the solid is taken into account first, and then the orientation is considered. The orientation is considered as a rotation around each main axis, in the order X, then Y, and finally Z. The center of rotation for this rotation is the position point of the solid.
 
 .. warning::
-    It's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity, but all three should be defined.
+    Concerning ``omega`` and ``orientation``, it's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity, but all three should be defined.
 
 * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
 
