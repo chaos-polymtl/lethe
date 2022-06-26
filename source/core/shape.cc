@@ -293,22 +293,22 @@ Cone<dim>::value(const Point<dim> & evaluation_point,
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   // For a cone, the parameters are tan(base angle) and height
-  Point<2> q({height * tan_base_angle, -height});
   Point<2> p_xz({centered_point[0], centered_point[2]});
   Point<2> w({p_xz.norm(), centered_point[1]});
-  double   dot_w_q = scalar_product<1, 2, double>(w, q);
-  double   dot_q_q = scalar_product<1, 2, double>(q, q);
+  double   dot_w_q = scalar_product<1, 2, double>(w, intermediate_q);
+  double dot_q_q = scalar_product<1, 2, double>(intermediate_q, intermediate_q);
   Point<2> a;
-  a = w - q * std::clamp(dot_w_q / dot_q_q, 0., 1.);
-  Point<2> b_intermediate1({std::clamp(w[0] / q[0], 0., 1.), 1.});
-  Point<2> b_intermediate2(
-    {q[0] * b_intermediate1[0], q[1] * b_intermediate1[1]});
+  a = w - intermediate_q * std::clamp(dot_w_q / dot_q_q, 0., 1.);
+  Point<2> b_intermediate1({std::clamp(w[0] / intermediate_q[0], 0., 1.), 1.});
+  Point<2> b_intermediate2({intermediate_q[0] * b_intermediate1[0],
+                            intermediate_q[1] * b_intermediate1[1]});
   Point<2> b;
   b        = w - b_intermediate2;
-  double k = (q[1] > 0) ? 1 : ((q[1] < 0) ? -1 : 0);
+  double k = (intermediate_q[1] > 0) ? 1 : ((intermediate_q[1] < 0) ? -1 : 0);
   double d = std::min(scalar_product<1, 2, double>(a, a),
                       scalar_product<1, 2, double>(b, b));
-  double s = std::max(k * (w[0] * q[1] - w[1] * q[0]), k * (w[1] - q[1]));
+  double s = std::max(k * (w[0] * intermediate_q[1] - w[1] * intermediate_q[0]),
+                      k * (w[1] - intermediate_q[1]));
 
   return sqrt(d) * ((s > 0) ? 1 : ((s < 0) ? -1 : 0));
 }
@@ -331,13 +331,12 @@ CutHollowSphere<dim>::value(const Point<dim> & evaluation_point,
 
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  double   w = sqrt(radius * radius - cut_depth * cut_depth);
   Point<2> p_xz({centered_point[0], centered_point[2]});
   Point<2> q({p_xz.norm(), centered_point[1]});
 
-  if (cut_depth * q[0] < w * q[1])
+  if (cut_depth * q[0] < intermediate_w * q[1])
     {
-      Point<2> wh({w, cut_depth});
+      Point<2> wh({intermediate_w, cut_depth});
       return (q - wh).norm();
     }
   else
@@ -364,17 +363,12 @@ DeathStar<dim>::value(const Point<dim> & evaluation_point,
 
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  double a = (radius * radius - hole_radius * hole_radius +
-              spheres_distance * spheres_distance) /
-             (2. * spheres_distance);
-  double b = sqrt(std::max(radius * radius - a * a, 0.));
-
   Point<2> p_yz({centered_point[1], centered_point[2]});
   Point<2> corrected_p_2d({centered_point[0], p_yz.norm()});
-  if (corrected_p_2d[0] * b - corrected_p_2d[1] * a >
-      spheres_distance * std::max(b - corrected_p_2d[1], 0.))
+  if (corrected_p_2d[0] * intermediate_b - corrected_p_2d[1] * intermediate_a >
+      spheres_distance * std::max(intermediate_b - corrected_p_2d[1], 0.))
     {
-      Point<2> ab({a, b});
+      Point<2> ab({intermediate_a, intermediate_b});
       return (corrected_p_2d - ab).norm();
     }
   else

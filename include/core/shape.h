@@ -297,6 +297,7 @@ public:
     : Shape<dim>(height, position, orientation)
     , tan_base_angle(tan_base_angle)
     , height(height)
+    , intermediate_q({height * tan_base_angle, -height})
   {}
 
   double
@@ -309,6 +310,8 @@ public:
 private:
   double tan_base_angle;
   double height;
+
+  Tensor<1, 2> intermediate_q;
 };
 
 template <int dim>
@@ -331,6 +334,7 @@ public:
     , radius(radius)
     , cut_depth(cut_depth)
     , shell_thickness(shell_thickness)
+    , intermediate_w(sqrt(radius * radius - cut_depth * cut_depth))
   {}
 
   double
@@ -344,6 +348,8 @@ private:
   double radius;
   double cut_depth;
   double shell_thickness;
+
+  double intermediate_w;
 };
 
 template <int dim>
@@ -368,6 +374,11 @@ public:
     , radius(radius)
     , hole_radius(hole_radius)
     , spheres_distance(spheres_distance)
+    , intermediate_a((radius * radius - hole_radius * hole_radius +
+                      spheres_distance * spheres_distance) /
+                     (2. * spheres_distance))
+    , intermediate_b(
+        sqrt(std::max(radius * radius - intermediate_a * intermediate_a, 0.)))
   {}
 
   double
@@ -381,6 +392,9 @@ private:
   double radius;
   double hole_radius;
   double spheres_distance;
+
+  double intermediate_a;
+  double intermediate_b;
 };
 
 // Composite Shapes are currently used only to output the signed distance of
