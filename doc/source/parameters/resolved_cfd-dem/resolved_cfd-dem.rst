@@ -18,11 +18,12 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set refine mesh inside radius factor        = 0.5
 		set refine mesh outside radius factor       = 1.5
 		set integrate motion                        = false
+		set print DEM                               = true
 		set particle nonlinear tolerance            = 1e-6
 		set DEM coupling frequency                  = 1000
 		set alpha                                   = 1
 		set contact search radius factor            = 3
-		set contact search frequency				= 1
+		set contact search frequency                = 1
 		
 		subsection gravity
 			set Function expression =0;0;0
@@ -36,7 +37,9 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 		set enable lubrication force		    = true
 		set lubrication range max		    = 2
 		set lubrication range min		    = 0.1
-		
+		set load particles from file		    = false
+		set particles file		            = particles
+
 		subsection particle info 0
 			set density    = 1
 			subsection position
@@ -136,21 +139,21 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using non-newtonian fluid.
 
-* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.
-
-* The ``load particles from file`` boolean defines whether the particles are generated from an external file instead of the prm file. If this parameter is activated, the number of particles is defined directly from the file, that is, the particle's subsection and the number of particles are ignored. 
-
-* The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): ID p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z radius density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient
-
-
 .. note::
-	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.  
+	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.
+
+* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.
 
 * The ``lubrication range min`` parameter defines the minimal distance used in the lubrication force calculation. The range is defined as a multiple of the smallest cell. This limits the force that can be applied on a particle since the lubrification force has a singularity when the distance between 2 particles is 0. We use this parameter to define a lower bound on the distance between 2 particles for the force calculation to avoid this singularity. Physically, this distance can be interpreted as the surface roughness of the particles.
 
 .. note::
     The lubrication force between two particles is expressed by the equation :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`. Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter of the first particle, :math:`d_{p_j}` the diameter of the second particle, :math:`y` the gap between the two particles, :math:`\mathbf{v_{ij}}` the relative velocity of the two particles, :math:`\mathbf{e_{ij}}` the unit vector along the line that joint the centroide of the two particles. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity `[1] <https://doi.org/10.1002/aic.690400418>`_. 
     This model requires a constant viscosity and density of the fluid.
+
+* The ``load particles from file`` boolean defines whether the particles are generated from an external file instead of the prm file. If this parameter is activated, the number of particles is defined directly from the file, that is, the particle's subsection and the number of particles are ignored.
+
+* The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z radius density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient
+
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
 

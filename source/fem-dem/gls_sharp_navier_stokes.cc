@@ -1561,19 +1561,19 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 
-      if (this->simulation_parameters.particlesParameters->integrate_motion)
+      if (this->simulation_parameters.particlesParameters->print_dem)
         {
-          this->pcout << "particule " << p << " position "
+          this->pcout << "particle " << p << " position "
                       << particles[p].position << std::endl;
           if (dim == 2)
             {
-              this->pcout << "particule " << p << " velocity "
+              this->pcout << "particle " << p << " velocity "
                           << tensor_nd_to_2d(particles[p].velocity)
                           << std::endl;
             }
           else
             {
-              this->pcout << "particule " << p << " velocity "
+              this->pcout << "particle " << p << " velocity "
                           << particles[p].velocity << std::endl;
             }
         }
@@ -2924,7 +2924,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
   // vector.
   std::map<std::string, std::vector<double>> restart_data;
   fill_vectors_from_file(restart_data, filename);
-  particles.resize(restart_data["ID"].size());
+  particles.resize(restart_data["p_x"].size());
   // Implement the data  in the particles.
   if (dim == 2)
     {
@@ -2957,7 +2957,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
           particles[p_i].rolling_friction_coefficient =
             restart_data["rolling_friction_coefficient"][p_i];
-          particles[p_i].initialise_last();
+          particles[p_i].initialise_end();
         }
     }
   if (dim == 3)
@@ -2997,7 +2997,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
           particles[p_i].rolling_friction_coefficient =
             restart_data["rolling_friction_coefficient"][p_i];
-          particles[p_i].initialise_last();
+          particles[p_i].initialise_end();
         }
     }
 }

@@ -13,8 +13,8 @@ Transient iteration : 1        Time : 0.05     Time step : 0.05     CFL : 0
 div u : 9.12428064855e-13
 error at the weak BC : 0.000124532197452
 L2 error velocity : 0.00158956705577 L2 error pressure: 0.0369358172508
-particule 0 position 0.997440813722 3.17878555306e-08 3.17882174895e-08
-particule 0 velocity -0.0511837255561 6.35757110612e-07 6.35764349789e-07
+particle 0 position 0.997440813722 3.17878555306e-08 3.17882174895e-08
+particle 0 velocity -0.0511837255561 6.35757110612e-07 6.35764349789e-07
 +------------------------------------------+
 |  Force  summary particle 0               |
 +------------------------------------------+
@@ -27,8 +27,8 @@ Transient iteration : 2        Time : 0.125    Time step : 0.075    CFL : 0.0165
 div u : 1.86267549012e-12
 error at the weak BC : 0.000587329659341
 L2 error velocity : 0.00405754337339 L2 error pressure: 0.120587297412
-particule 0 position 0.990003388948 9.78193117778e-08 9.78208524871e-08
-particule 0 velocity -0.12795482651 1.02721680024e-06 1.02723760341e-06
+particle 0 position 0.990003388948 9.78193117778e-08 9.78208524871e-08
+particle 0 velocity -0.12795482651 1.02721680024e-06 1.02723760341e-06
 +------------------------------------------+
 |  Force  summary particle 0               |
 +------------------------------------------+

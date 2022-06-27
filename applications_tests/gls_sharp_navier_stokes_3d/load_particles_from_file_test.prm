@@ -94,12 +94,12 @@ subsection particles
 	set integrate motion = true
 	set assemble Navier-Stokes inside particles = false
 	set length ratio = 1
-	set particle nonlinear tolerance=1e-5
-	set DEM coupling frequency= 10000
-	set alpha =1
+	set particle nonlinear tolerance = 1e-5
+	set DEM coupling frequency = 10000
+	set alpha = 1
 	
-	set load particles from file =true
-	set particles file =particles
+	set load particles from file = true
+	set particles file = particles
 	
 	subsection gravity
             	set Function expression =0;-981;0

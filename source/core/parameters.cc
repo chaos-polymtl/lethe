@@ -1877,6 +1877,11 @@ namespace Parameters
         Patterns::Bool(),
         "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
       prm.declare_entry(
+        "print DEM",
+        "true",
+        Patterns::Bool(),
+        "Bool to define if particles' informations are printed on the terminal when particles' time-step is finished");
+      prm.declare_entry(
         "contact search radius factor",
         "3",
         Patterns::Double(),
@@ -1993,6 +1998,7 @@ namespace Parameters
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
       integrate_motion     = prm.get_bool("integrate motion");
+      print_dem            = prm.get_bool("print DEM");
       alpha                = prm.get_double("alpha");
       contact_search_radius_factor =
         prm.get_double("contact search radius factor");
@@ -2098,7 +2104,7 @@ namespace Parameters
                                   particles[i].radius *
                                   prm.get_double("density");
             }
-          particles[i].initialise_last();
+          particles[i].initialise_end();
           prm.leave_subsection();
         }
       prm.leave_subsection();
