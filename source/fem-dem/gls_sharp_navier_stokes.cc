@@ -1298,8 +1298,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             {
               this->pcout
                 << "particle " << p
-                << " is now outside the domain we do not update this particle  "
-                << std::endl;
+                << " is now outside the domain we do not update this particle. Position: "
+                << particles[p].position[0] << ", " << particles[p].position[1]
+                << ", " << particles[p].position[2] << std::endl;
               save_particle_state_is_used = true;
             }
 
