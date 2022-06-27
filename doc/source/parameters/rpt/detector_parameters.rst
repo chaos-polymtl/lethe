@@ -31,7 +31,7 @@ This subsection contains the specific information of the detector. ``Detector po
 
 :raw-html:`<br />`
 
-The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
+The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam et al. (1978) <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
 
 - ``activity``: Radioactive source activity of the tracer [Beq]
     Options: Any positive float *(default value: 1)*
