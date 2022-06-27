@@ -84,7 +84,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   virtual double
-  displaced_volume(const double fluid_density);
+  displaced_volume(const double fluid_density) = 0;
 
   /**
    * @brief
@@ -218,6 +218,9 @@ public:
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  double
+  displaced_volume(const double fluid_density) override;
+
 private:
   Tensor<1, dim> half_lengths;
 };
@@ -244,6 +247,9 @@ public:
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
+
+  double
+  displaced_volume(const double fluid_density) override;
 
 private:
   Tensor<1, dim> radii;
@@ -275,6 +281,9 @@ public:
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  double
+  displaced_volume(const double fluid_density) override;
+
 private:
   double ring_radius;
   double ring_thickness;
@@ -298,6 +307,7 @@ public:
     , tan_base_angle(tan_base_angle)
     , height(height)
     , intermediate_q({height * tan_base_angle, -height})
+    , base_radius(height / tan_base_angle)
   {}
 
   double
@@ -307,9 +317,13 @@ public:
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  double
+  displaced_volume(const double fluid_density) override;
+
 private:
   double tan_base_angle;
   double height;
+  double base_radius;
 
   Tensor<1, 2> intermediate_q;
 };
@@ -343,6 +357,9 @@ public:
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
+
+  double
+  displaced_volume(const double fluid_density) override;
 
 private:
   double radius;
@@ -388,6 +405,9 @@ public:
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  double
+  displaced_volume(const double fluid_density) override;
+
 private:
   double radius;
   double hole_radius;
@@ -428,6 +448,9 @@ public:
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
+
+  double
+  displaced_volume(const double fluid_density) override;
 
 private:
   std::vector<std::shared_ptr<Shape<dim>>> components;

@@ -48,7 +48,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   // Selection of the first axis around which to rotate:
   // x -> 0, y -> 1, z -> 2
   // In 2D, only rotation around the z axis is possible
-  if (dim == 2)
+  if constexpr (dim == 2)
     {
       if (std::abs(theta[2]) > 1e-10)
         {
@@ -68,7 +68,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
           centralized_point = centralized_rotated;
         }
     }
-  else if (dim == 3)
+  else // (dim == 3)
     {
       for (unsigned int i = 0; i < 3; ++i)
         {
@@ -233,6 +233,18 @@ Rectangle<dim>::static_copy() const
 
 template <int dim>
 double
+Rectangle<dim>::displaced_volume(const double fluid_density)
+{
+  double solid_volume = 1.;
+  for (unsigned int i = 0; i < dim; i++)
+    {
+      solid_volume = solid_volume * 2. * half_lengths[dim];
+    }
+  return solid_volume;
+}
+
+template <int dim>
+double
 Ellipsoid<dim>::value(const Point<dim> & evaluation_point,
                       const unsigned int component) const
 {
@@ -262,6 +274,19 @@ Ellipsoid<dim>::static_copy() const
 
 template <int dim>
 double
+Ellipsoid<dim>::displaced_volume(const double fluid_density)
+{
+  using numbers::PI;
+  double solid_volume = PI * 4. / 3.;
+  for (unsigned int i = 0; i < dim; i++)
+    {
+      solid_volume = solid_volume * radii[dim];
+    }
+  return solid_volume;
+}
+
+template <int dim>
+double
 Torus<dim>::value(const Point<dim> & evaluation_point,
                   const unsigned int component) const
 {
@@ -281,6 +306,14 @@ Torus<dim>::static_copy() const
   std::shared_ptr<Shape<dim>> copy = std::make_shared<Torus<dim>>(
     ring_radius, ring_thickness, this->position, this->orientation);
   return copy;
+}
+
+template <int dim>
+double
+Torus<dim>::displaced_volume(const double fluid_density)
+{
+  using numbers::PI;
+  return 2. * PI * PI * ring_radius * ring_thickness * ring_thickness;
 }
 
 template <int dim>
@@ -324,6 +357,14 @@ Cone<dim>::static_copy() const
 
 template <int dim>
 double
+Cone<dim>::displaced_volume(const double fluid_density)
+{
+  using numbers::PI;
+  return PI / 3. * base_radius * base_radius * height;
+}
+
+template <int dim>
+double
 CutHollowSphere<dim>::value(const Point<dim> & evaluation_point,
                             const unsigned int component) const
 {
@@ -352,6 +393,21 @@ CutHollowSphere<dim>::static_copy() const
   std::shared_ptr<Shape<dim>> copy = std::make_shared<CutHollowSphere<dim>>(
     radius, cut_depth, shell_thickness, this->position, this->orientation);
   return copy;
+}
+
+template <int dim>
+double
+CutHollowSphere<dim>::displaced_volume(const double fluid_density)
+{
+  std::cout
+    << "Warning: For a cut hollow sphere, the real volume will be lower than "
+       "output."
+    << std::endl;
+  using numbers::PI;
+  double small_radius = radius - shell_thickness;
+  return 4. * PI / 3. *
+         (radius * radius * radius -
+          small_radius * small_radius * small_radius);
 }
 
 template <int dim>
@@ -390,6 +446,17 @@ DeathStar<dim>::static_copy() const
 
 template <int dim>
 double
+DeathStar<dim>::displaced_volume(const double fluid_density)
+{
+  std::cout
+    << "Warning: For a death star, the real volume will be lower than output."
+    << std::endl;
+  using numbers::PI;
+  return 4. * PI / 3. * radius * radius * radius;
+}
+
+template <int dim>
+double
 CompositeShape<dim>::value(const Point<dim> & evaluation_point,
                            const unsigned int component) const
 {
@@ -408,6 +475,22 @@ CompositeShape<dim>::static_copy() const
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<CompositeShape<dim>>(this->components);
   return copy;
+}
+
+template <int dim>
+double
+CompositeShape<dim>::displaced_volume(const double fluid_density)
+{
+  double solid_volume;
+  std::cout
+    << "Warning: For composite shapes, the real volume may be bigger than output "
+       "since intersections aren't considered in the calculation."
+    << std::endl;
+  for (const std::shared_ptr<Shape<dim>> &elem : components)
+    {
+      solid_volume += elem->displaced_volume(fluid_density);
+    }
+  return solid_volume;
 }
 
 template class Sphere<2>;
