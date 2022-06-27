@@ -98,7 +98,7 @@ subsection particles
 	set DEM coupling frequency= 10000
 	set alpha =1
 	
-	set load particles from a file =true
+	set load particles from file =true
 	set particles file =particles
 	
 	subsection gravity

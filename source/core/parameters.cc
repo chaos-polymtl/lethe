@@ -1858,7 +1858,7 @@ namespace Parameters
         Patterns::FileName(),
         "The name of the file where the data on the force of each particle is stored");
       prm.declare_entry(
-        "load particles from a file",
+        "load particles from file",
         "false",
         Patterns::Bool(),
         "Bool to define if particles are loaded from an external file");
@@ -2002,7 +2002,7 @@ namespace Parameters
 
       contact_search_frequency = prm.get_integer("contact search frequency");
 
-      load_particles_from_file = prm.get_bool("load particles from a file");
+      load_particles_from_file = prm.get_bool("load particles from file");
       particles_file           = prm.get("particles file");
 
       assemble_navier_stokes_inside =
