@@ -1,7 +1,6 @@
 #include <core/bdf.h>
 #include <core/sdirk.h>
 #include <core/utilities.h>
-
 #include <solvers/heat_transfer_scratch_data.h>
 
 
@@ -90,7 +89,7 @@ HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
 
   // VOF
   phase_values = std::vector<double>(this->n_q_points);
-  previous_vof_values =
+  previous_phase_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
 

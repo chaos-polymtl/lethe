@@ -25,14 +25,6 @@
 #ifndef lethe_heat_transfer_scratch_data_h
 #define lethe_heat_transfer_scratch_data_h
 
-#include <core/density_model.h>
-#include <core/multiphysics.h>
-#include <core/physical_property_model.h>
-#include <core/specific_heat_model.h>
-#include <core/thermal_conductivity_model.h>
-
-#include <solvers/multiphysics_interface.h>
-
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -43,6 +35,13 @@
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/density_model.h>
+#include <core/multiphysics.h>
+#include <core/physical_property_model.h>
+#include <core/specific_heat_model.h>
+#include <core/thermal_conductivity_model.h>
+#include <solvers/multiphysics_interface.h>
 
 using namespace dealii;
 
@@ -367,13 +366,13 @@ public:
     this->fe_values_vof->reinit(cell);
     // Gather phase fraction (values, gradient)
     this->fe_values_vof->get_function_values(current_solution,
-                                             this->vof_values);
+                                             this->phase_values);
 
     // Gather previous phase fraction values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         this->fe_values_vof->get_function_values(previous_solutions[p],
-                                                 previous_vof_values[p]);
+                                                 previous_phase_values[p]);
       }
   }
 
@@ -448,8 +447,7 @@ public:
    */
   bool                             gather_vof;
   unsigned int                     n_dofs_vof;
-  std::vector<double>              vof_values;
-  std::vector<std::vector<double>> previous_vof_values;
+  std::vector<std::vector<double>> previous_phase_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            phase_values;
