@@ -48,7 +48,7 @@ As discussed in the previous example (`Photon Count Calculation in a Cylindrical
     C = \frac{T \nu R \phi \xi_i (\vec{X})}{1 + \tau \nu R \phi \xi_i (\vec{X})}
 
 		
-In the previous expression, 
+where,
 
 - :math:`T` is the sampling time [:math:`s`];
 - :math:`\nu` is the number of :math:`\gamma`-rays emmited by each disintegration;
@@ -68,9 +68,10 @@ where
 
 - :math:`N` is the number of randomly generated photons;
 - :math:`\alpha_j` and :math:`\theta_j` are randomly generated angles that describe the direction of a ray emitted by a tracer particle;
-- :math:`\omega(\alpha)` is the weighting factor associated with the angle :math:`\alpha`, and
-- :math:`\omega(\theta)` is the weighting factor associated with the angle :math:`\theta`.
-- :math:`f_a(\alpha_j, \theta_j)` is the probability function of hte non-interaction between the :math:`\gamma`-rays emitted whithin :math:`\Omega` and the material inside the vessel, and
+- :math:`\omega(\alpha)` is the weighting factor associated with the angle :math:`\alpha`;
+- :math:`\omega(\theta)` is the weighting factor associated with the angle :math:`\theta`;
+- :math:`f_a(\alpha_j, \theta_j)` is the probability function of hte non-interaction between the :math:`\gamma`-rays emitted within :math:`\Omega` and the material inside the vessel;
+- :math:`\Omega` is the closed exposed area of the detector, and
 - :math:`f_d(\alpha_j, \theta_j)` is the probability function of the interaction of the :math:`\gamma`-rays with the detector.
 
 The two last functions may be re-written the following way :
@@ -79,7 +80,7 @@ The two last functions may be re-written the following way :
 
     f_a(\alpha_j, \theta_j) = exp\{-\mu_r \ e(\alpha_j, \theta_j)\}
 
-where :math:`\mu_r` is the reactor's attenuation coefficient *(the third unknown parameter)* and :math:`e(\alpha_j, \theta_j)` is the length of the path travelled by the photon inside the reactor.
+where :math:`\mu_r` is the reactor's attenuation coefficient *(the third unknown parameter)* and :math:`e(\alpha_j, \theta_j)` is the length of the path traveled by the photon inside the reactor.
 
 And
 
@@ -87,20 +88,20 @@ And
 
     f_d(\alpha_j, \theta_j) = 1 - exp\{ -\mu_d \ d(\alpha_j,\theta_j)\}
 
-where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alpha_j,\theta_j)` is the length of the path travelled by the photon inside the detector.
+where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alpha_j,\theta_j)` is the length of the path traveled by the photon inside the detector.
 
 :raw-html:`<br />`
 
 Parameter files
 ----------------
 
-``rpt_parameters.prm`` file
+*rpt_parameters.prm* file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 RPT Parameters
 ^^^^^^^^^^^^^^^^
 
-As seen in the previous example, in the subsection *rpt parameters*, we define the values of the set of parameters that is necessary for the calculation of the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
+As seen in the previous example, in the subsection *"rpt parameters"*, we define the values of the set of parameter necessary for calculating the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
 
 .. code-block:: text
 
@@ -128,7 +129,7 @@ As seen in the previous example, in the subsection *rpt parameters*, we define t
 Parameter tuning
 ^^^^^^^^^^^^^^^^^^
 
-In the subsection *parameter tuning*, we enable parameters tuning, we specify a type of cost function and define a set of artificial counts to compare with calculated counts. Parameters used of the tuning of the model parameters are described in the `Parameter tuning <../../../parameters/rpt/parameter_tuning.html>`_ documentation page.
+In the subsection *"parameter tuning"*, we enable parameters tuning, we specify a type of cost function and define a set of artificial counts to compare with calculated counts. Parameters used for the tuning of the model parameters are described in the `Parameter tuning <../../../parameters/rpt/parameter_tuning.html>`_ documentation page.
 
 .. code-block:: text
 
@@ -145,7 +146,7 @@ In the subsection *parameter tuning*, we enable parameters tuning, we specify a 
 Detector Parameters
 ^^^^^^^^^^^^^^^^^^^^
 
-In the subsection *detector parameters*, we specify the file that contains the position of the detector face center and the position of a point inside the detector on its axis. In this example, the detector face center position is :math:`(0.2,0,0.0750)` and :math:`(0.2381,0,0.075)` is another point on the detector’s axis. The detector parameters are described in the `Detector Parameters <../../../parameters/rpt/detector_parameters.html>`_ documentation page.
+In the subsection *"detector parameters"*, we specify the file that contains the position of the detector face center and the position of a point inside the detector on its axis. In this example, the detector face center position is :math:`(0.2,0,0.0750)` and :math:`(0.2381,0,0.075)` is another point on the detector’s axis. The detector parameters are described in the `Detector Parameters <../../../parameters/rpt/detector_parameters.html>`_ documentation page.
 
 .. code-block:: text
 
@@ -161,10 +162,12 @@ In the subsection *detector parameters*, we specify the file that contains the p
         set attenuation coefficient reactor  = 10
     end
 
-``param_nomad.txt`` file
+:raw-html:`<br />`
+
+*param_nomad.txt* file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``param_nomad.txt`` file is the file used when running NOMAD. This file provides the parameters necessary when defining the optimization problem. These parameters are defined using specific keywords as explained in the `NOMAD 4 user guide <https://nomad-4-user-guide.readthedocs.io/en/latest/GettingStarted.html#provide-parameters>`_.
+The ``param_nomad.txt`` file is used when running NOMAD. This file provides the parameters necessary when defining the optimization problem. These parameters are defined using specific keywords as explained in the `NOMAD User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/GettingStarted.html#provide-parameters>`_.
 
 .. code-block:: text
 
@@ -186,25 +189,27 @@ The ``param_nomad.txt`` file is the file used when running NOMAD. This file prov
     DISPLAY_STATS BBE ( SOL ) OBJ                         # Display the number of evaluation (BBE),
                                                           # the current solution ( SOL ) and the objective
 
+.. note::
+    In this example, we use version 4.2.0 of NOMAD. You can get it by clicking on the **Download** button on of `the software's web page <https://www.gerad.ca/en/software/nomad>`_ and filling out the required information. The steps to follow for the installation are specified in the `NOMAD 4 User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/Installation.html>`_.
 
 :raw-html:`<br />`
 
 Running the simulation
 ----------------------------------
 
-If its the **first time** you're running this example, it is important to open the ``rpt_lethe_nomad.py`` script and complete the path to the ``rpt_3d`` executable on the :math:`14^{th}` line.
+If it's the **first time** you're running this example, it is important to open the ``rpt_lethe_nomad.py`` script and complete the path to the ``rpt_3d`` executable on the :math:`14^{th}` line.
 
 .. attention::
     If you don't complete the path to the ``rpt_3d`` executable on the :math:`14^{th}` line of the ``rpt_lethe_nomad.py`` script you won't be able to tune your parameters.
 
-Once you've competed the line mentioned above in the ``rpt_lethe_nomad.py`` script, you may run NOMAD with the by typing :
+Once you've completed the line mentioned above in the ``rpt_lethe_nomad.py`` script, you may run NOMAD by typing :
 
 .. code-block:: text
 
     /home/myUserName/PathToNomad param_nomad.txt
 
 
-NOMAD will the execute the Python script (``rpt_lethe_nomad.py``) which in provided by the "param_nomad.txt" file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe and runs the rpt_3d application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates new set of parameters until a terminating criteria is reached.
+NOMAD will then execute the Python script (``rpt_lethe_nomad.py``) which is specified in the "param_nomad.txt" file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe, and runs the rpt_3d application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates a new set of parameters until a terminating criterion is reached.
 
 :raw-html:`<br />`
 
@@ -233,11 +238,11 @@ We may now verify if these values correspond to the studied system. To do so, as
 
 Before executing the ``rpt_3d`` application we have to change a few parameters in the ``rpt_parameters.prm`` file.
 
-First, in the *rpt parameters* subsection, we may set the ``verbosity`` parameter to ``verbose``, set the ``export counts`` parameter to ``true``, and change the name of the ``counts file`` that will be exported if we wish.
+First, in the *"rpt parameters"* subsection, we may set the ``verbosity`` parameter to ``verbose``, set the ``export counts`` parameter to ``true``, and change the name of the ``counts file`` that will be exported if we wish.
 
-Second, in the *parameter tuning* subsection, we have to set the ``tuning`` parameter to ``false`` since we're trying to tune parameters anymore.
+Second, in the *"parameter tuning"* subsection, we have to set the ``tuning`` parameter to ``false`` since we're trying to tune parameters anymore.
 
-Lastly, in the *detector parameters* subsection, we have to change the values of the parameters that we tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) with the ones NOMAD gave us.
+Lastly, in the *"detector parameters"* subsection, we have to change the values of the parameters that we tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) with the ones NOMAD gave us.
 
 By doing the modifications mentioned above, the content ``rpt_parameters.prm`` should look like this :
 
@@ -284,8 +289,13 @@ By doing the modifications mentioned above, the content ``rpt_parameters.prm`` s
         set attenuation coefficient reactor  = 0.5002
     end
 
-In the figure below we can se that there is very little difference between the experimental counts and the calculated ones.
+In the figure below, we can see that there is very little difference between the experimental counts and the calculated counts with the tuned parameters.
 
+
+.. image:: images/result.png
+    :alt: Experimental and calculated counts comparison
+    :align: center
+    :name: Experimental and calculated counts comparison
 
 
 
