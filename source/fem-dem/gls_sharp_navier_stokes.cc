@@ -1561,7 +1561,8 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 
-      if (this->simulation_parameters.particlesParameters->print_dem)
+      if (this->simulation_parameters.particlesParameters->integrate_motion &&
+          this->simulation_parameters.particlesParameters->print_dem)
         {
           this->pcout << "particle " << p << " position "
                       << particles[p].position << std::endl;
