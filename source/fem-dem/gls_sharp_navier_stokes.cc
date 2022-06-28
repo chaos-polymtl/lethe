@@ -120,6 +120,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                           }
                       }
                     else
+                      load_particles_from_file();
                 }
 
               // If some of the DOFs are inside the boundary, some are outside,
