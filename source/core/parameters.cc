@@ -1805,17 +1805,17 @@ namespace Parameters
       "pressure x",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is imposed inside the particle  in x ");
+      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in x ");
     prm.declare_entry(
       "pressure y",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is imposed inside the particle  in y ");
+      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in y ");
     prm.declare_entry(
       "pressure z",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is imposed inside the particle  in z ");
+      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in z ");
     prm.declare_entry("density",
                       "1",
                       Patterns::Double(),
