@@ -990,6 +990,8 @@ namespace Parameters
     double                       lubrication_range_min;
     double                       contact_search_radius_factor;
     int                          contact_search_frequency;
+    bool                         load_particles_from_file;
+    std::string                  particles_file;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 
@@ -998,6 +1000,7 @@ namespace Parameters
     double      length_ratio;
     double      alpha;
     bool        integrate_motion;
+    bool        print_dem;
     std::string ib_particles_pvd_file;
   };
 

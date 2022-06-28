@@ -66,7 +66,7 @@ public:
    *
    */
   void
-  initialise_last();
+  initialise_end();
   /**
    * @brief
    * Return the names of properties of the IB_particle for visualisation.

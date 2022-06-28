@@ -1,0 +1,23 @@
+Running on 1 MPI rank(s)...
+Loading particles from a file
+   Number of active cells:       1600
+   Number of degrees of freedom: 8228
+   Volume of triangulation:      1600
+Initial refinement around IB particles - Step : 1 of 1
+   Number of active cells:       2748
+   Number of degrees of freedom: 14196
+   Volume of triangulation:      1600
+
+*****************************************************************
+Transient iteration : 1        Time : 0.0025   Time step : 0.0025   CFL : 0
+*****************************************************************
+particle 0 position 5 12.7494 5
+particle 0 velocity 0 -0.24525 0
+particle 1 position 7 12.7494 5
+particle 1 velocity 0 -0.24525 0
+particle 2 position 3 12.7494 5
+particle 2 velocity 0 -0.24525 0
+particle 3 position 5 10.7494 5
+particle 3 velocity 0 -0.24525 0
+particle 4 position 5 8.74939 5
+particle 4 velocity 0 -0.24525 0

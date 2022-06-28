@@ -107,12 +107,19 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   // of the particles. If all the DOfs are on one side
                   // the cell is not cut by the boundary.
                   if (0 == this->fe->system_to_component_index(j).first)
-                    {
-                      if ((support_points[local_dof_indices[j]] -
-                           particles[p].position)
-                            .norm() <= particles[p].radius)
-                        ++nb_dof_inside;
-                    }
+                    if (this->simulation_parameters.particlesParameters
+                          ->load_particles_from_file == false)
+                      {
+                        particles.resize(
+                          this->simulation_parameters.particlesParameters->nb);
+                        for (unsigned int i = 0; i < this->simulation_parameters
+                                                       .particlesParameters->nb;
+                             ++i)
+                          {
+                            load_particles_from_file();
+                          }
+                      }
+                    else
                 }
 
               // If some of the DOFs are inside the boundary, some are outside,
@@ -157,9 +164,9 @@ void
 GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 {
   TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
-  MappingQ1<dim> mapping;
-  const auto    &cell_iterator = this->dof_handler.cell_iterators_on_level(0);
-  unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
+  MappingQ1<dim>     mapping;
+  const auto & cell_iterator = this->dof_handler.cell_iterators_on_level(0);
+  unsigned int max_childs    = GeometryInfo<dim>::max_children_per_cell;
 
   std::set<typename DoFHandler<dim>::cell_iterator> all_cells_candidates;
   std::set<typename DoFHandler<dim>::cell_iterator> last_all_cells_candidates;
@@ -176,15 +183,15 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
     }
 
 
-  //this->pcout <<"hi"<<std::endl;
+  // this->pcout <<"hi"<<std::endl;
   // Loop over particles
-  for (int p = particles.size()-1; p >= 0; --p)
+  for (int p = particles.size() - 1; p >= 0; --p)
     {
       // Loop over the cells on level 0 of the mesh
       for (const auto &cell : cell_iterator)
         {
           auto is_candidate = generate_cut_cells_candidate(cell, p);
-          //this->pcout <<"hi2 "<<std::endl;
+          // this->pcout <<"hi2 "<<std::endl;
           if (is_candidate.first)
             {
               all_cells_candidates.insert(cell);
@@ -195,8 +202,8 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
             }
         }
       // Loop over the boundary cells on level 0 to check their children.
-      last_all_cells_candidates    = all_cells_candidates;
-      if (all_cells_candidates.size() != 0 )
+      last_all_cells_candidates = all_cells_candidates;
+      if (all_cells_candidates.size() != 0)
         {
           bool all_cell_are_active = false;
           while (!all_cell_are_active)
@@ -212,8 +219,8 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                     {
                       if (cell->is_active())
                         {
-                          cells_inside_map[cell]    = {true, p};
-                        //  this->pcout <<"hi3 "<<std::endl;
+                          cells_inside_map[cell] = {true, p};
+                          //  this->pcout <<"hi3 "<<std::endl;
                         }
                       else
                         {
@@ -232,8 +239,8 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                     {
                       if (cell->is_active())
                         {
-                          cut_cells_map[cell]    = {true, p};
-                         // this->pcout <<"hi4"<<std::endl;
+                          cut_cells_map[cell] = {true, p};
+                          // this->pcout <<"hi4"<<std::endl;
                         }
                       else
                         {
@@ -249,7 +256,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                     }
                 }
               last_all_cells_candidates.clear();
-              last_all_cells_candidates =all_cells_candidates;
+              last_all_cells_candidates = all_cells_candidates;
             }
         }
     }
@@ -261,7 +268,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const unsigned int                                    p_id)
 {
-  //this->pcout <<"hello  "<<std::endl;
+  // this->pcout <<"hello  "<<std::endl;
   bool cell_is_inside = false;
   bool cell_is_cut    = false;
 
@@ -275,8 +282,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
   DoFHandler<dim - 1, dim>    local_face_dof_handler;
   Triangulation<dim - 1, dim> local_face_projection_triangulation;
 
-  std::vector<Point<dim>>        vertices_of_face_projection( GeometryInfo<dim - 1>::vertices_per_cell);
-  std::vector<CellData<dim - 1>> local_face_cell_data(1);*/
+  std::vector<Point<dim>>        vertices_of_face_projection( GeometryInfo<dim -
+  1>::vertices_per_cell); std::vector<CellData<dim - 1>>
+  local_face_cell_data(1);*/
 
   double radius   = particles[p_id].radius;
   auto   position = particles[p_id].position;
@@ -286,7 +294,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
 
   // Check how many vertices are inside the particle
   unsigned int nb_vertices_inside = 0;
-  //this->pcout <<"hello 1 "<<std::endl;
+  // this->pcout <<"hello 1 "<<std::endl;
   for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
     {
       if ((cell->vertex(i) - position).norm() <= radius)
@@ -311,7 +319,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
         }
       return std::pair(cell_is_inside, cell_is_cut);
     }
- // this->pcout <<"hello 3 "<<std::endl;
+  // this->pcout <<"hello 3 "<<std::endl;
 
   // If the particles is inside the cell and it is not known whether all
   // vertices are inside the particles or not, set all true by default
@@ -321,17 +329,17 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
       cell_is_cut    = true;
       return std::pair(cell_is_inside, cell_is_cut);
     }
-  //this->pcout <<"hello 4 "<<std::endl;
+  // this->pcout <<"hello 4 "<<std::endl;
 
   // Initialize superpoint of manifold
   std::vector<Point<dim>> manifold_points(
     GeometryInfo<dim - 1>::vertices_per_cell);
-  //this->pcout <<"hello 5 "<<std::endl;
+  // this->pcout <<"hello 5 "<<std::endl;
   for (const auto face : cell->face_indices())
     {
       auto  face_iter           = cell->face(face);
       auto &local_face_manifold = face_iter->get_manifold();
-      //this->pcout <<"hello 6 "<<std::endl;
+      // this->pcout <<"hello 6 "<<std::endl;
       for (unsigned int i = 0; i < GeometryInfo<dim - 1>::vertices_per_cell;
            ++i)
         {
@@ -339,7 +347,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
         }
       auto surrounding_points_face =
         make_array_view(manifold_points.begin(), manifold_points.end());
-      //this->pcout <<"hello 7 "<<std::endl;
+      // this->pcout <<"hello 7 "<<std::endl;
       for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i)
         {
           Point<dim> projected_point =
@@ -347,73 +355,73 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_candidate(
                                                     position);
 
 
-         /* for (unsigned int j = 0; j < GeometryInfo<dim>::vertices_per_face;
-               ++j)
-            {
-              // Define the vertices of the surface cell.
-              Tensor<1, dim, double> vertex_projection = face_iter->vertex(i);
-              // Create the list of vertices
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  vertices_of_face_projection[j][k] = vertex_projection[k];
-                }
-              // Create the connectivity of the vertices of the cell
-              local_face_cell_data[0].vertices[j] = j;
-            }
+          /* for (unsigned int j = 0; j < GeometryInfo<dim>::vertices_per_face;
+                ++j)
+             {
+               // Define the vertices of the surface cell.
+               Tensor<1, dim, double> vertex_projection = face_iter->vertex(i);
+               // Create the list of vertices
+               for (unsigned int k = 0; k < dim; ++k)
+                 {
+                   vertices_of_face_projection[j][k] = vertex_projection[k];
+                 }
+               // Create the connectivity of the vertices of the cell
+               local_face_cell_data[0].vertices[j] = j;
+             }
 
-          local_face_cell_data[0].material_id = 0;
-          //this->pcout << "hello 7.1 " << std::endl;
-          local_face_projection_triangulation = Triangulation<dim - 1, dim>();
-          // Create a dof handler that contains the triangulation of
-          // the projection of the face on the IB. This create the
-          // surface cell on the IB
-          local_face_projection_triangulation.create_triangulation(
-            vertices_of_face_projection, local_face_cell_data, SubCellData());
-          local_face_dof_handler.reinit(local_face_projection_triangulation);
-          local_face_dof_handler.distribute_dofs(local_face_fe);*/
-          //this->pcout << "hello 7.2 " << std::endl;
+           local_face_cell_data[0].material_id = 0;
+           //this->pcout << "hello 7.1 " << std::endl;
+           local_face_projection_triangulation = Triangulation<dim - 1, dim>();
+           // Create a dof handler that contains the triangulation of
+           // the projection of the face on the IB. This create the
+           // surface cell on the IB
+           local_face_projection_triangulation.create_triangulation(
+             vertices_of_face_projection, local_face_cell_data, SubCellData());
+           local_face_dof_handler.reinit(local_face_projection_triangulation);
+           local_face_dof_handler.distribute_dofs(local_face_fe);*/
+          // this->pcout << "hello 7.2 " << std::endl;
 
           /*for (const auto &projection_cell_face :
                local_face_dof_handler.active_cell_iterators())
             {*/
-              //this->pcout << "hello 8 " << std::endl;
+          // this->pcout << "hello 8 " << std::endl;
 
-              bool       projected_point_inside_face = true;
-              Point<dim> unit_cell_projected_point;
-              Tensor<1,dim> projected_point_tensor(projected_point);
+          bool           projected_point_inside_face = true;
+          Point<dim>     unit_cell_projected_point;
+          Tensor<1, dim> projected_point_tensor(projected_point);
 
-              try
-                {
-                  //unit_cell_projected_point=this->mapping->transform_real_to_unit_cell(face_iter,projected_point);
-                  projected_point_inside_face=cell->point_inside(projected_point);
-                }
-              catch (...)
+          try
+            {
+              // unit_cell_projected_point=this->mapping->transform_real_to_unit_cell(face_iter,projected_point);
+              projected_point_inside_face = cell->point_inside(projected_point);
+            }
+          catch (...)
+            {
+              projected_point_inside_face = false;
+            }
+
+          // this->pcout << "hello 9 " << std::endl;
+
+          for (unsigned int d = 0; d != dim; d++)
+            {
+              if (unit_cell_projected_point[d] < 0 ||
+                  unit_cell_projected_point[d] > 1)
                 {
                   projected_point_inside_face = false;
                 }
-
-             // this->pcout << "hello 9 " << std::endl;
-
-              for (unsigned int d = 0; d != dim; d++)
-                {
-                  if (unit_cell_projected_point[d] < 0 ||
-                      unit_cell_projected_point[d] > 1)
-                    {
-                      projected_point_inside_face = false;
-                    }
-                }
-              //this->pcout << "hello 10 " << std::endl;
-
-              if ((position - projected_point).norm() <= radius &&
-                  projected_point_inside_face == true)
-                {
-                  cell_is_inside = true;
-                  cell_is_cut    = true;
-                  return std::pair(cell_is_inside, cell_is_cut);
-                }
-              //this->pcout << "hello 10 " << std::endl;
             }
-        //}
+          // this->pcout << "hello 10 " << std::endl;
+
+          if ((position - projected_point).norm() <= radius &&
+              projected_point_inside_face == true)
+            {
+              cell_is_inside = true;
+              cell_is_cut    = true;
+              return std::pair(cell_is_inside, cell_is_cut);
+            }
+          // this->pcout << "hello 10 " << std::endl;
+        }
+      //}
     }
   return std::pair(cell_is_inside, cell_is_cut);
 }
@@ -1142,16 +1150,16 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   TimerOutput::Scope t(this->computing_timer, "error");
   QGauss<dim>        quadrature_formula(this->number_quadrature_points + 1);
   FEValues<dim>      fe_values(*this->mapping,
-                               *this->fe,
-                               quadrature_formula,
-                               update_values | update_gradients |
-                                 update_quadrature_points | update_JxW_values);
+                          *this->fe,
+                          quadrature_formula,
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
   FEFaceValues<dim>  fe_face_values(*this->mapping,
-                                    *this->fe,
-                                    *this->face_quadrature,
-                                    update_values | update_gradients |
-                                      update_quadrature_points |
-                                      update_JxW_values);
+                                   *this->fe,
+                                   *this->face_quadrature,
+                                   update_values | update_gradients |
+                                     update_quadrature_points |
+                                     update_JxW_values);
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -1606,8 +1614,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             {
               this->pcout
                 << "particle " << p
-                << " is now outside the domain we do not update this particle  "
-                << std::endl;
+                << " is now outside the domain we do not update this particle. Position: "
+                << particles[p].position[0] << ", " << particles[p].position[1]
+                << ", " << particles[p].position[2] << std::endl;
               save_particle_state_is_used = true;
             }
 
@@ -1868,19 +1877,20 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 
-      if (this->simulation_parameters.particlesParameters->integrate_motion)
+      if (this->simulation_parameters.particlesParameters->integrate_motion &&
+          this->simulation_parameters.particlesParameters->print_dem)
         {
-          this->pcout << "particule " << p << " position "
+          this->pcout << "particle " << p << " position "
                       << particles[p].position << std::endl;
           if (dim == 2)
             {
-              this->pcout << "particule " << p << " velocity "
+              this->pcout << "particle " << p << " velocity "
                           << tensor_nd_to_2d(particles[p].velocity)
                           << std::endl;
             }
           else
             {
-              this->pcout << "particule " << p << " velocity "
+              this->pcout << "particle " << p << " velocity "
                           << particles[p].velocity << std::endl;
             }
         }
@@ -2023,8 +2033,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);
   FEValues<dim>      fe_values(*this->fe,
-                               q_formula,
-                               update_quadrature_points | update_JxW_values);
+                          q_formula,
+                          update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   int    order = this->simulation_parameters.particlesParameters->order;
@@ -2671,8 +2681,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim>                         &scratch_data,
-  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2765,8 +2775,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim>                         &scratch_data,
-  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -3121,6 +3131,100 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   // Create the list of contact candidates
   ib_dem.update_contact_candidates();
   // Finish the time step of the particle.
+}
+
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
+{
+  using numbers::PI;
+  TimerOutput::Scope t(this->computing_timer,
+                       "Reset Sharp-Edge particle information");
+  this->pcout << "Loading particles from a file" << std::endl;
+  std::string filename =
+    this->simulation_parameters.particlesParameters->particles_file;
+
+  // Read the data of each particle and put the relevant information in a
+  // vector.
+  std::map<std::string, std::vector<double>> restart_data;
+  fill_vectors_from_file(restart_data, filename);
+  particles.resize(restart_data["p_x"].size());
+  // Implement the data  in the particles.
+  if (dim == 2)
+    {
+      // Loop over each line of the file and filling the particles properties.
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          particles[p_i].initialise_all();
+          particles[p_i].position[0] = restart_data["p_x"][p_i];
+          particles[p_i].position[1] = restart_data["p_y"][p_i];
+          particles[p_i].velocity[0] = restart_data["v_x"][p_i];
+          particles[p_i].velocity[1] = restart_data["v_y"][p_i];
+
+          particles[p_i].radius = restart_data["radius"][p_i];
+          particles[p_i].mass   = PI * particles[p_i].radius *
+                                particles[p_i].radius *
+                                restart_data["density"][p_i];
+
+          particles[p_i].omega[2]      = restart_data["omega_z"][p_i];
+          particles[p_i].inertia[0][0] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[1][1] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[2][2] = restart_data["inertia"][p_i];
+
+          particles[p_i].pressure_location[0] = restart_data["pressure_x"][p_i];
+          particles[p_i].pressure_location[1] = restart_data["pressure_y"][p_i];
+          particles[p_i].youngs_modulus = restart_data["youngs_modulus"][p_i];
+          particles[p_i].restitution_coefficient =
+            restart_data["restitution_coefficient"][p_i];
+          particles[p_i].friction_coefficient =
+            restart_data["friction_coefficient"][p_i];
+          particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
+          particles[p_i].rolling_friction_coefficient =
+            restart_data["rolling_friction_coefficient"][p_i];
+          particles[p_i].initialise_end();
+        }
+    }
+  if (dim == 3)
+    {
+      // Loop over each line of the file and filling the particles properties.
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          particles[p_i].initialise_all();
+          particles[p_i].position[0] = restart_data["p_x"][p_i];
+          particles[p_i].position[1] = restart_data["p_y"][p_i];
+          particles[p_i].position[2] = restart_data["p_z"][p_i];
+          particles[p_i].velocity[0] = restart_data["v_x"][p_i];
+          particles[p_i].velocity[1] = restart_data["v_y"][p_i];
+          particles[p_i].velocity[2] = restart_data["v_z"][p_i];
+
+          particles[p_i].radius = restart_data["radius"][p_i];
+          particles[p_i].mass   = 4.0 / 3.0 * PI * particles[p_i].radius *
+                                particles[p_i].radius * particles[p_i].radius *
+                                restart_data["density"][p_i];
+
+          particles[p_i].omega[0] = restart_data["omega_x"][p_i];
+          particles[p_i].omega[1] = restart_data["omega_y"][p_i];
+          particles[p_i].omega[2] = restart_data["omega_z"][p_i];
+
+          particles[p_i].inertia[0][0] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[1][1] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[2][2] = restart_data["inertia"][p_i];
+
+          particles[p_i].pressure_location[0] = restart_data["pressure_x"][p_i];
+          particles[p_i].pressure_location[1] = restart_data["pressure_y"][p_i];
+          particles[p_i].pressure_location[2] = restart_data["pressure_z"][p_i];
+          particles[p_i].youngs_modulus = restart_data["youngs_modulus"][p_i];
+          particles[p_i].restitution_coefficient =
+            restart_data["restitution_coefficient"][p_i];
+          particles[p_i].friction_coefficient =
+            restart_data["friction_coefficient"][p_i];
+          particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
+          particles[p_i].rolling_friction_coefficient =
+            restart_data["rolling_friction_coefficient"][p_i];
+          particles[p_i].initialise_end();
+        }
+    }
 }
 
 

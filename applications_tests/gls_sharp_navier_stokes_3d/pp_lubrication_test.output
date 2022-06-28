@@ -18,10 +18,10 @@ Initial refinement around IB particles - Step : 3 of 3
 *****************************************************************
 Transient iteration : 1        Time : 0.025    Time step : 0.025    CFL : 0       
 *****************************************************************
-particule 0 position 5 12.7256 4.99988
-particule 0 velocity 2.04878e-05 -0.975637 -0.00472526
-particule 1 position 5 11.0307 4.99989
-particule 1 velocity 0.000198446 1.22664 -0.00424002
+particle 0 position 5 12.7256 4.99988
+particle 0 velocity 2.04878e-05 -0.975637 -0.00472526
+particle 1 position 5 11.0307 4.99989
+particle 1 velocity 0.000198446 1.22664 -0.00424002
 +------------------------------------------+
 |  Force  summary particle 0               |
 +------------------------------------------+
@@ -39,10 +39,10 @@ Transient iteration : 2        Time : 0.05     Time step : 0.025    CFL : 0.0988
    Number of active cells:       4106
    Number of degrees of freedom: 21052
    Volume of triangulation:      1600
-particule 0 position 4.99995 12.6851 4.99946
-particule 0 velocity -0.00188457 -1.61987 -0.0168244
-particule 1 position 5.00002 11.0854 4.99961
-particule 1 velocity 0.000751014 2.18944 -0.0111702
+particle 0 position 4.99995 12.6851 4.99946
+particle 0 velocity -0.00188457 -1.61987 -0.0168244
+particle 1 position 5.00002 11.0854 4.99961
+particle 1 velocity 0.000751014 2.18944 -0.0111702
 +------------------------------------------+
 |  Force  summary particle 0               |
 +------------------------------------------+
@@ -62,10 +62,10 @@ Transient iteration : 3        Time : 0.075    Time step : 0.025    CFL : 0.1764
    Number of active cells:       3938
    Number of degrees of freedom: 20172
    Volume of triangulation:      1600
-particule 0 position 4.99974 12.6576 4.99919
-particule 0 velocity -0.00669154 1.38009 0.000642582
-particule 1 position 5.00006 11.122 4.9995
-particule 1 velocity -0.000830193 -1.61489 0.00564043
+particle 0 position 4.99974 12.6576 4.99919
+particle 0 velocity -0.00669154 1.38009 0.000642582
+particle 1 position 5.00006 11.122 4.9995
+particle 1 velocity -0.000830193 -1.61489 0.00564043
 +------------------------------------------+
 |  Force  summary particle 0               |
 +------------------------------------------+

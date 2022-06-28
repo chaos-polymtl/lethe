@@ -71,7 +71,7 @@ IBParticle<dim>::initialise_all()
 
 template <int dim>
 void
-IBParticle<dim>::initialise_last()
+IBParticle<dim>::initialise_end()
 {
   // initialise all the variables associated to an immersed boundary particle
   previous_fluid_forces = fluid_forces;
