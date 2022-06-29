@@ -6,8 +6,6 @@ Desc   : Generates plots for the data resulting from the count calculation examp
 """
 
 
-from mpl_toolkits import mplot3d
-import numpy as np
 import matplotlib.pyplot as plt
 import csv
 import sys
@@ -71,10 +69,10 @@ elif (position_x[0]!=0 and position_y==position_x):
 	fig = plt.figure()	
 	ax = plt.axes(projection="3d")
 	color_map = plt.get_cmap("turbo")
-	p = ax.scatter3D(position_x, position_y, position_z, c=counts, cmap=color_map);
+	p = ax.scatter3D(position_x, position_y, position_z, c=counts, cmap=color_map)
 	ax.set_xlabel("x (cm)")
 	ax.set_ylabel("y (cm)")
-	ax.set_zlabel("z (cm)");
+	ax.set_zlabel("z (cm)")
 	ax.axes.set_xlim3d(left=-10, right=10) 
 	ax.axes.set_ylim3d(bottom=-10, top=10) 
 	ax.axes.set_zlim3d(bottom=0, top=30)
@@ -88,10 +86,10 @@ else :
 	fig = plt.figure()	
 	ax = plt.axes(projection="3d")
 	color_map = plt.get_cmap("turbo")
-	p = ax.scatter3D(position_x, position_y, position_z, c=counts, cmap=color_map);
+	p = ax.scatter3D(position_x, position_y, position_z, c=counts, cmap=color_map)
 	ax.set_xlabel("x (cm)")
 	ax.set_ylabel("y (cm)")
-	ax.set_zlabel("z (cm)");
+	ax.set_zlabel("z (cm)")
 	cbar = fig.colorbar(p, location="left", pad=0.1)
 	cbar.set_label("Photon count", rotation=90)
 	plt.show()

@@ -27,7 +27,7 @@ Locations of files used in the example
 - Text file used when running NOMAD: ``examples/rpt/parameters_tuning/param_nomad.txt``
 - File containing particle positions: ``examples/rpt/parameters_tuning/real_positions.particle``
 - File containing experimental particle counts: ``examples/rpt/parameters_tuning/counts.experimental``
-- File containing the detector positions: ``examples/rpt/parameters_tuning/positions.detector``
+- File containing detector positions: ``examples/rpt/parameters_tuning/positions.detector``
 
 :raw-html:`<br />`
 
@@ -35,7 +35,7 @@ Description of the case
 -------------------------
 In this example, using the NOMAD optimization software and the experimental data, we are going to tune the three unknowns (:math:`R, \tau`, and :math:`\mu_r`) of our studied system.
 
-The illustration below depicts the geometry of the vessel, the detector, and the particle positioning of our system:
+The illustration below depicts the geometry of the vessel, the detector, and tthe path traveled by the particle in our system:
 
 .. image:: images/system_from_above.png
     :alt: The geometry
@@ -74,7 +74,7 @@ where
 - :math:`\Omega` is the closed exposed area of the detector, and
 - :math:`f_d(\alpha_j, \theta_j)` is the probability function of the interaction of the :math:`\gamma`-rays with the detector.
 
-The two last functions may be re-written the following way :
+The two probability functions mentioned above may be re-written the following way:
 
 .. math::
 
