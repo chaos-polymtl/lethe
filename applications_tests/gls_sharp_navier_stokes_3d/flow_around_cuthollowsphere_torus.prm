@@ -117,7 +117,7 @@ subsection mesh adaptation
   set fraction type           = number
   set max number elements     = 200000
   set max refinement level    = 7
-  set min refinement level    = 4
+  set min refinement level    = 3
   set frequency               = 1
   set fraction refinement     = 0.3
   set fraction coarsening     = 0.1
