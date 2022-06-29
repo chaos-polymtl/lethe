@@ -7,14 +7,11 @@
  * The Lethe library is free software; you can use it, redistribute
  * it, and/or modify it under the terms of the GNU Lesser General
  * Public License as published by the Free Software Foundation; either
- * version 3.1 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  * The full text of the license can be found in the file LICENSE at
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
 #include <core/bdf.h>
@@ -108,9 +105,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   // the cell is not cut by the boundary.
                   if (0 == this->fe->system_to_component_index(j).first)
                     {
-                      if ((support_points[local_dof_indices[j]] -
-                           particles[p].position)
-                            .norm() <= particles[p].radius)
+                      if (particles[p].get_levelset(
+                            support_points[local_dof_indices[j]]) <= 0)
                         ++nb_dof_inside;
                     }
                 }
@@ -214,16 +210,12 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                   // DOFs to the center of the particle must be bigger than the
                   // inside radius of the refinement zone and smaller than the
                   // outside radius of the refinement zone.
-
-                  if (((support_points[local_dof_indices[j]] - center_immersed)
-                           .norm() <=
-                         particles[p].radius *
-                           this->simulation_parameters.particlesParameters
-                             ->outside_radius &&
-                       (support_points[local_dof_indices[j]] - center_immersed)
-                           .norm() >= particles[p].radius *
-                                        this->simulation_parameters
-                                          .particlesParameters->inside_radius))
+                  if (particles[p].is_inside_crown(
+                        support_points[local_dof_indices[j]],
+                        this->simulation_parameters.particlesParameters
+                          ->outside_radius,
+                        this->simulation_parameters.particlesParameters
+                          ->inside_radius))
                     {
                       ++count_small;
                     }
@@ -300,7 +292,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     this->simulation_parameters.physical_properties_manager.get_density(0);
   std::map<field, double> field_values;
   field_values[field::temperature] = 0;
-  double density                   = density_model->value(field_values);
+  double fluid_density             = density_model->value(field_values);
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
   IBStencil<dim>      stencil;
@@ -385,9 +377,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // Count the number of DOFs that are inside
                       // of the particles. If all the DOfs are on one side
                       // the cell is not cut by the boundary.
-                      if ((support_points[local_face_dof_indices[j]] -
-                           particles[p].position)
-                            .norm() <= particles[p].radius)
+                      if (particles[p].get_levelset(
+                            support_points[local_face_dof_indices[j]]) <= 0)
                         ++nb_dof_inside;
                     }
 
@@ -402,12 +393,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       for (unsigned int i = 0; i < vertices_per_face; ++i)
                         {
                           // Define the vertices of the surface cell.
-                          Tensor<1, dim, double> vertex_projection =
-                            particles[p].position +
-                            particles[p].radius *
-                              (local_face->vertex(i) - particles[p].position) /
-                              (local_face->vertex(i) - particles[p].position)
-                                .norm();
+                          Point<dim> vertex_projection;
+                          particles[p].closest_surface_point(
+                            local_face->vertex(i), vertex_projection);
+
                           // Create the list of vertices
                           for (unsigned int j = 0; j < dim; ++j)
                             {
@@ -624,16 +613,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                    i < local_face_dof_indices.size();
                                    ++i)
                                 {
-                                  Point<dim> point_projection =
-                                    particles[p].position +
-                                    particles[p].radius *
-                                      (support_points
-                                         [local_face_dof_indices[i]] -
-                                       particles[p].position) /
-                                      (support_points
-                                         [local_face_dof_indices[i]] -
-                                       particles[p].position)
-                                        .norm();
+                                  Point<dim> point_projection;
+                                  particles[p].closest_surface_point(
+                                    support_points[local_face_dof_indices[i]],
+                                    point_projection);
 
                                   auto projected_point_unit =
                                     local_face_map.transform_real_to_unit_cell(
@@ -761,10 +744,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     {
       particles[i].fluid_forces =
         Utilities::MPI::sum(particles[i].fluid_forces, this->mpi_communicator) *
-        density;
+        fluid_density;
       particles[i].fluid_torque =
         Utilities::MPI::sum(particles[i].fluid_torque, this->mpi_communicator) *
-        density;
+        fluid_density;
     }
 
   total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
@@ -796,6 +779,24 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
         MPI_Barrier(this->mpi_communicator);
       }
     }
+}
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
+{
+  std::vector<std::shared_ptr<Shape<dim>>> all_shapes;
+  for (const IBParticle<dim> &particle : particles)
+    {
+      all_shapes.push_back(particle.shape);
+    }
+  std::shared_ptr<Function<dim>> combined_shapes =
+    std::make_shared<CompositeShape<dim>>(all_shapes);
+
+  scalar_function =
+    std::make_shared<ScalarFunctionPostprocessor<dim>>("levelset",
+                                                       combined_shapes);
+  data_out.add_data_vector(this->present_solution, *scalar_function);
 }
 
 template <int dim>
@@ -1214,27 +1215,19 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       this->simulation_parameters.physical_properties_manager.get_density(0);
       auto density_model =
         this->simulation_parameters.physical_properties_manager.get_density(0);
-      double density   = density_model->value(field_values);
-      double viscosity = rheological_model->value(field_values) * density;
+      double fluid_density = density_model->value(field_values);
+      double viscosity = rheological_model->value(field_values) * fluid_density;
 
       Vector<double> particles_residual_vect;
       particles_residual_vect.reinit(particles.size());
-      ib_dem.integrate_particles_motion(dt, h_max, h_min, density, viscosity);
+      ib_dem.integrate_particles_motion(
+        dt, h_max, h_min, fluid_density, viscosity);
       unsigned int worst_residual_particle_id;
 
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
           // calculate the volume of fluid displaced by the particle.
-          double volume = 0;
-          if (dim == 2)
-            {
-              volume = particles[p].radius * particles[p].radius * PI * density;
-            }
-          if (dim == 3)
-            {
-              volume = 4.0 / 3.0 * particles[p].radius * particles[p].radius *
-                       particles[p].radius * PI;
-            }
+          double volume = particles[p].shape->displaced_volume(fluid_density);
 
           // Transfers the impulsion evaluated in the sub-time-stepping scheme
           // to the particle at the CFD time scale.
@@ -1268,8 +1261,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             (particles[p].impulsion) / particles[p].mass / dt;
           // Approximate a diagonal Jacobian with a secant methods.
 
-          double d_residual_dv =
-            -bdf_coefs[0] - 0.5 * volume * density / particles[p].mass / dt;
+          double d_residual_dv = -bdf_coefs[0] - 0.5 * volume * fluid_density /
+                                                   particles[p].mass / dt;
           if ((particles[p].velocity - particles[p].velocity_iter).norm() != 0)
             {
               d_residual_dv =
@@ -1313,21 +1306,30 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                            i < number_of_previous_solutions(method) + 1;
                            ++i)
                         {
-                          particles[p].position[d] +=
+                          double position_update =
                             -bdf_coefs[i] *
                             particles[p].previous_positions[i - 1][d] /
                             bdf_coefs[0];
+
+                          particles[p].set_position(particles[p].position[d] +
+                                                      position_update,
+                                                    d);
                         }
-                      particles[p].position[d] +=
+
+                      double position_update =
                         particles[p].velocity[d] / bdf_coefs[0];
+                      particles[p].set_position(particles[p].position[d] +
+                                                  position_update,
+                                                d);
                     }
                 }
               else
                 {
-                  particles[p].position =
-                    particles[p].position +
-                    local_alpha * (ib_dem.dem_particles[p].position -
-                                   particles[p].position);
+                  Tensor<1, dim> position_update =
+                    local_alpha *
+                    (ib_dem.dem_particles[p].position - particles[p].position);
+                  particles[p].set_position(particles[p].position +
+                                            position_update);
                 }
               // Check if the particle is in the domain. Throw an error if it's
               // the case.
@@ -1357,7 +1359,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           residual_omega += inv_inertia * (particles[p].omega_impulsion) / dt;
 
           double d_residual_domega =
-            -bdf_coefs[0] - 0.5 * 2. / 5 * volume * density *
+            -bdf_coefs[0] - 0.5 * 2. / 5 * volume * fluid_density *
                               particles[p].radius * particles[p].radius *
                               inv_inertia.norm() / dt;
 
@@ -1449,6 +1451,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               particles[p].velocity[2] =
                 particles[p].f_velocity->value(particles[p].position, 2);
             }
+          particles[p].set_position(particles[p].position);
+          particles[p].set_orientation(particles[p].orientation);
         }
       particle_residual = 0;
     }
@@ -1574,6 +1578,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
                             group_files,
                             this->mpi_communicator);
 
+  table_all_p.clear();
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       for (unsigned int i = particles[p].previous_velocity.size() - 1; i > 0;
@@ -1619,14 +1624,21 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
             }
         }
       table_p[p].add_value("particle_ID", p);
+      table_all_p.add_value("particle_ID", p);
       if (this->simulation_parameters.simulation_control.method !=
           Parameters::SimulationControl::TimeSteppingMethod::steady)
         table_p[p].add_value("time",
                              this->simulation_control->get_current_time());
+      table_all_p.add_value("time",
+                            this->simulation_control->get_current_time());
       if (dim == 3)
         {
           table_p[p].add_value("T_x", particles[p].fluid_torque[0]);
           table_p[p].set_precision(
+            "T_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("T_x", particles[p].fluid_torque[0]);
+          table_all_p.set_precision(
             "T_x",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters->integrate_motion)
@@ -1635,10 +1647,18 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
               table_p[p].set_precision(
                 "omega_x",
                 this->simulation_parameters.simulation_control.log_precision);
+              table_all_p.add_value("omega_x", particles[p].omega[0]);
+              table_all_p.set_precision(
+                "omega_x",
+                this->simulation_parameters.simulation_control.log_precision);
             }
 
           table_p[p].add_value("T_y", particles[p].fluid_torque[1]);
           table_p[p].set_precision(
+            "T_y",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("T_y", particles[p].fluid_torque[1]);
+          table_all_p.set_precision(
             "T_y",
             this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters->integrate_motion)
@@ -1647,11 +1667,18 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
               table_p[p].set_precision(
                 "omega_y",
                 this->simulation_parameters.simulation_control.log_precision);
+              table_all_p.add_value("omega_y", particles[p].omega[1]);
+              table_all_p.set_precision(
+                "omega_y",
+                this->simulation_parameters.simulation_control.log_precision);
             }
         }
 
       table_p[p].add_value("T_z", particles[p].fluid_torque[2]);
       table_p[p].set_precision(
+        "T_z", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.add_value("T_z", particles[p].fluid_torque[2]);
+      table_all_p.set_precision(
         "T_z", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
@@ -1659,25 +1686,37 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_p[p].set_precision(
             "omega_z",
             this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("omega_z", particles[p].omega[2]);
+          table_all_p.set_precision(
+            "omega_z",
+            this->simulation_parameters.simulation_control.log_precision);
         }
 
-
-
       table_p[p].add_value("f_x", particles[p].fluid_forces[0]);
+      table_all_p.add_value("f_x", particles[p].fluid_forces[0]);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_x", particles[p].velocity[0]);
           table_p[p].add_value("p_x", particles[p].position[0]);
+          table_all_p.add_value("v_x", particles[p].velocity[0]);
+          table_all_p.add_value("p_x", particles[p].position[0]);
         }
       table_p[p].add_value("f_y", particles[p].fluid_forces[1]);
+      table_all_p.add_value("f_y", particles[p].fluid_forces[1]);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_y", particles[p].velocity[1]);
           table_p[p].add_value("p_y", particles[p].position[1]);
+          table_all_p.add_value("v_y", particles[p].velocity[1]);
+          table_all_p.add_value("p_y", particles[p].position[1]);
         }
       table_p[p].set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
       table_p[p].set_precision(
+        "f_y", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_x", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
@@ -1693,6 +1732,18 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_p[p].set_precision(
             "p_y",
             this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "v_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "v_y",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "p_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "p_y",
+            this->simulation_parameters.simulation_control.log_precision);
         }
       if (dim == 3)
         {
@@ -1700,10 +1751,16 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_p[p].set_precision(
             "f_z",
             this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("f_z", particles[p].fluid_forces[2]);
+          table_all_p.set_precision(
+            "f_z",
+            this->simulation_parameters.simulation_control.log_precision);
           if (this->simulation_parameters.particlesParameters->integrate_motion)
             {
               table_p[p].add_value("v_z", particles[p].velocity[2]);
               table_p[p].add_value("p_z", particles[p].position[2]);
+              table_all_p.add_value("v_z", particles[p].velocity[2]);
+              table_all_p.add_value("p_z", particles[p].position[2]);
             }
         }
     }
@@ -1712,16 +1769,13 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       if (this->simulation_parameters.forces_parameters.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          for (unsigned int p = 0; p < particles.size(); ++p)
-            {
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              std::cout << "|  Force  summary particle " << p
-                        << "               |" << std::endl;
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              table_p[p].write_text(std::cout);
-            }
+          std::cout << "+------------------------------------------+"
+                    << std::endl;
+          std::cout << "|  Force  summary particles  "
+                    << "              |" << std::endl;
+          std::cout << "+------------------------------------------+"
+                    << std::endl;
+          table_all_p.write_text(std::cout);
         }
     }
 }
@@ -1731,7 +1785,7 @@ void
 GLSSharpNavierStokesSolver<dim>::sharp_edge()
 {
   // This function defines an Immersed Boundary based on the sharp edge method
-  // on a hyper_sphere of dim=2 or dim=3
+  // on a solid of dim=2 or dim=3
 
   TimerOutput::Scope t(this->computing_timer, "assemble_sharp");
   using numbers::PI;
@@ -1888,9 +1942,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                     this->fe->system_to_component_index(i).first;
                   unsigned int global_index_overwrite = local_dof_indices[i];
                   bool         dof_is_inside =
-                    (support_points[local_dof_indices[i]] -
-                     particles[ib_particle_id].position)
-                      .norm() < particles[ib_particle_id].radius;
+                    particles[ib_particle_id].get_levelset(
+                      support_points[local_dof_indices[i]]) < 0;
                   bool use_ib_for_pressure =
                     (dof_is_inside) && (component_i == dim) &&
                     (this->simulation_parameters.particlesParameters
@@ -1982,12 +2035,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                   sum_line);
                           skip_stencil = true;
 
-                          // Tolerence to define a intersection of
+                          // Tolerance to define an intersection of
                           // the DOF and IB
-                          if (abs((support_points[local_dof_indices[i]] -
-                                   particles[ib_particle_id].position)
-                                    .norm() -
-                                  particles[ib_particle_id].radius) <=
+                          if (abs(particles[ib_particle_id].get_levelset(
+                                support_points[local_dof_indices[i]])) <=
                               1e-12 * dr)
                             {
                               dof_on_ib = true;
@@ -2100,9 +2151,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               // Check if the dof is inside or outside of the
                               // particle.
                               bool dof_is_inside_p =
-                                (support_points[local_dof_indices[k]] -
-                                 particles[ib_particle_id].position)
-                                  .norm() < particles[ib_particle_id].radius;
+                                particles[ib_particle_id].get_levelset(
+                                  support_points[local_dof_indices[k]]) < 0;
                               const unsigned int component_k =
                                 this->fe->system_to_component_index(k).first;
                               if (component_k == dim &&
@@ -2635,7 +2685,6 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
               particles_information_table.add_value(
                 "v_y", particles[i_particle].previous_velocity[j][1]);
               particles_information_table.set_precision("v_y", 16);
-
               if (dim == 3)
                 {
                   particles_information_table.add_value(
@@ -2753,6 +2802,9 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                     restart_data["v_y"][row];
                   particles[p_i].previous_omega[j][2] =
                     restart_data["omega_z"][row];
+
+                  particles[p_i].set_position(particles[p_i].position);
+                  particles[p_i].set_orientation(particles[p_i].orientation);
                 }
               else
                 {
@@ -2819,6 +2871,9 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                     restart_data["omega_y"][row];
                   particles[p_i].previous_omega[j][2] =
                     restart_data["omega_z"][row];
+
+                  particles[p_i].set_position(particles[p_i].position);
+                  particles[p_i].set_orientation(particles[p_i].orientation);
                 }
               else
                 {

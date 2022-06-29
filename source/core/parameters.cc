@@ -1751,6 +1751,14 @@ namespace Parameters
     if (dim == 3)
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
+
+    prm.enter_subsection("orientation");
+    particles[index].f_orientation =
+      std::make_shared<Functions::ParsedFunction<dim>>(3);
+    particles[index].f_orientation->declare_parameters(prm, dim);
+    prm.set("Function expression", "0; 0; 0");
+    prm.leave_subsection();
+
     prm.enter_subsection("velocity");
     particles[index].f_velocity =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
@@ -1760,6 +1768,7 @@ namespace Parameters
     if (dim == 3)
       prm.set("Function expression", "0; 0; 0");
     prm.leave_subsection();
+
     prm.enter_subsection("omega");
     particles[index].f_omega =
       std::make_shared<Functions::ParsedFunction<dim>>(3);
@@ -1768,21 +1777,45 @@ namespace Parameters
     prm.leave_subsection();
 
     prm.declare_entry(
+      "type",
+      "sphere",
+      Patterns::Selection(
+        "sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star"),
+      "The type of shape considered."
+      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star>."
+      "The parameter for a sphere is: radius. "
+      "The parameters for a rectangle are, in order: x half length,"
+      "y half length, z half length."
+      "The parameters for an ellipsoid are, in order: x radius,"
+      "y radius, z radius. "
+      "The parameters for a torus are, in order: torus radius,"
+      "torus thickness radius. "
+      "The parameters for a cone are, in order: tan(base angle),"
+      " height. "
+      "The parameters for a cut hollow sphere are, in order: sphere radius,"
+      "cut thickness, wall thickness. "
+      "The parameters for a death star are, in order: sphere radius,"
+      "smaller sphere radius, distance between centers.");
+    prm.declare_entry("shape arguments",
+                      "1",
+                      Patterns::List(Patterns::Double()),
+                      "Arguments defining the geometry");
+
+    prm.declare_entry(
       "pressure x",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in x ");
+      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in x ");
     prm.declare_entry(
       "pressure y",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in y ");
+      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in y ");
     prm.declare_entry(
       "pressure z",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in z ");
-    prm.declare_entry("radius", "0.2", Patterns::Double(), "Particles radius ");
+      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in z ");
     prm.declare_entry("density",
                       "1",
                       Patterns::Double(),
@@ -2030,6 +2063,11 @@ namespace Parameters
           particles[i].f_position->parse_parameters(prm);
           particles[i].f_position->set_time(0);
           prm.leave_subsection();
+          prm.enter_subsection("orientation");
+          particles[i].f_orientation->parse_parameters(prm);
+          particles[i].f_orientation->set_time(0);
+          prm.leave_subsection();
+
           prm.enter_subsection("velocity");
           particles[i].f_velocity->parse_parameters(prm);
           particles[i].f_velocity->set_time(0);
@@ -2042,6 +2080,12 @@ namespace Parameters
             particles[i].f_position->value(particles[i].position, 0);
           particles[i].position[1] =
             particles[i].f_position->value(particles[i].position, 1);
+          particles[i].orientation[0] =
+            particles[i].f_orientation->value(particles[i].position, 0);
+          particles[i].orientation[1] =
+            particles[i].f_orientation->value(particles[i].position, 1);
+          particles[i].orientation[2] =
+            particles[i].f_orientation->value(particles[i].position, 2);
           particles[i].velocity[0] =
             particles[i].f_velocity->value(particles[i].position, 0);
           particles[i].velocity[1] =
@@ -2054,7 +2098,6 @@ namespace Parameters
             particles[i].f_omega->value(particles[i].position, 2);
 
           particles[i].particle_id          = i;
-          particles[i].radius               = prm.get_double("radius");
           particles[i].inertia[0][0]        = prm.get_double("inertia");
           particles[i].inertia[1][1]        = prm.get_double("inertia");
           particles[i].inertia[2][2]        = prm.get_double("inertia");
@@ -2076,14 +2119,28 @@ namespace Parameters
               particles[i].velocity[2] =
                 particles[i].f_velocity->value(particles[i].position, 2);
               particles[i].pressure_location[2] = prm.get_double("pressure z");
-              particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
-                                  particles[i].radius * particles[i].radius *
-                                  prm.get_double("density");
             }
+
+          std::string shape_type          = prm.get("type");
+          std::string shape_arguments_str = prm.get("shape arguments");
+          std::vector<std::string> shape_arguments_str_list(
+            Utilities::split_string_list(shape_arguments_str));
+          std::vector<double> shape_arguments =
+            Utilities::string_to_double(shape_arguments_str_list);
+          initialize_shape(i, shape_type, shape_arguments);
+
+          particles[i].radius = particles[i].shape->effective_radius;
+
           if (dim == 2)
             {
               particles[i].mass = PI * particles[i].radius *
                                   particles[i].radius *
+                                  prm.get_double("density");
+            }
+          else if (dim == 3)
+            {
+              particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
+                                  particles[i].radius * particles[i].radius *
                                   prm.get_double("density");
             }
           particles[i].initialise_last();
@@ -2091,6 +2148,71 @@ namespace Parameters
         }
       prm.leave_subsection();
     }
+  }
+
+  template <int dim>
+  void
+  IBParticles<dim>::initialize_shape(const unsigned int        i,
+                                     const std::string         type,
+                                     const std::vector<double> shape_arguments)
+  {
+    if (type == "sphere")
+      particles[i].shape =
+        std::make_shared<Sphere<dim>>(shape_arguments[0],
+                                      particles[i].position,
+                                      particles[i].orientation);
+    else if (type == "rectangle")
+      {
+        Tensor<1, dim> half_lengths;
+        for (unsigned int i = 0; i < dim; ++i)
+          {
+            half_lengths[i] = shape_arguments[i];
+          }
+        particles[i].shape =
+          std::make_shared<Rectangle<dim>>(half_lengths,
+                                           particles[i].position,
+                                           particles[i].orientation);
+      }
+    else if (type == "ellipsoid")
+      {
+        Tensor<1, dim> radii;
+        for (unsigned int i = 0; i < dim; ++i)
+          {
+            radii[i] = shape_arguments[i];
+          }
+        particles[i].shape =
+          std::make_shared<Ellipsoid<dim>>(radii,
+                                           particles[i].position,
+                                           particles[i].orientation);
+      }
+    else if (type == "torus")
+      particles[i].shape =
+        std::make_shared<Torus<dim>>(shape_arguments[0],
+                                     shape_arguments[1],
+                                     particles[i].position,
+                                     particles[i].orientation);
+    else if (type == "cone")
+      particles[i].shape =
+        std::make_shared<Cone<dim>>(shape_arguments[0],
+                                    shape_arguments[1],
+                                    particles[i].position,
+                                    particles[i].orientation);
+    else if (type == "cut hollow sphere")
+      particles[i].shape =
+        std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
+                                               shape_arguments[1],
+                                               shape_arguments[2],
+                                               particles[i].position,
+                                               particles[i].orientation);
+    else if (type == "death star")
+      particles[i].shape =
+        std::make_shared<DeathStar<dim>>(shape_arguments[0],
+                                         shape_arguments[1],
+                                         shape_arguments[2],
+                                         particles[i].position,
+                                         particles[i].orientation);
+    else
+      StandardExceptions::ExcNotImplemented();
   }
 
   void

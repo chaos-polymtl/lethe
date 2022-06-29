@@ -150,8 +150,8 @@ subsection particles
 	subsection position
 	    set Function expression =0;0;0
 	end
-	set radius = 0.5
-    end
+    set type       = sphere
+    set shape arguments = 0.5
 end
 # --------------------------------------------------
 # Mesh Adaptation Control

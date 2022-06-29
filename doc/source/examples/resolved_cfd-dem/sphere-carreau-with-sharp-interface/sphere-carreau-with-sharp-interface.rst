@@ -65,38 +65,38 @@ We define the boundary conditions in order to have an inlet velocity of :math:`1
 
 .. code-block:: text
 
-	subsection boundary conditions
-	  set number                  = 5
-	  subsection bc 0
-		set id 		= 0
-		set type    = function
-		subsection u
-		  set Function expression = 1
-		end
-		subsection v
-		  set Function expression = 0
-		end
-		subsection w
-		  set Function expression = 0
-		end
-	  end
-	  subsection bc 1
-		set id 		= 2
-		set type    = slip
-	  end    
-	  subsection bc 2
-		set id 		= 3
-		set type    = slip
-	  end
-	  subsection bc 3
-		set id 		= 4
-		set type    = slip
-	  end
-	  subsection bc 4
-		set id 		= 5
-		set type    = slip
-	end
-	end
+    subsection boundary conditions
+        set number                  = 5
+        subsection bc 0
+            set id 		= 0
+            set type    = function
+            subsection u
+                set Function expression = 1
+            end
+            subsection v
+                set Function expression = 0
+            end
+            subsection w
+                set Function expression = 0
+            end
+        end
+        subsection bc 1
+            set id 		= 2
+            set type    = slip
+        end
+        subsection bc 2
+            set id 		= 3
+            set type    = slip
+        end
+        subsection bc 3
+            set id 		= 4
+            set type    = slip
+        end
+        subsection bc 4
+            set id 		= 5
+            set type    = slip
+        end
+    end
 
 .. note::
 	Since using a `deal.ii mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the boundary ``id = 1`` is by default the second boundary in the *x* axis, hence the free boundary in this problem. This is why all boundary indices are shifted.
@@ -108,21 +108,21 @@ This example showcases a shear-thinning flow, for which the viscosity decreases 
 
 .. code-block:: text
 
-	subsection physical properties
-	  set number of fluids = 1
-	  subsection fluid 0
-		set rheological model	= carreau
-		subsection non newtonian
-		  subsection carreau
-			set n 		   	= 0.5
-			set viscosity_0    	= 0.063403
-			set viscosity_inf  	= 0
-			set lambda	   	= 10
-			set a	           	= 2.0
-		  end
-		end
-	  end
-	end
+    subsection physical properties
+        set number of fluids = 1
+        subsection fluid 0
+            set rheological model	= carreau
+            subsection non newtonian
+                subsection carreau
+                    set n               = 0.5
+                    set viscosity_0     = 0.063403
+                    set viscosity_inf   = 0
+                    set lambda          = 10
+                    set a               = 2.0
+                end
+            end
+        end
+    end
 
 With ``viscosity_inf = 0`` (3-parameter Carreau model), the *a priori* Reynolds number can be estimated using :
 
@@ -139,21 +139,21 @@ This example uses a ramping initial condition that first ramps on the ``n`` para
 
 .. code-block:: text
 
-	subsection initial conditions
-	  set type = ramp
-	  subsection ramp
-		subsection n
-		  set initial n 	= 1.0
-		  set iterations 	= 2
-		  set alpha 		= 0.5
-		end
-		subsection viscosity
-		  set initial viscosity = 1.0
-		  set iterations 	= 2
-		  set alpha 		= 0.5
-		end
-	  end
-	end
+    subsection initial conditions
+        set type = ramp
+        subsection ramp
+            subsection n
+                set initial n   = 1.0
+                set iterations  = 2
+                set alpha       = 0.5
+            end
+            subsection viscosity
+                set initial viscosity   = 1.0
+                set iterations          = 2
+                set alpha               = 0.5
+            end
+        end
+    end
 	
 The first initial condition simulation solves for ``n=1.0``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2``. The subsequent initial simulations are:
 
@@ -170,25 +170,26 @@ In this case, we want to define a spherical boundary of radius :math:`0.5`, with
 
 .. code-block:: text
 
-	subsection particles
-	  set number of particles = 1
-	  set stencil order = 2
-	  set length ratio  = 1
-	  set refine mesh inside radius factor = 0.85
-	  set refine mesh outside radius factor = 1.3
-	  set initial refinement = 2
-	  set integrate motion = false
-	  set assemble Navier-Stokes inside particles = false    
-	  subsection particle info 0
-	  subsection position
-		set Function expression =0;0;0
-	  end
-		set pressure x =0.00001
-		set pressure y =0.00001
-		set pressure z =0.00001
-		set radius = 0.5
-	  end
-	end
+    subsection particles
+        set number of particles = 1
+        set stencil order = 2
+        set length ratio  = 1
+        set refine mesh inside radius factor = 0.85
+        set refine mesh outside radius factor = 1.3
+        set initial refinement = 2
+        set integrate motion = false
+        set assemble Navier-Stokes inside particles = false
+        subsection particle info 0
+            subsection position
+                set Function expression =0;0;0
+            end
+            set pressure x =0.00001
+            set pressure y =0.00001
+            set pressure z =0.00001
+            set type       = sphere
+            set shape arguments = 0.5
+        end
+    end
 
 The hypershell around the boundary between ``refine mesh inside radius factor`` (:math:`r = 0.425`) and ``refine mesh outside radius factor`` (:math:`r = 0.65`) will initially be refined twice (``initial refinement = 2``). 
 

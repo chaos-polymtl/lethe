@@ -6,60 +6,64 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 .. code-block:: text
 
-	subsection particles
-		set number of particles                     = 1
-		set stencil order                           = 2
-		set length ratio                            = 4
-		set assemble Navier-Stokes inside particles = false
-		set calculate force                         = true
-		set ib force output file                    = ib_force
-		set ib particles pvd file                   = ib_particles_data
-		set initial refinement                      = 0
-		set refine mesh inside radius factor        = 0.5
-		set refine mesh outside radius factor       = 1.5
-		set integrate motion                        = false
-		set particle nonlinear tolerance            = 1e-6
-		set DEM coupling frequency                  = 1000
-		set alpha                                   = 1
-		set contact search radius factor            = 3
-		set contact search frequency				= 1
+    subsection particles
+        set number of particles                     = 1
+        set stencil order                           = 2
+        set length ratio                            = 4
+        set assemble Navier-Stokes inside particles = false
+        set calculate force                         = true
+        set ib force output file                    = ib_force
+        set ib particles pvd file                   = ib_particles_data
+        set initial refinement                      = 0
+        set refine mesh inside radius factor        = 0.5
+        set refine mesh outside radius factor       = 1.5
+        set integrate motion                        = false
+        set particle nonlinear tolerance            = 1e-6
+        set DEM coupling frequency                  = 1000
+        set alpha                                   = 1
+        set contact search radius factor            = 3
+        set contact search frequency		    = 1
 
-		subsection gravity
-			set Function expression =0;0;0
-		end
+        subsection gravity
+            set Function expression =0;0;0
+        end
 
-		set wall friction coefficient               = 0
-		set wall poisson ratio                      = 0.3
-		set wall restitution coefficient            = 1
-		set wall rolling friction coefficient       = 0
-		set wall youngs modulus                     = 100000000
-		set enable lubrication force		    = true
-		set lubrication range max		    = 2
-		set lubrication range min		    = 0.1
+        set wall friction coefficient               = 0
+        set wall poisson ratio                      = 0.3
+        set wall restitution coefficient            = 1
+        set wall rolling friction coefficient       = 0
+        set wall youngs modulus                     = 100000000
+        set enable lubrication force		    = true
+        set lubrication range max		    = 2
+        set lubrication range min		    = 0.1
 
-		subsection particle info 0
-			set density    = 1
-			subsection position
-				set Function expression =0;0;0
-			end
-			subsection velocity
-				set Function expression =0;0;0
-			end
-		    	subsection omega
-		    		set Function expression =0;0;0
-		    	end
-		    	set inertia    = 1
-		    	set pressure x = 0
-		    	set pressure y = 0
-		    	set pressure z = 0
-		    	set radius     = 0.2
-		    	set friction coefficient         = 0
-		    	set poisson ratio                = 0.3
-		    	set restitution coefficient      = 1
-		    	set rolling friction coefficient = 0
-		    	set youngs modulus               = 100000000
-		end
-	end
+        subsection particle info 0
+            set density    = 1
+            subsection position
+                set Function expression =0;0;0
+            end
+            subsection velocity
+                set Function expression =0;0;0
+            end
+            subsection omega
+                set Function expression =0;0;0
+            end
+            subsection orientation
+                set Function expression =0;0;0
+            end
+            set inertia    = 1
+            set pressure x = 0
+            set pressure y = 0
+            set pressure z = 0
+            set type       = sphere
+            set shape arguments = 0
+            set friction coefficient         = 0
+            set poisson ratio                = 0.3
+            set restitution coefficient      = 1
+            set rolling friction coefficient = 0
+            set youngs modulus               = 100000000
+        end
+    end
 
 * The ``number of particles`` is the number of particles simulated by the sharp-edge IB.
 
@@ -81,26 +85,25 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
 
 * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
 
-To sharpen the immersed boundary of each particles, a layer of cells around the immersed boundary can be refined forming a hypershell of refined cells.
+To sharpen the immersed boundary of each particle, a layer of cells around the immersed boundary can be refined forming a near-surface zone of refined cells between two thresholds: :math:`\textit{inside factor} * \textit{radius}` and :math:`\textit{outside factor} * \textit{radius}`. An effective radius, for non spheres, is calculated at the shape initialization and its definition is given further below.
 
-* The ``refine mesh inside radius factor`` parameter defines the inside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside radius of the refinement zone would be 1.6 (see example below).
+* The ``refine mesh inside radius factor`` parameter defines how deep inside the solid that cells can be refined. If the absolute distance between a cell's degree of freedom and the solid's surface is lower than :math:`(1 - \textit{inside factor}) * \textit{radius}`, one of the two required conditions to refine this cell is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside reach of the refinement zone would be 0.4 (see example below).
 
-* The ``refine mesh outside radius factor`` parameter defines the outside radius of the hypershell that forms the refinement zone around the particles. The radius used is the product between this factor and the particle's radius. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside radius of the refinement zone would be 3 (see example below).
+* The ``refine mesh outside radius factor`` parameter defines how far outside the solid that cells can be refined. If the absolute distance between a cell's degree of freedom and the solid's surface is lower than :math:`(\textit{outside factor} - 1) * \textit{radius}`, the second of the two required conditions to refine this cell is met. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside reach of the refinement zone would be 1 (see example below).
+
+.. image:: images/particle_hypershell.png
+	:align: center
 
 .. warning::
-	When you want to use the hypershell refinement zone around particles, the mesh adaptation type used must be ``kelly``, otherwise no hypershell refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
+	The ``mesh adaptation type`` must be ``kelly`` to use the near-particle refinement zone around particles; otherwise, no near-particle refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
 
 .. note::
 	The refined cells are all those for which at least one of the degrees of freedom (dof) location satisfies both the ``refine mesh inside radius factor`` and the ``refine mesh outside radius factor`` thresholds. Each application of the refinement zone reduces the size of the elements by a factor two.
 
 .. note::
-	This hypershell zone will systematically be refined at each refinement step until reaching the ``max refinement level`` parameter in :doc:`../cfd/mesh_adaptation_control`.
+	This near-particle zone will be systematically refined at each refinement step until reaching the ``max refinement level`` parameter (:doc:`../cfd/mesh_adaptation_control`).
 
-.. image:: images/particle_hypershell.png
-	:align: center
-
-
-* The ``initial refinement`` parameter controls the number of refinement cycles in the hypershell refinement zone around every particle before the simulation starts.
+* The ``initial refinement`` parameter controls the number of refinement cycles in the near-particle refinement zone around every particle before the simulation starts.
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles remain static.  If ``ìntegrate motion=true`` the position and the velocity will be defined by the particles' position and velocity function.
 
@@ -147,7 +150,7 @@ The following properties are used if the particle impact one of the boundaries o
     The lubrication force between two particles is expressed by the equation :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`. Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter of the first particle, :math:`d_{p_j}` the diameter of the second particle, :math:`y` the gap between the two particles, :math:`\mathbf{v_{ij}}` the relative velocity of the two particles, :math:`\mathbf{e_{ij}}` the unit vector along the line that joint the centroide of the two particles. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity `[1] <https://doi.org/10.1002/aic.690400418>`_.
     This model requires a constant viscosity and density of the fluid.
 
-The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
+The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separately.
 
 * The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id 0. For each particle with the index ``n``, a new subsection name ``particle info n`` should be defined with relevant information.
 
@@ -157,15 +160,38 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The subsection ``velocity`` defines the initial value of the particle velocity if the parameter ``integrate motion=true``. Otherwise, it defines the particle's velocity at all points in time. This velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z direction.
 
-* The subsection ``omega`` defines the initial value of the particle rotational velocity if the parameter ``integrate motion=true``. Otherwise, it defines the particle's rotational velocity at all times. This rotational velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z direction. It's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity.
+* If the parameter ``integrate motion`` is set to ``true``, the subsection ``omega`` defines the initial value of the particle's rotational velocity. Otherwise, it defines the particle's rotational velocity at all time steps. This rotational velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z directions.
+
+* The subsection ``orientation`` defines the initial value of the particle's angular position around each of the axes X, then Y, and lastly Z.
+
+.. warning::
+    The way position and orientation are defined is that the position of the solid is taken into account first, and then the orientation is considered. The orientation is considered as a rotation around each main axis, in the order X, then Y, and lastly Z. The center of rotation for this rotation is the position point of the solid.
+
+.. warning::
+    Concerning ``omega`` and ``orientation``, it's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity, but all three should be defined.
 
 * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
 
 * The ``pressure x``, ``pressure y``, and ``pressure z`` parameters are used to define the X, Y, and Z coordinate offset of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to true to define the pressure reference point.
 
-* The ``radius`` parameter is used to define the radius of this particle.
+* The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``.
 
-The following properties are used if the particle impact one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are calculated using a harmonic mean of the properties of the particle and the object it impacts.
+* The ``shape arguments`` parameter is used to define the parameters of the shape in the form of a list separated by ``,``. The required arguments and the effective radius, used for near-particle refinement, are:
+    * Sphere: *radius*; the effective radius is the *radius*;
+
+    * Rectangle: *x half length*, *y half length*, [*z half length* (if 3D)]; the effective radius is the Euclidian norm of the half lengths;
+
+    * Ellipsoid: *x radius*, *y radius*, [*z radius* (if 3D)]; the effective radius is the Euclidian norm of the radii;
+
+    * Torus: *torus radius*, *torus thickness radius*; the effective radius is the *torus thickness radius*;
+
+    * Cone: *tan(base angle)*, *height*; the effective radius is the *height*;
+
+    * Cut Hollow Sphere: *radius*, *cut height*, *wall thickness*; the effective radius is the *radius*;
+
+    * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*.
+
+The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
 
 * The ``friction coefficient`` parameter is the coefficient of friction of the particle. This parameter is used to define the effective coefficient of friction between the wall and the particles.
 
@@ -178,13 +204,12 @@ The following properties are used if the particle impact one of the boundaries o
 * The ``youngs modulus`` parameter is the Young's modulus of the particle's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
 
 .. tip::
-	For a particle to be accounted for in the fluid mesh, it has to overlap one or more vertices of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls. To avoid this, a box refinement can be added around the particle (See Box refinement documentation).
+	For a particle to be accounted for in the fluid mesh, it has to overlap at least one vertex of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls. To avoid this, a box refinement can be added around the particle (See Box refinement documentation).
 
 Mesh refinement
----------------------
-The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The one that occurs first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection.
-The second refinement occuring is inside the **box refinement zone**, set by the ``initial refinement`` in the ``box refinement`` subsection. Lastly, the **particle hypershell zone** is refined, defined by the ``initial refinement`` parameter in the ``particles`` subsection.
-Therefore, the hypershell zone around each particle is refined ``mesh``:``initial refinement`` + ``box``:``initial refinement`` + ``particle``:``initial refinement`` times before the simulations starts.
+The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection.
+The second refinement is inside the **box refinement zone**, set by the ``initial refinement`` in the ``box refinement`` subsection. Lastly, the **near-particle zone** is refined, defined by the ``initial refinement`` parameter in the ``particles`` subsection.
+Therefore, the near-particle zone around each particle is refined ``mesh``:``initial refinement`` + ``box``:``initial refinement`` + ``particle``:``initial refinement`` times before the simulations starts.
 
 .. note::
 	If the ``max refinement level`` parameter in the ``adaptation control`` subsection is smaller than the summation of all initial refinement parameters, no cell can be refined more than ``max refinement level``. Note that it does not mean that the refinement stops, meaning that there can be other cells that are refined to the ``max refinement level``, but no cell can be refined more than this.

@@ -7,7 +7,7 @@
 
 template <int dim>
 unsigned int
-IBStencil<dim>::nb_points(unsigned int order)
+IBStencil<dim>::nb_points(const unsigned int order)
 {
   // The number of points used in the stencil excluding the DOF is equal to the
   // order.
@@ -21,10 +21,10 @@ IBStencil<dim>::nb_points(unsigned int order)
 
 template <int dim>
 void
-IBStencil<dim>::p_base(unsigned int order)
+IBStencil<dim>::p_base(const unsigned int order)
 {
   using numbers::PI;
-  // define the sampling point position of the the stencil on the reference 1D
+  // define the sampling point position of the stencil on the reference 1D
   // stencil 0 to 1. 1 being the position of the dof
   reference_points.resize(order + 1);
   for (unsigned int i = 0; i < order + 1; ++i)
@@ -37,7 +37,8 @@ IBStencil<dim>::p_base(unsigned int order)
 
 template <int dim>
 std::vector<double>
-IBStencil<dim>::coefficients(unsigned int order, double length_ratio)
+IBStencil<dim>::coefficients(const unsigned int order,
+                             const double       length_ratio)
 {
   p_base(order);
   // Initialize the coefficient vector
@@ -93,16 +94,18 @@ IBStencil<dim>::coefficients(unsigned int order, double length_ratio)
 
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
-IBStencil<dim>::points(unsigned int    order,
-                       double          length_ratio,
-                       IBParticle<dim> p,
-                       Point<dim>      dof_point)
+IBStencil<dim>::points(const unsigned int order,
+                       const double       length_ratio,
+                       IBParticle<dim> &  p,
+                       const Point<dim> & dof_point)
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
   // IB depending if the cell is used directly
   p_base(order);
-  Point<dim>              point;
+  Point<dim> point;
+  Point<dim> surface_point;
+  p.closest_surface_point(dof_point, surface_point);
   std::vector<Point<dim>> interpolation_points;
 
   if (order > 4)
@@ -110,11 +113,8 @@ IBStencil<dim>::points(unsigned int    order,
       // In this case the cell is directly used to find the solution at the IB
       // position. In this case only one point is needed (the position of the
       // point on the IB).
-      Tensor<1, dim, double> vect_ib =
-        (dof_point - p.position -
-         p.radius * (dof_point - p.position) / (dof_point - p.position).norm());
-
-      point = dof_point - vect_ib;
+      Tensor<1, dim, double> vect_ib = dof_point - surface_point;
+      point                          = surface_point;
 
       Point<dim, double> interpolation_point_1(dof_point +
                                                vect_ib * 1. / length_ratio);
@@ -125,10 +125,8 @@ IBStencil<dim>::points(unsigned int    order,
   else
     {
       interpolation_points.resize(order);
-      Tensor<1, dim, double> vect_ib =
-        (dof_point - p.position -
-         p.radius * (dof_point - p.position) / (dof_point - p.position).norm());
-      point = dof_point;
+      Tensor<1, dim, double> vect_ib = dof_point - surface_point;
+      point                          = dof_point;
       for (unsigned int i = 1; i < order + 1; ++i)
         {
           interpolation_points[i - 1] =
@@ -141,41 +139,44 @@ IBStencil<dim>::points(unsigned int    order,
 
 template <int dim>
 Point<dim>
-IBStencil<dim>::point_for_cell_detection(IBParticle<dim> p,
-                                         Point<dim>      dof_point)
+IBStencil<dim>::point_for_cell_detection(IBParticle<dim> & p,
+                                         const Point<dim> &dof_point)
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
   // IB depending if the cell is used directly
 
-
-  Tensor<1, dim, double> vect_ib =
-    (dof_point - p.position -
-     p.radius * (dof_point - p.position) / (dof_point - p.position).norm());
-
-  Point<dim> point(dof_point + vect_ib * 1.0 / 16);
+  Point<dim> surface_point;
+  p.closest_surface_point(dof_point, surface_point);
+  Tensor<1, dim, double> vect_ib = dof_point - surface_point;
+  Point<dim>             point   = dof_point + vect_ib * 1.0 / 16;
 
   return point;
 }
 
 template <int dim>
 double
-IBStencil<dim>::ib_velocity(IBParticle<dim> p,
-                            Point<dim>      dof_point,
-                            unsigned int    component)
+IBStencil<dim>::ib_velocity(IBParticle<dim> & p,
+                            const Point<dim> &dof_point,
+                            unsigned int      component)
 {
   // Return the value of the IB condition for that specific stencil.
   double v_ib = 0;
 
   Tensor<1, 3, double> radial_vector;
+  Point<dim>           closest_point;
+  p.closest_surface_point(dof_point, closest_point);
+  Point<dim> position_to_surface;
+  position_to_surface    = closest_point - p.position;
+  double radial_distance = position_to_surface.norm();
   if (dim == 2)
     {
       // have to do that conversion as there is no proper conversion from tensor
       // of dim 2 to 3.
-      radial_vector[0]   = p.radius * ((dof_point - p.position) /
-                                     (dof_point - p.position).norm())[0];
-      radial_vector[1]   = p.radius * ((dof_point - p.position) /
-                                     (dof_point - p.position).norm())[1];
+      radial_vector[0] =
+        radial_distance * (position_to_surface / radial_distance)[0];
+      radial_vector[1] =
+        radial_distance * (position_to_surface / radial_distance)[1];
       radial_vector[2]   = 0;
       Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
       if (component == 0)
@@ -191,12 +192,12 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> p,
     }
   if (dim == 3)
     {
-      radial_vector[0]   = p.radius * ((dof_point - p.position) /
-                                     (dof_point - p.position).norm())[0];
-      radial_vector[1]   = p.radius * ((dof_point - p.position) /
-                                     (dof_point - p.position).norm())[1];
-      radial_vector[2]   = p.radius * ((dof_point - p.position) /
-                                     (dof_point - p.position).norm())[2];
+      radial_vector[0] =
+        radial_distance * (position_to_surface / radial_distance)[0];
+      radial_vector[1] =
+        radial_distance * (position_to_surface / radial_distance)[1];
+      radial_vector[2] =
+        radial_distance * (position_to_surface / radial_distance)[2];
       Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {
