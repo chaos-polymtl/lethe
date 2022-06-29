@@ -199,7 +199,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
               unsigned int   count_small     = 0;
-              Point<dim>     center_immersed = particles[p].position;
+              center_immersed = particles[p].position;
               Tensor<1, dim> r;
               r[0] = particles[p].radius;
 
@@ -2938,7 +2938,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
       // Loop over each line of the file and filling the particles properties.
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
-          particles[p_i].initialise_all();
+          particles[p_i].initialize_all();
           particles[p_i].position[0] = restart_data["p_x"][p_i];
           particles[p_i].position[1] = restart_data["p_y"][p_i];
           particles[p_i].velocity[0] = restart_data["v_x"][p_i];
@@ -2964,7 +2964,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
           particles[p_i].rolling_friction_coefficient =
             restart_data["rolling_friction_coefficient"][p_i];
-          particles[p_i].initialise_end();
+          particles[p_i].initialize_previous_solution();
         }
     }
   if (dim == 3)
@@ -2972,7 +2972,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
       // Loop over each line of the file and filling the particles properties.
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
-          particles[p_i].initialise_all();
+          particles[p_i].initialize_all();
           particles[p_i].position[0] = restart_data["p_x"][p_i];
           particles[p_i].position[1] = restart_data["p_y"][p_i];
           particles[p_i].position[2] = restart_data["p_z"][p_i];
@@ -3004,7 +3004,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
           particles[p_i].rolling_friction_coefficient =
             restart_data["rolling_friction_coefficient"][p_i];
-          particles[p_i].initialise_end();
+          particles[p_i].initialize_previous_solution();
         }
     }
 }
