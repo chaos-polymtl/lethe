@@ -198,8 +198,8 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
           cell->get_dof_indices(local_dof_indices);
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-              unsigned int   count_small     = 0;
-              center_immersed = particles[p].position;
+              unsigned int count_small = 0;
+              center_immersed          = particles[p].position;
               Tensor<1, dim> r;
               r[0] = particles[p].radius;
 
