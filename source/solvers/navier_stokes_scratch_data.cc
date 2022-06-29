@@ -1,9 +1,11 @@
 #include <core/bdf.h>
 #include <core/sdirk.h>
 #include <core/utilities.h>
+
+#include <solvers/navier_stokes_scratch_data.h>
+
 #include <dem/dem.h>
 #include <dem/dem_properties.h>
-#include <solvers/navier_stokes_scratch_data.h>
 
 template <int dim>
 void
