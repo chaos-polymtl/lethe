@@ -67,13 +67,13 @@ public:
    *
    */
   void
-  initialise_all();
+  initialize_all();
   /**
    * @brief
    * initialize the value of the last state of the particle
    */
   void
-  initialise_end();
+  initialize_previous_solution();
   /**
    * @brief
    * Return the names of properties of the IB_particle for visualisation.
