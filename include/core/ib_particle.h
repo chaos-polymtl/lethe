@@ -13,11 +13,19 @@
  *
  * ---------------------------------------------------------------------
  *
- * Author: Lucka Barbeau, Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
+#include <core/shape.h>
+
+#include <deal.II/base/auto_derivative_function.h>
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+#else
+#  include <deal.II/base/function_signed_distance.h>
+#endif
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/point.h>
+
+#include <deal.II/physics/transformations.h>
 
 #include <vector>
 
@@ -63,38 +71,105 @@ public:
   /**
    * @brief
    * initialize the value of the last state of the particle
-   *
    */
   void
   initialise_last();
   /**
    * @brief
    * Return the names of properties of the IB_particle for visualisation.
-   *
    */
   std::vector<std::pair<std::string, int>>
   get_properties_name();
   /**
    * @brief
    * Return the value of the properties of the particle for visualisation.
-   *
    */
   std::vector<double>
   get_properties();
   /**
    * @brief
    * Return the number of properties of the particle for visualisation.
-   *
    */
   unsigned int
   get_number_properties();
+  /**
+   * @brief
+   * Returns the evaluation of the signed distance function of this shape
+   * Most levelset functions come from Inigo Quilez:
+   * iquilezles.org/articles/distfunctions
+   *
+   * @param p The point at which the evaluation is performed
+   */
+  double
+  get_levelset(const Point<dim> &p);
+
+  /**
+   * @brief
+   * Sets the closest_point parameter to be the point on the surface of the
+   * shape which has the minimal distance from the given point p
+   *
+   * @param p The point at which the evaluation is performed
+   * @param closest_point The reference to the closest point. This point will be modified by the function.
+   */
+  void
+  closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
+
+  /**
+   * @brief
+   * Returns true if the given point is inside the crown for which the limits
+   * are defined by inner and outer radius factors. An effective radius is used
+   * for non spherical shapes.
+   *
+   *  @param evaluation_point The point at which the evaluation is performed
+   *  @param outer_radius The factor to be multiplied by the effective radius to check if the evaluation point is inside the outer limits
+   *  @param inside_radius The factor to be multiplied by the effective radius to check if the evaluation point is outside the inner limits
+   */
+  bool
+  is_inside_crown(const Point<dim> &evaluation_point,
+                  const double      outer_radius,
+                  const double      inside_radius);
+
+  /**
+   * @brief
+   * Sets the position of the particle and dependent members to the argument
+   *
+   * @param position The new position to set the particle at
+   */
+  void
+  set_position(const Point<dim> position);
+
+  /**
+   * @brief
+   * Sets the position of the particle and dependent members to the argument for
+   * one component
+   *
+   * @param position_component The component of the new position to set the particle at
+   * @param component The component index for which the position will be updated
+   */
+  void
+  set_position(const double       position_component,
+               const unsigned int component = 0);
+
+  /**
+   * @brief
+   * Sets the orientation of the particle and dependent members to the argument
+   *
+   * @param orientation The new orientation to set the particle at
+   */
+  void
+  set_orientation(const Tensor<1, 3> orientation);
+
 
   // This class defines values related to a particle used in the sharp interface
   // IB. Each particle defined will have these value used in the solver.
 
   // The unique identification number of the particle.
   unsigned int particle_id;
-  // The particle radius.
+
+  // The geometrical information regarding the particle
+  std::shared_ptr<Shape<dim>> shape;
+
+  // The particle effective radius. It is the actual radius for spheres.
   double radius;
   // The particle Young's modulus. Used in case of contact.
   double youngs_modulus;
@@ -178,6 +253,10 @@ public:
   // determined. If the dynamic is not resolved, this function determines the
   // angular velocity at every time step.
   std::shared_ptr<Functions::ParsedFunction<dim>> f_omega;
+  // The function from which the initial particle angular position is
+  // determined. If the dynamic is not resolved, this function determines the
+  // angular position at every time step.
+  std::shared_ptr<Functions::ParsedFunction<dim>> f_orientation;
 
   // Allow the definition of a local relaxation parameter for each particle in
   // the integration process.

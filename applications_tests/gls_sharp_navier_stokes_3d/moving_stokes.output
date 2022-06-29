@@ -13,9 +13,16 @@ Transient iteration : 1        Time : 0.125    Time step : 0.125    CFL : 0
 div u : 0.000590735
 L2 error velocity : 0.00412312 L2 error pressure: 0.0276662
 +------------------------------------------+
-|  Force  summary particle 0               |
+|  Force  summary particles                |
 +------------------------------------------+
+<<<<<<< HEAD
 particle_ID  time     T_x      T_y       T_z      f_x      f_y      f_z      f_xv     f_yv     f_zv     f_xp     f_yp      f_zp   
 0           0.1250 0.000000 0.001189 -0.001189 1.018953 0.000039 0.000039 0.689351 0.000039 0.000039 0.329602 0.000000 0.000000 
  time  error_velocity error_pressure 
 0.1250 4.123123e-03   0.0277         
+=======
+particle_ID  time     T_x      T_y       T_z      f_x      f_y      f_z
+0           0.1250 0.000000 0.001189 -0.001189 1.018953 0.000039 0.000039
+ time  error_velocity error_pressure
+0.1250 4.123123e-03   0.0277
+>>>>>>> master

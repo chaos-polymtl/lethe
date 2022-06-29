@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
 #ifndef LETHE_GLSSHARPNS_H
@@ -22,6 +19,7 @@
 
 #include <core/ib_particle.h>
 #include <core/ib_stencil.h>
+#include <core/shape.h>
 
 #include <solvers/gls_navier_stokes.h>
 
@@ -284,6 +282,14 @@ private:
   virtual void
   postprocess_fd(bool firstIter) override;
 
+
+  /**
+   * @brief output_field_hook
+   * Adds the levelset output field to the output
+   */
+  virtual void
+  output_field_hook(DataOut<dim> &data_out) override;
+
   /**
    * @brief
    * Allow a refinement around each of the particles.
@@ -405,8 +411,6 @@ Return a bool that describes  if a cell contains a specific point
     return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
   }
 
-
-
   /**
    * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
    */
@@ -515,10 +519,14 @@ private:
   double                       particle_residual;
 
   std::vector<TableHandler> table_p;
+  TableHandler              table_all_p;
 
   // Object used to sub-time step the particle dynamics to allow contact between
   // particles.
   IBParticlesDEM<dim> ib_dem;
+
+  // Postprocessor to output the signed distance function of the immersed solids
+  std::shared_ptr<ScalarFunctionPostprocessor<dim>> scalar_function;
 };
 
 

@@ -177,7 +177,8 @@ subsection particles
 	    set pressure x =-0.00001
 	    set pressure y =0.00001
 	    set pressure z =0.00001
-	    set radius = 0.5
+	    set type       = sphere
+        set shape arguments = 0.5
 	    set density = 2
     end
 end

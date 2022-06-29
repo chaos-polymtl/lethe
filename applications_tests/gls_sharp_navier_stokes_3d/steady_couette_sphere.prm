@@ -105,7 +105,8 @@ subsection particles
 	    set pressure x =0.12501
 	    set pressure y =0.12501
 	    set pressure z =0.00001
-	    set radius = 0.25
+	    set type       = sphere
+        set shape arguments = 0.25
     end
 subsection particle info 1 
         subsection position
@@ -120,7 +121,8 @@ subsection particle info 1
 	    set pressure x =0.40001
 	    set pressure y =0.125001
 	    set pressure z =0.125001
-	    set radius = 0.65
+	    set type       = sphere
+        set shape arguments = 0.65
     end
 
 end

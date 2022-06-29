@@ -42,7 +42,7 @@ public:
   * @param order, the stencil order.
   */
   virtual unsigned int
-  nb_points(unsigned int order);
+  nb_points(const unsigned int order);
 
   /**
    * @brief
@@ -61,10 +61,10 @@ public:
    * @param dof_point, the support point of the DOF.
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
-  points(unsigned int    order,
-         double          length_ratio,
-         IBParticle<dim> p,
-         Point<dim>      dof_point);
+  points(const unsigned int order,
+         const double       length_ratio,
+         IBParticle<dim> &  p,
+         const Point<dim> & dof_point);
 
   /**
    * @brief
@@ -74,7 +74,7 @@ public:
    * @param dof_point, the support point of the DOF.
    */
   virtual Point<dim>
-  point_for_cell_detection(IBParticle<dim> p, Point<dim> dof_point);
+  point_for_cell_detection(IBParticle<dim> &p, const Point<dim> &dof_point);
 
   /**
    * @brief
@@ -89,7 +89,7 @@ public:
    * @param length_ratio the length ratio between the 2 side of the stencil.
    */
   virtual std::vector<double>
-  coefficients(unsigned int order, double length_ratio);
+  coefficients(const unsigned int order, const double length_ratio);
 
   /**
    * @brief
@@ -100,7 +100,9 @@ public:
    * @param component, the stencil component of the dof (vx=0,vy=1,vz=2).
    */
   virtual double
-  ib_velocity(IBParticle<dim> p, Point<dim> dof_point, unsigned int component);
+  ib_velocity(IBParticle<dim> &  p,
+              const Point<dim> & dof_point,
+              const unsigned int component);
 
 private:
   /**

@@ -52,17 +52,17 @@ ParticleParticleHertzMindlinLimitOverlap<
 
           this->effective_youngs_modulus[i][j] =
             (youngs_modulus_i * youngs_modulus_j) /
-            ((youngs_modulus_j * (1 - poisson_ratio_i * poisson_ratio_i)) +
-             (youngs_modulus_i * (1 - poisson_ratio_j * poisson_ratio_j)) +
+            ((youngs_modulus_j * (1.0 - poisson_ratio_i * poisson_ratio_i)) +
+             (youngs_modulus_i * (1.0 - poisson_ratio_j * poisson_ratio_j)) +
              DBL_MIN);
 
           this->effective_shear_modulus[i].insert(
             {j,
              (youngs_modulus_i * youngs_modulus_j) /
-               (2 * ((youngs_modulus_j * (2 - poisson_ratio_i) *
-                      (1 + poisson_ratio_i)) +
-                     (youngs_modulus_i * (2 - poisson_ratio_j) *
-                      (1 + poisson_ratio_j))) +
+               (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
+                        (1.0 + poisson_ratio_i)) +
+                       (youngs_modulus_i * (2.0 - poisson_ratio_j) *
+                        (1.0 + poisson_ratio_j))) +
                 DBL_MIN)});
 
           this->effective_coefficient_of_restitution[i].insert(
@@ -167,7 +167,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0)
+              if (normal_overlap > 0.0)
                 // This means that the adjacent particles are in contact
                 {
                   // Since the normal overlap is already calculated we update
@@ -234,7 +234,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0.0;
                     }
                 }
             }
@@ -284,7 +284,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0)
+              if (normal_overlap > 0.0)
                 {
                   // This means that the adjacent particles are in contact
 
@@ -342,7 +342,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0.0;
                     }
                 }
             }
@@ -387,14 +387,14 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
     }
 
   auto particle_one_properties = particle_one.get_properties();
-  particle_one_properties[DEM::PropertiesIndex::mass] = particle_one_mass;
-  particle_one_properties[DEM::PropertiesIndex::type] = 0;
-  particle_one_properties[DEM::PropertiesIndex::dp]   = 2 * particle_one_radius;
+  particle_one_properties[PropertiesIndex::mass] = particle_one_mass;
+  particle_one_properties[PropertiesIndex::type] = 0;
+  particle_one_properties[PropertiesIndex::dp]   = 2.0 * particle_one_radius;
 
   auto particle_two_properties = particle_one.get_properties();
-  particle_two_properties[DEM::PropertiesIndex::mass] = particle_two_mass;
-  particle_two_properties[DEM::PropertiesIndex::type] = 0;
-  particle_two_properties[DEM::PropertiesIndex::dp]   = 2 * particle_two_radius;
+  particle_two_properties[PropertiesIndex::mass] = particle_two_mass;
+  particle_two_properties[PropertiesIndex::type] = 0;
+  particle_two_properties[PropertiesIndex::dp]   = 2.0 * particle_two_radius;
 
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and
@@ -403,24 +403,24 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
   // these pair-wise properties by using the ID of IB particles (using
   // DEM::PropertiesIndex::type) and use them in force calculations.
   const unsigned int particle_one_type =
-    particle_one_properties[DEM::PropertiesIndex::type];
+    particle_one_properties[PropertiesIndex::type];
   const unsigned int particle_two_type =
-    particle_two_properties[DEM::PropertiesIndex::type];
+    particle_two_properties[PropertiesIndex::type];
 
   this->effective_youngs_modulus[particle_one_type][particle_two_type] =
     (particle_one.youngs_modulus * particle_two.youngs_modulus) /
     ((particle_two.youngs_modulus *
-      (1 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
+      (1.0 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
      (particle_one.youngs_modulus *
-      (1 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
+      (1.0 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
      DBL_MIN);
 
   this->effective_shear_modulus[particle_one_type][particle_two_type] =
     (particle_one.youngs_modulus * particle_two.youngs_modulus) /
-    (2 * ((particle_two.youngs_modulus * (2 - particle_one.poisson_ratio) *
-           (1 + particle_one.poisson_ratio)) +
-          (particle_one.youngs_modulus * (2 - particle_two.poisson_ratio) *
-           (1 + particle_two.poisson_ratio))) +
+    (2.0 * ((particle_two.youngs_modulus * (2.0 - particle_one.poisson_ratio) *
+             (1.0 + particle_one.poisson_ratio)) +
+            (particle_one.youngs_modulus * (2.0 - particle_two.poisson_ratio) *
+             (1.0 + particle_two.poisson_ratio))) +
      DBL_MIN);
 
   this->effective_coefficient_of_restitution[particle_one_type]
@@ -494,17 +494,17 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                                        particle_two_properties);
 
   const unsigned int particle_one_type =
-    particle_one_properties[DEM::PropertiesIndex::type];
+    particle_one_properties[PropertiesIndex::type];
   const unsigned int particle_two_type =
-    particle_two_properties[DEM::PropertiesIndex::type];
+    particle_two_properties[PropertiesIndex::type];
 
   const double radius_times_overlap_sqrt =
     sqrt(this->effective_radius * normal_overlap);
   const double model_parameter_sn =
-    2 * this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+    2.0 * this->effective_youngs_modulus[particle_one_type][particle_two_type] *
     radius_times_overlap_sqrt;
   double model_parameter_st =
-    8 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
+    8.0 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
     radius_times_overlap_sqrt;
 
   // Calculation of normal and tangential spring and dashpot constants
@@ -514,7 +514,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
     -1.8257 * model_parameter_beta[particle_one_type][particle_two_type] *
     sqrt(model_parameter_sn * this->effective_mass);
   double tangential_spring_constant =
-    8 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
+    8.0 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
       radius_times_overlap_sqrt +
     DBL_MIN;
   double tangential_damping_constant =
@@ -559,11 +559,12 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
   // Torque caused by tangential force (tangential_torque)
   particle_one_tangential_torque =
     cross_product_3d(normal_unit_vector,
-                     tangential_force * particle_one_properties[DEM::dp] * 0.5);
+                     tangential_force *
+                       particle_one_properties[PropertiesIndex::dp] * 0.5);
   particle_two_tangential_torque =
     particle_one_tangential_torque *
-    particle_two_properties[DEM::PropertiesIndex::dp] /
-    particle_one_properties[DEM::PropertiesIndex::dp];
+    particle_two_properties[PropertiesIndex::dp] /
+    particle_one_properties[PropertiesIndex::dp];
 
 
   // Rolling resistance torque
@@ -651,17 +652,17 @@ ParticleParticleHertzMindlinLimitForce<
 
           this->effective_youngs_modulus[i][j] =
             (youngs_modulus_i * youngs_modulus_j) /
-            ((youngs_modulus_j * (1 - poisson_ratio_i * poisson_ratio_i)) +
-             (youngs_modulus_i * (1 - poisson_ratio_j * poisson_ratio_j)) +
+            ((youngs_modulus_j * (1.0 - poisson_ratio_i * poisson_ratio_i)) +
+             (youngs_modulus_i * (1.0 - poisson_ratio_j * poisson_ratio_j)) +
              DBL_MIN);
 
           this->effective_shear_modulus[i].insert(
             {j,
              (youngs_modulus_i * youngs_modulus_j) /
-               (2 * ((youngs_modulus_j * (2 - poisson_ratio_i) *
-                      (1 + poisson_ratio_i)) +
-                     (youngs_modulus_i * (2 - poisson_ratio_j) *
-                      (1 + poisson_ratio_j))) +
+               (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
+                        (1.0 + poisson_ratio_i)) +
+                       (youngs_modulus_i * (2.0 - poisson_ratio_j) *
+                        (1.0 + poisson_ratio_j))) +
                 DBL_MIN)});
 
           this->effective_coefficient_of_restitution[i].insert(
@@ -765,7 +766,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0)
+              if (normal_overlap > 0.0)
                 // This means that the adjacent particles are in contact
                 {
                   // Since the normal overlap is already calculated we update
@@ -832,7 +833,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0.0;
                     }
                 }
             }
@@ -881,7 +882,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0)
+              if (normal_overlap > 0.0)
                 {
                   // This means that the adjacent particles are in contact
                   // Since the normal overlap is already calculated we update
@@ -938,7 +939,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0.0;
                     }
                 }
             }
@@ -983,14 +984,14 @@ ParticleParticleHertzMindlinLimitForce<dim>::
     }
 
   auto particle_one_properties = particle_one.get_properties();
-  particle_one_properties[DEM::PropertiesIndex::mass] = particle_one_mass;
-  particle_one_properties[DEM::PropertiesIndex::type] = 0;
-  particle_one_properties[DEM::PropertiesIndex::dp]   = 2 * particle_one_radius;
+  particle_one_properties[PropertiesIndex::mass] = particle_one_mass;
+  particle_one_properties[PropertiesIndex::type] = 0;
+  particle_one_properties[PropertiesIndex::dp]   = 2.0 * particle_one_radius;
 
   auto particle_two_properties = particle_one.get_properties();
-  particle_two_properties[DEM::PropertiesIndex::mass] = particle_two_mass;
-  particle_two_properties[DEM::PropertiesIndex::type] = 0;
-  particle_two_properties[DEM::PropertiesIndex::dp]   = 2 * particle_two_radius;
+  particle_two_properties[PropertiesIndex::mass] = particle_two_mass;
+  particle_two_properties[PropertiesIndex::type] = 0;
+  particle_two_properties[PropertiesIndex::dp]   = 2.0 * particle_two_radius;
 
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and
@@ -999,24 +1000,24 @@ ParticleParticleHertzMindlinLimitForce<dim>::
   // these pair-wise properties by using the ID of IB particles (using
   // DEM::PropertiesIndex::type) and use them in force calculations.
   const unsigned int particle_one_type =
-    particle_one_properties[DEM::PropertiesIndex::type];
+    particle_one_properties[PropertiesIndex::type];
   const unsigned int particle_two_type =
-    particle_two_properties[DEM::PropertiesIndex::type];
+    particle_two_properties[PropertiesIndex::type];
 
   this->effective_youngs_modulus[particle_one_type][particle_two_type] =
     (particle_one.youngs_modulus * particle_two.youngs_modulus) /
     ((particle_two.youngs_modulus *
-      (1 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
+      (1.0 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
      (particle_one.youngs_modulus *
-      (1 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
+      (1.0 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
      DBL_MIN);
 
   this->effective_shear_modulus[particle_one_type][particle_two_type] =
     (particle_one.youngs_modulus * particle_two.youngs_modulus) /
-    (2 * ((particle_two.youngs_modulus * (2 - particle_one.poisson_ratio) *
-           (1 + particle_one.poisson_ratio)) +
-          (particle_one.youngs_modulus * (2 - particle_two.poisson_ratio) *
-           (1 + particle_two.poisson_ratio))) +
+    (2.0 * ((particle_two.youngs_modulus * (2.0 - particle_one.poisson_ratio) *
+             (1.0 + particle_one.poisson_ratio)) +
+            (particle_one.youngs_modulus * (2.0 - particle_two.poisson_ratio) *
+             (1.0 + particle_two.poisson_ratio))) +
      DBL_MIN);
 
   this->effective_coefficient_of_restitution[particle_one_type]
@@ -1089,17 +1090,17 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                                        particle_two_properties);
 
   const unsigned int particle_one_type =
-    particle_one_properties[DEM::PropertiesIndex::type];
+    particle_one_properties[PropertiesIndex::type];
   const unsigned int particle_two_type =
-    particle_two_properties[DEM::PropertiesIndex::type];
+    particle_two_properties[PropertiesIndex::type];
 
   const double radius_times_overlap_sqrt =
     sqrt(this->effective_radius * normal_overlap);
   const double model_parameter_sn =
-    2 * this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+    2.0 * this->effective_youngs_modulus[particle_one_type][particle_two_type] *
     radius_times_overlap_sqrt;
   double model_parameter_st =
-    8 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
+    8.0 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
     radius_times_overlap_sqrt;
 
   // Calculation of normal and tangential spring and dashpot constants
@@ -1109,7 +1110,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
     -1.8257 * model_parameter_beta[particle_one_type][particle_two_type] *
     sqrt(model_parameter_sn * this->effective_mass);
   double tangential_spring_constant =
-    8 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
+    8.0 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
       radius_times_overlap_sqrt +
     DBL_MIN;
   double tangential_damping_constant =
@@ -1147,12 +1148,13 @@ ParticleParticleHertzMindlinLimitForce<dim>::
   // Torque caused by tangential force (tangential_torque)
   particle_one_tangential_torque =
     cross_product_3d(normal_unit_vector,
-                     tangential_force * particle_one_properties[DEM::dp] * 0.5);
+                     tangential_force *
+                       particle_one_properties[PropertiesIndex::dp] * 0.5);
 
   particle_two_tangential_torque =
     particle_one_tangential_torque *
-    particle_two_properties[DEM::PropertiesIndex::dp] /
-    particle_one_properties[DEM::PropertiesIndex::dp];
+    particle_two_properties[PropertiesIndex::dp] /
+    particle_one_properties[PropertiesIndex::dp];
 
 
   // Rolling resistance torque
@@ -1238,17 +1240,17 @@ ParticleParticleHertz<dim>::ParticleParticleHertz(
 
           this->effective_youngs_modulus[i][j] =
             (youngs_modulus_i * youngs_modulus_j) /
-            ((youngs_modulus_j * (1 - poisson_ratio_i * poisson_ratio_i)) +
-             (youngs_modulus_i * (1 - poisson_ratio_j * poisson_ratio_j)) +
+            ((youngs_modulus_j * (1.0 - poisson_ratio_i * poisson_ratio_i)) +
+             (youngs_modulus_i * (1.0 - poisson_ratio_j * poisson_ratio_j)) +
              DBL_MIN);
 
           this->effective_shear_modulus[i].insert(
             {j,
              (youngs_modulus_i * youngs_modulus_j) /
-               (2 * ((youngs_modulus_j * (2 - poisson_ratio_i) *
-                      (1 + poisson_ratio_i)) +
-                     (youngs_modulus_i * (2 - poisson_ratio_j) *
-                      (1 + poisson_ratio_j))) +
+               (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
+                        (1.0 + poisson_ratio_i)) +
+                       (youngs_modulus_i * (2.0 - poisson_ratio_j) *
+                        (1.0 + poisson_ratio_j))) +
                 DBL_MIN)});
 
           this->effective_coefficient_of_restitution[i].insert(
@@ -1351,7 +1353,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0)
+              if (normal_overlap > 0.0)
                 // This means that the adjacent particles are in contact
                 {
                   // Since the normal overlap is already calculated we update
@@ -1417,7 +1419,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0.0;
                     }
                 }
             }
@@ -1466,7 +1468,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0)
+              if (normal_overlap > 0.0)
                 {
                   // This means that the adjacent particles are in contact
                   // Since the normal overlap is already calculated we update
@@ -1522,7 +1524,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info.tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0.0;
                     }
                 }
             }
@@ -1566,14 +1568,14 @@ ParticleParticleHertz<dim>::calculate_IB_particle_particle_contact_force(
     }
 
   auto particle_one_properties = particle_one.get_properties();
-  particle_one_properties[DEM::PropertiesIndex::mass] = particle_one_mass;
-  particle_one_properties[DEM::PropertiesIndex::type] = 0;
-  particle_one_properties[DEM::PropertiesIndex::dp]   = 2 * particle_one_radius;
+  particle_one_properties[PropertiesIndex::mass] = particle_one_mass;
+  particle_one_properties[PropertiesIndex::type] = 0;
+  particle_one_properties[PropertiesIndex::dp]   = 2.0 * particle_one_radius;
 
   auto particle_two_properties = particle_one.get_properties();
-  particle_two_properties[DEM::PropertiesIndex::mass] = particle_two_mass;
-  particle_two_properties[DEM::PropertiesIndex::type] = 0;
-  particle_two_properties[DEM::PropertiesIndex::dp]   = 2 * particle_two_radius;
+  particle_two_properties[PropertiesIndex::mass] = particle_two_mass;
+  particle_two_properties[PropertiesIndex::type] = 0;
+  particle_two_properties[PropertiesIndex::dp]   = 2.0 * particle_two_radius;
 
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and
@@ -1582,24 +1584,24 @@ ParticleParticleHertz<dim>::calculate_IB_particle_particle_contact_force(
   // these pair-wise properties by using the ID of IB particles (using
   // DEM::PropertiesIndex::type) and use them in force calculations.
   const unsigned int particle_one_type =
-    particle_one_properties[DEM::PropertiesIndex::type];
+    particle_one_properties[PropertiesIndex::type];
   const unsigned int particle_two_type =
-    particle_two_properties[DEM::PropertiesIndex::type];
+    particle_two_properties[PropertiesIndex::type];
 
   this->effective_youngs_modulus[particle_one_type][particle_two_type] =
     (particle_one.youngs_modulus * particle_two.youngs_modulus) /
     ((particle_two.youngs_modulus *
-      (1 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
+      (1.0 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
      (particle_one.youngs_modulus *
-      (1 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
+      (1.0 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
      DBL_MIN);
 
   this->effective_shear_modulus[particle_one_type][particle_two_type] =
     (particle_one.youngs_modulus * particle_two.youngs_modulus) /
-    (2 * ((particle_two.youngs_modulus * (2 - particle_one.poisson_ratio) *
-           (1 + particle_one.poisson_ratio)) +
-          (particle_one.youngs_modulus * (2 - particle_two.poisson_ratio) *
-           (1 + particle_two.poisson_ratio))) +
+    (2.0 * ((particle_two.youngs_modulus * (2.0 - particle_one.poisson_ratio) *
+             (1.0 + particle_one.poisson_ratio)) +
+            (particle_one.youngs_modulus * (2.0 - particle_two.poisson_ratio) *
+             (1.0 + particle_two.poisson_ratio))) +
      DBL_MIN);
 
   this->effective_coefficient_of_restitution[particle_one_type]
@@ -1671,9 +1673,9 @@ ParticleParticleHertz<dim>::calculate_hertz_contact(
                                        particle_two_properties);
 
   const unsigned int particle_one_type =
-    particle_one_properties[DEM::PropertiesIndex::type];
+    particle_one_properties[PropertiesIndex::type];
   const unsigned int particle_two_type =
-    particle_two_properties[DEM::PropertiesIndex::type];
+    particle_two_properties[PropertiesIndex::type];
 
   const double radius_times_overlap_sqrt =
     sqrt(this->effective_radius * normal_overlap);
@@ -1688,7 +1690,7 @@ ParticleParticleHertz<dim>::calculate_hertz_contact(
     -1.8257 * model_parameter_beta[particle_one_type][particle_two_type] *
     sqrt(model_parameter_sn * this->effective_mass);
   double tangential_spring_constant =
-    8 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
+    8.0 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
       radius_times_overlap_sqrt +
     DBL_MIN;
 
@@ -1724,12 +1726,13 @@ ParticleParticleHertz<dim>::calculate_hertz_contact(
   // Torque caused by tangential force (tangential_torque)
   particle_one_tangential_torque =
     cross_product_3d(normal_unit_vector,
-                     tangential_force * particle_one_properties[DEM::dp] * 0.5);
+                     tangential_force *
+                       particle_one_properties[PropertiesIndex::dp] * 0.5);
 
   particle_two_tangential_torque =
     particle_one_tangential_torque *
-    particle_two_properties[DEM::PropertiesIndex::dp] /
-    particle_one_properties[DEM::PropertiesIndex::dp];
+    particle_two_properties[PropertiesIndex::dp] /
+    particle_one_properties[PropertiesIndex::dp];
 
 
   // Rolling resistance torque
