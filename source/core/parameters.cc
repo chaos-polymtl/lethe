@@ -1797,7 +1797,7 @@ namespace Parameters
       "The parameters for a death star are, in order: sphere radius,"
       "smaller sphere radius, distance between centers.");
     prm.declare_entry("shape arguments",
-                      "0",
+                      "1",
                       Patterns::List(Patterns::Double()),
                       "Arguments defining the geometry");
 

@@ -22,7 +22,7 @@ end
 subsection initial conditions
     set type = nodal
     subsection uvwp
-            set Function expression = 0; 0; 0
+            set Function expression = 0; 0; 0; 0
     end
 end
 #---------------------------------------------------
@@ -39,8 +39,8 @@ end
 subsection mesh
     set type                 = dealii
     set grid type            = subdivided_hyper_rectangle
-    set grid arguments       = 1,1: -4,-4 : 4,4  : true
-    set initial refinement   = 5
+    set grid arguments       = 1,1,1: -4,-4,-4 : 4,4,4  : true
+    set initial refinement   = 3
 end
 # --------------------------------------------------
 # Boundary Conditions
@@ -74,35 +74,31 @@ end
 # IB particules
 #---------------------------------------------------
 subsection particles
-	set number of particles = 3
+	set number of particles = 2
 	set stencil order = 2
 	set refine mesh inside radius factor = 0.7
 	set refine mesh outside radius factor = 1.5
-	set initial refinement = 2
+	set initial refinement = 1
 	set integrate motion = false
 	set assemble Navier-Stokes inside particles = false
 	subsection particle info 0
-		set type = rectangle
-		set shape arguments = 1,0.5
+		set type = cut hollow sphere
+		set shape arguments = 1.5,0.8,0.35
 		subsection position
-		    set Function expression =0.01;0.01
+		    set Function expression =0.01;-2.01;-0.01
+		end
+		subsection orientation
+		    set Function expression = 1;1;1
 		end
 	end
 	subsection particle info 1
-		set type = ellipsoid
-		set shape arguments = 0.75,0.25
+		set type = torus
+		set shape arguments = 1.5,0.5
 		subsection position
-		    set Function expression =0.01;2.01
+		    set Function expression =0.01;2.01;0.01
 		end
 		subsection orientation
-		    set Function expression =0;0;2
-		end
-	end
-	subsection particle info 2
-		set type = sphere
-		set shape arguments = 0.75
-		subsection position
-		    set Function expression =0.01;-2.01
+		    set Function expression = -1;-1;-1
 		end
 	end
 end
@@ -120,7 +116,7 @@ subsection mesh adaptation
   set variable                = pressure
   set fraction type           = number
   set max number elements     = 200000
-  set max refinement level    = 10
+  set max refinement level    = 7
   set min refinement level    = 4
   set frequency               = 1
   set fraction refinement     = 0.3
