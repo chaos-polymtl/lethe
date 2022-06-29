@@ -256,32 +256,32 @@ IB particles
 ~~~~~~~~~~~~~~
 .. code-block:: text
 
-	subsection particles
-		set number of particles = 1
-		set stencil order =3
-		set refine mesh inside radius factor = 0.8
-		set refine mesh outside radius factor = 1.3
-		set initial refinement = 6
-		set integrate motion = true
-		set assemble Navier-Stokes inside particles = false
-		set length ratio = 2
-		set particle nonlinear tolerance=1e-5
-		set alpha =1
-		subsection gravity
-		    	set Function expression =0;-981;0
-		end
-		subsection particle info 0 
-			subsection position
-			    set Function expression =5;12.75;5
-			end
-			subsection velocity
-			    set Function expression =0;0;0
-			end
-			set radius = 0.75
-			set density= 0.001120
-	    	end
-
-	end
+    subsection particles
+        set number of particles = 1
+        set stencil order =3
+        set refine mesh inside radius factor = 0.8
+        set refine mesh outside radius factor = 1.3
+        set initial refinement = 6
+        set integrate motion = true
+        set assemble Navier-Stokes inside particles = false
+        set length ratio = 2
+        set particle nonlinear tolerance=1e-5
+        set alpha =1
+        subsection gravity
+            set Function expression =0;-981;0
+        end
+        subsection particle info 0
+            subsection position
+                set Function expression =5;12.75;5
+            end
+            subsection velocity
+                set Function expression =0;0;0
+            end
+            set type       = sphere
+            set shape arguments = 0.75
+            set density= 0.001120
+        end
+    end
 
 In this subsection, we define most of the parameters that are related to the particle.
 

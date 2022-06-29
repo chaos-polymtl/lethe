@@ -35,13 +35,13 @@ On Niagara, Beluga, Graham or Cedar
 
 All operations can be performed on login nodes.
 
-.. warning:: 
+.. warning::
  If on **Niagara**, this additional module is needed beforehand: ``module load CCEnv``.
 
 For any cluster except Narval (that is: Niagara, Beluga, Graham, Cedar), load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules:
 
 .. code-block:: text
-	
+
  module load nixpkgs/16.09
  module load gcc/7.3.0
  module load openmpi/3.1.2
@@ -67,9 +67,9 @@ and:
 
  make -j8 install
 
-The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 8 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. In addition, the ``nice`` command can be used at the beginning of the call to give a lower priority to this task. 
+The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 8 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. In addition, the ``nice`` command can be used at the beginning of the call to give a lower priority to this task.
 
-.. note:: 
+.. note::
  If ``make install`` triggers an error, run the command ``which trilinos``. If it returns ``/usr/bin/which: no trilinos in``, try removing the deal.II build folder, recreating it and explicitly specify libraries' paths on the ``cmake``.
 
 
@@ -103,12 +103,12 @@ This command is absolutely barbaric, but it is required to prevent the usage of 
 and:
 
 .. code-block:: text
- 
+
  make -j8 install
 
-The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 8 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. In addition, the ``nice`` command can be used at the beginning of the call to give a lower priority to this task. 
+The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 8 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. In addition, the ``nice`` command can be used at the beginning of the call to give a lower priority to this task.
 
-.. note:: 
+.. note::
  If ``make install`` triggers an error, run the command ``which trilinos``. If it returns ``/usr/bin/which: no trilinos in``, try removing the deal.II build folder, recreating it and explicitly specify libraries' paths on the ``cmake``.
 
 ================================
@@ -140,16 +140,16 @@ If numdiff is not installed, you will have an error at the cmake step of Lethe's
 2. Unzip it
 3. Copy it with ``scp -r`` to your Compute Canada account on the chosen cluster (see :ref:`copying-local-files` section)
 4. In the numdiff folder on the cluster, execute:
-   
+
    .. code-block:: text
-   
+
     ./configure
     make
 
 5. Add it to your path environment:
 
    .. code-block:: text
-   
+
      PATH=$PATH:$HOME/path/to/numdiff/folder
 
 
@@ -248,7 +248,7 @@ Console outputs are written in ``slurm-$jobID.out``. For instance, to display th
 
  tail -n 20 slurm-$jobID.out
 
-.. note:: 
+.. note::
  If you need to launch multiple simulations, such as with varying parameter, feel free to adapt one of the scripts provided on `lethe-utils <https://github.com/lethe-cfd/lethe-utils/tree/master/python/cluster>`_.
 
 
@@ -279,9 +279,9 @@ To upload this local key to your Compute Canada Database account (CCDB) use:
 
 .. warning::
  This command does not work on Niagara anymore. You may use the following:
- 
+
  .. code-block:: text
- 
+
   cat ~/.ssh/$KEY_ID.pub
 
  where ``$KEY_ID.pub`` is the public key file located in ``~/.ssh/``. For more information, see `SSH documentation <https://docs.scinet.utoronto.ca/index.php/SSH#SSH_Keys>`_.

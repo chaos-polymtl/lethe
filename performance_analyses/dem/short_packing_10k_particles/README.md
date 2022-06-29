@@ -1,0 +1,1 @@
+Simulation_time_evaluation tracks the changes in the performance of the dem_3d solver. The benchmark used for this evaluation test is  packing_10kparticles_dynamic.prm and packing_10kparticles_dynamic_load_balancing.prm

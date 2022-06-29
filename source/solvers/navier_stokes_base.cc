@@ -1096,7 +1096,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
 
-  // Calculte apparent viscosity
+  // Calculate apparent viscosity
   if (this->simulation_parameters.post_processing.calculate_apparent_viscosity)
     {
       TimerOutput::Scope t(this->computing_timer,
@@ -1557,7 +1557,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       data_out.add_data_vector(solution, non_newtonian_viscosity);
       data_out.add_data_vector(solution, shear_rate_processor);
     }
-
 
   output_field_hook(data_out);
 

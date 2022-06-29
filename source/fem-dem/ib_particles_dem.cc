@@ -642,6 +642,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       if (dim == 3)
         g[2] =
           this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
+      dem_particles[p_i].set_position(dem_particles[p_i].position);
+      dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
     }
 
 
@@ -793,6 +795,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
               dem_particles[p_i].omega =
                 last_omega[p_i] + k_omega[p_i][step] * local_dt;
+
+              dem_particles[p_i].set_position(dem_particles[p_i].position);
             }
         }
 
@@ -852,6 +856,9 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
              2 * k_omega_contact_impulsion[p_i][2] +
              k_omega_contact_impulsion[p_i][3]) /
             6;
+
+          dem_particles[p_i].set_position(dem_particles[p_i].position);
+          dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
         }
 
       t += dt_dem;

@@ -1,11 +1,12 @@
 #include <core/ib_particle.h>
+#include <core/shape.h>
 
 
 template <int dim>
 void
-IBParticle<dim>::initialise_all()
+IBParticle<dim>::initialize_all()
 {
-  // initialise all the variables associated to an immersed boundary particle.
+  // initialize all the variables associated to an immersed boundary particle.
   radius      = 1;
   particle_id = 0;
 
@@ -71,9 +72,9 @@ IBParticle<dim>::initialise_all()
 
 template <int dim>
 void
-IBParticle<dim>::initialise_end()
+IBParticle<dim>::initialize_previous_solution()
 {
-  // initialise all the variables associated to an immersed boundary particle
+  // initialize all the variables associated to an immersed boundary particle
   previous_fluid_forces = fluid_forces;
   velocity_iter         = velocity;
   impulsion_iter        = impulsion;
@@ -150,6 +151,64 @@ unsigned int
 IBParticle<dim>::get_number_properties()
 {
   return PropertiesIndex::n_properties;
+}
+
+template <int dim>
+double
+IBParticle<dim>::get_levelset(const Point<dim> &p)
+{
+  return shape->value(p);
+}
+
+template <int dim>
+void
+IBParticle<dim>::closest_surface_point(const Point<dim> &p,
+                                       Point<dim> &      closest_point)
+{
+  Tensor<1, dim> actual_gradient       = shape->gradient(p);
+  double         distance_from_surface = shape->value(p);
+  closest_point =
+    p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
+}
+
+template <int dim>
+bool
+IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
+                                 const double      outer_radius,
+                                 const double      inside_radius)
+{
+  const double radius = shape->effective_radius;
+
+  double distance              = shape->value(evaluation_point);
+  bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
+  bool   is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+
+  return is_inside_outer_ring && is_outside_inner_ring;
+}
+
+template <int dim>
+void
+IBParticle<dim>::set_position(const Point<dim> position)
+{
+  this->position = position;
+  this->shape->set_position(this->position);
+}
+
+template <int dim>
+void
+IBParticle<dim>::set_position(const double       position_component,
+                              const unsigned int component)
+{
+  this->position[component] = position_component;
+  this->shape->set_position(this->position);
+}
+
+template <int dim>
+void
+IBParticle<dim>::set_orientation(const Tensor<1, 3> orientation)
+{
+  this->orientation = orientation;
+  this->shape->set_orientation(this->orientation);
 }
 
 template class IBParticle<2>;

@@ -968,6 +968,20 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
 
+    /**
+     * @brief
+     * Sets up a shape in accordance with the given type and arguments
+     *
+     * @param i The particle id
+     * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
+     * rectangle, death star, cut hollow sphere, or torus
+     * @param shape_arguments The dimensions to be used for shape initialization
+     */
+    void
+    initialize_shape(const unsigned int        i,
+                     const std::string         type,
+                     const std::vector<double> shape_arguments);
+
     unsigned int                 nb;
     unsigned int                 order;
     unsigned int                 initial_refinement;
