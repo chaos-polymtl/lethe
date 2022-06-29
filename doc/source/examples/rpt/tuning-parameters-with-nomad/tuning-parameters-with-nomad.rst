@@ -51,7 +51,7 @@ As discussed in the previous example (`Photon Count Calculation in a Cylindrical
 where,
 
 - :math:`T` is the sampling time [:math:`s`];
-- :math:`\nu` is the number of :math:`\gamma`-rays emmited by each disintegration;
+- :math:`\nu` is the number of :math:`\gamma`-rays emitted by each disintegration;
 - :math:`R` is the activity of the tracer [:math:`Beq`] *(the first unknown parameter)*;
 - :math:`\phi` is the peak-to-total ratio;
 - :math:`\tau` is the dead time of the detector [:math:`s`] *(the second unknown parameter)*;
@@ -70,7 +70,7 @@ where
 - :math:`\alpha_j` and :math:`\theta_j` are randomly generated angles that describe the direction of a ray emitted by a tracer particle;
 - :math:`\omega(\alpha)` is the weighting factor associated with the angle :math:`\alpha`;
 - :math:`\omega(\theta)` is the weighting factor associated with the angle :math:`\theta`;
-- :math:`f_a(\alpha_j, \theta_j)` is the probability function of hte non-interaction between the :math:`\gamma`-rays emitted within :math:`\Omega` and the material inside the vessel;
+- :math:`f_a(\alpha_j, \theta_j)` is the probability function of the non-interaction between the :math:`\gamma`-rays emitted within :math:`\Omega` and the material inside the vessel;
 - :math:`\Omega` is the closed exposed area of the detector, and
 - :math:`f_d(\alpha_j, \theta_j)` is the probability function of the interaction of the :math:`\gamma`-rays with the detector.
 
@@ -209,7 +209,7 @@ Once you've completed the line mentioned above in the ``rpt_lethe_nomad.py`` scr
     /home/myUserName/PathToNomad param_nomad.txt
 
 
-NOMAD will then execute the Python script (``rpt_lethe_nomad.py``) which is specified in the "param_nomad.txt" file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe, and runs the rpt_3d application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates a new set of parameters until a terminating criterion is reached.
+NOMAD will then execute the Python script (``rpt_lethe_nomad.py``) which is specified in the ``param_nomad.txt`` file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe, and runs the rpt_3d application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates a new set of parameters until a terminating criterion is reached.
 
 :raw-html:`<br />`
 
