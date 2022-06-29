@@ -1,13 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/heat_transfer.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-#include <solvers/postprocessing_cfd.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -25,6 +15,15 @@
 
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/heat_transfer.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/postprocessing_cfd.h>
 
 template <int dim>
 void
@@ -169,13 +168,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         cell->index(),
         dof_handler_vof);
 
-      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
-      previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
-
       scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
-                              previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
@@ -301,14 +295,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
         cell->index(),
         dof_handler_vof);
 
-      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
-      previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
-
-
       scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
-                              previous_solutions,
                               std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
