@@ -4,7 +4,7 @@
 RPT parameters
 -------------------
 
-This subsection contains the general information required for the photon count calculation.
+This subsection contains the general information required for the photon count calculation using a Monte Carlo technic.
 
 .. code-block:: text
 
@@ -26,6 +26,7 @@ This subsection contains the general information required for the photon count c
         set attenuation coefficient detector  = 21.477
     end
 
+
 - ``particle positions file``: Filename of the file with a set of particle positions inside the reactor.
 - ``verbosity``: Enable with ``verbose`` to show photon counts numbers results in realtime in terminal
     Options: ``quiet`` *(by default)* or ``verbose``
@@ -44,7 +45,8 @@ This subsection contains the general information required for the photon count c
 
 :raw-html:`<br />`
 
-The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
+
+The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam et al. (1978) <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
 
 - ``peak-to-total ratio``: The proportion of the events appearing in the full energy peak to the total number of events []
     Options: Any positive float *(default value: 1)*
@@ -55,5 +57,9 @@ The following parameters are variables in the gamma-ray Monte-Carlo model from `
 - ``attenuation coefficient detector``: Total linear attenuation of light coefficient of the detector []
     Options: Any positive float *(default value: 1)*
 
+
 References
--------------------
+~~~~~~~~~~~
+
+[1] Beam, G.B., Wielopolski, L., Gardner,  R.P., & Verghese, K. (1978). Monte Carlo calculation of efficiencies of right-circular cylindrical NaI detectors for arbitrarily located point sources. *Nuclear Instruments and Methods*. 154(3), 501-508. https://doi.org/10.1016/0029-554X(78)90081-2
+

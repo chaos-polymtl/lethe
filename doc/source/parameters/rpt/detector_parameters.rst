@@ -29,13 +29,21 @@ This subsection contains the specific information of the detector. ``Detector po
 - ``length``: Length of detector(s) (all detectors must have the same dimensions)
     Options: Any positive float *(default value: 1)*
 
+
 :raw-html:`<br />`
 
-The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
+The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam et al. (1978) <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
 
 - ``activity``: Radioactive source activity of the tracer [Beq]
     Options: Any positive float *(default value: 1)*
 - ``dead time``: Dead time of the detector per accepted pulse [s]
     Options : Any positive float *(default value: 1)*
 - ``attenuation coefficient reactor``: Total linear attenuation of light coefficient of the medium and reactor wall []
+
     Options: Any positive float *(default value: 1)*
+
+References
+~~~~~~~~~~~
+
+[1] Beam, G.B., Wielopolski, L., Gardner,  R.P., & Verghese, K. (1978). Monte Carlo calculation of efficiencies of right-circular cylindrical NaI detectors for arbitrarily located point sources. *Nuclear Instruments and Methods*. 154(3), 501-508. https://doi.org/10.1016/0029-554X(78)90081-2
+

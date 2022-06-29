@@ -4,7 +4,7 @@
 Parameter tuning
 -------------------
 
-This subsection contains information regarding the tuning parameters with NOMAD. Enable tuning parameters requires the ``verbosity parameter`` in the subsection ``rpt parameters`` to be disabled by setting it as ``quiet`` otherwise it will interact with `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ since it needs the cost function value only. So far there are 3 types of cost functions implemented, one from the `Larachi <https://www.sciencedirect.com/science/article/abs/pii/0168900294913439?via%3Dihub>`_, the L1 function, and the L2 function. To tune parameters, the cost function compares the calculated counts with the Monte Carlo technique and the measured counts that are provided in the ``.experimental`` file.
+This subsection contains information regarding the tuning parameters with NOMAD. Enable tuning parameters requires the ``verbosity parameter`` in the subsection ``rpt parameters`` to be disabled by setting it as ``quiet`` otherwise it will interact with `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ since it needs the cost function value only. So far there are 3 types of cost functions implemented, one from `Larachi et al. (1994) <https://www.sciencedirect.com/science/article/abs/pii/0168900294913439?via%3Dihub>`_, the L1 function, and the L2 function. To tune parameters, the cost function compares the calculated counts with the Monte Carlo technique and the measured counts that are provided in the ``.experimental`` file.
 
 .. code-block:: text
 
@@ -19,7 +19,8 @@ This subsection contains information regarding the tuning parameters with NOMAD.
 
 
 
-- ``tuning``: Enable to tune parameters with NOMAD by showing the cost function in terminal
+
+- ``tuning``: Enable to tune parameters with NOMAD by showing the cost function in the terminal
     Options: ``true`` or ``false`` *(by default)*
 - ``cost function type``: Type of cost function to evaluate
     Options: ``larachi`` *(by default)*, ``l1`` or ``l2``
@@ -42,3 +43,10 @@ This subsection contains information regarding the tuning parameters with NOMAD.
 - ``experimental data file``: Filename of the text file with experimental/artificial counts
     Options: Any text file with ``.experimental`` extension with the
     **required header**: :raw-html:`<br />` *experimental_counts*
+
+
+References
+~~~~~~~~~~~
+
+[1] Larachi, F., Kennedy, G., & Chaouki, J. (1994). A γ-ray detection system for 3-D particle tracking in multiphase reactors. *Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment*. 338(2), 568-576. https://doi.org/10.1016/0168-9002(94)91343-9
+
