@@ -743,11 +743,6 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
-      prm.declare_entry(
-        "decomposed viscous pressure contributions",
-        "false",
-        Patterns::Bool(),
-        "Output the viscous and pressure contributions to the total force");
     }
     prm.leave_subsection();
   }
@@ -769,8 +764,6 @@ namespace Parameters
       output_precision      = prm.get_integer("output precision");
       calculation_frequency = prm.get_integer("calculation frequency");
       output_frequency      = prm.get_integer("output frequency");
-      decomposed_viscous_pressure_contributions =
-        prm.get_bool("decomposed viscous pressure contributions");
     }
     prm.leave_subsection();
   }
