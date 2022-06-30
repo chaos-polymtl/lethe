@@ -64,7 +64,7 @@ HeatTransferScratchData<dim>::allocate()
   this->laplacian_phi_T =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
 
-  // Allocate memory for the physical properties
+  // Physical properties
   fields.insert(
     std::pair<field, std::vector<double>>(field::temperature, n_q_points));
   fields.insert(
@@ -88,24 +88,21 @@ HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
   fe_values_vof = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // VOF
+  // Allocate VOF values
   phase_values = std::vector<double>(this->n_q_points);
-  previous_vof_values =
-    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
-                                     std::vector<double>(this->n_q_points));
 
+  // Allocate physical properties
+  specific_heat_0                  = std::vector<double>(n_q_points);
+  density_0                        = std::vector<double>(n_q_points);
+  thermal_conductivity_0           = std::vector<double>(n_q_points);
+  viscosity_0                      = std::vector<double>(n_q_points);
+  grad_specific_heat_temperature_0 = std::vector<double>(n_q_points);
 
-  // Properties of fluid 0 (VOF)
-  specific_heat_0        = std::vector<double>(n_q_points);
-  density_0              = std::vector<double>(n_q_points);
-  thermal_conductivity_0 = std::vector<double>(n_q_points);
-  viscosity_0            = std::vector<double>(n_q_points);
-
-  // Properties of fluid 1 (VOF)
-  specific_heat_1        = std::vector<double>(n_q_points);
-  density_1              = std::vector<double>(n_q_points);
-  thermal_conductivity_1 = std::vector<double>(n_q_points);
-  viscosity_1            = std::vector<double>(n_q_points);
+  specific_heat_1                  = std::vector<double>(n_q_points);
+  density_1                        = std::vector<double>(n_q_points);
+  thermal_conductivity_1           = std::vector<double>(n_q_points);
+  viscosity_1                      = std::vector<double>(n_q_points);
+  grad_specific_heat_temperature_1 = std::vector<double>(n_q_points);
 }
 
 
@@ -175,6 +172,8 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
           thermal_conductivity_models[0]->vector_value(fields,
                                                        thermal_conductivity_0);
           rheology_models[0]->vector_value(fields, viscosity_0);
+          specific_heat_models[0]->vector_jacobian(
+            fields, field::temperature, grad_specific_heat_temperature_0);
 
 
           density_models[1]->vector_value(fields, density_1);
@@ -182,6 +181,8 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
           thermal_conductivity_models[1]->vector_value(fields,
                                                        thermal_conductivity_1);
           rheology_models[1]->vector_value(fields, viscosity_1);
+          specific_heat_models[1]->vector_jacobian(
+            fields, field::temperature, grad_specific_heat_temperature_1);
 
           // Blend the physical properties using the VOF field
           for (unsigned int q = 0; q < this->n_q_points; ++q)
@@ -203,6 +204,11 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
               viscosity[q] = calculate_point_property(this->phase_values[q],
                                                       this->viscosity_0[q],
                                                       this->viscosity_1[q]);
+
+              grad_specific_heat_temperature[q] = calculate_point_property(
+                this->phase_values[q],
+                this->grad_specific_heat_temperature_0[q],
+                this->grad_specific_heat_temperature_1[q]);
             }
           break;
         }

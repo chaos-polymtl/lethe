@@ -1,0 +1,59 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      0.2
+   Number of VOF degrees of freedom: 1089
+   Number of thermal degrees of freedom: 1089
+
+*****************************************************************
+Transient iteration : 1        Time : 0.2      Time step : 0.2      CFL : 0       
+*****************************************************************
+L2 error velocity : 0
+L2 error phase : 0.195496
+L2 error temperature : 0.413192
+
+*****************************************************************
+Transient iteration : 2        Time : 0.4      Time step : 0.2      CFL : 0       
+*****************************************************************
+L2 error velocity : 0
+L2 error phase : 0.195451
+L2 error temperature : 0.0934076
+
+*****************************************************************
+Transient iteration : 3        Time : 0.6      Time step : 0.2      CFL : 0       
+*****************************************************************
+L2 error velocity : 0
+L2 error phase : 0.195637
+L2 error temperature : 0.0223098
+
+*****************************************************************
+Transient iteration : 4        Time : 0.8      Time step : 0.2      CFL : 0       
+*****************************************************************
+L2 error velocity : 0
+L2 error phase : 0.195636
+L2 error temperature : 0.00467604
+
+*****************************************************************
+Transient iteration : 5        Time : 1        Time step : 0.2      CFL : 0       
+*****************************************************************
+L2 error velocity : 0
+L2 error phase : 0.195636
+L2 error temperature : 0.000923592
+ time  error_velocity error_pressure 
+0.2000 0.000000e+00   0.0000         
+0.4000 0.000000e+00   0.0000         
+0.6000 0.000000e+00   0.0000         
+0.8000 0.000000e+00   0.0000         
+1.0000 0.000000e+00   0.0000         
+ time  error_phase  
+0.2000 1.954964e-01 
+0.4000 1.954506e-01 
+0.6000 1.956370e-01 
+0.8000 1.956360e-01 
+1.0000 1.956358e-01 
+cells error_temperature 
+1024  4.131918e-01      
+1024  9.340759e-02      
+1024  2.230979e-02      
+1024  4.676035e-03      
+1024  9.235920e-04      
