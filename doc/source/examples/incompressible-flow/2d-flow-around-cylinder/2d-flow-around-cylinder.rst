@@ -226,7 +226,7 @@ Using Paraview the following steady-state velocity and pressure profiles can be 
 
 From the velocity distribution, we notice how the velocity of the fluid is 0 at the boundaries of the cylinder and how it increases gradually if we move further away from it. In the case of the pressure, the difference between the inlet and outlet is visible and we can see how the pressure is near to 0 close to the outlet.
 
-In addition to these profiles, we also obtain the values of the forces acting on the cylinder. These values can be found on the ``forces.00.dat`` file produced by the simulation and correspond to the forces acting on the ``bc 0`` (the cylinder):
+In addition to these profiles, we also obtain the values of the forces acting on the cylinder. These values can be found on the ``forces.00.dat`` file produced by the simulation and correspond to the forces acting on the ``bc 0`` (cylinder boundary). The force is decomposed in its two components which are the viscous force (``f_v``) due to shear stresses on the boundary, and a pressure force (``f_p``) due to the body shape.
 
 .. code-block:: text
 
