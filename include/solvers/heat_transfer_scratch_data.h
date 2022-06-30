@@ -349,32 +349,25 @@ public:
    * This cell must be compatible with the VOF FE and not the
    * Fluid Dynamics FE
    *
-   * @param current_solution The present value of the solution for [alpha]
+   * @param current_solution The present solution for the phase value
    *
-   * @param previous_solutions The solutions at the previous time steps for [alpha]
+   * @param solution_stages The solution at the intermediary stages
+   * (for SDIRK methods) for the phase value
    *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [alpha]
-   *
+   * NB: the previous_solutions are not used in heat_transfer_assemblers,
+   * contrary to navier_stokes_assemblers
    */
 
   template <typename VectorType>
   void
   reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
-             const VectorType &             current_solution,
-             const std::vector<VectorType> &previous_solutions,
+             const VectorType &current_solution,
              const std::vector<VectorType> & /*solution_stages*/)
   {
     this->fe_values_vof->reinit(cell);
     // Gather phase fraction (values, gradient)
     this->fe_values_vof->get_function_values(current_solution,
-                                             this->vof_values);
-
-    // Gather previous phase fraction values
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values_vof->get_function_values(previous_solutions[p],
-                                                 previous_vof_values[p]);
-      }
+                                             this->phase_values);
   }
 
 
@@ -405,11 +398,13 @@ public:
   std::vector<double> thermal_conductivity_0;
   std::vector<double> density_0;
   std::vector<double> viscosity_0;
+  std::vector<double> grad_specific_heat_temperature_0;
 
   std::vector<double> specific_heat_1;
   std::vector<double> thermal_conductivity_1;
   std::vector<double> density_1;
   std::vector<double> viscosity_1;
+  std::vector<double> grad_specific_heat_temperature_1;
 
 
   // FEValues for the HT problem
@@ -446,13 +441,11 @@ public:
   /**
    * Scratch component for the VOF auxiliary physics
    */
-  bool                             gather_vof;
-  unsigned int                     n_dofs_vof;
-  std::vector<double>              vof_values;
-  std::vector<std::vector<double>> previous_vof_values;
+  bool                gather_vof;
+  unsigned int        n_dofs_vof;
+  std::vector<double> phase_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_vof;
-  std::vector<double>            phase_values;
 
   /**
    * Scratch component for the Navier-Stokes component
