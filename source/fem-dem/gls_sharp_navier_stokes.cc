@@ -627,7 +627,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               if (this->simulation_parameters.fem_parameters
                                     .velocity_order > 1)
                                 {
-<<<<<<< HEAD
                                   FullMatrix<double> interpolation_matrix(
                                     local_face_dof_indices.size(),
                                     local_face_dof_indices.size());
@@ -640,36 +639,19 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   for (unsigned int i = 0;
                                        i < local_face_dof_indices.size();
                                        ++i)
-=======
-                                  Point<dim> point_projection;
-                                  particles[p].closest_surface_point(
-                                    support_points[local_face_dof_indices[i]],
-                                    point_projection);
-
-                                  auto projected_point_unit =
-                                    local_face_map.transform_real_to_unit_cell(
-                                      projection_cell_face, point_projection);
-                                  for (unsigned int j = 0;
-                                       j < local_face_dof_indices.size();
-                                       ++j)
->>>>>>> master
                                     {
-                                      Point<dim> point_projection =
-                                        particles[p].position +
-                                        particles[p].radius *
-                                          (support_points
-                                             [local_face_dof_indices[i]] -
-                                           particles[p].position) /
-                                          (support_points
-                                             [local_face_dof_indices[i]] -
-                                           particles[p].position)
-                                            .norm();
+                                      Point<dim> point_projection;
+                                      particles[p].closest_surface_point(
+                                        support_points
+                                          [local_face_dof_indices[i]],
+                                        point_projection);
 
                                       auto projected_point_unit =
                                         local_face_map
                                           .transform_real_to_unit_cell(
                                             projection_cell_face,
                                             point_projection);
+
                                       for (unsigned int j = 0;
                                            j < local_face_dof_indices.size();
                                            ++j)
@@ -1796,6 +1778,8 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       table_all_p.add_value("f_x", particles[p].fluid_forces[0]);
       table_p[p].set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_x", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_x", particles[p].velocity[0]);
@@ -1821,6 +1805,8 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       table_p[p].set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
       table_all_p.add_value("f_y", particles[p].fluid_forces[1]);
+      table_all_p.set_precision(
+        "f_y", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_y", particles[p].velocity[1]);
@@ -1873,30 +1859,50 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
         }
 
       table_p[p].add_value("f_xv", particles[p].fluid_viscous_forces[0]);
+      table_all_p.add_value("f_xv", particles[p].fluid_viscous_forces[0]);
       table_p[p].add_value("f_yv", particles[p].fluid_viscous_forces[1]);
+      table_all_p.add_value("f_yv", particles[p].fluid_viscous_forces[1]);
 
       table_p[p].set_precision(
         "f_xv", this->simulation_parameters.simulation_control.log_precision);
       table_p[p].set_precision(
         "f_yv", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_xv", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_yv", this->simulation_parameters.simulation_control.log_precision);
       if (dim == 3)
         {
           table_p[p].add_value("f_zv", particles[p].fluid_viscous_forces[2]);
+          table_all_p.add_value("f_zv", particles[p].fluid_viscous_forces[2]);
           table_p[p].set_precision(
+            "f_zv",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
             "f_zv",
             this->simulation_parameters.simulation_control.log_precision);
         }
 
       table_p[p].add_value("f_xp", particles[p].fluid_pressure_forces[0]);
+      table_all_p.add_value("f_xp", particles[p].fluid_pressure_forces[0]);
       table_p[p].add_value("f_yp", particles[p].fluid_pressure_forces[1]);
+      table_all_p.add_value("f_yp", particles[p].fluid_pressure_forces[1]);
       table_p[p].set_precision(
         "f_xp", this->simulation_parameters.simulation_control.log_precision);
       table_p[p].set_precision(
         "f_yp", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_xp", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_yp", this->simulation_parameters.simulation_control.log_precision);
       if (dim == 3)
         {
           table_p[p].add_value("f_zp", particles[p].fluid_pressure_forces[2]);
+          table_all_p.add_value("f_zp", particles[p].fluid_pressure_forces[2]);
           table_p[p].set_precision(
+            "f_zp",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
             "f_zp",
             this->simulation_parameters.simulation_control.log_precision);
         }

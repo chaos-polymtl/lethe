@@ -23,14 +23,7 @@ L2 error velocity : 0.0350449 L2 error pressure: 0.17405
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-<<<<<<< HEAD
-particle_ID    T_x      T_y       T_z      f_x      f_y      f_z      f_xv     f_yv     f_zv     f_xp     f_yp      f_zp    
-          0 -0.000447 0.010102 -0.004818 8.205281 0.011243 0.009363 5.332892 0.017306 0.015426 2.872388 -0.006063 -0.006063 
+particle_ID  time     T_x      T_y       T_z      f_x      f_y      f_z      f_xv     f_yv     f_zv     f_xp     f_yp      f_zp    
+          0 1.0000 -0.000447 0.010102 -0.004818 8.205281 0.011243 0.009363 5.332892 0.017306 0.015426 2.872388 -0.006063 -0.006063 
 cells error_velocity error_pressure 
  6096 3.504495e-02 - 1.740502e-01 - 
-=======
-particle_ID  time     T_x      T_y       T_z      f_x      f_y      f_z
-          0 1.0000 -0.000447 0.010102 -0.004818 8.205281 0.011243 0.009363
-cells error_velocity error_pressure
- 6096 3.504495e-02 - 1.740502e-01 -
->>>>>>> master
