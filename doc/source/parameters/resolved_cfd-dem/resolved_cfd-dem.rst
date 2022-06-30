@@ -154,6 +154,9 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``load particles from file`` boolean defines whether the particles are generated from an external file instead of the prm file. If this parameter is activated, the number of particles is defined directly from the file, that is, the particle's subsection and the number of particles are ignored.
 
+.. warning::
+    Currently this feature works only for spherical particles.
+
 * The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z radius density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
