@@ -146,6 +146,72 @@ IBParticle<dim>::get_properties()
   return properties;
 }
 
+
+template <int dim>
+void
+IBParticle<dim>::initialize_shape(const std::string         type,
+                                   const std::vector<double> shape_arguments)
+{
+  if (type == "sphere")
+    shape =
+      std::make_shared<Sphere<dim>>(shape_arguments[0],
+                                    position,
+                                    orientation);
+  else if (type == "rectangle")
+    {
+      Tensor<1, dim> half_lengths;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          half_lengths[i] = shape_arguments[i];
+        }
+      shape =
+        std::make_shared<Rectangle<dim>>(half_lengths,
+                                         position,
+                                         orientation);
+    }
+  else if (type == "ellipsoid")
+    {
+      Tensor<1, dim> radii;
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          radii[i] = shape_arguments[i];
+        }
+      shape =
+        std::make_shared<Ellipsoid<dim>>(radii,
+                                         position,
+                                         orientation);
+    }
+  else if (type == "torus")
+    shape =
+      std::make_shared<Torus<dim>>(shape_arguments[0],
+                                   shape_arguments[1],
+                                   position,
+                                   orientation);
+  else if (type == "cone")
+    shape =
+      std::make_shared<Cone<dim>>(shape_arguments[0],
+                                  shape_arguments[1],
+                                  position,
+                                  orientation);
+  else if (type == "cut hollow sphere")
+    shape =
+      std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
+                                             shape_arguments[1],
+                                             shape_arguments[2],
+                                             position,
+                                             orientation);
+  else if (type == "death star")
+    shape =
+      std::make_shared<DeathStar<dim>>(shape_arguments[0],
+                                       shape_arguments[1],
+                                       shape_arguments[2],
+                                       position,
+                                       orientation);
+  else
+    StandardExceptions::ExcNotImplemented();
+}
+
+
 template <int dim>
 unsigned int
 IBParticle<dim>::get_number_properties()

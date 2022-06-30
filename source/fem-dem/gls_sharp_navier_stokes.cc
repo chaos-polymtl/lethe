@@ -2939,12 +2939,20 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           particles[p_i].initialize_all();
+          particles[p_i].particle_id=p_i;
+          // When particles are defined by a file we impose the shape to be a sphere.
+
+
+
           particles[p_i].position[0] = restart_data["p_x"][p_i];
           particles[p_i].position[1] = restart_data["p_y"][p_i];
           particles[p_i].velocity[0] = restart_data["v_x"][p_i];
           particles[p_i].velocity[1] = restart_data["v_y"][p_i];
 
           particles[p_i].radius = restart_data["radius"][p_i];
+          std::vector<double> shape_argument(1);
+          shape_argument[0]=particles[p_i].radius;
+          particles[p_i].initialize_shape("sphere",shape_argument);
           particles[p_i].mass   = PI * particles[p_i].radius *
                                 particles[p_i].radius *
                                 restart_data["density"][p_i];
@@ -2973,6 +2981,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           particles[p_i].initialize_all();
+          particles[p_i].particle_id=p_i;
           particles[p_i].position[0] = restart_data["p_x"][p_i];
           particles[p_i].position[1] = restart_data["p_y"][p_i];
           particles[p_i].position[2] = restart_data["p_z"][p_i];
@@ -2981,6 +2990,12 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].velocity[2] = restart_data["v_z"][p_i];
 
           particles[p_i].radius = restart_data["radius"][p_i];
+          std::vector<double> shape_argument(1);
+          shape_argument[0]=particles[p_i].radius;
+
+
+          particles[p_i].initialize_shape("sphere",shape_argument);
+
           particles[p_i].mass   = 4.0 / 3.0 * PI * particles[p_i].radius *
                                 particles[p_i].radius * particles[p_i].radius *
                                 restart_data["density"][p_i];

@@ -139,6 +139,19 @@ public:
   set_position(const Point<dim> position);
 
   /**
+     * @brief
+     * Sets up a shape in accordance with the given type and arguments
+     *
+     * @param i The particle id
+     * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
+     * rectangle, death star, cut hollow sphere, or torus
+     * @param shape_arguments The dimensions to be used for shape initialization
+   */
+  void
+  initialize_shape(const std::string         type,
+                   const std::vector<double> shape_arguments);
+
+  /**
    * @brief
    * Sets the position of the particle and dependent members to the argument for
    * one component
