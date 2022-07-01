@@ -3001,13 +3001,13 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
         {
           particles[p_i].initialize_all();
 
-          if (restart_data["type"][p_i] == 0)
+          if (restart_data["type"][p_i] == Shape<dim>::ShapeType::sphere)
             {
               std::vector<double> shape_argument(1);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
               particles[p_i].initialize_shape("sphere", shape_argument);
             }
-          else if (restart_data["type"][p_i] == 1)
+          else if (restart_data["type"][p_i] == Shape<dim>::ShapeType::rectangle)
             {
               std::vector<double> shape_argument(3);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
@@ -3015,7 +3015,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
               shape_argument[2] = restart_data["shape_argument_2"][p_i];
               particles[p_i].initialize_shape("rectangle", shape_argument);
             }
-          else if (restart_data["type"][p_i] == 2)
+          else if (restart_data["type"][p_i] == Shape<dim>::ShapeType::ellipsoid)
             {
               std::vector<double> shape_argument(3);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
@@ -3023,21 +3023,21 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
               shape_argument[2] = restart_data["shape_argument_2"][p_i];
               particles[p_i].initialize_shape("ellipsoid", shape_argument);
             }
-          else if (restart_data["type"][p_i] == 3)
+          else if (restart_data["type"][p_i] == Shape<dim>::ShapeType::torus)
             {
               std::vector<double> shape_argument(2);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
               shape_argument[1] = restart_data["shape_argument_1"][p_i];
               particles[p_i].initialize_shape("torus", shape_argument);
             }
-          else if (restart_data["type"][p_i] == 4)
+          else if (restart_data["type"][p_i] == Shape<dim>::ShapeType::cone)
             {
               std::vector<double> shape_argument(3);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
               shape_argument[1] = restart_data["shape_argument_1"][p_i];
               particles[p_i].initialize_shape("cone", shape_argument);
             }
-          else if (restart_data["type"][p_i] == 5)
+          else if (restart_data["type"][p_i] ==  Shape<dim>::ShapeType::cut_hollow_sphere)
             {
               std::vector<double> shape_argument(3);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
@@ -3046,7 +3046,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
               particles[p_i].initialize_shape("cut hollow sphere",
                                               shape_argument);
             }
-          else if (restart_data["type"][p_i] == 6)
+          else if (restart_data["type"][p_i] ==  Shape<dim>::ShapeType::death_star)
             {
               std::vector<double> shape_argument(3);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];

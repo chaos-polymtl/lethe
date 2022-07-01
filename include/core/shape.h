@@ -52,11 +52,31 @@ public:
   Shape(double              radius,
         const Point<dim> &  position,
         const Tensor<1, 3> &orientation)
+
     : AutoDerivativeFunction<dim>(1e-8)
     , effective_radius(radius)
     , position(position)
     , orientation(orientation)
   {}
+
+  /**
+   * @brief enum class that associate an integer index tp each type of shape
+   */
+  enum ShapeType : int
+  {
+    sphere           = 0,
+    rectangle           = 1,
+    ellipsoid           = 2,
+    torus           = 3,
+    cone           = 4,
+    cut_hollow_sphere           = 5,
+    death_star           = 6,
+    composite_shape =7,
+  }type;
+
+
+  virtual std::pair<std::string, int>
+  get_shape_name() = 0;
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -139,6 +159,7 @@ public:
   // Effective radius used for crown refinement
   double effective_radius;
 
+
 protected:
   // Position of the center of the Shape. It doesn't always correspond to the
   // center of mass
@@ -146,6 +167,8 @@ protected:
   // The solid orientation, which is defined as the sequential rotation around
   // the axes x->y->z by each of the tensor components, in radian
   Tensor<1, 3> orientation;
+
+
 };
 
 
@@ -185,10 +208,17 @@ public:
   double
   displaced_volume(const double fluid_density) override;
 
+
+  std::pair<std::string, int>
+  get_shape_name() override{
+    return std::make_pair("sphere", Shape<dim>::ShapeType::sphere);
+  };
+
   void
   set_position(const Point<dim> &position) override;
 
-private:
+
+    private:
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
 #else
   std::shared_ptr<Functions::SignedDistance::Sphere<dim>> sphere_function;
@@ -221,6 +251,11 @@ public:
   double
   displaced_volume(const double fluid_density) override;
 
+  std::pair<std::string, int>
+  get_shape_name() override{
+    return std::make_pair("rectangle", Shape<dim>::ShapeType::rectangle);
+  };
+
 private:
   Tensor<1, dim> half_lengths;
 };
@@ -250,6 +285,12 @@ public:
 
   double
   displaced_volume(const double fluid_density) override;
+
+  std::pair<std::string, int>
+  get_shape_name() override
+  {
+    return std::make_pair("ellipsoid", Shape<dim>::ShapeType::ellipsoid);
+  }
 
 private:
   Tensor<1, dim> radii;
@@ -283,6 +324,12 @@ public:
 
   double
   displaced_volume(const double fluid_density) override;
+
+  std::pair<std::string, int>
+  get_shape_name() override
+  {
+    return std::make_pair("torus", Shape<dim>::ShapeType::torus);
+  }
 
 private:
   double ring_radius;
@@ -319,6 +366,12 @@ public:
 
   double
   displaced_volume(const double fluid_density) override;
+
+  std::pair<std::string, int>
+  get_shape_name() override
+  {
+    return std::make_pair("cone", Shape<dim>::ShapeType::cone);
+  }
 
 private:
   double tan_base_angle;
@@ -360,6 +413,12 @@ public:
 
   double
   displaced_volume(const double fluid_density) override;
+
+  std::pair<std::string, int>
+  get_shape_name() override
+  {
+    return std::make_pair("cut_hollow_sphere", Shape<dim>::ShapeType::cut_hollow_sphere);
+  }
 
 private:
   double radius;
@@ -408,6 +467,12 @@ public:
   double
   displaced_volume(const double fluid_density) override;
 
+  std::pair<std::string, int>
+  get_shape_name() override
+  {
+    return std::make_pair("death_star", Shape<dim>::ShapeType::death_star);
+  }
+
 private:
   double radius;
   double hole_radius;
@@ -451,6 +516,12 @@ public:
 
   double
   displaced_volume(const double fluid_density) override;
+
+  std::pair<std::string, int>
+  get_shape_name() override
+  {
+    return std::make_pair("composite_shape", Shape<dim>::ShapeType::composite_shape);
+  }
 
 private:
   std::vector<std::shared_ptr<Shape<dim>>> components;
