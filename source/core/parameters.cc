@@ -1798,24 +1798,14 @@ namespace Parameters
       "smaller sphere radius, distance between centers.");
     prm.declare_entry("shape arguments",
                       "1",
-                      Patterns::List(Patterns::Double()),
+                      Patterns::Anything(),
                       "Arguments defining the geometry");
 
     prm.declare_entry(
-      "pressure x",
-      "0",
-      Patterns::Double(),
-      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in x ");
-    prm.declare_entry(
-      "pressure y",
-      "0",
-      Patterns::Double(),
-      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in y ");
-    prm.declare_entry(
-      "pressure z",
-      "0",
-      Patterns::Double(),
-      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in z ");
+      "pressure location",
+      "0; 0; 0",
+      Patterns::Anything(),
+      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle");
     prm.declare_entry("density",
                       "1",
                       Patterns::Double(),
@@ -2119,8 +2109,16 @@ namespace Parameters
           particles[i].inertia[0][0]        = prm.get_double("inertia");
           particles[i].inertia[1][1]        = prm.get_double("inertia");
           particles[i].inertia[2][2]        = prm.get_double("inertia");
-          particles[i].pressure_location[0] = prm.get_double("pressure x");
-          particles[i].pressure_location[1] = prm.get_double("pressure y");
+
+          std::string pressure_location_str = prm.get("pressure location");
+          std::vector<std::string> pressure_location_str_list(
+            Utilities::split_string_list(pressure_location_str, ";"));
+          std::vector<double> pressure_list =
+            Utilities::string_to_double(pressure_location_str_list);
+          particles[i].pressure_location[0] = pressure_list[0];
+          particles[i].pressure_location[1] = pressure_list[1];
+
+
           particles[i].youngs_modulus       = prm.get_double("youngs modulus");
           particles[i].restitution_coefficient =
             prm.get_double("restitution coefficient");
@@ -2136,13 +2134,13 @@ namespace Parameters
                 particles[i].f_position->value(particles[i].position, 2);
               particles[i].velocity[2] =
                 particles[i].f_velocity->value(particles[i].position, 2);
-              particles[i].pressure_location[2] = prm.get_double("pressure z");
+              particles[i].pressure_location[2] = pressure_list[2];
             }
 
           std::string shape_type          = prm.get("type");
           std::string shape_arguments_str = prm.get("shape arguments");
           std::vector<std::string> shape_arguments_str_list(
-            Utilities::split_string_list(shape_arguments_str));
+            Utilities::split_string_list(shape_arguments_str,";"));
           std::vector<double> shape_arguments =
             Utilities::string_to_double(shape_arguments_str_list);
           particles[i].initialize_shape(shape_type, shape_arguments);

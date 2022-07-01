@@ -83,14 +83,14 @@ subsection particles
 	set assemble Navier-Stokes inside particles = false
 	subsection particle info 0
 		set type = cone
-		set shape arguments = 1,1.5
+		set shape arguments = 1; 1.5
 		subsection position
 		    set Function expression =0.01;-2.01;0.01
 		end
 	end
 	subsection particle info 1
 		set type = death star
-		set shape arguments = 1.5,1.5,2
+		set shape arguments = 1.5; 1.5; 2
 		subsection position
 		    set Function expression =0.01;2.01;0.01
 		end

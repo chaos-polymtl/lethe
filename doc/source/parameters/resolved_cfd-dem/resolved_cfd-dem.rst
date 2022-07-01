@@ -54,11 +54,9 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
                 set Function expression =0;0;0
             end
             set inertia    = 1
-            set pressure x = 0
-            set pressure y = 0
-            set pressure z = 0
+            set pressure location = 0; 0; 0
             set type       = sphere
-            set shape arguments = 0
+            set shape arguments = 1; 0; 0
             set friction coefficient         = 0
             set poisson ratio                = 0.3
             set restitution coefficient      = 1
@@ -179,7 +177,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
 
-* The ``pressure x``, ``pressure y``, and ``pressure z`` parameters are used to define the X, Y, and Z coordinate offset of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to true to define the pressure reference point.
+* The ``pressure location`` parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to true to define the pressure reference point.
 
 * The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``.
 
