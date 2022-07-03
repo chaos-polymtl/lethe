@@ -10,9 +10,9 @@ Steady iteration :        1/1
 +------------------------------------------+
 |  Force  summary                          |
 +------------------------------------------+
-Boundary ID f_x f_y f_z 
-          0   4  -0  -0 
-          1 -15   0   0 
+Boundary ID f_x f_y f_z f_xv f_yv f_zv f_xp f_yp f_zp 
+          0   4  -0  -0    4    0    0    0   -0   -0 
+          1 -15   0   0   -0    0    0  -15   -0   -0 
 
 +------------------------------------------+
 |  Torque on solids summary                |

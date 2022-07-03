@@ -270,9 +270,7 @@ end
 #---------------------------------------------------
 subsection forces
 
-  set verbosity               = verbose
-
-
+  set verbosity  = verbose
 end
 
 # --------------------------------------------------
