@@ -255,10 +255,11 @@ We get the following torques and forces applied on the particle for each of the 
 
 .. code-block:: text
 
-    particle_ID    T_x       T_y       T_z      f_x      f_y       f_z    
-	0 	-0.000008  0.000019 -0.000021 0.411248 0.000019  0.000038 
-	0 	 0.000000  0.000001 -0.000003 0.415503 0.000001  0.000002 
-	0 	-0.000000 -0.000000 -0.000000 0.424717 0.000002 -0.000002 
+ particle_ID    T_x       T_y       T_z      f_x       f_y       f_z      f_xv     f_yv     f_zv     f_xp     f_yp      f_zp    
+ 	0   -0.000008  0.000019 -0.000022 0.412183  0.000019  0.000038 0.143783 0.000019 0.000038 0.268400 -0.000000  0.000000 
+ 	0    0.000001  0.000000 -0.000003 0.415760  0.000001  0.000000 0.162431 0.000001 0.000001 0.253330  0.000000 -0.000000 
+ 	0   -0.000000 -0.000000 -0.000000 0.424786 -0.000000 -0.000003 0.176203 0.000001 0.000000 0.248584 -0.000001 -0.000003 
+
           
 .. note:: 
 	Because this analysis concerns non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at :math:`Re = 50`, the drag force would be :math:`0.6165`. Therefore, the drag force was decreased using a shear-thinning fluid.
