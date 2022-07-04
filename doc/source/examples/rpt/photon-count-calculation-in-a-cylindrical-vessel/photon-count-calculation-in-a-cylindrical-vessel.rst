@@ -35,7 +35,7 @@ In this example, four different sets of particle positions are studied for a giv
 
 1. Horizontal translation of a particle along the x-axis
 2. Horizontal translation of a particle along the y-axis
-3. Vertical translation of a particle 
+3. Vertical translation of a particle along the z-axis
 4. Particle going across the vessel on a diagonal line
 
 
@@ -130,7 +130,7 @@ RPT Parameters
 ~~~~~~~~~~~~~~~
 
 
-In the subsection *"rpt parameters"*, we define the values of the set of parameters necessary for calculating the counts using the Monte Carlo method.  Among these parameters, we have the name of the file in which is found a set of different positions of the particle inside the vessel (``particle position file``), the number of Monte Carlo iterations (``monte carlo iteration``), the seed that is used to generate a random number (``random number seed``) and other parameters that describe the studied :math:`\gamma`-ray model. We also define the name of the file in which the counts for each position will be exported in with the parameter ``counts file``. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
+In the subsection *"rpt parameters"*, we define the values of the set of parameters necessary for calculating the counts using the Monte Carlo method.  Among these parameters, we have the name of the file which contains a set of different positions of the particle inside the vessel (``particle position file``), the number of Monte Carlo iterations (``monte carlo iteration``), the seed that is used to generate a random number (``random number seed``) and other parameters that describe the studied :math:`\gamma`-ray model. We also define the name of the file in which the counts for each position will be exported in with the parameter ``counts file``. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
 
 .. code-block:: text
 
@@ -208,7 +208,7 @@ To visualize the data and obtain the figures shown below, a python script (``rpt
 
 Scenario 1: Horizontal translation of a particle along the x-axis 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. image:: images/result_1.png
+.. image:: images/counts_along_x-axis.png
     :alt: Scenario 1 results
     :align: center
     :name: Results for the horizontal translation of a particle along the x-axis 
@@ -219,10 +219,10 @@ In the figure shown above, as one would expect, as the particle approaches the d
 Scenario 2: Horizontal translation of a particle along the y-axis 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. figure:: images/result_2a.png
-    :alt: Scenario 2 results when reactor attenuation coefficient is set at 10
+.. figure:: images/counts_along_y-axis_case1.png
+    :alt: Scenario 2 results when reactor attenuation coefficient is set at 10 and detector attenuation coefficient is set at 21.477
     :align: center
-    :name: Results of the 2nd scenario, case I
+    :name: Results of the horizontal translation of a particle along the y-axis (Case I)
 
     Case I: :math:`\mu_r = 10, \ \mu_d = 21.477`
 
@@ -238,7 +238,7 @@ Secondly, we can notice that the variation in photon count as the particle trave
 Lastly, as the particle travels across the vessel, we notice fluctuations in the photon count. Starting from the back of the vessel, the photon count decreases rapidly until a local minimal value at approximately :math:`y = -6` cm and then increases until a local maximum at :math:`y = 0` cm (center of the detector's face). Then, from the center to the front of the vessel, a mirrored image of the photon count's evolution can be seen. To understand the fluctuations, let's look at three other figures (Case II, Case III, and Case IV) while focusing on the first half of the studied domain (:math:`y \in ]-10, 0]` cm) since the evolution of the count is symmetrical from :math:`y = 0` cm.
 
 +---------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/result_2b.png                                                                       |  .. figure:: images/result_2c.png                                                                       |
+|  .. figure:: images/counts_along_y-axis_case2.png                                                       |   .. figure:: images/counts_along_y-axis_case3.png                                                      |
 |    :alt: Scenario 2 results when the efficiency of the detector is the product of the weighting factors |     :alt: Scenario 2 results when reactor attenuation coefficient is set at 0                           |
 |    :align: center                                                                                       |     :align: center                                                                                      |
 |    :name: Results of the 2nd scenario, case II                                                          |     :name: Results of the 2nd scenario, case III                                                        |
@@ -247,7 +247,7 @@ Lastly, as the particle travels across the vessel, we notice fluctuations in the
 |                                                                                                         |                                                                                                         |
 |    :raw-html:`<br />`                                                                                   |     :raw-html:`<br />`                                                                                  |
 +---------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/result_2d.png                                                                       | .. figure:: images/result_2_reactor_path_lengths.png                                                    |
+|  .. figure:: images/counts_along_y-axis_case4.png                                                       | .. figure:: images/reactor_path_lengths.png                                                             |
 |    :alt: Scenario 2 results when detector attenuation coefficient is set at 1e9                         |     :alt: Scenario 2 reactor path lengths                                                               |
 |    :align: center                                                                                       |     :align: center                                                                                      |
 |    :name: Results of the 2nd scenario, case IV                                                          |     :name: Results of the 2nd scenario, Reactor path lengths                                            |
@@ -266,12 +266,12 @@ The last case studied (Case IV) shows the evolution of the photon count when :ma
 Coming back to the Case I figure, we can see that photon count follows a pattern similar to the one seen in Case IV. We may interpret from it that :math:`f_d(\alpha, \theta)` varies very little as opposed to :math:`f_a(\alpha, \theta)` that fluctuates greatly. The local minimal values, in this case, are at :math:`y \approx -6` cm and :math:`y \approx 6` cm, as opposed to :math:`y \approx -4.6` cm and :math:`y \approx -4.6` cm for the fourth case. This is due to the change in the value of :math:`\mu_d`. :math:`f_d(\alpha,\theta)` function of :math:`y` increases at a slower rate, making the minimums further way from the center. To summarize, the fluctuations seen in the Case I figure is the result of the combined influence of the values of the attenuation coefficients, the variation of the path lengths of the photon in the vessel and the detector, and the evolution of the weighting factors.
 
 
-Scenario 3: Vertical translation of a particle 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. image:: images/result_3.png
+Scenario 3: Vertical translation of a particle along the z-axis
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: images/counts_along_z-axis.png
     :alt: Scenario 3 results
     :align: center
-    :name: Results of the 3rd scenario
+    :name: Results of the vertical translation of a particle along the z-axis
 	
 
 Similar to the first scenario, as the particle approaches the detector, we notice an increase in photon count. The photon count reaches its maximal value at around :math:`z = 7.1` cm, which is close to the center of the detector's face.
@@ -279,10 +279,10 @@ Similar to the first scenario, as the particle approaches the detector, we notic
 
 Scenario 4: Particle going across the vessel on a diagonal line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. image:: images/result_4.png
+.. image:: images/counts_across_vessel_on_a_diagonal_line.png
     :alt: Scenario 4 results
     :align: center
-    :name: Results of the 4th scenario
+    :name: Results of the particle going across the vessel on a diagonal line
 	
 
 After analyzing the past three scenarios, we get much-expected results for this scenario. As seen in the first scenario, the photon count varies greatly with the :math:`x` coordinate of the position vector of the particle. That is because the path of the photon inside the vessel gets longer when :math:`x` gets smaller. In other words, the ray is more attenuated by the material inside the vessel before getting to the detector, therefore the photon count gets smaller. Consequently, even though the particle is further away from the detector if the :math:`x` coordinate of the tracer's position is closer to the detector's exposed surface, the photon count could get greater and that's what we see on the figure above for high :math:`z` values.
@@ -293,20 +293,20 @@ Sensibility analysis of the Monte Carlo technic
 Looking back at the second scenario, we notice that the counts are quite scattered (Case A). By increasing the number of Monte Carlo iterations, we see can much smoother results as seen in the Case C figure below. Here we have increased the number of Monte Carlo iteration (:math:`N`) by a factor :math:`10`. When :math:`N` is increased, when calculating the efficiency using the Monte Carlo method, more "weight" is accorded to the most probable points, since the appear more often in the sum. This makes the least probable points negligible. Consequently, we obtain smoother results. On the Case B figure, :math:`N` was decreased by a factor :math:`10`. As expected, on this figure, we see much more scattering.
 
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/result_2a.png                                                                                                                             |
+|  .. figure:: images/counts_along_y-axis_case1.png                                                                                                             |
 |    :alt: Scenario 2 results when the efficiency of the detector is the product of the weighting factors                                                       |
 |    :align: center                                                                                                                                             |
-|    :name: Sensibility analysis case A                                                                                                                         |
+|    :name: Sensibility analysis when N = 100000 (Case A)                                                                                                       |
 |    :scale: 60%                                                                                                                                                |
 |                                                                                                                                                               |
 |    Case A: :math:`N = 1e5`                                                                                                                                    |
 |                                                                                                                                                               |
 |    :raw-html:`<br />`                                                                                                                                         |
 +-----------------------------------------------------------------------------+---------------------------------------------------------------------------------+
-|  .. figure:: images/sensibility_2b.png                                      | .. figure:: images/sensibility_2c.png                                           |
+|  .. figure:: images/sensibility_analysis_caseB.png                          | .. figure:: images/sensibility_analysis_caseC.png                               |
 |    :alt: Scenario 2 results when reactor N = 10000                          |     :alt: Scenario 2 results when N = 1000000                                   |
 |    :align: center                                                           |     :align: center                                                              |
-|    :name: Sensibility analysis case B                                       |     :name: Sensibility analysis case C                                          |
+|    :name: Sensibility analysis when N = 10000 (Case B)                      |     :name: Sensibility analysis when N = 1000000 (Case C)                       |
 |                                                                             |                                                                                 |
 |    Case B: :math:`N = 1e4`                                                  |     Case C: :math:`N = 1e6`                                                     |
 |                                                                             |                                                                                 |

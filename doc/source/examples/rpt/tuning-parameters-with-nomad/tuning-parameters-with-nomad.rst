@@ -39,7 +39,7 @@ Description of the case
 -------------------------
 In this example, using the NOMAD optimization software and the experimental data, we are going to tune the three unknowns (:math:`R, \tau`, and :math:`\mu_r`) of our studied system.
 
-The illustration below depicts the geometry of the vessel, the detector, and the path travelled by the particle in our system:
+The illustration below depicts the geometry of the vessel, the detector, and the path traveled by the particle in our system:
 
 .. image:: images/system_from_above.png
     :alt: The geometry
