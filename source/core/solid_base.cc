@@ -54,7 +54,7 @@
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
-  std::shared_ptr<Parameters::NitscheSolid<spacedim>> &             param,
+  std::shared_ptr<Parameters::NitscheSolid<spacedim>>              &param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
   std::shared_ptr<Mapping<spacedim>> fluid_mapping)
   : mpi_communicator(MPI_COMM_WORLD)
@@ -253,13 +253,17 @@ template <>
 void
 SolidBase<2, 3>::rotate_grid(double angle, int axis)
 {
-  GridTools::rotate(angle, axis, *solid_tria);
+  Tensor<1, 3> t_axis;
+  t_axis[axis] = 1;
+  GridTools::rotate(t_axis, angle, *solid_tria);
 }
 template <>
 void
 SolidBase<3, 3>::rotate_grid(double angle, int axis)
 {
-  GridTools::rotate(angle, axis, *solid_tria);
+  Tensor<1, 3> t_axis;
+  t_axis[axis] = 1;
+  GridTools::rotate(t_axis, angle, *solid_tria);
 }
 
 
