@@ -211,7 +211,7 @@ Scenario 1: Horizontal translation of a particle along the x-axis
 .. image:: images/result_1.png
     :alt: Scenario 1 results
     :align: center
-    :name: Results of the 1st scenario
+    :name: Results for the horizontal translation of a particle along the x-axis 
 
 
 In the figure shown above, as one would expect, as the particle approaches the detector, the photon count grows. Such evolution may be explained by the efficiency of the detector getting greater as the particle advances toward the detector's exposed surface. Since the photon's path length in the vessel decreases, :math:`f_a(\alpha, \theta)` increases, and therefore the efficiency gets greater.

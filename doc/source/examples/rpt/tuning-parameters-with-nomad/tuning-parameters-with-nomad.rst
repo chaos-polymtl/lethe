@@ -28,7 +28,7 @@ Locations of files used in the example
 - Parameter file: ``examples/rpt/parameters_tuning/rpt_parameters.prm``
 - Python script for NOMAD: ``examples/rpt/parameters_tuning/rpt_lethe_nomad.py``
 - Text file used when running NOMAD: ``examples/rpt/parameters_tuning/param_nomad.txt``
-- File containing particle positions: ``examples/rpt/parameters_tuning/real_positions.particle``
+- File containing particle positions: ``examples/rpt/parameters_tuning/positions.particle``
 - File containing experimental particle counts: ``examples/rpt/parameters_tuning/counts.experimental``
 - File containing detector positions: ``examples/rpt/parameters_tuning/positions.detector``
 
@@ -39,14 +39,14 @@ Description of the case
 -------------------------
 In this example, using the NOMAD optimization software and the experimental data, we are going to tune the three unknowns (:math:`R, \tau`, and :math:`\mu_r`) of our studied system.
 
-The illustration below depicts the geometry of the vessel, the detector, and tthe path traveled by the particle in our system:
+The illustration below depicts the geometry of the vessel, the detector, and the path travelled by the particle in our system:
 
 .. image:: images/system_from_above.png
     :alt: The geometry
     :align: center
     :name: geometry_description
 
-As discussed in the previous example (`Photon Count Calculation in a Cylindrical Vessel <../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html>`_), when a particle travels in the cylindrical reactor, its corresponding photon count (:math:`C`) measured by the detector varies according to the following relation:
+As discussed in the previous example (`Photon Count Calculation in a Cylindrical Vessel <../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html>`_), when a particle travels in a cylindrical reactor, its corresponding photon count (:math:`C`) measured by the detector varies according to the following relation:
 
 .. math::
     C = \frac{T \nu R \phi \xi_i (\vec{X})}{1 + \tau \nu R \phi \xi_i (\vec{X})}
@@ -70,7 +70,7 @@ The efficiency of the detector is calculated using the Monte Carlo technic, with
 
 where
 
-- :math:`N` is the number of randomly generated photons;
+- :math:`N` is the number of randomly sampled photon directions;
 - :math:`\alpha_j` and :math:`\theta_j` are randomly generated angles that describe the direction of a ray emitted by a tracer particle;
 - :math:`\omega(\alpha)` is the weighting factor associated with the angle :math:`\alpha`;
 - :math:`\omega(\theta)` is the weighting factor associated with the angle :math:`\theta`;
@@ -175,7 +175,7 @@ In the subsection *"detector parameters"*, we specify the file that contains the
 *param_nomad.txt* file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``param_nomad.txt`` file is used when running NOMAD. This file provides the parameters necessary when defining the optimization problem. These parameters are defined using specific keywords as explained in the `NOMAD User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/GettingStarted.html#provide-parameters>`_.
+The ``param_nomad.txt`` file is used when running NOMAD. This file provides initial guess and constraints when defining the optimization problem. These parameters are defined using specific keywords as explained in the `NOMAD User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/GettingStarted.html#provide-parameters>`_.
 
 .. code-block:: text
 
@@ -244,7 +244,7 @@ After running the optimization software, the best feasible solution will be disp
 .. tip::
     Changing the initial values of the optimization problem to ones that are closer to the solution seen above can reduce the computation time.
 
-We may now verify if these values correspond to the studied system. To do so, as it was done in the previous example, we calculate the counts for the set of particle positions that we have.
+We may now verify if these values correspond to the studied system. To do so, as it was done in the previous example, we calculate the counts for the set of particle positions that the corresponding experimental counts are known.
 
 Before executing the ``rpt_3d`` application we have to change a few parameters in the ``rpt_parameters.prm`` file.
 
