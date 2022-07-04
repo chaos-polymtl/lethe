@@ -255,7 +255,8 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
         }
 
       const double tau_ggls =
-        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / (rho_cp + DBL_MIN);
+        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. /
+        (rho_cp + DBL_MIN);
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -325,7 +326,8 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
       const double rho_cp = density[q] * specific_heat[q];
 
       const double tau_ggls =
-        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. / (rho_cp + DBL_MIN);
+        std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. /
+        (rho_cp + DBL_MIN);
 
 
       temperature[0]          = scratch_data.present_temperature_values[q];
