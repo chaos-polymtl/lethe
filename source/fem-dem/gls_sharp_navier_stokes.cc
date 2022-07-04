@@ -320,9 +320,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                                         1);
   for (unsigned int i = 0; i < dim + 1; ++i)
     velocity_gradients_component[i].resize(ib_coef.size());
-  Tensor<2, dim>              fluid_stress;
+  Tensor<2, dim>              fluid_viscous_stress;
   Tensor<2, dim>              fluid_pressure;
-  Tensor<2, dim>              fluid_stress_at_ib;
+  Tensor<2, dim>              fluid_viscous_stress_at_ib;
+  Tensor<2, dim>              fluid_pressure_stress_at_ib;
   Tensor<2, dim>              shear_rate;
   DoFHandler<dim - 1, dim>    local_face_dof_handler;
   Triangulation<dim - 1, dim> local_face_projection_triangulation;
@@ -344,7 +345,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   std::vector<Point<dim>> cell_interpolation_points(ib_coef.size());
   std::vector<double>     local_interp_sol(ib_coef.size());
 
-  std::map<unsigned int, std::pair<bool, Tensor<2, dim>>> force_eval_done;
+  std::map<unsigned int, std::pair<Tensor<2, dim>, Tensor<2, dim>>> force_eval;
 
   // Define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
@@ -352,8 +353,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // Clear particle force and torque
   for (unsigned int i = 0; i < particles.size(); ++i)
     {
-      particles[i].fluid_forces = 0;
-      particles[i].fluid_torque = 0;
+      particles[i].fluid_forces          = 0;
+      particles[i].fluid_viscous_forces  = 0;
+      particles[i].fluid_pressure_forces = 0;
+      particles[i].fluid_torque          = 0;
     }
 
   double       total_area    = 0;
@@ -439,7 +442,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // Defined the solution on  IB surface cell by using the
                       // IB stencil to extrapolate the fluid stress tensor.
 
-                      std::vector<Tensor<2, dim>> local_face_tensor(
+                      std::vector<Tensor<2, dim>>
+                                                  local_face_viscous_stress_tensor(dofs_per_face);
+                      std::vector<Tensor<2, dim>> local_face_pressure_tensor(
                         dofs_per_face);
                       for (unsigned int i = 0;
                            i < local_face_dof_indices.size();
@@ -450,8 +455,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // Check if that dof already have been used to
                           // extrapolate the fluid stress tensor on the IB
                           // surface.
-                          if (force_eval_done[local_face_dof_indices[i]]
-                                .first == false)
+                          if (force_eval.find(local_face_dof_indices[i]) ==
+                              force_eval.end())
                             {
                               if (component_i == 0)
                                 {
@@ -514,7 +519,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                             interpolation_points[j - 1]);
                                     }
 
-                                  fluid_stress_at_ib = 0;
+                                  fluid_viscous_stress_at_ib  = 0;
+                                  fluid_pressure_stress_at_ib = 0;
 
                                   // Create a quadrature that is based on the IB
                                   // stencil
@@ -564,39 +570,58 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       viscosity =
                                         rheological_model->value(field_values);
 
-                                      fluid_stress =
-                                        viscosity * shear_rate - fluid_pressure;
+                                      fluid_viscous_stress =
+                                        -viscosity * shear_rate;
 
-                                      fluid_stress_at_ib +=
-                                        fluid_stress * ib_coef[k];
+                                      fluid_viscous_stress_at_ib -=
+                                        fluid_viscous_stress * ib_coef[k];
+
+                                      fluid_pressure_stress_at_ib -=
+                                        fluid_pressure * ib_coef[k];
                                     }
                                   // Store the stress tensor that results from
                                   // the extrapolation in the local evaluation
                                   // vector of the IB surface cell and in a map
                                   // that is used if the same extrapolation is
                                   // needed in another face.
-                                  local_face_tensor[i] = fluid_stress_at_ib;
-                                  force_eval_done[local_face_dof_indices[i]] =
-                                    std::make_pair(true, fluid_stress_at_ib);
+                                  local_face_viscous_stress_tensor[i] =
+                                    fluid_viscous_stress_at_ib;
+                                  local_face_pressure_tensor[i] =
+                                    fluid_pressure_stress_at_ib;
+
+                                  force_eval[local_face_dof_indices[i]] =
+                                    std::make_pair(fluid_viscous_stress_at_ib,
+                                                   fluid_pressure_stress_at_ib);
                                 }
                             }
                           else
                             {
                               // Use the results from a previously evaluated
-                              // extrapolation. This step comes with an error du
-                              // to the curvature of the surface in Q2 and
+                              // extrapolation. This step comes with an error
+                              // due to the curvature of the surface in Q2 and
                               // higher order elements.
-                              local_face_tensor[i] =
-                                force_eval_done[local_face_dof_indices[i]]
-                                  .second;
+                              local_face_viscous_stress_tensor[i] =
+                                force_eval[local_face_dof_indices[i]].first;
+                              local_face_pressure_tensor[i] =
+                                force_eval[local_face_dof_indices[i]].second;
                             }
                         }
                       // Use the extrapolation of fluid stress tensor at the
                       // dof location of the IB surface cell to integrate the
                       // stress tensor on the surface of the IB
-                      auto local_face_tensor_old = local_face_tensor;
-                      local_face_tensor.clear();
-                      local_face_tensor.resize(local_face_dof_indices.size());
+                      auto local_face_viscous_stress_tensor_old =
+                        local_face_viscous_stress_tensor;
+                      auto local_face_pressure_tensor_old =
+                        local_face_pressure_tensor;
+
+                      local_face_viscous_stress_tensor.clear();
+                      local_face_pressure_tensor.clear();
+
+                      local_face_viscous_stress_tensor.resize(
+                        local_face_dof_indices.size());
+                      local_face_pressure_tensor.resize(
+                        local_face_dof_indices.size());
+
                       for (const auto &projection_cell_face :
                            local_face_dof_handler.active_cell_iterators())
                         {
@@ -604,68 +629,92 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             projection_cell_face);
                           std::vector<Point<dim>> q_points =
                             fe_face_projection_values.get_quadrature_points();
-                          if (this->simulation_parameters.fem_parameters
-                                .velocity_order > 1)
+                          try
                             {
-                              FullMatrix<double> interpolation_matrix(
-                                local_face_dof_indices.size(),
-                                local_face_dof_indices.size());
-                              FullMatrix<double> inv_interpolation_matrix(
-                                local_face_dof_indices.size(),
-                                local_face_dof_indices.size());
-
-                              // Define the interpolation matrix of the surface
-                              // cell
-                              for (unsigned int i = 0;
-                                   i < local_face_dof_indices.size();
-                                   ++i)
+                              if (this->simulation_parameters.fem_parameters
+                                    .velocity_order > 1)
                                 {
-                                  Point<dim> point_projection;
-                                  particles[p].closest_surface_point(
-                                    support_points[local_face_dof_indices[i]],
-                                    point_projection);
+                                  FullMatrix<double> interpolation_matrix(
+                                    local_face_dof_indices.size(),
+                                    local_face_dof_indices.size());
+                                  FullMatrix<double> inv_interpolation_matrix(
+                                    local_face_dof_indices.size(),
+                                    local_face_dof_indices.size());
 
-                                  auto projected_point_unit =
-                                    local_face_map.transform_real_to_unit_cell(
-                                      projection_cell_face, point_projection);
-                                  for (unsigned int j = 0;
-                                       j < local_face_dof_indices.size();
-                                       ++j)
+                                  // Define the interpolation matrix of the
+                                  // surface cell
+                                  for (unsigned int i = 0;
+                                       i < local_face_dof_indices.size();
+                                       ++i)
                                     {
-                                      interpolation_matrix[i][j] = 0;
-                                      if (this->fe
-                                            ->face_system_to_component_index(j)
-                                            .first ==
-                                          this->fe
-                                            ->face_system_to_component_index(i)
-                                            .first)
-                                        interpolation_matrix[i][j] +=
-                                          local_face_fe.shape_value(
-                                            j, projected_point_unit);
+                                      Point<dim> point_projection;
+                                      particles[p].closest_surface_point(
+                                        support_points
+                                          [local_face_dof_indices[i]],
+                                        point_projection);
+
+                                      auto projected_point_unit =
+                                        local_face_map
+                                          .transform_real_to_unit_cell(
+                                            projection_cell_face,
+                                            point_projection);
+
+                                      for (unsigned int j = 0;
+                                           j < local_face_dof_indices.size();
+                                           ++j)
+                                        {
+                                          interpolation_matrix[i][j] = 0;
+                                          if (
+                                            this->fe
+                                              ->face_system_to_component_index(
+                                                j)
+                                              .first ==
+                                            this->fe
+                                              ->face_system_to_component_index(
+                                                i)
+                                              .first)
+                                            interpolation_matrix[i][j] +=
+                                              local_face_fe.shape_value(
+                                                j, projected_point_unit);
+                                        }
+                                    }
+                                  inv_interpolation_matrix.invert(
+                                    interpolation_matrix);
+                                  // Define the value of the fluid stress tensor
+                                  // on the surface cell at the DOF support
+                                  // points location.
+                                  for (unsigned int i = 0;
+                                       i < local_face_dof_indices.size();
+                                       ++i)
+                                    {
+                                      for (unsigned int j = 0;
+                                           j < local_face_dof_indices.size();
+                                           ++j)
+                                        {
+                                          local_face_viscous_stress_tensor[i] +=
+                                            inv_interpolation_matrix[i][j] *
+                                            local_face_viscous_stress_tensor_old
+                                              [j];
+                                          local_face_pressure_tensor[i] +=
+                                            inv_interpolation_matrix[i][j] *
+                                            local_face_pressure_tensor_old[j];
+                                        }
                                     }
                                 }
-                              inv_interpolation_matrix.invert(
-                                interpolation_matrix);
-                              // Define the value of the fluid stress tensor on
-                              // the surface cell at the DOF support points
-                              // location.
-                              for (unsigned int i = 0;
-                                   i < local_face_dof_indices.size();
-                                   ++i)
+                              else
                                 {
-                                  for (unsigned int j = 0;
-                                       j < local_face_dof_indices.size();
-                                       ++j)
-                                    {
-                                      local_face_tensor[i] +=
-                                        inv_interpolation_matrix[i][j] *
-                                        local_face_tensor_old[j];
-                                    }
+                                  local_face_viscous_stress_tensor =
+                                    local_face_viscous_stress_tensor_old;
+                                  local_face_pressure_tensor =
+                                    local_face_pressure_tensor_old;
                                 }
                             }
-                          else
+                          catch (...)
                             {
-                              local_face_tensor = local_face_tensor_old;
+                              local_face_viscous_stress_tensor =
+                                local_face_viscous_stress_tensor_old;
+                              local_face_pressure_tensor =
+                                local_face_pressure_tensor_old;
                             }
                           for (unsigned int q = 0; q < n_q_points_face; q++)
                             {
@@ -676,7 +725,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               normal_vector =
                                 (q_points[q] - particles[p].position) /
                                 (q_points[q] - particles[p].position).norm();
-                              fluid_stress        = 0;
+
+                              fluid_viscous_stress = 0;
+                              fluid_pressure       = 0;
+
                               double local_weight = 0;
                               // Integrate
                               for (unsigned int i = 0;
@@ -688,10 +740,16 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       .first;
                                   if (component_i == 0)
                                     {
-                                      fluid_stress +=
+                                      fluid_viscous_stress +=
                                         fe_face_projection_values.shape_value(
                                           i, q) *
-                                        local_face_tensor[i];
+                                        local_face_viscous_stress_tensor[i];
+
+                                      fluid_pressure +=
+                                        fe_face_projection_values.shape_value(
+                                          i, q) *
+                                        local_face_pressure_tensor[i];
+
                                       total_area +=
                                         fe_face_projection_values.JxW(q) *
                                         fe_face_projection_values.shape_value(
@@ -702,8 +760,16 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     }
                                 }
 
-                              auto force = fluid_stress * normal_vector *
-                                           fe_face_projection_values.JxW(q);
+                              auto viscous_force =
+                                fluid_viscous_stress * normal_vector *
+                                fe_face_projection_values.JxW(q);
+
+                              auto pressure_force =
+                                fluid_pressure * normal_vector *
+                                fe_face_projection_values.JxW(q);
+
+                              auto force = viscous_force + pressure_force;
+
                               if (force.norm() > 0)
                                 {
                                   nb_evaluation += local_weight;
@@ -713,8 +779,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               // Add the local contribution of this surface
                               // cell.
 
-                              particles[p].fluid_forces +=
-                                tensor_nd_to_3d(force);
+                              particles[p].fluid_viscous_forces +=
+                                tensor_nd_to_3d(viscous_force);
+
+                              particles[p].fluid_pressure_forces +=
+                                tensor_nd_to_3d(pressure_force);
 
                               auto distance =
                                 q_points[q] - particles[p].position;
@@ -749,9 +818,18 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // Sums the force evaluation on each of the processor.
   for (unsigned int i = 0; i < particles.size(); ++i)
     {
-      particles[i].fluid_forces =
-        Utilities::MPI::sum(particles[i].fluid_forces, this->mpi_communicator) *
+      particles[i].fluid_viscous_forces =
+        Utilities::MPI::sum(particles[i].fluid_viscous_forces,
+                            this->mpi_communicator) *
         fluid_density;
+      particles[i].fluid_pressure_forces =
+        Utilities::MPI::sum(particles[i].fluid_pressure_forces,
+                            this->mpi_communicator) *
+        fluid_density;
+
+      particles[i].fluid_forces =
+        particles[i].fluid_viscous_forces + particles[i].fluid_pressure_forces;
+
       particles[i].fluid_torque =
         Utilities::MPI::sum(particles[i].fluid_torque, this->mpi_communicator) *
         fluid_density;
@@ -1604,6 +1682,10 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       particles[p].previous_omega[0]     = particles[p].omega;
 
       particles[p].previous_fluid_forces = particles[p].fluid_forces;
+      particles[p].previous_fluid_viscous_forces =
+        particles[p].fluid_viscous_forces;
+      particles[p].previous_fluid_pressure_forces =
+        particles[p].fluid_pressure_forces;
       particles[p].previous_fluid_torque = particles[p].fluid_torque;
 
       particles[p].velocity_iter        = particles[p].velocity;
@@ -1703,57 +1785,57 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
       table_p[p].add_value("f_x", particles[p].fluid_forces[0]);
       table_all_p.add_value("f_x", particles[p].fluid_forces[0]);
+      table_p[p].set_precision(
+        "f_x", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_x", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_x", particles[p].velocity[0]);
           table_p[p].add_value("p_x", particles[p].position[0]);
           table_all_p.add_value("v_x", particles[p].velocity[0]);
           table_all_p.add_value("p_x", particles[p].position[0]);
+          table_p[p].set_precision(
+            "v_x",
+            this->simulation_parameters.simulation_control.log_precision);
+
+          table_p[p].set_precision(
+            "p_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "v_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "p_x",
+            this->simulation_parameters.simulation_control.log_precision);
         }
+
       table_p[p].add_value("f_y", particles[p].fluid_forces[1]);
+      table_p[p].set_precision(
+        "f_y", this->simulation_parameters.simulation_control.log_precision);
       table_all_p.add_value("f_y", particles[p].fluid_forces[1]);
+      table_all_p.set_precision(
+        "f_y", this->simulation_parameters.simulation_control.log_precision);
       if (this->simulation_parameters.particlesParameters->integrate_motion)
         {
           table_p[p].add_value("v_y", particles[p].velocity[1]);
           table_p[p].add_value("p_y", particles[p].position[1]);
           table_all_p.add_value("v_y", particles[p].velocity[1]);
           table_all_p.add_value("p_y", particles[p].position[1]);
-        }
-      table_p[p].set_precision(
-        "f_x", this->simulation_parameters.simulation_control.log_precision);
-      table_p[p].set_precision(
-        "f_y", this->simulation_parameters.simulation_control.log_precision);
-      table_all_p.set_precision(
-        "f_x", this->simulation_parameters.simulation_control.log_precision);
-      table_all_p.set_precision(
-        "f_y", this->simulation_parameters.simulation_control.log_precision);
-      if (this->simulation_parameters.particlesParameters->integrate_motion)
-        {
-          table_p[p].set_precision(
-            "v_x",
-            this->simulation_parameters.simulation_control.log_precision);
           table_p[p].set_precision(
             "v_y",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_p[p].set_precision(
-            "p_x",
             this->simulation_parameters.simulation_control.log_precision);
           table_p[p].set_precision(
             "p_y",
             this->simulation_parameters.simulation_control.log_precision);
           table_all_p.set_precision(
-            "v_x",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_all_p.set_precision(
             "v_y",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_all_p.set_precision(
-            "p_x",
             this->simulation_parameters.simulation_control.log_precision);
           table_all_p.set_precision(
             "p_y",
             this->simulation_parameters.simulation_control.log_precision);
         }
+
       if (dim == 3)
         {
           table_p[p].add_value("f_z", particles[p].fluid_forces[2]);
@@ -1770,7 +1852,68 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
               table_p[p].add_value("p_z", particles[p].position[2]);
               table_all_p.add_value("v_z", particles[p].velocity[2]);
               table_all_p.add_value("p_z", particles[p].position[2]);
+              table_p[p].set_precision(
+                "v_z",
+                this->simulation_parameters.simulation_control.log_precision);
+              table_p[p].set_precision(
+                "p_z",
+                this->simulation_parameters.simulation_control.log_precision);
+              table_all_p.set_precision(
+                "v_z",
+                this->simulation_parameters.simulation_control.log_precision);
+              table_all_p.set_precision(
+                "p_z",
+                this->simulation_parameters.simulation_control.log_precision);
             }
+        }
+
+      table_p[p].add_value("f_xv", particles[p].fluid_viscous_forces[0]);
+      table_all_p.add_value("f_xv", particles[p].fluid_viscous_forces[0]);
+      table_p[p].add_value("f_yv", particles[p].fluid_viscous_forces[1]);
+      table_all_p.add_value("f_yv", particles[p].fluid_viscous_forces[1]);
+
+      table_p[p].set_precision(
+        "f_xv", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
+        "f_yv", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_xv", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_yv", this->simulation_parameters.simulation_control.log_precision);
+      if (dim == 3)
+        {
+          table_p[p].add_value("f_zv", particles[p].fluid_viscous_forces[2]);
+          table_all_p.add_value("f_zv", particles[p].fluid_viscous_forces[2]);
+          table_p[p].set_precision(
+            "f_zv",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "f_zv",
+            this->simulation_parameters.simulation_control.log_precision);
+        }
+
+      table_p[p].add_value("f_xp", particles[p].fluid_pressure_forces[0]);
+      table_all_p.add_value("f_xp", particles[p].fluid_pressure_forces[0]);
+      table_p[p].add_value("f_yp", particles[p].fluid_pressure_forces[1]);
+      table_all_p.add_value("f_yp", particles[p].fluid_pressure_forces[1]);
+      table_p[p].set_precision(
+        "f_xp", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
+        "f_yp", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_xp", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "f_yp", this->simulation_parameters.simulation_control.log_precision);
+      if (dim == 3)
+        {
+          table_p[p].add_value("f_zp", particles[p].fluid_pressure_forces[2]);
+          table_all_p.add_value("f_zp", particles[p].fluid_pressure_forces[2]);
+          table_p[p].set_precision(
+            "f_zp",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "f_zp",
+            this->simulation_parameters.simulation_control.log_precision);
         }
     }
   if (this->this_mpi_process == 0)
@@ -2715,6 +2858,38 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
                   particles_information_table.set_precision("f_z", 16);
                 }
 
+              particles_information_table.add_value(
+                "f_xv", particles[i_particle].previous_fluid_viscous_forces[0]);
+              particles_information_table.set_precision("f_xv", 16);
+              particles_information_table.add_value(
+                "f_yv", particles[i_particle].previous_fluid_viscous_forces[1]);
+              particles_information_table.set_precision("f_yv", 16);
+
+              if (dim == 3)
+                {
+                  particles_information_table.add_value(
+                    "f_zv",
+                    particles[i_particle].previous_fluid_viscous_forces[2]);
+                  particles_information_table.set_precision("f_zv", 16);
+                }
+
+              particles_information_table.add_value(
+                "f_xp",
+                particles[i_particle].previous_fluid_pressure_forces[0]);
+              particles_information_table.set_precision("f_xp", 16);
+              particles_information_table.add_value(
+                "f_yp",
+                particles[i_particle].previous_fluid_pressure_forces[1]);
+              particles_information_table.set_precision("f_yp", 16);
+
+              if (dim == 3)
+                {
+                  particles_information_table.add_value(
+                    "f_zp",
+                    particles[i_particle].previous_fluid_pressure_forces[2]);
+                  particles_information_table.set_precision("f_zp", 16);
+                }
+
               if (dim == 3)
                 {
                   particles_information_table.add_value(
@@ -2778,7 +2953,6 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   std::map<std::string, std::vector<double>> restart_data;
   fill_vectors_from_file(restart_data, filename);
 
-
   // Implement the data  in the particles.
   if (dim == 2)
     {
@@ -2797,6 +2971,14 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                   particles[p_i].velocity[1]     = restart_data["v_y"][row];
                   particles[p_i].fluid_forces[0] = restart_data["f_x"][row];
                   particles[p_i].fluid_forces[1] = restart_data["f_y"][row];
+                  particles[p_i].fluid_viscous_forces[0] =
+                    restart_data["f_xv"][row];
+                  particles[p_i].fluid_viscous_forces[1] =
+                    restart_data["f_yv"][row];
+                  particles[p_i].fluid_pressure_forces[0] =
+                    restart_data["f_xp"][row];
+                  particles[p_i].fluid_pressure_forces[1] =
+                    restart_data["f_yp"][row];
                   particles[p_i].omega[2]        = restart_data["omega_z"][row];
                   particles[p_i].fluid_torque[2] = restart_data["T_z"][row];
 
@@ -2854,6 +3036,18 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
                   particles[p_i].fluid_forces[0] = restart_data["f_x"][row];
                   particles[p_i].fluid_forces[1] = restart_data["f_y"][row];
                   particles[p_i].fluid_forces[2] = restart_data["f_z"][row];
+                  particles[p_i].fluid_viscous_forces[0] =
+                    restart_data["f_xv"][row];
+                  particles[p_i].fluid_viscous_forces[1] =
+                    restart_data["f_yv"][row];
+                  particles[p_i].fluid_viscous_forces[2] =
+                    restart_data["f_zv"][row];
+                  particles[p_i].fluid_pressure_forces[0] =
+                    restart_data["f_xp"][row];
+                  particles[p_i].fluid_pressure_forces[1] =
+                    restart_data["f_yp"][row];
+                  particles[p_i].fluid_pressure_forces[2] =
+                    restart_data["f_zp"][row];
                   particles[p_i].omega[0]        = restart_data["omega_x"][row];
                   particles[p_i].omega[1]        = restart_data["omega_y"][row];
                   particles[p_i].omega[2]        = restart_data["omega_z"][row];
