@@ -42,7 +42,7 @@ The incompressible Navier-Stokes equations with a Boussinesq approximation for t
 
 where :math:`\beta` and :math:`T_0` denote thermal expansion coefficient and a reference temperature, respectively.
 
-A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0` s. The temperature of the bottom wall is equal to math:`T_h=50`, the temperature of the top wall is equal to math:`T_c=0`, and the left and right walls are insulated. By heating the fluid from the bottom wall, the buoyant force (natural convection) creates vortices inside the fluid. The shape and number of these vortices mainly depend on the Rayleigh number [1, 2]:
+A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0` s. The temperature of the bottom wall is equal to :math:`T_h=50`, the temperature of the top wall is equal to :math:`T_c=0`, and the left and right walls are insulated. By heating the fluid from the bottom wall, the buoyant force (natural convection) creates vortices inside the fluid. The shape and number of these vortices mainly depend on the Rayleigh number [1, 2]:
 
     .. math::
         \text{Ra} = \frac{\rho^2 \beta g (T_h - T_c) H^3}{k \mu}
