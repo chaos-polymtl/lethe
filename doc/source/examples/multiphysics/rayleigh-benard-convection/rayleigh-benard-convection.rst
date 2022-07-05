@@ -85,7 +85,6 @@ time step of :math:`0.01` second.
         set max cfl                         = 0.5
         set stop tolerance                  = 1e-5
         set adaptative time step scaling    = 1.3
-        set number mesh adapt               = 0
         set output name                     = rayleigh-benard_convection
         set output control                  = time
         set output time                     = 25
