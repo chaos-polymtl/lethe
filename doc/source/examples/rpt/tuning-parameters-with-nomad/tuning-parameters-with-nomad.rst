@@ -137,7 +137,7 @@ As seen in the previous example, in the subsection *"rpt parameters"*, we define
 Parameter tuning
 ^^^^^^^^^^^^^^^^^^
 
-In the subsection *"parameter tuning"*, we enable parameters tuning, we specify a type of cost function and define a set of artificial counts to compare with calculated counts. Parameters used for the tuning of the model parameters are described in the `Parameter tuning <../../../parameters/rpt/parameter_tuning.html>`_ documentation page.
+In the subsection *"parameter tuning"*, we enable parameters tuning, we specify a type of cost function and define a set of experimental counts to compare with the calculated counts. Parameters used for the tuning of the model parameters are described in the `Parameter tuning <../../../parameters/rpt/parameter_tuning.html>`_ documentation page.
 
 .. code-block:: text
 
@@ -244,17 +244,24 @@ After running the optimization software, the best feasible solution will be disp
 .. tip::
     Changing the initial values of the optimization problem to ones that are closer to the solution seen above can reduce the computation time.
 
-We may now verify if these values correspond to the studied system. To do so, as it was done in the previous example, we calculate the counts for the set of particle positions that the corresponding experimental counts are known.
+We may now verify if these values correspond to the studied system. To do so, as it was done in the `previous example (Photon Count Calculation in a Cylindrical Vessel) <../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html>`_, we calculate the counts for the set of particle positions that the corresponding experimental counts are known. Assuming that the ``rpt_3d`` executable is within your path, the simulation can be launched by typing:
 
-Before executing the ``rpt_3d`` application we have to change a few parameters in the ``rpt_parameters.prm`` file.
+.. code-block:: text
 
-First, in the *"rpt parameters"* subsection, we may set the ``verbosity`` parameter to ``verbose``, set the ``export counts`` parameter to ``true``, and change the name of the ``counts file`` that will be exported if we wish.
+    rpt_3d rpt_count_calculation.prm
 
-Second, in the *"parameter tuning"* subsection, we have to set the ``tuning`` parameter to ``false`` since we're trying to tune parameters anymore.
+.. attention::
+    It is important to launch the simulation with ``rpt_count_calculation.prm`` and not ``rpt_parameters.prm``. The parameters in both files are set for different purposes. ``rpt_count_calculation.prm`` is suited for count calculation with the Monte Carlo technic, and ``rpt_parameters.prm`` is suited for tuning parameters.
 
-Lastly, in the *"detector parameters"* subsection, we have to change the values of the parameters that we tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) with the ones NOMAD gave us.
+The differences between ``rpt_count_calculation.prm`` and ``rpt_parameters.prm`` are described below.
 
-By doing the modifications mentioned above, the content ``rpt_parameters.prm`` should look like this :
+First, in ``rpt_count_calculation.prm``, in the *"rpt parameters"* subsection, the ``verbosity`` parameter has been set to ``verbose`` since NOMAD is not used anymore, we can display counts on the terminal. To be able to export the counts in a file, the ``export counts`` parameter was set to ``true``. The name of the ``counts file`` that will be exported may be changed in this subsection.
+
+Second, in the *"parameter tuning"* subsection, the ``tuning`` parameter was set to ``false`` since we're not trying to tune parameters anymore.
+
+Lastly, in the *"detector parameters"* subsection, the values of the parameters that were tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) were replaced with the ones NOMAD gave us.
+
+The content of ``rpt_count_calculation.prm``:
 
 .. code-block:: text
 

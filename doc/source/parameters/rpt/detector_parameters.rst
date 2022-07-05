@@ -39,7 +39,6 @@ The following parameters are variables in the gamma-ray Monte-Carlo model from `
 - ``dead time``: Dead time of the detector per accepted pulse [s]
     Options : Any positive float *(default value: 1)*
 - ``attenuation coefficient reactor``: Total linear attenuation of light coefficient of the medium and reactor wall []
-
     Options: Any positive float *(default value: 1)*
 
 References
