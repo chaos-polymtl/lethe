@@ -64,15 +64,15 @@ public:
    */
   enum ShapeType : int
   {
-    sphere           = 0,
-    rectangle           = 1,
-    ellipsoid           = 2,
-    torus           = 3,
-    cone           = 4,
-    cut_hollow_sphere           = 5,
-    death_star           = 6,
-    composite_shape =7,
-  }type;
+    sphere            = 0,
+    rectangle         = 1,
+    ellipsoid         = 2,
+    torus             = 3,
+    cone              = 4,
+    cut_hollow_sphere = 5,
+    death_star        = 6,
+    composite_shape   = 7,
+  } type;
 
 
   virtual std::pair<std::string, int>
@@ -167,8 +167,6 @@ protected:
   // The solid orientation, which is defined as the sequential rotation around
   // the axes x->y->z by each of the tensor components, in radian
   Tensor<1, 3> orientation;
-
-
 };
 
 
@@ -210,7 +208,8 @@ public:
 
 
   std::pair<std::string, int>
-  get_shape_name() override{
+  get_shape_name() override
+  {
     return std::make_pair("sphere", Shape<dim>::ShapeType::sphere);
   };
 
@@ -218,7 +217,7 @@ public:
   set_position(const Point<dim> &position) override;
 
 
-    private:
+private:
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
 #else
   std::shared_ptr<Functions::SignedDistance::Sphere<dim>> sphere_function;
@@ -252,7 +251,8 @@ public:
   displaced_volume(const double fluid_density) override;
 
   std::pair<std::string, int>
-  get_shape_name() override{
+  get_shape_name() override
+  {
     return std::make_pair("rectangle", Shape<dim>::ShapeType::rectangle);
   };
 
@@ -417,7 +417,8 @@ public:
   std::pair<std::string, int>
   get_shape_name() override
   {
-    return std::make_pair("cut_hollow_sphere", Shape<dim>::ShapeType::cut_hollow_sphere);
+    return std::make_pair("cut_hollow_sphere",
+                          Shape<dim>::ShapeType::cut_hollow_sphere);
   }
 
 private:
@@ -520,7 +521,8 @@ public:
   std::pair<std::string, int>
   get_shape_name() override
   {
-    return std::make_pair("composite_shape", Shape<dim>::ShapeType::composite_shape);
+    return std::make_pair("composite_shape",
+                          Shape<dim>::ShapeType::composite_shape);
   }
 
 private:

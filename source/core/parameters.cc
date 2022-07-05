@@ -2105,10 +2105,10 @@ namespace Parameters
           particles[i].omega[2] =
             particles[i].f_omega->value(particles[i].position, 2);
 
-          particles[i].particle_id          = i;
-          particles[i].inertia[0][0]        = prm.get_double("inertia");
-          particles[i].inertia[1][1]        = prm.get_double("inertia");
-          particles[i].inertia[2][2]        = prm.get_double("inertia");
+          particles[i].particle_id   = i;
+          particles[i].inertia[0][0] = prm.get_double("inertia");
+          particles[i].inertia[1][1] = prm.get_double("inertia");
+          particles[i].inertia[2][2] = prm.get_double("inertia");
 
           std::string pressure_location_str = prm.get("pressure location");
           std::vector<std::string> pressure_location_str_list(
@@ -2119,7 +2119,7 @@ namespace Parameters
           particles[i].pressure_location[1] = pressure_list[1];
 
 
-          particles[i].youngs_modulus       = prm.get_double("youngs modulus");
+          particles[i].youngs_modulus = prm.get_double("youngs modulus");
           particles[i].restitution_coefficient =
             prm.get_double("restitution coefficient");
           particles[i].friction_coefficient =
@@ -2140,7 +2140,7 @@ namespace Parameters
           std::string shape_type          = prm.get("type");
           std::string shape_arguments_str = prm.get("shape arguments");
           std::vector<std::string> shape_arguments_str_list(
-            Utilities::split_string_list(shape_arguments_str,";"));
+            Utilities::split_string_list(shape_arguments_str, ";"));
           std::vector<double> shape_arguments =
             Utilities::string_to_double(shape_arguments_str_list);
           particles[i].initialize_shape(shape_type, shape_arguments);
