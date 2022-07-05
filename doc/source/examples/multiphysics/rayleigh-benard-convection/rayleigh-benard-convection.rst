@@ -18,7 +18,8 @@ Features
 ------------------------
 Location of the example
 ------------------------
-``examples/multiphysics/rayleigh_benard_convection/rayleigh_benard_convection.prm``
+``examples/multiphysics/rayleigh_benard_convection/rayleigh_benard_convection_Ra10k.prm``
+``examples/multiphysics/rayleigh_benard_convection/rayleigh_benard_convection_Ra25k.prm``
 
 
 -----------------------------
@@ -50,7 +51,7 @@ A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0`
 
 where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitational acceleration, :math:`H` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, and :math:`\mu` is the dynamic viscosity, and :math:`c_p` is the specific thermal capacity.
 
-In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers of 10000 and 25000. According to the literature [1, 2], we should see different numbers (2 and 3 vortices at Ra=10000 and 25000, respectively) of vortices in the fluid at these two Rayleigh numbers. Note that in this example, we change the Ra number by changing the thermal conduction coefficient of the fluid.
+In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers of 10000 and 25000. According to the literature [1, 2], we should see different numbers (2 and 3 vortices at :math:`Ra=10^4` and :math:`2.5 \times 10^4`, respectively) of vortices in the fluid at these two Rayleigh numbers. The gravity magnitude is set to -10 for both simulations. Additionally, :math:`\rho = 100`, :math:`\beta = 0.0002`, :math:`H = 0.25`, :math:`c_p = 100` and :math:`\mu = 1`. Thus, the Rayleigh number is controlled only by the thermal conduction coefficient for this example. In other words, we change the Rayleigh number by changing the thermal conduction coefficient of the fluid.
 
 .. note:: 
     All four boundary conditions are ``noslip``, and an external 
@@ -105,7 +106,7 @@ The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` th
         set fluid dynamics      = true
     end 
     
-The ``source term`` subsection defines gravitational acceleration. The value of the gravitational acceleration in this example is selected to satisfy the desired values of Ra number.
+The ``source term`` subsection defines gravitational acceleration.
 
 .. code-block:: text
     
@@ -120,7 +121,7 @@ The ``source term`` subsection defines gravitational acceleration. The value of 
     end
 
 
-The ``physical properties`` subsection defines the physical properties of the fluid. Since we simulate the Rayleigh-Bénard convection at two Rayleigh numbers (:math:`Ra=10^4` and :math:`2.5 \times 10^4`), we use different thermal conductivities to reach mentioned Rayleigh numbers. We change the thermal conductivity of the fluid in the two simulations. Note that any other physical property (that is present in the Rayleigh number equation defined above) can be used instead of thermal conductivity. Both thermal conductivity values (:math:`k=0.15625` for :math:`Ra=10^4`, and :math:`k=0.15625` for :math:`Ra=2.5 \times 10^4`) are added to the parameter handler file. However, only one of them should be uncommented for each simulation.
+The ``physical properties`` subsection defines the physical properties of the fluid. Since we simulate the Rayleigh-Bénard convection at two Rayleigh numbers (:math:`Ra=10^4` and :math:`2.5 \times 10^4`), we use different thermal conductivities to reach mentioned Rayleigh numbers. We change the thermal conductivity of the fluid in the two simulations. Note that any other physical property (that is present in the Rayleigh number equation defined above) can be used instead of thermal conductivity. Both thermal conductivity values (:math:`k=0.15625` for :math:`Ra=10^4`, and :math:`k=0.0625` for :math:`Ra=2.5 \times 10^4`) are added to the parameter handler file. However, only one of them should be uncommented for each simulation.
 
 
 .. code-block:: text
@@ -146,9 +147,13 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 8 gls_navier_stokes_2d rayleigh_benard_convection.prm``
+``mpirun -np 8 gls_navier_stokes_2d rayleigh_benard_convection_Ra10k.prm``
 
-to run the simulation using eight CPU cores. Feel free to use more.
+and
+
+``mpirun -np 8 gls_navier_stokes_2d rayleigh_benard_convection_Ra25k.prm``
+
+to run the simulations using eight CPU cores. Feel free to use more. Note that the first and second commands belong to the simulations at :math:`Ra=10^4` and :math:`Ra=2.5 \times 10^4`, repectively.
 
 
 .. warning:: 
