@@ -48,7 +48,7 @@ A two-dimensional block of gallium (initially in solid phase) is heated from its
 
 The simulation parameters are selected according to the references [1, 2] to satisfy the desired values for the dimensionless numbers
     .. math::
-        \text{Ra} = \frac{\rho^2 \beta g (T_w - T_m) L^3}{k \mu} = 10^5
+        \text{Ra} = \frac{\rho^2 \beta g (T_w - T_m) L^3 c_p}{k \mu} = 10^5
 
     .. math::
         \text{Gr} = \frac{g \beta (T_w - T_m) L^3}{\nu^2} = 5.5 \cdot 10^6

@@ -1,5 +1,5 @@
 ==========================
-Rayleigh-Benard Convection
+Rayleigh-Bénard Convection
 ==========================
 
 This example simulates `two-dimensional Rayleigh–Benard convection`_ at Rayleigh numbers of :math:`10^4` and :math:`2.5 \times 10^4` . 
@@ -45,15 +45,15 @@ where :math:`\beta` and :math:`T_0` denote thermal expansion coefficient and a r
 A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0` s. The temperature of the bottom wall is equal to :math:`T_h=50`, the temperature of the top wall is equal to :math:`T_c=0`, and the left and right walls are insulated. By heating the fluid from the bottom wall, the buoyant force (natural convection) creates vortices inside the fluid. The shape and number of these vortices mainly depend on the Rayleigh number [1, 2]:
 
     .. math::
-        \text{Ra} = \frac{\rho^2 \beta g (T_h - T_c) H^3}{k \mu}
+        \text{Ra} = \frac{\rho^2 \beta g (T_h - T_c) H^3 c_p}{k \mu}
 
 
-where :math:`\rho` is the fluid density, :math:`\beta` denotes the thermal expansion coefficient, :math:`g` is the magnitude of gravitational acceleration, :math:`T_h` and :math:`T_c` are the hot wall and the cold wall temperatures, :math:`H` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, and :math:`\mu` and :math:`\nu` are the dynamic and kinematic viscosities, :math:`c_p` is the specific thermal capacity, and :math:`\lambda` is the enthalpy of melting.
+where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitational acceleration, :math:`H` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, and :math:`\mu` is the dynamic viscosity, and :math:`c_p` is the specific thermal capacity.
 
-In this example, we simulate the Rayleigh-Benard convection problem at two Rayleigh numbers of 10000 and 25000. According to the literature [1, 2], we should see different numbers (2 and 3 vortices at Ra=10000 and 25000, respectively) of vortices in the fluid at these two Rayleigh numbers. Note that in this example, we change the Ra number by changing the thermal conduction coefficient of the fluid.
+In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers of 10000 and 25000. According to the literature [1, 2], we should see different numbers (2 and 3 vortices at Ra=10000 and 25000, respectively) of vortices in the fluid at these two Rayleigh numbers. Note that in this example, we change the Ra number by changing the thermal conduction coefficient of the fluid.
 
 .. note:: 
-    All the four boundary conditions are ``noslip``, and an external 
+    All four boundary conditions are ``noslip``, and an external 
     gravity field of :math:`-10` is applied in the :math:`y` direction.
 
 
@@ -93,7 +93,7 @@ time step of :math:`0.01` second.
     end
 
 
-The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are chosen.
+The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are chosen.
 
 .. code-block:: text
 
@@ -121,7 +121,7 @@ The ``source term`` subsection defines gravitational acceleration. The value of 
     end
 
 
-The ``physical properties`` subsection defines the physical properties of the fluid. Since we simulate the Rayleigh-Benard convection at two Rayleigh numbers (:math:`Ra=10^4` and :math:`2.5 \times 10^4`), we use different thermal conductivities to reach mentioned Rayleigh numbers. We change the thermal conductivity of the fluid in the two simulations. Note that any other physical property (that is present in the Rayleigh number equation defined above) can be used instead of thermal conductivity. Both thermal conductivity values (:math:`k=0.15625` for :math:`Ra=10^4`, and :math:`k=0.15625` for :math:`Ra=2.5 \times 10^4`) are added to the parameter handler file. However, only one of them should be uncommented for each simulation.
+The ``physical properties`` subsection defines the physical properties of the fluid. Since we simulate the Rayleigh-Bénard convection at two Rayleigh numbers (:math:`Ra=10^4` and :math:`2.5 \times 10^4`), we use different thermal conductivities to reach mentioned Rayleigh numbers. We change the thermal conductivity of the fluid in the two simulations. Note that any other physical property (that is present in the Rayleigh number equation defined above) can be used instead of thermal conductivity. Both thermal conductivity values (:math:`k=0.15625` for :math:`Ra=10^4`, and :math:`k=0.15625` for :math:`Ra=2.5 \times 10^4`) are added to the parameter handler file. However, only one of them should be uncommented for each simulation.
 
 
 .. code-block:: text
@@ -169,7 +169,7 @@ The following animation shows the results of this simulation:
     <iframe width="560" height="315" src="https://www.youtube.com/embed/tEg5M-wiCp8" frameborder="0" allowfullscreen></iframe>
 
 
-Note that at Ra=10000, two vortices exist in the fluid, while an extra (relatively small) vortex appear near the right wall. The velocity magnitude in the vortices is larger at smaller Rayleigh number.
+Note that at Ra=10000, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall. The velocity magnitude in the vortices is larger at smaller Rayleigh number.
 
 -----------
 References
