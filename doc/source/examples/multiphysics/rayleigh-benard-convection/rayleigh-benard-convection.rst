@@ -2,7 +2,7 @@
 Rayleigh-Benard Convection
 ==========================
 
-This example simulates `two-dimensional Rayleigh–Benard convection`_ at Rayleigh numbers of 10000 and 25000. 
+This example simulates `two-dimensional Rayleigh–Benard convection`_ at Rayleigh numbers of :math:`10^4` and :math:`2.5\times 10^4` . 
 
 .. _two-dimensional Rayleigh–Benard convection: https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/stochastic-bifurcation-analysis-of-rayleighbenard-convection/019773F174C453F84E7EB179CB1C89F1
 
