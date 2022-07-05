@@ -68,6 +68,16 @@ IBParticle<dim>::initialize_all()
     }
   residual_velocity = DBL_MAX;
   residual_omega    = DBL_MAX;
+
+  f_position =
+    std::make_shared<Functions::ParsedFunction<dim>>(dim);
+  f_velocity =
+    std::make_shared<Functions::ParsedFunction<dim>>(dim);
+  f_omega =
+    std::make_shared<Functions::ParsedFunction<dim>>(3);
+  f_orientation=
+    std::make_shared<Functions::ParsedFunction<dim>>(3);
+
 }
 
 template <int dim>

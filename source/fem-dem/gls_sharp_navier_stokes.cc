@@ -1435,29 +1435,53 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       // particle dynamics is not integrated.
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
-          particles[p].f_position->set_time(time);
-          particles[p].f_velocity->set_time(time);
-          particles[p].f_omega->set_time(time);
-          particles[p].position[0] =
-            particles[p].f_position->value(particles[p].position, 0);
-          particles[p].position[1] =
-            particles[p].f_position->value(particles[p].position, 1);
-          particles[p].velocity[0] =
-            particles[p].f_velocity->value(particles[p].position, 0);
-          particles[p].velocity[1] =
-            particles[p].f_velocity->value(particles[p].position, 1);
-          particles[p].omega[0] =
-            particles[p].f_omega->value(particles[p].position, 0);
-          particles[p].omega[1] =
-            particles[p].f_omega->value(particles[p].position, 1);
-          particles[p].omega[2] =
-            particles[p].f_omega->value(particles[p].position, 2);
-          if (dim == 3)
+          if (this->simulation_parameters.particlesParameters
+                ->load_particles_from_file == false)
             {
-              particles[p].position[2] =
-                particles[p].f_position->value(particles[p].position, 2);
-              particles[p].velocity[2] =
-                particles[p].f_velocity->value(particles[p].position, 2);
+              particles[p].f_position->set_time(time);
+              particles[p].f_velocity->set_time(time);
+              particles[p].f_omega->set_time(time);
+              particles[p].f_orientation->set_time(time);
+
+              particles[p].position[0] =
+                particles[p].f_position->value(particles[p].position, 0);
+              particles[p].position[1] =
+                particles[p].f_position->value(particles[p].position, 1);
+              particles[p].velocity[0] =
+                particles[p].f_velocity->value(particles[p].position, 0);
+              particles[p].velocity[1] =
+                particles[p].f_velocity->value(particles[p].position, 1);
+              particles[p].omega[0] =
+                particles[p].f_omega->value(particles[p].position, 0);
+              particles[p].omega[1] =
+                particles[p].f_omega->value(particles[p].position, 1);
+              particles[p].omega[2] =
+                particles[p].f_omega->value(particles[p].position, 2);
+              particles[p].orientation[0] =
+                particles[p].f_orientation->value(particles[p].position, 0);
+              particles[p].orientation[1] =
+                particles[p].f_orientation->value(particles[p].position, 1);
+              particles[p].orientation[2] =
+                particles[p].f_orientation->value(particles[p].position, 2);
+              if (dim == 3)
+                {
+                  particles[p].position[2] =
+                    particles[p].f_position->value(particles[p].position, 2);
+                  particles[p].velocity[2] =
+                    particles[p].f_velocity->value(particles[p].position, 2);
+                }
+            }
+          else{
+              particles[p].position[0] +=particles[p].velocity[0]*dt;
+              particles[p].position[1] +=particles[p].velocity[1]*dt;
+              particles[p].orientation[0] = particles[p].omega[0]*dt;
+              particles[p].orientation[1] = particles[p].omega[1]*dt;
+              particles[p].orientation[2] = particles[p].omega[2]*dt;
+
+              if (dim == 3)
+                {
+                  particles[p].position[2] +=particles[p].velocity[2]*dt;
+                }
             }
           particles[p].set_position(particles[p].position);
           particles[p].set_orientation(particles[p].orientation);
@@ -2939,11 +2963,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           particles[p_i].initialize_all();
-
-
-
           particles[p_i].particle_id    = p_i;
-
           particles[p_i].position[0]    = restart_data["p_x"][p_i];
           particles[p_i].position[1]    = restart_data["p_y"][p_i];
           particles[p_i].velocity[0]    = restart_data["v_x"][p_i];
@@ -3003,10 +3023,6 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           particles[p_i].initialize_all();
-
-
-
-          this->pcout<<"hi"<<std::endl;
           particles[p_i].particle_id    = p_i;
           particles[p_i].position[0]    = restart_data["p_x"][p_i];
           particles[p_i].position[1]    = restart_data["p_y"][p_i];
@@ -3074,10 +3090,6 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
               shape_argument[2] = restart_data["shape_argument_2"][p_i];
               particles[p_i].initialize_shape("death star", shape_argument);
             }
-
-
-
-
 
           particles[p_i].radius         = particles[p_i].shape->effective_radius;
           particles[p_i].mass = 4.0 / 3.0 * PI * particles[p_i].radius *
