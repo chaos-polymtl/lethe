@@ -1,5 +1,6 @@
 Running on 1 MPI rank(s)...
 Loading particles from a file
+Particles found: 5
    Number of active cells:       1600
    Number of degrees of freedom: 8228
    Volume of triangulation:      1600

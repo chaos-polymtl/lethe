@@ -3136,7 +3136,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::load_particles_from_file(prm)
+GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
 {
   using numbers::PI;
   TimerOutput::Scope t(this->computing_timer,
