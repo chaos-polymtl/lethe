@@ -1549,16 +1549,17 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                     particles[p].f_velocity->value(particles[p].position, 2);
                 }
             }
-          else{
-              particles[p].position[0] +=particles[p].velocity[0]*dt;
-              particles[p].position[1] +=particles[p].velocity[1]*dt;
-              particles[p].orientation[0] = particles[p].omega[0]*dt;
-              particles[p].orientation[1] = particles[p].omega[1]*dt;
-              particles[p].orientation[2] = particles[p].omega[2]*dt;
+          else
+            {
+              particles[p].position[0] += particles[p].velocity[0] * dt;
+              particles[p].position[1] += particles[p].velocity[1] * dt;
+              particles[p].orientation[0] = particles[p].omega[0] * dt;
+              particles[p].orientation[1] = particles[p].omega[1] * dt;
+              particles[p].orientation[2] = particles[p].omega[2] * dt;
 
               if (dim == 3)
                 {
-                  particles[p].position[2] +=particles[p].velocity[2]*dt;
+                  particles[p].position[2] += particles[p].velocity[2] * dt;
                 }
             }
           particles[p].set_position(particles[p].position);
