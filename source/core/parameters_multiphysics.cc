@@ -67,6 +67,11 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "VOF calculation <true|false>");
 
+    prm.declare_entry("use average velocity field",
+                      "false",
+                      Patterns::Bool(),
+                      "Use the average velocity field instead of the present velocity field <true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       "false",
@@ -92,6 +97,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     heat_transfer  = prm.get_bool("heat transfer");
     tracer         = prm.get_bool("tracer");
     VOF            = prm.get_bool("VOF");
+    use_average_velocity_field=prm.get_bool("use average velocity field");
 
     // subparameter for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");

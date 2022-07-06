@@ -173,6 +173,12 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                                       &this->dof_handler);
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    &this->present_solution);
+  if(this->simulation_parameters.post_processing.calculate_average_velocities){
+      this->multiphysics->set_average_solution(PhysicsID::fluid_dynamics,
+        const_cast<TrilinosWrappers::MPI::Vector *>(
+          &this->average_velocities->get_average_velocities()));
+    }
+
 }
 
 template <int dim>
