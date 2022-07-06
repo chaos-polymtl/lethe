@@ -9,24 +9,16 @@ subsection simulation control
   set log frequency				         = 1000
   set output frequency            		 = 1000
   set output path 					     = ./
-  set output name                        = sim3
+  set output name                        = simulation3
 end
 
-#---------------------------------------------------
-# Restart
-#---------------------------------------------------
-subsection restart
-	set checkpoint       				 = false
-	set filename      				     = sliding_restart
-	set frequency					     = 100000
-end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
 subsection model parameters
   set contact detection method 		   		         = dynamic
-  set dynamic contact search size coefficient	 	 = 0.8
+  set dynamic contact search size coefficient	 	 = 0.9
   set load balance method				             = frequent
   set load balance frequency				         = 200000
   set neighborhood threshold				         = 1.3
@@ -50,15 +42,15 @@ subsection lagrangian physical properties
         set density particles            	    = 2500
         set young modulus particles         	= 1000000
         set poisson ratio particles          	= 0.3
-        set restitution coefficient particles	= 0.7
+        set restitution coefficient particles	= 0.94
         set friction coefficient particles      = 0.2
-        set rolling friction particles         	= 0.0001
+        set rolling friction particles         	= 0.09
     end
     set young modulus wall            			= 1000000
     set poisson ratio wall            			= 0.3
     set friction coefficient wall         		= 0.2
-    set restitution coefficient wall            = 0.7
-    set rolling friction wall         	      	= 0.0001
+    set restitution coefficient wall            = 0.9
+    set rolling friction wall         	      	= 0.09
 end
 
 #---------------------------------------------------
@@ -84,7 +76,8 @@ end
 #---------------------------------------------------
 subsection mesh
 	set type = gmsh
-	set file name = hopper_wiebke.msh
+	set file name = hopper.msh
+	set initial refinement = 4
 	set expand particle-wall contact search = false
 end
 

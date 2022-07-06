@@ -22,15 +22,16 @@ import sys
 
 #Take case path as argument
 simulation_path = sys.argv[1]
+pvd_name = sys.argv[2]
 
 # Name the save path
 save_path = simulation_path
 
 # Create the particle object
-particle = Lethe_pyvista_tools(simulation_path, prm_file_name='hopper_wiebke.prm')
+particle = Lethe_pyvista_tools(simulation_path, prm_file_name='hopper.prm')
 
 # Read data
-particle.read_lethe_to_pyvista('sim3.pvd')
+particle.read_lethe_to_pyvista(pvd_name + ".pvd")
 
 
 #############################################################################
@@ -38,7 +39,7 @@ particle.read_lethe_to_pyvista('sim3.pvd')
 start = int(particle.prm_dict['end time'] / (particle.prm_dict['output frequency'] * particle.prm_dict['time step']))
 
 # Position of the outlet
-hopper_outlet = 0
+hopper_outlet = 0 - particle.prm_dict['diameter']
 
 # Create a list to store the number of particles below the outlet
 number_of_particles_below = []
@@ -55,8 +56,7 @@ for i in range(len(particle.list_vtu)):
     # Store results in 'df'
     exec(f'df = particle.df_{i}')
 
-    vertical_position =\
-        df.points[:, 2]
+    vertical_position = df.points[:, 2]
 
     # Select the data
     vertical_position_below = vertical_position[vertical_position < hopper_outlet]
@@ -91,5 +91,7 @@ plt.xlabel('Time (s)')
 plt.ylabel('Mass discharged from the hopper (g)')
 plt.legend()
 plt.grid()
+plt.savefig('figure_' + pvd_name + '.png')
 plt.show()
+
 
