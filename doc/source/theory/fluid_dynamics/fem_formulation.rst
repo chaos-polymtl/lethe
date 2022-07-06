@@ -21,7 +21,7 @@ on :math:`\Gamma`. We multiply by two test functions :math:`q` and :math:`\mathb
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) d\Omega =0
 
 
-Because we want the pressure to be in :math:`\mathcal{L}^2` and the velocity to be in :math:`\mathcal{H}^1`, we integrate by part the viscous stress and the pressure gradient. We thus obtain the weak form:
+Because we want the pressure to be in :math:`\mathcal{L}^2` and the velocity to be in :math:`\mathcal{H}^1`, we integrate by parts the viscous stress and the pressure gradient terms. We thus obtain the weak form:
 
 
 .. math::
@@ -36,7 +36,7 @@ Because we want the pressure to be in :math:`\mathcal{L}^2` and the velocity to 
   &  + \int_{\Gamma} \left( v_k \right) \left( \partial_l u_k  +\delta_{lk} p \right) n_l \mathrm{d}\Gamma
    =0
 
-where :math:`\delta_{lk}` is the Kronecker delta and :math:`n_j` is the outward pointing normal vector to a surface. Since we assume Dirichlet boundary conditions or zero stress  conditions 
+where :math:`\delta_{lk}` is the Kronecker delta and :math:`n_l` is the outward pointing normal vector to a surface. Since we assume Dirichlet boundary conditions or zero stress  conditions 
 on :math:`\Gamma`, this term may be discarded. Thus, when no boundary condition is applied, the boundary condition applied is:
 
 .. math::
@@ -58,7 +58,7 @@ To solve non-linear problem, Lethe uses the `Newton-Raphson method <https://en.w
 
     \mathbf{\mathcal{J}} \mathbf{\delta x} = - \mathbf{\mathcal{R}}
 
-For the incompressible Navier-Stokes equation, this leads to a saddle point problem of the form :
+For the incompressible Navier-Stokes equation, this leads to a saddle point problem of the form:
 
 .. math::
     
