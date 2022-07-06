@@ -130,7 +130,7 @@ RPT Parameters
 ~~~~~~~~~~~~~~~
 
 
-In the subsection *"rpt parameters"*, we define the values of the set of parameters necessary for calculating the counts using the Monte Carlo method.  Among these parameters, we have the name of the file which contains a set of different positions of the particle inside the vessel (``particle position file``), the number of Monte Carlo iterations (``monte carlo iteration``), the seed that is used to generate a random number (``random number seed``) and other parameters that describe the studied :math:`\gamma`-ray model. We also define the name of the file in which the counts for each position will be exported in with the parameter ``counts file``. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
+In the subsection ``rpt parameters``, we define the values of the set of parameters necessary for calculating the counts using the Monte Carlo method.  Among these parameters, we have the name of the file which contains a set of different positions of the particle inside the vessel (``particle position file``), the number of Monte Carlo iterations (``monte carlo iteration``), the seed that is used to generate a random number (``random number seed``) and other parameters that describe the studied :math:`\gamma`-ray model. We also define the name of the file in which the counts for each position will be exported in with the parameter ``counts file``. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
 
 .. code-block:: text
 
@@ -157,7 +157,7 @@ Detector Parameters
 ~~~~~~~~~~~~~~~~~~~~
 
 
-In the subsection *"detector parameters"*, we specify the file that contains two positions located on the axis of symmetry of the detector. The first point is on the surface facing the vessel (face of the detector), and the second point can be any point located inside the detector. In the current example, the center position of the face is :math:`(0.200, 0, 0.075)`, and the second point on the axis is :math:`(0.238, 0, 0.075)`. We also specify the radius (``radius``) and the length (``length``) of the detector. A detailed description of these parameters can be found in the `Detector Parameters <../../../parameters/rpt/detector_parameters.html>`_ documentation page.
+In the subsection ``detector parameters``, we specify the file that contains two positions located on the axis of symmetry of the detector. The first point is on the surface facing the vessel (face of the detector), and the second point can be any point located inside the detector. In the current example, the center position of the face is :math:`(0.200, 0, 0.075)`, and the second point on the axis is :math:`(0.238, 0, 0.075)`. We also specify the radius (``radius``) and the length (``length``) of the detector. A detailed description of these parameters can be found in the `Detector Parameters <../../../parameters/rpt/detector_parameters.html>`_ documentation page.
 
 
 .. code-block:: text
@@ -290,17 +290,17 @@ Scenario 4: Particle going across the vessel on a diagonal line
 
 After analyzing the past three scenarios, we get much-expected results for this scenario. As seen in the first scenario, the photon count varies greatly with the :math:`x` coordinate of the position vector of the particle. That is because the path of the photon inside the vessel gets longer when :math:`x` gets smaller. In other words, the ray is more attenuated by the material inside the vessel before getting to the detector, therefore the photon count gets smaller. Consequently, even though the particle is further away from the detector if the :math:`x` coordinate of the tracer's position is closer to the detector's exposed surface, the photon count could get greater and that's what we see on the figure above for high :math:`z` values.
 
-Sensitivity analysis of the Monte Carlo technic
+Sensitivity analysis of the Monte Carlo method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Looking back at the second scenario, we notice that the counts are quite scattered (Case A). By increasing the number of Monte Carlo iterations, we see can much smoother results as seen in the Case C figure. On the Case C figure, we have increased the number of Monte Carlo iteration (:math:`N`) by a factor :math:`10`. When calculating the efficiency using the Monte Carlo method with a large :math:`N`, more "weight" is accorded to the most probable points, since they appear more often in the sum. This makes the least probable points points negligible. Consequently, we obtain smoother results. On the Case B figure, :math:`N` was decreased by a factor :math:`10`. As expected, on this figure, we see much more scattering.
+Looking back at the second scenario's results (Case A), we notice that the counts are a little scattered. By increasing the number of Monte Carlo iterations (:math:`N`), we get much smoother results as seen in the Case C figure. In the Case C figure, we have multiplied the number of Monte Carlo iterations by a factor of :math:`10`. When calculating the efficiency using the Monte Carlo method with a large :math:`N`, more "weight" is accorded to the most probable points, since they appear more often in the sum. This makes the least probable points negligible. Consequently, we obtain smoother results. In the Case B figure, :math:`N` was divided by a factor of :math:`10`. As expected, in this figure, we see much more scattering.
 
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/counts_along_y-axis_case1.png                                                                                                             |
 |    :alt: Results for the horizontal translation of a particle along the y-axis results when reactor attenuation coefficient is set at 10 and detector         |
 |       attenuation coefficient is set at 21.477 (Scenario 2)                                                                                                   |
 |    :align: center                                                                                                                                             |
-|    :name: Sensibility analysis when N = 100000 (Case A)                                                                                                       |
+|    :name: Sensitivity analysis when N = 100000 (Case A)                                                                                                       |
 |    :scale: 60%                                                                                                                                                |
 |                                                                                                                                                               |
 |    Case A: :math:`N = 1e5`                                                                                                                                    |

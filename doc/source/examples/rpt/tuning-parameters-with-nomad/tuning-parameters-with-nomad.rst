@@ -45,6 +45,7 @@ The illustration below depicts the geometry of the vessel, the detector, and the
     :alt: The geometry
     :align: center
     :name: geometry_description
+    :width: 600
 
 As discussed in the previous example (`Photon Count Calculation in a Cylindrical Vessel <../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html>`_), when a particle travels in a cylindrical reactor, its corresponding photon count (:math:`C`) measured by the detector varies according to the following relation:
 
@@ -100,13 +101,11 @@ where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alph
 Parameter files
 ----------------
 
-
 *rpt_parameters.prm* file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 RPT Parameters
 ^^^^^^^^^^^^^^^^
-
 
 As seen in the previous example, in the subsection ``rpt parameters``, we define the values of the set of parameter necessary for calculating the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
 
@@ -255,22 +254,27 @@ We may now verify if these values correspond to the physical system. To do so, a
 
 The differences between ``rpt_count_calculation.prm`` and ``rpt_parameters.prm`` are described below.
 
-First, in ``rpt_count_calculation.prm``, in the *"rpt parameters"* subsection, the ``verbosity`` parameter has been set to ``verbose`` since NOMAD is not used anymore, we can display counts on the terminal. To be able to export the counts in a file, the ``export counts`` parameter was set to ``true``. The name of the ``counts file`` that will be exported may be changed in this subsection.
+First, in ``rpt_count_calculation.prm``, in the ``rpt parameters`` subsection, the ``verbosity`` parameter has been set to ``verbose`` since NOMAD is not used anymore, we can display counts on the terminal. To be able to export the counts in a file, the ``export counts`` parameter was set to ``true``. The name of the ``counts file`` that will be exported may be changed in this subsection.
 
-Second, in the *"parameter tuning"* subsection, the ``tuning`` parameter was set to ``false`` since we're not trying to tune parameters anymore.
+Second, in the ``parameter tuning`` subsection, the ``tuning`` parameter was set to ``false`` since we're not trying to tune parameters anymore.
 
-Lastly, in the *"detector parameters"* subsection, the values of the parameters that were tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) were replaced with the ones NOMAD gave us.
+Lastly, in the ``detector parameters`` subsection, the values of the parameters that were tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) were replaced with the ones NOMAD gave us.
 
-In the figure below, we can see that there is very little difference between the experimental counts and the calculated counts with the tuned parameters.
+In the figures below, we can see that there is very little difference between the experimental counts and the calculated counts with the tuned parameters. In fact, the linear regression between the experimental and calculated photon counts give us a R² value of 0.9990 as seen in the *Linear fit* figure.
 
-
-.. image:: images/result.png
+.. figure:: images/results.png
     :alt: Experimental and calculated counts comparison
     :align: center
     :name: Experimental and calculated counts comparison
 
+    Experimental and calculated counts comparison
 
+.. figure:: images/results_linear_fit_graph.png
+    :alt: Linear fit graph
+    :align: center
+    :name: Linear fit graph
 
+    Linear fit
 
 :raw-html:`<br />`
 
