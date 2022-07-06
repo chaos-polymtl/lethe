@@ -17,7 +17,7 @@ This approach consists of two new terms that are added to the classical weak for
   \\
   & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k =0
 
-This formulation is consistent as the added terms involve the residual and if we substitute the exact solution the stabilization term vanishes. In literature, one can find different definitions of the stabilization parameters :math:`\tau_{SUPG}` and :math:`\tau_{PSPG}`. Lethe uses the definition by `Tezudyar (1991) <https://linkinghub.elsevier.com/retrieve/pii/S0065215608701534>`_ for both stabilization parameters:
+This formulation is consistent as the added terms involve the residual and if we substitute the exact solution the stabilization term vanishes. In literature, one can find different definitions of the stabilization parameters :math:`\tau_{SUPG}` and :math:`\tau_{PSPG}`. Lethe uses the definition by `Tezduyar (1991) <https://linkinghub.elsevier.com/retrieve/pii/S0065215608701534>`_ for both stabilization parameters:
 
 .. math::
 
@@ -41,7 +41,7 @@ As it can be seen there is an additional matrix :math:`S^*` that appears in the 
 Grad-Div block formulation
 ------------------------------------
 
-This approach builds on the work of Heister et al. [REF] and can be seens a natural parallel extension of the Step-57 of deal.ii [REF]. An additional term is added to the classical weak form: 
+This approach builds on the work of `Heister et al. (2012) <https://onlinelibrary.wiley.com/doi/10.1002/fld.3654>`_. and can be seens a natural parallel extension of the `Step-57 of deal.ii <https://www.dealii.org/current/doxygen/deal.II/step_57.html>`_. An additional term is added to the classical weak form: 
 
 .. math::
 
@@ -51,19 +51,13 @@ This approach builds on the work of Heister et al. [REF] and can be seens a natu
   \\
   &+ \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  + \sum_K \gamma \int_{\Omega_k} \partial_l u_l \partial_k v_l = 0
 
-where :math:`\gamma` is an additional parameter that can be related to the augmented lagrangian formulation. In this case, the linear system to be solved in each non-linear iteration is not affected by the stabilization. To solve the non-linear problem Lethe uses again the Newton-Raphson method, however, the Jacobian and the residual are now of the following form: 
-
-.. math::
-    
-  \mathbf{\mathcal{J}} &= \left[ \begin{matrix} 	A + \gamma B^{T} W^{-1} B  & B^{T}  \\[0.3em]	B & 0 \end{matrix} \right] \\
-  \mathbf{\mathcal{R}} &=  \left[ \begin{matrix} \mathbf{\mathcal{R}}_{v}^*   \\[0.3em]		\mathbf{\mathcal{R}}_{q}^*  \end{matrix} \right]
-  
+where :math:`\gamma` is an additional parameter that can be related to the augmented lagrangian formulation. The additional stabilization term improves the numerical accuracy of the solution and helps reducing oscillations for convection-dominated flows. In general, the optimal value for :math:`\gamma` depends on the solution on each element and it is therefore, problem dependent. In this case, the linear system to be solved in each non-linear iteration has the same structure as the one obtained with the classical formulation. Therefore, a good preconditioning is necessary to solve the linear system at each non linear iteration. In Lethe this is done using the Schur complement.
 
 
 Galerkin Least-Squares formulation
 -----------------------------------
 
-The GLS formulation is built as a generalization of the stabbilization procedure in the SUPG/PSPG formulation. It is based on a Least-Squares term based on the momentum equation. It includes the SUPG and PSPG terms but adds an additional one as it can be seen in its weak form:
+The GLS formulation is built as a generalization of the stabilization procedure in the SUPG/PSPG formulation. It is based on a Least-Squares term based on the momentum equation. It includes the SUPG and PSPG terms but adds an additional one as it can be seen in its weak form:
 
 .. math::
 
@@ -73,7 +67,7 @@ The GLS formulation is built as a generalization of the stabbilization procedure
   \\
   & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k 
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{GLS} \nu v \partial_l \partial_l u_k \right) \mathrm{d}\Omega_k  =0
+  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{GLS} \nu \partial_l \partial_l u_k \right) \mathrm{d}\Omega_k  =0
 
-This is the version of the GLS stabilization if the finite element method is only used for the spatial discretization and no time-space finite element formulation is used. 
+This is the version of the GLS stabilization if the finite element method is only used for the spatial discretization and no time-space finite element formulation is used. The stabilization parameters are taken to be the same in all cases and given by the same :math:`\tau` expressions presented in the SUPG/PSPG section. The non-linear problem is solved in the same fashion and the structure of the Jacobian is the same one as the SUPG/PSPG formulation.
 
