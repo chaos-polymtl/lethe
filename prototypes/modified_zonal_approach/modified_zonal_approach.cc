@@ -22,10 +22,16 @@
 // developing totally new Lethe functionnalities
 
 #include <deal.II/base/logstream.h>
+#include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 
 
 using namespace dealii;
+
+template <int dim>
+std::vector<double>
+calculate_distance(std::vector<Point<dim>>, std::vector<Point<dim>>)
+{}
 
 int
 main()
