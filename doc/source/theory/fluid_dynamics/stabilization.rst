@@ -21,13 +21,13 @@ This formulation is consistent as the added terms involve the residual and if we
 
 .. math::
 
-   \tau = \left[ \left( \frac{1}{\Delta t} \right)^{2} + \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + \left( 9 \frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
+   \tau = \left[ \left( \frac{1}{\Delta t} \right)^{2} + \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + 9 \left( \frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
 
 where :math:`\Delta t` is the time step, :math:`h_{conv}` and :math:`h_{diff}` are the size of the element realted to the convection transport and diffusion mechanism, respectively. In Lethe, both element sizes are set to the diameter of a sphere of a volume equivalent to that of the cell. In the case of stationary problems, the following expression is used: 
 
 .. math::
 
-   \tau = \left[ \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + \left( 9 \frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
+   \tau = \left[ \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + 9 \left(\frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
 
 To solve the non-linear problem Lethe uses again the Newton-Raphson method, however, the Jacobian and the residual are now of the following form: 
 
@@ -49,9 +49,9 @@ This approach builds on the work of `Heister et al. (2012) <https://onlinelibrar
   \\
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega  - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  
   \\
-  &+ \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  + \sum_K \gamma \int_{\Omega_k} \partial_l u_l \partial_k v_l = 0
+  &+ \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  + \sum_K \gamma \int_{\Omega_k} \partial_l u_l \partial_k v_k = 0
 
-where :math:`\gamma` is an additional parameter that can be related to the augmented lagrangian formulation. The additional stabilization term improves the numerical accuracy of the solution and helps reducing oscillations for convection-dominated flows. In general, the optimal value for :math:`\gamma` depends on the solution on each element and it is therefore, problem dependent. In this case, the linear system to be solved in each non-linear iteration has the same structure as the one obtained with the classical formulation. Therefore, a good preconditioning is necessary to solve the linear system at each non linear iteration. In Lethe this is done using the Schur complement.
+where :math:`\gamma` is an additional parameter that can be related to the augmented lagrangian formulation. The additional stabilization term improves the numerical accuracy of the solution and helps reducing oscillations for convection-dominated flows. In general, the optimal value for :math:`\gamma` depends on the solution on each element and it is therefore, problem dependent. In Lethe the value of :math:`\gamma` is equal to :math:`1`. In this case, the linear system to be solved in each non-linear iteration has the same structure as the one obtained with the classical formulation. Therefore, a good preconditioning is necessary to solve the linear system at each non linear iteration. In Lethe this is done using the Schur complement.
 
 
 Galerkin Least-Squares formulation
