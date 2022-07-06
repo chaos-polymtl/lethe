@@ -17,7 +17,20 @@ Built-in kernel
 """"""""""""""""""""""""""
 OpenCASCADE kernel
 """"""""""""""""""""""""""
-OpenSource external CAD engined library.
+In the gmsh geometry section of the gmsh GUI (see **Geometry** > **Elementary entities** > **Add**), you can add directly multiple 2D or 3D common geometries with a simple click thanks to OpenCASCADE kernel. After selecting the geometry that you need, gmsh will automatically open a window where you can easily set the characteristic lenghts of the geometry. By doing so, the .geo file will be updated.
+
+.. note::
+	At anytime, you can go back to your code to change manually some parameters of your geometry. In the **Elementary entities** section, you can **Edit script** to go back to the code and **Reload** script to visualize and update the .geo file on the gmsh GUI.
+	
+To represent a circle in a rectangle to simulate the flow around a sphere in 2D, we will first select the **Circle** geometry available with OpenCASCADE, set the radius to 1 and center it at :math:`(x,y)=(0,0)`. Then, we will select the **Rectangle** geometry, set the length (DX) to 20, the width (DY) to 10 and the left bottom corner to :math:`(x,y)=(-5,-5)`. The geometry should look like below.
+
+.. image:: images/geo.png
+    :alt: The geometry of a circle in a rectangle
+    :align: center
+    :name: geometry
+    
+.. note::
+	If you click on **Edit script**, you will see that the OpenCASCADE kernel has been added to the code as ``SetFactory("OpenCASCADE");``. Also, the circle is set with ``Circle(1) = {0, 0, 0, 1, 0, 2*Pi};`` and the rectangle with ``Rectangle(1) = {-5, -5, 0, 20, 10, 0};``.
 
 """"""""""""""""""""""""""
 Import CAD file
