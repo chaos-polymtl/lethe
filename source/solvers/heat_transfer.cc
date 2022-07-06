@@ -302,8 +302,17 @@ HeatTransfer<dim>::assemble_local_system_rhs(
     }
   else
     {
-      scratch_data.reinit_velocity(
-        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+      if(this->simulation_parameters.multiphysics.use_average_velocity_field)
+        {
+          scratch_data.reinit_velocity(velocity_cell,
+                                       *multiphysics->get_average_solution(
+                                         PhysicsID::fluid_dynamics));
+        }
+      else{
+          scratch_data.reinit_velocity(velocity_cell,
+                                       *multiphysics->get_solution(
+                                         PhysicsID::fluid_dynamics));
+        }
 
       scratch_data.reinit_velocity_gradient(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics));

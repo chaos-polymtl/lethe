@@ -91,7 +91,7 @@ public:
   const VectorType &
   get_average_velocities()
   {
-    return get_av = average_velocities;
+    return  average_velocities;
   }
 
   /**
@@ -101,7 +101,7 @@ public:
   const VectorType &
   get_reynolds_normal_stresses()
   {
-    return get_rns = reynolds_normal_stresses;
+    return reynolds_normal_stresses;
   }
 
   /**
@@ -111,7 +111,7 @@ public:
   const VectorType &
   get_reynolds_shear_stresses()
   {
-    return get_rss = reynolds_shear_stresses;
+    return reynolds_shear_stresses;
   }
 
   /**
@@ -179,6 +179,7 @@ private:
   VectorType sum_velocity_dt;
   VectorType average_velocities;
   VectorType get_av;
+  VectorType get_average;
 
   VectorType reynolds_normal_stress_dt;
   VectorType sum_reynolds_normal_stress_dt;
@@ -193,6 +194,7 @@ private:
   VectorType sum_velocity_dt_with_ghost_cells;
   VectorType sum_rns_dt_with_ghost_cells;
   VectorType sum_rss_dt_with_ghost_cells;
+  VectorType average_velocities_with_ghost_cells;
 
   // Solution transfer for the three permanent velocity storage
   parallel::distributed::SolutionTransfer<dim, VectorType>
@@ -201,6 +203,8 @@ private:
     solution_transfer_sum_reynolds_normal_stress_dt;
   parallel::distributed::SolutionTransfer<dim, VectorType>
     solution_transfer_sum_reynolds_shear_stress_dt;
+  parallel::distributed::SolutionTransfer<dim, VectorType>
+    solution_transfer_average_velocity;
 
   double       dt;
   double       real_initial_time;
