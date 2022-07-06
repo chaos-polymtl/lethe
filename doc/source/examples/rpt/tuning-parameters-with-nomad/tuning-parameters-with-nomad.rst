@@ -49,7 +49,7 @@ The illustration below depicts the geometry of the vessel, the detector, and the
 As discussed in the previous example (`Photon Count Calculation in a Cylindrical Vessel <../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html>`_), when a particle travels in a cylindrical reactor, its corresponding photon count (:math:`C`) measured by the detector varies according to the following relation:
 
 .. math::
-    C = \frac{T \nu R \phi \xi_i (\vec{X})}{1 + \tau \nu R \phi \xi_i (\vec{X})}
+    C = \frac{T \nu R \phi \xi_i (\mathbf{X})}{1 + \tau \nu R \phi \xi_i (\mathbf{X})}
 
 
 where,
@@ -59,14 +59,14 @@ where,
 - :math:`R` is the activity of the tracer [:math:`Beq`] *(the first unknown parameter)*;
 - :math:`\phi` is the peak-to-total ratio;
 - :math:`\tau` is the dead time of the detector [:math:`s`] *(the second unknown parameter)*;
-- :math:`\vec{X}` is the tracer particle's position, and
-- :math:`\xi_i(\vec{X})` is the efficiency of the :math:`i_{th}` detector related to the position :math:`\vec{X}`.
+- :math:`\mathbf{X}` is the tracer particle's position, and
+- :math:`\xi_i(\mathbf{X})` is the efficiency of the :math:`i_{th}` detector related to the position :math:`\mathbf{X}`.
 
 The efficiency of the detector is calculated using the Monte Carlo method, with the following expression:
 
 .. math::
 
-    \xi_i (\vec{X}) = \frac{1}{N} \sum_{j=1}^{N} \omega(\alpha) \omega(\theta) f_a(\alpha_j, \theta_j) f_d(\alpha_j, \theta_j)
+    \xi_i (\mathbf{X}) = \frac{1}{N} \sum_{j=1}^{N} \omega(\alpha) \omega(\theta) f_a(\alpha_j, \theta_j) f_d(\alpha_j, \theta_j)
 
 where
 
@@ -261,51 +261,6 @@ Second, in the *"parameter tuning"* subsection, the ``tuning`` parameter was set
 
 Lastly, in the *"detector parameters"* subsection, the values of the parameters that were tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) were replaced with the ones NOMAD gave us.
 
-The content of ``rpt_count_calculation.prm``:
-
-.. code-block:: text
-
-    # Listing of Parameters
-    # ---------------------
-    # --------------------------------------------------
-    # RPT Monte Carlo technique
-    #---------------------------------------------------
-    subsection rpt parameters
-        set particle positions file          = positions.particle
-        set verbosity                        = verbose
-        set export counts                    = true
-        set counts file                      = counts_calculated.csv
-        set monte carlo iteration            = 100000
-        set random number seed               = 0
-        set reactor height                   = 0.3
-        set reactor radius                   = 0.4
-        set peak-to-total ratio              = 0.4
-        set sampling time                    = 0.01
-        set gamma-rays emitted               = 2
-        set attenuation coefficient detector = 21.477
-    end
-
-    # --------------------------------------------------
-    # Tuning with NOMAD
-    #---------------------------------------------------
-    subsection parameter tuning
-        set tuning                           = false
-        set cost function type               = larachi
-        set experimental data file           = counts.experimental
-    end
-
-    #---------------------------------------------------
-    # Detector parameters
-    #---------------------------------------------------
-    subsection detector parameters
-        set detector positions file          = positions.detector
-        set radius                           = 0.0381
-        set length                           = 0.0762
-        set dead time                        = 7.85479e-06
-        set activity                         = 2.43045e+06
-        set attenuation coefficient reactor  = 0.5002
-    end
-
 In the figure below, we can see that there is very little difference between the experimental counts and the calculated counts with the tuned parameters.
 
 
@@ -313,6 +268,7 @@ In the figure below, we can see that there is very little difference between the
     :alt: Experimental and calculated counts comparison
     :align: center
     :name: Experimental and calculated counts comparison
+
 
 
 

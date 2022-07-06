@@ -51,7 +51,7 @@ The illustration below depicts the geometry of the vessel, the detector, and the
 As a particle travels in the cylindrical vessel, its photon count (:math:`C`) measured by the detector varies according to the following relation:
 
 .. math::
-    C = \frac{T \nu R \phi \xi_i (\vec{X})}{1 + \tau \nu R \phi \xi_i (\vec{X})}
+    C = \frac{T \nu R \phi \xi_i (\mathbf{X})}{1 + \tau \nu R \phi \xi_i (\mathbf{X})}
 		
 where
 
@@ -60,8 +60,8 @@ where
 - :math:`R` is the activity of the tracer (:math:`Beq`);
 - :math:`\phi` is the peak-to-total ratio;
 - :math:`\tau` is the dead time of the detector (:math:`s`);
-- :math:`\vec{X}` is the tracer particle's position, and
-- :math:`\xi_i(\vec{X})` is the efficiency of the :math:`i_{th}` detector related to the position :math:`\vec{X}`.
+- :math:`\mathbf{X}` is the tracer particle's position, and
+- :math:`\xi_i(\mathbf{X})` is the efficiency of the :math:`i_{th}` detector related to the position :math:`\mathbf{X}`.
 
 
 
@@ -72,14 +72,14 @@ The efficiency of the detector may be expressed by means of the following equati
 .. math::
 	
 
-    \xi_i (\vec{X}) = \int_{\Omega } \frac{\vec{r}\cdot d\overrightarrow{A}}{\left \| \vec{r} \right \|^{3}}f_{a}(\alpha ,\theta )f_{d}(\alpha ,\theta )
+    \xi_i (\mathbf{X}) = \int_{\Omega } \frac{\mathbf{r}\cdot d\overrightarrow{A}}{\left \| \mathbf{r} \right \|^{3}}f_{a}(\alpha ,\theta )f_{d}(\alpha ,\theta )
 	
 
 where
 
 - :math:`\Omega` is the closed exposed surface of the detector;
-- :math:`\vec{r}` is a vector going from the position of the tracer particle (:math:`\vec{X}`) to a variable point (:math:`\vec{P}`) on the exposed surface of the detector;
-- :math:`d\vec{A}` is the external surface vector normal to the surface at the contact point on the detector's crystal;
+- :math:`\mathbf{r}` is a vector going from the position of the tracer particle (:math:`\mathbf{X}`) to a variable point (:math:`\mathbf{P}`) on the exposed surface of the detector;
+- :math:`d\mathbf{A}` is the external surface vector normal to the surface at the contact point on the detector's crystal;
 - :math:`f_a(\alpha, \theta)` is the probability function of the non-interaction between the :math:`\gamma`-rays emitted within :math:`\Omega` and the material inside the vessel, and
 - :math:`f_d(\alpha, \theta)` is the probability function of the interaction of the :math:`\gamma`-rays with the detector. 
 
@@ -110,7 +110,7 @@ Thus, the efficiency of the :math:`i_{th}` detector is calculated as follows :
 
 .. math::
 
-    \xi_i (\vec{X}) = \frac{1}{N} \sum_{j=1}^{N} \omega(\alpha) \omega(\theta) f_a(\alpha_j, \theta_j) f_d(\alpha_j, \theta_j)
+    \xi_i (\mathbf{X}) = \frac{1}{N} \sum_{j=1}^{N} \omega(\alpha) \omega(\theta) f_a(\alpha_j, \theta_j) f_d(\alpha_j, \theta_j)
 
 
 where
@@ -290,14 +290,15 @@ Scenario 4: Particle going across the vessel on a diagonal line
 
 After analyzing the past three scenarios, we get much-expected results for this scenario. As seen in the first scenario, the photon count varies greatly with the :math:`x` coordinate of the position vector of the particle. That is because the path of the photon inside the vessel gets longer when :math:`x` gets smaller. In other words, the ray is more attenuated by the material inside the vessel before getting to the detector, therefore the photon count gets smaller. Consequently, even though the particle is further away from the detector if the :math:`x` coordinate of the tracer's position is closer to the detector's exposed surface, the photon count could get greater and that's what we see on the figure above for high :math:`z` values.
 
-Sensibility analysis of the Monte Carlo technic
+Sensitivity analysis of the Monte Carlo technic
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Looking back at the second scenario, we notice that the counts are quite scattered (Case A). By increasing the number of Monte Carlo iterations, we see can much smoother results as seen in the Case C figure below. Here we have increased the number of Monte Carlo iteration (:math:`N`) by a factor :math:`10`. When :math:`N` is increased, when calculating the efficiency using the Monte Carlo method, more "weight" is accorded to the most probable points, since the appear more often in the sum. This makes the least probable points negligible. Consequently, we obtain smoother results. On the Case B figure, :math:`N` was decreased by a factor :math:`10`. As expected, on this figure, we see much more scattering.
+Looking back at the second scenario, we notice that the counts are quite scattered (Case A). By increasing the number of Monte Carlo iterations, we see can much smoother results as seen in the Case C figure. On the Case C figure, we have increased the number of Monte Carlo iteration (:math:`N`) by a factor :math:`10`. When calculating the efficiency using the Monte Carlo method with a large :math:`N`, more "weight" is accorded to the most probable points, since they appear more often in the sum. This makes the least probable points points negligible. Consequently, we obtain smoother results. On the Case B figure, :math:`N` was decreased by a factor :math:`10`. As expected, on this figure, we see much more scattering.
 
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/counts_along_y-axis_case1.png                                                                                                             |
-|    :alt: Scenario 2 results when the efficiency of the detector is the product of the weighting factors                                                       |
+|    :alt: Results for the horizontal translation of a particle along the y-axis results when reactor attenuation coefficient is set at 10 and detector         |
+|       attenuation coefficient is set at 21.477 (Scenario 2)                                                                                                   |
 |    :align: center                                                                                                                                             |
 |    :name: Sensibility analysis when N = 100000 (Case A)                                                                                                       |
 |    :scale: 60%                                                                                                                                                |
@@ -306,10 +307,10 @@ Looking back at the second scenario, we notice that the counts are quite scatter
 |                                                                                                                                                               |
 |    :raw-html:`<br />`                                                                                                                                         |
 +-----------------------------------------------------------------------------+---------------------------------------------------------------------------------+
-|  .. figure:: images/sensibility_analysis_caseB.png                          | .. figure:: images/sensibility_analysis_caseC.png                               |
+|  .. figure:: images/sensitivity_analysis_caseB.png                          | .. figure:: images/sensitivity_analysis_caseC.png                               |
 |    :alt: Scenario 2 results when reactor N = 10000                          |     :alt: Scenario 2 results when N = 1000000                                   |
 |    :align: center                                                           |     :align: center                                                              |
-|    :name: Sensibility analysis when N = 10000 (Case B)                      |     :name: Sensibility analysis when N = 1000000 (Case C)                       |
+|    :name: Sensitivity analysis when N = 10000 (Case B)                      |     :name: Sensitivity analysis when N = 1000000 (Case C)                       |
 |                                                                             |                                                                                 |
 |    Case B: :math:`N = 1e4`                                                  |     Case C: :math:`N = 1e6`                                                     |
 |                                                                             |                                                                                 |
