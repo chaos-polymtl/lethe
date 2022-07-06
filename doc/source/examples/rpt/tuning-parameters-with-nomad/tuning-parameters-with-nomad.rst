@@ -18,7 +18,7 @@ In this example, `NOMAD <https://www.gerad.ca/en/software/nomad/>`_, the blackbo
 Features
 ----------------------------------
 - Solver: ``rpt_3d``
-- Displays the use of NOMAD in parameter tuning
+- Displays the use of NOMAD to calibrate the parameters of the Beam model
 
 
 :raw-html:`<br />`
@@ -62,7 +62,7 @@ where,
 - :math:`\vec{X}` is the tracer particle's position, and
 - :math:`\xi_i(\vec{X})` is the efficiency of the :math:`i_{th}` detector related to the position :math:`\vec{X}`.
 
-The efficiency of the detector is calculated using the Monte Carlo technic, with the following expression:
+The efficiency of the detector is calculated using the Monte Carlo method, with the following expression:
 
 .. math::
 
@@ -108,7 +108,7 @@ RPT Parameters
 ^^^^^^^^^^^^^^^^
 
 
-As seen in the previous example, in the subsection *"rpt parameters"*, we define the values of the set of parameter necessary for calculating the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
+As seen in the previous example, in the subsection ``rpt parameters``, we define the values of the set of parameter necessary for calculating the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
 
 .. code-block:: text
 
@@ -137,7 +137,7 @@ As seen in the previous example, in the subsection *"rpt parameters"*, we define
 Parameter tuning
 ^^^^^^^^^^^^^^^^^^
 
-In the subsection *"parameter tuning"*, we enable parameters tuning, we specify a type of cost function and define a set of experimental counts to compare with the calculated counts. Parameters used for the tuning of the model parameters are described in the `Parameter tuning <../../../parameters/rpt/parameter_tuning.html>`_ documentation page.
+In the subsection ``parameter tuning``, we enable parameters tuning, we specify a type of cost function and define a set of experimental counts to compare with the calculated counts. Parameters used for the tuning of the model parameters are described in the `Parameter tuning <../../../parameters/rpt/parameter_tuning.html>`_ documentation page.
 
 .. code-block:: text
 
@@ -154,7 +154,7 @@ In the subsection *"parameter tuning"*, we enable parameters tuning, we specify 
 Detector Parameters
 ^^^^^^^^^^^^^^^^^^^^
 
-In the subsection *"detector parameters"*, we specify the file that contains the position of the detector face center and the position of a point inside the detector on its axis. In this example, the detector face center position is :math:`(0.2,0,0.0750)` and :math:`(0.2381,0,0.075)` is another point on the detector’s axis. The detector parameters are described in the `Detector Parameters <../../../parameters/rpt/detector_parameters.html>`_ documentation page.
+In the subsection ``detector parameters``, we specify the file that contains the position of the detector face center and the position of a point inside the detector on its axis. In this example, the detector face center position is :math:`(0.2,0,0.0750)` and :math:`(0.2381,0,0.075)` is another point on the detector’s axis. The detector parameters are described in the `Detector Parameters <../../../parameters/rpt/detector_parameters.html>`_ documentation page.
 
 .. code-block:: text
 
@@ -244,7 +244,7 @@ After running the optimization software, the best feasible solution will be disp
 .. tip::
     Changing the initial values of the optimization problem to ones that are closer to the solution seen above can reduce the computation time.
 
-We may now verify if these values correspond to the studied system. To do so, as it was done in the `previous example (Photon Count Calculation in a Cylindrical Vessel) <../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html>`_, we calculate the counts for the set of particle positions that the corresponding experimental counts are known. Assuming that the ``rpt_3d`` executable is within your path, the simulation can be launched by typing:
+We may now verify if these values correspond to the physical system. To do so, as it was done in the `previous example (Photon Count Calculation in a Cylindrical Vessel) <../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html>`_, we calculate the counts for the set of particle positions that the corresponding experimental counts are known. Assuming that the ``rpt_3d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
