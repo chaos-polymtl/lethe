@@ -596,6 +596,9 @@ namespace Parameters
     // Prefix for the tracer output
     std::string tracer_output_name;
 
+    // Enable smoothing postprocessed vectors and scalars
+    bool smoothing;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
