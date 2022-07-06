@@ -22,13 +22,13 @@ OpenSource external CAD engined library.
 """"""""""""""""""""""""""
 Import CAD file
 """"""""""""""""""""""""""
-Importing CAD files can be particularly convenient for more complex fluid geometries (like pipes) or immersed solids (like an impeller):
+Importing CAD files (``.step`` or ``.stp`` format) can be particularly convenient for more complex fluid geometries (like pipes) or immersed solids (like an impeller):
 
 .. hint::
   In the case of immersed solids, use a simplified CAD file of the outer shell of the solid, e.g. without any screws or bolts or threads.
 
 1. ``File > New...``: create a new .geo file (can use OpenCASCADE or Built-in kernel)
-2. ``Files > Merge...``: merge the CAD file with GMSH
+2. ``Files > Merge...``: merge the CAD file (``.step`` or ``.stp`` format) with GMSH
 3. ``Tools > Statistics``: check that the geometry is loaded (point, curves, surfaces, and if 3D volumes)
 
 .. seealso::
