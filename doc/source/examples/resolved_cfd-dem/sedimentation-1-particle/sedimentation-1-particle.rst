@@ -337,7 +337,7 @@ We can also compare the results obtained for the velocity in time with the resul
 
 Reference
 ---------------
-[1] Ten Cate, A., Nieuwstad, C. H., Derksen, J. J., & Van den Akker, H. E. A. (2002). Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity. Physics of Fluids, 14(11), 4012-4025.`DOI <https://doi.org/10.1063/1.1512918>`_
+`[1] <https://doi.org/10.1063/1.1512918>`_ Ten Cate, A., Nieuwstad, C. H., Derksen, J. J., & Van den Akker, H. E. A. (2002). Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity. Physics of Fluids, 14(11), 4012-4025.`DOI <https://doi.org/10.1063/1.1512918>`_
 
 
 
