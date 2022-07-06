@@ -7,23 +7,23 @@ It is well known that, in the absence of stabilization, the choice of the veloci
 SUPG/PSPG monolithic formulation
 -----------------------------------
 
-This approach consists of two new terms that are added to the classical weak formulation. The first one is known as SUPG (Streamline-Upwind/ Petro-Galerkin) formulation and it is in charge of stabilizing the formulation for convection-dominated flows. The second one is known as PSPG (Pressure-Stabilizing/ Petrov-Galerkin) and as its name indicates, it is in charge of reducing pressure oscillations when using equal order elements. Thus, the new weak form of the Navier-Stokes equation is given by:
+This approach consists of two new terms that are added to the classic weak formulation. The first one is known as SUPG (Streamline-Upwind/ Petro-Galerkin) formulation and it is in charge of stabilizing the formulation for convection-dominated flows. The second one is known as PSPG (Pressure-Stabilizing/ Petrov-Galerkin) and as its name indicates, it reduces pressure oscillations when using equal order elements. Thus, the new weak form of the Navier-Stokes equation is given by:
 
 .. math::
 
-  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_k  = 0 
+  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_k  = 0 
   \\
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k =0
+  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k =0
 
-This formulation is consistent as the added terms involve the residual and if we substitute the exact solution the stabilization term vanishes. In literature, one can find different definitions of the stabilization parameters :math:`\tau_{SUPG}` and :math:`\tau_{PSPG}`. Lethe uses the definition by `Tezduyar (1991) <https://linkinghub.elsevier.com/retrieve/pii/S0065215608701534>`_ for both stabilization parameters:
+This formulation is consistent as the added terms involve the residual and if we substitute the exact solution the stabilization terms vanish. In literature, one can find different definitions of the stabilization parameters :math:`\tau_{SUPG}` and :math:`\tau_{PSPG}`. Lethe uses the definition by `Tezduyar (1991) <https://linkinghub.elsevier.com/retrieve/pii/S0065215608701534>`_ for both stabilization parameters. In the case of a transient problem:
 
 .. math::
 
    \tau = \left[ \left( \frac{1}{\Delta t} \right)^{2} + \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + 9 \left( \frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
 
-where :math:`\Delta t` is the time step, :math:`h_{conv}` and :math:`h_{diff}` are the size of the element realted to the convection transport and diffusion mechanism, respectively. In Lethe, both element sizes are set to the diameter of a sphere of a volume equivalent to that of the cell. In the case of stationary problems, the following expression is used: 
+where :math:`\Delta t` is the time step, and :math:`h_{conv}` and :math:`h_{diff}` are the size of the element related to the convection transport and diffusion mechanism, respectively. In Lethe, both element sizes are set to the diameter of a sphere of a volume equivalent to that of the cell. In the case of stationary problems, the following expression is used: 
 
 .. math::
 
@@ -41,7 +41,7 @@ As it can be seen there is an additional matrix :math:`S^*` that appears in the 
 Grad-Div block formulation
 ------------------------------------
 
-This approach builds on the work of `Heister et al. (2012) <https://onlinelibrary.wiley.com/doi/10.1002/fld.3654>`_. and can be seens a natural parallel extension of the `Step-57 of deal.ii <https://www.dealii.org/current/doxygen/deal.II/step_57.html>`_. An additional term is added to the classical weak form: 
+This approach builds on the work of `Heister et al. (2012) <https://onlinelibrary.wiley.com/doi/10.1002/fld.3654>`_. and can be seen as a natural parallel extension of the `Step-57 of deal.ii <https://www.dealii.org/current/doxygen/deal.II/step_57.html>`_. An additional term is added to the classic weak form of the Navier-Stokes equations: 
 
 .. math::
 
@@ -51,23 +51,23 @@ This approach builds on the work of `Heister et al. (2012) <https://onlinelibrar
   \\
   &+ \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  + \sum_K \gamma \int_{\Omega_k} \partial_l u_l \partial_k v_k = 0
 
-where :math:`\gamma` is an additional parameter that can be related to the augmented lagrangian formulation. The additional stabilization term improves the numerical accuracy of the solution and helps reducing oscillations for convection-dominated flows. In general, the optimal value for :math:`\gamma` depends on the solution on each element and it is therefore, problem dependent. In Lethe the value of :math:`\gamma` is equal to :math:`1`. In this case, the linear system to be solved in each non-linear iteration has the same structure as the one obtained with the classical formulation. Therefore, a good preconditioning is necessary to solve the linear system at each non linear iteration. In Lethe this is done using the Schur complement.
+where :math:`\gamma` is an additional parameter that can be related to the augmented lagrangian formulation. The additional stabilization term improves the numerical accuracy of the solution and helps reduce oscillations for convection-dominated flows. In general, the optimal value for :math:`\gamma` depends on the solution on each element and it is therefore, problem dependent. In Lethe the value of :math:`\gamma` is equal to :math:`1`. In this case, the linear system to be solved in each non-linear iteration has the same structure as the one obtained with the classic weak formulation. Therefore, a good preconditioning is necessary to solve the linear system at each non linear iteration. More this on this topic are found in the linear solvers section.
 
 
 Galerkin Least-Squares formulation
 -----------------------------------
 
-The GLS formulation is built as a generalization of the stabilization procedure in the SUPG/PSPG formulation. It is based on a Least-Squares term based on the momentum equation. It includes the SUPG and PSPG terms but adds an additional one as it can be seen in its weak form:
+The GLS formulation is built as a generalization of the stabilization procedure in the SUPG/PSPG formulation. It is based on a Least-Squares term based on the momentum equation. It includes oth the SUPG and PSPG terms but adds an additional one as it can be seen in its weak form:
 
 .. math::
 
-  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_k  = 0 
+  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_k  = 0 
   \\
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k 
+  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k 
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{GLS} \nu \partial_l \partial_l u_k \right) \mathrm{d}\Omega_k  =0
+  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{GLS} \nu \partial_l \partial_l u_k \right) \mathrm{d}\Omega_k  =0
 
-This is the version of the GLS stabilization if the finite element method is only used for the spatial discretization and no time-space finite element formulation is used. The stabilization parameters are taken to be the same in all cases and given by the same :math:`\tau` expressions presented in the SUPG/PSPG section. The non-linear problem is solved in the same fashion and the structure of the Jacobian is the same one as the SUPG/PSPG formulation.
+This is the version of the GLS stabilization if the finite element method is only used for the spatial discretization and no time-space finite element formulation is used as is the case in Lethe. The stabilization parameters are taken to be the same in all cases and given by the same :math:`\tau` expressions presented in the SUPG/PSPG section. The non-linear problem is solved in the same fashion and the structure of the Jacobian is the same one as the SUPG/PSPG formulation.
 
