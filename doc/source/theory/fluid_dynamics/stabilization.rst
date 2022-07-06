@@ -4,17 +4,76 @@ On the need for stabilization
 It is well known that, in the absence of stabilization, the choice of the velocity and pressure finite element spaces must be done to ensure that the `Ladyzenskaya-Babuska-Brezzi (LBB) inf-sup <https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition>`_ condition is met. It is also known that the Galerkin approximation of the Navier–Stokes equations may fail in convection dominated flows, for which there are boundary layers where the velocity solution and its gradient exhibit rapid variation over short length scales. In these regions, the classical Galerkin approach may lead to numerical oscillations which may greatly pollute the solution over the entire domain. Stabilization of the elements, which is used in Lethe, can circumvent the limitations of the classical Galerkin approach and alleviate the  need to use LBB stable elements. This notably allows for the use of equal order elements (such as P1-P1).
 
 
-SUPG/SSPG monolithic formulation
+SUPG/PSPG monolithic formulation
 -----------------------------------
-**Under construction**
 
+This approach consists of two new terms that are added to the classical weak formulation. The first one is known as SUPG (Streamline-Upwind/ Petro-Galerkin) formulation and it is in charge of stabilizing the formulation for convection-dominated flows. The second one is known as PSPG (Pressure-Stabilizing/ Petrov-Galerkin) and as its name indicates, it is in charge of reducing pressure oscillations when using equal order elements. Thus, the new weak form of the Navier-Stokes equation is given by:
+
+.. math::
+
+  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_k  = 0 
+  \\
+  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
+  \\
+  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k =0
+
+This formulation is consistent as the added terms involve the residual and if we substitute the exact solution the stabilization term vanishes. In literature, one can find different definitions of the stabilization parameters :math:`\tau_{SUPG}` and :math:`\tau_{PSPG}`. Lethe uses the definition by `Tezudyar (1991) <https://linkinghub.elsevier.com/retrieve/pii/S0065215608701534>`_ for both stabilization parameters:
+
+.. math::
+
+   \tau = \left[ \left( \frac{1}{\Delta t} \right)^{2} + \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + \left( 9 \frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
+
+where :math:`\Delta t` is the time step, :math:`h_{conv}` and :math:`h_{diff}` are the size of the element realted to the convection transport and diffusion mechanism, respectively. In Lethe, both element sizes are set to the diameter of a sphere of a volume equivalent to that of the cell. In the case of stationary problems, the following expression is used: 
+
+.. math::
+
+   \tau = \left[ \left( \frac{2 |\mathrm{u}|}{h_{conv}} \right)^{2} + \left( 9 \frac{4 \nu}{h^2_{diff}} \right)^{2} \right]^{-1/2}
+
+To solve the non-linear problem Lethe uses again the Newton-Raphson method, however, the Jacobian and the residual are now of the following form: 
+
+.. math::
+    
+  \mathbf{\mathcal{J}} &= \left[ \begin{matrix} 	A^* & B^{*T}  \\[0.3em]	B^* & S^* \end{matrix} \right] \\
+  \mathbf{\mathcal{R}} &=  \left[ \begin{matrix} \mathbf{\mathcal{R}}_{v}^*   \\[0.3em]		\mathbf{\mathcal{R}}_{q}^*  \end{matrix} \right]
+  
+As it can be seen there is an additional matrix :math:`S^*` that appears in the linear system and eliminates the zero block on the diagonal of the Jacobian matrix.
 
 Grad-Div block formulation
 ------------------------------------
-**Under construction**
+
+This approach builds on the work of Heister et al. [REF] and can be seens a natural parallel extension of the Step-57 of deal.ii [REF]. An additional term is added to the classical weak form: 
+
+.. math::
+
+  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega =0 
+  \\
+  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega  - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  
+  \\
+  &+ \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  + \sum_K \gamma \int_{\Omega_k} \partial_l u_l \partial_k v_l = 0
+
+where :math:`\gamma` is an additional parameter that can be related to the augmented lagrangian formulation. In this case, the linear system to be solved in each non-linear iteration is not affected by the stabilization. To solve the non-linear problem Lethe uses again the Newton-Raphson method, however, the Jacobian and the residual are now of the following form: 
+
+.. math::
+    
+  \mathbf{\mathcal{J}} &= \left[ \begin{matrix} 	A + \gamma B^{T} W^{-1} B  & B^{T}  \\[0.3em]	B & 0 \end{matrix} \right] \\
+  \mathbf{\mathcal{R}} &=  \left[ \begin{matrix} \mathbf{\mathcal{R}}_{v}^*   \\[0.3em]		\mathbf{\mathcal{R}}_{q}^*  \end{matrix} \right]
+  
 
 
 Galerkin Least-Squares formulation
 -----------------------------------
-**Under construction**
+
+The GLS formulation is built as a generalization of the stabbilization procedure in the SUPG/PSPG formulation. It is based on a Least-Squares term based on the momentum equation. It includes the SUPG and PSPG terms but adds an additional one as it can be seen in its weak form:
+
+.. math::
+
+  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_k  = 0 
+  \\
+  &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
+  \\
+  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k 
+  \\
+  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - v \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{GLS} \nu v \partial_l \partial_l u_k \right) \mathrm{d}\Omega_k  =0
+
+This is the version of the GLS stabilization if the finite element method is only used for the spatial discretization and no time-space finite element formulation is used. 
 
