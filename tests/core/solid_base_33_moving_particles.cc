@@ -25,18 +25,19 @@
 #include <deal.II/particles/data_out.h>
 
 // Lethe
-#include <core/nitsche.h>
 #include <core/parameters.h>
 #include <core/solid_base.h>
+#include <core/solid_objects_parameters.h>
 
 #include <solvers/simulation_parameters.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
 
-void output(std::shared_ptr<Particles::ParticleHandler<3>> particle_handler,
-            MPI_Comm                                       mpi_communicator,
-            int                                            iter)
+void
+output(std::shared_ptr<Particles::ParticleHandler<3>> particle_handler,
+       MPI_Comm                                       mpi_communicator,
+       int                                            iter)
 {
   Particles::DataOut<3, 3> particles_out;
   particles_out.build_patches(*particle_handler);
@@ -50,7 +51,7 @@ test()
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
   SimulationParameters<3> NSparam;
-  auto             param = std::make_shared<Parameters::NitscheSolid<3>>();
+  auto             param = std::make_shared<Parameters::SolidObject<3>>();
   ParameterHandler prm;
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> fluid_tria =
     std::make_shared<parallel::distributed::Triangulation<3>>(

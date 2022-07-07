@@ -22,9 +22,9 @@
 
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
-#include <core/nitsche.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
+#include <core/solid_objects_parameters.h>
 
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
@@ -54,9 +54,9 @@ public:
   BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
-  Parameters::InitialConditions<dim> *              initial_condition;
-  AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
-  SourceTerms::SourceTerm<dim> *                    source_term;
+  Parameters::InitialConditions<dim>               *initial_condition;
+  AnalyticalSolutions::AnalyticalSolution<dim>     *analytical_solution;
+  SourceTerms::SourceTerm<dim>                     *source_term;
   Parameters::VelocitySource                        velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
