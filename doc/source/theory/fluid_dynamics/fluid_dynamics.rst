@@ -10,4 +10,5 @@ Fluid dynamics
     navier-stokes
     fem_formulation
     stabilization
+    linear_solvers
     rheology
