@@ -18,8 +18,8 @@ Initial refinement around IB particles - Step : 3 of 3
 *****************************************************************
 Transient iteration : 1        Time : 0.0025   Time step : 0.0025   CFL : 0       
 *****************************************************************
-particule 0 position 5.00002 0.797041 4.99992
-particule 0 velocity 0.00725055 -9.18348 -0.0300119
+particle 0 position 5.00002 0.797041 4.99992
+particle 0 velocity 0.00725055 -9.18348 -0.0300119
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+

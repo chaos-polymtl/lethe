@@ -1798,24 +1798,14 @@ namespace Parameters
       "smaller sphere radius, distance between centers.");
     prm.declare_entry("shape arguments",
                       "1",
-                      Patterns::List(Patterns::Double()),
+                      Patterns::Anything(),
                       "Arguments defining the geometry");
 
     prm.declare_entry(
-      "pressure x",
-      "0",
-      Patterns::Double(),
-      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in x ");
-    prm.declare_entry(
-      "pressure y",
-      "0",
-      Patterns::Double(),
-      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in y ");
-    prm.declare_entry(
-      "pressure z",
-      "0",
-      Patterns::Double(),
-      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle  in z ");
+      "pressure location",
+      "0; 0; 0",
+      Patterns::Anything(),
+      "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle");
     prm.declare_entry("density",
                       "1",
                       Patterns::Double(),
@@ -1891,6 +1881,15 @@ namespace Parameters
         Patterns::FileName(),
         "The name of the file where the data on the force of each particle is stored");
       prm.declare_entry(
+        "load particles from file",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if particles are loaded from an external file");
+      prm.declare_entry("particles file",
+                        "particles",
+                        Patterns::FileName(),
+                        "The file name from which we load the particles");
+      prm.declare_entry(
         "ib particles pvd file",
         "ib_particles_data",
         Patterns::FileName(),
@@ -1900,6 +1899,11 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
+      prm.declare_entry(
+        "print DEM",
+        "true",
+        Patterns::Bool(),
+        "Bool to define if particles' informations are printed on the terminal when particles' time-step is finished");
       prm.declare_entry(
         "contact search radius factor",
         "3",
@@ -1987,7 +1991,7 @@ namespace Parameters
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
-      unsigned int max_ib_particles = 1000;
+      unsigned int max_ib_particles = 10;
       particles.resize(max_ib_particles);
       for (unsigned int i = 0; i < max_ib_particles; ++i)
         {
@@ -2017,6 +2021,7 @@ namespace Parameters
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
       integrate_motion     = prm.get_bool("integrate motion");
+      print_dem            = prm.get_bool("print DEM");
       alpha                = prm.get_double("alpha");
       contact_search_radius_factor =
         prm.get_double("contact search radius factor");
@@ -2025,6 +2030,9 @@ namespace Parameters
           "Error, the parameter 'contact search radius factor' cannot be < 1."));
 
       contact_search_frequency = prm.get_integer("contact search frequency");
+
+      load_particles_from_file = prm.get_bool("load particles from file");
+      particles_file           = prm.get("particles file");
 
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
@@ -2055,7 +2063,7 @@ namespace Parameters
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
-          particles[i].initialise_all();
+          particles[i].initialize_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
 
@@ -2097,13 +2105,21 @@ namespace Parameters
           particles[i].omega[2] =
             particles[i].f_omega->value(particles[i].position, 2);
 
-          particles[i].particle_id          = i;
-          particles[i].inertia[0][0]        = prm.get_double("inertia");
-          particles[i].inertia[1][1]        = prm.get_double("inertia");
-          particles[i].inertia[2][2]        = prm.get_double("inertia");
-          particles[i].pressure_location[0] = prm.get_double("pressure x");
-          particles[i].pressure_location[1] = prm.get_double("pressure y");
-          particles[i].youngs_modulus       = prm.get_double("youngs modulus");
+          particles[i].particle_id   = i;
+          particles[i].inertia[0][0] = prm.get_double("inertia");
+          particles[i].inertia[1][1] = prm.get_double("inertia");
+          particles[i].inertia[2][2] = prm.get_double("inertia");
+
+          std::string pressure_location_str = prm.get("pressure location");
+          std::vector<std::string> pressure_location_str_list(
+            Utilities::split_string_list(pressure_location_str, ";"));
+          std::vector<double> pressure_list =
+            Utilities::string_to_double(pressure_location_str_list);
+          particles[i].pressure_location[0] = pressure_list[0];
+          particles[i].pressure_location[1] = pressure_list[1];
+
+
+          particles[i].youngs_modulus = prm.get_double("youngs modulus");
           particles[i].restitution_coefficient =
             prm.get_double("restitution coefficient");
           particles[i].friction_coefficient =
@@ -2118,16 +2134,16 @@ namespace Parameters
                 particles[i].f_position->value(particles[i].position, 2);
               particles[i].velocity[2] =
                 particles[i].f_velocity->value(particles[i].position, 2);
-              particles[i].pressure_location[2] = prm.get_double("pressure z");
+              particles[i].pressure_location[2] = pressure_list[2];
             }
 
           std::string shape_type          = prm.get("type");
           std::string shape_arguments_str = prm.get("shape arguments");
           std::vector<std::string> shape_arguments_str_list(
-            Utilities::split_string_list(shape_arguments_str));
+            Utilities::split_string_list(shape_arguments_str, ";"));
           std::vector<double> shape_arguments =
             Utilities::string_to_double(shape_arguments_str_list);
-          initialize_shape(i, shape_type, shape_arguments);
+          particles[i].initialize_shape(shape_type, shape_arguments);
 
           particles[i].radius = particles[i].shape->effective_radius;
 
@@ -2143,77 +2159,14 @@ namespace Parameters
                                   particles[i].radius * particles[i].radius *
                                   prm.get_double("density");
             }
-          particles[i].initialise_last();
+          particles[i].initialize_previous_solution();
           prm.leave_subsection();
         }
       prm.leave_subsection();
     }
   }
 
-  template <int dim>
-  void
-  IBParticles<dim>::initialize_shape(const unsigned int        i,
-                                     const std::string         type,
-                                     const std::vector<double> shape_arguments)
-  {
-    if (type == "sphere")
-      particles[i].shape =
-        std::make_shared<Sphere<dim>>(shape_arguments[0],
-                                      particles[i].position,
-                                      particles[i].orientation);
-    else if (type == "rectangle")
-      {
-        Tensor<1, dim> half_lengths;
-        for (unsigned int i = 0; i < dim; ++i)
-          {
-            half_lengths[i] = shape_arguments[i];
-          }
-        particles[i].shape =
-          std::make_shared<Rectangle<dim>>(half_lengths,
-                                           particles[i].position,
-                                           particles[i].orientation);
-      }
-    else if (type == "ellipsoid")
-      {
-        Tensor<1, dim> radii;
-        for (unsigned int i = 0; i < dim; ++i)
-          {
-            radii[i] = shape_arguments[i];
-          }
-        particles[i].shape =
-          std::make_shared<Ellipsoid<dim>>(radii,
-                                           particles[i].position,
-                                           particles[i].orientation);
-      }
-    else if (type == "torus")
-      particles[i].shape =
-        std::make_shared<Torus<dim>>(shape_arguments[0],
-                                     shape_arguments[1],
-                                     particles[i].position,
-                                     particles[i].orientation);
-    else if (type == "cone")
-      particles[i].shape =
-        std::make_shared<Cone<dim>>(shape_arguments[0],
-                                    shape_arguments[1],
-                                    particles[i].position,
-                                    particles[i].orientation);
-    else if (type == "cut hollow sphere")
-      particles[i].shape =
-        std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
-                                               shape_arguments[1],
-                                               shape_arguments[2],
-                                               particles[i].position,
-                                               particles[i].orientation);
-    else if (type == "death star")
-      particles[i].shape =
-        std::make_shared<DeathStar<dim>>(shape_arguments[0],
-                                         shape_arguments[1],
-                                         shape_arguments[2],
-                                         particles[i].position,
-                                         particles[i].orientation);
-    else
-      StandardExceptions::ExcNotImplemented();
-  }
+
 
   void
   DynamicFlowControl::declare_parameters(ParameterHandler &prm)

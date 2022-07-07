@@ -743,6 +743,12 @@ private:
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions_m1;
   std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
     block_physics_solutions_m1;
+
+  // Checks the required dependencies between multiphase models and handles the
+  // corresponding assertions
+  void
+  inspect_multiphysics_models_dependencies(
+    const SimulationParameters<dim> &nsparam);
 };
 
 

@@ -472,10 +472,6 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
     {
       enable_marangoni_effect = prm.get_bool("enable");
 
-      if (enable_marangoni_effect & !enable)
-        throw(std::runtime_error(
-          "Marangoni effect cannot be enabled without enabling surface tension force"));
-
       // Surface tension gradient
       surface_tension_gradient = prm.get_double("surface tension gradient");
     }

@@ -699,7 +699,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           std::fill(lubrication_wall_torque.begin(),
                     lubrication_wall_torque.end(),
                     0);
-
           // Calculate particle-particle and particle-wall contact force
           calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
           calculate_pw_contact_force(dt_dem,
@@ -713,6 +712,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                          mu,
                                          lubrication_wall_force,
                                          lubrication_wall_torque);
+
           // define local time of the rk step
           double local_dt = dt_dem * 0.5;
           if (step == 3)

@@ -168,9 +168,7 @@ subsection particles
         subsection velocity
             set Function expression =-sin(t);0;0
         end
-	    set pressure x =-0.75001
-	    set pressure y =0.00001
-	    set pressure z =0.00001
+	    set pressure location = -0.75001; 0.00001; 0.00001
 	    set type       = sphere
         set shape arguments = 0.5
 	    set density = 1

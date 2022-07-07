@@ -11,6 +11,7 @@ string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_LOWER_BUILD_TYPE)
 	file(COPY check_point.triangulation.info DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/check_point.${CMAKE_LOWER_BUILD_TYPE})
 	file(COPY check_point.triangulation_fixed.data DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/check_point.${CMAKE_LOWER_BUILD_TYPE})
 	file(COPY ib_force.00.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/check_point.${CMAKE_LOWER_BUILD_TYPE})
+	file(COPY particles DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/load_particles_from_file_test.${CMAKE_LOWER_BUILD_TYPE})
 
 	
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
