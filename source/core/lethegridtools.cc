@@ -1,10 +1,12 @@
 #include <core/lethegridtools.h>
+#include <core/serial_solid.h>
 
 #include <deal.II/fe/fe_q.h>
 
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
+#include <unordered_map>
 
 #include <cmath>
 
@@ -873,6 +875,70 @@ LetheGridTools::find_cells_around_flat_cell(
 }
 
 
+
+template <int spacedim, int structdim>
+std::map<typename DoFHandler<spacedim>::active_cell_iterator,std::map< unsigned int,typename DoFHandler<structdim, spacedim>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(const DoFHandler<spacedim> &dof_handler,std::map<unsigned int,
+                                                                                           std::set<typename DoFHandler<spacedim>::active_cell_iterator>>
+                                                                                    &vertices_cell_map,
+                          std::vector<SerialSolid<structdim,spacedim>>& list_of_objects)
+{
+  std::map<typename DoFHandler<spacedim>::active_cell_iterator,std::map< unsigned int ,typename DoFHandler<structdim,spacedim>::active_cell_iterator>> cells_cut_by_object;
+  if constexpr (structdim==spacedim-1){
+      for (unsigned int i = 0; i < list_of_objects.size();++i)
+        {
+          const auto& object=list_of_objects[i].get_solid_dof_handler();
+
+          const auto &object_cell_iterator = object.active_cell_iterators();
+          // Loop on all the cells and find their vertices, and use them to fill
+          // the map of sets of cells around each vertex
+          for (const auto &cell : object_cell_iterator)
+            {
+              std::vector<typename DoFHandler<spacedim>::active_cell_iterator>cells_cut=LetheGridTools::find_cells_around_flat_cell(dof_handler,cell,vertices_cell_map);
+              for (unsigned int j = 0; j < cells_cut.size();++j)
+                {
+                  cells_cut_by_object[cells_cut[j]][list_of_objects[i].get_solid_id()]=cell;
+                }
+            }
+        }
+      return cells_cut_by_object;
+    }
+  if constexpr (structdim==spacedim){
+      for (unsigned int i = 0; i < list_of_objects.size();++i)
+        {
+          auto& object=list_of_objects[i].get_solid_dof_handler();
+
+          const auto &object_cell_iterator = object.active_cell_iterators();
+          // Loop on all the cells and find their vertices, and use them to fill
+          // the map of sets of cells around each vertex
+          for (const auto &cell : object_cell_iterator)
+            {
+              if (cell->at_boundary())
+                {
+                  for (const auto face : cell->face_indices())
+                    {
+                      auto local_face =
+                        cell->face(face);
+                      if(cell->at_boundary())
+                        {
+                          std::vector<typename DoFHandler<spacedim>::active_cell_iterator>cells_cut=
+                            LetheGridTools::find_cells_around_flat_cell(
+                              dof_handler, cell, vertices_cell_map);
+                          for (unsigned int j = 0; j < cells_cut.size(); ++j)
+                            {
+                              cells_cut_by_object[cells_cut[j]]
+                                                 [list_of_objects[i].get_solid_id()] = cell;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+      return cells_cut_by_object;
+    }
+}
+
+
 template typename DoFHandler<3>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_tree(
   const DoFHandler<3> &dof_handler,
@@ -987,3 +1053,28 @@ template std::vector<typename DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_boundary_cells_in_sphere(const DoFHandler<3> &dof_handler,
                                               const Point<3> &     center,
                                               const double         radius);
+
+
+template std::map<typename DoFHandler<3>::active_cell_iterator,std::map<unsigned int,typename DoFHandler<3, 3>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(const DoFHandler<3> &dof_handler,std::map<unsigned int,
+                                                                                                 std::set<typename DoFHandler<3>::active_cell_iterator>>
+                                                                                            &vertices_cell_map,
+                                         std::vector<SerialSolid<3, 3>> & list_of_objects);
+
+template std::map<typename DoFHandler<2>::active_cell_iterator,std::map<unsigned int,typename DoFHandler<2, 2>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(const DoFHandler<2> &dof_handler,std::map<unsigned int,
+                                                                                          std::set<typename DoFHandler<2>::active_cell_iterator>>
+                                                                             &vertices_cell_map,
+                                         std::vector<SerialSolid<2, 2>> & list_of_objects);
+
+template std::map<typename DoFHandler<3>::active_cell_iterator,std::map<unsigned int,typename DoFHandler<2, 3>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(const DoFHandler<3> &dof_handler,std::map<unsigned int,
+                                                                                          std::set<typename DoFHandler<3>::active_cell_iterator>>
+                                                                             &vertices_cell_map,
+                                         std::vector<SerialSolid<2, 3>> & list_of_objects);
+
+template std::map<typename DoFHandler<2>::active_cell_iterator,std::map<unsigned int,typename DoFHandler<1, 2>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(const DoFHandler<2> &dof_handler,std::map<unsigned int,
+                                                                                          std::set<typename DoFHandler<2>::active_cell_iterator>>
+                                                                             &vertices_cell_map,
+                                         std::vector<SerialSolid<1, 2>> & list_of_objects);

@@ -16,7 +16,7 @@
 #ifndef lethe_lethegridtools_h
 #define lethe_lethegridtools_h
 
-
+#include <core/serial_solid.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
@@ -230,6 +230,25 @@ namespace LetheGridTools
   find_boundary_cells_in_sphere(const DoFHandler<dim> &dof_handler,
                                 const Point<dim> &     center,
                                 const double           radius);
+
+
+  /**
+   * @brief
+   * Function returns all the cells cut by a list of object defined by a mesh
+   *
+   * @param dof_handler the dof handler containing all the elements.
+   *
+   * @param center The center of the sphere.
+   *
+   * @param radius The radius of the sphere.
+   *
+   */
+  template <int spacedim, int structdim>
+  std::map<typename DoFHandler<spacedim>::active_cell_iterator,std::map< unsigned int,typename DoFHandler<structdim, spacedim>::active_cell_iterator>>
+  find_cells_cut_by_object(const DoFHandler<spacedim> &dof_handler, std::map<unsigned int,
+                                                                                                   std::set<typename DoFHandler<spacedim>::active_cell_iterator>>
+                                                                                              &vertices_cell_map,
+                                            std::vector<SerialSolid<structdim,spacedim>> & list_of_objects);
 
   /**
    * @brief

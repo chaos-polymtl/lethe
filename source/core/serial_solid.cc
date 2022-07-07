@@ -49,12 +49,13 @@
 
 template <int dim, int spacedim>
 SerialSolid<dim, spacedim>::SerialSolid(
-  std::shared_ptr<Parameters::SolidObject<spacedim>> &param)
+  std::shared_ptr<Parameters::SolidObject<spacedim>> &param,unsigned int id)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , param(param)
   , velocity(&param->solid_velocity)
+  , id(id)
 {
   if (param->solid_mesh.simplex)
     {
@@ -306,6 +307,22 @@ SerialSolid<1, 2>::rotate_grid(double /*angle*/, int /*axis*/)
   // Not implemented right now
   throw(std::runtime_error("This is currently not implemented"));
 }
+
+template <>
+void
+SerialSolid<2, 2>::rotate_grid(double /*angle*/, int /*axis*/)
+{
+  // Not implemented right now
+  throw(std::runtime_error("This is currently not implemented"));
+}
+template <>
+void
+SerialSolid<3, 3>::rotate_grid(double /*angle*/, int /*axis*/)
+{
+  // Not implemented right now
+  throw(std::runtime_error("This is currently not implemented"));
+}
+
 template <>
 void
 SerialSolid<2, 3>::rotate_grid(double angle, int axis)
@@ -313,6 +330,13 @@ SerialSolid<2, 3>::rotate_grid(double angle, int axis)
   GridTools::rotate(angle, axis, *solid_tria);
 }
 
+
+template <int dim, int spacedim>
+unsigned int
+SerialSolid<dim, spacedim>::get_solid_id()
+{
+  return id;
+}
 
 template <int dim, int spacedim>
 void
@@ -518,3 +542,5 @@ SerialSolid<dim, spacedim>::setup_displacement()
 // occur
 template class SerialSolid<1, 2>;
 template class SerialSolid<2, 3>;
+template class SerialSolid<2>;
+template class SerialSolid<3>;

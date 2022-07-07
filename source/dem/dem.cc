@@ -216,7 +216,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
       solids.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
-        this->parameters.solid_objects->solids[i_solid]));
+        this->parameters.solid_objects->solids[i_solid],i_solid ));
     }
 }
 
