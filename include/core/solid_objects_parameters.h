@@ -31,10 +31,10 @@ using namespace dealii;
 namespace Parameters
 {
   template <int dim>
-  class NitscheSolid
+  class SolidObject
   {
   public:
-    NitscheSolid()
+    SolidObject()
       : solid_velocity(dim)
     {}
 
@@ -72,7 +72,7 @@ namespace Parameters
 
   template <int dim>
   void
-  NitscheSolid<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
+  SolidObject<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
   {
     prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
@@ -145,7 +145,7 @@ namespace Parameters
 
   template <int dim>
   void
-  NitscheSolid<dim>::parse_parameters(ParameterHandler &prm, unsigned int id)
+  SolidObject<dim>::parse_parameters(ParameterHandler &prm, unsigned int id)
   {
     prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
@@ -190,9 +190,9 @@ namespace Parameters
     Verbosity verbosity;
 
     // Nitsche solid objects
-    std::vector<std::shared_ptr<NitscheSolid<dim>>> nitsche_solids;
-    unsigned int                                    number_solids;
-    static const unsigned int                       max_nitsche_solids = 10;
+    std::vector<std::shared_ptr<SolidObject<dim>>> nitsche_solids;
+    unsigned int                                   number_solids;
+    static const unsigned int                      max_nitsche_solids = 10;
   };
 
   template <int dim>
@@ -218,7 +218,7 @@ namespace Parameters
 
       for (unsigned int i_solid = 0; i_solid < max_nitsche_solids; ++i_solid)
         {
-          nitsche_solids[i_solid] = std::make_shared<NitscheSolid<dim>>();
+          nitsche_solids[i_solid] = std::make_shared<SolidObject<dim>>();
           nitsche_solids[i_solid]->declare_parameters(prm, i_solid);
         }
     }
@@ -241,6 +241,78 @@ namespace Parameters
       for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
         {
           nitsche_solids[i_solid]->parse_parameters(prm, i_solid);
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  class DEMSolidObjects
+  {
+  public:
+    DEMSolidObjects()
+    {}
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+
+    // Calculate forces
+    Verbosity verbosity;
+
+    // Nitsche solid objects
+    std::vector<std::shared_ptr<SolidObject<dim>>> solids;
+    unsigned int                                   number_solids;
+    static const unsigned int                      max_number_of_solids = 5;
+  };
+
+  template <int dim>
+  void
+  DEMSolidObjects<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    solids.resize(max_number_of_solids);
+    number_solids = 0;
+
+    prm.enter_subsection("solid objects");
+    {
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether the force on the solid should be printed "
+        "Choices are <quiet|verbose>.");
+
+      prm.declare_entry("number of solids",
+                        "1",
+                        Patterns::Integer(),
+                        "Number of immersed object");
+
+      for (unsigned int i_solid = 0; i_solid < max_number_of_solids; ++i_solid)
+        {
+          solids[i_solid] = std::make_shared<SolidObject<dim>>();
+          solids[i_solid]->declare_parameters(prm, i_solid);
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  DEMSolidObjects<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("nitsche");
+    {
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Verbosity::verbose;
+      if (op == "quiet")
+        verbosity = Verbosity::quiet;
+
+      number_solids = prm.get_integer("number of solids");
+      for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
+        {
+          solids[i_solid]->parse_parameters(prm, i_solid);
         }
     }
     prm.leave_subsection();

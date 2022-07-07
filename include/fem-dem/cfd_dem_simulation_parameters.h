@@ -19,7 +19,6 @@
 
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
-#include <core/nitsche.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
 

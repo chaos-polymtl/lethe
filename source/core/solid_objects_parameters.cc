@@ -17,7 +17,7 @@
  * Author: Carole-Anne Daunais, Polytechnique Montreal, 2020 -
  */
 
-#include <core/nitsche.h>
+#include <core/solid_objects_parameters.h>
 
 namespace Parameters
 {
