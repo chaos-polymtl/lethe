@@ -203,6 +203,9 @@ And the boundary conditions subsection in the parameter file needs to be compati
 	  	set id                = 3
 		set type              = noslip
 	  end
+	  subsection bc 3
+	  	set id                = 4
+	  	set type              = none
 	end
 
 .. _mesh:
