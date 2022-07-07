@@ -25,7 +25,7 @@ Location of the example
 Description of the case
 -------------------------
 
-The Stefan problem describes the melting or the solidification of a pure substance by conduction in a 1D semi-infinite domain. This classical problem, extensively described in the literature [1], is often used as the core test case to establish the accuracy and the robustness of numerical models for phase change. Although it is established for a semi-infinite domain, it can be solved on a finite domain provided that it is sufficiently long. This problem is illustrated in the following figure:
+The Stefan problem describes the melting or the solidification of a pure substance by conduction in a 1D semi-infinite domain. This classical problem, extensively described in the literature `[1] <https://doi.org/10.1016/j.applthermaleng.2007.01.008>`_, is often used as the core test case to establish the accuracy and the robustness of numerical models for phase change. Although it is established for a semi-infinite domain, it can be solved on a finite domain provided that it is sufficiently long. This problem is illustrated in the following figure:
 
 .. image:: images/stefan_problem_illustration.png
     :alt: problem_illustration
@@ -182,4 +182,4 @@ Possibilities for extension
 References
 ----------------------------
 
-[1] aus der Wiesche, Stefan. "Numerical heat transfer and thermal engineering of AdBlue (SCR) tanks for combustion engine emission reduction." Applied Thermal Engineering 27.11-12 (2007): 1790-1798.
+`[1] <https://doi.org/10.1016/j.applthermaleng.2007.01.008>`_ aus der Wiesche, Stefan. "Numerical heat transfer and thermal engineering of AdBlue (SCR) tanks for combustion engine emission reduction." Applied Thermal Engineering 27.11-12 (2007): 1790-1798.
