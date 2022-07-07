@@ -52,8 +52,23 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
                             update_JxW_values);
 
   const unsigned int dofs_per_cell = fe_q.dofs_per_cell;
+<<<<<<< HEAD
   const unsigned int n_q_points    = quadrature_formula.size();
 
+=======
+  const unsigned int n_q_points    = number_quadrature_points;
+
+  IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
+  AffineConstraints<double> constraints;
+
+  IndexSet locally_relevant_dofs;
+  DoFTools::extract_locally_relevant_dofs(dof_handler, locally_relevant_dofs);
+  constraints.clear();
+  constraints.reinit(locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(dof_handler, constraints);
+  constraints.close();
+
+>>>>>>> d040b655 (Created Vorticty and Qcriterion classes)
   FullMatrix<double> local_matrix(dofs_per_cell, dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<double>                  phi_vf(dofs_per_cell);
@@ -83,6 +98,11 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
                       local_matrix(i, j) +=
                         (phi_vf[j] * phi_vf[i]) * fe_values.JxW(q);
                     }
+<<<<<<< HEAD
+=======
+                  // local_rhs(i) += phi_vf[i] * cell_void_fraction *
+                  // fe_values_void_fraction.JxW(q);
+>>>>>>> d040b655 (Created Vorticty and Qcriterion classes)
                 }
             }
           cell->get_dof_indices(local_dof_indices);
@@ -92,6 +112,7 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
         }
     }
   system_matrix->compress(VectorOperation::add);
+<<<<<<< HEAD
 }
 
 template <int dim, typename VectorType>
@@ -166,6 +187,39 @@ VorticitySmoothing<dim, VectorType>::generate_rhs(const VectorType &)
 template <int dim, typename VectorType>
 void
 VorticitySmoothing<dim, VectorType>::calculate_smoothed_field()
+=======
+  // system_rhs_void_fraction.compress(VectorOperation::add);
+}
+
+template <int dim>
+VorticitySmoothing<dim>::VorticitySmoothing(
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+  SimulationParameters<dim> simulation_parameters,
+  unsigned int              number_quadrature_points)
+  : PostProcessorSmoothing<dim>(triangulation,
+                                simulation_parameters,
+                                number_quadrature_points)
+{}
+
+template <int dim>
+void
+VorticitySmoothing<dim>::evaluate_smoothed_field()
+{}
+
+template <int dim>
+QcriterionSmoothing<dim>::QcriterionSmoothing(
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+  SimulationParameters<dim> simulation_parameters,
+  unsigned int              number_quadrature_points)
+  : PostProcessorSmoothing<dim>(triangulation,
+                                simulation_parameters,
+                                number_quadrature_points)
+{}
+
+template <int dim>
+void
+QcriterionSmoothing<dim>::evaluate_smoothed_field()
+>>>>>>> d040b655 (Created Vorticty and Qcriterion classes)
 {}
 
 template class VorticitySmoothing<2, TrilinosWrappers::MPI::Vector>;
