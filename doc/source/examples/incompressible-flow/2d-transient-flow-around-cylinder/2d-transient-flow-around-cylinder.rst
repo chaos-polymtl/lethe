@@ -20,7 +20,7 @@ Location of the example
 
 Description of the case
 -----------------------
-We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, which were taken from Blais et al. [1]:
+We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, which were taken from Blais et al. `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_:
 
 .. image:: images/geometry_description.png
     :alt: The geometry
@@ -242,11 +242,11 @@ The obtained values of the drag and lift coefficients as well as the Strouhal nu
      - 1.392 :math:`\pm` 0.048
      - -0.006 :math:`\pm` 0.072
      - 0.2
-   * - Lethe Sharp [2]
+   * - Lethe Sharp `[2] <https://doi.org/10.1016/j.compfluid.2022.105415>`_
      - 1.395 :math:`\pm` 0.047
      - :math:`\pm` 0.071
      - 0.2
-   * - Braza et al. [3]
+   * - Braza et al. `[3] <https://doi.org/10.1017/S0022112086003014>`_
      - 1.400 :math:`\pm` 0.050
      - :math:`\pm` 0.075
      - 0.2
@@ -273,9 +273,9 @@ Possibilities for extension
 
 References
 ----------
-[1] Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146.
+`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146.
 
-[2] Barbeau, L., Étienne, S., Béguin, C., & Blais, B. (2022). Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,
+`[2] <https://doi.org/10.1016/j.compfluid.2022.105415>`_ Barbeau, L., Étienne, S., Béguin, C., & Blais, B. (2022). Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,
 Computers & Fluids, Volume 239, 105415, https://doi.org/10.1016/j.compfluid.2022.105415
 
-[3] Braza, M., Chassaing, P. & Ha Minh, H. (1986). Numerical Study and Physical Analysis of the Pressure and Velocity Field in the Near Wake of a Circular Cylinder. Journal of Fluid Mechanics. Volume 165. 79-130, https://doi.org/10.1017/S0022112086003014
+`[3] <https://doi.org/10.1017/S0022112086003014>`_ Braza, M., Chassaing, P. & Ha Minh, H. (1986). Numerical Study and Physical Analysis of the Pressure and Velocity Field in the Near Wake of a Circular Cylinder. Journal of Fluid Mechanics. Volume 165. 79-130, https://doi.org/10.1017/S0022112086003014

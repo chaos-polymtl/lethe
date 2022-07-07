@@ -273,7 +273,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 Results
 -------
 
-The following image shows the shape and dimensions of the bubble after 3 seconds of simulation, and compares it with results of [1, 2].
+The following image shows the shape and dimensions of the bubble after 3 seconds of simulation, and compares it with results of [`1 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_, `2 <https://doi.org/10.1002/fld.2643>`_].
 
 .. image:: images/bubble.png
     :alt: bubble
@@ -306,6 +306,6 @@ Animation of the rising bubble example:
 -----------
 References
 -----------
-[1] Brackbill, J.U., Kothe, D.B. and Zemach, C., 1992. A continuum method for modeling surface tension. Journal of computational physics, 100(2), pp.335-354.
+`[1] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_ Brackbill, J.U., Kothe, D.B. and Zemach, C., 1992. A continuum method for modeling surface tension. Journal of computational physics, 100(2), pp.335-354.
 
-[2] Zahedi, S., Kronbichler, M. and Kreiss, G., 2012. Spurious currents in finite element based level set methods for two‐phase flow. International Journal for Numerical Methods in Fluids, 69(9), pp.1433-1456.
+`[2] <https://doi.org/10.1002/fld.2643>`_ Zahedi, S., Kronbichler, M. and Kreiss, G., 2012. Spurious currents in finite element based level set methods for two‐phase flow. International Journal for Numerical Methods in Fluids, 69(9), pp.1433-1456.

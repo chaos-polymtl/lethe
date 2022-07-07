@@ -23,7 +23,7 @@ Location of the example
 
 Description of the case
 -----------------------
-We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. The following schematic describes the geometry with its relevant quantities (taken from the article by Blais et al. [1]):
+We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. The following schematic describes the geometry with its relevant quantities (taken from the article by Blais et al. `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_):
 
 .. image:: images/geometry_description.png
     :alt: The geometry
@@ -264,4 +264,4 @@ Possibilities for extension
 
 References
 ----------
-[1] Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146.
+`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146.
