@@ -5,6 +5,7 @@
 // DEALII INCLUDES
 // Base
 #include <deal.II/base/tensor.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
@@ -13,6 +14,8 @@
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/dofs/dof_tools.h>
 
 // Numerics
 #include <deal.II/numerics/data_postprocessor.h>
@@ -30,10 +33,14 @@ using namespace dealii;
 
 
 /**
- * A base class that ...
- *
+ * A base class that holds the dof_handler, fe_values and the simulation output to calculate post-processed parameters
+ * 
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
+ * 
+ * @tparam triangulation Flow triangulation
+ * @tparam simulation_parameters The simulation parameters
+ * @tparam number_quadrature_points The number of quadrature points
  */
 
 template <int dim>
@@ -59,6 +66,8 @@ private:
   DoFHandler<dim>           dof_handler;
   SimulationParameters<dim> simulation_parameters;
   unsigned int              number_quadrature_points;
+  TrilinosWrappers::SparseMatrix system_matrix;
+  TrilinosWrappers::MPI::Vector  system_rhs;
 };
 
 #endif
