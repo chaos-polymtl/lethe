@@ -18,6 +18,7 @@
  */
 
 #include <core/pvd_handler.h>
+#include <core/serial_solid.h>
 
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
@@ -102,7 +103,7 @@ private:
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-      &                                                                  cell,
+                                                                        &cell,
     const typename parallel::distributed::Triangulation<dim>::CellStatus status)
     const;
 
@@ -166,7 +167,7 @@ private:
   void
   update_moment_of_inertia(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double> &                    MOI);
+    std::vector<double>                     &MOI);
 
   /**
    * @brief Carries out the broad contact detection search using the
@@ -338,8 +339,8 @@ private:
     particle_container;
 
   std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
-                                           updated_boundary_points_and_normal_vectors;
-  DEM::DEMProperties<dim>                  properties_class;
+                          updated_boundary_points_and_normal_vectors;
+  DEM::DEMProperties<dim> properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
   double             neighborhood_threshold_squared;
@@ -381,6 +382,9 @@ private:
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
+
+  // Solid DEM objects
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
 };
 
 #endif

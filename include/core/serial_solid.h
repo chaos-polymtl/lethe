@@ -143,6 +143,9 @@ public:
   void
   move_solid_triangulation_with_displacement();
 
+  /**
+   * @brief Rotates the grid by a given angle around an axis
+   */
   void
   rotate_grid(double angle, int axis);
 
