@@ -1325,7 +1325,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     }
   if (this->simulation_control->is_output_iteration())
     {
-      this->write_output_results(present_solution, firstIter);
+      this->write_output_results(present_solution);
     }
 }
 
@@ -1466,8 +1466,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_field_hook(
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
-  const VectorType &solution,
-  const bool        first_iteration)
+  const VectorType &solution)
 {
   TimerOutput::Scope t(this->computing_timer, "output");
 
@@ -1620,7 +1619,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                          group_files,
                          this->mpi_communicator);
 
-  if (simulation_control->get_output_boundaries() && first_iteration)
+  if (simulation_control->get_output_boundaries() &&
+      simulation_control->get_step_number() == 0)
     {
       DataOutFaces<dim>          data_out_faces;
       BoundaryPostprocessor<dim> boundary_id;

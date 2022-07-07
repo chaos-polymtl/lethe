@@ -883,7 +883,7 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
 {
   if (this->simulation_control->is_output_iteration())
     {
-      this->write_output_results(this->present_solution, firstIter);
+      this->write_output_results(this->present_solution);
     }
 
   bool enable =

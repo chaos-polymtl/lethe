@@ -370,7 +370,7 @@ protected:
    * Post-processing as parallel VTU files
    */
   void
-  write_output_results(const VectorType &solution, const bool first_iteration);
+  write_output_results(const VectorType &solution);
 
   /**
    * @brief output_field_hook
