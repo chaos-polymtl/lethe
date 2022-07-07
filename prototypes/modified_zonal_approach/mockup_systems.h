@@ -43,7 +43,7 @@ generate_case_0(unsigned int n_pts, unsigned int axis)
 
 template <int dim>
 std::pair<std::vector<Point<dim>>, std::vector<Point<dim>>>
-generate_case_1(unsigned int n_pts)
+generate_case_1(const unsigned int n_pts, const unsigned int seed)
 {
   Point<dim> p_0({1, 1, 1});
   Point<dim> p_1({1, 2, 1});
@@ -56,14 +56,14 @@ generate_case_1(unsigned int n_pts)
   triangle.push_back(p_2);
 
   // Generate a n_pts random point between 0.5 and 1.5 in all directions.
-  srand(0);
+  srand(seed);
   std::vector<Point<dim>> pts;
   for (unsigned int p = 0; p < n_pts; ++p)
     {
       // Generate three random doubles
-      double x0 = rand() + 0.5;
-      double x1 = rand() + 0.5;
-      double x2 = rand() + 0.5;
+      double x0 = (double)rand() / (double)RAND_MAX + 0.75;
+      double x1 = (double)rand() / (double)RAND_MAX + 0.75;
+      double x2 = (double)rand() / (double)RAND_MAX + 0.75;
       pts.push_back({x0, x1, x2});
     }
 

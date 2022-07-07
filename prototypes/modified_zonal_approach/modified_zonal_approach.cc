@@ -70,7 +70,7 @@ calculate_distance(std::vector<Point<dim>> triangle,
       // arbitrary distance and continue
       if (distance_squared > (radius * radius))
         {
-          distances[k] = distance_squared;
+          distances[k] = std::sqrt(distance_squared);
           ++k;
           continue;
         }
@@ -251,13 +251,16 @@ main()
       }
 
       {
-        auto case_1 = generate_case_1<3>(100);
-        timer.enter_subsection("Case 1");
-        unsigned int n_times = 1e6;
+        unsigned int n_times = 1e5;
         for (unsigned int t = 0; t < n_times; ++t)
-          calculate_distance(case_1.first, case_1.second);
-
-        timer.leave_subsection();
+          {
+            auto case_1 = generate_case_1<3>(1000, t);
+            timer.enter_subsection("Case 1");
+            auto distances = calculate_distance(case_1.first, case_1.second);
+            timer.leave_subsection();
+            if (t == n_times - 1)
+              write_distances(case_1.second, distances, "random.dat");
+          }
       }
     }
   catch (std::exception &exc)
