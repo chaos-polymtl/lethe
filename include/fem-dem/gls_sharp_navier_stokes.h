@@ -303,15 +303,19 @@ private:
   void
   refine_ib();
 
-  std::pair<bool, bool>
-  generate_cut_cells_candidate(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const unsigned int                                    p_id);
 
   /**
    * @brief
-   *This function create a map (cut_cells_map) that indicates if a cell is cut,
-   *and the particle id of the particle that cut it.
+   *This function checks if all particles are spheres. If one of them is not,
+   *the code will use the regular generate_cut_cells function. If all particles
+   *are spheres, it uses the optimized_generate_cut_cells.
+   */
+  void
+  check_particles_all_sphere();
+  /**
+   * @brief
+   *This function create a map (cut_cells_map) that indicates if a cell is
+   *cut, and the particle id of the particle that cut it.
    */
   void
   generate_cut_cells_map();
@@ -325,6 +329,14 @@ private:
   void
   optimized_generate_cut_cells_map();
 
+  /**
+   * @brief
+   *This function abstracts the generation of cell candidates that possibly are
+   */
+  std::pair<bool, bool>
+  generate_cut_cell_candidates(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                    p_id);
 
   /**
    * @brief
@@ -402,9 +414,11 @@ private:
 
   /*
    * @brief Read file to load particles. The file must contain the following information for each particle (the header must be defined accordingly):
-   * ID p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z radius density inertia
-   * pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient
-   * friction_coefficient poisson_ratio rolling_friction_coefficient
+   * type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y
+   * v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z
+   * density inertia pressure_x pressure_y pressure_z youngs_modulus
+   * restitution_coefficient friction_coefficient poisson_ratio
+   * rolling_friction_coefficient
    * */
   void
   load_particles_from_file();
@@ -512,6 +526,8 @@ Return a bool that describes  if a cell contains a specific point
    */
 
 private:
+  bool all_spheres = true;
+
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;

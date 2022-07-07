@@ -49,42 +49,49 @@ LetheGridTools::find_cell_around_point_with_tree(
   // Define temporary variables to store search parameters and intermediate
   // results
   MappingQ1<dim> mapping;
-  const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
-
   typename DoFHandler<dim>::cell_iterator best_cell_iter;
 
-  bool cell_on_level_0_found = false;
+  bool         cell_found_on_level_search = false;
+  unsigned int lvl                        = 0;
 
-  // Loop on the cells on level 0 of the mesh
-  for (const auto &cell : cell_iterator)
+  while (lvl < 3)
     {
-      try
+      const auto &cell_iterator = dof_handler.cell_iterators_on_level(lvl);
+
+      // Loop on the cells on current level of the mesh
+      for (const auto &cell : cell_iterator)
         {
-          const Point<dim, double> p_cell =
-            mapping.transform_real_to_unit_cell(cell, point);
-
-          const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-
-          if (dist < 1e-12)
+          try
             {
-              // cell on lvl 0 found
-              cell_on_level_0_found = true;
-              best_cell_iter        = cell;
-              break;
-            }
-        }
-      catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-        {}
-    }
-  double best_dist_last = DBL_MAX;
-  if (cell_on_level_0_found)
-    {
-      // A cell on level 0 contains the point, so we loop on the children of
-      // this cell. When we found the child of the cell that contains the point,
-      // we check if the cell is active and stop if it is. Otherwise, we repeat
-      // this process until we find the active cell that contains the point.
+              const Point<dim, double> p_cell =
+                mapping.transform_real_to_unit_cell(cell, point);
 
-      unsigned int lvl        = 0;
+              const double dist =
+                GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+
+              if (dist < 1e-12)
+                {
+                  // cell found
+                  cell_found_on_level_search = true;
+                  best_cell_iter             = cell;
+                  break;
+                }
+            }
+          catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
+            {}
+        }
+      lvl += 1;
+    }
+
+  double best_dist_last = DBL_MAX;
+  if (cell_found_on_level_search)
+    {
+      // A cell found on level search contains the point, so we loop on the
+      // children of this cell. When we found the child of the cell that
+      // contains the point, we check if the cell is active and stop if it is.
+      // Otherwise, we repeat this process until we find the active cell that
+      // contains the point.
+
       unsigned int max_childs = GeometryInfo<dim>::max_children_per_cell;
       while (best_cell_iter->is_active() == false)
         {
@@ -118,7 +125,7 @@ LetheGridTools::find_cell_around_point_with_tree(
             }
 
           best_cell_iter = best_cell_iter->child(best_index);
-          if (cell_found == false)
+          if (!cell_found)
             {
               break;
             }
@@ -128,7 +135,7 @@ LetheGridTools::find_cell_around_point_with_tree(
         }
     }
 
-  if (best_dist_last >= 1e-9 && cell_on_level_0_found == false)
+  if (best_dist_last >= 1e-9 && !cell_found_on_level_search)
     {
       throw std::runtime_error("The point is not inside the mesh");
     }
