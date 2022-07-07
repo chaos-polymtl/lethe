@@ -284,7 +284,7 @@ namespace Parameters
         "Choices are <quiet|verbose>.");
 
       prm.declare_entry("number of solids",
-                        "1",
+                        "0",
                         Patterns::Integer(),
                         "Number of immersed object");
 
@@ -301,7 +301,7 @@ namespace Parameters
   void
   DEMSolidObjects<dim>::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("nitsche");
+    prm.enter_subsection("solid objects");
     {
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
