@@ -153,10 +153,57 @@ Importing CAD files (``.step`` or ``.stp`` format) can be particularly convenien
 --------------------------
 Physical group
 --------------------------
-After generating your geometry, it is essential to set physical groups for boundary conditions identification that are compatible to the prm file.
+After generating your geometry, it is **essential** to set physical groups for boundary conditions identification that are compatible with Lethe prm files.
 
-.. warning::
-  This step is essential for the mesh compatibility with Lethe.
+In 2D, the physical groups are curves and in 3D, surfaces. For this example, select ``Curve`` in the ``Modules > Geometry > Physical groups > Add `` section. Four different physical groups with ``Curve`` is needed:
+
+1. Click on the left line of the geometry for the inlet condition.
+2. Click on the top and bottom lines for the slip condition.
+3. Click on the circle for the no slip condition.
+4. Click on the right line for no condition.
+
+By reloading the script, you will see those four lines of code appear:
+
+.. code-block::
+	
+	// Physical Curve(id) = {<id of curve element>, ...}
+	Physical Curve(1) = {7};
+	Physical Curve(2) = {6, 9};
+	Physical Curve(3) = {5};
+	Physical Curve(4) = {8};
+	
+It is also **primordial** to add a surface physical group for a 2D geometry and a volume physical group for 3D. Otherwhise, the mesh will not be able to generate.
+
+.. code-block::
+	
+	// Physical Surface(id) = {<id of surface element>, ...}
+	Physical Surface(1) = {1};
+	
+And the boundary conditions subsection in the parameter file needs to be compatible to the ID of the geometry in GMSH.
+
+.. code-block:: text
+
+	subsection boundary conditions
+	  set number                  = 4
+	  subsection bc 0
+		set id                = 1
+		set type              = function
+		subsection u
+		    set Function expression = 1
+		end
+		subsection v
+            	    set Function expression = 0
+        	end
+	  end
+	  subsection bc 1
+	  	set id                = 2
+		set type              = slip
+	  end
+	  subsection bc 2
+	  	set id                = 3
+		set type              = noslip
+	  end
+	end
 
 .. _mesh:
 
@@ -246,7 +293,7 @@ Structured
 Other tips
 --------------------------
 
-Use the ``Visibility`` options to get the ID of an element easily on the GUI: 
+Use the ``Visibility`` options to get the ID of an element or a physical group easily on the GUI: 
 	* ``Tools > Options > Mesh > Tab: Visibility``
 	* Check the adequate boxes (for example ``1D element labels`` for points, etc.) 
 	* Choose the label type in the drop-down menu ``Label type`` (for example ``Elementary entity tag``).
