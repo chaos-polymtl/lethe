@@ -183,9 +183,7 @@ In this case, we want to define a spherical boundary of radius :math:`0.5`, with
             subsection position
                 set Function expression =0;0;0
             end
-            set pressure x =0.00001
-            set pressure y =0.00001
-            set pressure z =0.00001
+            set pressure location = 0.00001; 0.00001; 0.00001
             set type       = sphere
             set shape arguments = 0.5
         end

@@ -153,14 +153,21 @@ void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
   // initialized the particles
-
-  particles.resize(this->simulation_parameters.particlesParameters->nb);
-  for (unsigned int i = 0;
-       i < this->simulation_parameters.particlesParameters->nb;
-       ++i)
+  if (this->simulation_parameters.particlesParameters
+        ->load_particles_from_file == false)
     {
-      particles[i] =
-        this->simulation_parameters.particlesParameters->particles[i];
+      particles.resize(this->simulation_parameters.particlesParameters->nb);
+      for (unsigned int i = 0;
+           i < this->simulation_parameters.particlesParameters->nb;
+           ++i)
+        {
+          particles[i] =
+            this->simulation_parameters.particlesParameters->particles[i];
+        }
+    }
+  else
+    {
+      load_particles_from_file();
     }
 
   table_p.resize(particles.size());
@@ -191,8 +198,8 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
           cell->get_dof_indices(local_dof_indices);
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-              unsigned int   count_small     = 0;
-              Point<dim>     center_immersed = particles[p].position;
+              unsigned int count_small = 0;
+              center_immersed          = particles[p].position;
               Tensor<1, dim> r;
               r[0] = particles[p].radius;
 
@@ -1420,8 +1427,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             {
               this->pcout
                 << "particle " << p
-                << " is now outside the domain we do not update this particle  "
-                << std::endl;
+                << " is now outside the domain we do not update this particle. Position: "
+                << particles[p].position[0] << ", " << particles[p].position[1]
+                << ", " << particles[p].position[2] << std::endl;
               save_particle_state_is_used = true;
             }
 
@@ -1505,29 +1513,54 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       // particle dynamics is not integrated.
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
-          particles[p].f_position->set_time(time);
-          particles[p].f_velocity->set_time(time);
-          particles[p].f_omega->set_time(time);
-          particles[p].position[0] =
-            particles[p].f_position->value(particles[p].position, 0);
-          particles[p].position[1] =
-            particles[p].f_position->value(particles[p].position, 1);
-          particles[p].velocity[0] =
-            particles[p].f_velocity->value(particles[p].position, 0);
-          particles[p].velocity[1] =
-            particles[p].f_velocity->value(particles[p].position, 1);
-          particles[p].omega[0] =
-            particles[p].f_omega->value(particles[p].position, 0);
-          particles[p].omega[1] =
-            particles[p].f_omega->value(particles[p].position, 1);
-          particles[p].omega[2] =
-            particles[p].f_omega->value(particles[p].position, 2);
-          if (dim == 3)
+          if (this->simulation_parameters.particlesParameters
+                ->load_particles_from_file == false)
             {
-              particles[p].position[2] =
-                particles[p].f_position->value(particles[p].position, 2);
-              particles[p].velocity[2] =
-                particles[p].f_velocity->value(particles[p].position, 2);
+              particles[p].f_position->set_time(time);
+              particles[p].f_velocity->set_time(time);
+              particles[p].f_omega->set_time(time);
+              particles[p].f_orientation->set_time(time);
+
+              particles[p].position[0] =
+                particles[p].f_position->value(particles[p].position, 0);
+              particles[p].position[1] =
+                particles[p].f_position->value(particles[p].position, 1);
+              particles[p].velocity[0] =
+                particles[p].f_velocity->value(particles[p].position, 0);
+              particles[p].velocity[1] =
+                particles[p].f_velocity->value(particles[p].position, 1);
+              particles[p].omega[0] =
+                particles[p].f_omega->value(particles[p].position, 0);
+              particles[p].omega[1] =
+                particles[p].f_omega->value(particles[p].position, 1);
+              particles[p].omega[2] =
+                particles[p].f_omega->value(particles[p].position, 2);
+              particles[p].orientation[0] =
+                particles[p].f_orientation->value(particles[p].position, 0);
+              particles[p].orientation[1] =
+                particles[p].f_orientation->value(particles[p].position, 1);
+              particles[p].orientation[2] =
+                particles[p].f_orientation->value(particles[p].position, 2);
+              if (dim == 3)
+                {
+                  particles[p].position[2] =
+                    particles[p].f_position->value(particles[p].position, 2);
+                  particles[p].velocity[2] =
+                    particles[p].f_velocity->value(particles[p].position, 2);
+                }
+            }
+          else
+            {
+              particles[p].position[0] += particles[p].velocity[0] * dt;
+              particles[p].position[1] += particles[p].velocity[1] * dt;
+              particles[p].orientation[0] = particles[p].omega[0] * dt;
+              particles[p].orientation[1] = particles[p].omega[1] * dt;
+              particles[p].orientation[2] = particles[p].omega[2] * dt;
+
+              if (dim == 3)
+                {
+                  particles[p].position[2] += particles[p].velocity[2] * dt;
+                }
             }
           particles[p].set_position(particles[p].position);
           particles[p].set_orientation(particles[p].orientation);
@@ -1689,19 +1722,20 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 
-      if (this->simulation_parameters.particlesParameters->integrate_motion)
+      if (this->simulation_parameters.particlesParameters->integrate_motion &&
+          this->simulation_parameters.particlesParameters->print_dem)
         {
-          this->pcout << "particule " << p << " position "
+          this->pcout << "particle " << p << " position "
                       << particles[p].position << std::endl;
           if (dim == 2)
             {
-              this->pcout << "particule " << p << " velocity "
+              this->pcout << "particle " << p << " velocity "
                           << tensor_nd_to_2d(particles[p].velocity)
                           << std::endl;
             }
           else
             {
-              this->pcout << "particule " << p << " velocity "
+              this->pcout << "particle " << p << " velocity "
                           << particles[p].velocity << std::endl;
             }
         }
@@ -3101,6 +3135,193 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   // Finish the time step of the particle.
 }
 
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
+{
+  using numbers::PI;
+  TimerOutput::Scope t(this->computing_timer,
+                       "Reset Sharp-Edge particle information");
+  this->pcout << "Loading particles from a file" << std::endl;
+  std::string filename =
+    this->simulation_parameters.particlesParameters->particles_file;
+
+  // Read the data of each particle and put the relevant information in a
+  // vector.
+  std::map<std::string, std::vector<double>> restart_data;
+  fill_vectors_from_file(restart_data, filename);
+  particles.resize(restart_data["type"].size());
+
+  this->pcout << "Particles found: " << particles.size() << std::endl;
+  // Implement the data  in the particles.
+  if (dim == 2)
+    {
+      // Loop over each line of the file and filling the particles properties.
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          particles[p_i].initialize_all();
+
+          particles[p_i].particle_id = p_i;
+
+          particles[p_i].position[0]    = restart_data["p_x"][p_i];
+          particles[p_i].position[1]    = restart_data["p_y"][p_i];
+          particles[p_i].velocity[0]    = restart_data["v_x"][p_i];
+          particles[p_i].velocity[1]    = restart_data["v_y"][p_i];
+          particles[p_i].orientation[2] = restart_data["orientation_z"][p_i];
+          // Initialize shape of particles according to the type parameter in
+          // the file
+          if (restart_data["type"][p_i] == 0)
+            {
+              std::vector<double> shape_argument(1);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              particles[p_i].initialize_shape("sphere", shape_argument);
+            }
+          else if (restart_data["type"][p_i] == 1)
+            {
+              std::vector<double> shape_argument(2);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              shape_argument[1] = restart_data["shape_argument_1"][p_i];
+              particles[p_i].initialize_shape("rectangle", shape_argument);
+            }
+          else if (restart_data["type"][p_i] == 2)
+            {
+              std::vector<double> shape_argument(2);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              shape_argument[1] = restart_data["shape_argument_1"][p_i];
+              particles[p_i].initialize_shape("ellipsoid", shape_argument);
+            }
+
+
+          particles[p_i].radius = particles[p_i].shape->effective_radius;
+          particles[p_i].mass   = PI * particles[p_i].radius *
+                                particles[p_i].radius *
+                                restart_data["density"][p_i];
+
+          particles[p_i].omega[2]      = restart_data["omega_z"][p_i];
+          particles[p_i].inertia[0][0] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[1][1] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[2][2] = restart_data["inertia"][p_i];
+
+          particles[p_i].pressure_location[0] = restart_data["pressure_x"][p_i];
+          particles[p_i].pressure_location[1] = restart_data["pressure_y"][p_i];
+
+          particles[p_i].youngs_modulus = restart_data["youngs_modulus"][p_i];
+          particles[p_i].restitution_coefficient =
+            restart_data["restitution_coefficient"][p_i];
+          particles[p_i].friction_coefficient =
+            restart_data["friction_coefficient"][p_i];
+          particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
+          particles[p_i].rolling_friction_coefficient =
+            restart_data["rolling_friction_coefficient"][p_i];
+          particles[p_i].initialize_previous_solution();
+        }
+    }
+  if (dim == 3)
+    {
+      // Loop over each line of the file and filling the particles properties.
+      for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+        {
+          particles[p_i].initialize_all();
+
+          particles[p_i].particle_id    = p_i;
+          particles[p_i].position[0]    = restart_data["p_x"][p_i];
+          particles[p_i].position[1]    = restart_data["p_y"][p_i];
+          particles[p_i].position[2]    = restart_data["p_z"][p_i];
+          particles[p_i].velocity[0]    = restart_data["v_x"][p_i];
+          particles[p_i].velocity[1]    = restart_data["v_y"][p_i];
+          particles[p_i].velocity[2]    = restart_data["v_z"][p_i];
+          particles[p_i].orientation[0] = restart_data["orientation_x"][p_i];
+          particles[p_i].orientation[1] = restart_data["orientation_y"][p_i];
+          particles[p_i].orientation[2] = restart_data["orientation_z"][p_i];
+
+          if (restart_data["type"][p_i] == Shape<dim>::ShapeType::sphere)
+            {
+              std::vector<double> shape_argument(1);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              particles[p_i].initialize_shape("sphere", shape_argument);
+            }
+          else if (restart_data["type"][p_i] ==
+                   Shape<dim>::ShapeType::rectangle)
+            {
+              std::vector<double> shape_argument(3);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              shape_argument[1] = restart_data["shape_argument_1"][p_i];
+              shape_argument[2] = restart_data["shape_argument_2"][p_i];
+              particles[p_i].initialize_shape("rectangle", shape_argument);
+            }
+          else if (restart_data["type"][p_i] ==
+                   Shape<dim>::ShapeType::ellipsoid)
+            {
+              std::vector<double> shape_argument(3);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              shape_argument[1] = restart_data["shape_argument_1"][p_i];
+              shape_argument[2] = restart_data["shape_argument_2"][p_i];
+              particles[p_i].initialize_shape("ellipsoid", shape_argument);
+            }
+          else if (restart_data["type"][p_i] == Shape<dim>::ShapeType::torus)
+            {
+              std::vector<double> shape_argument(2);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              shape_argument[1] = restart_data["shape_argument_1"][p_i];
+              particles[p_i].initialize_shape("torus", shape_argument);
+            }
+          else if (restart_data["type"][p_i] == Shape<dim>::ShapeType::cone)
+            {
+              std::vector<double> shape_argument(2);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              shape_argument[1] = restart_data["shape_argument_1"][p_i];
+              particles[p_i].initialize_shape("cone", shape_argument);
+            }
+          else if (restart_data["type"][p_i] ==
+                   Shape<dim>::ShapeType::cut_hollow_sphere)
+            {
+              std::vector<double> shape_argument(3);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              shape_argument[1] = restart_data["shape_argument_1"][p_i];
+              shape_argument[2] = restart_data["shape_argument_2"][p_i];
+              particles[p_i].initialize_shape("cut hollow sphere",
+                                              shape_argument);
+            }
+          else if (restart_data["type"][p_i] ==
+                   Shape<dim>::ShapeType::death_star)
+            {
+              std::vector<double> shape_argument(3);
+              shape_argument[0] = restart_data["shape_argument_0"][p_i];
+              shape_argument[1] = restart_data["shape_argument_1"][p_i];
+              shape_argument[2] = restart_data["shape_argument_2"][p_i];
+              particles[p_i].initialize_shape("death star", shape_argument);
+            }
+
+          particles[p_i].radius = particles[p_i].shape->effective_radius;
+          particles[p_i].mass   = 4.0 / 3.0 * PI * particles[p_i].radius *
+                                particles[p_i].radius * particles[p_i].radius *
+                                restart_data["density"][p_i];
+
+          particles[p_i].omega[0] = restart_data["omega_x"][p_i];
+          particles[p_i].omega[1] = restart_data["omega_y"][p_i];
+          particles[p_i].omega[2] = restart_data["omega_z"][p_i];
+
+          particles[p_i].inertia[0][0] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[1][1] = restart_data["inertia"][p_i];
+          particles[p_i].inertia[2][2] = restart_data["inertia"][p_i];
+
+          particles[p_i].pressure_location[0] = restart_data["pressure_x"][p_i];
+          particles[p_i].pressure_location[1] = restart_data["pressure_y"][p_i];
+          particles[p_i].pressure_location[2] = restart_data["pressure_z"][p_i];
+
+          particles[p_i].youngs_modulus = restart_data["youngs_modulus"][p_i];
+          particles[p_i].restitution_coefficient =
+            restart_data["restitution_coefficient"][p_i];
+          particles[p_i].friction_coefficient =
+            restart_data["friction_coefficient"][p_i];
+          particles[p_i].poisson_ratio = restart_data["poisson_ratio"][p_i];
+          particles[p_i].rolling_friction_coefficient =
+            restart_data["rolling_friction_coefficient"][p_i];
+          particles[p_i].initialize_previous_solution();
+        }
+    }
+}
+
 
 
 template <int dim>
@@ -3179,7 +3400,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
         integrate_particles();
 
 
-
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
@@ -3189,7 +3409,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
                                                    *this->face_quadrature,
                                                    *this->mapping);
           ib_dem.update_contact_candidates();
-
           this->iterate();
         }
       else

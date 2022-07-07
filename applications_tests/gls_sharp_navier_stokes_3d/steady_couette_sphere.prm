@@ -102,9 +102,7 @@ subsection particles
         subsection omega
             set Function expression =1;1;1
         end
-	    set pressure x =0.12501
-	    set pressure y =0.12501
-	    set pressure z =0.00001
+	    set pressure location = 0.12501; 0.12501; 0.00001
 	    set type       = sphere
         set shape arguments = 0.25
     end
@@ -118,9 +116,7 @@ subsection particle info 1
         subsection omega
             set Function expression =0;0;0
         end
-	    set pressure x =0.40001
-	    set pressure y =0.125001
-	    set pressure z =0.125001
+	    set pressure location = 0.40001; 0.125001; 0.125001
 	    set type       = sphere
         set shape arguments = 0.65
     end

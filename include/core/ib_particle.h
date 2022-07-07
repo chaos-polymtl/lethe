@@ -67,13 +67,13 @@ public:
    *
    */
   void
-  initialise_all();
+  initialize_all();
   /**
    * @brief
    * initialize the value of the last state of the particle
    */
   void
-  initialise_last();
+  initialize_previous_solution();
   /**
    * @brief
    * Return the names of properties of the IB_particle for visualisation.
@@ -137,6 +137,19 @@ public:
    */
   void
   set_position(const Point<dim> position);
+
+  /**
+   * @brief
+   * Sets up a shape in accordance with the given type and arguments
+   *
+   * @param i The particle id
+   * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
+   * rectangle, death star, cut hollow sphere, or torus
+   * @param shape_arguments The dimensions to be used for shape initialization
+   */
+  void
+  initialize_shape(const std::string         type,
+                   const std::vector<double> shape_arguments);
 
   /**
    * @brief
