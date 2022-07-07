@@ -82,6 +82,7 @@ public:
                 const double e = scalar_product(e1, vector_to_plane);
 
         auto det = (a * c - b * b);
+        auto det_inverse = 1.0 / det;
         auto s = b * e - c * d;
         auto t = b * d - a * e;
 
@@ -91,7 +92,7 @@ public:
             if (s <0)
             {
                 if (t <0)
-                  { auto region4_output =  region4(a,b,c,d,e);
+                  { auto region4_output =  regions2_4_6(a,b,c,d,e);
                     s = region4_output.first;
                     t =  region4_output.second;
                 }
@@ -110,7 +111,7 @@ public:
             }
             else
             {
-                auto region0_output = region0(det, s, t);
+                auto region0_output = region0(det_inverse, s, t);
                 s = region0_output.first;
                 t = region0_output.second;
             }
@@ -119,13 +120,13 @@ public:
         {
         if (s < 0 )
         {
-            auto region_2_output = region2(a,b,c,d,e);
+            auto region_2_output = regions2_4_6(a,b,c,d,e);
             s = region_2_output.first;
             t = region_2_output.second;
         }
         else if (t < 0)
         {
-            auto region6_output = region6(a,b,c,d,e);
+            auto region6_output = regions2_4_6(a,b,c,d,e);
             s = region6_output.first;
             t = region6_output.second;
 
@@ -150,11 +151,10 @@ public:
 private:
 
 
-    std::pair<double, double> region0(const double &det, double &s, double &t)
+    std::pair<double, double> region0(const double &det_inverse, double &s, double &t)
     {
-        const double inv_det = 1. / det;
-        s *= inv_det;
-        t *= inv_det;
+        s *= det_inverse;
+        t *= det_inverse;
 
          return std::make_pair(s,t);
     }
@@ -180,28 +180,6 @@ private:
         return std::make_pair(s,t);
     }
 
-    std::pair<double, double> region2(const double &a, const double &b, const double &c, const double &d, const double &e)
-    {
-        double t = 0.0;
-        double s = 0.0;
-
-        double tmpO = b + d;
-         double tmpl = c + e;
-         if   (tmpl > tmpO) {
-             double numer = tmpl - tmpO;
-             double denom = a - 2 * b + c;
-             s = (numer >= denom? 1 : numer / denom);
-             t = 1 - s;
-         }
-         else
-         {
-             s = 0.0;
-             t = (tmpl <= 0 ? 1 : (e >= 0 ? 0 : -e / c ) );
-         }
-
-         return std::make_pair(s,t);
-    }
-
     std::pair<double, double> region3(const double &c, const double &e)
     {
         double s = 0.0;
@@ -216,30 +194,6 @@ private:
 
         return std::make_pair(s,t);
     }
-
-
-    std::pair<double, double> region4(const double &a, const double &b, const double &c, const double &d, const double &e)
-    {
-        double t = 0.0;
-        double s = 0.0;
-
-        double tmpO = b + d;
-         double tmpl = c + e;
-         if   (tmpl > tmpO) {
-             double numer = tmpl - tmpO;
-             double denom = a - 2 * b + c;
-             s = (numer >= denom? 1 : numer / denom);
-             t = 1 - s;
-         }
-         else
-         {
-             s = 0.0;
-             t = (tmpl <= 0 ? 1 : (e >= 0 ? 0 : -e / c ) );
-         }
-
-         return std::make_pair(s,t);
-    }
-
 
     std::pair<double, double> region5(const double &a, const double &d)
     {
@@ -256,7 +210,7 @@ private:
         return std::make_pair(s, t);
     }
 
-    std::pair<double, double> region6(const double &a, const double &b, const double &c, const double &d, const double &e)
+    std::pair<double, double> regions2_4_6(const double &a, const double &b, const double &c, const double &d, const double &e)
     {
         double t = 0.0;
         double s = 0.0;
@@ -277,6 +231,7 @@ private:
 
          return std::make_pair(s,t);
     }
+
 };
 
 
@@ -317,6 +272,19 @@ main()
               timer.leave_subsection();
               if (t == n_times - 1)
                 write_distances(case_1.second, distances, "random.dat");
+            }
+        }
+
+        {
+          unsigned int n_times = 1e5;
+          for (unsigned int t = 0; t < n_times; ++t)
+            {
+              auto case_2 = generate_case_2<3>(1000, t);
+              timer.enter_subsection("Case 1");
+              auto distances = distance_calculator.calculate_distance(case_2.first, case_2.second);
+              timer.leave_subsection();
+              if (t == n_times - 1)
+                write_distances(case_2.second, distances, "case_2.dat");
             }
         }
     }
