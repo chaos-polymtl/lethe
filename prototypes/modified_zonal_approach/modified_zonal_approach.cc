@@ -261,6 +261,19 @@ main()
             if (t == n_times - 1)
               write_distances(case_1.second, distances, "random.dat");
           }
+      }    
+
+      {
+        unsigned int n_times = 1e5;
+        for (unsigned int t = 0; t < n_times; ++t)
+          {
+            auto case_2 = generate_case_2<3>(1000, t);
+            timer.enter_subsection("Case 1");
+            auto distances = calculate_distance(case_2.first, case_2.second);
+            timer.leave_subsection();
+            if (t == n_times - 1)
+              write_distances(case_2.second, distances, "case_2.dat");
+          }
       }
     }
   catch (std::exception &exc)

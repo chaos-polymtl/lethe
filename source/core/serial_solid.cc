@@ -416,8 +416,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
 
 
 template <int dim, int spacedim>
-void
-SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
+void SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 {
   // SolutionTransfer<dim, Vector<double>, spacedim> system_trans_vectors(
   //   this->displacement_dh);
@@ -436,8 +435,7 @@ SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 }
 
 template <int dim, int spacedim>
-void
-SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
+void SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
 {
   // Setup an un-refined triangulation before loading
   // setup_triangulation(true);

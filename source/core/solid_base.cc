@@ -54,7 +54,7 @@
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
-  std::shared_ptr<Parameters::SolidObject<spacedim>> &             param,
+  std::shared_ptr<Parameters::SolidObject<spacedim>> &              param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
   std::shared_ptr<Mapping<spacedim>> fluid_mapping)
   : mpi_communicator(MPI_COMM_WORLD)
