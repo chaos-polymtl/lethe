@@ -44,7 +44,7 @@ using namespace dealii;
  * @tparam number_quadrature_points The number of quadrature points
  */
 
-template <int dim>
+template <int dim, typename VectorType>
 class PostProcessorSmoothing
 {
 public:
@@ -60,24 +60,25 @@ public:
    * @brief Outputs a solution for the field on the nodes.
    */
   virtual void
-  evaluate_smoothed_field()
+  evaluate_smoothed_field(const VectorType &)
   {}
 
-private:
+protected:
   FE_Q<dim>                                       fe_q;
   DoFHandler<dim>                                 dof_handler;
   SimulationParameters<dim>                       simulation_parameters;
   unsigned int                                    number_quadrature_points;
   std::shared_ptr<TrilinosWrappers::SparseMatrix> system_matrix;
-  TrilinosWrappers::MPI::Vector                   system_rhs;
+
+private:
 };
 
 /**
  * A class that assembles the rhs and solves the L2projection of the Vorticity
  * on nodes
  */
-template <int dim>
-class VorticitySmoothing : public PostProcessorSmoothing<dim>
+template <int dim, typename VectorType>
+class VorticitySmoothing : public PostProcessorSmoothing<dim, VectorType>
 {
 public:
   // Member functions
@@ -90,15 +91,18 @@ public:
    * @brief Outputs a solution for the field on the nodes.
    */
   void
-  evaluate_smoothed_field();
+  evaluate_smoothed_field(const VectorType &);
+
+private:
+  TrilinosWrappers::MPI::Vector system_rhs;
 };
 
 /**
  * A class that assembles the rhs and solves the L2projection of the Qcriterion
  * on nodes
  */
-template <int dim>
-class QcriterionSmoothing : public PostProcessorSmoothing<dim>
+template <int dim, typename VectorType>
+class QcriterionSmoothing : public PostProcessorSmoothing<dim, VectorType>
 {
 public:
   // Member functions
@@ -111,7 +115,10 @@ public:
    * @brief Outputs a solution for the field on the nodes.
    */
   void
-  evaluate_smoothed_field();
+  evaluate_smoothed_field(const VectorType &solution);
+
+private:
+  TrilinosWrappers::MPI::Vector system_rhs;
 };
 
 #endif
