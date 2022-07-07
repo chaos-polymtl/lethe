@@ -101,7 +101,7 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set verbosity 			= verbose
+  set verbosity	= verbose
   set number of solids = 1
 
   subsection nitsche solid 0
@@ -112,13 +112,13 @@ subsection nitsche
       		set initial refinement   = 0
 	  end
     subsection solid velocity
-	    set Function expression = 0 ; 1*2*3.1416*z ; -1*2*3.1416*y
+	    set Function expression = 0 ; 1*2*pi*z ; -1*2*pi*y
     end
 
     set calculate torque on solid = true
     set enable particles motion		= true
     set particles sub iterations      = 10
-   	set beta 			= 10
+    set beta 			= 10
   end
 
 end
