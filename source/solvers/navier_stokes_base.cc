@@ -1669,7 +1669,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_out.add_data_vector(solution, vorticity);
 
   QCriterionPostprocessor<dim> qcriterion;
-  data_out.add_data_vector(solution, qcriterion);
+  if (!this->simulation_parameters.post_processing.smoothing)
+    data_out.add_data_vector(solution, qcriterion);
 
   SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
                             simulation_parameters.velocity_sources.omega_y,
