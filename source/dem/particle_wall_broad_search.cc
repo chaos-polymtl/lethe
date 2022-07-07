@@ -14,7 +14,7 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index,
+    std::unordered_map<unsigned int,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
@@ -85,7 +85,7 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
   const double &                                    simulation_time,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
+    std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
     &pfw_contact_candidates)
 {
   // Clearing pfw_contact_candidates(output of this function)
@@ -147,3 +147,75 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
 
 template class ParticleWallBroadSearch<2>;
 template class ParticleWallBroadSearch<3>;
+
+
+template <int dim>
+void
+ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
+  const std::unordered_map<
+    typename Triangulation<dim>::active_cell_iterator,
+    std::unordered_map<int, typename Triangulation<dim>::active_cell_iterator>>
+    &                                    moving_mesh_information,
+  const Particles::ParticleHandler<dim> &particle_handler,
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<unsigned int,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  double>>>
+    &particle_moving_mesh_contact_candidates)
+{
+  particle_moving_mesh_contact_candidates.clear();
+
+  for (auto moving_mesh_iterator = moving_mesh_information.begin();
+       moving_mesh_iterator != moving_mesh_information.end();
+       ++moving_mesh_iterator)
+    {
+      auto background_cell = moving_mesh_iterator->first;
+
+      // Finding particles located in the corresponding cell
+      // (boundary_cells_content.cell)
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_cell = particle_handler.particles_in_cell(background_cell);
+
+      const bool particles_exist_in_main_cell = !particles_in_cell.empty();
+
+      // If the main cell is not empty
+      if (particles_exist_in_main_cell)
+        {
+          auto cut_cells = moving_mesh_iterator->second;
+
+          for (unsigned int cut_cells_counter = 0;
+               cut_cells_counter != cut_cells.size();
+               ++cut_cells_counter)
+            {
+              for (typename Particles::ParticleHandler<
+                     dim>::particle_iterator_range::iterator
+                     particles_in_cell_iterator = particles_in_cell.begin();
+                   particles_in_cell_iterator != particles_in_cell.end();
+                   ++particles_in_cell_iterator)
+                {
+                  // UPDATE *******
+                  Tensor<1, dim> cut_cell_norm_vec;
+                  Point<dim>     projection;
+                  double         distance;
+
+
+                  auto particle_mesh_info =
+                    std::make_tuple(particles_in_cell_iterator,
+                                    cut_cell_norm_vec,
+                                    projection,
+                                    distance);
+
+                  particle_moving_mesh_contact_candidates
+                    [particles_in_cell_iterator->get_id()]
+                      .insert({cut_cells_counter, particle_mesh_info});
+                }
+            }
+        }
+    }
+}
+
+template class ParticleMovingMeshBroadSearch<2>;
+template class ParticleMovingMeshBroadSearch<3>;

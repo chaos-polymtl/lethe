@@ -22,12 +22,15 @@
 
 #include <deal.II/distributed/tria.h>
 
+#include <deal.II/dofs/dof_handler.h>
+
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
 #include <iostream>
 #include <vector>
+
 
 using namespace dealii;
 
@@ -73,7 +76,7 @@ public:
     const Particles::ParticleHandler<dim> &particle_handler,
     std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index,
+      std::unordered_map<unsigned int,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,
@@ -107,10 +110,48 @@ public:
     const Particles::ParticleHandler<dim> &particle_handler,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double &                                    simulation_time,
-    std::unordered_map<types::particle_index,
-                       std::unordered_map<types::particle_index,
-                                          Particles::ParticleIterator<dim>>>
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
       &pfw_contact_candidates);
+};
+
+
+/**
+ * UPDATE THIS *****************************
+ *
+ * @note
+ *
+ */
+
+template <int dim>
+class ParticleMovingMeshBroadSearch
+{
+public:
+  ParticleMovingMeshBroadSearch<dim>();
+
+  /**
+   * UPDATE ****************************
+   *
+   * @param
+   */
+
+  void
+  find_particle_moving_mesh_contact_pairs(
+    const std::unordered_map<
+      typename Triangulation<dim>::active_cell_iterator,
+      std::unordered_map<int,
+                         typename Triangulation<dim>::active_cell_iterator>>
+      &                                    moving_mesh_information,
+    const Particles::ParticleHandler<dim> &particle_handler,
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<unsigned int,
+                         std::tuple<Particles::ParticleIterator<dim>,
+                                    Tensor<1, dim>,
+                                    Point<dim>,
+                                    double>>>
+      &particle_moving_mesh_contact_candidates);
 };
 
 #endif /* particle_wall_broad_search_h */
