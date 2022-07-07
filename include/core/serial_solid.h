@@ -62,7 +62,7 @@ class SerialSolid
 {
 public:
   // Member functions
-  SerialSolid(std::shared_ptr<Parameters::SolidObject<spacedim>> &param);
+  SerialSolid(std::shared_ptr<Parameters::SolidObject<spacedim>> &param,unsigned int id);
 
   /**
    * @brief Manages solid triangulation and particles setup
@@ -119,6 +119,12 @@ public:
   get_solid_velocity();
 
   /**
+   * @return id of the solid
+   */
+  unsigned int
+  get_solid_id();
+
+  /**
    * @brief Moves the vertices of the solid triangulation. This function
    * uses an Runge-Kutta 4 explicit time integrator to displace the vertices
    * of the solid triangulation and stores the displacement in an array
@@ -167,6 +173,8 @@ private:
   MPI_Comm           mpi_communicator;
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
+
+  unsigned int id;
 
   std::shared_ptr<Triangulation<dim, spacedim>> solid_tria;
   DoFHandler<dim, spacedim>                     solid_dh;
