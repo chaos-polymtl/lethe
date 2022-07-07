@@ -203,7 +203,6 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
                                      param->solid_mesh.delta_y,
                                      param->solid_mesh.delta_z),
                      *solid_tria);
-  // Rotate the triangulation
   if (param->solid_mesh.rotate)
     {
       rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);
@@ -298,6 +297,22 @@ SerialSolid<dim, spacedim>::get_solid_velocity()
 {
   return velocity;
 }
+
+
+template <>
+void
+SerialSolid<1, 2>::rotate_grid(double /*angle*/, int /*axis*/)
+{
+  // Not implemented right now
+  throw(std::runtime_error("This is currently not implemented"));
+}
+template <>
+void
+SerialSolid<2, 3>::rotate_grid(double angle, int axis)
+{
+  GridTools::rotate(angle, axis, *solid_tria);
+}
+
 
 template <int dim, int spacedim>
 void
@@ -501,6 +516,5 @@ SerialSolid<dim, spacedim>::setup_displacement()
 
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can
 // occur
-template class SerialSolid<2>;
-template class SerialSolid<3>;
+template class SerialSolid<1, 2>;
 template class SerialSolid<2, 3>;

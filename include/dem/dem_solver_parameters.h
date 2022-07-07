@@ -19,6 +19,7 @@
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
 #include <core/simulation_control.h>
+#include <core/solid_objects_parameters.h>
 
 #ifndef parameters_DEM_h
 #  define parameters_DEM_h
@@ -37,15 +38,17 @@ public:
   Parameters::Timer             timer;
   Parameters::SimulationControl simulation_control;
   Parameters::Lagrangian::LagrangianPhysicalProperties
-                                                   lagrangian_physical_properties;
-  Parameters::Lagrangian::InsertionInfo            insertion_info;
-  Parameters::Lagrangian::ModelParameters          model_parameters;
-  Parameters::Lagrangian::FloatingWalls<dim>       floating_walls;
-  Parameters::Lagrangian::BCDEM                    boundary_conditions;
-  Parameters::Lagrangian::FloatingGrid<dim>        floating_grid;
-  Parameters::Lagrangian::ForceTorqueOnWall<dim>   forces_torques;
-  Parameters::Lagrangian::GridMotion<dim>          grid_motion;
-  Parameters::Lagrangian::LagrangianPostProcessing post_processing;
+                                                 lagrangian_physical_properties;
+  Parameters::Lagrangian::InsertionInfo          insertion_info;
+  Parameters::Lagrangian::ModelParameters        model_parameters;
+  Parameters::Lagrangian::FloatingWalls<dim>     floating_walls;
+  Parameters::Lagrangian::BCDEM                  boundary_conditions;
+  Parameters::Lagrangian::FloatingGrid<dim>      floating_grid;
+  Parameters::Lagrangian::ForceTorqueOnWall<dim> forces_torques;
+  Parameters::Lagrangian::GridMotion<dim>        grid_motion;
+  Parameters::Lagrangian::LagrangianPostProcessing  post_processing;
+  std::shared_ptr<Parameters::DEMSolidObjects<dim>> solid_objects;
+
 
   void
   declare(ParameterHandler &prm)
@@ -64,6 +67,8 @@ public:
     forces_torques.declare_parameters(prm);
     grid_motion.declare_parameters(prm);
     post_processing.declare_parameters(prm);
+    solid_objects = std::make_shared<Parameters::DEMSolidObjects<dim>>();
+    solid_objects->declare_parameters(prm);
   }
 
   void
@@ -83,6 +88,7 @@ public:
     forces_torques.parse_parameters(prm);
     grid_motion.parse_parameters(prm);
     post_processing.parse_parameters(prm);
+    solid_objects->parse_parameters(prm);
   }
 };
 
