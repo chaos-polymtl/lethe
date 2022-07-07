@@ -171,10 +171,66 @@ Unstructured
 Basic:
 
 1. (optional) ``Tools > Options > Mesh`` and ``General`` panel, check ``Recombine all triangular meshes``: generate a quad mesh.
-2. ``Left pannel: Modules > Mesh > 2D`` or ``3D``: create the mesh
-3. ``Tools > Statistics``: check that the mesh is generated appropriately (by default, triangles for 2D and hexahedra for 3D)
-4. (optional) ``Left pannel: Modules > Mesh > Refine by splitting``: refine the mesh (beware, it takes more and more time for each refinement)
-5. ``Left pannel: Modules > Mesh > Save``: save the mesh in a ``.msh`` file, to be used in Lethe (see :doc:`../../parameters/cfd/mesh`)
+2. (optional) In the same panel, change ``Min/Max element size`` to have smaller/bigger elements, therefor a finer/coarser mesh.
+3. ``Left pannel: Modules > Mesh > 2D`` or ``3D``: create the mesh
+4. ``Tools > Statistics``: check that the mesh is generated appropriately (by default, triangles for 2D and hexahedra for 3D)
+5. (optional) ``Left pannel: Modules > Mesh > Refine by splitting``: refine the mesh (beware, it takes more and more time for each refinement)
+6. ``Left pannel: Modules > Mesh > Save``: save the mesh in a ``.msh`` file, to be used in Lethe (see :doc:`../../parameters/cfd/mesh`)
+
+By following all the previous steps, the mesh generated looks like bellow.
+
+.. image:: images/unstructured.png
+    :alt: 2D mesh with quads
+    :align: center
+    :name: unstructured mesh
+    
+Attractors can also be used to refine the mesh towards specific edges or surfaces. In this example, attractors could be interesting if the mesh needs to be finer around the sphere. Attractors can only be added by code with the ``Field`` attribut.
+
+.. code-block::
+
+	// LcMax -                         /------------------
+	//                               /
+	//                             /
+	//                           /
+	// LcMin -o----------------/
+	//        |                |       |
+	//     Attractor       DistMin   DistMax
+
+1. Set the attractor:
+
+.. code-block::
+
+	Field[1] = Attractor;
+	
+2. Specify where the refinement needs to be done (near the circle in this case):
+
+.. code-block::
+
+	Field[1].EdgesList = {5};
+	
+3. Set the minimum/maximum characteristic length and the minimum/maximum distance of the refinement:
+
+.. code-block::
+
+	Field[2] = Threshold;
+	Field[2].IField = 1;
+	Field[2].LcMin = 0.25;
+	Field[2].LcMax = 1;
+	Field[2].DistMin = 1;
+	Field[2].DistMax = 2;
+	
+4. Apply the attractor:
+
+.. code-block::
+
+	Background Field = 2;
+	
+Here is the mesh generated with an attractor around the sphere:
+
+.. image:: images/attractor.png
+    :alt: The mesh generated with an attractor arround the sphere
+    :align: center
+    :name: attractor
 
 .. _structured mesh:
 
