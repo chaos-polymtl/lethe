@@ -246,7 +246,8 @@ DEMSolver<dim>::cell_weight(
   switch (status)
     {
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-        case parallel::distributed::Triangulation<dim>::CELL_REFINE: {
+      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
+        {
           const unsigned int n_particles_in_cell =
             particle_handler.n_particles_in_cell(cell);
           return n_particles_in_cell * particle_weight;
@@ -256,7 +257,8 @@ DEMSolver<dim>::cell_weight(
       case parallel::distributed::Triangulation<dim>::CELL_INVALID:
         break;
 
-        case parallel::distributed::Triangulation<dim>::CELL_COARSEN: {
+      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
+        {
           unsigned int n_particles_in_cell = 0;
 
           for (unsigned int child_index = 0;
@@ -441,7 +443,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double>                     &MOI)
+  std::vector<double> &                    MOI)
 {
   MOI.resize(torque.size());
 

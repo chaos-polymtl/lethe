@@ -38,14 +38,14 @@ public:
   Parameters::Timer             timer;
   Parameters::SimulationControl simulation_control;
   Parameters::Lagrangian::LagrangianPhysicalProperties
-                                                 lagrangian_physical_properties;
-  Parameters::Lagrangian::InsertionInfo          insertion_info;
-  Parameters::Lagrangian::ModelParameters        model_parameters;
-  Parameters::Lagrangian::FloatingWalls<dim>     floating_walls;
-  Parameters::Lagrangian::BCDEM                  boundary_conditions;
-  Parameters::Lagrangian::FloatingGrid<dim>      floating_grid;
-  Parameters::Lagrangian::ForceTorqueOnWall<dim> forces_torques;
-  Parameters::Lagrangian::GridMotion<dim>        grid_motion;
+                                                    lagrangian_physical_properties;
+  Parameters::Lagrangian::InsertionInfo             insertion_info;
+  Parameters::Lagrangian::ModelParameters           model_parameters;
+  Parameters::Lagrangian::FloatingWalls<dim>        floating_walls;
+  Parameters::Lagrangian::BCDEM                     boundary_conditions;
+  Parameters::Lagrangian::FloatingGrid<dim>         floating_grid;
+  Parameters::Lagrangian::ForceTorqueOnWall<dim>    forces_torques;
+  Parameters::Lagrangian::GridMotion<dim>           grid_motion;
   Parameters::Lagrangian::LagrangianPostProcessing  post_processing;
   std::shared_ptr<Parameters::DEMSolidObjects<dim>> solid_objects;
 
