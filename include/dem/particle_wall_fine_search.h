@@ -107,4 +107,39 @@ public:
       &pfw_pairs_in_contact);
 };
 
+
+/**
+ * UPDATE *****************************
+ *
+ * @note
+ *
+ */
+
+template <int dim>
+class ParticleMovingMeshFineSearch
+{
+public:
+  ParticleMovingMeshFineSearch<dim>();
+
+  /**
+   * UPDATE **********************
+   *
+   * @param
+   */
+  void
+  particle_moving_mesh_fine_search(
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<unsigned int,
+                         std::tuple<Particles::ParticleIterator<dim>,
+                                    Tensor<1, dim>,
+                                    Point<dim>,
+                                    double>>>
+      &particle_moving_mesh_contact_candidates,
+    std::unordered_map<
+      types::particle_index,
+      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      &particle_moving_mesh_in_contact);
+};
+
 #endif /* particle_wall_fine_search_h */
