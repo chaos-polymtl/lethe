@@ -104,20 +104,11 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   // of the particles. If all the DOfs are on one side
                   // the cell is not cut by the boundary.
                   if (0 == this->fe->system_to_component_index(j).first)
-                    if (this->simulation_parameters.particlesParameters
-                          ->load_particles_from_file == false)
-                      {
-                        particles.resize(
-                          this->simulation_parameters.particlesParameters->nb);
-                        for (unsigned int i = 0; i < this->simulation_parameters
-                                                       .particlesParameters->nb;
-                             ++i)
-                          {
-                            load_particles_from_file();
-                          }
-                      }
-                    else
-                      load_particles_from_file();
+                    {
+                      if (particles[p].get_levelset(
+                            support_points[local_dof_indices[j]]) <= 0)
+                        ++nb_dof_inside;
+                    }
                 }
 
               // If some of the DOFs are inside the boundary, some are outside,
