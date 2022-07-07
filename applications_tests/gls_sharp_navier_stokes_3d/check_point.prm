@@ -19,7 +19,7 @@ end
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity            = 0.604166666666667
-    set density =0.000960
+    set density = 0.000960
   end
 end
 
@@ -90,7 +90,7 @@ subsection particles
 	set refine mesh outside radius factor = 1.5
 	set initial refinement = 3
 	set integrate motion = true
-	set alpha =0.5
+	set alpha = 0.5
 	set assemble Navier-Stokes inside particles = false
 	subsection gravity
         set Function expression =0;-981;0
@@ -106,10 +106,9 @@ subsection particles
 	    subsection omega
             set Function expression =0;0;0
         end
-	    set pressure x =0.00001
-	    set pressure y =0.00001
-	    set pressure z =0.00001
-	    set radius = 0.75
+	    set pressure location = 0.00001; 0.00001; 0.00001
+	    set type       = sphere
+        set shape arguments = 0.75
 	    set density = 0.001120
     end
 

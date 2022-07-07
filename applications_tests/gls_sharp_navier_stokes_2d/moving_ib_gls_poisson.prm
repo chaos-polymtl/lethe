@@ -103,9 +103,9 @@ subsection particles
 	    subsection omega
             set Function expression =0;0;0
         end
-	    set pressure x =0.00001
-	    set pressure y =0.00001
-	    set radius = 0.5
+	    set pressure location = 0.00001; 0.00001
+	    set type       = sphere
+        set shape arguments = 0.5
 	    set density =1.5
 	    set inertia=1
 

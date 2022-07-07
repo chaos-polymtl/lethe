@@ -176,6 +176,13 @@ namespace Parameters
     // Type of verbosity for the surface tension force calculation
     Parameters::Verbosity verbosity;
 
+    // Enable marangoni effect
+    bool enable_marangoni_effect;
+
+    // Surface tension gradient with respect to temperature
+    // This will be moved to the property manager in another PR.
+    double surface_tension_gradient;
+
     void
     declare_parameters(ParameterHandler &prm);
     void

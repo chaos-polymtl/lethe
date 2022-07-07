@@ -71,9 +71,6 @@ NavierStokesScratchData<dim>::allocate()
     n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
 
   // Physical properties
-
-  // Allocate memory for the physical properties
-
   fields.insert(
     std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
 
@@ -81,12 +78,6 @@ NavierStokesScratchData<dim>::allocate()
   viscosity                 = std::vector<double>(n_q_points);
   thermal_expansion         = std::vector<double>(n_q_points);
   grad_viscosity_shear_rate = std::vector<double>(n_q_points);
-
-
-  density_0   = std::vector<double>(n_q_points);
-  density_1   = std::vector<double>(n_q_points);
-  viscosity_0 = std::vector<double>(n_q_points);
-  viscosity_1 = std::vector<double>(n_q_points);
 
   previous_density =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
@@ -103,12 +94,18 @@ NavierStokesScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
   fe_values_vof = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // VOF
+  // Allocate VOF values
   phase_values = std::vector<double>(this->n_q_points);
   previous_phase_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
   phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+
+  // Allocate physical properties
+  density_0   = std::vector<double>(n_q_points);
+  density_1   = std::vector<double>(n_q_points);
+  viscosity_0 = std::vector<double>(n_q_points);
+  viscosity_1 = std::vector<double>(n_q_points);
 }
 
 template <int dim>
@@ -191,11 +188,12 @@ NavierStokesScratchData<dim>::enable_heat_transfer(
   const Quadrature<dim> &   quadrature,
   const Mapping<dim> &      mapping)
 {
-  gather_temperature = true;
-  fe_values_temperature =
-    std::make_shared<FEValues<dim>>(mapping, fe, quadrature, update_values);
+  gather_temperature    = true;
+  fe_values_temperature = std::make_shared<FEValues<dim>>(
+    mapping, fe, quadrature, update_values | update_gradients);
 
-  temperature_values = std::vector<double>(this->n_q_points);
+  temperature_values    = std::vector<double>(this->n_q_points);
+  temperature_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
   fields.insert(
     std::pair<field, std::vector<double>>(field::temperature, n_q_points));
 }

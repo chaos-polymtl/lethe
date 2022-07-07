@@ -105,7 +105,8 @@ end
                 subsection velocity
                     set Function expression =0;0
                 end
-                    set radius = 0.5
+                set type       = sphere
+                set shape arguments = 0.5
             end
         end
         

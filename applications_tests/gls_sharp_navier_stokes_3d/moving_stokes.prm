@@ -161,18 +161,16 @@ subsection particles
 	set assemble Navier-Stokes inside particles = false
 	set length ratio = 2
 
-
-    subsection particle info 0 
-            subsection position
-            	set Function expression =cos(t);0;0
-            end
-            subsection velocity
-            	set Function expression =-sin(t);0;0
-            end
-	    set pressure x =-0.75001
-	    set pressure y =0.00001
-	    set pressure z =0.00001
-	    set radius = 0.5
+    subsection particle info 0
+        subsection position
+            set Function expression =cos(t);0;0
+        end
+        subsection velocity
+            set Function expression =-sin(t);0;0
+        end
+	    set pressure location = -0.75001; 0.00001; 0.00001
+	    set type       = sphere
+        set shape arguments = 0.5
 	    set density = 1
     end
 

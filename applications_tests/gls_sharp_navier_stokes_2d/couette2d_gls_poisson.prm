@@ -78,10 +78,6 @@ subsection analytical solution
 
             set Function constants = eta=0.50, ri=0.25
 	    set Function expression = if(sqrt(x*x+y*y)>ri, if (sqrt(x*x+y*y)<ri/eta,-sin(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)),0) , sqrt(x*x+y*y)/ri*-sin(atan2(y,x))*ri) ; if(sqrt(x*x+y*y)>ri,if (sqrt(x*x+y*y)<ri/eta,cos(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)),0), sqrt(x*x+y*y)/ri*cos(atan2(y,x))*ri) ; 0
-
-
-
-
 	end
 end
 
@@ -102,10 +98,9 @@ subsection particles
         subsection omega
             set Function expression =0;0;1
         end
-	    set pressure x =0.00001
-	    set pressure y =0.00001
-	    set radius = 0.25
-
+	    set pressure location = 0.00001; 0.00001
+	    set type       = sphere
+	    set shape arguments = 0.25
     end
     subsection particle info 1 
         subsection position
@@ -117,9 +112,9 @@ subsection particles
         subsection omega
             set Function expression =0;0;0
         end
-	    set pressure x =0.40001
-	    set pressure y =0.00001
-	    set radius = 0.5
+	    set pressure location = 0.40001; 0.00001
+	    set type       = sphere
+        set shape arguments = 0.5
     end
 end
 

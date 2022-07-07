@@ -642,6 +642,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       if (dim == 3)
         g[2] =
           this->parameters->f_gravity->value(dem_particles[p_i].position, 2);
+      dem_particles[p_i].set_position(dem_particles[p_i].position);
+      dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
     }
 
 
@@ -697,7 +699,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           std::fill(lubrication_wall_torque.begin(),
                     lubrication_wall_torque.end(),
                     0);
-
           // Calculate particle-particle and particle-wall contact force
           calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
           calculate_pw_contact_force(dt_dem,
@@ -711,6 +712,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                          mu,
                                          lubrication_wall_force,
                                          lubrication_wall_torque);
+
           // define local time of the rk step
           double local_dt = dt_dem * 0.5;
           if (step == 3)
@@ -793,6 +795,8 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
               dem_particles[p_i].omega =
                 last_omega[p_i] + k_omega[p_i][step] * local_dt;
+
+              dem_particles[p_i].set_position(dem_particles[p_i].position);
             }
         }
 
@@ -852,6 +856,9 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
              2 * k_omega_contact_impulsion[p_i][2] +
              k_omega_contact_impulsion[p_i][3]) /
             6;
+
+          dem_particles[p_i].set_position(dem_particles[p_i].position);
+          dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
         }
 
       t += dt_dem;

@@ -428,6 +428,20 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
       Patterns::Selection("quiet|verbose"),
       "State whether the output from the surface tension force calculations should be printed "
       "Choices are <quiet|verbose>.");
+
+    prm.enter_subsection("marangoni effect");
+    {
+      prm.declare_entry("enable",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable marangoni effect calculation <true|false>");
+
+      prm.declare_entry("surface tension gradient",
+                        "0.0",
+                        Patterns::Double(),
+                        "Surface tension gradient with respect to temperature");
+    }
+    prm.leave_subsection();
   }
   prm.leave_subsection();
 }
@@ -453,6 +467,15 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
       verbosity = Parameters::Verbosity::quiet;
     else
       throw(std::runtime_error("Invalid verbosity level"));
+
+    prm.enter_subsection("marangoni effect");
+    {
+      enable_marangoni_effect = prm.get_bool("enable");
+
+      // Surface tension gradient
+      surface_tension_gradient = prm.get_double("surface tension gradient");
+    }
+    prm.leave_subsection();
   }
   prm.leave_subsection();
 }

@@ -226,16 +226,16 @@ Using Paraview the following steady-state velocity and pressure profiles can be 
 
 From the velocity distribution, we notice how the velocity of the fluid is 0 at the boundaries of the cylinder and how it increases gradually if we move further away from it. In the case of the pressure, the difference between the inlet and outlet is visible and we can see how the pressure is near to 0 close to the outlet.
 
-In addition to these profiles, we also obtain the values of the forces acting on the cylinder. These values can be found on the ``forces.00.dat`` file produced by the simulation and correspond to the forces acting on the ``bc 0`` (the cylinder):
+In addition to these profiles, we also obtain the values of the forces acting on the cylinder. These values can be found on the ``forces.00.dat`` file produced by the simulation and correspond to the forces acting on the ``bc 0`` (cylinder boundary). The force is decomposed in its two components which are the viscous force (``f_v``) due to shear stresses on the boundary, and a pressure force (``f_p``) due to the body shape.
 
 .. code-block:: text
 
-  cells     f_x           f_y          f_z      
-   1167 6.6047203044  0.0000001031 0.0000000000 
-   2247 6.9679298724 -0.0000000103 0.0000000000 
-   4302 7.0779158358  0.0000817047 0.0000000000 
-   8268 7.1160652038  0.0001911781 0.0000000000 
-  15990 7.1227744092 -0.0000746224 0.0000000000 
+ cells     f_x           f_y          f_z          f_xv         f_yv          f_zv         f_xp         f_yp          f_zp     
+  1167 6.6047202908  0.0000000824 0.0000000000 3.0431481836  0.0000000312 0.0000000000 3.5615721072  0.0000000512 0.0000000000 
+  2208 6.9680865613 -0.0002186491 0.0000000000 3.2447002611 -0.0000730915 0.0000000000 3.7233863002 -0.0001455576 0.0000000000 
+  4197 7.0833998066  0.0025544399 0.0000000000 3.3778679961  0.0020491181 0.0000000000 3.7055318105  0.0005053218 0.0000000000 
+  8058 7.1321594705 -0.0000600573 0.0000000000 3.4651119900 -0.0000419133 0.0000000000 3.6670474805 -0.0000181441 0.0000000000 
+ 15459 7.1121045976  0.0048440122 0.0000000000 3.4730928015  0.0032471187 0.0000000000 3.6390117961  0.0015968935 0.0000000000 
 
 The force in the x direction is the parallel or drag force, while the force in the y direction is the perpendicular or lift force. The drag and lift coefficients can be calculated as follows:
 

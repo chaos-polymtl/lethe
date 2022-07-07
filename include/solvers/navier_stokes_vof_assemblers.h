@@ -117,7 +117,7 @@ public:
  * @brief Class that assembles the Surface Tension Force (STF) for the
  * Navier-Stokes equations. The following equation is assembled
  *
- * $$\mathbf{F_{CSV}}=\sigma \rho k \nabla \phi
+ * $$\mathbf{F_{CSV}}=\sigma k \nabla \phi \frac{2 \rho}{\rho_0 + \rho_1}
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -128,6 +128,56 @@ class GLSNavierStokesVOFAssemblerSTF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerSTF(
+    std::shared_ptr<SimulationControl> p_simulation_control,
+    const SimulationParameters<dim> &  nsparam)
+    : simulation_control(p_simulation_control)
+    , STF_parameters(nsparam.multiphysics.vof_parameters.surface_tension_force)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+
+  // Surface tension force (STF)
+  const Parameters::VOF_SurfaceTensionForce STF_parameters;
+};
+
+
+/**
+ * @brief Class that assembles the marangoni effect for the
+ * Navier-Stokes equations. The following equation is assembled
+ *
+ * $$\mathbf{F_{Ma}}= \frac{\partial \sigma}{\partial T} \left[ \nabla T
+ * - \frac{\nabla \phi}{| \nabla \phi |} \left( \frac{ \nabla \phi }
+ * {| \nabla \phi |} \cdot \nabla T \right) \right] | \nabla \phi |
+ * \frac{2 \rho}{\rho_0 + \rho_1}
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class GLSNavierStokesVOFAssemblerMarangoni
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSNavierStokesVOFAssemblerMarangoni(
     std::shared_ptr<SimulationControl>  p_simulation_control,
     Parameters::VOF_SurfaceTensionForce p_STF_properties)
     : simulation_control(p_simulation_control)
@@ -157,7 +207,6 @@ public:
   // Surface tension force (STF)
   const Parameters::VOF_SurfaceTensionForce STF_properties;
 };
-
 
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation
