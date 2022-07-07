@@ -36,6 +36,8 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
         set enable lubrication force		    = true
         set lubrication range max		    = 2
         set lubrication range min		    = 0.1
+		set load particles from file		    = false
+		set particles file		    = particles
 
         subsection particle info 0
             set density    = 1
@@ -52,11 +54,9 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
                 set Function expression =0;0;0
             end
             set inertia    = 1
-            set pressure x = 0
-            set pressure y = 0
-            set pressure z = 0
+            set pressure location = 0; 0; 0
             set type       = sphere
-            set shape arguments = 0
+            set shape arguments = 1; 0; 0
             set friction coefficient         = 0
             set poisson ratio                = 0.3
             set restitution coefficient      = 1
@@ -139,10 +139,10 @@ The following properties are used if the particle impact one of the boundaries o
 
 * The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using non-newtonian fluid.
 
-* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.
-
 .. note::
 	When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.
+
+* The ``lubrication range max`` parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.
 
 * The ``lubrication range min`` parameter defines the minimal distance used in the lubrication force calculation. The range is defined as a multiple of the smallest cell. This limits the force that can be applied on a particle since the lubrification force has a singularity when the distance between 2 particles is 0. We use this parameter to define a lower bound on the distance between 2 particles for the force calculation to avoid this singularity. Physically, this distance can be interpreted as the surface roughness of the particles.
 
@@ -150,11 +150,16 @@ The following properties are used if the particle impact one of the boundaries o
     The lubrication force between two particles is expressed by the equation :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`. Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter of the first particle, :math:`d_{p_j}` the diameter of the second particle, :math:`y` the gap between the two particles, :math:`\mathbf{v_{ij}}` the relative velocity of the two particles, :math:`\mathbf{e_{ij}}` the unit vector along the line that joint the centroide of the two particles. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity `[1] <https://doi.org/10.1002/aic.690400418>`_.
     This model requires a constant viscosity and density of the fluid.
 
-The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separately.
+* The ``load particles from file`` boolean defines whether the particles are generated from an external file instead of the prm file. If this parameter is activated, the number of particles is defined directly from the file, that is, the particle's subsection and the number of particles are ignored.
+
+.. warning::
+    Currently this feature works only for spherical particles.
+
+* The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient
+
+The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
 
 * The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id 0. For each particle with the index ``n``, a new subsection name ``particle info n`` should be defined with relevant information.
-
-
 
 * The subsection ``position`` defines the initial value of the particle position if the parameter ``integrate motion=true``. Otherwise, it defines the particle's position at all points in time. This position is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of coordinate X, Y, and Z.
 
@@ -172,7 +177,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
 
-* The ``pressure x``, ``pressure y``, and ``pressure z`` parameters are used to define the X, Y, and Z coordinate offset of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to true to define the pressure reference point.
+* The ``pressure location`` parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to true to define the pressure reference point.
 
 * The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``.
 
