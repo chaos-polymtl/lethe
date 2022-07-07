@@ -165,7 +165,10 @@ private:
       {
         force_on_ib();
         integrate_particles();
-        optimized_generate_cut_cells_map();
+        if (all_spheres)
+          optimized_generate_cut_cells_map();
+        else
+          generate_cut_cells_map();
       }
     // this->simulation_control->set_assembly_method(this->time_stepping_method);
     {

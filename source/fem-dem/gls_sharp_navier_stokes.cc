@@ -65,8 +65,9 @@ GLSSharpNavierStokesSolver<dim>::check_particles_all_sphere()
 {
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
-      if (particles[p_i].shape->type != Shape<dim>::ShapeType::sphere)
+      if (particles[p_i].shape->get_shape_name().second != Shape<dim>::ShapeType::sphere)
         all_spheres = false;
+      std::cout << "PARTICLE TYPE = " << particles[p_i].shape->get_shape_name().second << std::endl;
     }
 }
 
@@ -423,6 +424,8 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
   ib_dem.initialize(this->simulation_parameters.particlesParameters,
                     this->mpi_communicator,
                     particles);
+
+  check_particles_all_sphere();
 }
 
 
@@ -3663,7 +3666,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-          check_particles_all_sphere();
           if (all_spheres)
             optimized_generate_cut_cells_map();
           else
