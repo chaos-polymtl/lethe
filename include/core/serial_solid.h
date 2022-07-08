@@ -24,6 +24,8 @@
 
 // Lethe Includes
 #include <core/parameters.h>
+#include <core/pvd_handler.h>
+#include <core/simulation_control.h>
 #include <core/solid_objects_parameters.h>
 
 // Dealii Includes
@@ -62,7 +64,8 @@ class SerialSolid
 {
 public:
   // Member functions
-  SerialSolid(std::shared_ptr<Parameters::SolidObject<spacedim>> &param,unsigned int id);
+  SerialSolid(std::shared_ptr<Parameters::SolidObject<spacedim>> &param,
+              unsigned int                                        id);
 
   /**
    * @brief Manages solid triangulation and particles setup
@@ -156,6 +159,13 @@ public:
   rotate_grid(double angle, int axis);
 
   /**
+   *  @brief output solid triangulation
+   */
+  void
+  write_output_results(std::shared_ptr<SimulationControl> simulation_control);
+
+
+  /**
    * @brief read solid base triangulation checkpoint
    */
   void
@@ -170,9 +180,11 @@ public:
 
 private:
   // Member variables
-  MPI_Comm           mpi_communicator;
-  const unsigned int n_mpi_processes;
-  const unsigned int this_mpi_process;
+  MPI_Comm                                            mpi_communicator;
+  const unsigned int                                  n_mpi_processes;
+  const unsigned int                                  this_mpi_process;
+  std::shared_ptr<Parameters::SolidObject<spacedim>> &param;
+
 
   unsigned int id;
 
@@ -187,9 +199,14 @@ private:
   std::shared_ptr<FESystem<dim, spacedim>> displacement_fe;
   Vector<double>                           displacement;
 
-  std::shared_ptr<Parameters::SolidObject<spacedim>> &param;
+  PVDHandler pvdhandler;
 
-  Function<spacedim> *velocity;
+
+  Function<spacedim> *translational_velocity;
+  Function<spacedim> *angular_velocity;
+  Tensor<1, spacedim> center_of_rotation;
+  Tensor<1, spacedim> current_translation_velocity;
+  Tensor<1, spacedim> current_angular_velocity;
 };
 
 #endif
