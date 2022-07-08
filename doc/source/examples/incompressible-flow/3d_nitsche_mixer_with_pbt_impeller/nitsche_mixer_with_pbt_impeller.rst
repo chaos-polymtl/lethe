@@ -81,7 +81,7 @@ The boundary conditions on the tank are:
 * ``slip`` on the upper wall to mimic the liquid's free surface. 
 
 .. note::
-	The ``slip`` boundary condition is debatable. A ``none`` (do-nothing) boundary condition could also be used since free surfaces have constant pressure, but the slip boundary condition is generally significantly more numerically robust.
+	The use of a ``slip`` boundary condition is debatable. A ``none`` (do-nothing) boundary condition could also be used since free surfaces have constant pressure, but the slip boundary condition is generally significantly more numerically robust.
 
 For this configuration, the Reynolds number is defined as:
 
