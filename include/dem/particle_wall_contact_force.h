@@ -70,6 +70,21 @@ public:
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
 
+  /**
+   * UPDATE *********************
+   *
+   * @param
+   */
+  virtual void
+  calculate_particle_moving_wall_contact_force(
+    std::unordered_map<
+      unsigned int,
+      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      &                        particle_floating_wall_pairs_in_contact,
+    const double &             dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force) = 0;
+
   std::map<unsigned int, Tensor<1, 3>>
   get_force()
   {

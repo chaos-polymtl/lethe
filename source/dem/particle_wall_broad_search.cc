@@ -161,11 +161,9 @@ ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   std::unordered_map<
     unsigned int,
-    std::unordered_map<types::particle_index,
-                       std::tuple<Particles::ParticleIterator<dim>,
-                                  Tensor<1, dim>,
-                                  Point<dim>,
-                                  double>>>
+    std::unordered_map<
+      types::particle_index,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     &particle_moving_mesh_contact_candidates)
 {
   particle_moving_mesh_contact_candidates.clear();
@@ -202,7 +200,7 @@ ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
                 LetheGridTools::calculate_particle_triangle_distance(
                   triangle, particles_in_cell, n_particles_in_background_cell);
 
-              const std::vector<double> distances =
+              const std::vector<bool> pass_distance_check =
                 std::get<0>(particle_triangle_information);
               const std::vector<Point<dim>> projection_points =
                 std::get<1>(particle_triangle_information);
@@ -215,15 +213,18 @@ ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
                    particles_in_cell_iterator != particles_in_cell.end();
                    ++particles_in_cell_iterator, ++particle_counter)
                 {
-                  auto particle_mesh_info =
-                    std::make_tuple(particles_in_cell_iterator,
-                                    std::get<2>(particle_triangle_information),
-                                    projection_points[particle_counter],
-                                    distances[particle_counter]);
+                  if (pass_distance_check[particle_counter])
+                    {
+                      auto particle_mesh_info =
+                        std::make_tuple(particles_in_cell_iterator,
+                                        std::get<2>(
+                                          particle_triangle_information),
+                                        projection_points[particle_counter]);
 
-                  particle_moving_mesh_contact_candidates[cut_cells_counter]
-                    .insert({particles_in_cell_iterator->get_id(),
-                             particle_mesh_info});
+                      particle_moving_mesh_contact_candidates[cut_cells_counter]
+                        .insert({particles_in_cell_iterator->get_id(),
+                                 particle_mesh_info});
+                    }
                 }
             }
         }

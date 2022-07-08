@@ -263,7 +263,7 @@ namespace LetheGridTools
    *
    */
   template <int dim>
-  std::tuple<std::vector<double>, std::vector<Point<dim>>, Tensor<1, dim>>
+  std::tuple<std::vector<bool>, std::vector<Point<dim>>, Tensor<1, dim>>
   calculate_particle_triangle_distance(
     const std::vector<Point<dim>> &triangle,
     const typename Particles::ParticleHandler<dim>::particle_iterator_range

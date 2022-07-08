@@ -149,8 +149,7 @@ public:
       std::unordered_map<types::particle_index,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
-                                    Point<dim>,
-                                    double>>>
+                                    Point<dim>>>>
       &particle_moving_mesh_contact_candidates);
 };
 
