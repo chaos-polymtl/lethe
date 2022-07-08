@@ -23,7 +23,7 @@ Features
 
 :raw-html:`<br />`
 
-Locations of files used in the example
+Locations of Files Used in the Example
 ---------------------------------------
 - Parameter file: ``examples/rpt/parameters_tuning/rpt_parameters.prm``
 - Python script for NOMAD: ``examples/rpt/parameters_tuning/rpt_lethe_nomad.py``
@@ -35,7 +35,7 @@ Locations of files used in the example
 
 :raw-html:`<br />`
 
-Description of the case
+Description of the Case
 -------------------------
 In this example, using the NOMAD optimization software and the experimental data, we are going to tune the three unknowns (:math:`R, \tau`, and :math:`\mu_r`) of our studied system.
 
@@ -53,7 +53,7 @@ As discussed in the previous example (`Photon Count Calculation in a Cylindrical
     C = \frac{T \nu R \phi \xi_i (\mathbf{X})}{1 + \tau \nu R \phi \xi_i (\mathbf{X})}
 
 
-where,
+where
 
 - :math:`T` is the sampling time [:math:`s`];
 - :math:`\nu` is the number of :math:`\gamma`-rays emitted by each disintegration;
@@ -98,10 +98,10 @@ where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alph
 
 :raw-html:`<br />`
 
-Parameter files
+Parameter Files
 ----------------
 
-*rpt_parameters.prm* file
+*rpt_parameters.prm* File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 RPT Parameters
@@ -133,7 +133,7 @@ As seen in the previous example, in the subsection ``rpt parameters``, we define
     ``verbosity`` **must** be set to **quiet** since NOMAD gets the cost function value from the terminal for its MADS algorithm.
 
 
-Parameter tuning
+Parameter Tuning
 ^^^^^^^^^^^^^^^^^^
 
 In the subsection ``parameter tuning``, we enable parameters tuning, we specify a type of cost function and define a set of experimental counts to compare with the calculated counts. Parameters used for the tuning of the model parameters are described in the `Parameter tuning <../../../parameters/rpt/parameter_tuning.html>`_ documentation page.
@@ -171,7 +171,7 @@ In the subsection ``detector parameters``, we specify the file that contains the
 
 :raw-html:`<br />`
 
-*param_nomad.txt* file
+*param_nomad.txt* File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``param_nomad.txt`` file is used when running NOMAD. This file provides initial guess and constraints when defining the optimization problem. These parameters are defined using specific keywords as explained in the `NOMAD User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/GettingStarted.html#provide-parameters>`_.
@@ -197,28 +197,21 @@ The ``param_nomad.txt`` file is used when running NOMAD. This file provides init
                                                           # the current solution ( SOL ) and the objective
 
 .. note::
-    In this example, we use version 4.2.0 of NOMAD. You can get it by clicking on the **Download** button on of `the software's web page <https://www.gerad.ca/en/software/nomad>`_ and filling out the required information. The steps to follow for the installation are specified in the `NOMAD 4 User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/Installation.html>`_.
+    In this example, we use version 4.2.0 of NOMAD. You can get it by clicking on the **Download** button of `the software's web page <https://www.gerad.ca/en/software/nomad>`_ and filling out the required information. The steps to follow for the installation are specified in the `NOMAD 4 User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/Installation.html>`_.
 
 
 :raw-html:`<br />`
 
-Running the simulation
+Running the Simulation
 ----------------------------------
 
-If it's the **first time** you're running this example, it is important to open the ``rpt_lethe_nomad.py`` script and complete the path to the ``rpt_3d`` executable on the :math:`14^{th}` line.
-
-.. attention::
-    If you don't complete the path to the ``rpt_3d`` executable on the :math:`14^{th}` line of the ``rpt_lethe_nomad.py`` script you won't be able to tune your parameters.
-
-Once you've completed the line mentioned above in the ``rpt_lethe_nomad.py`` script, you may run NOMAD by typing :
+Assuming that ``rpt_3d`` and ``nomad`` executables are within your path, you may run NOMAD by typing :
 
 .. code-block:: text
 
-    /home/myUserName/PathToNomad param_nomad.txt
+    nomad param_nomad.txt
 
-
-NOMAD will then execute the Python script (``rpt_lethe_nomad.py``) which is specified in the ``param_nomad.txt`` file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe, and runs the rpt_3d application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates a new set of parameters until a terminating criterion is reached.
-
+NOMAD will then execute the Python script (``rpt_lethe_nomad.py``) which is specified in the ``param_nomad.txt`` file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe, and runs the ``rpt_3d`` application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates a new set of parameters until a terminating criterion is reached.
 
 :raw-html:`<br />`
 
@@ -260,7 +253,7 @@ Second, in the ``parameter tuning`` subsection, the ``tuning`` parameter was set
 
 Lastly, in the ``detector parameters`` subsection, the values of the parameters that were tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) were replaced with the ones NOMAD gave us.
 
-In the figures below, we can see that there is very little difference between the experimental counts and the calculated counts with the tuned parameters. In fact, the linear regression between the experimental and calculated photon counts give us a R² value of 0.9990 as seen in the *Linear fit* figure.
+To visualize the data and obtain the figures shown below, a python script (``rpt_parameter_tuning_plot.py``) is provided. When running the script, the name of the ``.csv`` file containing the calculated counts must be specified as an argument. In the *Experimental and calculated counts comparison* figure, we can see very little difference between the experimental counts and the calculated counts with the tuned parameters. The linear regression between the experimental and calculated photon counts gives us an R² value of 0.9990 as seen in the *Linear fit* figure. This confirms the validity of the tuned parameters.
 
 .. figure:: images/results.png
     :alt: Experimental and calculated counts comparison

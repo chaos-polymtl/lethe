@@ -17,7 +17,7 @@ Features
 
 :raw-html:`<br />`
 
-Locations of files used in the example
+Locations of Files Used in the Example
 ---------------------------------------
 - Parameter file: ``examples/rpt/count_calculation/rpt_count_calculation.prm``
 - File containing detector positions: ``examples/rpt/count_calculation/positions.detector``
@@ -29,7 +29,7 @@ Locations of files used in the example
 
 :raw-html:`<br />`
 
-Description of the case
+Description of the Case
 -------------------------
 In this example, four different sets of particle positions are studied for a given detector position. The four different scenarios studied in this example are :
 
@@ -123,7 +123,7 @@ where
 
 :raw-html:`<br />`
 
-Parameter file
+Parameter File
 ----------------
 
 RPT Parameters
@@ -180,7 +180,7 @@ In the subsection ``detector parameters``, we specify the file that contains two
 
 :raw-html:`<br />`
 
-Running the simulation
+Running the Simulation
 ----------------------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``rpt_3d`` executable is within your path, the simulation can be launched by typing:
 
@@ -206,7 +206,7 @@ To visualize the data and obtain the figures shown below, a python script (``rpt
     You may use the ``rpt_count_calculation_plot.py`` script to plot any other set of data saved in a ``.csv`` file format.
 
 
-Scenario 1: Horizontal translation of a particle along the x-axis 
+Scenario 1: Horizontal Translation of a Particle Along the X-Axis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. image:: images/counts_along_x-axis.png
     :alt: Results for the horizontal translation of a particle along the x-axis (Scenario 1)
@@ -216,7 +216,7 @@ Scenario 1: Horizontal translation of a particle along the x-axis
 
 In the figure shown above, as one would expect, as the particle approaches the detector, the photon count grows. Such evolution may be explained by the efficiency of the detector getting greater as the particle advances toward the detector's exposed surface. Since the photon's path length in the vessel decreases, :math:`f_a(\alpha, \theta)` increases, and therefore the efficiency gets greater. In addition to that, as the particle approaches the detector, the solid angle gets greater, the product :math:`\omega(\alpha) \omega(\theta)` increases, making the efficiency increase also.
 
-Scenario 2: Horizontal translation of a particle along the y-axis 
+Scenario 2: Horizontal Translation of a Particle Along the Y-Axis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: images/counts_along_y-axis_case1.png
@@ -269,7 +269,7 @@ The last case studied (Case IV) shows the evolution of the photon count when :ma
 Coming back to the Case I figure, we can see that photon count follows a pattern similar to the one seen in Case IV. We may interpret from it that :math:`f_d(\alpha, \theta)` varies very little as opposed to :math:`f_a(\alpha, \theta)` that fluctuates greatly. The local minimal values, in this case, are at :math:`y \approx -6` cm and :math:`y \approx 6` cm, as opposed to :math:`y \approx -4.6` cm and :math:`y \approx -4.6` cm for the fourth case. This is due to the change in the value of :math:`\mu_d`. :math:`f_d(\alpha,\theta)` function of :math:`y` increases at a slower rate, making the minimums further way from the center. To summarize, the fluctuations seen in the Case I figure is the result of the combined influence of the values of the attenuation coefficients, the variation of the path lengths of the photon in the vessel and the detector, and the evolution of the weighting factors.
 
 
-Scenario 3: Vertical translation of a particle along the z-axis
+Scenario 3: Vertical Translation of a Particle Along the Z-Axis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. image:: images/counts_along_z-axis.png
     :alt: Results for the vertical translation of a particle along the z-axis (Scenario 3)
@@ -280,7 +280,7 @@ Scenario 3: Vertical translation of a particle along the z-axis
 Similar to the first scenario, as the particle approaches the detector, we notice an increase in photon count. The photon count reaches its maximal value at around :math:`z = 7.1` cm, which is close to the center of the detector's face.
 
 
-Scenario 4: Particle going across the vessel on a diagonal line
+Scenario 4: Particle Going Across the Vessel on a Diagonal Line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. image:: images/counts_across_vessel_on_a_diagonal_line.png
     :alt: Results for the particle going across the vessel on a diagonal line (Scenario 4)
@@ -290,10 +290,10 @@ Scenario 4: Particle going across the vessel on a diagonal line
 
 After analyzing the past three scenarios, we get much-expected results for this scenario. As seen in the first scenario, the photon count varies greatly with the :math:`x` coordinate of the position vector of the particle. That is because the path of the photon inside the vessel gets longer when :math:`x` gets smaller. In other words, the ray is more attenuated by the material inside the vessel before getting to the detector, therefore the photon count gets smaller. Consequently, even though the particle is further away from the detector if the :math:`x` coordinate of the tracer's position is closer to the detector's exposed surface, the photon count could get greater and that's what we see on the figure above for high :math:`z` values.
 
-Sensitivity analysis of the Monte Carlo method
+Sensitivity Analysis of the Monte Carlo Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Looking back at the second scenario's results (Case A), we notice that the counts are a little scattered. By increasing the number of Monte Carlo iterations (:math:`N`), we get much smoother results as seen in the Case C figure. In the Case C figure, we have multiplied the number of Monte Carlo iterations by a factor of :math:`10`. When calculating the efficiency using the Monte Carlo method with a large :math:`N`, more "weight" is accorded to the most probable points, since they appear more often in the sum. This makes the least probable points negligible. Consequently, we obtain smoother results. In the Case B figure, :math:`N` was divided by a factor of :math:`10`. As expected, in this figure, we see much more scattering.
+Looking back at the second scenario's results (Case A), we notice that the counts are a little scattered. This is caused by the stochastic nature of the Monte Carlo method. Increasing the number of Monte Carlo iterations (:math:`N`), generates much smoother results as seen in the Case C figure where we have multiplied :math:`N` by a factor of :math:`10`. By increasing :math:`N`, we're covering more of the solid angle, making the simulation more representative of the physical system. Therefore, we see a better continuity in the photon counts. In the Case B figure, :math:`N` was divided by a factor of :math:`10`. As expected, in this figure, we see much more scattering.
 
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/counts_along_y-axis_case1.png                                                                                                             |

@@ -11,7 +11,6 @@ import sys
 
 # Path to files/application
 path = "./"  # Current directory
-path_to_rpt_3d = "/home/          /lethe/build/applications/rpt_3d/rpt_3d"   # TO FILL OUT
 
 # Get new calculated parameters
 tmpfile = sys.argv[1]  # Temporary file for new values
@@ -42,7 +41,7 @@ with open(tmp_lethe_parameter_file, "w") as file:  # Write .prm with new paramet
     file.write("\n".join(filestr))
 
 # Call rpt_3d executable
-os.system(path_to_rpt_3d + " " + tmp_lethe_parameter_file)
+os.system("rpt_3d " + tmp_lethe_parameter_file)
 
 # Delete temporary parameter files
 os.remove(tmp_lethe_parameter_file)
