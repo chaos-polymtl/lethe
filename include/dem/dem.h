@@ -298,6 +298,12 @@ private:
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates;
   std::unordered_map<
+    unsigned int,
+    std::unordered_map<
+      types::particle_index,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+    particle_moving_mesh_contact_candidates;
+  std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
@@ -334,6 +340,11 @@ private:
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
     particle_points_in_contact, particle_lines_in_contact;
+
+  std::unordered_map<
+    typename Triangulation<dim>::active_cell_iterator,
+    std::unordered_map<int, typename Triangulation<dim>::active_cell_iterator>>
+    moving_mesh_information;
 
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     particle_container;

@@ -1,3 +1,5 @@
+#include <core/lethegridtools.h>
+
 #include <dem/particle_wall_broad_search.h>
 
 using namespace dealii;
@@ -145,25 +147,19 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
     }
 }
 
-template class ParticleWallBroadSearch<2>;
-template class ParticleWallBroadSearch<3>;
-
-
 template <int dim>
 void
-ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
+ParticleWallBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
   const std::unordered_map<
     typename Triangulation<dim>::active_cell_iterator,
     std::unordered_map<int, typename Triangulation<dim>::active_cell_iterator>>
     &                                    moving_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   std::unordered_map<
-    types::particle_index,
-    std::unordered_map<unsigned int,
-                       std::tuple<Particles::ParticleIterator<dim>,
-                                  Tensor<1, dim>,
-                                  Point<dim>,
-                                  double>>>
+    unsigned int,
+    std::unordered_map<
+      types::particle_index,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     &particle_moving_mesh_contact_candidates)
 {
   particle_moving_mesh_contact_candidates.clear();
@@ -179,6 +175,9 @@ ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_cell = particle_handler.particles_in_cell(background_cell);
 
+      const unsigned int n_particles_in_background_cell =
+        particle_handler.n_particles_in_cell(background_cell);
+
       const bool particles_exist_in_main_cell = !particles_in_cell.empty();
 
       // If the main cell is not empty
@@ -190,32 +189,43 @@ ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
                cut_cells_counter != cut_cells.size();
                ++cut_cells_counter)
             {
+              // UPDATE ***************
+              std::vector<Point<dim>> triangle;
+
+              auto particle_triangle_information =
+                LetheGridTools::calculate_particle_triangle_distance(
+                  triangle, particles_in_cell, n_particles_in_background_cell);
+
+              const std::vector<bool> pass_distance_check =
+                std::get<0>(particle_triangle_information);
+              const std::vector<Point<dim>> projection_points =
+                std::get<1>(particle_triangle_information);
+
+              unsigned int particle_counter = 0;
+
               for (typename Particles::ParticleHandler<
                      dim>::particle_iterator_range::iterator
                      particles_in_cell_iterator = particles_in_cell.begin();
                    particles_in_cell_iterator != particles_in_cell.end();
-                   ++particles_in_cell_iterator)
+                   ++particles_in_cell_iterator, ++particle_counter)
                 {
-                  // UPDATE *******
-                  Tensor<1, dim> cut_cell_norm_vec;
-                  Point<dim>     projection;
-                  double         distance;
+                  if (pass_distance_check[particle_counter])
+                    {
+                      auto particle_mesh_info =
+                        std::make_tuple(particles_in_cell_iterator,
+                                        std::get<2>(
+                                          particle_triangle_information),
+                                        projection_points[particle_counter]);
 
-
-                  auto particle_mesh_info =
-                    std::make_tuple(particles_in_cell_iterator,
-                                    cut_cell_norm_vec,
-                                    projection,
-                                    distance);
-
-                  particle_moving_mesh_contact_candidates
-                    [particles_in_cell_iterator->get_id()]
-                      .insert({cut_cells_counter, particle_mesh_info});
+                      particle_moving_mesh_contact_candidates[cut_cells_counter]
+                        .insert({particles_in_cell_iterator->get_id(),
+                                 particle_mesh_info});
+                    }
                 }
             }
         }
     }
 }
 
-template class ParticleMovingMeshBroadSearch<2>;
-template class ParticleMovingMeshBroadSearch<3>;
+template class ParticleWallBroadSearch<2>;
+template class ParticleWallBroadSearch<3>;

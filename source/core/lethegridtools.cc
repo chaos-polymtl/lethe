@@ -6,9 +6,9 @@
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
-#include <unordered_map>
 
 #include <cmath>
+#include <unordered_map>
 
 
 template <int dim>
@@ -877,36 +877,50 @@ LetheGridTools::find_cells_around_flat_cell(
 
 
 template <int spacedim, int structdim>
-std::map<typename DoFHandler<spacedim>::active_cell_iterator,std::map< unsigned int,typename DoFHandler<structdim, spacedim>::active_cell_iterator>>
-LetheGridTools::find_cells_cut_by_object(const DoFHandler<spacedim> &dof_handler,std::map<unsigned int,
-                                                                                           std::set<typename DoFHandler<spacedim>::active_cell_iterator>>
-                                                                                    &vertices_cell_map,
-                          std::vector<SerialSolid<structdim,spacedim>>& list_of_objects)
+std::map<
+  typename DoFHandler<spacedim>::active_cell_iterator,
+  std::map<unsigned int,
+           typename DoFHandler<structdim, spacedim>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(
+  const DoFHandler<spacedim> &dof_handler,
+  std::map<unsigned int,
+           std::set<typename DoFHandler<spacedim>::active_cell_iterator>>
+    &                                            vertices_cell_map,
+  std::vector<SerialSolid<structdim, spacedim>> &list_of_objects)
 {
-  std::map<typename DoFHandler<spacedim>::active_cell_iterator,std::map< unsigned int ,typename DoFHandler<structdim,spacedim>::active_cell_iterator>> cells_cut_by_object;
-  if constexpr (structdim==spacedim-1){
-      for (unsigned int i = 0; i < list_of_objects.size();++i)
+  std::map<
+    typename DoFHandler<spacedim>::active_cell_iterator,
+    std::map<unsigned int,
+             typename DoFHandler<structdim, spacedim>::active_cell_iterator>>
+    cells_cut_by_object;
+  if constexpr (structdim == spacedim - 1)
+    {
+      for (unsigned int i = 0; i < list_of_objects.size(); ++i)
         {
-          const auto& object=list_of_objects[i].get_solid_dof_handler();
+          const auto &object = list_of_objects[i].get_solid_dof_handler();
 
           const auto &object_cell_iterator = object.active_cell_iterators();
           // Loop on all the cells and find their vertices, and use them to fill
           // the map of sets of cells around each vertex
           for (const auto &cell : object_cell_iterator)
             {
-              std::vector<typename DoFHandler<spacedim>::active_cell_iterator>cells_cut=LetheGridTools::find_cells_around_flat_cell(dof_handler,cell,vertices_cell_map);
-              for (unsigned int j = 0; j < cells_cut.size();++j)
+              std::vector<typename DoFHandler<spacedim>::active_cell_iterator>
+                cells_cut = LetheGridTools::find_cells_around_flat_cell(
+                  dof_handler, cell, vertices_cell_map);
+              for (unsigned int j = 0; j < cells_cut.size(); ++j)
                 {
-                  cells_cut_by_object[cells_cut[j]][list_of_objects[i].get_solid_id()]=cell;
+                  cells_cut_by_object[cells_cut[j]]
+                                     [list_of_objects[i].get_solid_id()] = cell;
                 }
             }
         }
       return cells_cut_by_object;
     }
-  if constexpr (structdim==spacedim){
-      for (unsigned int i = 0; i < list_of_objects.size();++i)
+  if constexpr (structdim == spacedim)
+    {
+      for (unsigned int i = 0; i < list_of_objects.size(); ++i)
         {
-          auto& object=list_of_objects[i].get_solid_dof_handler();
+          auto &object = list_of_objects[i].get_solid_dof_handler();
 
           const auto &object_cell_iterator = object.active_cell_iterators();
           // Loop on all the cells and find their vertices, and use them to fill
@@ -917,17 +931,19 @@ LetheGridTools::find_cells_cut_by_object(const DoFHandler<spacedim> &dof_handler
                 {
                   for (const auto face : cell->face_indices())
                     {
-                      auto local_face =
-                        cell->face(face);
-                      if(cell->at_boundary())
+                      auto local_face = cell->face(face);
+                      if (cell->at_boundary())
                         {
-                          std::vector<typename DoFHandler<spacedim>::active_cell_iterator>cells_cut=
-                            LetheGridTools::find_cells_around_flat_cell(
-                              dof_handler, cell, vertices_cell_map);
+                          std::vector<
+                            typename DoFHandler<spacedim>::active_cell_iterator>
+                            cells_cut =
+                              LetheGridTools::find_cells_around_flat_cell(
+                                dof_handler, cell, vertices_cell_map);
                           for (unsigned int j = 0; j < cells_cut.size(); ++j)
                             {
                               cells_cut_by_object[cells_cut[j]]
-                                                 [list_of_objects[i].get_solid_id()] = cell;
+                                                 [list_of_objects[i]
+                                                    .get_solid_id()] = cell;
                             }
                         }
                     }
@@ -1055,26 +1071,252 @@ LetheGridTools::find_boundary_cells_in_sphere(const DoFHandler<3> &dof_handler,
                                               const double         radius);
 
 
-template std::map<typename DoFHandler<3>::active_cell_iterator,std::map<unsigned int,typename DoFHandler<3, 3>::active_cell_iterator>>
-LetheGridTools::find_cells_cut_by_object(const DoFHandler<3> &dof_handler,std::map<unsigned int,
-                                                                                                 std::set<typename DoFHandler<3>::active_cell_iterator>>
-                                                                                            &vertices_cell_map,
-                                         std::vector<SerialSolid<3, 3>> & list_of_objects);
+template std::map<
+  typename DoFHandler<3>::active_cell_iterator,
+  std::map<unsigned int, typename DoFHandler<3, 3>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(
+  const DoFHandler<3> &dof_handler,
+  std::map<unsigned int, std::set<typename DoFHandler<3>::active_cell_iterator>>
+    &                             vertices_cell_map,
+  std::vector<SerialSolid<3, 3>> &list_of_objects);
 
-template std::map<typename DoFHandler<2>::active_cell_iterator,std::map<unsigned int,typename DoFHandler<2, 2>::active_cell_iterator>>
-LetheGridTools::find_cells_cut_by_object(const DoFHandler<2> &dof_handler,std::map<unsigned int,
-                                                                                          std::set<typename DoFHandler<2>::active_cell_iterator>>
-                                                                             &vertices_cell_map,
-                                         std::vector<SerialSolid<2, 2>> & list_of_objects);
+template std::map<
+  typename DoFHandler<2>::active_cell_iterator,
+  std::map<unsigned int, typename DoFHandler<2, 2>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(
+  const DoFHandler<2> &dof_handler,
+  std::map<unsigned int, std::set<typename DoFHandler<2>::active_cell_iterator>>
+    &                             vertices_cell_map,
+  std::vector<SerialSolid<2, 2>> &list_of_objects);
 
-template std::map<typename DoFHandler<3>::active_cell_iterator,std::map<unsigned int,typename DoFHandler<2, 3>::active_cell_iterator>>
-LetheGridTools::find_cells_cut_by_object(const DoFHandler<3> &dof_handler,std::map<unsigned int,
-                                                                                          std::set<typename DoFHandler<3>::active_cell_iterator>>
-                                                                             &vertices_cell_map,
-                                         std::vector<SerialSolid<2, 3>> & list_of_objects);
+template std::map<
+  typename DoFHandler<3>::active_cell_iterator,
+  std::map<unsigned int, typename DoFHandler<2, 3>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(
+  const DoFHandler<3> &dof_handler,
+  std::map<unsigned int, std::set<typename DoFHandler<3>::active_cell_iterator>>
+    &                             vertices_cell_map,
+  std::vector<SerialSolid<2, 3>> &list_of_objects);
 
-template std::map<typename DoFHandler<2>::active_cell_iterator,std::map<unsigned int,typename DoFHandler<1, 2>::active_cell_iterator>>
-LetheGridTools::find_cells_cut_by_object(const DoFHandler<2> &dof_handler,std::map<unsigned int,
-                                                                                          std::set<typename DoFHandler<2>::active_cell_iterator>>
-                                                                             &vertices_cell_map,
-                                         std::vector<SerialSolid<1, 2>> & list_of_objects);
+template std::map<
+  typename DoFHandler<2>::active_cell_iterator,
+  std::map<unsigned int, typename DoFHandler<1, 2>::active_cell_iterator>>
+LetheGridTools::find_cells_cut_by_object(
+  const DoFHandler<2> &dof_handler,
+  std::map<unsigned int, std::set<typename DoFHandler<2>::active_cell_iterator>>
+    &                             vertices_cell_map,
+  std::vector<SerialSolid<1, 2>> &list_of_objects);
+
+template <int dim>
+std::tuple<std::vector<bool>, std::vector<Point<dim>>, Tensor<1, dim>>
+LetheGridTools::calculate_particle_triangle_distance(
+  const std::vector<Point<dim>> &triangle,
+  const typename Particles::ParticleHandler<dim>::particle_iterator_range
+    &                 particles,
+  const unsigned int &n_particles_in_base_cell)
+{
+  //  std::vector<double>     distances(n_particles_in_base_cell);
+  std::vector<bool>       pass_distance_check(n_particles_in_base_cell);
+  std::vector<Point<dim>> projection_points(n_particles_in_base_cell);
+
+  const double radius = 0.25;
+  auto &       p_0    = triangle[0];
+  auto &       p_1    = triangle[1];
+  auto &       p_2    = triangle[2];
+
+  const Tensor<1, dim> e_0 = p_1 - p_0;
+  const Tensor<1, dim> e_1 = p_2 - p_0;
+
+  const Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
+  const double         norm_normal = normal.norm();
+  const Tensor<1, dim> unit_normal = normal / norm_normal;
+
+  const double a   = e_0.norm_square();
+  const double b   = scalar_product(e_0, e_1);
+  const double c   = e_1.norm_square();
+  const double det = a * c - b * b;
+
+
+  // Pre-allocation for speed
+  Tensor<1, dim> vector_to_plane;
+  Point<dim>     pt_in_triangle;
+
+  unsigned int k = 0;
+  for (auto &part : particles)
+    {
+      Point<dim> particle_position = part.get_location();
+      vector_to_plane              = p_0 - particle_position;
+      double distance_squared = scalar_product(vector_to_plane, unit_normal);
+
+      // If the particle is too far from the plane, set distance squared as an
+      // arbitrary distance and continue
+      if (distance_squared > (radius * radius))
+        {
+          // distances[k] = std::sqrt(distance_squared);
+          pass_distance_check[k] = false;
+          ++k;
+          continue;
+        }
+
+      // Otherwise, do the full calculation taken from Eberly 2003
+      const double d = scalar_product(e_0, vector_to_plane);
+      const double e = scalar_product(e_1, vector_to_plane);
+
+      // Calculate necessary values;
+      double s = b * e - c * d;
+      double t = b * d - a * e;
+      // std::cout << "s " << s << " t " << t << std::endl;
+
+      // const double f = vector_to_plane.norm_square();
+      if (s + t <= det)
+        {
+          if (s < 0)
+            {
+              if (t < 0)
+                {
+                  // Region 4
+                  if (d < 0)
+                    {
+                      t = 0;
+                      if (-d >= a)
+                        s = 1;
+                      else
+                        s = -d / a;
+                    }
+                  else
+                    {
+                      s = 0;
+                      if (e >= 0)
+                        t = 0;
+                      else if (-e >= c)
+                        t = 1;
+                      else
+                        t = e / c;
+                    }
+                }
+              else
+                {
+                  // Region 3
+                  s = 0;
+                  if (e >= 0)
+                    t = 0;
+                  else if (-e >= c)
+                    t = 1;
+                  else
+                    t = -e / c;
+                }
+            }
+          else if (t < 0)
+            {
+              // Region 5
+              t = 0;
+              if (d >= 0)
+                s = 0;
+              else if (-d >= a)
+                s = 1;
+              else
+                s = -d / a;
+            }
+          else
+            {
+              // Region 0
+              const double inv_det = 1. / det;
+              s *= inv_det;
+              t *= inv_det;
+            }
+        }
+      else
+        {
+          if (s < 0)
+            {
+              // Region 2
+              const double tmp0 = b + d;
+              const double tmp1 = c + e;
+              if (tmp1 > tmp0)
+                {
+                  const double numer = tmp1 - tmp0;
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    s = 1;
+                  else
+                    s = numer / denom;
+
+                  t = 1 - s;
+                }
+              else
+                {
+                  s = 0;
+                  if (tmp1 <= 0)
+                    t = 1;
+                  else if (e >= 0)
+                    t = 0;
+                  else
+                    t = -e / c;
+                }
+            }
+          else if (t < 0)
+            {
+              // Region 6
+              const double tmp0 = b + e;
+              const double tmp1 = a + d;
+              if (tmp1 > tmp0)
+                {
+                  const double numer = tmp1 - tmp0;
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    t = 1;
+                  else
+                    t = numer / denom;
+                  s = 1 - t;
+                }
+              else
+                {
+                  t = 0;
+                  if (tmp1 <= 0)
+                    s = 1;
+                  else if (d >= 0)
+                    s = 0;
+                  else
+                    s = -d / a;
+                }
+            }
+          else
+            {
+              // Region 1
+              const double numer = (c + e) - (b + d);
+              if (numer <= 0)
+                s = 0;
+              else
+                {
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    s = 1;
+                  else
+                    s = numer / denom;
+                }
+              t = 1 - s;
+            }
+        }
+
+      pt_in_triangle = p_0 + s * e_0 + t * e_1;
+
+      projection_points[k] = pt_in_triangle;
+      // distances[k]         = pt_in_triangle.distance(particle_position);
+      pass_distance_check[k] = true;
+      ++k;
+    }
+  return std::make_tuple(pass_distance_check, projection_points, unit_normal);
+}
+
+template std::tuple<std::vector<bool>, std::vector<Point<2>>, Tensor<1, 2>>
+LetheGridTools::calculate_particle_triangle_distance(
+  const std::vector<Point<2>> &triangle,
+  const typename Particles::ParticleHandler<2>::particle_iterator_range
+    &                 particles,
+  const unsigned int &n_particles_in_base_cell);
+template std::tuple<std::vector<bool>, std::vector<Point<3>>, Tensor<1, 3>>
+LetheGridTools::calculate_particle_triangle_distance(
+  const std::vector<Point<3>> &triangle,
+  const typename Particles::ParticleHandler<3>::particle_iterator_range
+    &                 particles,
+  const unsigned int &n_particles_in_base_cell);

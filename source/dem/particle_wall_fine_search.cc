@@ -198,27 +198,21 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
     }
 }
 
-template class ParticleWallFineSearch<2>;
-template class ParticleWallFineSearch<3>;
-
-
 template <int dim>
 void
-ParticleMovingMeshFineSearch<dim>::particle_moving_mesh_fine_search(
+ParticleWallFineSearch<dim>::particle_moving_mesh_fine_search(
   std::unordered_map<
-    types::particle_index,
-    std::unordered_map<unsigned int,
-                       std::tuple<Particles::ParticleIterator<dim>,
-                                  Tensor<1, dim>,
-                                  Point<dim>,
-                                  double>>>
+    unsigned int,
+    std::unordered_map<
+      types::particle_index,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     &particle_moving_mesh_contact_candidates,
   std::unordered_map<
-    types::particle_index,
+    unsigned int,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &particle_moving_mesh_in_contact)
 {
-  for (auto const &[particle_id, particle_moving_mesh_candidates] :
+  for (auto const &[cut_cell, particle_moving_mesh_candidates] :
        particle_moving_mesh_contact_candidates)
     {
       if (!particle_moving_mesh_candidates.empty())
@@ -231,14 +225,13 @@ ParticleMovingMeshFineSearch<dim>::particle_moving_mesh_fine_search(
             {
               auto &particle_moving_mesh_info =
                 particle_moving_mesh_candidate_iterator->second;
-              const unsigned int &cut_cell =
+              const types::particle_index &particle_id =
                 particle_moving_mesh_candidate_iterator->first;
 
               auto           particle = std::get<0>(particle_moving_mesh_info);
               Tensor<1, dim> normal_vector =
                 std::get<1>(particle_moving_mesh_info);
               Point<dim> projection = std::get<2>(particle_moving_mesh_info);
-              double     distance   = std::get<3>(particle_moving_mesh_info);
 
               Tensor<1, 3> tangential_overlap({0, 0, 0});
 
@@ -258,26 +251,21 @@ ParticleMovingMeshFineSearch<dim>::particle_moving_mesh_fine_search(
 
               particle_wall_contact_info_struct<dim> contact_info;
 
-              contact_info.particle      = particle;
-              contact_info.normal_vector = normal_vector_3d;
-
-              contact_info.normal_overlap =
-                distance -
-                particle->get_properties()[DEM::PropertiesIndex::dp] * 0.5;
-              contact_info.normal_relative_velocity = .0;
-              contact_info.point_on_boundary        = point_on_boundary_3d;
-
+              contact_info.particle                     = particle;
+              contact_info.normal_vector                = normal_vector_3d;
+              contact_info.normal_overlap               = .0;
+              contact_info.normal_relative_velocity     = .0;
+              contact_info.point_on_boundary            = point_on_boundary_3d;
               contact_info.boundary_id                  = cut_cell;
               contact_info.tangential_overlap           = tangential_overlap;
               contact_info.tangential_relative_velocity = .0;
 
-
-              particle_moving_mesh_in_contact[particle_id].insert(
-                {cut_cell, contact_info});
+              particle_moving_mesh_in_contact[cut_cell].insert(
+                {particle_id, contact_info});
             }
         }
     }
 }
 
-template class ParticleMovingMeshFineSearch<2>;
-template class ParticleMovingMeshFineSearch<3>;
+template class ParticleWallFineSearch<2>;
+template class ParticleWallFineSearch<3>;

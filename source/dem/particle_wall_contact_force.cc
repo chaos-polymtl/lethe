@@ -45,6 +45,9 @@ ParticleWallContactForce<dim>::update_contact_information(
   particle_omega[2] = particle_properties[DEM::PropertiesIndex::omega_z];
 
 
+  // UPDATE ******************
+  // add floating mesh velocity to the relative vel.
+
   // Defining relative contact velocity
   Tensor<1, 3> contact_relative_velocity =
     particle_velocity - this->boundary_translational_velocity_map[boundary_id] +

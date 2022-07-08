@@ -114,24 +114,9 @@ public:
       types::particle_index,
       std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
       &pfw_contact_candidates);
-};
-
-
-/**
- * UPDATE THIS *****************************
- *
- * @note
- *
- */
-
-template <int dim>
-class ParticleMovingMeshBroadSearch
-{
-public:
-  ParticleMovingMeshBroadSearch<dim>();
 
   /**
-   * UPDATE ****************************
+   * UPDATE ************************
    *
    * @param
    */
@@ -145,12 +130,11 @@ public:
       &                                    moving_mesh_information,
     const Particles::ParticleHandler<dim> &particle_handler,
     std::unordered_map<
-      types::particle_index,
-      std::unordered_map<unsigned int,
+      unsigned int,
+      std::unordered_map<types::particle_index,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
-                                    Point<dim>,
-                                    double>>>
+                                    Point<dim>>>>
       &particle_moving_mesh_contact_candidates);
 };
 
