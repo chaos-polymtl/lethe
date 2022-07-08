@@ -198,13 +198,9 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
     }
 }
 
-template class ParticleWallFineSearch<2>;
-template class ParticleWallFineSearch<3>;
-
-
 template <int dim>
 void
-ParticleMovingMeshFineSearch<dim>::particle_moving_mesh_fine_search(
+ParticleWallFineSearch<dim>::particle_moving_mesh_fine_search(
   std::unordered_map<
     unsigned int,
     std::unordered_map<
@@ -271,5 +267,5 @@ ParticleMovingMeshFineSearch<dim>::particle_moving_mesh_fine_search(
     }
 }
 
-template class ParticleMovingMeshFineSearch<2>;
-template class ParticleMovingMeshFineSearch<3>;
+template class ParticleWallFineSearch<2>;
+template class ParticleWallFineSearch<3>;

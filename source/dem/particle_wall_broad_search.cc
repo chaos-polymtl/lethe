@@ -147,13 +147,9 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
     }
 }
 
-template class ParticleWallBroadSearch<2>;
-template class ParticleWallBroadSearch<3>;
-
-
 template <int dim>
 void
-ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
+ParticleWallBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
   const std::unordered_map<
     typename Triangulation<dim>::active_cell_iterator,
     std::unordered_map<int, typename Triangulation<dim>::active_cell_iterator>>
@@ -231,5 +227,5 @@ ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
     }
 }
 
-template class ParticleMovingMeshBroadSearch<2>;
-template class ParticleMovingMeshBroadSearch<3>;
+template class ParticleWallBroadSearch<2>;
+template class ParticleWallBroadSearch<3>;

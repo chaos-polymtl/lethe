@@ -105,27 +105,13 @@ public:
       types::particle_index,
       std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
       &pfw_pairs_in_contact);
-};
-
-
-/**
- * UPDATE *****************************
- *
- * @note
- *
- */
-
-template <int dim>
-class ParticleMovingMeshFineSearch
-{
-public:
-  ParticleMovingMeshFineSearch<dim>();
 
   /**
    * UPDATE **********************
    *
    * @param
    */
+
   void
   particle_moving_mesh_fine_search(
     std::unordered_map<
