@@ -5,7 +5,7 @@
 3D Ribbon Mixer using a Single Rotating Reference Frame
 ========================================================
 
-In the industry, when sizing a mixer, the power number (:math:`N_p`) a dimensionless number plays an important role. The :math:`N_p` relates the power consumed by the agitator to the geometry of the system and the characteristics of the flow in the tank. In this example, using a single rotating reference frame, we model a ribbon mixer for different flow conditions (different values of :math:`Re`).
+In the industry, when designing a mixer, we need to evaluate the power consumed by the agitator. To do so, we refer to the power number (:math:`N_p`) vs Reynolds number (:math:`Re`) curves. The :math:`N_p` relates the power consumed by the agitator to the geometry of the system and the characteristics of the flow in the tank. In this example, using a single rotating reference frame, we model a ribbon mixer for different flow conditions (different values of :math:`Re`) to generate :math:`N_p` vs :math:`Re` curves.
 
 :raw-html:`<br />`
 
@@ -14,7 +14,8 @@ Features
 - Solver: ``gls_navier_stokes_3d`` (with Q1-Q1)
 - Steady-state problem
 - Displays the use of a single rotating frame (srf) when modeling a complex rotating geometry
-- Calculation of the power number (:math:`N_p`)
+- Calculation of the power number (:math:`N_p`) with a python script
+- Use of a cluster to run simulations
 
 :raw-html:`<br />`
 
@@ -33,7 +34,28 @@ The following figure represents the geometry of our system:
 
 <insert image>
 
-To be able to simulate the flow in such complex geometry, we take advantage of the symmetry of the system and opt for a Lagrangian reference. Instead of observing the velocity profile from an Eulerian reference (or lab reference), we place ourselves on the impeller's reference inducing a no-slip boundary condition on it. This way, the cylindrical vessel is going to be the only moving geometry in our system.
+<insert description of the image>
+
+The Reynolds number for our system is defined as follows:
+
+.. math::
+    Re = \frac{ND²}{\nu}
+
+where
+
+- N is the angular velocity :math:`[rps]`;
+- D is the diameter of the impeller :math:`[m]`, and
+- \nu is the kinematic viscosity of the fluid :math:`[N \cdot s/m^2]`.
+
+To be able to simulate the flow in such complex geometry, we take advantage of the symmetry of the system and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or lab reference frame), we place ourselves on the impeller's reference making it static and inducing a no-slip boundary condition on it. This way, the cylindrical vessel is going to be the only moving geometry in our system. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames.
+
+.. image:: images/eulerian_vs_langrangian_reference.jpg
+   :alt: Eulerian and Lagrangian reference frames
+   :align: center
+   :name: Eulerian and Lagrangian reference frames
+   :height: 5cm
+
+In this example, we will start by simulating the case when :math:`Re = 1` and then follow with simulation a for :math:`Re` values ranging for :math:`0.1` to :math:`100`.
 
 
 :raw-html:`<br />`
@@ -208,13 +230,16 @@ Linear Solver Control
 Running the Simulation
 ------------------------------------
 
-Simulating for a Specific Flow Condition
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Simulating for a Specific Flow Condition (:math:`Re = 1`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the gls_navier_stokes_3d executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
     gls_navier_stokes_3d ribbon_gls.prm
+
+Simulating for
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 :raw-html:`<br />`
