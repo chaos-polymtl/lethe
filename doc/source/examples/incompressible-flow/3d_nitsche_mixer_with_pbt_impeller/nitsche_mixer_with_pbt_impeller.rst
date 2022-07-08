@@ -160,7 +160,7 @@ The :doc:`../../../parameters/cfd/mesh` subsection specifies the computational g
 Thanks to our immersed boundary approach, we only need to mesh the vessel without considering the impeller. This greatly simplifies the meshing process, so that the mesh can be generated straightforwardly using the deal.II mesh generator for a subdivided cylinder, where:
 
 * the half-height is :math:`= 0.5`, and 
-* the radius of the vessel :math:`= 0.5`. 
+* the radius of the vessel is :math:`= 0.5`. 
 
 This will generate a vessel in which the axis of the impeller will be along the :math:`x` coordinate. The bottom of the vessel will be on the :math:`x=-0.5` plane. 
 
