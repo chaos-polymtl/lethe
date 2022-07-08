@@ -48,7 +48,7 @@ LetheGridTools::find_cell_around_point_with_tree(
 {
   // Define temporary variables to store search parameters and intermediate
   // results
-  MappingQ1<dim> mapping;
+  MappingQ1<dim>                          mapping;
   typename DoFHandler<dim>::cell_iterator best_cell_iter;
 
   bool         cell_found_on_level_search = false;

@@ -65,12 +65,14 @@ GLSSharpNavierStokesSolver<dim>::check_particles_all_sphere()
 {
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
-      if (particles[p_i].shape->get_shape_name().second != Shape<dim>::ShapeType::sphere)
+      if (particles[p_i].shape->get_shape_name().second !=
+          Shape<dim>::ShapeType::sphere)
         {
           all_spheres = false;
-          std::cout << "Non spherical particle found: using regular cut_cells_mapping." << std::endl;
-
-          break
+          std::cout
+            << "Non spherical particle found: using regular cut_cells_mapping."
+            << std::endl;
+          break;
         }
     }
 }
@@ -161,6 +163,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           cells_inside_map[cell] = {cell_is_inside, p_id_inside};
         }
     }
+  std::cout << "REGULAR CUT MAP SIZE" << cut_cells_map.size() << std::endl;
+  std::cout << "REGULAR INSIDE MAP SIZE" << cells_inside_map.size()
+            << std::endl;
 }
 
 
@@ -286,6 +291,9 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
             }
         }
     }
+  std::cout << "OPTIMIZED CUT MAP SIZE" << cut_cells_map.size() << std::endl;
+  std::cout << "OPTIMIZED INSIDE MAP SIZE" << cells_inside_map.size()
+            << std::endl;
 }
 
 template <int dim>
@@ -1281,7 +1289,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
 
-          if (cell_is_cut == false && cell_is_inside == false)
+          if (!cell_is_cut && !cell_is_inside)
             {
               auto &evaluation_point = this->evaluation_point;
               fe_values.reinit(cell);
@@ -1409,7 +1417,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                 }
             }
 
-          if (cell_is_cut == false)
+          if (!cell_is_cut)
             {
               auto &evaluation_point = this->evaluation_point;
               auto &present_solution = this->present_solution;
@@ -1457,7 +1465,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                       l2errorU += (uz_sim - uz_exact) * (uz_sim - uz_exact) *
                                   fe_values.JxW(q);
                     }
-                  if (cell_is_inside == false)
+                  if (!cell_is_inside)
                     {
                       total_velocity_divergence +=
                         (present_velocity_divergence - mass_source) *
@@ -3635,10 +3643,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
         temp_coarse;
 
       vertices_cell_mapping();
-      if (all_spheres)
-        optimized_generate_cut_cells_map();
-      else
-        generate_cut_cells_map();
+      // if (all_spheres)
+      optimized_generate_cut_cells_map();
+      // else
+      generate_cut_cells_map();
     }
 
   this->set_initial_condition(
@@ -3670,10 +3678,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-          if (all_spheres)
-            optimized_generate_cut_cells_map();
-          else
-            generate_cut_cells_map();
+          // if (all_spheres)
+          optimized_generate_cut_cells_map();
+          // else
+          generate_cut_cells_map();
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,
@@ -3688,10 +3696,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
           vertices_cell_mapping();
-          if (all_spheres)
-            optimized_generate_cut_cells_map();
-          else
-            generate_cut_cells_map();
+          // if (all_spheres)
+          optimized_generate_cut_cells_map();
+          // else
+          generate_cut_cells_map();
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,
