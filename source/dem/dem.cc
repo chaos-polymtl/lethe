@@ -483,6 +483,15 @@ DEMSolver<dim>::particle_wall_broad_search()
           pfw_contact_candidates);
     }
 
+  // Particle - floating mesh broad search
+  if (parameters.solid_objects->number_solids > 0)
+    {
+      particle_wall_broad_search_object.find_particle_moving_mesh_contact_pairs(
+        moving_mesh_information,
+        particle_handler,
+        particle_moving_mesh_contact_candidates);
+    }
+
   particle_point_contact_candidates =
     particle_point_line_broad_search_object.find_particle_point_contact_pairs(
       particle_handler, boundary_cell_object.get_boundary_cells_with_points());
@@ -513,6 +522,14 @@ DEMSolver<dim>::particle_wall_fine_search()
         parameters.floating_walls,
         simulation_control->get_current_time(),
         pfw_pairs_in_contact);
+    }
+
+  // Particle - floating mesh fine search
+  if (parameters.solid_objects->number_solids > 0)
+    {
+      particle_wall_fine_search_object.particle_moving_mesh_fine_search(
+        particle_moving_mesh_contact_candidates,
+        particle_moving_mesh_in_contact);
     }
 
   particle_points_in_contact =
@@ -554,6 +571,17 @@ DEMSolver<dim>::particle_wall_contact_force()
         simulation_control->get_time_step(),
         torque,
         force);
+    }
+
+  // Particle - floating mesh contact force
+  if (parameters.solid_objects->number_solids > 0)
+    {
+      particle_wall_contact_force_object
+        ->calculate_particle_moving_wall_contact_force(
+          particle_moving_mesh_in_contact,
+          simulation_control->get_time_step(),
+          std::vector<Tensor<1, 3>> & torque,
+          std::vector<Tensor<1, 3>> & force)
     }
 
   particle_point_line_contact_force_object
