@@ -226,8 +226,10 @@ The :doc:`../../../parameters/cfd/nitsche` subsection is used to insert the imme
 	end
 
 * ``subsection mesh``: controls the mesh used for the Nitsche immersed boundary, working as a regular :doc:`../../../parameters/cfd/mesh` subsection. 
+
   * ``type = gmsh``: we import a mesh file (``.msh``) of the PBT that is in the same folder as the ``.prm``, with the specified ``file name``
   * ``simplex = true``: mandatory as the mesh is built with simplices (tetrahedra), to better account for the PBT geometry
+
 * ``subsection solid velocity``: specify the velocity as a rotation around the :math:`x` axis of the meshes, centered at :math:`(0,0,0)`.
 
   .. warning::
@@ -307,7 +309,7 @@ Relatively standard parameters are used for the :doc:`../../../parameters/cfd/li
     set amg preconditioner ilu absolute tolerance    = 1e-8
     set amg preconditioner ilu relative tolerance    = 2.00
     set amg aggregation threshold = 1e-10  
-    set max krylov vectors      = 200
+    set max krylov vectors        = 200
   end
 
 :raw-html:`<br />`

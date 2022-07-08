@@ -61,8 +61,6 @@ subsection forces
     set output frequency      = 1
 end
 
-
-
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
@@ -75,7 +73,6 @@ subsection mesh adaptation
   set min refinement level    = 3
   set frequency               = 5
   set fraction refinement     = 0.2
-  set fraction coarsening     = 0.05
 end
 
 # --------------------------------------------------
@@ -102,23 +99,20 @@ end
 #---------------------------------------------------
 subsection nitsche
   set verbosity	= verbose
-  set number of solids = 1
 
   subsection nitsche solid 0
 	  subsection mesh
       		set type                 = gmsh
       		set file name            = pbt.msh
-          set simplex = true
-      		set initial refinement   = 0
+          	set simplex 		 = true
 	  end
     subsection solid velocity
 	    set Function expression = 0 ; 1*2*pi*z ; -1*2*pi*y
     end
 
     set calculate torque on solid = true
-    set enable particles motion		= true
-    set particles sub iterations      = 10
-    set beta 			= 10
+    set enable particles motion	  = true
+    set particles sub iterations  = 10
   end
 
 end
@@ -128,8 +122,6 @@ end
 #---------------------------------------------------
 subsection non-linear solver
   set tolerance               = 1e-4
-  set max iterations          = 10
-  set verbosity               = verbose
   set solver                  = inexact_newton
 end
 
@@ -139,14 +131,9 @@ end
 subsection linear solver
   set method                    = amg
   set max iters                 = 200
-  set relative residual         = 1e-3
   set minimum residual          = 1e-7
-  set amg preconditioner ilu fill                  = 0
   set amg preconditioner ilu absolute tolerance    = 1e-8
   set amg preconditioner ilu relative tolerance    = 2.00
-  set amg aggregation threshold = 1e-10  # Aggregation
-  set amg smoother sweeps       = 2      # Sweeps
-  set amg smoother overlap      = 1      # Overlap
-  set verbosity                 = verbose
-  set max krylov vectors      = 200
+  set amg aggregation threshold = 1e-10
+  set max krylov vectors        = 200
 end
