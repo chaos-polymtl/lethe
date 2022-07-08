@@ -145,8 +145,8 @@ public:
       &                                    moving_mesh_information,
     const Particles::ParticleHandler<dim> &particle_handler,
     std::unordered_map<
-      types::particle_index,
-      std::unordered_map<unsigned int,
+      unsigned int,
+      std::unordered_map<types::particle_index,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,

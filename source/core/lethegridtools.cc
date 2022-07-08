@@ -1078,3 +1078,204 @@ LetheGridTools::find_cells_cut_by_object(const DoFHandler<2> &dof_handler,std::m
                                                                                           std::set<typename DoFHandler<2>::active_cell_iterator>>
                                                                              &vertices_cell_map,
                                          std::vector<SerialSolid<1, 2>> & list_of_objects);
+
+template <int dim>
+std::vector<double>
+LetheGridTools::calculate_particle_triangle_distance(const std::vector<Point<dim>> &triangle,
+                   const typename Particles::ParticleHandler<dim>::particle_iterator_range &particles, const unsigned int &n_particles_in_base_cell)
+{
+  std::vector<double> distances(n_particles_in_base_cell);
+  const double        radius = 0.25;
+  auto               &p_0    = triangle[0];
+  auto               &p_1    = triangle[1];
+  auto               &p_2    = triangle[2];
+
+  const Tensor<1, dim> e_0 = p_1 - p_0;
+  const Tensor<1, dim> e_1 = p_2 - p_0;
+
+  const Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
+  const double         norm_normal = normal.norm();
+  const Tensor<1, dim> unit_normal = normal / norm_normal;
+
+  const double a   = e_0.norm_square();
+  const double b   = scalar_product(e_0, e_1);
+  const double c   = e_1.norm_square();
+  const double det = a * c - b * b;
+
+
+  // Pre-allocation for speed
+  Tensor<1, dim> vector_to_plane;
+  Point<dim>     pt_in_triangle;
+
+  unsigned int k = 0;
+  for (auto &part : particles)
+    {
+      Point<dim> particle_position = part.get_location();
+      vector_to_plane         = p_0 - particle_position;
+      double distance_squared = scalar_product(vector_to_plane, unit_normal);
+
+      // If the particle is too far from the plane, set distance squared as an
+      // arbitrary distance and continue
+      if (distance_squared > (radius * radius))
+        {
+          distances[k] = std::sqrt(distance_squared);
+          ++k;
+          continue;
+        }
+
+      // Otherwise, do the full calculation taken from Eberly 2003
+      const double d = scalar_product(e_0, vector_to_plane);
+      const double e = scalar_product(e_1, vector_to_plane);
+
+      // Calculate necessary values;
+      double s = b * e - c * d;
+      double t = b * d - a * e;
+      // std::cout << "s " << s << " t " << t << std::endl;
+
+      // const double f = vector_to_plane.norm_square();
+      if (s + t <= det)
+        {
+          if (s < 0)
+            {
+              if (t < 0)
+                {
+                  // Region 4
+                  if (d < 0)
+                    {
+                      t = 0;
+                      if (-d >= a)
+                        s = 1;
+                      else
+                        s = -d / a;
+                    }
+                  else
+                    {
+                      s = 0;
+                      if (e >= 0)
+                        t = 0;
+                      else if (-e >= c)
+                        t = 1;
+                      else
+                        t = e / c;
+                    }
+                }
+              else
+                {
+                  // Region 3
+                  s = 0;
+                  if (e >= 0)
+                    t = 0;
+                  else if (-e >= c)
+                    t = 1;
+                  else
+                    t = -e / c;
+                }
+            }
+          else if (t < 0)
+            {
+              // Region 5
+              t = 0;
+              if (d >= 0)
+                s = 0;
+              else if (-d >= a)
+                s = 1;
+              else
+                s = -d / a;
+            }
+          else
+            {
+              // Region 0
+              const double inv_det = 1. / det;
+              s *= inv_det;
+              t *= inv_det;
+            }
+        }
+      else
+        {
+          if (s < 0)
+            {
+              // Region 2
+              const double tmp0 = b + d;
+              const double tmp1 = c + e;
+              if (tmp1 > tmp0)
+                {
+                  const double numer = tmp1 - tmp0;
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    s = 1;
+                  else
+                    s = numer / denom;
+
+                  t = 1 - s;
+                }
+              else
+                {
+                  s = 0;
+                  if (tmp1 <= 0)
+                    t = 1;
+                  else if (e >= 0)
+                    t = 0;
+                  else
+                    t = -e / c;
+                }
+            }
+          else if (t < 0)
+            {
+              // Region 6
+              const double tmp0 = b + e;
+              const double tmp1 = a + d;
+              if (tmp1 > tmp0)
+                {
+                  const double numer = tmp1 - tmp0;
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    t = 1;
+                  else
+                    t = numer / denom;
+                  s = 1 - t;
+                }
+              else
+                {
+                  t = 0;
+                  if (tmp1 <= 0)
+                    s = 1;
+                  else if (d >= 0)
+                    s = 0;
+                  else
+                    s = -d / a;
+                }
+            }
+          else
+            {
+              // Region 1
+              const double numer = (c + e) - (b + d);
+              if (numer <= 0)
+                s = 0;
+              else
+                {
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    s = 1;
+                  else
+                    s = numer / denom;
+                }
+              t = 1 - s;
+            }
+        }
+
+      pt_in_triangle = p_0 + s * e_0 + t * e_1;
+
+      distances[k] = pt_in_triangle.distance(particle_position);
+      ++k;
+    }
+  return distances;
+}
+
+template std::vector<double>
+  LetheGridTools::calculate_particle_triangle_distance(const std::vector<Point<2>> &triangle,
+                                     const typename Particles::ParticleHandler<2>::particle_iterator_range &particles,
+                                     const unsigned int &n_particles_in_base_cell);
+  template std::vector<double>
+    LetheGridTools::calculate_particle_triangle_distance(const std::vector<Point<3>> &triangle,
+                                       const typename Particles::ParticleHandler<3>::particle_iterator_range &particles,
+                                       const unsigned int &n_particles_in_base_cell);

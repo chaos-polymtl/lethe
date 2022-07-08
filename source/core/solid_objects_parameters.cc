@@ -23,4 +23,6 @@ namespace Parameters
 {
   extern template class Nitsche<2>;
   extern template class Nitsche<3>;
+  extern template class DEMSolidObjects<2>;
+  extern template class DEMSolidObjects<3>;
 } // namespace Parameters

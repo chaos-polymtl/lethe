@@ -158,8 +158,8 @@ ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
     &                                    moving_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   std::unordered_map<
-    types::particle_index,
-    std::unordered_map<unsigned int,
+    unsigned int,
+    std::unordered_map<types::particle_index,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
@@ -190,17 +190,18 @@ ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
                cut_cells_counter != cut_cells.size();
                ++cut_cells_counter)
             {
+              // UPDATE *******
+              Tensor<1, dim> cut_cell_norm_vec;
+              Point<dim>     projection;
+              double         distance;
+
+
               for (typename Particles::ParticleHandler<
                      dim>::particle_iterator_range::iterator
                      particles_in_cell_iterator = particles_in_cell.begin();
                    particles_in_cell_iterator != particles_in_cell.end();
                    ++particles_in_cell_iterator)
                 {
-                  // UPDATE *******
-                  Tensor<1, dim> cut_cell_norm_vec;
-                  Point<dim>     projection;
-                  double         distance;
-
 
                   auto particle_mesh_info =
                     std::make_tuple(particles_in_cell_iterator,
@@ -209,8 +210,8 @@ ParticleMovingMeshBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
                                     distance);
 
                   particle_moving_mesh_contact_candidates
-                    [particles_in_cell_iterator->get_id()]
-                      .insert({cut_cells_counter, particle_mesh_info});
+                    [cut_cells_counter]
+                      .insert({particles_in_cell_iterator->get_id(), particle_mesh_info});
                 }
             }
         }

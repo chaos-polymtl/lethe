@@ -264,6 +264,7 @@ ParticleMovingMeshFineSearch<dim>::particle_moving_mesh_fine_search(
               contact_info.normal_overlap =
                 distance -
                 particle->get_properties()[DEM::PropertiesIndex::dp] * 0.5;
+
               contact_info.normal_relative_velocity = .0;
               contact_info.point_on_boundary        = point_on_boundary_3d;
 

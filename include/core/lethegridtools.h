@@ -251,6 +251,19 @@ namespace LetheGridTools
                                             std::vector<SerialSolid<structdim,spacedim>> & list_of_objects);
 
   /**
+   * UPDATE ************************
+   *
+   * @param
+   *
+   */
+  template <int dim>
+  std::vector<double>
+  calculate_particle_triangle_distance(const std::vector<Point<dim>> &triangle,
+                     const typename Particles::ParticleHandler<dim>::particle_iterator_range &particles,
+                     const unsigned int &n_particles_in_base_cell);
+
+
+  /**
    * @brief
    * A functor that provides a unique and uniformly distributed hash for a
    * a cell. Used to store cells in hash sets.
