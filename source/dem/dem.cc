@@ -720,7 +720,6 @@ DEMSolver<dim>::write_output_results()
     }
 
   // Write all solid objects
-
   for (const auto &solid_object : solids)
     {
       solid_object->write_output_results(simulation_control);
@@ -985,6 +984,14 @@ DEMSolver<dim>::solve()
           ->update_boundary_points_and_normal_vectors_in_contact_list(
             particle_wall_pairs_in_contact,
             updated_boundary_points_and_normal_vectors);
+
+      // Move the solid triangulations, previous time must be used here instead
+      // of current time.
+      for (auto &solid_object : solids)
+        solid_object->move_solid_triangulation(
+          simulation_control->get_time_step(),
+          simulation_control->get_previous_time());
+
 
       // Particles-walls contact force:
       particle_wall_contact_force();

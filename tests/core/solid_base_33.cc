@@ -37,7 +37,7 @@ test()
 {
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
-  auto param = std::make_shared<Parameters::SolidObject<3>>();
+  auto param = std::make_shared<Parameters::NitscheObject<3>>();
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> fluid_tria =
     std::make_shared<parallel::distributed::Triangulation<3>>(
       mpi_communicator,

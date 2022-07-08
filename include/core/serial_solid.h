@@ -64,8 +64,8 @@ class SerialSolid
 {
 public:
   // Member functions
-  SerialSolid(std::shared_ptr<Parameters::SolidObject<spacedim>> &param,
-              unsigned int                                        id);
+  SerialSolid(std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param,
+              unsigned int                                             id);
 
   /**
    * @brief Manages solid triangulation and particles setup
@@ -129,12 +129,10 @@ public:
 
   /**
    * @brief Moves the vertices of the solid triangulation. This function
-   * uses an Runge-Kutta 4 explicit time integrator to displace the vertices
+   * uses explicitEuler scheme time integrator to displace the vertices
    * of the solid triangulation and stores the displacement in an array
    * in order to allow correct checkpointing of the triangulation.
    *               See
-   https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
-               for more details
    *
    * @param time_step The time_step value for this iteration
    *
@@ -180,10 +178,10 @@ public:
 
 private:
   // Member variables
-  MPI_Comm                                            mpi_communicator;
-  const unsigned int                                  n_mpi_processes;
-  const unsigned int                                  this_mpi_process;
-  std::shared_ptr<Parameters::SolidObject<spacedim>> &param;
+  MPI_Comm                                                 mpi_communicator;
+  const unsigned int                                       n_mpi_processes;
+  const unsigned int                                       this_mpi_process;
+  std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param;
 
 
   unsigned int id;
@@ -204,9 +202,9 @@ private:
 
   Function<spacedim> *translational_velocity;
   Function<spacedim> *angular_velocity;
-  Tensor<1, spacedim> center_of_rotation;
-  Tensor<1, spacedim> current_translation_velocity;
-  Tensor<1, spacedim> current_angular_velocity;
+  Point<spacedim>     center_of_rotation;
+  Tensor<1, spacedim> current_translational_velocity;
+  Tensor<1, 3>        current_angular_velocity;
 };
 
 #endif

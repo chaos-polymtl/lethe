@@ -51,14 +51,16 @@
 
 template <int dim, int spacedim>
 SerialSolid<dim, spacedim>::SerialSolid(
-  std::shared_ptr<Parameters::SolidObject<spacedim>> &param,
-  unsigned int                                        id)
+  std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param,
+  unsigned int                                             id)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , param(param)
   , id(id)
-  , translational_velocity(&param->solid_velocity)
+  , translational_velocity(&param->translational_velocity)
+  , angular_velocity(&param->angular_velocity)
+  , center_of_rotation(param->center_of_rotation)
 {
   if (param->solid_mesh.simplex)
     {
@@ -324,6 +326,16 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
   std::vector<bool> vertex_moved(this->solid_tria->n_vertices(), false);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
+  translational_velocity->set_time(initial_time);
+  // angular_velocity->set_time(initial_time);
+
+  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+    {
+      current_translational_velocity[comp_i] =
+        translational_velocity->value(center_of_rotation, comp_i);
+      current_angular_velocity[comp_i] =
+        angular_velocity->value(center_of_rotation, comp_i);
+    }
 
   for (const auto &cell : displacement_dh.active_cell_iterators())
     {
@@ -333,19 +345,6 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
                vertex < cell->reference_cell().n_vertices();
                ++vertex)
             {
-              // Calculate the next position of the particle using the RK4
-              // time integration scheme
-              // x(t+dt) = x(t) + 1/6 (k1+2*k2+2*k3+k4)
-              // k1 = dt * v(t,x(t))
-              // k2 = dt * v(t+0.5*dt,x+k1/2)
-              // k3 = dt * v(t+0.5*dt,x+k2/2)
-              // k4 = dt * vt(t+dt,x+k3)
-              // The four stages (1 to 4) are built successively
-              // For each stage, the time of the function must be "reset"
-              // to ensure adequate evaluation of the RK4 scheme.
-              // See https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
-              // for more details
-
               const auto       dof_index = cell->vertex_dof_index(vertex, 0);
               Point<spacedim> &vertex_position  = cell->vertex(vertex);
               const unsigned   global_vertex_no = cell->vertex_index(vertex);
@@ -353,31 +352,25 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
                   !locally_owned_vertices[global_vertex_no])
                 continue;
 
-              Tensor<1, spacedim> k1;
-              translational_velocity->set_time(initial_time);
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k1[comp_i] =
-                  translational_velocity->value(vertex_position, comp_i);
+              Tensor<1, spacedim> distance_vector =
+                vertex_position - center_of_rotation;
 
-              Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
-              Tensor<1, spacedim> k2;
-              translational_velocity->set_time(initial_time + time_step / 2);
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k2[comp_i] = translational_velocity->value(p1, comp_i);
+              Tensor<1, spacedim> local_velocity =
+                current_translational_velocity;
+              if constexpr (spacedim == 2)
+                {
+                  local_velocity[0] +=
+                    -distance_vector[1] * current_angular_velocity[2];
+                  local_velocity[1] +=
+                    distance_vector[0] * current_angular_velocity[2];
+                }
+              if constexpr (spacedim == 3)
+                {
+                  local_velocity +=
+                    cross_product_3d(current_angular_velocity, distance_vector);
+                }
 
-              Point<spacedim>     p2 = vertex_position + time_step / 2 * k2;
-              Tensor<1, spacedim> k3;
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k3[comp_i] = translational_velocity->value(p2, comp_i);
-
-              Point<spacedim>     p3 = vertex_position + time_step * k3;
-              Tensor<1, spacedim> k4;
-              translational_velocity->set_time(initial_time + time_step);
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k4[comp_i] = translational_velocity->value(p3, comp_i);
-
-              auto vertex_displacement =
-                time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+              auto vertex_displacement = time_step * local_velocity;
 
               vertex_position += vertex_displacement;
 
@@ -389,6 +382,8 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
             }
         }
     }
+
+  center_of_rotation += current_translational_velocity * time_step;
 }
 
 
