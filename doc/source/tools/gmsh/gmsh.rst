@@ -2,6 +2,10 @@
 Introduction on how to use GMSH
 ===============================
 
+.. seealso::
+	``.geo`` files are available in the `lethe-utils github folder <https://github.com/lethe-cfd/lethe-utils/tree/master/gmsh>`_
+	
+
 --------------------------
 Installation
 --------------------------
@@ -155,7 +159,9 @@ Importing CAD files (``.step`` or ``.stp`` format) can be particularly convenien
 --------------------------
 Physical group
 --------------------------
-After generating your geometry, it is **essential** to set physical groups for boundary conditions identification that are compatible with Lethe prm files.
+
+.. warning::
+	This step is essential. Physical group are used to identify the boundary conditions.
 
 In 2D, the physical groups are curves and in 3D, surfaces. For this example, select ``Curve`` in the ``Modules > Geometry > Physical groups > Add`` section. Four different physical groups with ``Curve`` is needed:
 
@@ -174,14 +180,22 @@ By reloading the script, you will see those four lines of code appear:
 	Physical Curve(3) = {5};
 	Physical Curve(4) = {8};
 	
-It is also **primordial** to add a surface physical group for a 2D geometry and a volume physical group for 3D. Otherwhise, the mesh will not be able to generate.
+.. important::
+	The ``bc #`` in the ``.prm`` files (:doc:`../../parameters/cfd/boundary_conditions_cfd`) must be the same as the ``id`` specified for the physical group.
+
+Then, add a ``Physical Surface`` for a 2D geometry, or a ``Physical Volume`` for a 3D geometry. 
+
+.. warning::
+	All cells must be in a Physical group.
+	
+	While not adding a ``Physical Surface`` or ``Volume`` would not prevent GMSH from building the mesh, it would result in an error when the mesh is loaded by deal.II. This is often a source of error.
 
 .. code-block::
 	
 	// Physical Surface(id) = {<id of surface element>, ...}
 	Physical Surface(1) = {1};
 	
-And the boundary conditions subsection in the parameter file needs to be compatible to the ID of the geometry in GMSH.
+Then, define the boundary conditions accordingly in the parameter file :
 
 .. code-block:: text
 
@@ -286,19 +300,72 @@ Here is the mesh generated with an attractor around the sphere:
 .. _structured mesh:
 
 """"""""""""""""""""""""""
-Structured
+Structured - Quad mesh
 """"""""""""""""""""""""""
 .. warning::
 	The ``.geo`` file must be built with the :ref:`built-in kernel`.
+
+Creating a structured quad-mesh usually take a lot more time than an unstructured quad-mesh, but provides a full control on the mesh generation. To do so:
+
+1. Create the geometry accordingly and add construction elements where needed
+
+.. tip::
+	Converting an unstructured mesh to a structured mesh usually required rewritting a good part of the geometry. Begin by drawing by-hand and check that each of your surfaces have only four points.
+
+2. Define ``Transfinite Line`` (before ``Line Loop``), with:
+	
+.. code-block::
+
+	// Transfinite Loop {<id>, ...} = <number of divisions> Using Progression <num>;
+
+3. Define the ``Line Loop`` (or ``Curve Loop``) and ``Plane Surface`` as for a regular mesh
+
+4. Define ``Transfinite Surface`` (instead of ``Plane Surface``) and recombine them to get a quad mesh:
+
+.. code-block::
+
+	// Recombine Surface {<id>}
+
+5. Generate the mesh
+
+.. seealso::
+  You can find a step-by-step `video <https://youtu.be/1A-b84kloFs?t=316>`_, with a similar geometry (cylinder in flow). 
+
+A mesh can also be partially structured, to better account for a boundary layer for instance: see the ``.geo`` file provided with the :doc:`../../examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body` example. 
 
 .. _tips:
 
 --------------------------
 Other tips
 --------------------------
+- Use variables and functions to make your ``.geo`` file more adaptative
+	* Example: 
+
+	.. code-block::
+
+		//Parameters
+		L = 5; 			//length
+		C45 = Cos(45*Pi/180); 	//cosine of 45 degrees
+		esf = 1.2; 		//element size factor
+
+		//Points
+		Point(1) = {L, L*C45, 0, esf};
+
 - Use the ``Visibility`` options to get the ID of an element or a physical group easily on the GUI: 
 	* ``Tools > Options > Mesh > Tab: Visibility``
 	* Check the adequate boxes (for example ``1D element labels`` for points, etc.) 
 	* Choose the label type in the drop-down menu ``Label type`` (for example ``Elementary entity tag``).
 
+- You can define a range of elements to group, and if an index does not exist it is simply not considered. Use it to define ``Physical Surface`` (2D) or ``Physical Volume`` (3D) for the whole geometry more easily.
+	* For example: ``Physical Surface(1) = {1:200};``
+
 - Click on the grey bar at the bottom of the software interface to see all the logs, errors and warnings.
+
+- Verify your mesh in: ``Tools > Statistics > Mesh``. In particular pay attention that you only have one type of elements. If not, changing the mesh refinement can help removing unwanted triangles in a quad mesh.
+
+- ``negative cells`` or ``cells volume < 0`` is a classical error that deal.II can trigger when importing a mesh generated with GMSH. This indicates that at least some of your ``Curve Loop`` or ``Line Loop`` are not defined with the same orientation (clockwise or counter-clockwise). Inspect your mesh with GMSH GUI: 
+	* The cells should be drawn with color lines, different for each surface. 
+	* A surface with black cells indicates that it is not in the correct orientation. Change the definition of the loop in the ``.geo`` file
+		* Example: ``Curve Loop(1) = {1, 2, 3, 4};`` instead of ``Curve Loop(1) = {1, 4, 3, 2};``
+
+
