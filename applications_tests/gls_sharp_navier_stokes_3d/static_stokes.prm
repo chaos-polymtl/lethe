@@ -168,9 +168,7 @@ subsection particles
 	    subsection omega
             set Function expression =0;0;0
         end
-	    set pressure x =2.000
-	    set pressure y =2.0000
-	    set pressure z =2.0000
+	    set pressure location = 2.0000; 2.0000; 2.0000
 	    set type       = sphere
         set shape arguments = 0.5
 	    set density = 0.001120
@@ -270,9 +268,7 @@ end
 #---------------------------------------------------
 subsection forces
 
-  set verbosity               = verbose
-
-
+  set verbosity  = verbose
 end
 
 # --------------------------------------------------

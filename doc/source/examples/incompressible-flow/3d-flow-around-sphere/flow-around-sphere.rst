@@ -278,8 +278,8 @@ We can appreciate the axisymmetrical behavior of the flow. The drag on the spher
 
 .. code-block:: text
 
-  cells      f_x           f_y          f_z      
-  5823 98.3705224612 -0.0000000785 0.0000001119
+  cells      f_x           f_y          f_z        f_xv      f_yv      f_zv       f_xp       f_yp      f_zp  
+  5823 98.3705224612 -0.0000000785 0.0000001119 62.270588  0.000000  0.000000   36.099934 -0.000000  0.000000
 
 Given the flow parameters, the calculated drag coefficient is 250.50, using 6000 cells. At Re = 0.1, an analytical solution of the drag coefficient is known: :math:`C_D = 240` (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_). The deviation from the analytical solution is primarily due to the size of the domain (height of the domain compared to the size of the sphere). The coarseness of the mesh can also have an impact on the result. It would be relevant to carry out a mesh refinement analysis.
 

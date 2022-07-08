@@ -283,7 +283,7 @@ where :math:`k_l`, :math:`k_s` and  :math:`alpha_l` denote thermal conductivitie
 Specific heat models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Lethe supports two types of specific heat models. Setting ``specific heat=constant`` sets a constant specific heat. Lethe also supports a ``phase_change`` specific heat model. This model can simulate the melting and solidification of a material. The model follows the work of Blais & Ilinca [1]. This approach defines the specific heat :math:`C_p` as:
+Lethe supports two types of specific heat models. Setting ``specific heat=constant`` sets a constant specific heat. Lethe also supports a ``phase_change`` specific heat model. This model can simulate the melting and solidification of a material. The model follows the work of Blais & Ilinca `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_. This approach defines the specific heat :math:`C_p` as:
 
 .. math::
 
@@ -338,4 +338,4 @@ This model is parameterized using the following section:
 * The ``specific heat solid`` is :math:`C_{p,s}`
 
 
-[1] Blais, Bruno, and Florin Ilinca. "Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection." Computers & Fluids 172 (2018): 564-581.
+`[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ Blais, Bruno, and Florin Ilinca. "Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection." Computers & Fluids 172 (2018): 564-581.

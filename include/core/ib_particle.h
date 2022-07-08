@@ -67,13 +67,13 @@ public:
    *
    */
   void
-  initialise_all();
+  initialize_all();
   /**
    * @brief
    * initialize the value of the last state of the particle
    */
   void
-  initialise_last();
+  initialize_previous_solution();
   /**
    * @brief
    * Return the names of properties of the IB_particle for visualisation.
@@ -140,6 +140,19 @@ public:
 
   /**
    * @brief
+   * Sets up a shape in accordance with the given type and arguments
+   *
+   * @param i The particle id
+   * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
+   * rectangle, death star, cut hollow sphere, or torus
+   * @param shape_arguments The dimensions to be used for shape initialization
+   */
+  void
+  initialize_shape(const std::string         type,
+                   const std::vector<double> shape_arguments);
+
+  /**
+   * @brief
    * Sets the position of the particle and dependent members to the argument for
    * one component
    *
@@ -191,8 +204,12 @@ public:
   std::vector<Point<dim>> previous_positions;
   // The fluid force applied on the particle.
   Tensor<1, 3> fluid_forces;
+  Tensor<1, 3> fluid_viscous_forces;
+  Tensor<1, 3> fluid_pressure_forces;
   // The fluid force applied on the particle at the end of the last time step.
   Tensor<1, 3> previous_fluid_forces;
+  Tensor<1, 3> previous_fluid_viscous_forces;
+  Tensor<1, 3> previous_fluid_pressure_forces;
   // The fluid torque applied on the particle.
   Tensor<1, 3> fluid_torque;
   // The fluid torque is applied on the particle at the end of the last time

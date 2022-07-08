@@ -43,9 +43,6 @@ using namespace dealii;
  * independent components of the Reynolds stresses tensor (<u'u'>, <v'v'>,
  * <w'w'>, <u'v'>, <v'w'>, <w'u'>). The generated vectors are displayable of
  * visualization software.
- *
- * Important : Time-averaging velocities and calculating reynolds stresses are
- * currently unavailable for mesh adaptation.
  */
 template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities

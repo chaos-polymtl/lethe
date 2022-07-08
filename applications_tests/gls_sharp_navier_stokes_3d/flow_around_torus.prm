@@ -83,7 +83,7 @@ subsection particles
 	set assemble Navier-Stokes inside particles = false
 	subsection particle info 0
 		set type = torus
-		set shape arguments = 3,1
+		set shape arguments = 3; 1
 		subsection position
 		    set Function expression =0.01;0.01;0.01
 		end

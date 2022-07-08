@@ -290,7 +290,7 @@ post-processing code, where ``./Output`` is the directory that
 contains the simulation results. In post-processing, the maximum 
 dimensionless lateral position of the liquid phase is tracked 
 through time and compared with the experiments of Martin and Moyce
-(1952). The following figure shows the result of
+(1952) `[1] <https://doi.org/10.1098/rsta.1952.0006>`_. The following figure shows the result of
 the post-processing, with a very good agreement between the simulation and the experiment:
 
 .. image:: images/xmax_t.png
@@ -306,3 +306,9 @@ and refines the meshes on the interface.
 .. image:: images/refinement.png
     :alt: refinement
     :align: center
+
+----------------------------
+References
+----------------------------
+
+`[1] <https://doi.org/10.1098/rsta.1952.0006>`_ Martin, J. C., Moyce, W. J., Martin, J. C., Moyce, W. J., Penney, W. G., Price, A. T., & Thornhill, C. K. (1952). Part IV. An experimental study of the collapse of liquid columns on a rigid horizontal plane. Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, 244(882), 312-324.

@@ -298,11 +298,11 @@ Validation and Comparison
 Reattachment Length
 ~~~~~~~~~~~~~~~~~~~
 
-In this section, the solutions obtained with *Lethe* are compared with data that can be found in the scientific literature (Erturk (2008) [1], Armaly and al. (1983) [2] and Velivelli and Bryden (2015) [3]). Several studies include datasets of :math:`x_r/h = f(Re)` (reattachment length) either experimentally or numerically. The next figure illustrates some of them in comparison with *Lethe*.
+In this section, the solutions obtained with *Lethe* are compared with data that can be found in the scientific literature (Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_, Armaly and al. (1983) `[2] <https://doi.org/10.1017/S0022112083002839>`_ and Velivelli and Bryden (2015) `[3] <https://doi.org/10.1016/j.advengsoft.2014.11.006>`_). Several studies include datasets of :math:`x_r/h = f(Re)` (reattachment length) either experimentally or numerically. The next figure illustrates some of them in comparison with *Lethe*.
 
 .. image:: image/xr_comparison.png
 
-First, the results provided by *Lethe* are identical or so to all of the three selected studies for low Reynolds numbers (:math:`Re \leq 400`). After that point, both results form *Lethe* and from Erturk (2008) [1] diverge from the experimental data of Armaly and al. (1983) [2]. According to [1], this error is due to 3D effects that are more potent as the flow becomes more and more turbulent. Furthermore, there is also a less significant but clearly noticeable error between *Lethe* and Erturk [1]: the fact that certain tolerances have been set higher for higher Reynolds number cases might have underestimated the reattachment length. Also, first order elements have been used throughout the whole simulation process. Using second order elements for velocity, for instance, could yield better results for higher Reynolds numbers, however, at a higher computational cost. The following table illustrates the error at :math:`Re = 600` for first and second order velocity elements.
+First, the results provided by *Lethe* are identical or so to all of the three selected studies for low Reynolds numbers (:math:`Re \leq 400`). After that point, both results form *Lethe* and from Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_ diverge from the experimental data of Armaly and al. (1983) `[2] <https://doi.org/10.1017/S0022112083002839>`_. According to `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_, this error is due to 3D effects that are more potent as the flow becomes more and more turbulent. Furthermore, there is also a less significant but clearly noticeable error between *Lethe* and Erturk  `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_: the fact that certain tolerances have been set higher for higher Reynolds number cases might have underestimated the reattachment length. Also, first order elements have been used throughout the whole simulation process. Using second order elements for velocity, for instance, could yield better results for higher Reynolds numbers, however, at a higher computational cost. The following table illustrates the error at :math:`Re = 600` for first and second order velocity elements.
 
 +---------------+----------------+----------------+
 | Order         | :math:`x_r/h`  | Error          |
@@ -340,11 +340,11 @@ Possibilities for extension
 References
 ----------
 
-[1] Erturk, E. (2008). Numerical solutions of 2-d steady incompressible flow over a backward-facing step, part i: high reynolds number solutions. Computers and Fluids, 37(6), 633–655. https://doi.org/10.1016/j.compfluid.2007.09.003
+`[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_ Erturk, E. (2008). Numerical solutions of 2-d steady incompressible flow over a backward-facing step, part i: high reynolds number solutions. Computers and Fluids, 37(6), 633–655. https://doi.org/10.1016/j.compfluid.2007.09.003
 
-[2] Armaly, B. F., Durst, F., Pereira, J. C. F., &amp; Schönung B. (1983). Experimental and theoretical investigation of backward-facing step flow. Journal of Fluid Mechanics, 127(-1), 473–473. https://doi.org/10.1017/S0022112083002839
+`[2] <https://doi.org/10.1017/S0022112083002839>`_ Armaly, B. F., Durst, F., Pereira, J. C. F., &amp; Schönung B. (1983). Experimental and theoretical investigation of backward-facing step flow. Journal of Fluid Mechanics, 127(-1), 473–473. https://doi.org/10.1017/S0022112083002839
 
-[3] Velivelli, A. C., &amp; Bryden, K. M. (2015). Domain decomposition based coupling between the lattice boltzmann method and traditional cfd methods – part ii: numerical solution to the backward facing step flow. Advances in Engineering Software, 82(C). https://doi.org/10.1016/j.advengsoft.2014.11.006
+`[3] <https://doi.org/10.1016/j.advengsoft.2014.11.006>`_ Velivelli, A. C., &amp; Bryden, K. M. (2015). Domain decomposition based coupling between the lattice boltzmann method and traditional cfd methods – part ii: numerical solution to the backward facing step flow. Advances in Engineering Software, 82(C). https://doi.org/10.1016/j.advengsoft.2014.11.006
 
 
 
