@@ -7,7 +7,6 @@ Photon Count Calculation in a Cylindrical Vessel
 
 In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-ray. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector.
 
-
 :raw-html:`<br />`
 
 Features

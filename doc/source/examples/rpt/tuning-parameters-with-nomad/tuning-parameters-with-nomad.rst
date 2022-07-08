@@ -5,13 +5,11 @@
 Tuning Count Calculation Model Parameters with NOMAD
 =======================================================
 
-
 In this example, `NOMAD <https://www.gerad.ca/en/software/nomad/>`_, the blackbox optimization software is used to estimate the unknown variables of the `Beam et al. (1978) <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_ model. The three unknowns of our studied system are:
 
 - the detector's ``dead time`` (:math:`\tau`)
 - the source's ``activity`` (:math:`R`), and
 - the reactor's attenuation coefficient (``attenuation coefficient reactor`` (:math:`\mu_r`)).
-
 
 :raw-html:`<br />`
 
@@ -19,7 +17,6 @@ Features
 ----------------------------------
 - Solver: ``rpt_3d``
 - Displays the use of NOMAD to calibrate the parameters of the Beam model
-
 
 :raw-html:`<br />`
 
