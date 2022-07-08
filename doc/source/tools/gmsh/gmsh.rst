@@ -5,11 +5,14 @@ Introduction on how to use GMSH
 --------------------------
 Installation
 --------------------------
+See the `GMSH website <https://gmsh.info/>`_ for installation. For the stable release, the GMSH executable needs to be extracted from a compressed file.
+
+.. hint::
+	For Linux users, after extracting the TGZ file, it is recommanded to add the ``bin`` folder of the GMSH installation in your ``.bashrc`` script with ``export``. It will be easier to access GMSH.
 
 --------------------------
 Geometry
 --------------------------
-
 This guide uses mainly this simple geometry:
 
 .. image:: images/geo.png
@@ -20,7 +23,6 @@ This guide uses mainly this simple geometry:
 """"""""""""""""""""""""""""""""""
 Create and Edit the ``.geo`` file
 """"""""""""""""""""""""""""""""""
-
 The geometry is written in a ``.geo`` file:
 
 1. Start ``GMSH``
@@ -75,7 +77,7 @@ It is quite easy to create a ``.geo`` file directly by coding line by line the g
 
 	.. code-block::
 
-		// Line(id) = {<id of start point>, <id of end point>}
+		// Line(<id>) = {<id of start point>, <id of end point>}
 		Line(1) = {1, 2};
 		Line(2) = {2, 4};
 		Line(3) = {4, 3};
@@ -85,7 +87,7 @@ It is quite easy to create a ``.geo`` file directly by coding line by line the g
 
 	.. code-block::
 
-		// Circle(id) = {<id of start point>, <id of middle point>, <id of end point>}
+		// Circle(<id>) = {<id of start point>, <id of middle point>, <id of end point>}
 		Circle(5) = {6, 5, 7};
 		Circle(6) = {7, 5, 6};
 
@@ -96,10 +98,10 @@ It is quite easy to create a ``.geo`` file directly by coding line by line the g
 
 .. code-block::
 
-	// Curve Loop(id) = {<id of line>, ...}
+	// Curve Loop(<id>) = {<id of line>, ...}
 	Curve Loop(1) = {1, 2, 3, 4};
 	Curve Loop(2) = {5, 6};
-	// Plane Surface(id) = {<id of curve loop>, ...}
+	// Plane Surface(<id>) = {<id of curve loop>, ...}
 	Plane Surface(1) = {1, 2};
 	
 .. tip::
@@ -155,7 +157,7 @@ Physical group
 --------------------------
 After generating your geometry, it is **essential** to set physical groups for boundary conditions identification that are compatible with Lethe prm files.
 
-In 2D, the physical groups are curves and in 3D, surfaces. For this example, select ``Curve`` in the ``Modules > Geometry > Physical groups > Add `` section. Four different physical groups with ``Curve`` is needed:
+In 2D, the physical groups are curves and in 3D, surfaces. For this example, select ``Curve`` in the ``Modules > Geometry > Physical groups > Add`` section. Four different physical groups with ``Curve`` is needed:
 
 1. Click on the left line of the geometry for the inlet condition.
 2. Click on the top and bottom lines for the slip condition.
@@ -166,7 +168,7 @@ By reloading the script, you will see those four lines of code appear:
 
 .. code-block::
 	
-	// Physical Curve(id) = {<id of curve element>, ...}
+	// Physical Curve(<id>) = {<id of curve element>, ...}
 	Physical Curve(1) = {7};
 	Physical Curve(2) = {6, 9};
 	Physical Curve(3) = {5};
@@ -217,7 +219,6 @@ Mesh
 """"""""""""""""""""""""""
 Unstructured
 """"""""""""""""""""""""""
-
 Basic:
 
 1. (optional) ``Tools > Options > Mesh`` and ``General`` panel, check ``Recombine all triangular meshes``: generate a quad mesh.
@@ -295,10 +296,9 @@ Structured
 --------------------------
 Other tips
 --------------------------
-
-Use the ``Visibility`` options to get the ID of an element or a physical group easily on the GUI: 
+- Use the ``Visibility`` options to get the ID of an element or a physical group easily on the GUI: 
 	* ``Tools > Options > Mesh > Tab: Visibility``
 	* Check the adequate boxes (for example ``1D element labels`` for points, etc.) 
 	* Choose the label type in the drop-down menu ``Label type`` (for example ``Elementary entity tag``).
 
-
+- Click on the grey bar at the bottom of the software interface to see all the logs, errors and warnings.
