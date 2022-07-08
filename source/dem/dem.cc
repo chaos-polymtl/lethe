@@ -484,13 +484,13 @@ DEMSolver<dim>::particle_wall_broad_search()
     }
 
   // Particle - floating mesh broad search
-  if (parameters.solid_objects->number_solids > 0)
-    {
-      particle_wall_broad_search_object.find_particle_moving_mesh_contact_pairs(
-        moving_mesh_information,
-        particle_handler,
-        particle_moving_mesh_contact_candidates);
-    }
+  // if (parameters.solid_objects->number_solids > 0)
+  //   {
+  //     particle_wall_broad_search_object.find_particle_moving_mesh_contact_pairs(
+  //       moving_mesh_information,
+  //      particle_handler,
+  //       particle_moving_mesh_contact_candidates);
+  //   }
 
   particle_point_contact_candidates =
     particle_point_line_broad_search_object.find_particle_point_contact_pairs(
@@ -525,12 +525,12 @@ DEMSolver<dim>::particle_wall_fine_search()
     }
 
   // Particle - floating mesh fine search
-  if (parameters.solid_objects->number_solids > 0)
-    {
-      particle_wall_fine_search_object.particle_moving_mesh_fine_search(
-        particle_moving_mesh_contact_candidates,
-        particle_moving_mesh_in_contact);
-    }
+  // if (parameters.solid_objects->number_solids > 0)
+  //  {
+  //    particle_wall_fine_search_object.particle_moving_mesh_fine_search(
+  //     particle_moving_mesh_contact_candidates,
+  //     particle_moving_mesh_in_contact);
+  //   }
 
   particle_points_in_contact =
     particle_point_line_fine_search_object.particle_point_fine_search(
@@ -574,15 +574,15 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 
   // Particle - floating mesh contact force
-  if (parameters.solid_objects->number_solids > 0)
-    {
-      particle_wall_contact_force_object
-        ->calculate_particle_moving_wall_contact_force(
-          particle_moving_mesh_in_contact,
-          simulation_control->get_time_step(),
-          std::vector<Tensor<1, 3>> & torque,
-          std::vector<Tensor<1, 3>> & force)
-    }
+  //  if (parameters.solid_objects->number_solids > 0)
+  //   {
+  //   particle_wall_contact_force_object
+  //      ->calculate_particle_moving_wall_contact_force(
+  //        particle_moving_mesh_in_contact,
+  //       simulation_control->get_time_step(),
+  //       torque,
+  //        force);
+  // }
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
