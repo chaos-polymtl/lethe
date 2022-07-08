@@ -246,8 +246,7 @@ DEMSolver<dim>::cell_weight(
   switch (status)
     {
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
-        {
+        case parallel::distributed::Triangulation<dim>::CELL_REFINE: {
           const unsigned int n_particles_in_cell =
             particle_handler.n_particles_in_cell(cell);
           return n_particles_in_cell * particle_weight;
@@ -257,8 +256,7 @@ DEMSolver<dim>::cell_weight(
       case parallel::distributed::Triangulation<dim>::CELL_INVALID:
         break;
 
-      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
-        {
+        case parallel::distributed::Triangulation<dim>::CELL_COARSEN: {
           unsigned int n_particles_in_cell = 0;
 
           for (unsigned int child_index = 0;
@@ -443,7 +441,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double> &                    MOI)
+  std::vector<double>                     &MOI)
 {
   MOI.resize(torque.size());
 
@@ -748,6 +746,12 @@ DEMSolver<dim>::write_output_results()
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);
     }
+
+  // Write all solid objects
+  for (const auto &solid_object : solids)
+    {
+      solid_object->write_output_results(simulation_control);
+    }
 }
 
 template <int dim>
@@ -1008,6 +1012,14 @@ DEMSolver<dim>::solve()
           ->update_boundary_points_and_normal_vectors_in_contact_list(
             particle_wall_pairs_in_contact,
             updated_boundary_points_and_normal_vectors);
+
+      // Move the solid triangulations, previous time must be used here instead
+      // of current time.
+      for (auto &solid_object : solids)
+        solid_object->move_solid_triangulation(
+          simulation_control->get_time_step(),
+          simulation_control->get_previous_time());
+
 
       // Particles-walls contact force:
       particle_wall_contact_force();

@@ -16,6 +16,7 @@
 
 
 #include <core/serial_solid.h>
+#include <core/solutions_output.h>
 
 #include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
@@ -33,6 +34,7 @@
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
 
@@ -49,14 +51,16 @@
 
 template <int dim, int spacedim>
 SerialSolid<dim, spacedim>::SerialSolid(
-  std::shared_ptr<Parameters::SolidObject<spacedim>> &param,
-  unsigned int                                        id)
+  std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param,
+  unsigned int                                             id)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , param(param)
-  , velocity(&param->solid_velocity)
   , id(id)
+  , translational_velocity(&param->translational_velocity)
+  , angular_velocity(&param->angular_velocity)
+  , center_of_rotation(param->center_of_rotation)
 {
   if (param->solid_mesh.simplex)
     {
@@ -91,6 +95,9 @@ SerialSolid<dim, spacedim>::SerialSolid(
   // Dof handler associated with mesh displacement
   displacement_dh.clear();
   displacement_dh.reinit(*this->solid_tria);
+
+  // Load triangulation
+  initial_setup();
 }
 
 template <int dim, int spacedim>
@@ -113,29 +120,11 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
     {
       if (param->solid_mesh.simplex)
         {
-          auto        comm      = solid_tria->get_communicator();
-          std::string file_name = param->solid_mesh.file_name;
+          GridIn<dim, spacedim> grid_in;
+          grid_in.attach_triangulation(*solid_tria);
+          std::ifstream input_file(param->solid_mesh.file_name);
 
-          auto construction_data = TriangulationDescription::Utilities::
-            create_description_from_triangulation_in_groups<dim, spacedim>(
-              [file_name](dealii::Triangulation<dim, spacedim> &basetria) {
-                GridIn<dim, spacedim> grid_in;
-                grid_in.attach_triangulation(basetria);
-                std::ifstream input_file(file_name);
-
-                grid_in.read_msh(input_file);
-              },
-              [](dealii::Triangulation<dim, spacedim> &basetria,
-                 const MPI_Comm                        comm,
-                 const unsigned int /*group_size*/) {
-                GridTools::partition_triangulation(
-                  Utilities::MPI::n_mpi_processes(comm), basetria);
-              },
-              comm,
-              Utilities::MPI::n_mpi_processes(comm) /* group size */,
-              dealii::Triangulation<dim, spacedim>::none);
-
-          solid_tria->create_triangulation(construction_data);
+          grid_in.read_msh(input_file);
         }
       else
         { // Grid creation
@@ -167,24 +156,8 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
           GridGenerator::flatten_triangulation(temporary_quad_triangulation,
                                                flat_temp_quad_triangulation);
 
-          Triangulation<dim, spacedim> temporary_tri_triangulation(
-            Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
           GridGenerator::convert_hypercube_to_simplex_mesh(
-            flat_temp_quad_triangulation, temporary_tri_triangulation);
-
-          GridTools::partition_triangulation_zorder(
-            Utilities::MPI::n_mpi_processes(solid_tria->get_communicator()),
-            temporary_tri_triangulation);
-          GridTools::partition_multigrid_levels(temporary_tri_triangulation);
-
-          // extract relevant information from distributed triangulation
-          auto construction_data = TriangulationDescription::Utilities::
-            create_description_from_triangulation(
-              temporary_tri_triangulation,
-              solid_tria->get_communicator(),
-              TriangulationDescription::Settings::
-                construct_multigrid_hierarchy);
-          solid_tria->create_triangulation(construction_data);
+            flat_temp_quad_triangulation, *solid_tria);
         }
       else
         { // deal.ii creates grid and attaches the solid triangulation
@@ -297,7 +270,7 @@ template <int dim, int spacedim>
 Function<spacedim> *
 SerialSolid<dim, spacedim>::get_solid_velocity()
 {
-  return velocity;
+  return translational_velocity;
 }
 
 
@@ -353,6 +326,16 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
   std::vector<bool> vertex_moved(this->solid_tria->n_vertices(), false);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
+  translational_velocity->set_time(initial_time);
+  // angular_velocity->set_time(initial_time);
+
+  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+    {
+      current_translational_velocity[comp_i] =
+        translational_velocity->value(center_of_rotation, comp_i);
+      current_angular_velocity[comp_i] =
+        angular_velocity->value(center_of_rotation, comp_i);
+    }
 
   for (const auto &cell : displacement_dh.active_cell_iterators())
     {
@@ -362,19 +345,6 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
                vertex < cell->reference_cell().n_vertices();
                ++vertex)
             {
-              // Calculate the next position of the particle using the RK4
-              // time integration scheme
-              // x(t+dt) = x(t) + 1/6 (k1+2*k2+2*k3+k4)
-              // k1 = dt * v(t,x(t))
-              // k2 = dt * v(t+0.5*dt,x+k1/2)
-              // k3 = dt * v(t+0.5*dt,x+k2/2)
-              // k4 = dt * vt(t+dt,x+k3)
-              // The four stages (1 to 4) are built successively
-              // For each stage, the time of the function must be "reset"
-              // to ensure adequate evaluation of the RK4 scheme.
-              // See https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
-              // for more details
-
               const auto       dof_index = cell->vertex_dof_index(vertex, 0);
               Point<spacedim> &vertex_position  = cell->vertex(vertex);
               const unsigned   global_vertex_no = cell->vertex_index(vertex);
@@ -382,30 +352,25 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
                   !locally_owned_vertices[global_vertex_no])
                 continue;
 
-              Tensor<1, spacedim> k1;
-              velocity->set_time(initial_time);
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k1[comp_i] = velocity->value(vertex_position, comp_i);
+              Tensor<1, spacedim> distance_vector =
+                vertex_position - center_of_rotation;
 
-              Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
-              Tensor<1, spacedim> k2;
-              velocity->set_time(initial_time + time_step / 2);
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k2[comp_i] = velocity->value(p1, comp_i);
+              Tensor<1, spacedim> local_velocity =
+                current_translational_velocity;
+              if constexpr (spacedim == 2)
+                {
+                  local_velocity[0] +=
+                    -distance_vector[1] * current_angular_velocity[2];
+                  local_velocity[1] +=
+                    distance_vector[0] * current_angular_velocity[2];
+                }
+              if constexpr (spacedim == 3)
+                {
+                  local_velocity +=
+                    cross_product_3d(current_angular_velocity, distance_vector);
+                }
 
-              Point<spacedim>     p2 = vertex_position + time_step / 2 * k2;
-              Tensor<1, spacedim> k3;
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k3[comp_i] = velocity->value(p2, comp_i);
-
-              Point<spacedim>     p3 = vertex_position + time_step * k3;
-              Tensor<1, spacedim> k4;
-              velocity->set_time(initial_time + time_step);
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k4[comp_i] = velocity->value(p3, comp_i);
-
-              auto vertex_displacement =
-                time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+              auto vertex_displacement = time_step * local_velocity;
 
               vertex_position += vertex_displacement;
 
@@ -417,6 +382,8 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
             }
         }
     }
+
+  center_of_rotation += current_translational_velocity * time_step;
 }
 
 
@@ -456,7 +423,50 @@ SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
 
 
 template <int dim, int spacedim>
-void SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
+void
+SerialSolid<dim, spacedim>::write_output_results(
+  std::shared_ptr<SimulationControl> simulation_control)
+{
+  DataOut<dim, spacedim> data_out;
+  data_out.attach_dof_handler(solid_dh);
+
+  data_out.attach_dof_handler(displacement_dh);
+
+  std::vector<std::string> solution_names(spacedim, "displacement");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    data_component_interpretation(
+      spacedim, DataComponentInterpretation::component_is_part_of_vector);
+
+
+  data_out.add_data_vector(displacement,
+                           solution_names,
+                           DataOut<dim, spacedim>::type_dof_data,
+                           data_component_interpretation);
+
+
+
+  data_out.build_patches();
+
+  const std::string folder        = simulation_control->get_output_path();
+  const std::string solution_name = simulation_control->get_output_name() +
+                                    "_solid_" + Utilities::int_to_string(id, 2);
+  const unsigned int iter        = simulation_control->get_step_number();
+  const double       time        = simulation_control->get_current_time();
+  const unsigned int group_files = simulation_control->get_group_files();
+
+  write_vtu_and_pvd<dim, spacedim>(pvdhandler,
+                                   data_out,
+                                   folder,
+                                   solution_name,
+                                   time,
+                                   iter,
+                                   group_files,
+                                   this->mpi_communicator);
+}
+
+template <int dim, int spacedim>
+void
+SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 {
   // SolutionTransfer<dim, Vector<double>, spacedim> system_trans_vectors(
   //   this->displacement_dh);
@@ -475,7 +485,8 @@ void SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 }
 
 template <int dim, int spacedim>
-void SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
+void
+SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
 {
   // Setup an un-refined triangulation before loading
   // setup_triangulation(true);
