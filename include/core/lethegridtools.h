@@ -17,6 +17,7 @@
 #define lethe_lethegridtools_h
 
 #include <core/serial_solid.h>
+
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
@@ -244,11 +245,16 @@ namespace LetheGridTools
    *
    */
   template <int spacedim, int structdim>
-  std::map<typename DoFHandler<spacedim>::active_cell_iterator,std::map< unsigned int,typename DoFHandler<structdim, spacedim>::active_cell_iterator>>
-  find_cells_cut_by_object(const DoFHandler<spacedim> &dof_handler, std::map<unsigned int,
-                                                                                                   std::set<typename DoFHandler<spacedim>::active_cell_iterator>>
-                                                                                              &vertices_cell_map,
-                                            std::vector<SerialSolid<structdim,spacedim>> & list_of_objects);
+  std::map<
+    typename DoFHandler<spacedim>::active_cell_iterator,
+    std::map<unsigned int,
+             typename DoFHandler<structdim, spacedim>::active_cell_iterator>>
+  find_cells_cut_by_object(
+    const DoFHandler<spacedim> &dof_handler,
+    std::map<unsigned int,
+             std::set<typename DoFHandler<spacedim>::active_cell_iterator>>
+      &                                            vertices_cell_map,
+    std::vector<SerialSolid<structdim, spacedim>> &list_of_objects);
 
   /**
    * UPDATE ************************
@@ -257,10 +263,13 @@ namespace LetheGridTools
    *
    */
   template <int dim>
-  std::vector<double>
-  calculate_particle_triangle_distance(const std::vector<Point<dim>> &triangle,
-                     const typename Particles::ParticleHandler<dim>::particle_iterator_range &particles,
-                     const unsigned int &n_particles_in_base_cell);
+  std::tuple<std::vector<double>, std::vector<Point<dim>>, Tensor<1, dim>>
+  calculate_particle_triangle_distance(
+    const std::vector<Point<dim>> &triangle,
+    const typename Particles::ParticleHandler<dim>::particle_iterator_range
+      &                 particles,
+    const unsigned int &n_particles_in_base_cell);
+
 
 
   /**

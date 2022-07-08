@@ -62,7 +62,8 @@ class SerialSolid
 {
 public:
   // Member functions
-  SerialSolid(std::shared_ptr<Parameters::SolidObject<spacedim>> &param,unsigned int id);
+  SerialSolid(std::shared_ptr<Parameters::SolidObject<spacedim>> &param,
+              unsigned int                                        id);
 
   /**
    * @brief Manages solid triangulation and particles setup

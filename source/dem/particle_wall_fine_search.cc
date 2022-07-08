@@ -206,15 +206,15 @@ template <int dim>
 void
 ParticleMovingMeshFineSearch<dim>::particle_moving_mesh_fine_search(
   std::unordered_map<
-    types::particle_index,
-    std::unordered_map<unsigned int,
+    unsigned int,
+    std::unordered_map<types::particle_index,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
                                   double>>>
     &particle_moving_mesh_contact_candidates,
   std::unordered_map<
-    types::particle_index,
+    unsigned int,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &particle_moving_mesh_in_contact)
 {
@@ -272,9 +272,8 @@ ParticleMovingMeshFineSearch<dim>::particle_moving_mesh_fine_search(
               contact_info.tangential_overlap           = tangential_overlap;
               contact_info.tangential_relative_velocity = .0;
 
-
-              particle_moving_mesh_in_contact[particle_id].insert(
-                {cut_cell, contact_info});
+              particle_moving_mesh_in_contact[cut_cell].insert(
+                {particle_id, contact_info});
             }
         }
     }

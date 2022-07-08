@@ -231,8 +231,6 @@ protected:
   bool                                 calculate_force_torque_on_boundary;
   Point<3>                             center_mass_container;
   std::vector<types::boundary_id>      boundary_index;
-
-
 };
 
 #endif /* particle_wall_contact_force_h */
