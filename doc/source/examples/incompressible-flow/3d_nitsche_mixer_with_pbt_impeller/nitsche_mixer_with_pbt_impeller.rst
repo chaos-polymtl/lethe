@@ -316,7 +316,7 @@ Relatively standard parameters are used for the :doc:`../../../parameters/cfd/li
 
 :raw-html:`<br />`
 
-Running the simulation
+Running the Simulation
 ----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. For this more complex example, it is highly advised to use ``mpirun`` to parallelize the computation, with ``<np>`` the number of processes, defined accordingly with your machine's number of cpu. The simulation can be launched by typing, in a terminal opened in the example folder:
 
