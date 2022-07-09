@@ -376,7 +376,7 @@ Multiple analyses can be done with this type of simulation. For example, one can
 
 :raw-html:`<br />`
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 
 - **Increase the Reynolds number:** Using a finer grid, this example can be launched at even higher Reynolds numbers. In the latter case, the flow is significantly more unsteady.
