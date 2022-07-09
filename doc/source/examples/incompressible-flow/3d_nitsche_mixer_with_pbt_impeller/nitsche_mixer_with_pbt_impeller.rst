@@ -325,6 +325,7 @@ Launching the simulation is as simple as specifying the executable name and the 
   mpirun -np <np> </path/to/the/build/applications/gls_nitsche_navier_stokes_33/gls_nitsche_navier_stokes_33 mixer.prm>
 
 Lethe generates a larger number of files when the Nitsche immersed boundary is used:
+
 * the ``mixer.pvd`` contains the 3D visualization of the velocity, pressure, and auxiliary variables such as the average velocity ;
 * the ``mixer_solid_triangulation_00.pvd``, corresponding to the Nitsche IB mesh ;
 * the ``mixer_solid_particles_00.pvd``, corresponding to the discrete particles inserted at the Gauss points of the solid triangulation. 
