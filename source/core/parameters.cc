@@ -1890,6 +1890,12 @@ namespace Parameters
                         Patterns::FileName(),
                         "The file name from which we load the particles");
       prm.declare_entry(
+        "cut cells mapping",
+        "automatic",
+        Patterns::Selection("automatic|regular|performance test"),
+        "Choose whether the optimized approach is used or not. The optimized approach for cut cells mapping is currently implemented only for spheres. Choosing automatic allows the code to automatically decide if the optimized approach is used according to the shape of particles. If the performance test is chosen, both the regular and optimized cut cells mapping are used, which allows for keeping track of the time of this step using both algorithms"
+        "Choices are <automatic|regular|performance test>.");
+      prm.declare_entry(
         "ib particles pvd file",
         "ib_particles_data",
         Patterns::FileName(),
@@ -2033,6 +2039,10 @@ namespace Parameters
 
       load_particles_from_file = prm.get_bool("load particles from file");
       particles_file           = prm.get("particles file");
+      cut_cells_mapping        = prm.get("cut cells mapping");
+      if (cut_cells_mapping != "automatic" && cut_cells_mapping != "regular" && cut_cells_mapping != "performance test")
+        throw(std::logic_error(
+          "Invalid cut cells mapping. Cut cells mapping options are automatic|regular|performance test."));
 
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");

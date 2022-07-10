@@ -1006,6 +1006,7 @@ namespace Parameters
     int                          contact_search_frequency;
     bool                         load_particles_from_file;
     std::string                  particles_file;
+    std::string                  cut_cells_mapping;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 

@@ -163,9 +163,34 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           cells_inside_map[cell] = {cell_is_inside, p_id_inside};
         }
     }
-  std::cout << "REGULAR CUT MAP SIZE" << cut_cells_map.size() << std::endl;
-  std::cout << "REGULAR INSIDE MAP SIZE" << cells_inside_map.size()
-            << std::endl;
+
+  /*Vector<double> cell_cut(this->triangulation->n_active_cells());
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      bool cell_is_cut;
+      // The id of the particle that cut the cell. Returns 0 if the cell is
+      // not cut.
+      unsigned int ib_particle_id;
+      std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+      if (cell_is_cut)
+        {
+          cell_cut(cell->global_active_cell_index()) = 1;
+        }
+    }
+
+    // Printing the final position for all the vertices
+
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+  Legacy::DataOut<dim>                   data_out;
+#else
+  DataOut<dim>    data_out;
+#endif
+  data_out.attach_dof_handler(this->dof_handler);
+  data_out.add_data_vector(cell_cut, "cell_cut");
+  data_out.build_patches();
+  std::ofstream output("regular.vtu");
+  data_out.write_vtu(output);*/
 }
 
 
@@ -291,10 +316,36 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
             }
         }
     }
-  std::cout << "OPTIMIZED CUT MAP SIZE" << cut_cells_map.size() << std::endl;
-  std::cout << "OPTIMIZED INSIDE MAP SIZE" << cells_inside_map.size()
-            << std::endl;
+
+  /*Vector<double> cell_cut_opt(this->triangulation->n_active_cells());
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      bool cell_is_cut;
+      // The id of the particle that cut the cell. Returns 0 if the cell is
+      // not cut.
+      unsigned int ib_particle_id;
+      std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+      if (cell_is_cut)
+        {
+          cell_cut_opt(cell->global_active_cell_index()) = 1;
+        }
+    }
+
+    // Printing the final position for all the vertices
+
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+  Legacy::DataOut<dim>                   data_out;
+#else
+  DataOut<dim>    data_out;
+#endif
+  data_out.attach_dof_handler(this->dof_handler);
+  data_out.add_data_vector(cell_cut_opt, "cell_cut");
+  data_out.build_patches();
+  std::ofstream output("optimized.vtu");
+  data_out.write_vtu(output);*/
 }
+
 
 template <int dim>
 std::pair<bool, bool>
@@ -305,7 +356,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
   bool cell_is_inside = false;
   bool cell_is_cut    = false;
 
-  double radius   = particles[p_id].radius;
+  double search_radius   = particles[p_id].radius * (1.0 + pow(10, -5));
   auto   position = particles[p_id].position;
 
   bool point_inside_cell = cell->point_inside(position);
@@ -314,7 +365,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
   unsigned int nb_vertices_inside = 0;
   for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
     {
-      if ((cell->vertex(i) - position).norm() <= radius)
+      if ((cell->vertex(i) - position).norm() <= search_radius)
         ++nb_vertices_inside;
     }
 
@@ -383,7 +434,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
             {
               projected_point_over_face = cell->point_inside(projected_point);
 
-              if ((position - projected_point).norm() <= radius &&
+              if ((position - projected_point).norm() <= search_radius &&
                   projected_point_over_face)
                 {
                   cell_is_inside = true;
@@ -3643,10 +3694,24 @@ GLSSharpNavierStokesSolver<dim>::solve()
         temp_coarse;
 
       vertices_cell_mapping();
-      // if (all_spheres)
-      optimized_generate_cut_cells_map();
-      // else
-      generate_cut_cells_map();
+
+      if (this->simulation_parameters.particlesParameters
+            ->cut_cells_mapping == "regular")
+        generate_cut_cells_map();
+      else if (this->simulation_parameters.particlesParameters
+                 ->cut_cells_mapping == "automatic")
+        {
+          if (all_spheres)
+            optimized_generate_cut_cells_map();
+          else
+            generate_cut_cells_map();
+        }
+      else if (this->simulation_parameters.particlesParameters
+                 ->cut_cells_mapping == "performance test")
+        {
+          optimized_generate_cut_cells_map();
+          generate_cut_cells_map();
+        }
     }
 
   this->set_initial_condition(
@@ -3678,10 +3743,23 @@ GLSSharpNavierStokesSolver<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-          // if (all_spheres)
-          optimized_generate_cut_cells_map();
-          // else
-          generate_cut_cells_map();
+          if (this->simulation_parameters.particlesParameters
+                ->cut_cells_mapping == "regular")
+            generate_cut_cells_map();
+          else if (this->simulation_parameters.particlesParameters
+                     ->cut_cells_mapping == "automatic")
+            {
+              if (all_spheres)
+                optimized_generate_cut_cells_map();
+              else
+                generate_cut_cells_map();
+            }
+          else if (this->simulation_parameters.particlesParameters
+                     ->cut_cells_mapping == "performance test")
+            {
+              optimized_generate_cut_cells_map();
+              generate_cut_cells_map();
+            }
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,
@@ -3696,10 +3774,23 @@ GLSSharpNavierStokesSolver<dim>::solve()
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
           vertices_cell_mapping();
-          // if (all_spheres)
-          optimized_generate_cut_cells_map();
-          // else
-          generate_cut_cells_map();
+          if (this->simulation_parameters.particlesParameters
+                ->cut_cells_mapping == "regular")
+            generate_cut_cells_map();
+          else if (this->simulation_parameters.particlesParameters
+                     ->cut_cells_mapping == "automatic")
+            {
+              if (all_spheres)
+                optimized_generate_cut_cells_map();
+              else
+                generate_cut_cells_map();
+            }
+          else if (this->simulation_parameters.particlesParameters
+                     ->cut_cells_mapping == "performance test")
+            {
+              optimized_generate_cut_cells_map();
+              generate_cut_cells_map();
+            }
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,
