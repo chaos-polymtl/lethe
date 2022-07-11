@@ -5,7 +5,7 @@
 3D Ribbon Mixer using a Single Rotating Reference Frame
 ========================================================
 
-In the industry, when designing a mixer, we need to evaluate the power consumed by the agitator. To do so, we refer to the power number (:math:`N_p`) vs Reynolds number (:math:`Re`) curves. The :math:`N_p` relates the power consumed by the agitator to the geometry of the system and the characteristics of the flow in the tank. In this example, using a single rotating reference frame, we model a ribbon mixer for different flow conditions (different values of :math:`Re`) to generate :math:`N_p` vs :math:`Re` curves.
+When designing an industrial mixer, it is essential to evaluate the power consumed by the agitator. To do so, we usually refer to graphs correlating the power number (:math:`N_p`) as a function of the Reynolds number (:math:`Re`). :math:`N_p` is a dimensionless number that relates the power consumed by the agitator to the geometry of the system, the speed of the agitator, and the properties of the material being mixed (density :math:`\rho` and viscosity :math:`\mu`). In this example, using a single rotating frame (SRF) model, we simulate a fluid being mixed in a ribbon mixer for different flow conditions (different values :math:`Re`) to generate :math:`N_p` vs :math:`Re` curves.
 
 :raw-html:`<br />`
 
@@ -34,18 +34,9 @@ The following figure represents the geometry of our system:
 
 <insert image>
 
-<insert description of the image>
+The dimensions of the parameters seen in the figure above are listed in the following table:
 
-The Reynolds number for our system is defined as follows:
-
-.. math::
-    Re = \frac{ND²}{\nu}
-
-where
-
-- N is the angular velocity :math:`[rps]`;
-- D is the diameter of the impeller :math:`[m]`, and
-- \nu is the kinematic viscosity of the fluid :math:`[N \cdot s/m^2]`.
+<insert table>
 
 To be able to simulate the flow in such complex geometry, we take advantage of the symmetry of the system and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or lab reference frame), we place ourselves on the impeller's reference making it static and inducing a no-slip boundary condition on it. This way, the cylindrical vessel is going to be the only moving geometry in our system. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames.
 
@@ -57,12 +48,30 @@ To be able to simulate the flow in such complex geometry, we take advantage of t
 
 In this example, we will start by simulating the case when :math:`Re = 1` and then follow with simulation a for :math:`Re` values ranging for :math:`0.1` to :math:`100`.
 
+The Reynolds number for our system is defined as follows:
+
+.. math::
+    Re = \frac{ND²}{\nu}
+
+where
+
+- N is the angular velocity :math:`[rps]` of the agitator;
+- D is the diameter of the impeller :math:`[m]`, and
+- \nu is the kinematic viscosity of the fluid :math:`[m^2 \cdot s^{-1}]`.
+
+In order to genrate :math:`N_p` vs :math:`Re` curves, we have to calculate :math:`N_p`. In this example, we will be using the torque (:math:`\Gamma`) to calculate :math:`N_p`:
+
+.. math::
+	N_p = \frac{2 \pi \Gamma}{\rho N^2 D^5}
+
+
+where :math:`\rho` is the density of the fluid.
 
 :raw-html:`<br />`
 
 Parameter File
 --------------
-Except for the ``velocity source`` subsection, all other subsections in ``ribbon_gls.prm`` were discussed in previous examples.
+All subsections in ``ribbon_gls.prm`` except for ``velocity source`` were discussed in previous examples. However, the important sections are briefly explained for completeness.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -191,7 +200,7 @@ Boundary Conditions
     end
 
 
-Non-Linear Solver Control
+Non-linear Solver Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -238,8 +247,9 @@ Launching the simulation is as simple as specifying the executable name and the 
 
     gls_navier_stokes_3d ribbon_gls.prm
 
-Simulating for
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Generating :math:`N_p` vs :math:`Re` curves (:math:`Re \in [0.1, 100]`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 
 :raw-html:`<br />`
