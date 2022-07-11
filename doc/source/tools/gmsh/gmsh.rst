@@ -34,6 +34,8 @@ The geometry is written in a ``.geo`` file:
 3. Either use the folders navigator or directly specify the path and filename in ``Filename`` 
     for example: ``/home/<user>/Documents/Mesh/<filename>.geo``
 4. Specify the Kernel to use: :ref:`built-in kernel` or :ref:`opencascade kernel`
+	* The **Built-in kernel** uses the raw code of GMSH to create a geometry from points, to curves, then surfaces and finally volumes (in 3D).
+	* The **OpenCASCADE kernel** uses simplified shapes to create the same geometry with fewer steps.
 
 You can then open the created ``.geo`` file in a simple text editor, either by:
 
@@ -54,7 +56,7 @@ It is quite easy to create a ``.geo`` file directly by coding line by line the g
 .. tip::
 	Using a Built-in kernel gives you full control over the geometry creation, which is necessary to create a :ref:`structured mesh` (transfinite) mesh. However, it usually takes more time than using functions available in :ref:`opencascade kernel`.
 
-1. Set the points that delimits the shape being traced. The attribut ``Point`` is essential to set a point of the shape and to specify its coordinates. 
+1. Set the points that delimits the shape being traced. The attribute ``Point`` is essential to set a point of the shape and to specify its coordinates. 
 	* For the rectangle, we will have:
 
 	.. code-block::
@@ -109,7 +111,7 @@ It is quite easy to create a ``.geo`` file directly by coding line by line the g
 	Plane Surface(1) = {1, 2};
 	
 .. tip::
-	All the lines of code can be directly made with the GUI of gmsh with some clicks and keyboards shortcuts.
+	All the lines of code can be directly made with the GUI of gmsh with some clicks and keyboard shortcuts.
 
 .. _opencascade kernel:
 
@@ -119,7 +121,7 @@ OpenCASCADE kernel
 In the GMSH geometry section of the GMSH GUI (see ``Left pannel: Modules > Geometry > Elementary entities > Add``), you can add directly multiple 2D or 3D common geometries with a simple click thanks to OpenCASCADE kernel. GMSH will automatically open a window where you can easily set the characteristic lenghts of the geometry, and update the ``.geo`` file.
 
 .. warning::
-	Always save your ``.geo`` file in your text editor before modifying it through the GMSH GUI. If you modified the ``.geo`` file without saving it, GMSH will not update it. 
+	Always save your ``.geo`` file in your text editor before modifying it through the GMSH GUI. If you modify the ``.geo`` file without saving it, GMSH will not update it. 
 
 For our example (circle in a rectangle in 2D):
 
@@ -132,7 +134,7 @@ For our example (circle in a rectangle in 2D):
 	The rectangle is set with ``Rectangle(1) = {-5, -5, 0, 20, 10, 0};`` and the circle with ``Disk(2) = {0, 0, 0, 1, 1};``.
 	
 .. tip::
-	The ``Disk`` and ``Rectangle`` are already considered as surfaces in gmsh, so no need to pass from points, to curves and then surfaces. 
+	The ``Disk`` and ``Rectangle`` are already considered as surfaces in gmsh, there is therefore no need to pass from points, to curves and then surfaces. 
 
 3. Remove the disk surface from the rectangular domain, with OpenCASCADE boolean operation, either via the GUI (``Geometry > Elementary entities > Boolean``) or the code:
 
@@ -151,17 +153,17 @@ Importing CAD files (``.step`` or ``.stp`` format) can be particularly convenien
 
 1. ``File > New...``: create a new .geo file (can use OpenCASCADE or Built-in kernel)
 2. ``Files > Merge...``: merge the CAD file (``.step`` or ``.stp`` format) with GMSH
-3. ``Tools > Statistics``: check that the geometry is loaded (point, curves, surfaces, and if 3D volumes)
+3. ``Tools > Statistics``: check that the geometry is loaded (point, curves, surfaces, and volumes in 3D)
 
 .. seealso::
   You can find a step-by-step video `here <https://www.youtube.com/watch?v=e7zA3joOWX8>`_, with very useful tools as how to inspect your mesh.
 
 --------------------------
-Physical group
+Physical groups
 --------------------------
 
 .. warning::
-	This step is essential. Physical group are used to identify the boundary conditions.
+	This step is essential. Physical groups are used to identify the boundary conditions.
 
 In 2D, the physical groups are curves and in 3D, surfaces. For this example, select ``Curve`` in the ``Modules > Geometry > Physical groups > Add`` section. Four different physical groups with ``Curve`` is needed:
 
@@ -242,13 +244,16 @@ Basic:
 5. (optional) ``Left pannel: Modules > Mesh > Refine by splitting``: refine the mesh (beware, it takes more and more time for each refinement)
 6. ``Left pannel: Modules > Mesh > Save``: save the mesh in a ``.msh`` file, to be used in Lethe (see :doc:`../../parameters/cfd/mesh`)
 
-By following all the previous steps, the mesh generated looks like bellow.
+By following all the previous steps, the mesh generated looks like below.
 
 .. image:: images/unstructured.png
     :alt: 2D mesh with quads
     :align: center
     :name: unstructured mesh
-    
+
+""""""""""""""""""""""""""""""""""""
+Attractors for local mesh refinement
+""""""""""""""""""""""""""""""""""""
 Attractors can also be used to refine the mesh towards specific edges or surfaces. In this example, attractors could be interesting if the mesh needs to be finer around the sphere. Attractors can only be added by code with the ``Field`` attribut.
 
 .. code-block::
@@ -305,12 +310,12 @@ Structured - Quad mesh
 .. warning::
 	The ``.geo`` file must be built with the :ref:`built-in kernel`.
 
-Creating a structured quad-mesh usually take a lot more time than an unstructured quad-mesh, but provides a full control on the mesh generation. To do so:
+Creating a structured quad-mesh usually takes a lot more time than an unstructured quad-mesh, but provides a full control on the mesh generation. To do so:
 
 1. Create the geometry accordingly and add construction elements where needed
 
 .. tip::
-	Converting an unstructured mesh to a structured mesh usually required rewritting a good part of the geometry. Begin by drawing by-hand and check that each of your surfaces have only four points.
+	Converting an unstructured mesh to a structured mesh usually requires rewritting a good part of the geometry. Begin by drawing by-hand and check that all of your surfaces have only four points each.
 
 2. Define ``Transfinite Line`` (before ``Line Loop``), with:
 	
@@ -331,7 +336,7 @@ Creating a structured quad-mesh usually take a lot more time than an unstructure
 .. seealso::
   You can find a step-by-step `video <https://youtu.be/1A-b84kloFs?t=316>`_, with a similar geometry (cylinder in flow). 
 
-A mesh can also be partially structured, to better account for a boundary layer for instance: see the ``.geo`` file provided with the :doc:`../../examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body` example. 
+A mesh can also be partially structured, to better encounter for a boundary layer for instance: see the ``.geo`` file provided with the :doc:`../../examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body` example. 
 
 .. _tips:
 
@@ -351,7 +356,7 @@ Other tips
 		//Points
 		Point(1) = {L, L*C45, 0, esf};
 
-- Use the ``Visibility`` options to get the ID of an element or a physical group easily on the GUI: 
+- Use the ``Visibility`` tool to get the ID of an element or a physical group easily on the GUI: 
 	* ``Tools > Options > Mesh > Tab: Visibility``
 	* Check the adequate boxes (for example ``1D element labels`` for points, etc.) 
 	* Choose the label type in the drop-down menu ``Label type`` (for example ``Elementary entity tag``).
@@ -361,7 +366,7 @@ Other tips
 
 - Click on the grey bar at the bottom of the software interface to see all the logs, errors and warnings.
 
-- Verify your mesh in: ``Tools > Statistics > Mesh``. In particular pay attention that you only have one type of elements. If not, changing the mesh refinement can help removing unwanted triangles in a quad mesh.
+- Verify your mesh in: ``Tools > Statistics > Mesh``. In particular, make sure that you only have one type of elements. If not, changing the mesh refinement can help removing unwanted triangles in a quad mesh.
 
 - ``negative cells`` or ``cells volume < 0`` is a classical error that deal.II can trigger when importing a mesh generated with GMSH. This indicates that at least some of your ``Curve Loop`` or ``Line Loop`` are not defined with the same orientation (clockwise or counter-clockwise). Inspect your mesh with GMSH GUI: 
 	* The cells should be drawn with color lines, different for each surface. 
