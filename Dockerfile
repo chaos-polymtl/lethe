@@ -1,4 +1,4 @@
-ARG DEALII_IMAGE_VERSION="v9.3.0"
+ARG DEALII_IMAGE_VERSION="v9.4.0"
 
 FROM dealii/dealii:${DEALII_IMAGE_VERSION}-focal as builder
 
