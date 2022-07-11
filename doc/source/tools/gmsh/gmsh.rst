@@ -254,7 +254,7 @@ By following all the previous steps, the mesh generated looks like below.
 """"""""""""""""""""""""""""""""""""
 Attractors for local mesh refinement
 """"""""""""""""""""""""""""""""""""
-Attractors can also be used to refine the mesh towards specific edges or surfaces. In this example, attractors could be interesting if the mesh needs to be finer around the sphere. Attractors can only be added by code with the ``Field`` attribut.
+Attractors can also be used to refine the mesh towards specific edges or surfaces. In this example, attractors could be interesting if the mesh needs to be finer around the sphere. Attractors can only be added by code with the ``Field`` attribute.
 
 .. code-block::
 
@@ -356,7 +356,7 @@ Other tips
 		//Points
 		Point(1) = {L, L*C45, 0, esf};
 
-- Use the ``Visibility`` tool to get the ID of an element or a physical group easily on the GUI: 
+- Use the ``Visibility`` option to get the ID of an element or a physical group easily on the GUI: 
 	* ``Tools > Options > Mesh > Tab: Visibility``
 	* Check the adequate boxes (for example ``1D element labels`` for points, etc.) 
 	* Choose the label type in the drop-down menu ``Label type`` (for example ``Elementary entity tag``).
