@@ -253,13 +253,17 @@ template <>
 void
 SolidBase<2, 3>::rotate_grid(double angle, int axis)
 {
-  GridTools::rotate(angle, axis, *solid_tria);
+  Tensor<1, 3> t_axis;
+  t_axis[axis] = 1;
+  GridTools::rotate(t_axis, angle, *solid_tria);
 }
 template <>
 void
 SolidBase<3, 3>::rotate_grid(double angle, int axis)
 {
-  GridTools::rotate(angle, axis, *solid_tria);
+  Tensor<1, 3> t_axis;
+  t_axis[axis] = 1;
+  GridTools::rotate(t_axis, angle, *solid_tria);
 }
 
 
@@ -311,12 +315,6 @@ SolidBase<dim, spacedim>::setup_particles_handler()
 
   // Put the proper triangulation and mapping for more general cases
   solid_particle_handler->initialize(*fluid_tria, *fluid_mapping, n_properties);
-
-  // Connect Nitsche particles to the fluid triangulation
-  fluid_tria->signals.pre_distributed_refinement.connect(
-    [&]() { solid_particle_handler->register_store_callback_function(); });
-  fluid_tria->signals.post_distributed_refinement.connect(
-    [&]() { solid_particle_handler->register_load_callback_function(false); });
 }
 
 template <int dim, int spacedim>
