@@ -273,7 +273,7 @@ RPTFEMReconstruction<dim>::L2_project()
     }
 
     GridTools::rotate(1.57078, 1, triangulation);
-    Tensor<1, dim> shift_vector({0, 0, 0.065});
+    Tensor<1, dim> shift_vector({0, 0, 0.07});
     GridTools::shift(shift_vector, triangulation);
     {
         std::ofstream output_file("rotated_triangulation.vtk");
@@ -301,21 +301,21 @@ RPTFEMReconstruction<dim>::L2_project()
 Vector<double>
 assemble_matrix_and_rhs(
         std::vector<std::vector<double>> &vertex_count,
-        std::vector<double> &             experimental_count)
+        std::vector<double> &experimental_count)
 {
     // Assembling system_matrix
     Vector<double> reference_location;
-
 
 
     LAPACKFullMatrix<double> system_matrix;
     system_matrix.reinit(3);
 
     unsigned int detector_size = vertex_count.size();
-    // std::cout << "Detector size is " << detector_size << std::endl;
+    //std::cout << "Detector size is " << detector_size << std::endl;
 
 
     // TODO, this could be refactored to just three loops...
+
     double sigma = 0;
     for (unsigned int i = 0; i < detector_size; i++)
     {
@@ -394,8 +394,8 @@ assemble_matrix_and_rhs(
     }
     system_matrix.set(2, 2, sigma);
 
-    // std::cout << "Printing matrix " << std::endl;
-    // system_matrix.print_formatted(std::cout);
+    //std::cout << "Printing matrix " << std::endl;
+    //system_matrix.print_formatted(std::cout);
 
 
     // Assembling system_rhs
@@ -427,13 +427,9 @@ assemble_matrix_and_rhs(
     system_rhs[2] = -sigma;
 
 
-
     system_matrix.set_property(LAPACKSupport::general);
     system_matrix.compute_lu_factorization();
     system_matrix.solve(system_rhs);
-
-
-
 
     reference_location = system_rhs;
     return reference_location;
@@ -445,7 +441,7 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 {
-    // Loop over cell in the finest level, loop over detetors get nodal values,
+    // Loop over cell in the finest level, loop over detectors get nodal values,
     // solve first loop over cell
 
     // for now I define experimental counts manually
@@ -461,17 +457,17 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
 
 
-    const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-    for (const auto &cell : cell_iterator)
+    //const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+    // for (const auto &cell : cell_iterator
+    // ajouté/modifié
+    for (const auto &cell : dof_handler.active_cell_iterators())
     {
 
         std::vector<std::vector<double>> count_from_all_detectors;
+        std::vector<double> detectorCount;
 
         for (unsigned int i = 0; i < n_detector; ++i)
         {
-            std::vector<double> detectorCount;
-
-
             for (unsigned int v = 0; v < cell->n_vertices(); ++v)
             {
                 auto dof_index = cell->vertex_dof_index(v, 0);
@@ -522,8 +518,6 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
             norm_error_coordinates += err_coordinates[i] * err_coordinates[i];
         }
 
-
-
         if (norm_error_coordinates < 0.05)
         {
             //std::cout << "Printing reference solution " << std::endl;
@@ -542,6 +536,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                                             (cell->vertex(v) - cell->vertex(0));
             }
             max_reconstruction_error = norm_error_coordinates;
+
             /*std::cout << "The reconstruction error is : "
                       << norm_error_coordinates << std::endl;*/
             //std::cout << "The real location is : " << real_location << std::endl;
@@ -573,6 +568,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
             }
         }
         count_from_all_detectors.clear();
+
     }
 
     //std::cout<<"this: "<<max_cost_function<<std::endl;
@@ -589,7 +585,7 @@ RPTFEMReconstruction<dim>::trajectory()
 {
 
     std::ifstream in("Test.txt");
-    std::vector<std::vector<double> > v;
+    std::vector<std::vector<double>> v;
 
     if (in) {
         std::string line;
@@ -605,12 +601,14 @@ RPTFEMReconstruction<dim>::trajectory()
                 v.back().push_back(value);
         }
     }
-    for(int i=0; i<v.size();i++){
+    std::vector<double> experimental_count;
 
-        std::vector<double> experimental_count=v[i];
-        find_cell(experimental_count);
-
-
+    for (unsigned int i=0; i<v.size();i++){
+        if (v[i].size() != 0)
+          {
+            experimental_count = v[i];
+            find_cell(experimental_count);
+          }
     }
 
 }
@@ -653,10 +651,11 @@ void
 RPTFEMReconstruction<dim>::load_from_checkpoint()
 {
   n_detector = rpt_parameters.fem_reconstruction_param.nodal_counts_file.size();
+
   // flatten the triangulation
   Triangulation<dim> temp_triangulation;
   Triangulation<dim> flat_temp_triangulation;
-  GridGenerator::cylinder(temp_triangulation, 0.1, 0.07);
+  GridGenerator::cylinder(temp_triangulation, rpt_parameters.rpt_param.reactor_radius, rpt_parameters.rpt_param.reactor_height/2);
   temp_triangulation.refine_global(2);
 
   GridGenerator::flatten_triangulation(temp_triangulation,
@@ -665,13 +664,11 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
   GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
                                                    triangulation);
 
-  triangulation.set_all_manifold_ids(0);
+  //print number of cells
+  std::cout << "n_cell:" << this->triangulation.n_cells() << std::endl;
 
   // import triangulation
   {
-    //print number of cells
-    std::cout << "n_cell:" << this->triangulation.n_cells() << std::endl;
-
     std::ifstream ifs(rpt_parameters.fem_reconstruction_param.triangulation_file);
     boost::archive::text_iarchive ia(ifs);
     triangulation.load(ia, 0);
