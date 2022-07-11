@@ -215,7 +215,7 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
 
               // Coefficient used to neglect viscous dissipation in the fluid
               // which is more than 10 times less dense than the other fluid
-              if (this->density_1[q] > 10. * this->density_0[q])
+              if (this->viscosity_1[q] > 10. * this->viscosity_0[q])
                 {
                   // if phase = 0, no viscous dissipation
                   // if phase = 1, maximum viscous dissipation
