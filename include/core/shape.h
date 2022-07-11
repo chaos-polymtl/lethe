@@ -353,8 +353,8 @@ public:
     : Shape<dim>(height, position, orientation)
     , tan_base_angle(tan_base_angle)
     , height(height)
-    , intermediate_q({height * tan_base_angle, -height})
     , base_radius(height / tan_base_angle)
+    , intermediate_q({height * tan_base_angle, -height})
   {}
 
   double

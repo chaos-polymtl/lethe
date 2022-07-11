@@ -180,27 +180,39 @@ IBParticle<dim>::initialize_shape(const std::string         type,
       shape = std::make_shared<Ellipsoid<dim>>(radii, position, orientation);
     }
   else if (type == "torus")
-    shape = std::make_shared<Torus<dim>>(shape_arguments[0],
-                                         shape_arguments[1],
-                                         position,
-                                         orientation);
-  else if (type == "cone")
-    shape = std::make_shared<Cone<dim>>(shape_arguments[0],
-                                        shape_arguments[1],
-                                        position,
-                                        orientation);
-  else if (type == "cut hollow sphere")
-    shape = std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
-                                                   shape_arguments[1],
-                                                   shape_arguments[2],
-                                                   position,
-                                                   orientation);
-  else if (type == "death star")
-    shape = std::make_shared<DeathStar<dim>>(shape_arguments[0],
+    {
+      if constexpr (dim == 3)
+        shape = std::make_shared<Torus<dim>>(shape_arguments[0],
                                              shape_arguments[1],
-                                             shape_arguments[2],
                                              position,
                                              orientation);
+    }
+  else if (type == "cone")
+    {
+      if constexpr (dim == 3)
+        shape = std::make_shared<Cone<dim>>(shape_arguments[0],
+                                            shape_arguments[1],
+                                            position,
+                                            orientation);
+    }
+  else if (type == "cut hollow sphere")
+    {
+      if constexpr (dim == 3)
+        shape = std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
+                                                       shape_arguments[1],
+                                                       shape_arguments[2],
+                                                       position,
+                                                       orientation);
+    }
+  else if (type == "death star")
+    {
+      if constexpr (dim == 3)
+        shape = std::make_shared<DeathStar<dim>>(shape_arguments[0],
+                                                 shape_arguments[1],
+                                                 shape_arguments[2],
+                                                 position,
+                                                 orientation);
+    }
   else
     StandardExceptions::ExcNotImplemented();
 }
