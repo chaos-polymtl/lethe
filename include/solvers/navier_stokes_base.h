@@ -321,7 +321,7 @@ protected:
   /**
    * @brief Allow the refinement of the mesh according to one of the 2 methods proposed
    */
-  void
+  virtual void
   refine_mesh();
 
   /**

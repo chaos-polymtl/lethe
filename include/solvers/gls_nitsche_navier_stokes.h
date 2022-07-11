@@ -144,6 +144,14 @@ private:
   output_solid_triangulation(const unsigned int i_solid);
 
   /**
+   * @brief Allow the refinement of the mesh according to one of the 2 methods proposed.
+   * Overrides the regular mesh adaptation by ensuring that the Nitsche solids
+   * are prepared for adaptation.
+   */
+  virtual void
+  refine_mesh() override;
+
+  /**
    * @brief Write a gls_nitsche simulation checkpointing to allow for gls_nitsche simulation restart
    */
   virtual void
@@ -155,7 +163,7 @@ private:
   virtual void
   read_checkpoint() override;
 
-  std::vector<std::shared_ptr<SolidBase<dim, spacedim>>> solid;
+  std::vector<std::shared_ptr<SolidBase<dim, spacedim>>> solids;
   std::vector<PVDHandler> pvdhandler_solid_triangulation;
   std::vector<PVDHandler> pvdhandler_solid_particles;
 
