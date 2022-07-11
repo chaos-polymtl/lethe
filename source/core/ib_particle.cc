@@ -235,7 +235,7 @@ IBParticle<dim>::get_levelset(const Point<dim> &p)
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(const Point<dim> &p,
-                                       Point<dim>       &closest_point)
+                                       Point<dim> &      closest_point)
 {
   Tensor<1, dim> actual_gradient       = shape->gradient(p);
   double         distance_from_surface = shape->value(p);

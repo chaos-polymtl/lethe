@@ -50,7 +50,7 @@ public:
    * @param orientation The orientation to set the shape at
    */
   Shape(double              radius,
-        const Point<dim>   &position,
+        const Point<dim> &  position,
         const Tensor<1, 3> &orientation)
 
     : AutoDerivativeFunction<dim>(1e-8)
@@ -88,7 +88,7 @@ public:
    * @param component Not applicable
    */
   virtual double
-  value(const Point<dim>  &evaluation_point,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override = 0;
 
   /**
@@ -180,7 +180,7 @@ public:
    * @param orientation The sphere orientation
    */
   Sphere<dim>(double              radius,
-              const Point<dim>   &position,
+              const Point<dim> &  position,
               const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
   {
@@ -193,14 +193,14 @@ public:
   }
 
   double
-  value(const Point<dim>  &evaluation_point,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
   Tensor<1, dim>
-  gradient(const Point<dim>  &evaluation_point,
+  gradient(const Point<dim> & evaluation_point,
            const unsigned int component = 0) const override;
 
   double
@@ -234,14 +234,14 @@ public:
    * @param orientation The rectangle orientation
    */
   Rectangle<dim>(const Tensor<1, dim> &half_lengths,
-                 const Point<dim>     &position,
-                 const Tensor<1, 3>   &orientation)
+                 const Point<dim> &    position,
+                 const Tensor<1, 3> &  orientation)
     : Shape<dim>(half_lengths.norm(), position, orientation)
     , half_lengths(half_lengths)
   {}
 
   double
-  value(const Point<dim>  &evaluation_point,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
@@ -270,14 +270,14 @@ public:
    * @param orientation The ellipsoid orientation
    */
   Ellipsoid<dim>(const Tensor<1, dim> &radii,
-                 const Point<dim>     &position,
-                 const Tensor<1, 3>   &orientation)
+                 const Point<dim> &    position,
+                 const Tensor<1, 3> &  orientation)
     : Shape<dim>(radii.norm(), position, orientation)
     , radii(radii)
   {}
 
   double
-  value(const Point<dim>  &evaluation_point,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
@@ -308,7 +308,7 @@ public:
    */
   Torus<dim>(double              ring_radius,
              double              ring_thickness,
-             const Point<dim>   &position,
+             const Point<dim> &  position,
              const Tensor<1, 3> &orientation)
     : Shape<dim>(ring_thickness, position, orientation)
     , ring_radius(ring_radius)
@@ -316,7 +316,7 @@ public:
   {}
 
   double
-  value(const Point<dim>  &evaluation_point,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
@@ -348,7 +348,7 @@ public:
    */
   Cone<dim>(double              tan_base_angle,
             double              height,
-            const Point<dim>   &position,
+            const Point<dim> &  position,
             const Tensor<1, 3> &orientation)
     : Shape<dim>(height, position, orientation)
     , tan_base_angle(tan_base_angle)
@@ -358,7 +358,7 @@ public:
   {}
 
   double
-  value(const Point<dim>  &evaluation_point,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
@@ -395,7 +395,7 @@ public:
   CutHollowSphere<dim>(double              radius,
                        double              cut_depth,
                        double              shell_thickness,
-                       const Point<dim>   &position,
+                       const Point<dim> &  position,
                        const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
     , radius(radius)
@@ -405,7 +405,7 @@ public:
   {}
 
   double
-  value(const Point<dim>  &evaluation_point,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
@@ -445,7 +445,7 @@ public:
   DeathStar<dim>(double              radius,
                  double              hole_radius,
                  double              spheres_distance,
-                 const Point<dim>   &position,
+                 const Point<dim> &  position,
                  const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
     , radius(radius)
@@ -459,7 +459,7 @@ public:
   {}
 
   double
-  value(const Point<dim>  &evaluation_point,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
@@ -509,7 +509,7 @@ public:
   }
 
   double
-  value(const Point<dim>  &evaluation_point,
+  value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
   std::shared_ptr<Shape<dim>>
