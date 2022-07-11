@@ -149,6 +149,20 @@ namespace Parameters
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
+
+
+  };
+
+  struct RPTFEMReconstructionParameters
+  {
+    std::string              triangulation_file;
+    std::string              dof_handler_file;
+    std::vector<std::string> nodal_counts_file;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
   };
 
 } // namespace Parameters
