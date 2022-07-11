@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import csv
 import sys
 
-
 header = []
 rows = []
 position_x = []
@@ -47,18 +46,20 @@ exp_counts = np.array(exp_counts)
 # Experimental and calculated counts comparison
 plt.plot(position_x, cal_counts, linestyle="dashed", color="#fc710d", linewidth=2, label="tuned parameters")
 plt.plot(position_x, exp_counts, linestyle="none", color="#000000", marker='o', ms=5, mfc="None", label="experimental")
-plt.xlabel("Photon count")
-plt.ylabel("x (cm)")
+plt.xlabel("x (cm)")
+plt.ylabel("Photon count")
 plt.legend()
 plt.grid(True)
+plt.savefig("./experimental_and_calculated_counts_comparison.png", dpi=300)
 plt.show()
 
 # Linear fit graph
 plt.plot(exp_counts, cal_counts, linestyle="None", color="#000000", marker='o', ms=5, mfc="None")
 cal_counts, exp_counts = cal_counts.reshape(-1,1), exp_counts.reshape(-1,1)
 plt.plot(cal_counts, LinearRegression().fit(cal_counts, exp_counts).predict(cal_counts), linestyle="dashed", color="#fc710d", linewidth=2)
-plt.annotate("R^2 = {:.4f}".format(r2_score(cal_counts, exp_counts)), (490, 650), color="#fc710d")
+plt.annotate("$R^2$ = {:.4f}".format(r2_score(cal_counts, exp_counts)), (490, 650), color="#fc710d")
 plt.xlabel("Experimental photon count")
 plt.ylabel("Calculated photon count")
 plt.grid(True)
+plt.savefig("./linear_fit_graph.png", dpi=300)
 plt.show()
