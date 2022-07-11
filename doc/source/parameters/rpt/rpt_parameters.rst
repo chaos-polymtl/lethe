@@ -4,7 +4,7 @@
 RPT parameters
 -------------------
 
-This subsection contains the general information required for the photon count calculation using a Monte Carlo technic.
+This subsection contains the general information required for the photon count calculation using a Monte Carlo technique
 
 .. code-block:: text
 
