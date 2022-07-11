@@ -315,12 +315,6 @@ SolidBase<dim, spacedim>::setup_particles_handler()
 
   // Put the proper triangulation and mapping for more general cases
   solid_particle_handler->initialize(*fluid_tria, *fluid_mapping, n_properties);
-
-  // Connect Nitsche particles to the fluid triangulation
-  fluid_tria->signals.pre_distributed_refinement.connect(
-    [&]() { solid_particle_handler->register_store_callback_function(); });
-  fluid_tria->signals.post_distributed_refinement.connect(
-    [&]() { solid_particle_handler->register_load_callback_function(false); });
 }
 
 template <int dim, int spacedim>
