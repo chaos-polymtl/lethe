@@ -22,6 +22,13 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   When ``set heat transfer = true``, these optional parameters can be used:
    * ``viscous dissipation``: controls if the viscous dissipation is taken into account in the heat transfer equation.
+
+   .. important::
+
+	When both ``viscous dissipation`` and ``VOF`` are ``true``, ``viscous dissipation`` will be neglected in the fluid with a ``kinematic viscosity`` (in :doc:`physical_properties`): :math:`\nu_\text{less viscous} < 10 \times \nu_\text{more viscous}`.
+
+	This mechanism is particularly useful when one fluid is the air: for numerical stability, the ``kinematic viscosity`` for the air is usually increased, but we do not want to have viscous dissipation in the air, which would heat it in a non-physical way.
+
    * ``buoyancy force``: controls if the buoyancy force is taken into account in the Navier-Stokes equations. The buoyancy force is calculated using the Boussinesq approximation.
 
 .. seealso::
