@@ -53,80 +53,89 @@ template <int dim>
 class RPTFEMReconstruction
 {
 public:
-  /**
-   * @brief Constructor for the RPTFEMReconstructon
-   *
-   * @param RPTparameters All parameters and positions needed for the count
-   * calculation and the reconstruction
-   *
-   */
-  RPTFEMReconstruction(RPTCalculatingParameters &RPTparameters)
-    : fe(1)
-    , dof_handler(triangulation)
-    , rpt_parameters(RPTparameters)
-    , mapping(FE_SimplexP<dim>(1))
-  {}
+    /**
+     * @brief Constructor for the RPTFEMReconstructon
+     *
+     * @param RPTparameters All parameters and positions needed for the count
+     * calculation and the reconstruction
+     *
+     */
+    RPTFEMReconstruction(RPTCalculatingParameters &RPTparameters)
+            : fe(1)
+            , dof_handler(triangulation)
+            , rpt_parameters(RPTparameters)
+            , mapping(FE_SimplexP<dim>(1))
+    {}
 
 
-  void
-  L2_project();
-  void
-  test();
+    void
+    L2_project();
+    void
+    test();
+
+    void
+    rpt_fem_reconstruct();
 
 
 private:
-  void
-  setup_system();
-  void
-  assemble_system(unsigned detector_no);
-  void
-  assign_detector_positions();
-  void
-  solve_linear_system(unsigned detector_no);
-  void
-  output_results();
-  void
-  output_raw_results_per_level();
-  void
-  output_counts_on_level(
-    unsigned int                                   level,
-    std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
-  Vector<double>
-  assemble_matrix_and_rhs(std::vector<std::vector<double> > &vertex_count,
-                          std::vector<double> &experimental_count
-                          );
-  void
-  find_cell(std::vector<double> experimental_count);
+    void
+    setup_system();
+    void
+    assemble_system(unsigned detector_no);
+    void
+    assign_detector_positions();
+    void
+    solve_linear_system(unsigned detector_no);
+    void
+    output_results();
+    void
+    output_raw_results_per_level();
+    void
+    output_counts_on_level(
+            unsigned int                                   level,
+            std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
+    void
+    find_cell(std::vector<double> experimental_count);
 
-  void
-  trajectory();
+    void
+    trajectory();
 
-  void
-  cylinder_shell();
+    void
+    checkpoint();
 
-  void
-  post_process_L2_projection();
-
-  void
-  helix_trajectory();
+    void
+    load_from_checkpoint();
 
 
+    void
+    cylinder_shell();
+
+    void
+    post_process_L2_projection();
 
 
+    // ajouté
+    unsigned int n_detector;
 
-  Triangulation<dim> triangulation;
-  MappingFE<dim>     mapping;
-  FE_SimplexP<dim>   fe;
-  DoFHandler<dim>    dof_handler;
 
-  AffineConstraints<double>   constraints;
-  SparseMatrix<double>        system_matrix;
-  SparsityPattern             sparsity_pattern;
-  Vector<double>              system_rhs;
-  std::vector<Vector<double>> nodal_counts;
-  RPTCalculatingParameters    rpt_parameters;
-  std::vector<Detector<dim>>  detectors;
+    Triangulation<dim> triangulation;
+    MappingFE<dim>     mapping;
+    FE_SimplexP<dim>   fe;
+    DoFHandler<dim>    dof_handler;
+
+    AffineConstraints<double>   constraints;
+    SparseMatrix<double>        system_matrix;
+    SparsityPattern             sparsity_pattern;
+    Vector<double>              system_rhs;
+    std::vector<Vector<double>> nodal_counts;
+    RPTCalculatingParameters    rpt_parameters;
+    std::vector<Detector<dim>>  detectors;
 };
+
+Vector<double>
+assemble_matrix_and_rhs(std::vector<std::vector<double> > &vertex_count,
+                        std::vector<double> &experimental_count
+);
 
 
 

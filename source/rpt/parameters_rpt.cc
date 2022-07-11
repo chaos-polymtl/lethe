@@ -301,3 +301,42 @@ Parameters::RPTReconstructionParameters::parse_parameters(ParameterHandler &prm)
   }
   prm.leave_subsection();
 }
+
+
+void
+Parameters::RPTFEMReconstructionParameters::declare_parameters(
+  ParameterHandler &prm)
+{
+  prm.enter_subsection("fem reconstruction");
+  {
+    prm.declare_entry(
+      "triangulation file",
+      "temp_tria.tria",
+      Patterns::FileName(),
+      "Saved Triangulation filename");
+
+    prm.declare_entry("dof handler file",
+                      "temp_dof_handler.dof",
+                      Patterns::FileName(),
+                      "Saved DOF Handler filename");
+
+    prm.declare_entry("nodal counts file",
+                      "temp_nodal_counts_detector00.counts",
+                      Patterns::List(Patterns::FileName()),
+                      "Saved nodal counts of every detector for every cell of the mesh filename");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::RPTFEMReconstructionParameters::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("fem reconstruction");
+  {
+    triangulation_file             = prm.get("triangulation file");
+    dof_handler_file               = prm.get("dof handler file");
+    std::string nodal_counts_list  = prm.get("nodal counts file");
+    nodal_counts_file              = Utilities::split_string_list(nodal_counts_list);
+  }
+  prm.leave_subsection();
+}
