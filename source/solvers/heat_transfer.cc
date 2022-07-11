@@ -1,13 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/heat_transfer.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-#include <solvers/postprocessing_cfd.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -25,6 +15,15 @@
 
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/heat_transfer.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/postprocessing_cfd.h>
 
 template <int dim>
 void
@@ -64,9 +63,19 @@ HeatTransfer<dim>::setup_assemblers()
 
   if (this->simulation_parameters.multiphysics.viscous_dissipation)
     {
-      this->assemblers.push_back(
-        std::make_shared<HeatTransferAssemblerViscousDissipation<dim>>(
-          this->simulation_control));
+      if (not this->simulation_parameters.multiphysics.VOF)
+        {
+          this->assemblers.push_back(
+            std::make_shared<HeatTransferAssemblerViscousDissipation<dim>>(
+              this->simulation_control));
+        }
+      else
+        {
+          // Call for the specialized assembler
+          this->assemblers.push_back(
+            std::make_shared<HeatTransferAssemblerViscousDissipationVOF<dim>>(
+              this->simulation_control));
+        }
     }
 
   // Time-stepping schemes

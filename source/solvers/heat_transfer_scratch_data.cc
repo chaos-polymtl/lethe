@@ -1,7 +1,6 @@
 #include <core/bdf.h>
 #include <core/sdirk.h>
 #include <core/utilities.h>
-
 #include <solvers/heat_transfer_scratch_data.h>
 
 
@@ -103,6 +102,8 @@ HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
   thermal_conductivity_1           = std::vector<double>(n_q_points);
   viscosity_1                      = std::vector<double>(n_q_points);
   grad_specific_heat_temperature_1 = std::vector<double>(n_q_points);
+
+  viscous_dissipation_coefficient = std::vector<double>(n_q_points);
 }
 
 
@@ -156,6 +157,7 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
           thermal_conductivity_model->vector_value(fields,
                                                    thermal_conductivity);
           rheology_model->vector_value(fields, viscosity);
+
           break;
         }
       case 2:
@@ -209,6 +211,23 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
                 this->phase_values[q],
                 this->grad_specific_heat_temperature_0[q],
                 this->grad_specific_heat_temperature_1[q]);
+
+              // Coefficient used to neglect viscous dissipation in the fluid
+              // which is more than 10 times less dense than the other fluid
+              if (this->density_1[q] > 10. * this->density_0[q])
+                {
+                  // if phase = 0, no viscous dissipation
+                  // if phase = 1, maximum viscous dissipation
+                  this->viscous_dissipation_coefficient[q] =
+                    this->phase_values[q];
+                }
+              else
+                {
+                  // if phase = 1, no viscous dissipation
+                  // if phase = 0, maximum viscous dissipation
+                  this->viscous_dissipation_coefficient[q] =
+                    1 - this->phase_values[q];
+                }
             }
           break;
         }

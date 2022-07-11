@@ -25,14 +25,6 @@
 #ifndef lethe_heat_transfer_scratch_data_h
 #define lethe_heat_transfer_scratch_data_h
 
-#include <core/density_model.h>
-#include <core/multiphysics.h>
-#include <core/physical_property_model.h>
-#include <core/specific_heat_model.h>
-#include <core/thermal_conductivity_model.h>
-
-#include <solvers/multiphysics_interface.h>
-
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -43,6 +35,13 @@
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/density_model.h>
+#include <core/multiphysics.h>
+#include <core/physical_property_model.h>
+#include <core/specific_heat_model.h>
+#include <core/thermal_conductivity_model.h>
+#include <solvers/multiphysics_interface.h>
 
 using namespace dealii;
 
@@ -405,6 +404,8 @@ public:
   std::vector<double> density_1;
   std::vector<double> viscosity_1;
   std::vector<double> grad_specific_heat_temperature_1;
+
+  std::vector<double> viscous_dissipation_coefficient;
 
 
   // FEValues for the HT problem

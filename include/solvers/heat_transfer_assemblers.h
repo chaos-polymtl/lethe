@@ -26,7 +26,6 @@
 #define lethe_heat_transfer_assemblers_h
 
 #include <core/simulation_control.h>
-
 #include <solvers/copy_data.h>
 #include <solvers/heat_transfer_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
@@ -230,6 +229,39 @@ public:
                StabilizedMethodsCopyData &   copy_data) override;
 };
 
+/**
+ * @brief Class that assembles the viscous dissipation for the heat transfer solver,
+ * specialized in the case of VOF simulations. The only difference is that the
+ * viscous dissipation can be neglected on the low density fluid, through a
+ * viscous_dissipation_coefficient (see scratch_data for more information).
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerViscousDissipationVOF
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerViscousDissipationVOF(
+    std::shared_ptr<SimulationControl> simulation_control)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+  {}
+
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData &   copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData &   copy_data) override;
+};
 
 /**
  * @brief Class that assembles the laser heat source for the heat
