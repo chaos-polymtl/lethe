@@ -1537,12 +1537,13 @@ namespace Parameters
                         "Type of mesh adaptation"
                         "Choices are <none|uniform|kelly>.");
 
-      prm.declare_entry("variable",
-                        "velocity",
-                        Patterns::Selection(
-                          "velocity|pressure|phase|temperature"),
-                        "Variable for kelly estimation"
-                        "Choices are <velocity|pressure|phase|temperature>.");
+      prm.declare_entry(
+        "variable",
+        "velocity",
+        Patterns::Selection(
+          "velocity|pressure|phase|temperature|velocity and temperature"),
+        "Variable for kelly estimation"
+        "Choices are <velocity|pressure|phase|temperature|velocity and temperature>.");
       prm.declare_entry(
         "fraction type",
         "number",
@@ -1599,6 +1600,8 @@ namespace Parameters
         variable = Variable::phase;
       if (vop == "temperature")
         variable = Variable::temperature;
+      if (vop == "velocity and temperature")
+        variable = Variable::velocity_temperature;
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")

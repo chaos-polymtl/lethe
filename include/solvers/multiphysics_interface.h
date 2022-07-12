@@ -25,6 +25,7 @@
 #include <core/multiphysics.h>
 #include <core/parameters_multiphysics.h>
 #include <core/simulation_control.h>
+#include <core/solid_base.h>
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/simulation_parameters.h>
@@ -523,7 +524,6 @@ public:
     return block_physics_time_average_solutions[physics_id];
   }
 
-
   /**
    * @brief Request the reynolds_stress solution of a given physics.
    * WIP for an upcoming PR, not yet implemented in the solver.
@@ -539,6 +539,19 @@ public:
                 ExcInternalError());
     return reynolds_stress_solutions;
   }
+
+  /**
+   @brief Request the solid objects. Used an auxiliary physics
+    * needs to apply a boundary condition on a solid through Nitsche immersed
+   boundary method.
+    *
+    */
+  std::vector<std::shared_ptr<SolidBase<dim, dim>>> *
+  get_solids()
+  {
+    return solids;
+  }
+
 
   /**
    * @brief Request the present solution of the filtered phase fraction gradient (PFG)
@@ -629,6 +642,17 @@ public:
   }
 
   /**
+   * @brief Sets the reference to the vector of the SolidBase object. This allows the use of the solid base object in multiple physics at the same time.
+   *
+   * @param solids_input The reference to the vector of solidBase object
+   */
+  void
+  set_solid(std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids_input)
+  {
+    solids = solids_input;
+  }
+
+  /**
    * @brief Sets the reference to the solution of the physics in the multiphysics interface
    *
    * @param physics_id The physics of the DOF handler being requested
@@ -683,7 +707,6 @@ public:
                 ExcInternalError());
     physics_time_average_solutions[physics_id] = solution_vector;
   }
-
 
 
   /**
@@ -764,15 +787,25 @@ public:
    * NB : only implemented for VOF for now
    */
   virtual void
-  compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+  compute_kelly(Parameters::MeshAdaptation::Variable mesh_adaptation_variable,
+                dealii::Vector<float> &              estimated_error_per_cell)
   {
-    for (auto &iphys : physics)
+    if (mesh_adaptation_variable ==
+        Parameters::MeshAdaptation::Variable::velocity_temperature)
       {
-        iphys.second->compute_kelly(estimated_error_per_cell);
+        physics[PhysicsID::heat_transfer]->compute_kelly(
+          estimated_error_per_cell);
       }
-    for (auto &iphys : block_physics)
+    else
       {
-        iphys.second->compute_kelly(estimated_error_per_cell);
+        for (auto &iphys : physics)
+          {
+            iphys.second->compute_kelly(estimated_error_per_cell);
+          }
+        for (auto &iphys : block_physics)
+          {
+            iphys.second->compute_kelly(estimated_error_per_cell);
+          }
       }
   };
 
@@ -809,8 +842,6 @@ public:
       }
   };
 
-
-
 private:
   const Parameters::Multiphysics multiphysics_parameters;
   const Parameters::Verbosity    verbosity;
@@ -818,6 +849,7 @@ private:
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;
+
 
   // Map that states if the physics are solved before the fluid dynamics
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
@@ -839,6 +871,10 @@ private:
 
 
   std::map<PhysicsID, DoFHandler<dim> *> physics_dof_handler;
+
+  std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids;
+
+
 
   // present solution
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions;

@@ -67,7 +67,7 @@ end
 subsection nitsche
     set verbosity = verbose
     set calculate torques on solid = true
-
+    set number of solids = 1
     subsection nitsche solid 0
 	set beta = 10
 	subsection mesh

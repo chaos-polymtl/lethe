@@ -850,7 +850,8 @@ namespace Parameters
       velocity,
       pressure,
       phase,
-      temperature
+      temperature,
+      velocity_temperature,
     } variable;
 
     // Decision factor for Kelly refinement (number or fraction)

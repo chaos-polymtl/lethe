@@ -62,6 +62,7 @@ SolidBase<dim, spacedim>::SolidBase(
   , fluid_mapping(fluid_mapping)
   , param(param)
   , velocity(&param->solid_velocity)
+  , temperature(&param->solid_temperature)
 {
   if (param->solid_mesh.simplex)
     {
@@ -460,6 +461,19 @@ Function<spacedim> *
 SolidBase<dim, spacedim>::get_solid_velocity()
 {
   return velocity;
+}
+template <int dim, int spacedim>
+Function<spacedim> *
+SolidBase<dim, spacedim>::get_solid_temperature()
+{
+  return temperature;
+}
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::update_temperature_time(double time)
+{
+  temperature->set_time(time);
 }
 
 template <int dim, int spacedim>

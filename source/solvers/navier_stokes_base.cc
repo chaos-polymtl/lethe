@@ -889,11 +889,52 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         estimated_error_per_cell,
         this->fe->component_mask(velocity));
     }
+  else if (this->simulation_parameters.mesh_adaptation.variable ==
+           Parameters::MeshAdaptation::Variable::velocity_temperature)
+    {
+      Vector<float> multiphysics_estimated_error_per_cell(
+        tria.n_active_cells());
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->mapping,
+        this->dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        present_solution,
+        estimated_error_per_cell,
+        this->fe->component_mask(velocity));
+
+      multiphysics->compute_kelly(
+        this->simulation_parameters.mesh_adaptation.variable,
+        multiphysics_estimated_error_per_cell);
+
+      if (this->simulation_parameters.mesh_adaptation.fractionType ==
+          Parameters::MeshAdaptation::FractionType::number)
+        parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
+          tria,
+          multiphysics_estimated_error_per_cell,
+          this->simulation_parameters.mesh_adaptation.refinement_fraction,
+          this->simulation_parameters.mesh_adaptation.coarsening_fraction,
+          this->simulation_parameters.mesh_adaptation.maximum_number_elements);
+
+      else if (this->simulation_parameters.mesh_adaptation.fractionType ==
+               Parameters::MeshAdaptation::FractionType::fraction)
+        parallel::distributed::GridRefinement::
+          refine_and_coarsen_fixed_fraction(
+            tria,
+            multiphysics_estimated_error_per_cell,
+            this->simulation_parameters.mesh_adaptation.refinement_fraction,
+            this->simulation_parameters.mesh_adaptation.coarsening_fraction);
+    }
   else
     {
       // refine_mesh on an auxiliary physic parameter
-      multiphysics->compute_kelly(estimated_error_per_cell);
+      multiphysics->compute_kelly(
+        this->simulation_parameters.mesh_adaptation.variable,
+        estimated_error_per_cell);
     }
+
+
 
   if (this->simulation_parameters.mesh_adaptation.fractionType ==
       Parameters::MeshAdaptation::FractionType::number)

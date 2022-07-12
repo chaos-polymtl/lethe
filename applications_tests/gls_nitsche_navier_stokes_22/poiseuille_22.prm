@@ -75,6 +75,7 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
+    set number of solids = 1
     subsection nitsche solid 0
 	set beta = 100
         set number quadrature points = 3

@@ -99,7 +99,7 @@ end
 #---------------------------------------------------
 subsection nitsche
   set verbosity	= verbose
-
+  set number of solids = 1
   subsection nitsche solid 0
 	  subsection mesh
       		set type                 = gmsh

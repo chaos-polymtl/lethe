@@ -49,10 +49,13 @@ namespace Parameters
 
     // Solid velocity
     Functions::ParsedFunction<dim> solid_velocity;
+    Functions::ParsedFunction<dim> solid_temperature;
     bool                           enable_particles_motion;
+    bool                           enable_heat_bc;
 
     // Penalization term
     double beta;
+    double beta_heat;
 
     // Particle motion integration parameters
     unsigned int particles_sub_iterations;
@@ -86,15 +89,32 @@ namespace Parameters
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
+
+
+      prm.enter_subsection("solid temperature");
+      solid_temperature.declare_parameters(prm, 1);
+      prm.set("Function expression", "0");
+      prm.leave_subsection();
+
       prm.declare_entry("enable particles motion",
                         "false",
                         Patterns::Bool(),
                         "Condition on the motion of particles");
+      prm.declare_entry(
+        "enable heat boundary condition",
+        "false",
+        Patterns::Bool(),
+        "controls if a heat boundary condition is imposed on the Nitsche immersed boundary");
 
       prm.declare_entry("beta",
                         "10",
                         Patterns::Double(),
                         "Penalization term for Nitsche method");
+      prm.declare_entry(
+        "beta heat",
+        "10",
+        Patterns::Double(),
+        "Penalization term for Nitsche method applied to the heat equation");
 
       prm.declare_entry(
         "particles sub iterations",
@@ -153,8 +173,15 @@ namespace Parameters
       prm.enter_subsection("solid velocity");
       solid_velocity.parse_parameters(prm);
       prm.leave_subsection();
+
+      prm.enter_subsection("solid temperature");
+      solid_temperature.parse_parameters(prm);
+      prm.leave_subsection();
+
       enable_particles_motion  = prm.get_bool("enable particles motion");
+      enable_heat_bc           = prm.get_bool("enable heat boundary condition");
       beta                     = prm.get_double("beta");
+      beta_heat                = prm.get_double("beta heat");
       particles_sub_iterations = prm.get_integer("particles sub iterations");
       stop_particles_lost      = prm.get_bool("stop if particles lost");
       number_quadrature_points = prm.get_integer("number quadrature points");
@@ -212,7 +239,7 @@ namespace Parameters
         "Choices are <quiet|verbose>.");
 
       prm.declare_entry("number of solids",
-                        "1",
+                        "0",
                         Patterns::Integer(),
                         "Number of solid object");
 
@@ -238,9 +265,12 @@ namespace Parameters
         verbosity = Verbosity::quiet;
 
       number_solids = prm.get_integer("number of solids");
-      for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
+      nitsche_solids.resize(number_solids);
+
+      if (number_solids > 0)
         {
-          nitsche_solids[i_solid]->parse_parameters(prm, i_solid);
+          for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
+            nitsche_solids[i_solid]->parse_parameters(prm, i_solid);
         }
     }
     prm.leave_subsection();
