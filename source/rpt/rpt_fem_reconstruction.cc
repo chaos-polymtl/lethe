@@ -29,6 +29,44 @@ using namespace dealii;
 
 template <int dim>
 void
+RPTFEMReconstruction<dim>::setup_triangulation()
+{
+  // flatten the triangulation
+  Triangulation<dim> temp_triangulation;
+  Triangulation<dim> flat_temp_triangulation;
+  GridGenerator::cylinder(temp_triangulation, rpt_parameters.rpt_param.reactor_radius, rpt_parameters.rpt_param.reactor_height/2);
+  //To make the mesh finer in z diraction
+  //GridGenerator::subdivided_cylinder(temp_triangulation, 3,0.1, 0.13);
+  temp_triangulation.refine_global(2);
+
+  GridGenerator::flatten_triangulation(temp_triangulation,
+                                       flat_temp_triangulation);
+
+  GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
+                                                   triangulation);
+
+  triangulation.set_all_manifold_ids(0);
+
+  // ajouté
+  std::cout << "n_cell:" << this->triangulation.n_cells() << std::endl;
+
+  GridOut grid_out;
+  {
+    std::ofstream output_file("original_triangulation.vtk");
+    grid_out.write_vtk(triangulation, output_file);
+  }
+
+  GridTools::rotate(M_PI_2, 1, triangulation);
+  Tensor<1, dim> shift_vector({0, 0, rpt_parameters.rpt_param.reactor_height/2});
+  GridTools::shift(shift_vector, triangulation);
+  {
+    std::ofstream output_file("rotated_triangulation.vtk");
+    grid_out.write_vtk(triangulation, output_file);
+  }
+}
+
+template <int dim>
+void
 RPTFEMReconstruction<dim>::setup_system()
 {
     dof_handler.distribute_dofs(fe);
@@ -242,47 +280,16 @@ RPTFEMReconstruction<dim>::L2_project()
 {
     std::cout << "Assigning detector positions" << std::endl;
     assign_detector_positions();
+
     //ajouté
     n_detector = detectors.size();
     std::cout << "Number of detectors identified : " << detectors.size()
               << std::endl;
 
-    // flatten the triangulation
-    Triangulation<dim> temp_triangulation;
-    Triangulation<dim> flat_temp_triangulation;
-    GridGenerator::cylinder(temp_triangulation, 0.1, 0.07);
-    //To make the mesh finer in z diraction
-    //GridGenerator::subdivided_cylinder(temp_triangulation, 3,0.1, 0.13);
-    temp_triangulation.refine_global(2);
+   setup_triangulation();
 
-    GridGenerator::flatten_triangulation(temp_triangulation,
-                                         flat_temp_triangulation);
-
-    GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
-                                                     triangulation);
-
-    triangulation.set_all_manifold_ids(0);
-
-    // ajouté
-    std::cout << "n_cell:" << this->triangulation.n_cells() << std::endl;
-
-    GridOut grid_out;
-    {
-        std::ofstream output_file("original_triangulation.vtk");
-        grid_out.write_vtk(triangulation, output_file);
-    }
-
-    GridTools::rotate(1.57078, 1, triangulation);
-    Tensor<1, dim> shift_vector({0, 0, 0.07});
-    GridTools::shift(shift_vector, triangulation);
-    {
-        std::ofstream output_file("rotated_triangulation.vtk");
-        grid_out.write_vtk(triangulation, output_file);
-    }
-
-
-    setup_system();
-    for (unsigned d = 0; d < detectors.size(); ++d)
+   setup_system();
+   for (unsigned d = 0; d < detectors.size(); ++d)
     {
         std::cout << "Assembling system" << std::endl;
         assemble_system(d);
@@ -526,7 +533,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
             //std::cout << "Printing vertex " << std::endl;
             for (unsigned int v = 0; v < cell->n_vertices(); ++v)
             {
-                auto vertex_location = cell->vertex(v);
+                //auto vertex_location = cell->vertex(v);
                 //std::cout << vertex_location << std::endl;
                 if (v == 0)
                     real_location = cell->vertex(v);
@@ -617,13 +624,14 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::checkpoint()
 {
+  /*
     // save triangulation
     {
         std::ofstream ofs("temp_tria.tria");
         boost::archive::text_oarchive oa(ofs);
         triangulation.save(oa, 0);
     }
-
+  */
     // save dof_handler
     {
         std::ofstream ofs("temp_dof_handler.dof");
@@ -651,7 +659,8 @@ void
 RPTFEMReconstruction<dim>::load_from_checkpoint()
 {
   n_detector = rpt_parameters.fem_reconstruction_param.nodal_counts_file.size();
-
+  setup_triangulation();
+  /*
   // flatten the triangulation
   Triangulation<dim> temp_triangulation;
   Triangulation<dim> flat_temp_triangulation;
@@ -673,7 +682,7 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
     boost::archive::text_iarchive ia(ifs);
     triangulation.load(ia, 0);
   }
-
+*/
   // import dof handler
   {
     dof_handler.distribute_dofs(fe);

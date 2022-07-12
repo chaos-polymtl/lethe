@@ -153,6 +153,9 @@ namespace Parameters
 
   };
 
+  /**
+   * @brief FEMReconstructionParameters - Defines
+   */
   struct RPTFEMReconstructionParameters
   {
     std::string              triangulation_file;
