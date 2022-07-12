@@ -12,3 +12,4 @@ Examples
     dem/dem
     unresolved_cfd-dem/unresolved_cfd-dem
     resolved_cfd-dem/resolved_cfd-dem
+    rpt/rpt
