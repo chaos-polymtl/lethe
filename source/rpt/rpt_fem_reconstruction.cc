@@ -37,7 +37,7 @@ RPTFEMReconstruction<dim>::setup_triangulation()
   Triangulation<dim> temp_triangulation;
   Triangulation<dim> flat_temp_triangulation;
   GridGenerator::cylinder(temp_triangulation, rpt_parameters.rpt_param.reactor_radius, rpt_parameters.rpt_param.reactor_height/2);
-  //To make the mesh finer in z diraction
+  //To make the mesh finer in z direction
   //GridGenerator::subdivided_cylinder(temp_triangulation, 3,0.1, 0.13);
   temp_triangulation.refine_global(2);
 
@@ -51,7 +51,6 @@ RPTFEMReconstruction<dim>::setup_triangulation()
 
   // ajouté
   std::cout << "n_cell:" << this->triangulation.n_cells() << std::endl;
-
 
   GridOut grid_out;
   {
@@ -80,7 +79,7 @@ RPTFEMReconstruction<dim>::setup_system()
     sparsity_pattern.copy_from(dsp);
     system_matrix.reinit(sparsity_pattern);
 
-    nodal_counts.resize(detectors.size());
+    nodal_counts.resize(n_detector);
     for (auto &nodal_counts_for_one_detector : nodal_counts)
     {
         nodal_counts_for_one_detector.reinit(dof_handler.n_dofs());
@@ -124,7 +123,7 @@ RPTFEMReconstruction<dim>::assemble_system(unsigned detector_no)
     FullMatrix<double>       cell_matrix(dofs_per_cell, dofs_per_cell);
     Vector<double>           cell_rhs(dofs_per_cell);
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-    unsigned int                         cell_calculated = 0;
+    //unsigned int                         cell_calculated = 0;
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
         // std::cout << " Cell id : " << ++cell_calculated << std::endl;
@@ -250,13 +249,13 @@ RPTFEMReconstruction<dim>::output_counts_on_level(
 
     // Open a file
     std::ofstream myfile;
-    std::string   sep;
+    std::string   sep = " ";
     myfile.open(filename);
     myfile << "vertex_positions_x vertex_position_y vertex_position_z ";
     for (unsigned int i = 0; i < n_detector; ++i)
-        myfile << "detector_" + Utilities::int_to_string(i) + " ";
+        myfile << "detector_" + Utilities::int_to_string(i) + sep;
     myfile << std::endl;
-    sep = " ";
+    //sep = " ";
 
     // showing contents:
     for (auto it = dof_index_and_location.begin();
@@ -286,13 +285,13 @@ RPTFEMReconstruction<dim>::L2_project()
 
     //ajouté
     n_detector = detectors.size();
-    std::cout << "Number of detectors identified : " << detectors.size()
+    std::cout << "Number of detectors identified : " << n_detector
               << std::endl;
 
    setup_triangulation();
-
    setup_system();
-   for (unsigned d = 0; d < detectors.size(); ++d)
+
+   for (unsigned d = 0; d < n_detector; ++d)
     {
         std::cout << "Assembling system" << std::endl;
         assemble_system(d);
@@ -304,144 +303,61 @@ RPTFEMReconstruction<dim>::L2_project()
     std::cout << "Outputting results" << std::endl;
     output_results();
     checkpoint();
-    //output_raw_results_per_level();
-    //trajectory();
 }
-
+template<int dim>
 Vector<double>
 assemble_matrix_and_rhs(
         std::vector<std::vector<double>> &vertex_count,
         std::vector<double> &experimental_count)
 {
-    // Assembling system_matrix
+    // Assembling sys_matrix
     Vector<double> reference_location;
 
 
-    LAPACKFullMatrix<double> system_matrix;
-    system_matrix.reinit(3);
+    LAPACKFullMatrix<double> sys_matrix;
+    sys_matrix.reinit(dim);
 
     unsigned int detector_size = vertex_count.size();
     //std::cout << "Detector size is " << detector_size << std::endl;
 
-
-    // TODO, this could be refactored to just three loops...
-
     double sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (-vertex_count[i][0] + vertex_count[i][1]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-    }
-    system_matrix.set(0, 0, sigma);
-
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-    }
-    system_matrix.set(0, 1, sigma);
-
-
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-    }
-    system_matrix.set(0, 2, sigma);
-
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-    }
-    system_matrix.set(1, 0, sigma);
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (-vertex_count[i][0] + vertex_count[i][2]) *
-                 (-vertex_count[i][0] + vertex_count[i][2]);
-    }
-
-    system_matrix.set(1, 1, sigma);
-
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][2]);
-    }
-    system_matrix.set(1, 2, sigma);
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-    }
-    system_matrix.set(2, 0, sigma);
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][2]);
-    }
-    system_matrix.set(2, 1, sigma);
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (-vertex_count[i][0] + vertex_count[i][3]) *
-                 (-vertex_count[i][0] + vertex_count[i][3]);
-    }
-    system_matrix.set(2, 2, sigma);
+    for (unsigned int i = 0; i < dim; ++i)
+      {
+        for (unsigned int j = 0; j < dim; ++j)
+          {
+            for (unsigned int d = 0;  d < detector_size; ++d )
+              {
+                sigma += (-vertex_count[d][0] + vertex_count[d][j+1])*
+                         (-vertex_count[d][0] + vertex_count[d][i+1]);
+              }
+            sys_matrix.set(i,j,sigma);
+            sigma = 0;
+          }
+      }
 
     //std::cout << "Printing matrix " << std::endl;
-    //system_matrix.print_formatted(std::cout);
+    //sys_matrix.print_formatted(std::cout);
 
+    // Assembling sys_rhs
+    Vector<double> sys_rhs;
+    sys_rhs.reinit(dim);
 
-    // Assembling system_rhs
-    Vector<double> system_rhs;
-    system_rhs.reinit(3);
+    for (unsigned int i = 0; i < dim; ++i)
+      {
+        for (unsigned int d = 0; d < detector_size; ++d)
+          {
+            sigma += (vertex_count[d][0] - experimental_count[d]) *
+                     (-vertex_count[d][0] + vertex_count[d][i+1]);
+          }
+        sys_rhs[i] = -sigma;
+        sigma = 0;
+      }
 
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (vertex_count[i][0] - experimental_count[i]) *
-                 (-vertex_count[i][0] + vertex_count[i][1]);
-    }
-    system_rhs[0] = -sigma;
+    sys_matrix.set_property(LAPACKSupport::general);
+    sys_matrix.compute_lu_factorization();
+    sys_matrix.solve(sys_rhs);
 
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (vertex_count[i][0] - experimental_count[i]) *
-                 (-vertex_count[i][0] + vertex_count[i][2]);
-    }
-    system_rhs[1] = -sigma;
-
-    sigma = 0;
-    for (unsigned int i = 0; i < detector_size; i++)
-    {
-        sigma += (vertex_count[i][0] - experimental_count[i]) *
-                 (-vertex_count[i][0] + vertex_count[i][3]);
-    }
-    system_rhs[2] = -sigma;
-
-
-    system_matrix.set_property(LAPACKSupport::general);
-    system_matrix.compute_lu_factorization();
-    system_matrix.solve(system_rhs);
-
-    reference_location = system_rhs;
+    reference_location = sys_rhs;
     return reference_location;
 }
 
@@ -457,7 +373,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
     // for now I define experimental counts manually
 
 
-    double max_reconstruction_error = DBL_MAX;
+    //double max_reconstruction_error = DBL_MAX;
     double max_cost_function=DBL_MAX;
     double comparing_cost_function;
     Point<dim> result;
@@ -465,9 +381,6 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
     std::vector<double> check;
 
 
-    //const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-    // for (const auto &cell : cell_iterator
-    // ajouté/modifié
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
 
@@ -487,7 +400,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
 
         Vector<double> reference_location =
-                assemble_matrix_and_rhs(count_from_all_detectors, experimental_count);
+                assemble_matrix_and_rhs<dim>(count_from_all_detectors, experimental_count);
 
         // Check if the location is a valid one
         std::vector<double> err_coordinates(4);
@@ -521,7 +434,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
 
         double norm_error_coordinates = 0;
-        for (unsigned int i = 0; i < 4; ++i)
+        for (unsigned int i = 0; i < err_coordinates.size(); ++i)
         {
             norm_error_coordinates += err_coordinates[i] * err_coordinates[i];
         }
@@ -543,7 +456,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                             real_location + reference_location[v - 1] *
                                             (cell->vertex(v) - cell->vertex(0));
             }
-            max_reconstruction_error = norm_error_coordinates;
+            //max_reconstruction_error = norm_error_coordinates;
 
             /*std::cout << "The reconstruction error is : "
                       << norm_error_coordinates << std::endl;*/
@@ -590,19 +503,19 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::trajectory()
 {
-
     std::ifstream in("Test.txt");
     std::vector<std::vector<double>> v;
 
-    if (in) {
+    if (in)
+      {
         std::string line;
 
-        while (std::getline(in, line)) {
-        
+        while (std::getline(in, line))
+          {
             if (line == "")
               continue;
 
-            v.push_back(std::vector<double>());
+            v.emplace_back(std::vector<double>());
 
             // Break down the row into column values
             std::stringstream split(line);
@@ -610,15 +523,16 @@ RPTFEMReconstruction<dim>::trajectory()
 
             while (split >> value)
                 v.back().push_back(value);
-        }
-    }
+          }
+      }
     
     std::vector<double> experimental_count;
 
-    for (unsigned int i=0; i<v.size();i++){
+    for (unsigned int i=0; i<v.size();i++)
+      {
             experimental_count = v[i];
             find_cell(experimental_count);
-    }
+      }
 
 }
 
@@ -643,7 +557,7 @@ RPTFEMReconstruction<dim>::checkpoint()
 
     // save nodal_counts_per_detector
     {
-        for (unsigned int i = 0; i < detectors.size(); ++i)
+        for (unsigned int i = 0; i < n_detector; ++i)
         {
             std::string filename("temp_nodal_counts_detector" + Utilities::to_string(i,2) + ".counts");
             std::ofstream ofs(filename);
@@ -715,7 +629,7 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
   grid_out.write_vtk(triangulation, output_file);
   */
   
-  output_results();
+  //output_results();
   
 }
 
