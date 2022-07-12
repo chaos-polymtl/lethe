@@ -2,7 +2,7 @@
 Photon Count Calculation in a Cylindrical Vessel
 ==================================================
 
-In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-ray. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector.
+In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-rays. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector.
 
 
 Features
@@ -19,11 +19,12 @@ Locations of Files Used in the Example
 - File containing particle positions for the second scenario  ``examples/rpt/count_calculation/positions_horizontaly.particle``
 - File containing particle positions for the third scenario:  ``examples/rpt/count_calculation/positions_vertical.particle``
 - File containing particle positions for the fourth scenario:  ``examples/rpt/count_calculation/positions_diagonal.particle``
+- Python script for post-processing the data: ``examples/rpt/count_calculation/rpt_count_calculation_plot.py``
 
 
 Description of the Case
 -------------------------
-In this example, four different sets of particle positions are studied for a given detector position. The four different scenarios studied in this example are :
+In this example, four different sets of particle positions are studied for a given detector position. The four different scenarios studied in this example are:
 
 1. Horizontal translation of a particle along the x-axis
 2. Horizontal translation of a particle along the y-axis
@@ -70,7 +71,7 @@ where
 - :math:`f_a(\alpha, \theta)` is the probability function of the non-interaction between the :math:`\gamma`-rays emitted within :math:`\Omega` and the material inside the vessel, and
 - :math:`f_d(\alpha, \theta)` is the probability function of the interaction of the :math:`\gamma`-rays with the detector. 
 
-The two last functions may be re-written the following way :
+The two last functions may be re-written the following way:
 
 .. math::
 
@@ -91,7 +92,7 @@ where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alph
 
 Using the Monte Carlo algorithm, we approximate the previous closed surface integral by randomly selecting several thousands of photon path directions.
 
-Thus, the efficiency of the :math:`i_{th}` detector is calculated as follows :
+Thus, the efficiency of the :math:`i_{th}` detector is calculated as follows:
 
 .. math::
 
