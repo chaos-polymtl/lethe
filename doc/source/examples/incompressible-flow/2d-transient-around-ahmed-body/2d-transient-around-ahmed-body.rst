@@ -82,7 +82,7 @@ The input mesh ``Ahmed_Body_20_2D.msh`` is in the same folder as the ``.prm`` fi
 
 .. note::
 
-    For further information about `Mesh <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_ generation, we refer to the reader to the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ on the deal.ii documentation and the `Gmsh <https://gmsh.info/#Download>`_ website.
+    For further information about `Mesh <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_ generation, we refer to the reader to the :doc:`../../../tools/gmsh/gmsh` page of this documentation, or the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ on the deal.ii documentation and the `Gmsh <https://gmsh.info/#Download>`_ website.
 
 Initial and boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
