@@ -8,7 +8,6 @@ AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
   : solution_transfer_sum_velocity_dt(dof_handler)
   , solution_transfer_sum_reynolds_normal_stress_dt(dof_handler)
   , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler)
-  , solution_transfer_average_velocity(dof_handler)
   , average_calculation(false)
 {}
 
@@ -41,12 +40,35 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   // Get the inverse of the total time with the first time step since
   // the weighted velocities are calculated with the first velocity when
   // total time = 0.
-  inv_range_time = 1. / ((current_time - real_initial_time) + dt_0);
+  total_time_for_average=(current_time - real_initial_time) + dt_0;
+  inv_range_time = 1. / total_time_for_average;
 
   // Calculate the average velocities.
   average_velocities.equ(inv_range_time, sum_velocity_dt);
 
   this->calculate_reynolds_stresses(local_evaluation_point);
+}
+
+
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::update_average_velocities()
+{
+
+  // Get the inverse of the total time with the first time step since
+  // the weighted velocities are calculated with the first velocity when
+  // total time = 0.
+  if(total_time_for_average>0)
+    {
+      inv_range_time = 1.0 / total_time_for_average;
+
+      // Calculate the average velocities.
+      average_velocities.equ(inv_range_time, sum_velocity_dt);
+      reynolds_normal_stresses.equ(inv_range_time,
+                                   sum_reynolds_normal_stress_dt);
+      reynolds_shear_stresses.equ(inv_range_time, sum_reynolds_shear_stress_dt);
+    }
+
 }
 
 // Since Trilinos vectors and block vectors data doesn't have the same
@@ -167,7 +189,6 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
   sum_velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
   average_velocities.reinit(locally_owned_dofs, mpi_communicator);
   get_av.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
-  get_average.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 
   // Reinitialize independent components of stress tensor vectors.
   reynolds_normal_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
@@ -188,16 +209,12 @@ AverageVelocities<dim, VectorType, DofsType>::prepare_for_mesh_adaptation()
   get_av  = sum_velocity_dt;
   get_rns = sum_reynolds_normal_stress_dt;
   get_rss = sum_reynolds_shear_stress_dt;
-  get_average=average_velocities;
-
   solution_transfer_sum_velocity_dt.prepare_for_coarsening_and_refinement(
     get_av);
   solution_transfer_sum_reynolds_normal_stress_dt
     .prepare_for_coarsening_and_refinement(get_rns);
   solution_transfer_sum_reynolds_shear_stress_dt
     .prepare_for_coarsening_and_refinement(get_rss);
-  solution_transfer_average_velocity
-    .prepare_for_coarsening_and_refinement(get_average);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -209,13 +226,15 @@ AverageVelocities<dim, VectorType, DofsType>::post_mesh_adaptation()
     sum_reynolds_normal_stress_dt);
   solution_transfer_sum_reynolds_shear_stress_dt.interpolate(
     sum_reynolds_shear_stress_dt);
-  solution_transfer_average_velocity.interpolate(average_velocities);
+
 
 
   sum_velocity_dt_with_ghost_cells = sum_velocity_dt;
   sum_rns_dt_with_ghost_cells      = sum_reynolds_normal_stress_dt;
   sum_rss_dt_with_ghost_cells      = sum_reynolds_shear_stress_dt;
-  average_velocities_with_ghost_cells=average_velocities;
+
+  update_average_velocities();
+
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -236,9 +255,7 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_checkpoint_vectors(
   sum_rss_dt_with_ghost_cells.reinit(locally_owned_dofs,
                                      locally_relevant_dofs,
                                      mpi_communicator);
-  average_velocities_with_ghost_cells.reinit(locally_owned_dofs,
-                                     locally_relevant_dofs,
-                                     mpi_communicator);
+
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -248,13 +265,13 @@ AverageVelocities<dim, VectorType, DofsType>::save(std::string prefix)
   sum_velocity_dt_with_ghost_cells = sum_velocity_dt;
   sum_rns_dt_with_ghost_cells      = sum_reynolds_normal_stress_dt;
   sum_rss_dt_with_ghost_cells      = sum_reynolds_shear_stress_dt;
-  average_velocities_with_ghost_cells =average_velocities;
+
 
   std::vector<const VectorType *> av_set_transfer;
   av_set_transfer.push_back(&sum_velocity_dt_with_ghost_cells);
   av_set_transfer.push_back(&sum_rns_dt_with_ghost_cells);
   av_set_transfer.push_back(&sum_rss_dt_with_ghost_cells);
-  av_set_transfer.push_back(&average_velocities_with_ghost_cells);
+
 
   std::string   filename = prefix + ".averagevelocities";
   std::ofstream output(filename.c_str());

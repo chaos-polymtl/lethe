@@ -638,7 +638,7 @@ public:
    */
   void
   set_average_solution(PhysicsID                      physics_id,
-               TrilinosWrappers::MPI::Vector *solution_vector)
+                      TrilinosWrappers::MPI::Vector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
