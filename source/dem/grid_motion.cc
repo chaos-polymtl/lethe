@@ -10,7 +10,7 @@ using namespace dealii;
 template <int dim, int spacedim>
 GridMotion<dim, spacedim>::GridMotion(
   const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
-  const double                                       &dem_time_step)
+  const double &                                      dem_time_step)
 {
   // Setting grid motion type
   if (grid_motion_parameters.motion_type ==
@@ -32,8 +32,7 @@ GridMotion<dim, spacedim>::GridMotion(
 }
 
 template <>
-void
-GridMotion<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
+void GridMotion<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
 {
   throw ExcImpossibleInDim(1);
   // TODO We need to add this function to GridTools for dim=1
@@ -41,15 +40,13 @@ GridMotion<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
 }
 
 template <>
-void
-GridMotion<2, 2>::move_grid_rotational(Triangulation<2, 2> &triangulation)
+void GridMotion<2, 2>::move_grid_rotational(Triangulation<2, 2> &triangulation)
 {
   GridTools::rotate(rotation_angle, triangulation);
 }
 
 template <>
-void
-GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
+void GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
 {
   Tensor<1, 3> axis({0, 0, 0});
   axis[rotation_axis] = 1;
@@ -57,8 +54,7 @@ GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
 }
 
 template <>
-void
-GridMotion<3, 3>::move_grid_rotational(Triangulation<3, 3> &triangulation)
+void GridMotion<3, 3>::move_grid_rotational(Triangulation<3, 3> &triangulation)
 {
   Tensor<1, 3> axis({0, 0, 0});
   axis[rotation_axis] = 1;

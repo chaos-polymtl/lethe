@@ -41,7 +41,7 @@ using namespace dealii;
  */
 template <int dim>
 void
-attach_grid_to_triangulation(Triangulation<dim>              &triangulation,
+attach_grid_to_triangulation(Triangulation<dim> &             triangulation,
                              const Parameters::RPTParameters &parameters,
                              const unsigned int               n_refinement)
 {

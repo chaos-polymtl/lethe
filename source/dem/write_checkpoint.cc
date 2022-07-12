@@ -4,14 +4,14 @@ using namespace dealii;
 
 template <int dim>
 void
-write_checkpoint(TimerOutput                        &computing_timer,
-                 const DEMSolverParameters<dim>     &parameters,
+write_checkpoint(TimerOutput &                       computing_timer,
+                 const DEMSolverParameters<dim> &    parameters,
                  std::shared_ptr<SimulationControl> &simulation_control,
-                 PVDHandler                         &particles_pvdhandler,
+                 PVDHandler &                        particles_pvdhandler,
                  parallel::distributed::Triangulation<dim> &triangulation,
-                 Particles::ParticleHandler<dim>           &particle_handler,
-                 const ConditionalOStream                  &pcout,
-                 MPI_Comm                                  &mpi_communicator)
+                 Particles::ParticleHandler<dim> &          particle_handler,
+                 const ConditionalOStream &                 pcout,
+                 MPI_Comm &                                 mpi_communicator)
 {
   TimerOutput::Scope timer(computing_timer, "write_checkpoint");
 
@@ -40,21 +40,21 @@ write_checkpoint(TimerOutput                        &computing_timer,
 }
 
 template void
-write_checkpoint(TimerOutput                             &computing_timer,
-                 const DEMSolverParameters<2>            &parameters,
-                 std::shared_ptr<SimulationControl>      &simulation_control,
-                 PVDHandler                              &particles_pvdhandler,
+write_checkpoint(TimerOutput &                            computing_timer,
+                 const DEMSolverParameters<2> &           parameters,
+                 std::shared_ptr<SimulationControl> &     simulation_control,
+                 PVDHandler &                             particles_pvdhandler,
                  parallel::distributed::Triangulation<2> &triangulation,
-                 Particles::ParticleHandler<2>           &particle_handler,
-                 const ConditionalOStream                &pcout,
-                 MPI_Comm                                &mpi_communicator);
+                 Particles::ParticleHandler<2> &          particle_handler,
+                 const ConditionalOStream &               pcout,
+                 MPI_Comm &                               mpi_communicator);
 
 template void
-write_checkpoint(TimerOutput                             &computing_timer,
-                 const DEMSolverParameters<3>            &parameters,
-                 std::shared_ptr<SimulationControl>      &simulation_control,
-                 PVDHandler                              &particles_pvdhandler,
+write_checkpoint(TimerOutput &                            computing_timer,
+                 const DEMSolverParameters<3> &           parameters,
+                 std::shared_ptr<SimulationControl> &     simulation_control,
+                 PVDHandler &                             particles_pvdhandler,
                  parallel::distributed::Triangulation<3> &triangulation,
-                 Particles::ParticleHandler<3>           &particle_handler,
-                 const ConditionalOStream                &pcout,
-                 MPI_Comm                                &mpi_communicator);
+                 Particles::ParticleHandler<3> &          particle_handler,
+                 const ConditionalOStream &               pcout,
+                 MPI_Comm &                               mpi_communicator);
