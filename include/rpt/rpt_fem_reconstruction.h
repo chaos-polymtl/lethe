@@ -70,6 +70,7 @@ public:
 
     void
     L2_project();
+
     void
     test();
 
@@ -78,6 +79,8 @@ public:
 
 
 private:
+    void
+    setup_triangulation();
     void
     setup_system();
     void
@@ -136,7 +139,5 @@ Vector<double>
 assemble_matrix_and_rhs(std::vector<std::vector<double> > &vertex_count,
                         std::vector<double> &experimental_count
 );
-
-
 
 #endif
