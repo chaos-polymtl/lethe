@@ -111,39 +111,18 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // These connections only need to be created once, so we might as well
   // have set them up in the constructor of this class, but for the purpose
   // of this example we want to group the particle related instructions.
-  triangulation.signals.cell_weight.connect(
+
+  triangulation.signals.weight.connect(
+    [](const typename Triangulation<dim>::cell_iterator &,
+       const typename Triangulation<dim>::CellStatus) -> unsigned int {
+      return 1000;
+    });
+
+  triangulation.signals.weight.connect(
     [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
           &cell,
         const typename parallel::distributed::Triangulation<dim>::CellStatus
           status) -> unsigned int { return this->cell_weight(cell, status); });
-
-  triangulation.signals.pre_distributed_repartition.connect(std::bind(
-    &Particles::ParticleHandler<dim>::register_store_callback_function,
-    &particle_handler));
-
-  triangulation.signals.post_distributed_repartition.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &particle_handler,
-              false));
-
-  triangulation.signals.pre_distributed_refinement.connect(std::bind(
-    &Particles::ParticleHandler<dim>::register_store_callback_function,
-    &particle_handler));
-
-  triangulation.signals.post_distributed_refinement.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &particle_handler,
-              false));
-
-  // Necessary signals for checkpointing
-  triangulation.signals.pre_distributed_save.connect(std::bind(
-    &Particles::ParticleHandler<dim>::register_store_callback_function,
-    &particle_handler));
-
-  triangulation.signals.post_distributed_load.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &particle_handler,
-              true));
 
   // Setting contact detection method (constant or dynamic)
   if (parameters.model_parameters.contact_detection_method ==
@@ -237,8 +216,7 @@ DEMSolver<dim>::cell_weight(
   switch (status)
     {
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
-        {
+        case parallel::distributed::Triangulation<dim>::CELL_REFINE: {
           const unsigned int n_particles_in_cell =
             particle_handler.n_particles_in_cell(cell);
           return n_particles_in_cell * particle_weight;
@@ -248,8 +226,7 @@ DEMSolver<dim>::cell_weight(
       case parallel::distributed::Triangulation<dim>::CELL_INVALID:
         break;
 
-      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
-        {
+        case parallel::distributed::Triangulation<dim>::CELL_COARSEN: {
           unsigned int n_particles_in_cell = 0;
 
           for (unsigned int child_index = 0;
@@ -282,8 +259,15 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
+  // Prepare particle handler for the adaptation of the triangulation to the
+  // load
+  particle_handler.prepare_for_coarsening_and_refinement();
+
   pcout << "-->Repartitionning triangulation" << std::endl;
   triangulation.repartition();
+
+  // Unpack the particle handler avec the mesh has been repartitioned
+  particle_handler.unpack_after_coarsening_and_refinement();
 
   cells_local_neighbor_list.clear();
   cells_ghost_neighbor_list.clear();
@@ -434,7 +418,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double> &                    MOI)
+  std::vector<double>                     &MOI)
 {
   MOI.resize(torque.size());
 
