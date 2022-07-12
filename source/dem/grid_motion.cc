@@ -48,13 +48,17 @@ void GridMotion<2, 2>::move_grid_rotational(Triangulation<2, 2> &triangulation)
 template <>
 void GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
 {
-  GridTools::rotate(rotation_angle, rotation_axis, triangulation);
+  Tensor<1, 3> axis({0, 0, 0});
+  axis[rotation_axis] = 1;
+  GridTools::rotate(axis, rotation_angle, triangulation);
 }
 
 template <>
 void GridMotion<3, 3>::move_grid_rotational(Triangulation<3, 3> &triangulation)
 {
-  GridTools::rotate(rotation_angle, rotation_axis, triangulation);
+  Tensor<1, 3> axis({0, 0, 0});
+  axis[rotation_axis] = 1;
+  GridTools::rotate(axis, rotation_angle, triangulation);
 }
 
 template <int dim, int spacedim>
