@@ -42,7 +42,7 @@ if (position_x[0]!=0 and position_y==zeros):
 	plt.xlabel("x (cm)")
 	plt.ylabel("Photon count")
 	plt.grid(True)
-	plt.savefig("./plots/results_horizontalx.png", dpi=300)
+	plt.savefig("./results_horizontalx.png", dpi=300)
 	plt.show()	
 	
 # Scenario 2
@@ -51,7 +51,7 @@ elif (position_x==zeros and  position_y[0]!=0):
 	plt.xlabel("y (cm)")
 	plt.ylabel("Photon count")
 	plt.grid(True)
-	plt.savefig("./plots/results_horizontaly.png", dpi=300)
+	plt.savefig("./results_horizontaly.png", dpi=300)
 	plt.show()
 	
 # Scenario 3
@@ -60,7 +60,7 @@ elif (position_x==zeros and  position_y==position_x):
 	plt.xlabel("z (cm)")
 	plt.ylabel("Photon count")
 	plt.grid(True)
-	plt.savefig("./plots/results_vertical.png", dpi=300)
+	plt.savefig("./results_vertical.png", dpi=300)
 	plt.show()
 	
 # Scenario 4
@@ -77,7 +77,7 @@ elif (position_x[0]!=0 and position_y==position_x):
 	ax.axes.set_zlim3d(bottom=0, top=30)
 	cbar = fig.colorbar(p, location="left")
 	cbar.set_label("Photon count", rotation=90)
-	plt.savefig("./plots/results_diagonal.png", dpi=300)
+	plt.savefig("./results_diagonal.png", dpi=300)
 	plt.show()
 
 # For any other set of particle positions
