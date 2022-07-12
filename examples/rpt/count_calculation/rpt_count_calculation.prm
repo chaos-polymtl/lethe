@@ -4,12 +4,13 @@
 # RPT Monte Carlo technique
 #---------------------------------------------------
 subsection rpt parameters
-    set particle positions file          = positions.particle
+    set particle positions file          = positions_horizontalx.particle
     set verbosity                        = verbose
     set export counts                    = true
-    set counts file                      = counts.csv
+    set counts file                      = counts_horizontalx.csv
     set monte carlo iteration            = 100000
     set random number seed               = 0
+    set reactor height                   = 0.3
     set reactor radius       			 = 0.1
     set peak-to-total ratio  			 = 0.4
     set sampling time        			 = 1
