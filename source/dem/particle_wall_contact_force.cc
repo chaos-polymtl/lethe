@@ -46,7 +46,7 @@ ParticleWallContactForce<dim>::update_contact_information(
 
 
   // UPDATE ******************
-  // add floating mesh velocity to the relative vel.
+  // add floating mesh velocity to the relative velocity
 
   // Defining relative contact velocity
   Tensor<1, 3> contact_relative_velocity =

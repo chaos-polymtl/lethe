@@ -246,7 +246,8 @@ DEMSolver<dim>::cell_weight(
   switch (status)
     {
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-        case parallel::distributed::Triangulation<dim>::CELL_REFINE: {
+      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
+        {
           const unsigned int n_particles_in_cell =
             particle_handler.n_particles_in_cell(cell);
           return n_particles_in_cell * particle_weight;
@@ -256,7 +257,8 @@ DEMSolver<dim>::cell_weight(
       case parallel::distributed::Triangulation<dim>::CELL_INVALID:
         break;
 
-        case parallel::distributed::Triangulation<dim>::CELL_COARSEN: {
+      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
+        {
           unsigned int n_particles_in_cell = 0;
 
           for (unsigned int child_index = 0;
@@ -441,7 +443,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double>                     &MOI)
+  std::vector<double> &                    MOI)
 {
   MOI.resize(torque.size());
 
@@ -481,14 +483,15 @@ DEMSolver<dim>::particle_wall_broad_search()
           pfw_contact_candidates);
     }
 
+
   // Particle - floating mesh broad search
-  // if (parameters.solid_objects->number_solids > 0)
-  //   {
-  //     particle_wall_broad_search_object.find_particle_moving_mesh_contact_pairs(
-  //       moving_mesh_information,
-  //      particle_handler,
-  //       particle_moving_mesh_contact_candidates);
-  //   }
+  //  if (parameters.solid_objects->number_solids > 0)
+  {
+    particle_wall_broad_search_object.find_particle_moving_mesh_contact_pairs(
+      floating_mesh_information,
+      particle_handler,
+      particle_moving_mesh_contact_candidates);
+  }
 
   particle_point_contact_candidates =
     particle_point_line_broad_search_object.find_particle_point_contact_pairs(
@@ -524,11 +527,10 @@ DEMSolver<dim>::particle_wall_fine_search()
 
   // Particle - floating mesh fine search
   // if (parameters.solid_objects->number_solids > 0)
-  //  {
-  //    particle_wall_fine_search_object.particle_moving_mesh_fine_search(
-  //     particle_moving_mesh_contact_candidates,
-  //     particle_moving_mesh_in_contact);
-  //   }
+  {
+    particle_wall_fine_search_object.particle_moving_mesh_fine_search(
+      particle_moving_mesh_contact_candidates, particle_moving_mesh_in_contact);
+  }
 
   particle_points_in_contact =
     particle_point_line_fine_search_object.particle_point_fine_search(
@@ -573,14 +575,14 @@ DEMSolver<dim>::particle_wall_contact_force()
 
   // Particle - floating mesh contact force
   //  if (parameters.solid_objects->number_solids > 0)
-  //   {
-  //   particle_wall_contact_force_object
-  //      ->calculate_particle_moving_wall_contact_force(
-  //        particle_moving_mesh_in_contact,
-  //       simulation_control->get_time_step(),
-  //       torque,
-  //        force);
-  // }
+  {
+    particle_wall_contact_force_object
+      ->calculate_particle_moving_wall_contact_force(
+        particle_moving_mesh_in_contact,
+        simulation_control->get_time_step(),
+        torque,
+        force);
+  }
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
@@ -843,6 +845,7 @@ DEMSolver<dim>::solve()
   cell_neighbors_object.find_cell_neighbors(triangulation,
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
+
   // Finding boundary cells with faces
   boundary_cell_object.build(
     triangulation,

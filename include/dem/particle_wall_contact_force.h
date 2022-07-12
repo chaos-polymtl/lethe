@@ -71,9 +71,14 @@ public:
     std::vector<Tensor<1, 3>> &force) = 0;
 
   /**
-   * UPDATE *********************
+   * Carries out the calculation of particle-moving mesh contact force using the
+   * contact pair container
    *
-   * @param
+   * @param particle_floating_wall_pairs_in_contact A container that stores the information of
+   * particle-moving wall contact
+   * @param dt DEM time step
+   * @param torque Torque acting on particles
+   * @param force Force acting on particles
    */
   virtual void
   calculate_particle_moving_wall_contact_force(

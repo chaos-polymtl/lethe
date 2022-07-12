@@ -257,9 +257,17 @@ namespace LetheGridTools
     std::vector<SerialSolid<structdim, spacedim>> &list_of_objects);
 
   /**
-   * UPDATE ************************
+   * @brief Calculates the distance between particles and a triangle (defined using
+   * three vertices)
    *
-   * @param
+   * @return A tuple in which 0. a vector of bools to determine if the particle is
+   * close to the triangle plane, 1. a vector of projected location of particles
+   * on the triangle, 2. a vector of normal vectors of the triangles
+   *
+   * @param triangle A vector of points that defines a triangle
+   * @param particles A particle_iterator_range that refers to all the particles
+   * located in the background (base) cell
+   * @param n_particles_in_base_cell Number of particles in the base cell
    *
    */
   template <int dim>
@@ -269,8 +277,6 @@ namespace LetheGridTools
     const typename Particles::ParticleHandler<dim>::particle_iterator_range
       &                 particles,
     const unsigned int &n_particles_in_base_cell);
-
-
 
   /**
    * @brief

@@ -257,7 +257,6 @@ ParticleWallNonLinearForce<dim>::calculate_particle_moving_wall_contact_force(
           if constexpr (dim == 2)
             particle_location_3d = point_nd_to_3d(particle->get_location());
 
-
           double normal_overlap =
             ((particle_properties[DEM::PropertiesIndex::dp]) * 0.5) -
             (particle_projection_on_face.distance(particle_location_3d));

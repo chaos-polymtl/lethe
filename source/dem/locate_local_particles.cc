@@ -50,6 +50,9 @@ locate_local_particles_in_cells(
 
   update_particle_point_line_contact_container_iterators<dim>(
     particle_points_in_contact, particle_lines_in_contact, particle_container);
+
+  // UPDATE ********
+  // Add moving mesh
 }
 
 template void

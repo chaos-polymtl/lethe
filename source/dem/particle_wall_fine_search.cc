@@ -12,8 +12,9 @@ ParticleWallFineSearch<dim>::ParticleWallFineSearch()
 {}
 
 template <int dim>
-void ParticleWallFineSearch<dim>::particle_wall_fine_search(
-  std::unordered_map<
+void
+ParticleWallFineSearch<dim>::particle_wall_fine_search(
+  const std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        std::tuple<Particles::ParticleIterator<dim>,
@@ -88,7 +89,7 @@ void ParticleWallFineSearch<dim>::particle_wall_fine_search(
 template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
-  std::unordered_map<
+  const std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
     &                                               pfw_contact_candidates,
@@ -201,7 +202,7 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
 template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_moving_mesh_fine_search(
-  std::unordered_map<
+  const std::unordered_map<
     unsigned int,
     std::unordered_map<
       types::particle_index,

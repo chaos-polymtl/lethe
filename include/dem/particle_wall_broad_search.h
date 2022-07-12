@@ -18,6 +18,7 @@
  */
 
 #include <dem/boundary_cells_info_struct.h>
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
@@ -116,19 +117,27 @@ public:
       &pfw_contact_candidates);
 
   /**
-   * UPDATE ************************
+   * Finds a two-layered unordered map (particle_moving_mesh_contact_candidates)
+   * of particle iterators that shows the candidate particle-floating mesh
+   * collision candidates. These collision pairs will be investigated in the
+   * fine search to check if they are in contact or not
    *
-   * @param
+   * @param moving_mesh_information Information of the moving mesh mapped in the
+   * background triangulation
+   * @param particle_handler
+   * @param particle_moving_mesh_contact_candidates Particle-moving mesh contact
+   * candidates
    */
 
   void
   find_particle_moving_mesh_contact_pairs(
     const std::unordered_map<
-      typename Triangulation<dim>::active_cell_iterator,
-      std::unordered_map<int,
-                         typename Triangulation<dim>::active_cell_iterator>>
-      &                                    moving_mesh_information,
-    const Particles::ParticleHandler<dim> &particle_handler,
+      typename dealii::Triangulation<dim>::active_cell_iterator,
+      std::unordered_map<
+        int,
+        typename dealii::Triangulation<dim>::active_cell_iterator>,
+      dem_data_containers::cell_comparison<dim>> &moving_mesh_information,
+    const Particles::ParticleHandler<dim> &       particle_handler,
     std::unordered_map<
       unsigned int,
       std::unordered_map<types::particle_index,

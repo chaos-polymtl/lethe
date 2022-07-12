@@ -1,6 +1,8 @@
 #include <core/lethegridtools.h>
 #include <core/serial_solid.h>
 
+#include <dem/dem_properties.h>
+
 #include <deal.II/fe/fe_q.h>
 
 #include <deal.II/grid/grid_tools.h>
@@ -1115,14 +1117,12 @@ LetheGridTools::calculate_particle_triangle_distance(
     &                 particles,
   const unsigned int &n_particles_in_base_cell)
 {
-  //  std::vector<double>     distances(n_particles_in_base_cell);
   std::vector<bool>       pass_distance_check(n_particles_in_base_cell);
   std::vector<Point<dim>> projection_points(n_particles_in_base_cell);
 
-  const double radius = 0.25;
-  auto &       p_0    = triangle[0];
-  auto &       p_1    = triangle[1];
-  auto &       p_2    = triangle[2];
+  auto &p_0 = triangle[0];
+  auto &p_1 = triangle[1];
+  auto &p_2 = triangle[2];
 
   const Tensor<1, dim> e_0 = p_1 - p_0;
   const Tensor<1, dim> e_1 = p_2 - p_0;
@@ -1144,6 +1144,8 @@ LetheGridTools::calculate_particle_triangle_distance(
   unsigned int k = 0;
   for (auto &part : particles)
     {
+      const double radius =
+        part.get_properties()[DEM::PropertiesIndex::dp] * 0.5;
       Point<dim> particle_position = part.get_location();
       vector_to_plane              = p_0 - particle_position;
       double distance_squared = scalar_product(vector_to_plane, unit_normal);
@@ -1300,8 +1302,7 @@ LetheGridTools::calculate_particle_triangle_distance(
 
       pt_in_triangle = p_0 + s * e_0 + t * e_1;
 
-      projection_points[k] = pt_in_triangle;
-      // distances[k]         = pt_in_triangle.distance(particle_position);
+      projection_points[k]   = pt_in_triangle;
       pass_distance_check[k] = true;
       ++k;
     }

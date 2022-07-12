@@ -151,10 +151,12 @@ template <int dim>
 void
 ParticleWallBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
   const std::unordered_map<
-    typename Triangulation<dim>::active_cell_iterator,
-    std::unordered_map<int, typename Triangulation<dim>::active_cell_iterator>>
-    &                                    moving_mesh_information,
-  const Particles::ParticleHandler<dim> &particle_handler,
+    typename dealii::Triangulation<dim>::active_cell_iterator,
+    std::unordered_map<
+      int,
+      typename dealii::Triangulation<dim>::active_cell_iterator>,
+    dem_data_containers::cell_comparison<dim>> &moving_mesh_information,
+  const Particles::ParticleHandler<dim> &       particle_handler,
   std::unordered_map<
     unsigned int,
     std::unordered_map<
@@ -162,16 +164,18 @@ ParticleWallBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     &particle_moving_mesh_contact_candidates)
 {
+  // Clear the candidate container
   particle_moving_mesh_contact_candidates.clear();
 
+  // Loop through moving mesh information
   for (auto moving_mesh_iterator = moving_mesh_information.begin();
        moving_mesh_iterator != moving_mesh_information.end();
        ++moving_mesh_iterator)
     {
+      // Get background cell
       auto background_cell = moving_mesh_iterator->first;
 
-      // Finding particles located in the corresponding cell
-      // (boundary_cells_content.cell)
+      // Finding particles located in the backgorund cell
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_cell = particle_handler.particles_in_cell(background_cell);
 
@@ -183,6 +187,7 @@ ParticleWallBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
       // If the main cell is not empty
       if (particles_exist_in_main_cell)
         {
+          // Get cut cells (moving mesh cells)
           auto cut_cells = moving_mesh_iterator->second;
 
           for (unsigned int cut_cells_counter = 0;
@@ -192,6 +197,8 @@ ParticleWallBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
               // UPDATE ***************
               std::vector<Point<dim>> triangle;
 
+              // Call calculate_particle_triangle_distance to get the distance
+              // and projection of particles on the triangle (moving mesh cell)
               auto particle_triangle_information =
                 LetheGridTools::calculate_particle_triangle_distance(
                   triangle, particles_in_cell, n_particles_in_background_cell);
@@ -203,6 +210,8 @@ ParticleWallBroadSearch<dim>::find_particle_moving_mesh_contact_pairs(
 
               unsigned int particle_counter = 0;
 
+              // Loop through particles in the main cell and build contact
+              // candidate pairs
               for (typename Particles::ParticleHandler<
                      dim>::particle_iterator_range::iterator
                      particles_in_cell_iterator = particles_in_cell.begin();
