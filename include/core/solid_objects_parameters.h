@@ -267,7 +267,8 @@ namespace Parameters
     Functions::ParsedFunction<dim> translational_velocity;
     Functions::ParsedFunction<dim> angular_velocity;
     Point<dim>
-      center_of_rotation; // Center of rotation used for torque calculation
+      center_of_rotation; // Center of rotation used to locate the center of the
+                          // object and also used to rotate the object
   };
 
 

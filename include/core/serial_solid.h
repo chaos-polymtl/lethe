@@ -49,14 +49,15 @@
 using namespace dealii;
 
 /**
- * A base class that generates a particle handler for the solid
+ * A class that generates an object to manage a serial triangulation that
+ * represents a solid object. This class can represent solid objects for which
+ * the dimension do not match the spatial dimension. For example, a 2D surface
+ * defined in 3D or a line defined in 2D.
  *
- * @tparam dim An integer that denotes the dimension of the space in which
- * the flow is solved
+ * @tparam dim An integer that denotes the dimensionality of the geometry
  * @tparam spacedim An integer that denotes the dimension of the space occupied
  * by the embedded solid
  *
- * @author Carole-Anne Daunais, Valerie Bibeau, 2020
  */
 
 template <int dim, int spacedim = dim>
@@ -200,6 +201,7 @@ private:
   PVDHandler pvdhandler;
 
 
+  // Elements used to store the velocity of the solid object
   Function<spacedim> *translational_velocity;
   Function<spacedim> *angular_velocity;
   Point<spacedim>     center_of_rotation;
