@@ -46,7 +46,6 @@
 #include <deal.II/base/timer.h>
 
 
-
 using namespace dealii;
 
 template <int dim>
@@ -95,17 +94,14 @@ private:
     output_raw_results_per_level();
     void
     output_counts_on_level(
-            unsigned int                                   level,
+            unsigned int                                  level,
             std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
     void
     find_cell(std::vector<double> experimental_count);
-
     void
     trajectory();
-
     void
     checkpoint();
-
     void
     load_from_checkpoint();
 
@@ -117,24 +113,22 @@ private:
     post_process_L2_projection();
 
 
-    // ajouté
-    unsigned int n_detector;
-
-
     Triangulation<dim> triangulation;
-    MappingFE<dim>     mapping;
     FE_SimplexP<dim>   fe;
     DoFHandler<dim>    dof_handler;
+    RPTCalculatingParameters    rpt_parameters;
+    MappingFE<dim>     mapping;
+    unsigned int n_detector;
 
     AffineConstraints<double>   constraints;
     SparseMatrix<double>        system_matrix;
     SparsityPattern             sparsity_pattern;
     Vector<double>              system_rhs;
     std::vector<Vector<double>> nodal_counts;
-    RPTCalculatingParameters    rpt_parameters;
     std::vector<Detector<dim>>  detectors;
 };
 
+template <int dim>
 Vector<double>
 assemble_matrix_and_rhs(std::vector<std::vector<double> > &vertex_count,
                         std::vector<double> &experimental_count
