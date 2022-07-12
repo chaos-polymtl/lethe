@@ -1,6 +1,3 @@
-.. role:: raw-html(raw)
-    :format: html
-
 ==================================================
 Photon Count Calculation in a Cylindrical Vessel
 ==================================================
@@ -8,14 +5,11 @@ Photon Count Calculation in a Cylindrical Vessel
 In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-ray. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector.
 
 
-:raw-html:`<br />`
-
 Features
 ----------------------------------
 - Solver: ``rpt_3d``
 - Displays the use of the Monte Carlo method in the calculation of photon count
 
-:raw-html:`<br />`
 
 Locations of Files Used in the Example
 ---------------------------------------
@@ -26,8 +20,6 @@ Locations of Files Used in the Example
 - File containing particle positions for the third scenario:  ``examples/rpt/count_calculation/positions_vertical.particle``
 - File containing particle positions for the fourth scenario:  ``examples/rpt/count_calculation/positions_diagonal.particle``
 
-
-:raw-html:`<br />`
 
 Description of the Case
 -------------------------
@@ -46,8 +38,6 @@ The illustration below depicts the geometry of the vessel, the detector, and the
     :align: center
     :name: geometry_description
 
-:raw-html:`<br />`
-
 As a particle travels in the cylindrical vessel, its photon count (:math:`C`) measured by the detector varies according to the following relation:
 
 .. math::
@@ -63,9 +53,6 @@ where
 - :math:`\mathbf{X}` is the tracer particle's position, and
 - :math:`\xi_i(\mathbf{X})` is the efficiency of the :math:`i_{th}` detector related to the position :math:`\mathbf{X}`.
 
-
-
-:raw-html:`<br />`
 
 The efficiency of the detector may be expressed by means of the following equation:
 
@@ -101,8 +88,6 @@ And
 where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alpha,\theta)` is the length of the path traveled by the photon inside the detector.
 
 
-:raw-html:`<br />`
-
 
 Using the Monte Carlo algorithm, we approximate the previous closed surface integral by randomly selecting several thousands of photon path directions.
 
@@ -120,8 +105,6 @@ where
 - :math:`\omega(\alpha)` is the weighting factor associated with the angle :math:`\alpha`, and
 - :math:`\omega(\theta)` is the weighting factor associated with the angle :math:`\theta`.
 
-
-:raw-html:`<br />`
 
 Parameter File
 ----------------
@@ -176,9 +159,7 @@ In the subsection ``detector parameters``, we specify the file that contains two
 
 .. note::
     The parameters ``dead time``, ``activity`` and ``attenuation coefficient reactor`` are obtained using the blackbox optimization software `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ . The second example `Tuning Parameters with NOMAD <../tuning-parameters-with-nomad/tuning-parameters-with-nomad.html>`_ explains how we can obtain the values of these parameters using NOMAD.
-	
 
-:raw-html:`<br />`
 
 Running the Simulation
 ----------------------------------
@@ -194,8 +175,6 @@ Lethe will generate a ``.csv`` file with the name specified next to the ``counts
 .. warning::
     When running the code with different particle position files, don't forget to change the name of the exporting ``counts file`` in ``rpt_count_calculation.prm`` so that the previous ``.csv`` file isn't overwritten.
 
-
-:raw-html:`<br />`
 
 Results
 --------
@@ -226,8 +205,6 @@ Scenario 2: Horizontal Translation of a Particle Along the Y-Axis
 
     Case I: :math:`\mu_r = 10, \ \mu_d = 21.477`
 
-:raw-html:`<br />`
-
 
 The figure shown above illustrates the photon count of the particle as it travels from the back to the front of the vessel along the y-axis. The Case I figure shows the evolution of the photon count for the system we are currently studying (:math:`\mu_r = 10, \ \mu_d = 21.477`). Let's analyze the resulting plot.
 
@@ -247,7 +224,6 @@ Lastly, as the particle travels across the vessel, we notice fluctuations in the
 |                                                                                                         |     Case III: :math:`\mu_r = 0, \ \mu_d = 21.477`                                                       |
 |    Case II: :math:`\mu_r = 0, \ \mu_d = 1e9`                                                            |                                                                                                         |
 |                                                                                                         |                                                                                                         |
-|    :raw-html:`<br />`                                                                                   |     :raw-html:`<br />`                                                                                  |
 +---------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/counts_along_y-axis_case4.png                                                       | .. figure:: images/reactor_path_lengths.png                                                             |
 |    :alt: Results for the horizontal translation of a particle along the y-axis when detector attenuation|     :alt: Reactor path lengths for the horizontal translation of a particle along the y-axis            |
@@ -257,7 +233,6 @@ Lastly, as the particle travels across the vessel, we notice fluctuations in the
 |                                                                                                         |     :math:`e(\alpha, \theta)` function of :math:`y`                                                     |
 |    Case IV: :math:`\mu_r = 10, \ \mu_d = 1e9`                                                           |                                                                                                         |
 |                                                                                                         |                                                                                                         |
-|    :raw-html:`<br />`                                                                                   |     :raw-html:`<br />`                                                                                  |
 +---------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
 
 The Case II figure shows the evolution of the photon count in absence of attenuation due to the medium found inside the vessel and the vessel's wall, and in the absence of variation of the interaction between the emitted :math:`\gamma`-ray and the detector. By setting :math:`\mu_r = 0`, we set :math:`f_a(\alpha_j, \theta_j) = 1`. As a consequence, the count becomes independent of the path of the photon inside the vessel. In a similar manner, by setting :math:`\mu_d = 1e9`, we make :math:`f_d(\alpha_j, \theta_j)` tend to :math:`1`. Consequently, the path traveled by the photon in the detector doesn't affect the efficiency anymore. Only the weighting factors :math:`\omega(\alpha)` and :math:`\omega(\theta)` have an influence on the calculated efficiency and photon count (:math:`\xi_i \approx \omega(\alpha) \omega(\theta)`). Therefore, the Case II figure gives us an idea of how the photon count evolves according to the particle's position respective to the detector's position disregarding the interactions between the emitted ray and the medium inside the vessel and its walls, and disregarding the interactions between the ray and the detector. We can use this case as a base to understand the interactions that occur in other cases.
@@ -305,7 +280,6 @@ Looking back at the second scenario's results (Case A), we notice that the count
 |                                                                                                                                                               |
 |    Case A: :math:`N = 1e5`                                                                                                                                    |
 |                                                                                                                                                               |
-|    :raw-html:`<br />`                                                                                                                                         |
 +-----------------------------------------------------------------------------+---------------------------------------------------------------------------------+
 |  .. figure:: images/sensitivity_analysis_caseB.png                          | .. figure:: images/sensitivity_analysis_caseC.png                               |
 |    :alt: Scenario 2 results when reactor N = 10000                          |     :alt: Scenario 2 results when N = 1000000                                   |
@@ -314,11 +288,9 @@ Looking back at the second scenario's results (Case A), we notice that the count
 |                                                                             |                                                                                 |
 |    Case B: :math:`N = 1e4`                                                  |     Case C: :math:`N = 1e6`                                                     |
 |                                                                             |                                                                                 |
-|    :raw-html:`<br />`                                                       |     :raw-html:`<br />`                                                          |
 +-----------------------------------------------------------------------------+---------------------------------------------------------------------------------+
 
 
-:raw-html:`<br />`
 
 References
 -----------

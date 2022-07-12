@@ -1,6 +1,3 @@
-.. role:: raw-html(raw)
-    :format: html
-
 Detector parameters
 --------------------
 
@@ -22,15 +19,13 @@ This subsection contains the specific information of the detector. ``Detector po
 
 
 - ``detector positions file``: Filename of the text file with positions of detector(s)
-    Options: Any text file with ``.detector`` extension with the **required header**: :raw-html:`<br />`
+    Options: Any text file with ``.detector`` extension with the **required header**:
     *face_positions_x face_positions_y face_positions_z middle_positions_x middle_positions_y middle_positions_z*
 - ``radius``: Radius of detector(s) (all detectors must have the same dimensions)
     Options: Any positive float *(default value: 1)*
 - ``length``: Length of detector(s) (all detectors must have the same dimensions)
     Options: Any positive float *(default value: 1)*
 
-
-:raw-html:`<br />`
 
 The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam et al. (1978) <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
 

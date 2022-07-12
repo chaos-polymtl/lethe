@@ -1,6 +1,3 @@
-.. role:: raw-html(raw)
-    :format: html
-
 =======================================================
 Tuning Count Calculation Model Parameters with NOMAD
 =======================================================
@@ -13,15 +10,11 @@ In this example, `NOMAD <https://www.gerad.ca/en/software/nomad/>`_, the blackbo
 - the reactor's attenuation coefficient (``attenuation coefficient reactor`` (:math:`\mu_r`)).
 
 
-:raw-html:`<br />`
-
 Features
 ----------------------------------
 - Solver: ``rpt_3d``
 - Displays the use of NOMAD to calibrate the parameters of the Beam model
 
-
-:raw-html:`<br />`
 
 Locations of Files Used in the Example
 ---------------------------------------
@@ -32,8 +25,6 @@ Locations of Files Used in the Example
 - File containing experimental particle counts: ``examples/rpt/parameters_tuning/counts.experimental``
 - File containing detector positions: ``examples/rpt/parameters_tuning/positions.detector``
 
-
-:raw-html:`<br />`
 
 Description of the Case
 -------------------------
@@ -94,9 +85,6 @@ And
     f_d(\alpha_j, \theta_j) = 1 - exp\{ -\mu_d \ d(\alpha_j,\theta_j)\}
 
 where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alpha_j,\theta_j)` is the length of the path traveled by the photon inside the detector.
-
-
-:raw-html:`<br />`
 
 Parameter Files
 ----------------
@@ -169,8 +157,6 @@ In the subsection ``detector parameters``, we specify the file that contains the
         set attenuation coefficient reactor  = 10
     end
 
-:raw-html:`<br />`
-
 *param_nomad.txt* File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -199,9 +185,6 @@ The ``param_nomad.txt`` file is used when running NOMAD. This file provides init
 .. note::
     In this example, we use version 4.2.0 of NOMAD. You can get it by clicking on the **Download** button of `the software's web page <https://www.gerad.ca/en/software/nomad>`_ and filling out the required information. The steps to follow for the installation are specified in the `NOMAD 4 User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/Installation.html>`_.
 
-
-:raw-html:`<br />`
-
 Running the Simulation
 ----------------------------------
 
@@ -212,8 +195,6 @@ Assuming that ``rpt_3d`` and ``nomad`` executables are within your path, you may
     nomad param_nomad.txt
 
 NOMAD will then execute the Python script (``rpt_lethe_nomad.py``) which is specified in the ``param_nomad.txt`` file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe, and runs the ``rpt_3d`` application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates a new set of parameters until a terminating criterion is reached.
-
-:raw-html:`<br />`
 
 Results
 --------
@@ -268,8 +249,6 @@ To visualize the data and obtain the figures shown below, a python script (``rpt
     :name: Linear fit graph
 
     Linear fit
-
-:raw-html:`<br />`
 
 References
 -----------

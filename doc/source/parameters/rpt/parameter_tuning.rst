@@ -1,6 +1,3 @@
-.. role:: raw-html(raw)
-    :format: html
-
 Parameter tuning
 -------------------
 
@@ -42,7 +39,7 @@ This subsection contains information regarding the tuning parameters with NOMAD.
 
 - ``experimental data file``: Filename of the text file with experimental/artificial counts
     Options: Any text file with ``.experimental`` extension with the
-    **required header**: :raw-html:`<br />` *experimental_counts*
+    **required header**: *experimental_counts*
 
 
 References

@@ -1,6 +1,3 @@
-.. role:: raw-html(raw)
-    :format: html
-
 RPT parameters
 -------------------
 
@@ -42,8 +39,6 @@ This subsection contains the general information required for the photon count c
     Options: Any positive float *(default value: 0.1)*
 - ``reactor radius``: Radius of the cylindrical reactor vessel [m]
     Options: Any positive float *(default value: 0.1)*
-
-:raw-html:`<br />`
 
 
 The following parameters are variables in the gamma-ray Monte-Carlo model from `Beam et al. (1978) <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_:
