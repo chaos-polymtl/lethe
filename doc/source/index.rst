@@ -49,6 +49,7 @@ Contents
    parameters/parameters
    examples/examples
    theory/theory
+   tools/tools
    publications
    referencing
    contributing
