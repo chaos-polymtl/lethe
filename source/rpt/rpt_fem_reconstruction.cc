@@ -49,9 +49,6 @@ RPTFEMReconstruction<dim>::setup_triangulation()
 
   triangulation.set_all_manifold_ids(0);
 
-  // ajouté
-  std::cout << "n_cell:" << this->triangulation.n_cells() << std::endl;
-
   GridOut grid_out;
   {
     std::ofstream output_file("original_triangulation.vtk");
@@ -201,12 +198,10 @@ RPTFEMReconstruction<dim>::output_results()
 {
     DataOut<dim> data_out;
     data_out.attach_dof_handler(dof_handler);
-    //for (unsigned d = 0; d < detectors.size(); ++d)
-    //ajouté
     for (unsigned d = 0; d < n_detector; ++d)
     {
         data_out.add_data_vector(nodal_counts[d],
-                                 "detector_" + std::to_string(d));
+                                 "detector_" + Utilities::to_string(d,2));
     }
     data_out.build_patches();
     std::ofstream output("solution.vtu");
@@ -245,7 +240,7 @@ RPTFEMReconstruction<dim>::output_counts_on_level(
 {
     std::cout << "Outputting on level : " << level << std::endl;
     std::string filename =
-            "raw_counts_" + Utilities::int_to_string(level) + ".dat";
+            "raw_counts_" + Utilities::to_string(level) + ".dat";
 
     // Open a file
     std::ofstream myfile;
@@ -253,25 +248,21 @@ RPTFEMReconstruction<dim>::output_counts_on_level(
     myfile.open(filename);
     myfile << "vertex_positions_x vertex_position_y vertex_position_z ";
     for (unsigned int i = 0; i < n_detector; ++i)
-        myfile << "detector_" + Utilities::int_to_string(i) + sep;
+        myfile << "detector_" + Utilities::to_string(i,2) + sep;
     myfile << std::endl;
-    //sep = " ";
 
     // showing contents:
     for (auto it = dof_index_and_location.begin();
          it != dof_index_and_location.end();
          ++it)
     {
-        for (unsigned d = 0; d < dim; ++d){
+        for (unsigned d = 0; d < dim; ++d)
             myfile << it->second[d] << sep;
-        }
+
+        for (unsigned int i = 0; i < n_detector; ++i)
+          myfile << nodal_counts[i][it->first] << sep;
+
         myfile << "\n";
-
-
-        //for (unsigned int i = 0; i < detectors.size(); ++i)
-        //myfile << nodal_counts[i][it->first] << sep;
-
-        //myfile << "\n";
     }
     myfile.close();
 }
@@ -283,7 +274,6 @@ RPTFEMReconstruction<dim>::L2_project()
     std::cout << "Assigning detector positions" << std::endl;
     assign_detector_positions();
 
-    //ajouté
     n_detector = detectors.size();
     std::cout << "Number of detectors identified : " << n_detector
               << std::endl;
@@ -312,7 +302,6 @@ assemble_matrix_and_rhs(
 {
     // Assembling sys_matrix
     Vector<double> reference_location;
-
 
     LAPACKFullMatrix<double> sys_matrix;
     sys_matrix.reinit(dim);
@@ -404,7 +393,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
         // Check if the location is a valid one
         std::vector<double> err_coordinates(4);
-        //what about the ones that they meet all four conditions? We are considering they are not valid but they are so close!
+        //what about the ones that they meet all four conditions? We are considering they are not valid, but they are so close!
 
         for (unsigned int i = 0; i < 3; ++i)
         {
@@ -434,9 +423,10 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
 
         double norm_error_coordinates = 0;
-        for (unsigned int i = 0; i < err_coordinates.size(); ++i)
+
+        for (const double &error : err_coordinates)
         {
-            norm_error_coordinates += err_coordinates[i] * err_coordinates[i];
+            norm_error_coordinates += error * error;
         }
 
         if (norm_error_coordinates < 0.05)
@@ -452,8 +442,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                 if (v == 0)
                     real_location = cell->vertex(v);
                 else
-                    real_location =
-                            real_location + reference_location[v - 1] *
+                    real_location += reference_location[v - 1] *
                                             (cell->vertex(v) - cell->vertex(0));
             }
             //max_reconstruction_error = norm_error_coordinates;
@@ -476,16 +465,16 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                         (nodal_counts[i][cell->vertex_dof_index(2, 0)]*(reference_location[1]))+
                         (nodal_counts[i][cell->vertex_dof_index(3, 0)]*(reference_location[2]));
 
-                count1=count1-experimental_count[i];
+                count1-=experimental_count[i];
                 cost_function1+=count1*count1;
 
             }
             //std::cout<<cost_function1<<std::endl;
             comparing_cost_function=cost_function1;
-            result=real_location;
+
             if (comparing_cost_function<max_cost_function){
                 max_cost_function=comparing_cost_function;
-                final_result=result;
+                final_result=real_location;
             }
         }
         count_from_all_detectors.clear();
@@ -504,7 +493,7 @@ void
 RPTFEMReconstruction<dim>::trajectory()
 {
     std::ifstream in("Test.txt");
-    std::vector<std::vector<double>> v;
+    std::vector<std::vector<double>> all_experimental_counts;
 
     if (in)
       {
@@ -515,23 +504,20 @@ RPTFEMReconstruction<dim>::trajectory()
             if (line == "")
               continue;
 
-            v.emplace_back(std::vector<double>());
+            all_experimental_counts.emplace_back(std::vector<double>());
 
             // Break down the row into column values
             std::stringstream split(line);
             double value;
 
             while (split >> value)
-                v.back().push_back(value);
+                all_experimental_counts.back().push_back(value);
           }
       }
-    
-    std::vector<double> experimental_count;
 
-    for (unsigned int i=0; i<v.size();i++)
+    for (std::vector<double> &experimental_counts : all_experimental_counts)
       {
-            experimental_count = v[i];
-            find_cell(experimental_count);
+          find_cell(experimental_counts);
       }
 
 }
@@ -591,7 +577,8 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
 
   //print number of cells
   std::cout << "n_cell:" << this->triangulation.n_cells() << std::endl;
-
+*/
+/*
   // import triangulation
   {
     std::ifstream ifs(rpt_parameters.fem_reconstruction_param.triangulation_file);
