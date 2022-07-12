@@ -14,8 +14,10 @@
 
 #include <deal.II/numerics/data_out.h>
 
+
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+
 
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/rpt_fem_reconstruction.h>
@@ -49,6 +51,7 @@ RPTFEMReconstruction<dim>::setup_triangulation()
 
   // ajouté
   std::cout << "n_cell:" << this->triangulation.n_cells() << std::endl;
+
 
   GridOut grid_out;
   {
@@ -462,8 +465,6 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
     std::vector<double> check;
 
 
-
-
     //const auto &cell_iterator = this->dof_handler.active_cell_iterators();
     // for (const auto &cell : cell_iterator
     // ajouté/modifié
@@ -581,7 +582,6 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
     //std::cout<<"this: "<<max_cost_function<<std::endl;
     std::cout<<final_result<<std::endl;
 
-
 }
 
 
@@ -598,6 +598,7 @@ RPTFEMReconstruction<dim>::trajectory()
         std::string line;
 
         while (std::getline(in, line)) {
+        
             if (line == "")
               continue;
 
@@ -611,6 +612,7 @@ RPTFEMReconstruction<dim>::trajectory()
                 v.back().push_back(value);
         }
     }
+    
     std::vector<double> experimental_count;
 
     for (unsigned int i=0; i<v.size();i++){
@@ -711,9 +713,10 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
   GridOut grid_out;
   std::ofstream output_file("loaded_rotated_triangulation.vtk");
   grid_out.write_vtk(triangulation, output_file);
-
-  output_results();
   */
+  
+  output_results();
+  
 }
 
 template <int dim>
@@ -724,5 +727,6 @@ RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
   output_raw_results_per_level();
   trajectory();
 }
+
 
 template class RPTFEMReconstruction<3>;
