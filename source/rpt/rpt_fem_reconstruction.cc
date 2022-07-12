@@ -591,6 +591,9 @@ RPTFEMReconstruction<dim>::trajectory()
         std::string line;
 
         while (std::getline(in, line)) {
+            if (line == "")
+              continue;
+
             v.push_back(std::vector<double>());
 
             // Break down the row into column values
@@ -604,11 +607,8 @@ RPTFEMReconstruction<dim>::trajectory()
     std::vector<double> experimental_count;
 
     for (unsigned int i=0; i<v.size();i++){
-        if (v[i].size() != 0)
-          {
             experimental_count = v[i];
             find_cell(experimental_count);
-          }
     }
 
 }
