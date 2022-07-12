@@ -78,30 +78,74 @@ public:
 
 
 private:
+    /**
+     * @brief Set up the triangulation that covers the domain of the reactor.
+     */
     void
     setup_triangulation();
+
+    /**
+     * @brief Set up the system to be solved by enumerating the degrees of freedom and set up the matrix and vector objects to hold the system data.
+     */
     void
     setup_system();
+
+    /**
+     * @brief Assemble matrix and right hand side that form the linear system that need to be solved for a given detector.
+     * @param detector_no detector_no defines the detector for which the linear system is being assembled.
+     */
     void
     assemble_system(unsigned detector_no);
+
+    /**
+     * @brief Reads file with detector positions, generates Detector objects, and stores them in a vector.
+     */
     void
     assign_detector_positions();
+
+    /**
+     * @brief Solve the linear system for a given detector to get the nodal counts.
+     * @param detector_no detector_no defines the detector for which the linear system is being solved.
+     */
     void
     solve_linear_system(unsigned detector_no);
+
+    /**
+     * @brief Outputs the solution of the linear system (nodal counts) in a ".vtu" file format.
+     */
     void
     output_results();
+
+    /**
+     * @brief Outputs for every level of the triangulation the position of each vertex of every cell and the photon count at that position for every detector in ".dat" file format.
+     */
     void
     output_raw_results_per_level();
+
+    /**
+     * @brief Outputs for a given level of the triangulation the position of each vertex of every cell and the photon count at that position for every detector in ".dat" file format with the use the "output_counts_on_level" function.
+     */
     void
     output_counts_on_level(
             unsigned int                                  level,
             std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
+
+    /**
+     * @brief Finds the position of the particle.
+     * @param experimental_count experimental_count contains the experimental counts of every detector for a given position.
+     */
     void
     find_cell(std::vector<double> experimental_count);
+
+    /**
+     * @brief Outputs for a given level of the triangulation the position of each vertex of every cell and the photon count at that position for every detector in ".dat" file format.
+     */
     void
     trajectory();
+
     void
     checkpoint();
+
     void
     load_from_checkpoint();
 
