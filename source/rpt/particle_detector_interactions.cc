@@ -304,8 +304,6 @@ double
 ParticleDetectorInteractions<dim>::calculate_detector_interaction_probability(
   double &detector_path_length)
 {
-  calculate_detector_path_length();
-
   double mu_d = parameters.attenuation_coefficient_detector;
   double detector_interaction_probability =
     1 - std::exp(-mu_d * detector_path_length);
@@ -318,8 +316,6 @@ double
 ParticleDetectorInteractions<dim>::calculate_non_interaction_probability(
   double &reactor_path_length)
 {
-  calculate_reactor_path_length();
-
   double mu_a                        = attenuation_coefficient_reactor;
   double non_interaction_probability = std::exp(-mu_a * reactor_path_length);
 
