@@ -24,6 +24,9 @@ write_checkpoint(TimerOutput &                       computing_timer,
       particles_pvdhandler.save(prefix);
     }
 
+  // Prepare the particle handler for checkpointing
+  particle_handler.prepare_for_serialization();
+
   std::ostringstream            oss;
   boost::archive::text_oarchive oa(oss, boost::archive::no_header);
   oa << particle_handler;
