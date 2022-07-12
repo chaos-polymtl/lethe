@@ -45,7 +45,6 @@ main(int argc, char *argv[])
 
       RPTFEMReconstruction<3> rpt_reconstruct(rpt_parameters);
       rpt_reconstruct.rpt_fem_reconstruct();
-
     }
   catch (std::exception &exc)
     {
