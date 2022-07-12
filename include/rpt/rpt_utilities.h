@@ -41,7 +41,7 @@ using namespace dealii;
  */
 template <int dim>
 void
-attach_grid_to_triangulation(Triangulation<dim> &             triangulation,
+attach_grid_to_triangulation(Triangulation<dim>              &triangulation,
                              const Parameters::RPTParameters &parameters,
                              const unsigned int               n_refinement)
 {
@@ -51,7 +51,8 @@ attach_grid_to_triangulation(Triangulation<dim> &             triangulation,
                                      5,
                                      parameters.reactor_radius,
                                      parameters.reactor_height / 2.);
-  GridTools::rotate(M_PI_2, 1, triangulation);
+  Tensor<1, dim> axis({0, 1, 0});
+  GridTools::rotate(axis, M_PI_2, triangulation);
   const Tensor<1, dim> shift_vector({0, 0, parameters.reactor_height / 2.});
   GridTools::shift(shift_vector, triangulation);
 
