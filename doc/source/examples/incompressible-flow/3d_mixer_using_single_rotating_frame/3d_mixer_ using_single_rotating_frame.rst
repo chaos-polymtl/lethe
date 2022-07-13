@@ -1,13 +1,8 @@
-.. role:: raw-html(raw)
-    :format: html
-
 ========================================================
 3D Ribbon Mixer using a Single Rotating Reference Frame
 ========================================================
 
 When designing an industrial mixer, it is essential to evaluate the power consumed by the agitator. To do so, we usually refer to graphs correlating the power number (:math:`N_p`) as a function of the Reynolds number (:math:`Re`). :math:`N_p` is a dimensionless number that relates the power consumed by the agitator to the geometry of the system, the speed of the agitator, and the properties of the material being mixed (density :math:`\rho` and viscosity :math:`\mu`). In this example, using a single rotating frame (SRF) model, we simulate a fluid being mixed in a ribbon mixer for different flow conditions (different values :math:`Re`) to generate :math:`N_p` vs :math:`Re` curves.
-
-:raw-html:`<br />`
 
 Features
 -------------
@@ -17,14 +12,11 @@ Features
 - Calculation of the power number (:math:`N_p`) with a python script
 - Use of a cluster to run simulations
 
-:raw-html:`<br />`
 
 Locations of Files Used in the Example
 ---------------------------------------
 - Parameter file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/ribbon_gls.prm``
 
-
-:raw-html:`<br />`
 
 Description of the Case
 -------------------------
@@ -67,7 +59,6 @@ In order to genrate :math:`N_p` vs :math:`Re` curves, we have to calculate :math
 
 where :math:`\rho` is the density of the fluid.
 
-:raw-html:`<br />`
 
 Parameter File
 --------------
@@ -243,7 +234,7 @@ Relatively standard parameters are used for the linear solver. From our experien
     end
 
 
-:raw-html:`<br />`
+
 
 Running the Simulation
 ------------------------------------
@@ -261,13 +252,11 @@ Generating :math:`N_p` vs :math:`Re` curves (:math:`Re \in [0.1, 100]`)
 
 
 
-:raw-html:`<br />`
-
 Results
 --------
 
 
-:raw-html:`<br />`
+
 
 References
 -----------
