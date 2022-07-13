@@ -163,7 +163,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           cells_inside_map[cell] = {cell_is_inside, p_id_inside};
         }
     }
-
+}
+/*
   Vector<double> cell_cut(this->triangulation->n_active_cells());
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
@@ -191,7 +192,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   data_out.build_patches();
   std::ofstream output("regular.vtu");
   data_out.write_vtu(output);
-}
+}*/
 
 
 template <int dim>
@@ -223,8 +224,8 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
       bool         empty    = true;
       unsigned int lvl_iter = 0;
 
-      // Search for candidates until at least one is found or until level 2
-      while (empty || lvl_iter < 3)
+      // Search for candidates until at least one is found or until level 3
+      while (empty || lvl_iter < 4)
         {
           const auto &cell_iterator =
             this->dof_handler.cell_iterators_on_level(lvl_iter);
@@ -317,7 +318,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
         }
     }
 
-  Vector<double> cell_cut_opt(this->triangulation->n_active_cells());
+/*  Vector<double> cell_cut_opt(this->triangulation->n_active_cells());
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
@@ -343,7 +344,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
   data_out.add_data_vector(cell_cut_opt, "cell_cut");
   data_out.build_patches();
   std::ofstream output("optimized.vtu");
-  data_out.write_vtu(output);
+  data_out.write_vtu(output);*/
 }
 
 
@@ -356,7 +357,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
   bool cell_is_inside = false;
   bool cell_is_cut    = false;
 
-  double search_radius   = particles[p_id].radius; // * (1.0 + pow(10, -5));
+  double search_radius   = particles[p_id].radius;
   auto   position = particles[p_id].position;
 
   bool point_inside_cell = cell->point_inside(position);
