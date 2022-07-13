@@ -46,6 +46,18 @@ namespace Parameters
     adaptative
   };
 
+  /** @brief Class to account for different viscous dissipation fluid indicator:
+   *  - fluid0: viscous dissipation in fluid 0 only,
+   *  - fluid1: viscous dissipation in fluid 1 only,
+   *  - both: viscous dissipation on both fluids
+   */
+  enum class DissipationIndicator
+  {
+    fluid0,
+    fluid1,
+    both
+  };
+
   /**
    * @brief Defines the subparameters for free surface peeling/wetting mechanism.
    * Has to be declared before member creation in VOF structure.
@@ -200,6 +212,8 @@ namespace Parameters
     Parameters::VOF_InterfaceSharpening sharpening;
     Parameters::VOF_PeelingWetting      peeling_wetting;
     Parameters::VOF_SurfaceTensionForce surface_tension_force;
+
+    Parameters::DissipationIndicator viscous_dissipation_indicator;
 
     void
     declare_parameters(ParameterHandler &prm);

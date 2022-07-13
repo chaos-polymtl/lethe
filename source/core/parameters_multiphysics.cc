@@ -102,6 +102,12 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
     sharpening.declare_parameters(prm);
     peeling_wetting.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
+
+    prm.declare_entry("viscous dissipation indicator",
+                      "fluid 1",
+                      Patterns::Selection("fluid 1|fluid 0|both"),
+                      "Fluid in which to apply the viscous dissipation in "
+                      "heat equation <fluid 1|fluid 0|both>");
   }
   prm.leave_subsection();
 }
@@ -115,6 +121,17 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     sharpening.parse_parameters(prm);
     peeling_wetting.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
+
+    // DissipationIndicator
+    const std::string op = prm.get("viscous dissipation indicator");
+    if (op == "fluid 1")
+      viscous_dissipation_indicator = Parameters::DissipationIndicator::fluid1;
+    else if (op == "fluid 0")
+      viscous_dissipation_indicator = Parameters::DissipationIndicator::fluid0;
+    else if (op == "both")
+      viscous_dissipation_indicator = Parameters::DissipationIndicator::both;
+    else
+      throw(std::runtime_error("Invalid viscous dissipation indicator"));
 
     // Error definitions
     if (sharpening.type == Parameters::SharpeningType::adaptative)

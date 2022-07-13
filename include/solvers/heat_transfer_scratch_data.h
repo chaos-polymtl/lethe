@@ -443,9 +443,10 @@ public:
   /**
    * Scratch component for the VOF auxiliary physics
    */
-  bool                gather_vof;
-  unsigned int        n_dofs_vof;
-  std::vector<double> phase_values;
+  bool                             gather_vof;
+  unsigned int                     n_dofs_vof;
+  Parameters::DissipationIndicator viscous_dissipation_indicator;
+  std::vector<double>              phase_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_vof;
 
