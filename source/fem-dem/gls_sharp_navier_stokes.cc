@@ -318,33 +318,33 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
         }
     }
 
-/*  Vector<double> cell_cut_opt(this->triangulation->n_active_cells());
+  /*  Vector<double> cell_cut_opt(this->triangulation->n_active_cells());
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
-    {
-      bool cell_is_cut;
-      // The id of the particle that cut the cell. Returns 0 if the cell is
-      // not cut.
-      unsigned int ib_particle_id;
-      std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
-      if (cell_is_cut)
-        {
-          cell_cut_opt(cell->global_active_cell_index()) = 1;
-        }
-    }
+    for (const auto &cell : this->dof_handler.active_cell_iterators())
+      {
+        bool cell_is_cut;
+        // The id of the particle that cut the cell. Returns 0 if the cell is
+        // not cut.
+        unsigned int ib_particle_id;
+        std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+        if (cell_is_cut)
+          {
+            cell_cut_opt(cell->global_active_cell_index()) = 1;
+          }
+      }
 
-    // Printing the final position for all the vertices
+      // Printing the final position for all the vertices
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  Legacy::DataOut<dim>                   data_out;
-#else
-  DataOut<dim>    data_out;
-#endif
-  data_out.attach_dof_handler(this->dof_handler);
-  data_out.add_data_vector(cell_cut_opt, "cell_cut");
-  data_out.build_patches();
-  std::ofstream output("optimized.vtu");
-  data_out.write_vtu(output);*/
+  #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
+    Legacy::DataOut<dim>                   data_out;
+  #else
+    DataOut<dim>    data_out;
+  #endif
+    data_out.attach_dof_handler(this->dof_handler);
+    data_out.add_data_vector(cell_cut_opt, "cell_cut");
+    data_out.build_patches();
+    std::ofstream output("optimized.vtu");
+    data_out.write_vtu(output);*/
 }
 
 
@@ -357,8 +357,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
   bool cell_is_inside = false;
   bool cell_is_cut    = false;
 
-  double search_radius   = particles[p_id].radius;
-  auto   position = particles[p_id].position;
+  double search_radius = particles[p_id].radius;
+  auto   position      = particles[p_id].position;
 
   bool point_inside_cell = cell->point_inside(position);
 
@@ -3696,8 +3696,8 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
       vertices_cell_mapping();
 
-      if (this->simulation_parameters.particlesParameters
-            ->cut_cells_mapping == "regular")
+      if (this->simulation_parameters.particlesParameters->cut_cells_mapping ==
+          "regular")
         generate_cut_cells_map();
       else if (this->simulation_parameters.particlesParameters
                  ->cut_cells_mapping == "automatic")

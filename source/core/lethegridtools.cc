@@ -82,7 +82,7 @@ LetheGridTools::find_cell_around_point_with_tree(
         }
       lvl += 1;
     }
-  lvl = 0;
+  lvl                   = 0;
   double best_dist_last = DBL_MAX;
   if (cell_found_on_level_search)
     {

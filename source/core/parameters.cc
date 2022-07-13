@@ -2040,7 +2040,8 @@ namespace Parameters
       load_particles_from_file = prm.get_bool("load particles from file");
       particles_file           = prm.get("particles file");
       cut_cells_mapping        = prm.get("cut cells mapping");
-      if (cut_cells_mapping != "automatic" && cut_cells_mapping != "regular" && cut_cells_mapping != "performance test")
+      if (cut_cells_mapping != "automatic" && cut_cells_mapping != "regular" &&
+          cut_cells_mapping != "performance test")
         throw(std::logic_error(
           "Invalid cut cells mapping. Cut cells mapping options are automatic|regular|performance test."));
 
