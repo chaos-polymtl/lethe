@@ -5,13 +5,21 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 		 = 1e-5
-  set time end       					 = 6.25
+  set time end       					 = 7.5
   set log frequency				         = 1000
   set output frequency            		 = 1000
   set output path 					     = ./
-  set output name                        = simulation3
+  set output name                        = sim1
 end
 
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+subsection restart
+	set checkpoint       		     = true
+	set filename      				 = hopper90
+	set frequency					 = 100000
+end
 
 # --------------------------------------------------
 # Model parameters
@@ -31,14 +39,14 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection lagrangian physical properties
-    set gx            		 			            = 0.0
-    set gy            		 			            = 0.0
-    set gz            		 			            = -9.81
-    set number of particle types	                = 1
+    set gx            		 			        = 0.0
+    set gy            		 			        = -9.81
+    set gz            		 			        = 0.0
+    set number of particle types	            = 1
     subsection particle type 0
         set size distribution type		        = uniform
         set diameter            	 	        = 0.00224
-        set number				                = 6790
+        set number				                = 40740
         set density particles            	    = 2500
         set young modulus particles         	= 1000000
         set poisson ratio particles          	= 0.3
@@ -58,17 +66,17 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				                = non_uniform
-    set inserted number of particles at each time step  = 485
+    set inserted number of particles at each time step  = 2910
     set insertion frequency            		 	        = 25000
-    set insertion box minimum x            	 	        = -.049
-    set insertion box minimum y            	            = -.004
-    set insertion box minimum z            	            = .17
-    set insertion box maximum x            	            = 0.049
-    set insertion box maximum y           	 	        = -.0015
-    set insertion box maximum z            	            = .197
-    set insertion distance threshold			        = 1
+    set insertion box minimum x            	 	        = -0.06
+    set insertion box minimum y            	            =  0.123
+    set insertion box minimum z            	            =  0.002
+    set insertion box maximum x            	            =  0.06
+    set insertion box maximum y           	 	        =  0.16
+    set insertion box maximum z            	            =  0.031
+    set insertion distance threshold			        = 1.5
     set insertion random number range			        = 0.1
-    set insertion random number seed			        = 19
+    set insertion random number seed			        = 20
 end
 
 #---------------------------------------------------
@@ -76,8 +84,8 @@ end
 #---------------------------------------------------
 subsection mesh
 	set type = gmsh
-	set file name = hopper.msh
-	set initial refinement = 4
+	set file name = hopper90.msh
+	set initial refinement = 1
 	set expand particle-wall contact search = false
 end
 
@@ -85,20 +93,20 @@ end
 # Floating Walls
 #---------------------------------------------------
 subsection floating walls
-    set number of floating walls	                = 1
+    set number of floating walls    = 1
     	subsection wall 0
 		subsection point on wall
-			set x				= 0
-			set y				= 0
-			set z				= 0
+			set x			    	= 0
+			set y			    	= 0
+			set z			       	= 0
 		end
 		subsection normal vector
-			set nx				= 0	
-			set ny				= 0
-			set nz				= 1
+			set nx			        = 0
+			set ny			    	= 1
+			set nz			    	= 0
 		end
-		set start time				= 0
-		set end time				= 4
+		set start time		        = 0
+		set end time		        = 3.75
     	end
 end
 
