@@ -157,6 +157,7 @@ subsection particles
 	set initial refinement = 0
 	set integrate motion = false
 	set assemble Navier-Stokes inside particles = false
+    set cut cells mapping = regular
 
     subsection particle info 0 
         subsection position

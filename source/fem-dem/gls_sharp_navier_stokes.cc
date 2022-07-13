@@ -164,7 +164,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
         }
     }
 
-  /*Vector<double> cell_cut(this->triangulation->n_active_cells());
+  Vector<double> cell_cut(this->triangulation->n_active_cells());
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
@@ -190,7 +190,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   data_out.add_data_vector(cell_cut, "cell_cut");
   data_out.build_patches();
   std::ofstream output("regular.vtu");
-  data_out.write_vtu(output);*/
+  data_out.write_vtu(output);
 }
 
 
@@ -317,7 +317,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
         }
     }
 
-  /*Vector<double> cell_cut_opt(this->triangulation->n_active_cells());
+  Vector<double> cell_cut_opt(this->triangulation->n_active_cells());
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
@@ -343,7 +343,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
   data_out.add_data_vector(cell_cut_opt, "cell_cut");
   data_out.build_patches();
   std::ofstream output("optimized.vtu");
-  data_out.write_vtu(output);*/
+  data_out.write_vtu(output);
 }
 
 
@@ -356,7 +356,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
   bool cell_is_inside = false;
   bool cell_is_cut    = false;
 
-  double search_radius   = particles[p_id].radius * (1.0 + pow(10, -5));
+  double search_radius   = particles[p_id].radius; // * (1.0 + pow(10, -5));
   auto   position = particles[p_id].position;
 
   bool point_inside_cell = cell->point_inside(position);
@@ -365,7 +365,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
   unsigned int nb_vertices_inside = 0;
   for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
     {
-      if ((cell->vertex(i) - position).norm() <= search_radius)
+      if ((cell->vertex(i) - position).norm() < search_radius)
         ++nb_vertices_inside;
     }
 
@@ -434,7 +434,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
             {
               projected_point_over_face = cell->point_inside(projected_point);
 
-              if ((position - projected_point).norm() <= search_radius &&
+              if ((position - projected_point).norm() < search_radius &&
                   projected_point_over_face)
                 {
                   cell_is_inside = true;
