@@ -154,13 +154,15 @@ namespace Parameters
   };
 
   /**
-   * @brief FEMReconstructionParameters - Defines
+   * @brief FEMReconstructionParameters - Gets filenames of files from which
+   * information must be read for the 3D FEM reconstruction.
    */
   struct RPTFEMReconstructionParameters
   {
+    std::string              experimental_counts_file; // file with experimental counts from all detectors
     std::string              triangulation_file;
-    std::string              dof_handler_file;
-    std::vector<std::string> nodal_counts_file;
+    std::string              dof_handler_file; // file with the saved DOFHandler object
+    std::vector<std::string> nodal_counts_file; // vector containing the filenames of the files with the nodal counts from the built dictionary for each detector (1 detector per file)
 
     static void
     declare_parameters(ParameterHandler &prm);
