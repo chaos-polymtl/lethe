@@ -492,7 +492,7 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::trajectory()
 {
-    std::ifstream in("Test.txt");
+    std::ifstream in(rpt_parameters.fem_reconstruction_param.experimental_counts_file);
     std::vector<std::vector<double>> all_experimental_counts;
 
     if (in)
