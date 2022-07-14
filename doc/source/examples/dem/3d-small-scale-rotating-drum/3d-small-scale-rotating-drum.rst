@@ -176,14 +176,14 @@ The simulation is launched in two steps: the first step packs the particle in th
 Results
 ---------
 
-Here is a video for the rolling regime inside the rotating drum with a rotational velocity of 1 rad/s. 
+The following movie displays the rolling regime inside the rotating drum obtained with a rotational velocity of 1 rad/s. 
 
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/EQM19wEkEaI" frameborder="0" allowfullscreen></iframe>
      
   
-Here is another video for the centrifuging regime inside the rotating drum for a drum rotational velocity of 18 rad/s.
+The following movie displays the centrifuging regime inside the rotating drum for a drum rotational velocity of 18 rad/s.
 
     
 .. raw:: html
