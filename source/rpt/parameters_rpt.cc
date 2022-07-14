@@ -314,11 +314,17 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
                       Patterns::FileName(),
                       "Experimental counts filename");
 
+    prm.declare_entry("export positions file",
+                      "found_positions.csv",
+                      Patterns::FileName(),
+                      "Exported particle positions filename");
+
+/*
     prm.declare_entry("triangulation file",
                       "temp_tria.tria",
                       Patterns::FileName(),
                       "Saved Triangulation filename");
-
+*/
     prm.declare_entry("dof handler file",
                       "temp_dof_handler.dof",
                       Patterns::FileName(),
@@ -338,7 +344,8 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(ParameterHandler &p
   prm.enter_subsection("fem reconstruction");
   {
     experimental_counts_file       = prm.get("experimental counts file");
-    triangulation_file             = prm.get("triangulation file");
+    export_positions_file          = prm.get("export positions file");
+    //triangulation_file             = prm.get("triangulation file");
     dof_handler_file               = prm.get("dof handler file");
     std::string nodal_counts_list  = prm.get("nodal counts file");
     nodal_counts_file              = Utilities::split_string_list(nodal_counts_list);

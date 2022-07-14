@@ -359,45 +359,33 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
     // Loop over cell in the finest level, loop over detectors get nodal values,
     // solve first loop over cell
 
-    // for now I define experimental counts manually
-
-
-    //double max_reconstruction_error = DBL_MAX;
     double max_cost_function=DBL_MAX;
     double comparing_cost_function;
     Point<dim> result;
     Point<dim> final_result;
     std::vector<double> check;
 
+    std::vector<std::vector<double>> count_from_all_detectors (n_detector,std::vector<double>(4));
 
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
-
-        std::vector<std::vector<double>> count_from_all_detectors;
-        std::vector<double> detectorCount;
-
         for (unsigned int i = 0; i < n_detector; ++i)
         {
             for (unsigned int v = 0; v < cell->n_vertices(); ++v)
             {
                 auto dof_index = cell->vertex_dof_index(v, 0);
-                detectorCount.push_back(nodal_counts[i][dof_index]);
+                count_from_all_detectors[i][v]=nodal_counts[i][dof_index];
             }
-            count_from_all_detectors.push_back(detectorCount);
-            detectorCount.clear();
         }
-
 
         Vector<double> reference_location =
                 assemble_matrix_and_rhs<dim>(count_from_all_detectors, experimental_count);
 
         // Check if the location is a valid one
-        std::vector<double> err_coordinates(4);
-        //what about the ones that they meet all four conditions? We are considering they are not valid, but they are so close!
+        std::vector<double> err_coordinates(4,0);
 
         for (unsigned int i = 0; i < 3; ++i)
         {
-            err_coordinates[i] = 0;
             if (reference_location[i] > 1)
                 err_coordinates[i] = (reference_location[i] - 1);
 
@@ -407,18 +395,13 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
         // fourth error block
         {
-            err_coordinates[3] = 0;
+            double last_constraint_reference_location = 1 - reference_location[0] - reference_location[1] - reference_location[2];
 
-            if ((1 - reference_location[0] - reference_location[1] -
-                 reference_location[2]) < 0)
-                err_coordinates[3] =
-                        std::abs(1 - reference_location[0] - reference_location[1] -
-                                 reference_location[2]);
-            else if ((1 - reference_location[0] - reference_location[1] -
-                      reference_location[2]) > 1)
-                err_coordinates[3] =
-                        1 - std::abs(1 - reference_location[0] - reference_location[1] -
-                                     reference_location[2]);
+            if (last_constraint_reference_location < 0)
+              err_coordinates[3] = std::abs(last_constraint_reference_location);
+            else if (last_constraint_reference_location > 1)
+              err_coordinates[3] = 1 - last_constraint_reference_location;
+
         }
 
 
@@ -445,7 +428,6 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                     real_location += reference_location[v - 1] *
                                             (cell->vertex(v) - cell->vertex(0));
             }
-            //max_reconstruction_error = norm_error_coordinates;
 
             /*std::cout << "The reconstruction error is : "
                       << norm_error_coordinates << std::endl;*/
@@ -459,8 +441,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
                 double count1=0;
 
-                count1+=(nodal_counts[i][cell->vertex_dof_index(0, 0)]*(1-reference_location[0]-reference_location[1]
-                                                                        -reference_location[2]))+
+                count1+=(nodal_counts[i][cell->vertex_dof_index(0, 0)]*(1-reference_location[0]-reference_location[1]-reference_location[2]))+
                         (nodal_counts[i][cell->vertex_dof_index(1, 0)]*(reference_location[0]))+
                         (nodal_counts[i][cell->vertex_dof_index(2, 0)]*(reference_location[1]))+
                         (nodal_counts[i][cell->vertex_dof_index(3, 0)]*(reference_location[2]));
@@ -477,23 +458,16 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                 final_result=real_location;
             }
         }
-        count_from_all_detectors.clear();
-
     }
-
-    //std::cout<<"this: "<<max_cost_function<<std::endl;
-    std::cout<<final_result<<std::endl;
-
+    std::cout << final_result << std::endl;
+    found_positions.push_back(final_result);
 }
-
-
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::trajectory()
+RPTFEMReconstruction<dim>::read_experimental_counts(std::vector<std::vector<double>> &all_experimental_counts)
 {
     std::ifstream in(rpt_parameters.fem_reconstruction_param.experimental_counts_file);
-    std::vector<std::vector<double>> all_experimental_counts;
 
     if (in)
       {
@@ -514,6 +488,15 @@ RPTFEMReconstruction<dim>::trajectory()
                 all_experimental_counts.back().push_back(value);
           }
       }
+}
+
+
+template <int dim>
+void
+RPTFEMReconstruction<dim>::trajectory()
+{
+    std::vector<std::vector<double>> all_experimental_counts;
+        read_experimental_counts(all_experimental_counts);
 
     for (std::vector<double> &experimental_counts : all_experimental_counts)
       {
@@ -527,6 +510,7 @@ void
 RPTFEMReconstruction<dim>::checkpoint()
 {
   /*
+    //When erasing, also erase the "triangulation_file" parameter in parameter_rpt.cc and parameter.h
     // save triangulation
     {
         std::ofstream ofs("temp_tria.tria");
@@ -560,64 +544,84 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::load_from_checkpoint()
 {
-  n_detector = rpt_parameters.fem_reconstruction_param.nodal_counts_file.size();
-  setup_triangulation();
-  /*
-  // flatten the triangulation
-  Triangulation<dim> temp_triangulation;
-  Triangulation<dim> flat_temp_triangulation;
-  GridGenerator::cylinder(temp_triangulation, rpt_parameters.rpt_param.reactor_radius, rpt_parameters.rpt_param.reactor_height/2);
-  temp_triangulation.refine_global(2);
+    n_detector = rpt_parameters.fem_reconstruction_param.nodal_counts_file.size();
+    setup_triangulation();
 
-  GridGenerator::flatten_triangulation(temp_triangulation,
-                                       flat_temp_triangulation);
-
-  GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
-                                                   triangulation);
-
-  //print number of cells
-  std::cout << "n_cell:" << this->triangulation.n_cells() << std::endl;
-*/
 /*
-  // import triangulation
-  {
-    std::ifstream ifs(rpt_parameters.fem_reconstruction_param.triangulation_file);
-    boost::archive::text_iarchive ia(ifs);
-    triangulation.load(ia, 0);
-  }
+    // import triangulation
+    {
+      std::ifstream ifs(rpt_parameters.fem_reconstruction_param.triangulation_file);
+      boost::archive::text_iarchive ia(ifs);
+      triangulation.load(ia, 0);
+    }
 */
-  // import dof handler
-  {
-    dof_handler.distribute_dofs(fe);
-    std::ifstream ifs(rpt_parameters.fem_reconstruction_param.dof_handler_file);
-    boost::archive::text_iarchive ia(ifs);
-    dof_handler.load(ia, 0);
-  }
+    // import dof handler
+    {
+      dof_handler.distribute_dofs(fe);
+      std::ifstream ifs(rpt_parameters.fem_reconstruction_param.dof_handler_file);
+      boost::archive::text_iarchive ia(ifs);
+      dof_handler.load(ia, 0);
+    }
 
-  // import nodal counts
-  {
-    Vector<double>     counts_per_detector;
+    // import nodal counts
+    {
+      Vector<double>     counts_per_detector;
 
-    nodal_counts.resize(n_detector);
+      nodal_counts.resize(n_detector);
 
-    for (unsigned int i = 0; i < n_detector; ++i)
-      {
-        std::ifstream ifs(rpt_parameters.fem_reconstruction_param
-                            .nodal_counts_file[i]);
-        boost::archive::text_iarchive ia(ifs);
-        counts_per_detector.load(ia, 0);
-        nodal_counts[i] = counts_per_detector;
-      }
-  }
-  // verification
-  /*
-  GridOut grid_out;
-  std::ofstream output_file("loaded_rotated_triangulation.vtk");
-  grid_out.write_vtk(triangulation, output_file);
-  */
-  
-  //output_results();
-  
+      for (unsigned int i = 0; i < n_detector; ++i)
+        {
+          std::ifstream ifs(rpt_parameters.fem_reconstruction_param
+                              .nodal_counts_file[i]);
+          boost::archive::text_iarchive ia(ifs);
+          counts_per_detector.load(ia, 0);
+          nodal_counts[i] = counts_per_detector;
+        }
+    }
+
+    //Verification
+    //output_results();
+
+}
+
+template <int dim>
+void
+RPTFEMReconstruction<dim>::export_found_positions()
+{
+  std::string filename = rpt_parameters.fem_reconstruction_param.export_positions_file;
+
+  // Look if extension of the exporting file is specified
+  std::size_t csv_file = filename.find(".csv");
+  std::size_t dat_file = filename.find(".dat");
+
+  if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
+      filename += ".csv";
+
+  // Open a file
+  std::ofstream myfile;
+  myfile.open(filename);
+  myfile << "position_x position_y position_z " << std::endl;
+
+  if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+    {
+      for (const Point<dim> &position : found_positions)
+        {
+          myfile << position << std::endl;
+        }
+    }
+  else
+    {
+      std::string sep = ",";
+
+      for (const Point<dim> &position : found_positions)
+        {
+          for(unsigned int i = 0; i<dim; ++i)
+            myfile << position[i] << sep;
+          myfile << std::endl;
+        }
+    }
+
+  myfile.close();
 }
 
 template <int dim>
@@ -627,6 +631,7 @@ RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
   load_from_checkpoint();
   output_raw_results_per_level();
   trajectory();
+  export_found_positions();
 }
 
 

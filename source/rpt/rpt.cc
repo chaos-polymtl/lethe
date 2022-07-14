@@ -92,6 +92,13 @@ RPT<dim>::export_data()
   if (rpt_parameters.rpt_param.export_counts)
     {
       std::string filename = rpt_parameters.rpt_param.export_counts_file;
+      /*
+      std::size_t csv_file = filename.find(".csv");
+      std::size_t dat_file = filename.find("dat");
+
+      if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
+          filename += ".csv";
+      */
       myfile.open(filename);
       if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
         {
