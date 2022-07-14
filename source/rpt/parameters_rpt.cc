@@ -309,6 +309,11 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
 {
   prm.enter_subsection("fem reconstruction");
   {
+    prm.declare_entry("mesh refinement",
+                      "1",
+                      Patterns::Integer(),
+                      "Number of refinements the grid undergoes");
+
     prm.declare_entry("experimental counts file",
                       "experimental_counts.txt",
                       Patterns::FileName(),
@@ -319,12 +324,11 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
                       Patterns::FileName(),
                       "Exported particle positions filename");
 
-/*
-    prm.declare_entry("triangulation file",
-                      "temp_tria.tria",
-                      Patterns::FileName(),
-                      "Saved Triangulation filename");
-*/
+    prm.declare_entry("cost function type",
+                      "absolute",
+                      Patterns::Selection("absolute|relative"),
+                      "Type of cost function applied when evaluating the particle's real position");
+
     prm.declare_entry("dof handler file",
                       "temp_dof_handler.dof",
                       Patterns::FileName(),
@@ -343,12 +347,22 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(ParameterHandler &p
 {
   prm.enter_subsection("fem reconstruction");
   {
-    experimental_counts_file       = prm.get("experimental counts file");
-    export_positions_file          = prm.get("export positions file");
-    //triangulation_file             = prm.get("triangulation file");
-    dof_handler_file               = prm.get("dof handler file");
-    std::string nodal_counts_list  = prm.get("nodal counts file");
-    nodal_counts_file              = Utilities::split_string_list(nodal_counts_list);
+    mesh_refinement                 = prm.get_integer("mesh refinement");
+    experimental_counts_file        = prm.get("experimental counts file");
+    export_positions_file           = prm.get("export positions file");
+
+    const std::string fem_cf        = prm.get("cost function type");
+    if (fem_cf == "absolute")
+      fem_cost_function = FEMCostFunction::absolute;
+    else if (fem_cf == "relative")
+      fem_cost_function = FEMCostFunction::relative;
+    else
+      throw std::logic_error("Error, invalid cost function type. Choices are 'absolute' or 'relative'");
+
+
+    dof_handler_file                = prm.get("dof handler file");
+    std::string nodal_counts_list   = prm.get("nodal counts file");
+    nodal_counts_file               = Utilities::split_string_list(nodal_counts_list);
   }
   prm.leave_subsection();
 }
