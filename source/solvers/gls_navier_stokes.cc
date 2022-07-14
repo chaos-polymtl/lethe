@@ -173,13 +173,8 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                                       &this->dof_handler);
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    &this->present_solution);
-  if(this->simulation_parameters.post_processing.calculate_average_velocities){
-      this->average_velocities->update_average_velocities();
-      TrilinosWrappers::MPI::Vector * average_velocity=this->average_velocities->get_average_velocities_pointer();
-      this->multiphysics->set_average_solution(PhysicsID::fluid_dynamics,
-                                                                         average_velocity);
 
-    }
+
 
 }
 
@@ -1590,12 +1585,26 @@ GLSNavierStokesSolver<dim>::solve()
 
       if (this->simulation_control->is_at_start())
         {
+          if(this->simulation_parameters.post_processing.calculate_average_velocities){
+              this->average_velocities->update_average_velocities();
+              //TrilinosWrappers::MPI::Vector* average_velocity=;
+              this->multiphysics->set_average_solution(PhysicsID::fluid_dynamics,
+                                                       &this->average_velocities->get_average_velocities());
+
+            }
           this->iterate();
         }
       else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          if(this->simulation_parameters.post_processing.calculate_average_velocities){
+              this->average_velocities->update_average_velocities();
+              //TrilinosWrappers::MPI::Vector* average_velocity=;
+              this->multiphysics->set_average_solution(PhysicsID::fluid_dynamics,
+                                                       &this->average_velocities->get_average_velocities());
+
+            }
           this->iterate();
         }
       this->postprocess(false);
