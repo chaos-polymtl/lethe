@@ -70,10 +70,10 @@ localize_contacts(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
-        std::unordered_map<
-          types::particle_index,
-          std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
-          &particle_moving_mesh_in_contact,
+  std::unordered_map<
+    types::particle_index,
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    &particle_moving_mesh_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -91,11 +91,11 @@ localize_contacts(
     types::particle_index,
     std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
     &pfw_contact_candidates,
-        std::unordered_map<
-          types::particle_index,
-          std::unordered_map<
-            unsigned int,
-            std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
-          &particle_moving_mesh_contact_candidates);
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<
+      unsigned int,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+    &particle_moving_mesh_contact_candidates);
 
 #endif /* localize_contacts_h */

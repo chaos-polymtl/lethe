@@ -98,8 +98,7 @@ public:
   particle_floating_wall_fine_search(
     const std::unordered_map<
       types::particle_index,
-      std::unordered_map<unsigned int,
-                         Particles::ParticleIterator<dim>>>
+      std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
       &                                               pfw_contact_candidates,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double &                                    simulation_time,

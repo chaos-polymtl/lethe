@@ -1129,7 +1129,7 @@ LetheGridTools::calculate_particle_triangle_distance(
 
   const Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
   const double         norm_normal = normal.norm();
-  Tensor<1, dim> unit_normal = normal / norm_normal;
+  Tensor<1, dim>       unit_normal = normal / norm_normal;
 
   const double a   = e_0.norm_square();
   const double b   = scalar_product(e_0, e_1);
@@ -1149,11 +1149,12 @@ LetheGridTools::calculate_particle_triangle_distance(
       Point<dim> particle_position = part.get_location();
       vector_to_plane              = p_0 - particle_position;
 
-      // Check to see if the particle is located on the correct side (with respect to the normal vector) of the triangle
-      if(vector_to_plane * unit_normal > 0)
-      {
-          unit_normal = -1.0  * unit_normal;
-      }
+      // Check to see if the particle is located on the correct side (with
+      // respect to the normal vector) of the triangle
+      if (vector_to_plane * unit_normal > 0)
+        {
+          unit_normal = -1.0 * unit_normal;
+        }
 
 
       double distance_squared = scalar_product(vector_to_plane, unit_normal);

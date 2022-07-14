@@ -288,7 +288,9 @@ private:
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_ghost_neighbor_list;
 
-  std::unordered_map<types::global_cell_index, std::vector<typename Triangulation<dim>::active_cell_iterator>>
+  std::unordered_map<
+    types::global_cell_index,
+    std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_total_neighbor_list;
 
   BoundaryCellsInformation<dim> boundary_cell_object;
@@ -303,7 +305,9 @@ private:
     std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates;
 
-  std::vector<std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator, typename Triangulation<dim-1,dim>::active_cell_iterator>>>
+  std::vector<std::vector<
+    std::pair<typename Triangulation<dim>::active_cell_iterator,
+              typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
     floating_mesh_information;
 
   std::unordered_map<
@@ -412,7 +416,7 @@ private:
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
-  bool floating_mesh = false;
+  bool                                                    floating_mesh = false;
 };
 
 #endif

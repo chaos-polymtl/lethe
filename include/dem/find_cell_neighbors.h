@@ -20,9 +20,10 @@
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/grid/grid_tools.h>
+
 #include <iostream>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 
 using namespace dealii;
 
@@ -47,7 +48,8 @@ public:
   FindCellNeighbors<dim>();
 
   /**
-   * Finds the neighbor list (without repetition) of all the active cells in the triangulation
+   * Finds the neighbor list (without repetition) of all the active cells in the
+   * triangulation
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param cells_local_neighbor_list A vector (with size of the local cell
@@ -67,7 +69,8 @@ public:
       &cells_ghost_neighbor_list);
 
   /**
-   * Finds the full neighbor list (with repetition) of all the active cells in the triangulation
+   * Finds the full neighbor list (with repetition) of all the active cells in
+   * the triangulation
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param cells_total_neighbor_list An unordered_map (with size of the local cell
@@ -77,7 +80,9 @@ public:
   void
   find_full_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    std::unordered_map<types::global_cell_index, std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    std::unordered_map<
+      types::global_cell_index,
+      std::vector<typename Triangulation<dim>::active_cell_iterator>>
       &cells_total_neighbor_list);
 };
 

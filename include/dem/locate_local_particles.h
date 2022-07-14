@@ -79,10 +79,10 @@ locate_local_particles_in_cells(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
-        std::unordered_map<
-          types::particle_index,
-          std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
-          &particle_moving_mesh_in_contact,
+  std::unordered_map<
+    types::particle_index,
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    &particle_moving_mesh_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,

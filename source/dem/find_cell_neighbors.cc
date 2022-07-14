@@ -7,8 +7,8 @@ template <int dim>
 FindCellNeighbors<dim>::FindCellNeighbors()
 {}
 
-// This function finds the neighbor list (without repetition) of all the active cells in the
-// triangulation
+// This function finds the neighbor list (without repetition) of all the active
+// cells in the triangulation
 template <int dim>
 void
 FindCellNeighbors<dim>::find_cell_neighbors(
@@ -111,14 +111,16 @@ FindCellNeighbors<dim>::find_cell_neighbors(
     }
 }
 
-// This function finds the full neighbor list (with repetition) of all the active cells in the
-// triangulation
+// This function finds the full neighbor list (with repetition) of all the
+// active cells in the triangulation
 template <int dim>
 void
-FindCellNeighbors<dim>::  find_full_cell_neighbors(
-        const parallel::distributed::Triangulation<dim> &triangulation,
-        std::unordered_map<types::global_cell_index, std::vector<typename Triangulation<dim>::active_cell_iterator>>
-          &cells_total_neighbor_list)
+FindCellNeighbors<dim>::find_full_cell_neighbors(
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  std::unordered_map<
+    types::global_cell_index,
+    std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    &cells_total_neighbor_list)
 {
   auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
 
@@ -141,20 +143,21 @@ FindCellNeighbors<dim>::  find_full_cell_neighbors(
                 {
                   if (neighbor->is_locally_owned())
                     {
-                      auto search_iterator = std::find(full_neighbor_vector.begin(),
-                                                       full_neighbor_vector.end(),
-                                                       neighbor);
+                      auto search_iterator =
+                        std::find(full_neighbor_vector.begin(),
+                                  full_neighbor_vector.end(),
+                                  neighbor);
 
                       if (search_iterator == full_neighbor_vector.end())
-                         {
+                        {
                           full_neighbor_vector.push_back(neighbor);
-                      }
+                        }
                     }
-
                 }
             }
 
-          cells_total_neighbor_list.insert({cell->global_active_cell_index(), full_neighbor_vector});
+          cells_total_neighbor_list.insert(
+            {cell->global_active_cell_index(), full_neighbor_vector});
         }
     }
 }

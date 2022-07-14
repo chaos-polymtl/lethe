@@ -214,13 +214,13 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   const unsigned int n_solids = this->parameters.solid_objects->number_solids;
   floating_mesh_information.resize(n_solids);
   if (n_solids > 0)
-      floating_mesh = true;
+    floating_mesh = true;
 
   for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
       solids.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
         this->parameters.solid_objects->solids[i_solid], i_solid));
-          }
+    }
 }
 
 template <int dim>
@@ -306,10 +306,11 @@ DEMSolver<dim>::load_balance()
 
   // Get total (with repetition) neighbors list for moving mesh
   if (floating_mesh)
-  {
-        cells_total_neighbor_list.clear();
-    cell_neighbors_object.find_full_cell_neighbors(triangulation, cells_total_neighbor_list);
-  }
+    {
+      cells_total_neighbor_list.clear();
+      cell_neighbors_object.find_full_cell_neighbors(triangulation,
+                                                     cells_total_neighbor_list);
+    }
 
 
   boundary_cell_object.build(
@@ -496,14 +497,14 @@ DEMSolver<dim>::particle_wall_broad_search()
 
 
   // Particle - floating mesh broad search
-    if (floating_mesh)
-  {
-    particle_wall_broad_search_object.find_particle_moving_mesh_contact_pairs(
-      floating_mesh_information,
-      particle_handler,
-      particle_moving_mesh_contact_candidates,
-                  cells_total_neighbor_list);
-  }
+  if (floating_mesh)
+    {
+      particle_wall_broad_search_object.find_particle_moving_mesh_contact_pairs(
+        floating_mesh_information,
+        particle_handler,
+        particle_moving_mesh_contact_candidates,
+        cells_total_neighbor_list);
+    }
 
   particle_point_contact_candidates =
     particle_point_line_broad_search_object.find_particle_point_contact_pairs(
@@ -539,10 +540,11 @@ DEMSolver<dim>::particle_wall_fine_search()
 
   // Particle - floating mesh fine search
   if (floating_mesh)
-  {
-    particle_wall_fine_search_object.particle_moving_mesh_fine_search(
-      particle_moving_mesh_contact_candidates, particle_moving_mesh_in_contact);
-  }
+    {
+      particle_wall_fine_search_object.particle_moving_mesh_fine_search(
+        particle_moving_mesh_contact_candidates,
+        particle_moving_mesh_in_contact);
+    }
 
   particle_points_in_contact =
     particle_point_line_fine_search_object.particle_point_fine_search(
@@ -587,14 +589,14 @@ DEMSolver<dim>::particle_wall_contact_force()
 
   // Particle - floating mesh contact force
   if (floating_mesh)
-  {
-    particle_wall_contact_force_object
-      ->calculate_particle_moving_wall_contact_force(
-        particle_moving_mesh_in_contact,
-        simulation_control->get_time_step(),
-        torque,
-        force);
-  }
+    {
+      particle_wall_contact_force_object
+        ->calculate_particle_moving_wall_contact_force(
+          particle_moving_mesh_in_contact,
+          simulation_control->get_time_step(),
+          torque,
+          force);
+    }
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
@@ -817,10 +819,12 @@ DEMSolver<dim>::solve()
   const unsigned int n_solids = this->parameters.solid_objects->number_solids;
   for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
-
-      // Create a container that contains all the combinations of background and solid cells
-      floating_mesh_information.push_back(solids[i_solid]->map_solid_in_background_triangulation(triangulation, solids[i_solid]->get_solid_triangulation()));
-          }
+      // Create a container that contains all the combinations of background and
+      // solid cells
+      floating_mesh_information.push_back(
+        solids[i_solid]->map_solid_in_background_triangulation(
+          triangulation, solids[i_solid]->get_solid_triangulation()));
+    }
 
   if (parameters.restart.restart == true)
     {
