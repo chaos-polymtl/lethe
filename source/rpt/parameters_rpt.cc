@@ -117,9 +117,9 @@ Parameters::RPTTuningParameters::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry("cost function type",
                       "larachi",
-                      Patterns::Selection("larachi|L1|L2"),
+                      Patterns::Selection("larachi|l1|l2"),
                       "Cost function used for the parameter tuning"
-                      "Choices are <larachi|L1|L2>.");
+                      "Choices are <larachi|l1|l2>.");
 
     prm.declare_entry("experimental data file",
                       "none",
