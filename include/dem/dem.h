@@ -284,8 +284,12 @@ private:
 
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_local_neighbor_list;
+
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_ghost_neighbor_list;
+
+  std::unordered_map<types::global_cell_index, std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    cells_total_neighbor_list;
 
   BoundaryCellsInformation<dim> boundary_cell_object;
 
@@ -293,28 +297,24 @@ private:
     local_contact_pair_candidates;
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     ghost_contact_pair_candidates;
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
-    pfw_contact_candidates;
-  std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::map<unsigned int,
-                    typename DoFHandler<dim - 1, dim>::active_cell_iterator>>
-    cells_cut_by_object;
 
   std::unordered_map<
-    typename Triangulation<dim>::active_cell_iterator,
-    std::unordered_map<int, typename Triangulation<dim>::active_cell_iterator>,
-    dem_data_containers::cell_comparison<dim>>
+    types::particle_index,
+    std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
+    pfw_contact_candidates;
+
+  std::vector<std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator, typename Triangulation<dim-1,dim>::active_cell_iterator>>>
     floating_mesh_information;
+
   std::unordered_map<
-    unsigned int,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    types::particle_index,
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
     particle_moving_mesh_in_contact;
+
   std::unordered_map<
-    unsigned int,
+    types::particle_index,
     std::unordered_map<
-      types::particle_index,
+      unsigned int,
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     particle_moving_mesh_contact_candidates;
   std::unordered_map<
@@ -322,36 +322,42 @@ private:
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
     local_adjacent_particles;
+
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
     ghost_adjacent_particles;
+
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
     particle_wall_pairs_in_contact;
+
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
     pfw_pairs_in_contact;
 
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index,
+    std::unordered_map<unsigned int,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
                                   unsigned int,
                                   unsigned int>>>
     particle_wall_contact_candidates;
+
   std::unordered_map<types::particle_index,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
+
   std::unordered_map<
     types::particle_index,
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
     particle_line_contact_candidates;
+
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
     particle_points_in_contact, particle_lines_in_contact;
@@ -406,6 +412,7 @@ private:
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
+  bool floating_mesh = false;
 };
 
 #endif

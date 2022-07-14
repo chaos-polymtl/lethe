@@ -23,6 +23,10 @@ localize_contacts(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
+        std::unordered_map<
+          types::particle_index,
+          std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+          &particle_moving_mesh_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -38,8 +42,15 @@ localize_contacts(
     &particle_wall_contact_candidates,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
-    &pfw_contact_candidates)
+    std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
+    &pfw_contact_candidates,
+        std::unordered_map<
+          types::particle_index,
+          std::unordered_map<
+         unsigned   int,
+            std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+          &particle_moving_mesh_contact_candidates
+        )
 
 {
   for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
@@ -196,8 +207,36 @@ localize_contacts(
         }
     }
 
-  // UPDATE ********
-  // Add moving mesh
+  // Particle-moving mesh contacts
+  for (auto pmm_pairs_in_contact_iterator = particle_moving_mesh_in_contact.begin();
+       pmm_pairs_in_contact_iterator != particle_moving_mesh_in_contact.end();
+       ++pmm_pairs_in_contact_iterator)
+    {
+      unsigned int particle_id = pmm_pairs_in_contact_iterator->first;
+
+      auto pairs_in_contant_content = &pmm_pairs_in_contact_iterator->second;
+
+      for (auto pmm_map_iterator = pairs_in_contant_content->begin();
+           pmm_map_iterator != pairs_in_contant_content->end();)
+        {
+          unsigned int triangle_id = pmm_map_iterator->first;
+          auto         pmm_contact_candidate_element =
+            &particle_moving_mesh_contact_candidates[particle_id];
+
+          auto search_iterator =
+            pmm_contact_candidate_element->find(triangle_id);
+
+          if (search_iterator != pmm_contact_candidate_element->end())
+            {
+              pmm_contact_candidate_element->erase(search_iterator);
+              ++pmm_map_iterator;
+            }
+          else
+            {
+              pairs_in_contant_content->erase(pmm_map_iterator++);
+            }
+        }
+    }
 }
 
 template void localize_contacts(
@@ -219,13 +258,17 @@ template void localize_contacts(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<2>>>
     &pfw_pairs_in_contact,
+std::unordered_map<
+  types::particle_index,
+  std::map<unsigned int, particle_wall_contact_info_struct<2>>>
+  &particle_moving_mesh_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &ghost_contact_pair_candidates,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index,
+    std::unordered_map<unsigned int,
                        std::tuple<Particles::ParticleIterator<2>,
                                   Tensor<1, 2>,
                                   Point<2>,
@@ -234,8 +277,14 @@ template void localize_contacts(
     &particle_wall_contact_candidates,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>>
-    &pfw_contact_candidates);
+    std::unordered_map<unsigned int, Particles::ParticleIterator<2>>>
+    &pfw_contact_candidates,
+std::unordered_map<
+  types::particle_index,
+  std::unordered_map<
+    unsigned int,
+    std::tuple<Particles::ParticleIterator<2>, Tensor<1, 2>, Point<2>>>>
+  &particle_moving_mesh_contact_candidates);
 
 template void localize_contacts(
   std::unordered_map<
@@ -256,13 +305,17 @@ template void localize_contacts(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<3>>>
     &pfw_pairs_in_contact,
+std::unordered_map<
+  types::particle_index,
+  std::map<unsigned int, particle_wall_contact_info_struct<3>>>
+  &particle_moving_mesh_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &ghost_contact_pair_candidates,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index,
+    std::unordered_map<unsigned int,
                        std::tuple<Particles::ParticleIterator<3>,
                                   Tensor<1, 3>,
                                   Point<3>,
@@ -271,5 +324,11 @@ template void localize_contacts(
     &particle_wall_contact_candidates,
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>>
-    &pfw_contact_candidates);
+    std::unordered_map<unsigned int, Particles::ParticleIterator<3>>>
+    &pfw_contact_candidates,
+std::unordered_map<
+  types::particle_index,
+  std::unordered_map<
+   unsigned  int,
+    std::tuple<Particles::ParticleIterator<3>, Tensor<1, 3>, Point<3>>>>
+  &particle_moving_mesh_contact_candidates);

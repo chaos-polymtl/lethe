@@ -44,6 +44,7 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/particles/particle_handler.h>
+#include <dem/data_containers.h>
 
 
 using namespace dealii;
@@ -69,7 +70,14 @@ public:
               unsigned int                                             id);
 
   /**
-   * @brief Manages solid triangulation and particles setup
+   * @brief Maps the solid object in the background triangulation
+   */
+  std::vector<std::pair<typename Triangulation<spacedim>::active_cell_iterator, typename Triangulation<dim,spacedim>::active_cell_iterator>> map_solid_in_background_triangulation(
+          const parallel::distributed::Triangulation<spacedim> &background_tr,
+                                                                                     const std::shared_ptr<Triangulation<dim, spacedim>> &solid_tr);
+
+  /**
+   * @brief Manages solid triangulation setup
    */
   void
   initial_setup();
@@ -199,7 +207,6 @@ private:
   Vector<double>                           displacement;
 
   PVDHandler pvdhandler;
-
 
   // Elements used to store the velocity of the solid object
   Function<spacedim> *translational_velocity;

@@ -25,7 +25,7 @@ ParticleWallFineSearch<dim>::particle_wall_fine_search(
     &particle_wall_contact_pair_candidates,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
     &particle_wall_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search and adding the pairs to
@@ -91,13 +91,13 @@ void
 ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
   const std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
+    std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
     &                                               pfw_contact_candidates,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double &                                    simulation_time,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact)
 {
   // Reading floating wall properties
@@ -203,17 +203,17 @@ template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_moving_mesh_fine_search(
   const std::unordered_map<
-    unsigned int,
+    types::particle_index,
     std::unordered_map<
-      types::particle_index,
+     unsigned int,
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     &particle_moving_mesh_contact_candidates,
   std::unordered_map<
-    unsigned int,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    types::particle_index,
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
     &particle_moving_mesh_in_contact)
 {
-  for (auto const &[cut_cell, particle_moving_mesh_candidates] :
+  for (auto const &[particle_id, particle_moving_mesh_candidates] :
        particle_moving_mesh_contact_candidates)
     {
       if (!particle_moving_mesh_candidates.empty())
@@ -224,10 +224,11 @@ ParticleWallFineSearch<dim>::particle_moving_mesh_fine_search(
                particle_moving_mesh_candidates.end();
                ++particle_moving_mesh_candidate_iterator)
             {
+              unsigned int cut_cell_id =
+                particle_moving_mesh_candidate_iterator->first;
+
               auto &particle_moving_mesh_info =
                 particle_moving_mesh_candidate_iterator->second;
-              const types::particle_index &particle_id =
-                particle_moving_mesh_candidate_iterator->first;
 
               auto           particle = std::get<0>(particle_moving_mesh_info);
               Tensor<1, dim> normal_vector =
@@ -257,12 +258,12 @@ ParticleWallFineSearch<dim>::particle_moving_mesh_fine_search(
               contact_info.normal_overlap               = .0;
               contact_info.normal_relative_velocity     = .0;
               contact_info.point_on_boundary            = point_on_boundary_3d;
-              contact_info.boundary_id                  = cut_cell;
+              contact_info.boundary_id                  = cut_cell_id;
               contact_info.tangential_overlap           = tangential_overlap;
               contact_info.tangential_relative_velocity = .0;
 
-              particle_moving_mesh_in_contact[cut_cell].insert(
-                {particle_id, contact_info});
+              particle_moving_mesh_in_contact[particle_id].insert(
+                {cut_cell_id, contact_info});
             }
         }
     }

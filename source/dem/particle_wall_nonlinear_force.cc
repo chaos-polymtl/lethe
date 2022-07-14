@@ -123,7 +123,7 @@ void
 ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
     &                        particle_wall_pairs_in_contact,
   const double &             dt,
   std::vector<Tensor<1, 3>> &torque,
@@ -229,8 +229,8 @@ template <int dim>
 void
 ParticleWallNonLinearForce<dim>::calculate_particle_moving_wall_contact_force(
   std::unordered_map<
-    unsigned int,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    types::particle_index,
+    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
     &                        particle_floating_wall_pairs_in_contact,
   const double &             dt,
   std::vector<Tensor<1, 3>> &torque,
@@ -260,7 +260,6 @@ ParticleWallNonLinearForce<dim>::calculate_particle_moving_wall_contact_force(
           double normal_overlap =
             ((particle_properties[DEM::PropertiesIndex::dp]) * 0.5) -
             (particle_projection_on_face.distance(particle_location_3d));
-
           if (normal_overlap > 0)
             {
               contact_information.normal_overlap = normal_overlap;

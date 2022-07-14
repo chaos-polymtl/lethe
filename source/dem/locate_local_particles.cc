@@ -26,6 +26,10 @@ locate_local_particles_in_cells(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
+        std::unordered_map<
+          types::particle_index,
+          std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+          &particle_moving_mesh_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
@@ -48,11 +52,12 @@ locate_local_particles_in_cells(
   update_particle_wall_contact_container_iterators<dim>(pfw_pairs_in_contact,
                                                         particle_container);
 
+  // Calling the same function for moving mesh
+  update_particle_wall_contact_container_iterators<dim>(particle_moving_mesh_in_contact,
+                                                        particle_container);
+
   update_particle_point_line_contact_container_iterators<dim>(
     particle_points_in_contact, particle_lines_in_contact, particle_container);
-
-  // UPDATE ********
-  // Add moving mesh
 }
 
 template void
@@ -78,6 +83,10 @@ locate_local_particles_in_cells(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<2>>>
     &pfw_pairs_in_contact,
+std::unordered_map<
+ types::particle_index,
+  std::map<unsigned int, particle_wall_contact_info_struct<2>>>
+  &particle_moving_mesh_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<2>>
     &particle_points_in_contact,
@@ -108,6 +117,10 @@ locate_local_particles_in_cells(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<3>>>
     &pfw_pairs_in_contact,
+std::unordered_map<
+  types::particle_index,
+  std::map<unsigned int, particle_wall_contact_info_struct<3>>>
+  &particle_moving_mesh_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<3>>
     &particle_points_in_contact,

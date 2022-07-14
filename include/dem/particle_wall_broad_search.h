@@ -127,24 +127,25 @@ public:
    * @param particle_handler
    * @param particle_moving_mesh_contact_candidates Particle-moving mesh contact
    * candidates
+   * @param cells_total_neighbor_list A container in which all the neighbor cells
+   * of the local cells are stored
    */
 
   void
   find_particle_moving_mesh_contact_pairs(
-    const std::unordered_map<
-      typename dealii::Triangulation<dim>::active_cell_iterator,
-      std::unordered_map<
-        int,
-        typename dealii::Triangulation<dim>::active_cell_iterator>,
-      dem_data_containers::cell_comparison<dim>> &moving_mesh_information,
+    const std::vector<std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator, typename Triangulation<dim-1,dim>::active_cell_iterator>>> &moving_mesh_information,
     const Particles::ParticleHandler<dim> &       particle_handler,
     std::unordered_map<
-      unsigned int,
-      std::unordered_map<types::particle_index,
+      types::particle_index,
+      std::unordered_map<unsigned int,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>>>>
-      &particle_moving_mesh_contact_candidates);
+      &particle_moving_mesh_contact_candidates,
+std::unordered_map<types::global_cell_index, std::vector<typename Triangulation<dim>::active_cell_iterator>>
+            &cells_total_neighbor_list);
+
+  const unsigned int vertices_per_triangle = 3;
 };
 
 #endif /* particle_wall_broad_search_h */

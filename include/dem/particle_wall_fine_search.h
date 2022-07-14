@@ -67,7 +67,7 @@ public:
   particle_wall_fine_search(
     const std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index,
+      std::unordered_map<unsigned int,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,
@@ -76,7 +76,7 @@ public:
       &particle_wall_contact_pair_candidates,
     std::unordered_map<
       types::particle_index,
-      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
       &particle_wall_pairs_in_contact);
 
   /**
@@ -98,14 +98,14 @@ public:
   particle_floating_wall_fine_search(
     const std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index,
+      std::unordered_map<unsigned int,
                          Particles::ParticleIterator<dim>>>
       &                                               pfw_contact_candidates,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double &                                    simulation_time,
     std::unordered_map<
       types::particle_index,
-      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
       &pfw_pairs_in_contact);
 
   /**
@@ -121,15 +121,15 @@ public:
   void
   particle_moving_mesh_fine_search(
     const std::unordered_map<
-      unsigned int,
-      std::unordered_map<types::particle_index,
+      types::particle_index,
+      std::unordered_map<unsigned int,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>>>>
       &particle_moving_mesh_contact_candidates,
     std::unordered_map<
-      unsigned int,
-      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      types::particle_index,
+      std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
       &particle_moving_mesh_in_contact);
 };
 

@@ -317,6 +317,7 @@ LetheGridTools::find_cells_in_cells(
   return cells_inside;
 }
 
+
 template <int dim>
 bool
 LetheGridTools::cell_pierced_by_edge(
@@ -876,8 +877,6 @@ LetheGridTools::find_cells_around_flat_cell(
   return cells_cut;
 }
 
-
-
 template <int spacedim, int structdim>
 std::map<
   typename DoFHandler<spacedim>::active_cell_iterator,
@@ -1109,6 +1108,7 @@ LetheGridTools::find_cells_cut_by_object(
     &                             vertices_cell_map,
   std::vector<SerialSolid<1, 2>> &list_of_objects);
 
+
 template <int dim>
 std::tuple<std::vector<bool>, std::vector<Point<dim>>, Tensor<1, dim>>
 LetheGridTools::calculate_particle_triangle_distance(
@@ -1129,7 +1129,7 @@ LetheGridTools::calculate_particle_triangle_distance(
 
   const Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
   const double         norm_normal = normal.norm();
-  const Tensor<1, dim> unit_normal = normal / norm_normal;
+  Tensor<1, dim> unit_normal = normal / norm_normal;
 
   const double a   = e_0.norm_square();
   const double b   = scalar_product(e_0, e_1);
@@ -1148,6 +1148,14 @@ LetheGridTools::calculate_particle_triangle_distance(
         part.get_properties()[DEM::PropertiesIndex::dp] * 0.5;
       Point<dim> particle_position = part.get_location();
       vector_to_plane              = p_0 - particle_position;
+
+      // Check to see if the particle is located on the correct side (with respect to the normal vector) of the triangle
+      if(vector_to_plane * unit_normal > 0)
+      {
+          unit_normal = -1.0  * unit_normal;
+      }
+
+
       double distance_squared = scalar_product(vector_to_plane, unit_normal);
 
       // If the particle is too far from the plane, set distance squared as an

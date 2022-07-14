@@ -101,6 +101,28 @@ SerialSolid<dim, spacedim>::SerialSolid(
 }
 
 template <int dim, int spacedim>
+std::vector<std::pair<typename Triangulation<spacedim>::active_cell_iterator, typename Triangulation<dim,spacedim>::active_cell_iterator>>
+SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(const parallel::distributed::Triangulation<spacedim> &background_tr,
+                                                                                  const std::shared_ptr<Triangulation<dim, spacedim>> &solid_tr)
+{
+    std::vector<std::pair<typename Triangulation<spacedim>::active_cell_iterator, typename Triangulation<dim,spacedim>::active_cell_iterator>>
+ mapped_solid;
+
+    for (const auto &background_cell : background_tr.active_cell_iterators())
+      {
+        // If the cell is owned by the processor
+        if (background_cell->is_locally_owned())
+          {
+            for (auto &solid_cell : solid_tr->active_cell_iterators())
+            {
+                mapped_solid.push_back(std::make_pair(background_cell, solid_cell));
+            }
+        }
+    }
+    return mapped_solid;
+}
+
+template <int dim, int spacedim>
 void
 SerialSolid<dim, spacedim>::initial_setup()
 {
@@ -272,7 +294,6 @@ SerialSolid<dim, spacedim>::get_solid_velocity()
 {
   return translational_velocity;
 }
-
 
 template <>
 void
