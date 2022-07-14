@@ -98,6 +98,8 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_system_matrix()
 {
+  this->pcout<<"velocity "<<this->multiphysics->get_average_solution(PhysicsID::fluid_dynamics)->max() <<std::endl;
+
   this->system_matrix = 0;
   setup_assemblers();
 

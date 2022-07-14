@@ -175,11 +175,10 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                                    &this->present_solution);
   if(this->simulation_parameters.post_processing.calculate_average_velocities){
       this->average_velocities->update_average_velocities();
-      auto average_velocity =const_cast<TrilinosWrappers::MPI::Vector *>(
-                                &this->average_velocities->get_average_velocities());
+      TrilinosWrappers::MPI::Vector * average_velocity=this->average_velocities->get_average_velocities_pointer();
       this->multiphysics->set_average_solution(PhysicsID::fluid_dynamics,
                                                                          average_velocity);
-      this->pcout<<"velocity "<< average_velocity->max() <<std::endl;
+
     }
 
 }
