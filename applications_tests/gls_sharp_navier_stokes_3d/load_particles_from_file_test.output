@@ -1,5 +1,4 @@
 Running on 1 MPI rank(s)...
-Non spherical particle found: using regular cut_cells_mapping.
 Loading particles from a file
 Particles found: 5
    Number of active cells:       1600
