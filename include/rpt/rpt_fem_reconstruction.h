@@ -153,6 +153,14 @@ private:
     find_cell(std::vector<double> experimental_count);
 
     /**
+     * @brief Reads the file with the experimental counts and returns a vector
+     * of vectors containing the counts of all detectors for every particle
+     * position.
+     */
+    void
+    read_experimental_counts(std::vector<std::vector<double>> &all_experimental_counts);
+
+    /**
      * @brief Reads the file with the experimental counts and finds the
      * particles' positions by calling the "find_cell" function.
      */
@@ -173,13 +181,12 @@ private:
     void
     load_from_checkpoint();
 
-
+    /**
+     * @brief Exports found particle positions in a the specified file format.
+     * If not specified, it will be exported in a ".csv" file format.
+     */
     void
-    cylinder_shell();
-
-    void
-    post_process_L2_projection();
-
+    export_found_positions();
 
     Triangulation<dim> triangulation;
     FE_SimplexP<dim>   fe;
@@ -194,6 +201,7 @@ private:
     Vector<double>              system_rhs;
     std::vector<Vector<double>> nodal_counts;
     std::vector<Detector<dim>>  detectors;
+    std::vector<Point<dim>>     found_positions;
 };
 
 /**
@@ -209,7 +217,6 @@ private:
 template <int dim>
 Vector<double>
 assemble_matrix_and_rhs(std::vector<std::vector<double> > &vertex_count,
-                        std::vector<double> &experimental_count
-);
+                        std::vector<double> &experimental_count);
 
 #endif

@@ -42,7 +42,7 @@ test()
   solution.reinit(3);
 
 
-  solution = assemble_matrix_and_rhs(vertex_counts, measured_count);
+  solution = assemble_matrix_and_rhs<3>(vertex_counts, measured_count);
 
 
   deallog << "The final solution is : " << solution[0] << " " << solution[1]
