@@ -57,9 +57,11 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				         = list
-    set list x                                   = 0.05
-    set list y                                   = 0.15
-    set list z                                   = 0.05
+    set inserted number of particles at each time step  = 1
+    set insertion frequency            		 	= 10000
+    set list x                                   = 0.075
+    set list y                                   = 0.175
+    set list z                                   = 0.075
 end
 
 #---------------------------------------------------
@@ -69,8 +71,22 @@ subsection mesh
     set type                 				= dealii
     set grid type            				= hyper_rectangle
     set grid arguments       				= 0.0, 0.0, 0.0 : 0.1, 0.2, 0.1 : false
-    set initial refinement   				= 3
+    set initial refinement   				= 2
 end
 
+#---------------------------------------------------
+# Boundary conditions
+#---------------------------------------------------
+subsection DEM boundary conditions
+   set number of boundary conditions                     = 1
+
+   subsection boundary condition 0
+       # Choices are fixed_wall|outlet|rotational|translational|periodic
+       set type                                        = periodic
+       set boundary id                                 = 2
+       set periodic id                                 = 3
+   end
+
+end
 
 

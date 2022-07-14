@@ -833,9 +833,9 @@ namespace Parameters
       prm.declare_entry(
         "type",
         "fixed_wall",
-        Patterns::Selection("fixed_wall|outlet|translational|rotational"),
+        Patterns::Selection("fixed_wall|outlet|translational|rotational|periodic"),
         "Type of boundary condition"
-        "Choices are <fixed_wall|outlet|translational|rotational>.");
+        "Choices are <fixed_wall|outlet|translational|rotational|periodic>.");
 
       prm.declare_entry("speed x",
                         "0.",
@@ -866,6 +866,10 @@ namespace Parameters
                         "0.",
                         Patterns::Double(),
                         "Rotational vector element in z direction");
+      prm.declare_entry("periodic id",
+                        "0",
+                        Patterns::Integer(),
+                        "Periodic boundary ID");
     }
 
     void
@@ -906,6 +910,12 @@ namespace Parameters
       else if (boundary_type == "fixed_wall")
         {
           BC_type = BoundaryType::fixed_wall;
+        }
+      else if (boundary_type == "periodic")
+        {
+          BC_type = BoundaryType::periodic;
+          const unsigned int boundary_id   = prm.get_integer("boundary id");
+
         }
       else
         {

@@ -310,7 +310,8 @@ namespace Parameters
         fixed_wall,
         outlet,
         translational,
-        rotational
+        rotational,
+        periodic
       } BC_type;
 
       // Outlet boundary IDs
@@ -325,6 +326,9 @@ namespace Parameters
 
       // Rotational axes of rotating boundaries
       std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
+
+      // Number of DEM periodic boundary conditions
+      unsigned int periodic_boundary_id;
 
       void
       declare_parameters(ParameterHandler &prm);
