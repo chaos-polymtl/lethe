@@ -66,7 +66,7 @@ HeatTransfer<dim>::setup_assemblers()
     {
       if (this->simulation_parameters.multiphysics.VOF)
         {
-          // Call for the specialized assembler
+          // Call for the specific assembler
           this->assemblers.push_back(
             std::make_shared<HeatTransferAssemblerViscousDissipationVOF<dim>>(
               this->simulation_control,

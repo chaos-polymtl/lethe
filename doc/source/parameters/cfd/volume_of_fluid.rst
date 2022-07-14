@@ -1,5 +1,5 @@
-Volume of Fluid
---------------------
+Multiphase Flow - Volume of Fluid
+----------------------------------
 
 In this subsection, the parameters for multiphase flow simulation using the volume of fluid method (VOF) are specified. 
 
@@ -14,6 +14,9 @@ The default values of the VOF parameters are given in the text box below.
 .. code-block:: text
 
 	subsection VOF	
+
+		set viscous dissipation application = fluid 1
+
 		subsection interface sharpening
 			set enable 	= false
 			set frequency   = 10			
@@ -55,15 +58,15 @@ The default values of the VOF parameters are given in the text box below.
 		subsection surface tension force
 			set enable 	= false
 			set verbosity 	= quiet
-			set output auxiliary fields 	= false
-			set surface tension coefficient = 0.0
+			set output auxiliary fields 	   = false
+			set surface tension coefficient    = 0.0
 			set phase fraction gradient filter = 0.5
-			set curvature filter 		= 0.5	
+			set curvature filter 		   = 0.5	
             
-            subsection marangoni effect
-                set enable = false
-                set surface tension gradient = 0.0
-            end subsection		
+			subsection marangoni effect
+				set enable = false
+				set surface tension gradient = 0.0
+			end
 		end
 
 	end
@@ -75,6 +78,13 @@ The default values of the VOF parameters are given in the text box below.
 .. seealso::
   See :doc:`initial_conditions` for the definition of the VOF initial conditions and `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
 
+* ``viscous dissipation application``: defines in which fluid to consider viscous dissipation, if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`. 
+
+  Choices are: ``fluid 0``, ``fluid 1`` or ``both``, with the fluids defined in the :doc:`./physical_properties` for two phase simulations.
+
+  .. tip::
+
+	Applying viscous dissipation in one of the fluid only is particularly useful when one of the fluids is air: for numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, but we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature.
 
 * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
@@ -207,7 +217,7 @@ The default values of the VOF parameters are given in the text box below.
 	   ... final sharpening
 
 
-* ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. ``subsection marangoni effect`` in the ``subsection surface tension force`` enables the calculation of Marangoni effect (thermocapillary effect) in simulations where the surface tension gradient (:math:`\frac{\partial \sigma}{\partial \T}`) is not equal to zero.
+* ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. 
 
   * ``enable``: controls if ``surface tension force`` is considered.
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
@@ -240,6 +250,8 @@ The default values of the VOF parameters are given in the text box below.
   .. tip::
 
     Use the procedure suggested in: :ref:`choosing values for the surface tension force filters`.
+
+  * ``subsection marangoni effect``: Marangoni effect is a thermocapillary effect, considered in simulations if ``set enable = true`` and if the ``surface tension gradient`` is not zero :math:`\left(\frac{\partial \sigma}{\partial T} \neq 0\right)`.
 
 .. seealso::
 
