@@ -53,8 +53,12 @@ LetheGridTools::find_cell_around_point_with_tree(
 
   bool         cell_found_on_level_search = false;
   unsigned int lvl                        = 0;
+  unsigned int max_lvl_search = dof_handler.get_triangulation().n_levels() - 2;
 
-  while (lvl < 4)
+  if (max_lvl_search < 4)
+    dof_handler.get_triangulation().n_levels();
+
+  while (lvl < max_lvl_search)
     {
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(lvl);
 
@@ -82,7 +86,7 @@ LetheGridTools::find_cell_around_point_with_tree(
         }
       lvl += 1;
     }
-  lvl                   = 0;
+
   double best_dist_last = DBL_MAX;
   if (cell_found_on_level_search)
     {
