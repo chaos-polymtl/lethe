@@ -146,7 +146,7 @@ Parameters::RPTTuningParameters::parse_parameters(ParameterHandler &prm)
       cost_function_type = CostFunctionType::l2;
     else
       throw std::logic_error(
-        "Error, invalid cost function type. Choices are larachi, l2 or l1.");
+        "Error, invalid cost function type. Choices are 'larachi', 'l2' or 'l1'.");
 
     experimental_file = prm.get("experimental data file");
   }
