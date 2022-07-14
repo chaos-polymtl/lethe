@@ -234,7 +234,7 @@ public:
  * @brief Class that assembles the viscous dissipation for the heat transfer solver,
  * for the specific case of VOF simulations. The only difference compared to the
  * regular one is that the viscous dissipation can be applied in one of the
- * fluids only, through the viscous_dissipation_indicator parameter.
+ * fluids rather than both, through the viscous_dissipation_indicator parameter.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

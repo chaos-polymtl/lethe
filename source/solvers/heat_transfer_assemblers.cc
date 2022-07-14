@@ -608,10 +608,17 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
           // if phase = 0, maximum viscous dissipation
           viscous_dissipation_coefficient = 1. - phase_value_q;
         }
-      else
+      else if (this->viscous_dissipation_indicator ==
+               Parameters::DissipationIndicator::both)
         {
           // maximum viscous dissipation everywhere
           viscous_dissipation_coefficient = 1.;
+        }
+      else
+        {
+          throw(
+            std::runtime_error("Invalid viscous dissipation application. "
+                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
         }
 
       // assemble the rhs

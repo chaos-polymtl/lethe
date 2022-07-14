@@ -24,7 +24,7 @@ end
 # VOF
 #---------------------------------------------------
 subsection VOF
-	set viscous dissipation application = fluid 1
+	set viscous dissipative fluid = fluid 1
 end
 
 #---------------------------------------------------

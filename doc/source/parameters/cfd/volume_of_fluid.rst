@@ -15,7 +15,7 @@ The default values of the VOF parameters are given in the text box below.
 
 	subsection VOF	
 
-		set viscous dissipation application = fluid 1
+		set viscous dissipative fluid = fluid 1
 
 		subsection interface sharpening
 			set enable 	= false
@@ -78,13 +78,17 @@ The default values of the VOF parameters are given in the text box below.
 .. seealso::
   See :doc:`initial_conditions` for the definition of the VOF initial conditions and `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
 
-* ``viscous dissipation application``: defines in which fluid to consider viscous dissipation, if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`. 
+* ``viscous dissipative fluid``: defines fluid(s) to which viscous dissipation is applied. 
 
   Choices are: ``fluid 0``, ``fluid 1`` or ``both``, with the fluids defined in the :doc:`./physical_properties` for two phase simulations.
 
+  .. warning::
+
+	This parameter is used only if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`. 
+
   .. tip::
 
-	Applying viscous dissipation in one of the fluid only is particularly useful when one of the fluids is air: for numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, but we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature.
+	Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, but we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature.
 
 * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
