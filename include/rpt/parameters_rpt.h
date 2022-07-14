@@ -159,11 +159,20 @@ namespace Parameters
    */
   struct RPTFEMReconstructionParameters
   {
-    std::string              experimental_counts_file; // file with experimental counts from all detectors
-    std::string              export_positions_file; // file with all found positions
-    //std::string              triangulation_file;
-    std::string              dof_handler_file; // file with the saved DOFHandler object
-    std::vector<std::string> nodal_counts_file; // vector containing the filenames of the files with the nodal counts from the built dictionary for each detector (1 detector per file)
+    unsigned int              mesh_refinement; // number of refinement the grid undergoes
+    std::string               experimental_counts_file; // file with experimental counts from all detectors
+    std::string               export_positions_file; // file with all found positions
+    std::string               dof_handler_file; // file with the saved DOFHandler object
+    std::vector<std::string>  nodal_counts_file; // vector containing the filenames of the files with the nodal counts from the built dictionary for each detector (1 detector per file)
+
+    // type of cost function applied when evaluating the particle's real position
+    enum class FEMCostFunction
+    {
+      absolute,
+      relative
+    };
+
+    FEMCostFunction fem_cost_function;
 
     static void
     declare_parameters(ParameterHandler &prm);

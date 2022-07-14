@@ -65,13 +65,17 @@ public:
             , mapping(FE_SimplexP<dim>(1))
     {}
 
-
+    /**
+     * @brief Using the L2 projection, builds a dictionary of particle counts
+     * with respect to a detector for a given reactor.
+     */
     void
     L2_project();
 
-    void
-    test();
-
+    /**
+     * @brief Reconstruction of the particle positions with the counts from the
+     * detectors.
+     */
     void
     rpt_fem_reconstruct();
 
@@ -144,6 +148,26 @@ private:
             std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
 
     /**
+     * @brief Reads the file with the experimental counts and returns a vector
+     * of vectors containing the counts of all detectors for every particle
+     * position.
+     */
+    void
+    read_experimental_counts(std::vector<std::vector<double>> &all_experimental_counts);
+
+    /**
+     * @brief Calculates the cost with the selected cost function of the found
+     * position and returns it.
+     *
+     * @return Cost
+     */
+    double
+    calculate_cost(const TriaActiveIterator<DoFCellAccessor<dim, dim, false>> &cell
+                   , const double &last_constraint
+                   , Vector<double> &reference_location
+                   , std::vector<double> &experimental_count);
+
+    /**
      * @brief Finds the position of the particle and displays in the terminal.
      *
      * @param experimental_count experimental_count contains the experimental
@@ -152,13 +176,6 @@ private:
     void
     find_cell(std::vector<double> experimental_count);
 
-    /**
-     * @brief Reads the file with the experimental counts and returns a vector
-     * of vectors containing the counts of all detectors for every particle
-     * position.
-     */
-    void
-    read_experimental_counts(std::vector<std::vector<double>> &all_experimental_counts);
 
     /**
      * @brief Reads the file with the experimental counts and finds the
@@ -213,6 +230,8 @@ private:
  *
  * @param experimental_count contains the experimental counts from all
  * detectors for a given particle position.
+ *
+ * @return Calculated reference position
  */
 template <int dim>
 Vector<double>

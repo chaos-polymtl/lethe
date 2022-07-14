@@ -39,7 +39,7 @@ RPTFEMReconstruction<dim>::setup_triangulation()
   GridGenerator::cylinder(temp_triangulation, rpt_parameters.rpt_param.reactor_radius, rpt_parameters.rpt_param.reactor_height/2);
   //To make the mesh finer in z direction
   //GridGenerator::subdivided_cylinder(temp_triangulation, 3,0.1, 0.13);
-  temp_triangulation.refine_global(2);
+  temp_triangulation.refine_global(rpt_parameters.fem_reconstruction_param.mesh_refinement);
 
   GridGenerator::flatten_triangulation(temp_triangulation,
                                        flat_temp_triangulation);
@@ -351,6 +351,55 @@ assemble_matrix_and_rhs(
 }
 
 
+template <int dim>
+  double
+  RPTFEMReconstruction<dim>::calculate_cost(const TriaActiveIterator<DoFCellAccessor<dim, dim, false>> &cell
+                                            , const double &last_constraint
+                                            , Vector<double> &reference_location
+                                            , std::vector<double> &experimental_count)
+{
+  double          cost = 0;
+  double          count = 0;
+
+  if (rpt_parameters.fem_reconstruction_param.fem_cost_function == Parameters::RPTFEMReconstructionParameters::FEMCostFunction::absolute)
+    {
+      for (unsigned int d = 0; d < n_detector; ++d)
+        {
+          count += (nodal_counts[d][cell->vertex_dof_index(0, 0)] *
+                     last_constraint);
+
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              count +=
+                (nodal_counts[d][cell->vertex_dof_index(i+1, 0)] *
+                 reference_location[i]);
+            }
+          count -= experimental_count[d];
+          cost += count * count;
+          count = 0;
+        }
+    }
+  else if (rpt_parameters.fem_reconstruction_param.fem_cost_function == Parameters::RPTFEMReconstructionParameters::FEMCostFunction::relative)
+    {
+      for (unsigned int d = 0; d < n_detector; ++d)
+        {
+          count += (nodal_counts[d][cell->vertex_dof_index(0,0)] *
+                    last_constraint);
+
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              count += (nodal_counts[d][cell->vertex_dof_index(i+1,0)] * reference_location[i]);
+            }
+
+          count -= experimental_count[d];
+          cost += count*count/(experimental_count[d]*experimental_count[d]);
+          count = 0;
+        }
+    }
+
+  return cost;
+}
+
 
 template <int dim>
 void
@@ -360,10 +409,15 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
     // solve first loop over cell
 
     double max_cost_function=DBL_MAX;
-    double comparing_cost_function;
+    //double comparing_cost_function;
+    double calculated_cost;
     Point<dim> result;
     Point<dim> final_result;
-    std::vector<double> check;
+    Vector<double> reference_location;
+    double last_constraint_reference_location;
+    std::vector<double> err_coordinates(4,0);
+    double norm_error_coordinates;
+    Point<dim> real_location;
 
     std::vector<std::vector<double>> count_from_all_detectors (n_detector,std::vector<double>(4));
 
@@ -378,12 +432,14 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
             }
         }
 
-        Vector<double> reference_location =
+        reference_location =
                 assemble_matrix_and_rhs<dim>(count_from_all_detectors, experimental_count);
 
-        // Check if the location is a valid one
-        std::vector<double> err_coordinates(4,0);
+        last_constraint_reference_location = 1 - reference_location[0] - reference_location[1] - reference_location[2];
 
+        calculated_cost = calculate_cost(cell, last_constraint_reference_location, reference_location, experimental_count);
+
+        // Check if the location is a valid one
         for (unsigned int i = 0; i < 3; ++i)
         {
             if (reference_location[i] > 1)
@@ -395,17 +451,12 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
         // fourth error block
         {
-            double last_constraint_reference_location = 1 - reference_location[0] - reference_location[1] - reference_location[2];
-
             if (last_constraint_reference_location < 0)
               err_coordinates[3] = std::abs(last_constraint_reference_location);
             else if (last_constraint_reference_location > 1)
               err_coordinates[3] = 1 - last_constraint_reference_location;
-
         }
 
-
-        double norm_error_coordinates = 0;
 
         for (const double &error : err_coordinates)
         {
@@ -414,14 +465,8 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
         if (norm_error_coordinates < 0.05)
         {
-            //std::cout << "Printing reference solution " << std::endl;
-            //reference_location.print(std::cout);
-            Point<dim> real_location;
-            //std::cout << "Printing vertex " << std::endl;
             for (unsigned int v = 0; v < cell->n_vertices(); ++v)
             {
-                //auto vertex_location = cell->vertex(v);
-                //std::cout << vertex_location << std::endl;
                 if (v == 0)
                     real_location = cell->vertex(v);
                 else
@@ -429,37 +474,16 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                                             (cell->vertex(v) - cell->vertex(0));
             }
 
-            /*std::cout << "The reconstruction error is : "
-                      << norm_error_coordinates << std::endl;*/
-            //std::cout << "The real location is : " << real_location << std::endl;
-
-            //Cost function must be calculated here
-
-            double cost_function1=0;
-
-            for (unsigned int i = 0; i < n_detector; ++i){
-
-                double count1=0;
-
-                count1+=(nodal_counts[i][cell->vertex_dof_index(0, 0)]*(1-reference_location[0]-reference_location[1]-reference_location[2]))+
-                        (nodal_counts[i][cell->vertex_dof_index(1, 0)]*(reference_location[0]))+
-                        (nodal_counts[i][cell->vertex_dof_index(2, 0)]*(reference_location[1]))+
-                        (nodal_counts[i][cell->vertex_dof_index(3, 0)]*(reference_location[2]));
-
-                count1-=experimental_count[i];
-                cost_function1+=count1*count1;
-
-            }
-            //std::cout<<cost_function1<<std::endl;
-            comparing_cost_function=cost_function1;
-
-            if (comparing_cost_function<max_cost_function){
-                max_cost_function=comparing_cost_function;
+            if (calculated_cost<max_cost_function)
+              {
+                max_cost_function=calculated_cost;
                 final_result=real_location;
-            }
+              }
         }
+        fill(err_coordinates.begin(),err_coordinates.end(),0);
+        norm_error_coordinates = 0;
     }
-    std::cout << final_result << std::endl;
+    //std::cout << final_result << std::endl;
     found_positions.push_back(final_result);
 }
 
