@@ -146,7 +146,19 @@ The rotation of the cylinder is applied using a rotational boundary condition wi
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The end time of the simulation is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing dem simulation which was run for 2 seconds in real time.
+The packing dem simulation was run for 2 seconds in real time.
+
+.. code-block:: text
+
+    subsection simulation control
+      set time step                 		 = 5e-6
+      set time end       			 = 2
+      set log frequency				 = 2000
+      set output frequency            		 = 10000
+      set output path                  	 	 = ./output_dem/
+    end
+    
+The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing dem simulation.
 
 .. code-block:: text
 
