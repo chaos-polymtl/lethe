@@ -33,28 +33,28 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::setup_triangulation()
 {
-  // flatten the triangulation
   Triangulation<dim> temp_triangulation;
   Triangulation<dim> flat_temp_triangulation;
+
   GridGenerator::cylinder(temp_triangulation, rpt_parameters.rpt_param.reactor_radius, rpt_parameters.rpt_param.reactor_height/2);
-  //To make the mesh finer in z direction
-  //GridGenerator::subdivided_cylinder(temp_triangulation, 3,0.1, 0.13);
   temp_triangulation.refine_global(rpt_parameters.fem_reconstruction_param.mesh_refinement);
 
+  // Flatten the triangulation
   GridGenerator::flatten_triangulation(temp_triangulation,
                                        flat_temp_triangulation);
-
+  // Convert to simplex elements
   GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
                                                    triangulation);
-
   triangulation.set_all_manifold_ids(0);
 
+  // Output the grid before transformation
   GridOut grid_out;
   {
     std::ofstream output_file("original_triangulation.vtk");
     grid_out.write_vtk(triangulation, output_file);
   }
 
+  // Output the grid after transformation
   GridTools::rotate(M_PI_2, 1, triangulation);
   Tensor<1, dim> shift_vector({0, 0, rpt_parameters.rpt_param.reactor_height/2});
   GridTools::shift(shift_vector, triangulation);
