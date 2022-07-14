@@ -21,6 +21,13 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
+# VOF
+#---------------------------------------------------
+subsection VOF
+	set viscous dissipation application = fluid 1
+end
+
+#---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
 subsection initial conditions

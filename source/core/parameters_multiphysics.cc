@@ -1,7 +1,7 @@
-#include <core/parameters_multiphysics.h>
-
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/parameter_handler.h>
+
+#include <core/parameters_multiphysics.h>
 
 DeclException1(
   SharpeningThresholdError,
@@ -103,7 +103,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
     peeling_wetting.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
 
-    prm.declare_entry("viscous dissipation indicator",
+    prm.declare_entry("viscous dissipation application",
                       "fluid 1",
                       Patterns::Selection("fluid 1|fluid 0|both"),
                       "Fluid in which to apply the viscous dissipation in "
@@ -123,7 +123,7 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     surface_tension_force.parse_parameters(prm);
 
     // DissipationIndicator
-    const std::string op = prm.get("viscous dissipation indicator");
+    const std::string op = prm.get("viscous dissipation application");
     if (op == "fluid 1")
       viscous_dissipation_indicator = Parameters::DissipationIndicator::fluid1;
     else if (op == "fluid 0")
@@ -131,7 +131,7 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     else if (op == "both")
       viscous_dissipation_indicator = Parameters::DissipationIndicator::both;
     else
-      throw(std::runtime_error("Invalid viscous dissipation indicator"));
+      throw(std::runtime_error("Invalid viscous dissipation application"));
 
     // Error definitions
     if (sharpening.type == Parameters::SharpeningType::adaptative)

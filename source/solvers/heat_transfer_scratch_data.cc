@@ -1,7 +1,6 @@
 #include <core/bdf.h>
 #include <core/sdirk.h>
 #include <core/utilities.h>
-
 #include <solvers/heat_transfer_scratch_data.h>
 
 
@@ -103,10 +102,6 @@ HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
   thermal_conductivity_1           = std::vector<double>(n_q_points);
   viscosity_1                      = std::vector<double>(n_q_points);
   grad_specific_heat_temperature_1 = std::vector<double>(n_q_points);
-
-  viscous_dissipation_indicator =
-    Parameters::DissipationIndicator::fluid1; // TODO take from parameters
-  viscous_dissipation_coefficient = std::vector<double>(n_q_points);
 }
 
 
@@ -214,30 +209,6 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
                 this->phase_values[q],
                 this->grad_specific_heat_temperature_0[q],
                 this->grad_specific_heat_temperature_1[q]);
-
-              // Coefficient used to consider viscous dissipation in
-              // a given fluid only
-              if (this->viscous_dissipation_indicator ==
-                  Parameters::DissipationIndicator::fluid1)
-                {
-                  // if phase = 0, no viscous dissipation
-                  // if phase = 1, maximum viscous dissipation
-                  this->viscous_dissipation_coefficient[q] =
-                    this->phase_values[q];
-                }
-              else if (this->viscous_dissipation_indicator ==
-                       Parameters::DissipationIndicator::fluid0)
-                {
-                  // if phase = 1, no viscous dissipation
-                  // if phase = 0, maximum viscous dissipation
-                  this->viscous_dissipation_coefficient[q] =
-                    1. - this->phase_values[q];
-                }
-              else
-                {
-                  // maximum viscous dissipation everywhere
-                  this->viscous_dissipation_coefficient[q] = 1.;
-                }
             }
           break;
         }

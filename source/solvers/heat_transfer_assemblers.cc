@@ -1,7 +1,6 @@
 #include <core/bdf.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-
 #include <solvers/copy_data.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/heat_transfer_assemblers.h>
@@ -569,8 +568,9 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
   const std::vector<double> &density   = scratch_data.density;
   const std::vector<double> &viscosity = scratch_data.viscosity;
 
-  const std::vector<double> &viscous_dissipation_coefficient =
-    scratch_data.viscous_dissipation_coefficient;
+  double viscous_dissipation_coefficient(0.);
+  //  const std::vector<double> &viscous_dissipation_coefficient =
+  //    scratch_data.viscous_dissipation_coefficient;
 
   // Time steps and inverse time steps which is used for stabilization
   // constant
@@ -579,6 +579,31 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
 
   // Copy data elements
   auto &local_rhs = copy_data.local_rhs;
+
+
+  //  // Coefficient used to consider viscous dissipation in
+  //  // a given fluid only
+  //  if (this->viscous_dissipation_indicator ==
+  //      Parameters::DissipationIndicator::fluid1)
+  //    {
+  //      // if phase = 0, no viscous dissipation
+  //      // if phase = 1, maximum viscous dissipation
+  //      this->viscous_dissipation_coefficient[q] =
+  //        this->phase_values[q];
+  //    }
+  //  else if (this->viscous_dissipation_indicator ==
+  //           Parameters::DissipationIndicator::fluid0)
+  //    {
+  //      // if phase = 1, no viscous dissipation
+  //      // if phase = 0, maximum viscous dissipation
+  //      this->viscous_dissipation_coefficient[q] =
+  //        1. - this->phase_values[q];
+  //    }
+  //  else
+  //    {
+  //      // maximum viscous dissipation everywhere
+  //      this->viscous_dissipation_coefficient[q] = 1.;
+  //    }
 
   // assembling right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -593,11 +618,34 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
       const auto velocity_gradient_fd =
         scratch_data.velocity_gradient_values[q];
 
+      // Manage viscous dissipation application on specified fluid
+      const double phase_value_q = scratch_data.phase_values[q];
+      if (this->viscous_dissipation_indicator ==
+          Parameters::DissipationIndicator::fluid1)
+        {
+          // if phase = 0, no viscous dissipation
+          // if phase = 1, maximum viscous dissipation
+          viscous_dissipation_coefficient = phase_value_q;
+        }
+      else if (this->viscous_dissipation_indicator ==
+               Parameters::DissipationIndicator::fluid0)
+        {
+          // if phase = 1, no viscous dissipation
+          // if phase = 0, maximum viscous dissipation
+          viscous_dissipation_coefficient = 1. - phase_value_q;
+        }
+      else
+        {
+          // maximum viscous dissipation everywhere
+          viscous_dissipation_coefficient = 1.;
+        }
+
+      // assemble the rhs
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_T_i = scratch_data.phi_T[q][i];
 
-          local_rhs(i) -= viscous_dissipation_coefficient[q] *
+          local_rhs(i) -= viscous_dissipation_coefficient *
                           (-dynamic_viscosity * phi_T_i *
                            scalar_product(velocity_gradient_fd +
                                             transpose(velocity_gradient_fd),

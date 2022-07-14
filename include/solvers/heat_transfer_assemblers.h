@@ -26,7 +26,6 @@
 #define lethe_heat_transfer_assemblers_h
 
 #include <core/simulation_control.h>
-
 #include <solvers/copy_data.h>
 #include <solvers/heat_transfer_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
@@ -233,7 +232,7 @@ public:
 /**
  * @brief Class that assembles the viscous dissipation for the heat transfer solver,
  * specialized in the case of VOF simulations. The only difference is that the
- * viscous dissipation can be neglected on the low density fluid, through a
+ * viscous dissipation can be applied in one of the fluids only, through the
  * viscous_dissipation_coefficient (see scratch_data for more information).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -246,8 +245,10 @@ class HeatTransferAssemblerViscousDissipationVOF
 {
 public:
   HeatTransferAssemblerViscousDissipationVOF(
-    std::shared_ptr<SimulationControl> simulation_control)
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::DissipationIndicator   p_viscous_dissipation_indicator)
     : HeatTransferAssemblerBase<dim>(simulation_control)
+    , viscous_dissipation_indicator(p_viscous_dissipation_indicator)
   {}
 
   virtual void
@@ -262,6 +263,10 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
+
+
+protected:
+  Parameters::DissipationIndicator viscous_dissipation_indicator;
 };
 
 /**
