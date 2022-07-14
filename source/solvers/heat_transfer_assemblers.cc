@@ -570,8 +570,6 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
   const std::vector<double> &viscosity = scratch_data.viscosity;
 
   double viscous_dissipation_coefficient(0.);
-  //  const std::vector<double> &viscous_dissipation_coefficient =
-  //    scratch_data.viscous_dissipation_coefficient;
 
   // Time steps and inverse time steps which is used for stabilization
   // constant
@@ -580,31 +578,6 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
 
   // Copy data elements
   auto &local_rhs = copy_data.local_rhs;
-
-
-  //  // Coefficient used to consider viscous dissipation in
-  //  // a given fluid only
-  //  if (this->viscous_dissipation_indicator ==
-  //      Parameters::DissipationIndicator::fluid1)
-  //    {
-  //      // if phase = 0, no viscous dissipation
-  //      // if phase = 1, maximum viscous dissipation
-  //      this->viscous_dissipation_coefficient[q] =
-  //        this->phase_values[q];
-  //    }
-  //  else if (this->viscous_dissipation_indicator ==
-  //           Parameters::DissipationIndicator::fluid0)
-  //    {
-  //      // if phase = 1, no viscous dissipation
-  //      // if phase = 0, maximum viscous dissipation
-  //      this->viscous_dissipation_coefficient[q] =
-  //        1. - this->phase_values[q];
-  //    }
-  //  else
-  //    {
-  //      // maximum viscous dissipation everywhere
-  //      this->viscous_dissipation_coefficient[q] = 1.;
-  //    }
 
   // assembling right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
