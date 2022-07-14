@@ -159,13 +159,39 @@ private:
      * @brief Calculates the cost with the selected cost function of the found
      * position and returns it.
      *
-     * @return Cost
+     * @param cell Iterator on active cells of the grid.
+     *
+     * @param reference_location Location of the particle in reference
+     * coordinates
+     *
+     * @param last_constraint Constraint on the particle's location
+     *
+     * @param experimental_count Experimental counts from all detectors for a
+     * given particle position
+     *
+     * @return Cost; it is calculated with the cost function mentioned in the
+     * parameter file.
      */
     double
     calculate_cost(const TriaActiveIterator<DoFCellAccessor<dim, dim, false>> &cell
-                   , const double &last_constraint
                    , Vector<double> &reference_location
+                   , const double &last_constraint
                    , std::vector<double> &experimental_count);
+
+    /**
+     * @brief Evaluates the validity of the found location in reference
+     * coordinates and returns the error vector's L2 norm
+     *
+     * @param reference_location Location of the point in reference coordinates
+     *
+     * @param last_constraint 4th constraint on the location of the particle in
+     * reference coordinates
+     *
+     * @return norm_error_coordinates
+     */
+    double
+    check_reference_location_validity(Vector<double> &reference_location
+                            , const double &last_constraint);
 
     /**
      * @brief Finds the position of the particle and displays in the terminal.
