@@ -617,7 +617,7 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
       else
         {
           throw(
-            std::runtime_error("Invalid viscous dissipation application. "
+            std::runtime_error("Invalid viscous dissipative fluid. "
                                "Options are 'fluid 0', 'fluid 1' or 'both'."));
         }
 
