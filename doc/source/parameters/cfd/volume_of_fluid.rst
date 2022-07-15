@@ -206,7 +206,7 @@ The default values of the VOF parameters are given in the text box below.
 
   * ``tolerance``: value for the tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening (see the ``subsection sharpening``). 
   
-    For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``fluid monitored`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
+    For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``monitored fluid`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
 
   * ``verbosity``: states whether from the mass conservation data should be printed. Choices are quiet (no output), verbose (output information from the ``adaptive`` sharpening threshold) and extra verbose (output of the monitoring table in the terminal at the end of the simulation).
 
