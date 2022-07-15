@@ -427,6 +427,35 @@ public:
 };
 
 /**
+ * @brief Class that assembles the Lift force using Saffman-Mei model (as in Crowe et al., 2011) for where the lift force f_l = 1.61 C_s d_p * d_p * pow(murho_p)
+ *  and the momentum exchange coefficient
+ *  beta =(0.5 * c_d * M_PI *
+         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
+        relative_velocity.norm()
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerSaffmanMei : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerSaffmanMei(Parameters::CFDDEM cfd_dem)
+    : cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+  Parameters::CFDDEM cfd_dem;
+};
+/**
  * @brief Class that assembles the Buoyancy force  for the
  * VANS equations whe F_b =  -g *
         density * (4.0 / 3) * M_PI *
