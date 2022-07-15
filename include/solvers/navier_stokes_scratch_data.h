@@ -744,6 +744,7 @@ public:
     std::vector<Point<dim>> particle_reference_location(particle_number + 1);
     std::vector<double>     particle_weights(particle_number + 1);
     fluid_pressure_gradients_at_particle_location.resize(particle_number + 1);
+    fluid_velocity_divergences_at_particle_location.resize(particle_number + 1);
     fluid_velocity_laplacian_at_particle_location.resize(particle_number + 1);
 
     // Loop over particles in cell
@@ -770,6 +771,9 @@ public:
 
     fe_values_local_particles[velocities].get_function_laplacians(
       previous_solution, fluid_velocity_laplacian_at_particle_location);
+
+    fe_values_local_particles[velocities].get_function_divergences(
+      previous_solution, fluid_velocity_divergences_at_particle_location);
 
     fe_values_local_particles[pressure].get_function_gradients(
       previous_solution, fluid_pressure_gradients_at_particle_location);
@@ -922,6 +926,7 @@ public:
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
+  std::vector<Tensor<1, dim>> fluid_velocity_divergences_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
   std::vector<double>         cell_void_fraction;
   unsigned int                max_number_of_particles_per_cell;
@@ -929,6 +934,7 @@ public:
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double                                                            cell_volume;
   double                                                            beta_drag;
+  double                                                            beta_lift;
   Tensor<1, dim> undisturbed_flow_force;
 
   /**
