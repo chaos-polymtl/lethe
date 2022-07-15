@@ -45,10 +45,9 @@ The default values of the VOF parameters are given in the text box below.
 		end
 
 		subsection mass conservation
-			set skip mass conservation in fluid 0 = false
-			set skip mass conservation in fluid 1 = false
+			set conservative fluid  = both
 			set monitoring 		= false
-			set fluid monitored 	= 1
+			set monitored fluid 	= fluid 1
 
 			# parameters used with adaptative sharpening
 			set tolerance		= 1e-2
@@ -80,7 +79,7 @@ The default values of the VOF parameters are given in the text box below.
 
 * ``viscous dissipative fluid``: defines fluid(s) to which viscous dissipation is applied. 
 
-  Choices are: ``fluid 0``, ``fluid 1`` or ``both``, with the fluids defined in the :doc:`./physical_properties` for two phase simulations.
+  Choices are: ``fluid 0``, ``fluid 1`` (default) or ``both``, with the fluids defined in the :doc:`./physical_properties` for two phase simulations.
 
   .. warning::
 
@@ -178,10 +177,13 @@ The default values of the VOF parameters are given in the text box below.
 
   As peeling/wetting mechanisms result in fluid creation and disparition, is it highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
 
-* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids. However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to skip mass conservation in one of the fluid, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
+* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``). However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
 
-  * mass conservation can be skipped on the fluid with index 0 or 1, as defined in the subsection `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_, with ``skip mass conservation in fluid 0`` and ``skip mass conservation in fluid 1`` respectively.
-  * ``monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid with index ``fluid monitored``. Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
+  * ``conservative fluid``: defines fluid(s) to which conservation is solved. 
+
+    Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluids defined in the :doc:`./physical_properties` for two phase simulations.
+
+  * ``monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid given as ``monitored fluid`` (``fluid 0`` or ``fluid 1`` (default)). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
 
     .. admonition:: Example of file output, `VOF_monitoring_fluid_1.dat`:
 
@@ -275,7 +277,7 @@ In the framework of incompressible fluids, a layer of the lowest density fluid (
 .. tip::
   It is strongly advised to sharpen the interface more often (e.g. ``set frequency = 2``) to limit interface blurriness due the added diffusivity. As peeling-wetting is handled after the transport equation is solved, but before interface sharpening, this will not prevent the wetting from occuring.
 
-2. Remove the conservation condition on the lowest density fluid (e.g. ``set skip mass conservation in fluid 0 = false``). The mass conservation equation in the cells of interest is replaced by a zero-pressure condition, to allow the fluid to get out of the domain. 
+2. Remove the conservation condition on the lowest density fluid (e.g. ``set conservative fluid = fluid 1``). The mass conservation equation in the cells of interest is replaced by a zero-pressure condition, to allow the fluid to get out of the domain. 
 
 .. tip::
   This can give more precise results as the interface remains sharp, but the time step (in :doc:`simulation_control`) must be low enough to prevent numerical instabilities.

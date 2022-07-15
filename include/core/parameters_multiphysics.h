@@ -26,9 +26,9 @@
 #ifndef lethe_parameters_multiphysics_h
 #define lethe_parameters_multiphysics_h
 
-#include <core/parameters.h>
-
 #include <deal.II/base/parameter_handler.h>
+
+#include <core/parameters.h>
 
 using namespace dealii;
 
@@ -46,12 +46,14 @@ namespace Parameters
     adaptative
   };
 
-  /** @brief Class to account for different viscous dissipation fluid indicator:
-   *  - fluid0: viscous dissipation in fluid 0 only,
-   *  - fluid1: viscous dissipation in fluid 1 only,
-   *  - both: viscous dissipation on both fluids
+  /** @brief Class to account for different fluid indicator:
+   *  - fluid0: fluid 0 only,
+   *  - fluid1: fluid 1 only,
+   *  - both: both fluids
+   * This is used in VOF for the viscous dissipation (see parameter
+   * viscous_dissipative_fluid) and mass conservation
    */
-  enum class DissipationIndicator
+  enum class FluidIndicator
   {
     fluid0,
     fluid1,
@@ -117,16 +119,15 @@ namespace Parameters
    */
   struct VOF_MassConservation
   {
-    bool skip_mass_conservation_fluid_0;
-    bool skip_mass_conservation_fluid_1;
     bool monitoring;
-    int  id_fluid_monitored;
-
     // Conservation tolerance on the fluid monitored,
     // used with adaptative Sharpening
     double tolerance;
 
-    // Type of verbosity for the interface sharpening calculation
+    Parameters::FluidIndicator conservative_fluid;
+    Parameters::FluidIndicator monitored_fluid;
+
+    // Type of verbosity for the mass conservation algorithm
     Parameters::Verbosity verbosity;
 
     static void
@@ -213,7 +214,7 @@ namespace Parameters
     Parameters::VOF_PeelingWetting      peeling_wetting;
     Parameters::VOF_SurfaceTensionForce surface_tension_force;
 
-    Parameters::DissipationIndicator viscous_dissipation_indicator;
+    Parameters::FluidIndicator viscous_dissipative_fluid;
 
     void
     declare_parameters(ParameterHandler &prm);

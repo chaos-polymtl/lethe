@@ -1,7 +1,6 @@
 #include <core/bdf.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-
 #include <solvers/copy_data.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/heat_transfer_assemblers.h>
@@ -594,22 +593,21 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
 
       // Manage viscous dissipation application on specified fluid
       const double phase_value_q = scratch_data.phase_values[q];
-      if (this->viscous_dissipation_indicator ==
-          Parameters::DissipationIndicator::fluid1)
+      if (this->viscous_dissipative_fluid == Parameters::FluidIndicator::fluid1)
         {
           // if phase = 0, no viscous dissipation
           // if phase = 1, maximum viscous dissipation
           viscous_dissipation_coefficient = phase_value_q;
         }
-      else if (this->viscous_dissipation_indicator ==
-               Parameters::DissipationIndicator::fluid0)
+      else if (this->viscous_dissipative_fluid ==
+               Parameters::FluidIndicator::fluid0)
         {
           // if phase = 1, no viscous dissipation
           // if phase = 0, maximum viscous dissipation
           viscous_dissipation_coefficient = 1. - phase_value_q;
         }
-      else if (this->viscous_dissipation_indicator ==
-               Parameters::DissipationIndicator::both)
+      else if (this->viscous_dissipative_fluid ==
+               Parameters::FluidIndicator::both)
         {
           // maximum viscous dissipation everywhere
           viscous_dissipation_coefficient = 1.;

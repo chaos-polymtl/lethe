@@ -17,14 +17,6 @@
 #ifndef lethe_VOF_h
 #define lethe_VOF_h
 
-#include <core/bdf.h>
-#include <core/simulation_control.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/multiphysics_interface.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/table_handler.h>
@@ -43,6 +35,13 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/error_estimator.h>
+
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 template <int dim>
 class VolumeOfFluid
@@ -168,12 +167,12 @@ public:
    *
    * @param solution VOF solution (phase fraction)
    *
-   * @param id_fluid_monitored Phase value (0 or 1) corresponding to
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
    * the phase of interest.
    */
   void
   calculate_volume_and_mass(const TrilinosWrappers::MPI::Vector &solution,
-                            const int id_fluid_monitored);
+                            const Parameters::FluidIndicator monitored_fluid);
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -535,14 +534,14 @@ private:
    * test multiple sharpening threshold in the binary search algorithm
    * (adaptative sharpening).
    *
-   * @param id_fluid_monitored Phase value (0 or 1) corresponding to
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
    * the phase of interest.
    *
    * @param sharpening_threshold Interface sharpening threshold that represents the
    * mass conservation level
    */
   double
-  calculate_mass_deviation(const int    id_fluid_monitored,
+  calculate_mass_deviation(const Parameters::FluidIndicator monitored_fluid,
                            const double sharpening_threshold);
 
   /**

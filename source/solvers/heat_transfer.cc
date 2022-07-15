@@ -1,13 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/heat_transfer.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-#include <solvers/postprocessing_cfd.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -25,6 +15,15 @@
 
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/heat_transfer.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/postprocessing_cfd.h>
 
 template <int dim>
 void
@@ -71,7 +70,7 @@ HeatTransfer<dim>::setup_assemblers()
             std::make_shared<HeatTransferAssemblerViscousDissipationVOF<dim>>(
               this->simulation_control,
               this->simulation_parameters.multiphysics.vof_parameters
-                .viscous_dissipation_indicator));
+                .viscous_dissipative_fluid));
         }
       else
         {

@@ -1,12 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -23,6 +14,14 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 #include <cmath>
 
@@ -340,7 +339,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::calculate_volume_and_mass(
   const TrilinosWrappers::MPI::Vector &solution,
-  const int                            id_fluid_monitored)
+  const Parameters::FluidIndicator     monitored_fluid)
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
@@ -377,9 +376,9 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              switch (id_fluid_monitored)
+              switch (monitored_fluid)
                 {
-                  case 0:
+                  case Parameters::FluidIndicator::fluid0:
                     {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * (1 - phase_values[q]);
@@ -387,7 +386,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                         this->volume_monitored * density_0[q];
                       break;
                     }
-                  case 1:
+                  case Parameters::FluidIndicator::fluid1:
                     {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * phase_values[q];
@@ -490,10 +489,9 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         .monitoring)
     {
       // Calculate volume and mass (this->mass_monitored)
-      calculate_volume_and_mass(
-        this->present_solution,
-        simulation_parameters.multiphysics.vof_parameters.conservation
-          .id_fluid_monitored);
+      calculate_volume_and_mass(this->present_solution,
+                                simulation_parameters.multiphysics
+                                  .vof_parameters.conservation.monitored_fluid);
 
       if (first_iteration)
         {
@@ -518,11 +516,20 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 "time", this->simulation_control->get_current_time());
             }
 
-          std::string fluid_id =
-            "fluid_" + Utilities::int_to_string(
-                         this->simulation_parameters.multiphysics.vof_parameters
-                           .conservation.id_fluid_monitored,
-                         1);
+          std::string fluid_id("");
+
+          if (this->simulation_parameters.multiphysics.vof_parameters
+                .conservation.monitored_fluid ==
+              Parameters::FluidIndicator::fluid1)
+            {
+              fluid_id = "fluid_1";
+            }
+          else if (this->simulation_parameters.multiphysics.vof_parameters
+                     .conservation.monitored_fluid ==
+                   Parameters::FluidIndicator::fluid0)
+            {
+              fluid_id = "fluid_0";
+            }
 
           // Add volume column
           this->table_monitoring_vof.add_value("volume_" + fluid_id,
@@ -635,9 +642,9 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
   const int max_iterations = this->simulation_parameters.multiphysics
                                .vof_parameters.sharpening.max_iterations;
 
-  const int id_fluid_monitored =
+  const Parameters::FluidIndicator monitored_fluid =
     this->simulation_parameters.multiphysics.vof_parameters.conservation
-      .id_fluid_monitored;
+      .monitored_fluid;
 
   double mass_deviation = 0.;
   int    nb_search_ite  = 0;
@@ -665,12 +672,12 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
       st_ave    = (st_min + st_max) / 2.;
       st_tested = st_ave;
 
-      mass_deviation = calculate_mass_deviation(id_fluid_monitored, st_tested);
+      mass_deviation = calculate_mass_deviation(monitored_fluid, st_tested);
 
       // Adapt searching range
-      switch (id_fluid_monitored)
+      switch (monitored_fluid)
         {
-          case 0:
+          case Parameters::FluidIndicator::fluid0:
             {
               if (mass_deviation > 0.)
                 {
@@ -686,7 +693,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
                 }
               break;
             }
-          case 1:
+          case Parameters::FluidIndicator::fluid1:
             {
               if (mass_deviation > 0.)
                 {
@@ -721,7 +728,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
         st_tested = st_min;
 
       mass_deviation_endpoint =
-        calculate_mass_deviation(id_fluid_monitored, st_tested);
+        calculate_mass_deviation(monitored_fluid, st_tested);
 
       // Retake st_ave value if mass deviation is not lowered at endpoint
       // values
@@ -766,8 +773,9 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
 
 template <int dim>
 double
-VolumeOfFluid<dim>::calculate_mass_deviation(const int    id_fluid_monitored,
-                                             const double sharpening_threshold)
+VolumeOfFluid<dim>::calculate_mass_deviation(
+  const Parameters::FluidIndicator monitored_fluid,
+  const double                     sharpening_threshold)
 {
   // Copy present solution VOF
   auto mpi_communicator = this->triangulation->get_communicator();
@@ -780,7 +788,7 @@ VolumeOfFluid<dim>::calculate_mass_deviation(const int    id_fluid_monitored,
   sharpen_interface(solution_copy, sharpening_threshold, false);
 
   // Calculate mass of the monitored phase
-  calculate_volume_and_mass(solution_copy, id_fluid_monitored);
+  calculate_volume_and_mass(solution_copy, monitored_fluid);
 
   // Calculate mass deviation
   double mass_deviation = this->mass_monitored - this->mass_first_iteration;
