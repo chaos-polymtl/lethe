@@ -3645,23 +3645,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
       vertices_cell_mapping();
 
-      if (this->simulation_parameters.particlesParameters->cut_cells_mapping ==
-          "regular")
+      if (all_spheres)
+        optimized_generate_cut_cells_map();
+      else
         generate_cut_cells_map();
-      else if (this->simulation_parameters.particlesParameters
-                 ->cut_cells_mapping == "automatic")
-        {
-          if (all_spheres)
-            optimized_generate_cut_cells_map();
-          else
-            generate_cut_cells_map();
-        }
-      else if (this->simulation_parameters.particlesParameters
-                 ->cut_cells_mapping == "performance test")
-        {
-          optimized_generate_cut_cells_map();
-          generate_cut_cells_map();
-        }
     }
 
   this->set_initial_condition(
@@ -3693,23 +3680,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-          if (this->simulation_parameters.particlesParameters
-                ->cut_cells_mapping == "regular")
+
+          if (all_spheres)
+            optimized_generate_cut_cells_map();
+          else
             generate_cut_cells_map();
-          else if (this->simulation_parameters.particlesParameters
-                     ->cut_cells_mapping == "automatic")
-            {
-              if (all_spheres)
-                optimized_generate_cut_cells_map();
-              else
-                generate_cut_cells_map();
-            }
-          else if (this->simulation_parameters.particlesParameters
-                     ->cut_cells_mapping == "performance test")
-            {
-              optimized_generate_cut_cells_map();
-              generate_cut_cells_map();
-            }
+
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,
@@ -3724,23 +3700,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
           vertices_cell_mapping();
-          if (this->simulation_parameters.particlesParameters
-                ->cut_cells_mapping == "regular")
+
+          if (all_spheres)
+            optimized_generate_cut_cells_map();
+          else
             generate_cut_cells_map();
-          else if (this->simulation_parameters.particlesParameters
-                     ->cut_cells_mapping == "automatic")
-            {
-              if (all_spheres)
-                optimized_generate_cut_cells_map();
-              else
-                generate_cut_cells_map();
-            }
-          else if (this->simulation_parameters.particlesParameters
-                     ->cut_cells_mapping == "performance test")
-            {
-              optimized_generate_cut_cells_map();
-              generate_cut_cells_map();
-            }
+
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,

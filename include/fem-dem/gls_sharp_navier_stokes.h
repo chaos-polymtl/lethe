@@ -165,23 +165,10 @@ private:
       {
         force_on_ib();
         integrate_particles();
-        if (this->simulation_parameters.particlesParameters
-              ->cut_cells_mapping == "regular")
+        if (all_spheres)
+          optimized_generate_cut_cells_map();
+        else
           generate_cut_cells_map();
-        else if (this->simulation_parameters.particlesParameters
-                   ->cut_cells_mapping == "automatic")
-          {
-            if (all_spheres)
-              optimized_generate_cut_cells_map();
-            else
-              generate_cut_cells_map();
-          }
-        else if (this->simulation_parameters.particlesParameters
-                   ->cut_cells_mapping == "performance_test")
-          {
-            optimized_generate_cut_cells_map();
-            generate_cut_cells_map();
-          }
       }
     // this->simulation_control->set_assembly_method(this->time_stepping_method);
     {
