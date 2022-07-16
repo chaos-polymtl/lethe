@@ -90,12 +90,12 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        support_points);
   cut_cells_map.clear();
   cells_inside_map.clear();
-  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  auto &             v_x_fe                  = this->fe->get_sub_fe(0, 1);
+  auto              &v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
@@ -196,9 +196,10 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
       unsigned int lvl_iter = 0;
 
       // Fix max level search
-      unsigned int max_lvl_search = this->triangulation->n_levels() - 2;
+      unsigned int max_lvl_search =
+        this->dof_handler.get_triangulation().n_levels() - 2;
       if (max_lvl_search < 4)
-        max_lvl_search = this->triangulation->n_levels();
+        max_lvl_search = this->dof_handler.get_triangulation().n_levels();
 
       // Search for candidates until at least one is found or until the
       // max_lvl_search is reached
@@ -207,7 +208,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
           const auto &cell_iterator =
             this->dof_handler.cell_iterators_on_level(lvl_iter);
 
-          // Loop over the cells on level 0 of the mesh
+          // Loop over the cells on level lvl_iter of the mesh
           for (const auto &cell : cell_iterator)
             {
               auto is_candidate = generate_cut_cell_candidates(cell, p);
@@ -300,8 +301,8 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 template <int dim>
 std::pair<bool, bool>
 GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const unsigned int                                    p_id)
+  const typename DoFHandler<dim>::cell_iterator &cell,
+  const unsigned int                             p_id)
 {
   bool cell_is_inside = false;
   bool cell_is_cut    = false;
@@ -708,7 +709,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // IB stencil to extrapolate the fluid stress tensor.
 
                       std::vector<Tensor<2, dim>>
-                                                  local_face_viscous_stress_tensor(dofs_per_face);
+                        local_face_viscous_stress_tensor(dofs_per_face);
                       std::vector<Tensor<2, dim>> local_face_pressure_tensor(
                         dofs_per_face);
                       for (unsigned int i = 0;
@@ -2897,8 +2898,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2991,8 +2992,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
