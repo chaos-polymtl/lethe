@@ -339,7 +339,7 @@ private:
   std::pair<bool, bool>
   generate_cut_cell_candidates(
     const typename DoFHandler<dim>::cell_iterator &cell,
-    const unsigned int                                    p_id);
+    const unsigned int                             p_id);
 
   /**
    * @brief
