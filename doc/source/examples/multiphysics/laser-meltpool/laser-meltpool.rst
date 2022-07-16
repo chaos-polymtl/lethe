@@ -139,7 +139,7 @@ and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy 
     end 
     
 
-In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model [1] is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
+In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
 
     .. math:: 
         q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{(-\eta \frac{r^2}{R^2})} \exp{(- \frac{|z|}{\mu})}
@@ -278,6 +278,6 @@ The following animation shows the temperature distribution in the simulations do
 -----------
 References
 -----------
-[1] Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X., 2018. Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis. Materials & Design, 142, pp.319-328.
+`[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X., 2018. Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis. Materials & Design, 142, pp.319-328.
 
-[2] Li, E., Zhou, Z., Wang, L., Zheng, Q., Zou, R. and Yu, A., 2022. Melt pool dynamics and pores formation in multi-track studies in laser powder bed fusion process. Powder Technology, p.117533.
+`[2] <https://doi.org/10.1016/j.powtec.2022.117533>`_ Li, E., Zhou, Z., Wang, L., Zheng, Q., Zou, R. and Yu, A., 2022. Melt pool dynamics and pores formation in multi-track studies in laser powder bed fusion process. Powder Technology, p.117533.

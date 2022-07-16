@@ -1,7 +1,7 @@
 The Incompressible Navier-Stokes equations
 #############################################
 
-Lethe was designed to solve the incompressible Navier-Stokes equations. For the physics in Lethe, we generally try to follow the convention of the `BSL <https://en.wikipedia.org/wiki/Transport_Phenomena_(book)>`_ Assuming a constant density :math:`\rho` and kinematic viscosity :math:`\nu`, these equations take the following form:
+Lethe was designed to solve the incompressible Navier-Stokes equations. For the physics in Lethe, we generally try to follow the convention of the `BSL <https://en.wikipedia.org/wiki/Transport_Phenomena_(book)>`_. Assuming a constant density :math:`\rho` and kinematic viscosity :math:`\nu`, these equations take the following form:
 
 .. math::
     \nabla \cdot \mathbf{u} &= 0   \\

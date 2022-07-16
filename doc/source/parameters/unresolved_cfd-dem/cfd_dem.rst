@@ -23,11 +23,11 @@ This subsection includes parameters related to multiphase flow simulations using
    end
 
 
-* The ``grad div`` parameter allows the enabling of the grad div stabilization for the Volume Averaged Navier Stokes equations [1]. This allows for a much better mass conservation of the system.
+* The ``grad div`` parameter allows the enabling of the grad div stabilization for the Volume Averaged Navier Stokes equations `[1] <https://doi.org/10.1016/j.softx.2020.100579>`_. This allows for a much better mass conservation of the system.
 * The ``void fraction time derivative`` parameter allows us to choose whether or not we want to account for the time derivative of the void fraction or take it equal to zero.
 * The ``interpolated void fraction`` parameter allows us choose whether the void fraction used to calculate drag is the cell void fraction or the one interpolated at the position of the particle (Using the cell void fraction to calculate drag on each particle instead of the interpolated one is currently under investigation).
 * The ``drag force``, ``buoyancy force``, ``shear force``, and ``pressure force`` parameters allow us to enable or disable the respective forces in a cfd-dem simulation.
-* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time of writing are: Di Felice [2], Rong [3], Dallavalle [4], Koch and Hill [5], Beetstra [6], and Gidaspow [7].
+* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time of writing are: Di Felice `[2] <https://doi.org/10.1016/0301-9322(94)90011-6>`_, Rong `[3] <https://doi.org/10.1016/j.ces.2013.05.036>`_, Dallavalle `[4] <https://doi.org/10.1080/07373937.2010.482714>`_, Koch and Hill `[5] <https://doi.org/10.1016/j.ces.2013.05.014>`_, Beetstra `[6] <https://doi.org/10.1002/aic.11065>`_, and Gidaspow `[7] <https://books.google.ca/books?id=fHecceQyaYkC&lpg=PP1&ots=uhExYvWrkv&lr&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_.
 * The ``post processing`` parameter, when enabled, allows the calculation of the pressure drop, void fraction in the packed region, and the mass conservation in a packed bed at each time step.
 * The ``coupling frequency`` parameter is only applicable for the cfd-dem solver and it determines the number of DEM iterations per 1 CFD iteration.
 
@@ -41,16 +41,16 @@ This subsection includes parameters related to multiphase flow simulations using
 * The implicit stabilization parameter determines wehether or not we calculate the :math:`\tau` for the SUPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization). By default, this is set to true. If difficulties are encountered in the convergence of the non-linear solver, a good practice is to set this to false.
 * The grad-div length scale determines the value of the length scale constant :math:`c^*` in the calculation of :math:`\gamma = \nu + c^* \mathbf{u}`. 
 
-[1] B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, J. Chaouki, Lethe: An open-source parallel high- order adaptative cfd solver for incompressible flows, SoftwareX 12 (2020) 100579.
+`[1] <https://doi.org/10.1016/j.softx.2020.100579>`_ B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, J. Chaouki, Lethe: An open-source parallel high- order adaptative cfd solver for incompressible flows, SoftwareX 12 (2020) 100579.
 
-[2] R. Di Felice, The voidage function for fluid-particle interaction systems, International journal of multiphase flow 20 (1) (1994) 153–159.
+`[2] <https://doi.org/10.1016/0301-9322(94)90011-6>`_ R. Di Felice, The voidage function for fluid-particle interaction systems, International journal of multiphase flow 20 (1) (1994) 153–159.
 
-[3] L. Rong, K. Dong, A. Yu, Lattice-boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity, Chemical engineering science 99 (2013) 44–58.
+`[3] <https://doi.org/10.1016/j.ces.2013.05.036>`_ L. Rong, K. Dong, A. Yu, Lattice-boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity, Chemical engineering science 99 (2013) 44–58.
 
-[4] Sobieski, Wojciech. (2011). Drag Coefficient in Solid–Fluid System Modeling with the Eulerian Multiphase Model. Drying Technology. 29. 111-125. 10.1080/07373937.2010.482714. 
+`[4] <https://doi.org/10.1080/07373937.2010.482714>`_ Sobieski, Wojciech. (2011). Drag Coefficient in Solid–Fluid System Modeling with the Eulerian Multiphase Model. Drying Technology. 29. 111-125. 10.1080/07373937.2010.482714.
 
-[5]  D. Jajcevic, E. Siegmann, C. Radeke, J. G. Khinast, Large-scale cfd–dem simulations of fluidized granular systems, Chemical Engineering Science 98 (2013) 298–310.
+`[5] <https://doi.org/10.1016/j.ces.2013.05.014>`_  D. Jajcevic, E. Siegmann, C. Radeke, J. G. Khinast, Large-scale cfd–dem simulations of fluidized granular systems, Chemical Engineering Science 98 (2013) 298–310.
 
-[6] R. Beetstra, M. A. van der Hoef, J. A. M. Kuipers. Drag Force of Intermediate Reynolds Number Flow Past Mono- and Bidisperse Arrays of Spheres. AIChE journal, v. 53, n. 2, p. 489-501, 2007.
+`[6] <https://doi.org/10.1002/aic.11065>`_ R. Beetstra, M. A. van der Hoef, J. A. M. Kuipers. Drag Force of Intermediate Reynolds Number Flow Past Mono- and Bidisperse Arrays of Spheres. AIChE journal, v. 53, n. 2, p. 489-501, 2007.
 
-[7] D. Gidaspow. Multiphase flow and fluidization: continuum and kinetic theory descriptions. Academic press, 1994.
+`[7] <https://books.google.ca/books?id=fHecceQyaYkC&lpg=PP1&ots=uhExYvWrkv&lr&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_ D. Gidaspow. Multiphase flow and fluidization: continuum and kinetic theory descriptions. Academic press, 1994.
