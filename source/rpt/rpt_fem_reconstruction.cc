@@ -141,6 +141,7 @@ RPTFEMReconstruction<dim>::assemble_local_system(
   copy_data.cell_matrix.reinit(dofs_per_cell,dofs_per_cell);
   copy_data.cell_rhs(dofs_per_cell);
 
+  copy_data.local_dof_indices.resize(dofs_per_cell);
 
   auto &fe_values = sd.fe_values;
 
