@@ -512,6 +512,64 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
   const std::vector<double> &density   = scratch_data.density;
   const std::vector<double> &viscosity = scratch_data.viscosity;
 
+  // Time steps and inverse time steps which is used for stabilization
+  // constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // assembling right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather physical properties in case of mono fluids simulations (to be
+      // modified by cell in case of multiple fluids simulations)
+      const double dynamic_viscosity = viscosity[q] * density[q];
+
+      // Store JxW in local variable for faster access
+      const double JxW = scratch_data.fe_values_T.JxW(q);
+
+      const auto velocity_gradient_fd =
+        scratch_data.velocity_gradient_values[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i = scratch_data.phi_T[q][i];
+
+          local_rhs(i) -= (-dynamic_viscosity * phi_T_i *
+                           scalar_product(velocity_gradient_fd +
+                                            transpose(velocity_gradient_fd),
+                                          transpose(velocity_gradient_fd))) *
+                          JxW;
+        }
+    }
+}
+
+template class HeatTransferAssemblerViscousDissipation<2>;
+template class HeatTransferAssemblerViscousDissipation<3>;
+
+template <int dim>
+void
+HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_matrix(
+  HeatTransferScratchData<dim> & /*scratch_data*/,
+  StabilizedMethodsCopyData &
+  /*copy_data*/)
+{}
+
+template <int dim>
+void
+HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
+  HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &   copy_data)
+{
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  const std::vector<double> &density   = scratch_data.density;
+  const std::vector<double> &viscosity = scratch_data.viscosity;
+
+  double viscous_dissipation_coefficient(0.);
 
   // Time steps and inverse time steps which is used for stabilization
   // constant
@@ -534,12 +592,41 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
       const auto velocity_gradient_fd =
         scratch_data.velocity_gradient_values[q];
 
+      // Manage viscous dissipation application on specified fluid
+      const double phase_value_q = scratch_data.phase_values[q];
+      if (this->viscous_dissipative_fluid == Parameters::FluidIndicator::fluid1)
+        {
+          // if phase = 0, no viscous dissipation
+          // if phase = 1, maximum viscous dissipation
+          viscous_dissipation_coefficient = phase_value_q;
+        }
+      else if (this->viscous_dissipative_fluid ==
+               Parameters::FluidIndicator::fluid0)
+        {
+          // if phase = 1, no viscous dissipation
+          // if phase = 0, maximum viscous dissipation
+          viscous_dissipation_coefficient = 1. - phase_value_q;
+        }
+      else if (this->viscous_dissipative_fluid ==
+               Parameters::FluidIndicator::both)
+        {
+          // maximum viscous dissipation everywhere
+          viscous_dissipation_coefficient = 1.;
+        }
+      else
+        {
+          throw(
+            std::runtime_error("Invalid viscous dissipative fluid. "
+                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
+        }
 
+      // assemble the rhs
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_T_i = scratch_data.phi_T[q][i];
 
-          local_rhs(i) -= (-dynamic_viscosity * phi_T_i *
+          local_rhs(i) -= viscous_dissipation_coefficient *
+                          (-dynamic_viscosity * phi_T_i *
                            scalar_product(velocity_gradient_fd +
                                             transpose(velocity_gradient_fd),
                                           transpose(velocity_gradient_fd))) *
@@ -548,10 +635,8 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
     }
 }
 
-template class HeatTransferAssemblerViscousDissipation<2>;
-template class HeatTransferAssemblerViscousDissipation<3>;
-
-
+template class HeatTransferAssemblerViscousDissipationVOF<2>;
+template class HeatTransferAssemblerViscousDissipationVOF<3>;
 
 template <int dim>
 void
