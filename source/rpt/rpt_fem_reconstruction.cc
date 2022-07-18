@@ -18,6 +18,8 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
+#include <deal.II/base/work_stream.h>
+#include <deal.II/base/multithread_info.h>
 
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/rpt_fem_reconstruction.h>
@@ -28,6 +30,30 @@
 #include <vector>
 
 using namespace dealii;
+
+
+template <int dim>
+RPTFEMReconstruction<dim>::AssemblyScratchData::AssemblyScratchData(
+  const FiniteElement<dim> &fe,
+  const unsigned int no_detector)
+  : fe_values(fe,
+              QGaussSimplex<dim>(fe.degree + 1),
+              update_values | update_quadrature_points |
+                update_JxW_values),
+  detector_id (no_detector)
+{}
+
+template <int dim>
+RPTFEMReconstruction<dim>::AssemblyScratchData::AssemblyScratchData(const AssemblyScratchData &scratch)
+  : fe_values (scratch.fe_values.get_fe(),
+                        scratch.fe_values.get_quadrature(),
+                        update_values | update_quadrature_points |
+                        update_JxW_values),
+  detector_id (scratch.detector_id)
+{}
+
+
+
 
 template <int dim>
 void
@@ -105,6 +131,74 @@ RPTFEMReconstruction<dim>::solve_linear_system(unsigned detector_no)
 
 template <int dim>
 void
+RPTFEMReconstruction<dim>::assemble_local_system(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  AssemblyScratchData &                                 sd,
+  AssemblyCopyData &                                    copy_data)
+{
+  unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+
+  copy_data.cell_matrix.reinit(dofs_per_cell,dofs_per_cell);
+  copy_data.cell_rhs(dofs_per_cell);
+
+
+  auto &fe_values = sd.fe_values;
+
+  fe_values.reinit(cell);
+  for (const unsigned int q_index : fe_values.quadrature_point_indices())
+    {
+      Point<dim> q_point_position = fe_values.quadrature_point(q_index);
+      RadioParticle<dim> particle(q_point_position, 0);
+
+      ParticleDetectorInteractions<dim> p_q_interaction(
+        particle, detectors[sd.detector_id], rpt_parameters.rpt_param);
+
+      double count = p_q_interaction.calculate_count();
+
+      for (const unsigned int i : fe_values.dof_indices())
+        {
+          for (const unsigned int j : fe_values.dof_indices())
+            {
+              copy_data.cell_matrix(i, j) +=
+                (fe_values.shape_value(i, q_index) * // phi_i(x_q)
+                 fe_values.shape_value(j, q_index) * // phi_j(x_q)
+                 fe_values.JxW(q_index));            // dx
+            }
+          copy_data.cell_rhs(i) += (count *                             // f(x)
+                          fe_values.shape_value(i, q_index) * // phi_i(x_q)
+                          fe_values.JxW(q_index));            // dx
+        }
+    }
+  cell->get_dof_indices(copy_data.local_dof_indices);
+}
+
+template <int dim>
+void
+RPTFEMReconstruction<dim>::copy_local_to_global(const AssemblyCopyData &copy_data)
+{
+  constraints.distribute_local_to_global(
+    copy_data.cell_matrix, copy_data.cell_rhs, copy_data.local_dof_indices, system_matrix, system_rhs);
+}
+
+template <int dim>
+void
+RPTFEMReconstruction<dim>::assemble_system(unsigned no_detector)
+{
+  AssemblyScratchData scratch(fe, no_detector);
+
+  WorkStream::run(dof_handler.begin_active(),
+                  dof_handler.end(),
+                  *this,
+                  &RPTFEMReconstruction::assemble_local_system,
+                  &RPTFEMReconstruction::copy_local_to_global,
+                  scratch,
+                  AssemblyCopyData());
+}
+
+
+/*
+template <int dim>
+void
 RPTFEMReconstruction<dim>::assemble_system(unsigned detector_no)
 {
     system_rhs    = 0;
@@ -155,7 +249,7 @@ RPTFEMReconstruction<dim>::assemble_system(unsigned detector_no)
                 cell_matrix, cell_rhs, local_dof_indices, system_matrix, system_rhs);
     }
 }
-
+*/
 
 template <int dim>
 void

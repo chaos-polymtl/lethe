@@ -38,6 +38,8 @@
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/vector.h>
 
+#include <deal.II/fe/fe_values.h>
+
 #include <rpt/detector.h>
 #include <rpt/parameters_rpt.h>
 #include <rpt/particle_detector_interactions.h>
@@ -245,6 +247,41 @@ private:
     std::vector<Vector<double>> nodal_counts;
     std::vector<Detector<dim>>  detectors;
     std::vector<Point<dim>>     found_positions;
+
+
+    struct AssemblyScratchData
+    {
+      AssemblyScratchData(const FiniteElement<dim> &fe,
+                          const unsigned int no_detector);
+      AssemblyScratchData(const AssemblyScratchData &scratch_data);
+
+      FEValues<dim>               fe_values;
+      unsigned int                detector_id;
+    };
+
+    struct AssemblyCopyData
+    {
+      FullMatrix<double>                   cell_matrix;
+      Vector<double>                       cell_rhs;
+      std::vector<types::global_dof_index> local_dof_indices;
+    };
+// TO DO
+    /**
+     * @brief
+     */
+    void
+    assemble_local_system(
+      const typename DoFHandler<dim>::active_cell_iterator &cell,
+      AssemblyScratchData &                                 scratch_data,
+      AssemblyCopyData &                                    copy_data);
+
+    /**
+     * @brief
+     */
+    void
+    copy_local_to_global(const AssemblyCopyData & copy_data
+        );
+
 };
 
 /**
