@@ -415,6 +415,7 @@ assemble_matrix_and_rhs(
   Vector<double>           reference_location;
   unsigned int             detector_size = vertex_count.size();
   double                   sigma         = 0;
+  double                   denum;
   LAPACKFullMatrix<double> sys_matrix;
   sys_matrix.reinit(dim);
   Vector<double> sys_rhs;
@@ -461,9 +462,10 @@ assemble_matrix_and_rhs(
             {
               for (unsigned int d = 0; d < detector_size; ++d)
                 {
+                  denum = 1/(experimental_count[d] * experimental_count[d]);
                   sigma += (-vertex_count[d][0] + vertex_count[d][j + 1]) *
-                           (-vertex_count[d][0] + vertex_count[d][i + 1]) /
-                           (experimental_count[d] * experimental_count[d]);
+                           (-vertex_count[d][0] + vertex_count[d][i + 1]) *
+                            denum;
                 }
               sys_matrix.set(i, j, sigma);
               sigma = 0;
@@ -475,9 +477,10 @@ assemble_matrix_and_rhs(
         {
           for (unsigned int d = 0; d < detector_size; ++d)
             {
+              denum = 1/(experimental_count[d] * experimental_count[d]);
               sigma += (vertex_count[d][0] - experimental_count[d]) *
-                       (-vertex_count[d][0] + vertex_count[d][i + 1]) /
-                       (experimental_count[d] * experimental_count[d]);
+                       (-vertex_count[d][0] + vertex_count[d][i + 1]) *
+                        denum;
             }
           sys_rhs[i] = -sigma;
           sigma      = 0;
@@ -589,9 +592,9 @@ void
 RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 {
   double                           max_cost_function                  = DBL_MAX;
-  double                           last_constraint_reference_location = 0;
-  double                           norm_error_coordinates             = 0;
-  double                           calculated_cost                    = 0;
+  double                           last_constraint_reference_location;
+  double                           norm_error_coordinates;
+  double                           calculated_cost;
   Point<dim>                       real_location;
   Vector<double>                   reference_location;
   std::vector<std::vector<double>> count_from_all_detectors(
@@ -628,7 +631,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                                           last_constraint_reference_location);
 
       //
-      if (norm_error_coordinates < 0.05)
+      if (norm_error_coordinates < 0.005)
         {
           // Calculate cost with the selected cost function
           calculated_cost = calculate_cost(cell,
