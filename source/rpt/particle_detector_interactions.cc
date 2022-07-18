@@ -178,7 +178,8 @@ ParticleDetectorInteractions<dim>::calculate_detector_path_length()
 }
 
 template <int dim>
-std::vector<double> ParticleDetectorInteractions<dim>::solve_t(
+std::vector<double>
+ParticleDetectorInteractions<dim>::solve_t(
   Tensor<2, dim> e_inverse,
   Tensor<1, dim> detector_particle_origin,
   Tensor<1, dim> particle_position_rotation)
@@ -332,11 +333,13 @@ ParticleDetectorInteractions<dim>::calculate_efficiency()
   // Calculate position parameters for the particle position
   calculate_position_parameters();
 
+  const double denum = 1. / RAND_MAX;
+
   for (unsigned int i = 0; i < parameters.n_monte_carlo_iteration; i++)
     {
       // Generate random values for Monte Carlo
-      double n_alpha = (double)rand() / RAND_MAX;
-      double n_theta = (double)rand() / RAND_MAX;
+      double n_alpha = (double)rand() * denum;
+      double n_theta = (double)rand() * denum;
 
       // Initialize variables
       double detector_path_length, reactor_path_length,
