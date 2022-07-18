@@ -40,8 +40,8 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   // Get the inverse of the total time with the first time step since
   // the weighted velocities are calculated with the first velocity when
   // total time = 0.
-  total_time_for_average=(current_time - real_initial_time) + dt_0;
-  inv_range_time = 1. / total_time_for_average;
+  total_time_for_average = (current_time - real_initial_time) + dt_0;
+  inv_range_time         = 1. / total_time_for_average;
 
   // Calculate the average velocities.
   average_velocities.equ(inv_range_time, sum_velocity_dt);
@@ -54,11 +54,10 @@ template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::update_average_velocities()
 {
-
   // Get the inverse of the total time with the first time step since
   // the weighted velocities are calculated with the first velocity when
   // total time = 0.
-  if(total_time_for_average>0)
+  if (total_time_for_average > 0)
     {
       inv_range_time = 1.0 / total_time_for_average;
 
@@ -68,7 +67,6 @@ AverageVelocities<dim, VectorType, DofsType>::update_average_velocities()
                                    sum_reynolds_normal_stress_dt);
       reynolds_shear_stresses.equ(inv_range_time, sum_reynolds_shear_stress_dt);
     }
-
 }
 
 // Since Trilinos vectors and block vectors data doesn't have the same
@@ -234,7 +232,6 @@ AverageVelocities<dim, VectorType, DofsType>::post_mesh_adaptation()
   sum_rss_dt_with_ghost_cells      = sum_reynolds_shear_stress_dt;
 
   update_average_velocities();
-
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -255,7 +252,6 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_checkpoint_vectors(
   sum_rss_dt_with_ghost_cells.reinit(locally_owned_dofs,
                                      locally_relevant_dofs,
                                      mpi_communicator);
-
 }
 
 template <int dim, typename VectorType, typename DofsType>

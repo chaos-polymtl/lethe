@@ -257,6 +257,12 @@ protected:
   virtual void
   setup_dofs_fd() = 0;
 
+  /**
+   * @brief  Update the average velocity field solution
+   */
+  virtual void
+  update_multiphysics_average_solution() = 0;
+
   virtual void
   set_initial_condition_fd(
     Parameters::InitialConditionType initial_condition_type,

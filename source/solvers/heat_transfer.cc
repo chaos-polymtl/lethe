@@ -98,8 +98,6 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_system_matrix()
 {
-  this->pcout<<"velocity "<<this->multiphysics->get_average_solution(PhysicsID::fluid_dynamics)->max() <<std::endl;
-
   this->system_matrix = 0;
   setup_assemblers();
 
@@ -163,25 +161,34 @@ HeatTransfer<dim>::assemble_local_system_matrix(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-
-      scratch_data.reinit_velocity(velocity_cell,
-                                   *multiphysics->get_block_solution(
-                                     PhysicsID::fluid_dynamics));
+      if (this->simulation_parameters.multiphysics.use_average_velocity_field)
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_block_average_solution(
+              PhysicsID::fluid_dynamics));
+        }
+      else
+        {
+          scratch_data.reinit_velocity(velocity_cell,
+                                       *multiphysics->get_block_solution(
+                                         PhysicsID::fluid_dynamics));
+        }
     }
   else
     {
-      if(this->simulation_parameters.multiphysics.use_average_velocity_field)
+      if (this->simulation_parameters.multiphysics.use_average_velocity_field)
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_average_solution(
                                          PhysicsID::fluid_dynamics));
         }
-      else{
+      else
+        {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_solution(
                                          PhysicsID::fluid_dynamics));
         }
-
     }
 
   if (this->simulation_parameters.multiphysics.VOF)
@@ -295,22 +302,32 @@ HeatTransfer<dim>::assemble_local_system_rhs(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      scratch_data.reinit_velocity(velocity_cell,
-                                   *multiphysics->get_block_solution(
-                                     PhysicsID::fluid_dynamics));
-
+      if (this->simulation_parameters.multiphysics.use_average_velocity_field)
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_block_average_solution(
+              PhysicsID::fluid_dynamics));
+        }
+      else
+        {
+          scratch_data.reinit_velocity(velocity_cell,
+                                       *multiphysics->get_block_solution(
+                                         PhysicsID::fluid_dynamics));
+        }
       scratch_data.reinit_velocity_gradient(
         *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
     }
   else
     {
-      if(this->simulation_parameters.multiphysics.use_average_velocity_field)
+      if (this->simulation_parameters.multiphysics.use_average_velocity_field)
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_average_solution(
                                          PhysicsID::fluid_dynamics));
         }
-      else{
+      else
+        {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_solution(
                                          PhysicsID::fluid_dynamics));

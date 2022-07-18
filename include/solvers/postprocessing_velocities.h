@@ -111,7 +111,7 @@ public:
   const VectorType &
   get_reynolds_normal_stresses()
   {
-    return get_rns =reynolds_normal_stresses;
+    return get_rns = reynolds_normal_stresses;
   }
 
   /**
@@ -121,7 +121,7 @@ public:
   const VectorType &
   get_reynolds_shear_stresses()
   {
-    return get_rss =reynolds_shear_stresses;
+    return get_rss = reynolds_shear_stresses;
   }
 
   /**
@@ -217,8 +217,6 @@ private:
   double       total_time_for_average;
   bool         average_calculation;
   unsigned int n_dofs_per_vertex;
-
-
 };
 
 #endif

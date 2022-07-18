@@ -509,7 +509,23 @@ public:
   }
 
   /**
-   * @brief Request the reynolds_stress solution of a given physics
+   * @brief Request the present block average solution of a given physics
+   *
+   * @param physics_id The physics of the solution being requested
+   */
+  TrilinosWrappers::MPI::BlockVector *
+  get_block_average_solution(PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    return block_physics_average_solutions[physics_id];
+  }
+
+
+  /**
+   * @brief Request the reynolds_stress solution of a given physics. This is WIP and is not yet implemented in the solver.
    *
    * @param physics_id The physics of the solution being requested
    */
@@ -638,7 +654,7 @@ public:
    */
   void
   set_average_solution(PhysicsID                      physics_id,
-                      TrilinosWrappers::MPI::Vector *solution_vector)
+                       TrilinosWrappers::MPI::Vector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -648,7 +664,26 @@ public:
   }
 
   /**
-   * @brief Sets the reference to the Reynolds stress of the physics in the multiphysics interface
+   * @brief Sets the reference to the average solution of the physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   *
+   * @param solution_vector The reference to the solution vector of the physics
+   */
+  void
+  set_average_block_solution(PhysicsID                      physics_id,
+                             TrilinosWrappers::MPI::Vector *solution_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    physics_average_solutions[physics_id] = solution_vector;
+  }
+
+  /**
+   * @brief Sets the reference to the Reynolds stress of the physics in the multiphysics interface.
+   * This is WIP and is not yet implemented in the solver.
    *
    * @param physics_id The physics of the DOF handler being requested
    *
@@ -656,7 +691,7 @@ public:
    */
   void
   set_reynolds_stress_solutions(PhysicsID                      physics_id,
-                       TrilinosWrappers::MPI::Vector *solution_vector)
+                                TrilinosWrappers::MPI::Vector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -683,6 +718,25 @@ public:
                            physics_id) != active_physics.end()),
                 ExcInternalError());
     block_physics_solutions[physics_id] = solution_vector;
+  }
+
+  /**
+   * @brief Sets the reference to the average solution of the physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   *
+   * @param solution_vector The reference to the solution vector of the physics
+   */
+  void
+  set_block_average_solution(
+    PhysicsID                           physics_id,
+    TrilinosWrappers::MPI::BlockVector *solution_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    block_physics_average_solutions[physics_id] = solution_vector;
   }
 
   /**
@@ -806,10 +860,16 @@ private:
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions;
 
   // average solution
-  std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_average_solutions;
+  std::map<PhysicsID, TrilinosWrappers::MPI::Vector *>
+    physics_average_solutions;
 
-  // reynolds stress solution
-  TrilinosWrappers::MPI::Vector * reynolds_stress_solutions;
+  // average solution
+  std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
+    block_physics_average_solutions;
+
+  // reynolds stress solution. This is WIP and is not yet implemented in the
+  // solver.
+  TrilinosWrappers::MPI::Vector *reynolds_stress_solutions;
 
   std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
     block_physics_solutions;
