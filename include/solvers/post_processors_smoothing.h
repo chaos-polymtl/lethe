@@ -12,10 +12,19 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/fe_values_extractors.h>
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/solver_control.h>
+#include <deal.II/lac/sparsity_tools.h>
+#include <deal.II/lac/trilinos_parallel_block_vector.h>
+#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_vector.h>
 
 // Numerics
 #include <deal.II/numerics/data_postprocessor.h>
@@ -52,7 +61,8 @@ public:
   PostProcessorSmoothing(
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
     SimulationParameters<dim> simulation_parameters,
-    unsigned int              number_quadrature_points);
+    unsigned int              number_quadrature_points,
+    const MPI_Comm &          mpi_communicator);
 
   void
   generate_mass_matrix();
@@ -60,7 +70,14 @@ public:
    * @brief Outputs a solution for the field on the nodes.
    */
   virtual void
-  evaluate_smoothed_field(const VectorType &)
+  generate_rhs(const VectorType &)
+  {}
+
+  TrilinosWrappers::MPI::Vector
+  solve_L2_projection();
+
+  virtual void
+  calculate_smoothed_field()
   {}
 
 protected:
@@ -69,6 +86,11 @@ protected:
   SimulationParameters<dim>                       simulation_parameters;
   unsigned int                                    number_quadrature_points;
   std::shared_ptr<TrilinosWrappers::SparseMatrix> system_matrix;
+  TrilinosWrappers::MPI::Vector                   system_rhs;
+  MPI_Comm                                        mpi_communicator;
+  AffineConstraints<double>                       constraints;
+  IndexSet                                        locally_relevant_dofs;
+  IndexSet                                        locally_owned_dofs;
 
 private:
 };
@@ -85,16 +107,19 @@ public:
   VorticitySmoothing(
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
     SimulationParameters<dim> simulation_parameters,
-    unsigned int              number_quadrature_points);
+    unsigned int              number_quadrature_points,
+    const MPI_Comm &          mpi_communicator);
 
   /**
    * @brief Outputs a solution for the field on the nodes.
    */
   void
-  evaluate_smoothed_field(const VectorType &);
+  generate_rhs(const VectorType &);
+
+  void
+  calculate_smoothed_field();
 
 private:
-  TrilinosWrappers::MPI::Vector system_rhs;
 };
 
 /**
@@ -109,16 +134,19 @@ public:
   QcriterionSmoothing(
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
     SimulationParameters<dim> simulation_parameters,
-    unsigned int              number_quadrature_points);
+    unsigned int              number_quadrature_points,
+    const MPI_Comm &          mpi_communicator);
 
   /**
    * @brief Outputs a solution for the field on the nodes.
    */
   void
-  evaluate_smoothed_field(const VectorType &solution);
+  generate_rhs(const VectorType &solution);
+
+  void
+  calculate_smoothed_field();
 
 private:
-  TrilinosWrappers::MPI::Vector system_rhs;
 };
 
 #endif
