@@ -478,9 +478,6 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 {
-    // Loop over cell in the finest level, loop over detectors get nodal values,
-    // solve first loop over cell
-
     double max_cost_function=DBL_MAX;
     double last_constraint_reference_location = 0;
     double norm_error_coordinates = 0;
@@ -488,22 +485,23 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
     Point<dim> real_location;
     Vector<double> reference_location;
     std::vector<std::vector<double>> count_from_all_detectors (n_detector,std::vector<double>(4));
-    Parameters::RPTFEMReconstructionParameters::FEMCostFunction cost_function_type = rpt_parameters.fem_reconstruction_param.fem_cost_function;
 
+    // Loop over cell in the finest level, loop over detectors and get nodal
+    // count values for each vertex of the cell
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
-        for (unsigned int i = 0; i < n_detector; ++i)
+        for (unsigned int d = 0; d < n_detector; ++d)
         {
             for (unsigned int v = 0; v < cell->n_vertices(); ++v)
             {
                 auto dof_index = cell->vertex_dof_index(v, 0);
-                count_from_all_detectors[i][v]=nodal_counts[i][dof_index];
+                count_from_all_detectors[d][v]=nodal_counts[d][dof_index];
             }
         }
 
         // Solve linear system to find the location in reference coordinates
         reference_location =
-                assemble_matrix_and_rhs<dim>(count_from_all_detectors, experimental_count, cost_function_type);
+                assemble_matrix_and_rhs<dim>(count_from_all_detectors, experimental_count, rpt_parameters.fem_reconstruction_param.fem_cost_function);
 
         // 4th constraint on the location of the particle in reference coordinates
         last_constraint_reference_location = 1 - reference_location[0] - reference_location[1] - reference_location[2];
