@@ -62,12 +62,14 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
 
-  if (vof_parameters.conservation.skip_mass_conservation_fluid_0)
+  if (vof_parameters.conservation.conservative_fluid ==
+      Parameters::FluidIndicator::fluid0)
     {
       if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
-  else if (vof_parameters.conservation.skip_mass_conservation_fluid_1)
+  else if (vof_parameters.conservation.conservative_fluid ==
+           Parameters::FluidIndicator::fluid1)
     {
       if (*max_phase_cell > phase_cutoff)
         solve_continuity = false;
@@ -270,12 +272,14 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
 
-  if (vof_parameters.conservation.skip_mass_conservation_fluid_0)
+  if (vof_parameters.conservation.conservative_fluid ==
+      Parameters::FluidIndicator::fluid0)
     {
       if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
-  else if (vof_parameters.conservation.skip_mass_conservation_fluid_1)
+  else if (vof_parameters.conservation.conservative_fluid ==
+           Parameters::FluidIndicator::fluid1)
     {
       if (*max_phase_cell > phase_cutoff)
         solve_continuity = false;
@@ -741,12 +745,14 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
 
-  if (vof_parameters.conservation.skip_mass_conservation_fluid_0)
+  if (vof_parameters.conservation.conservative_fluid ==
+      Parameters::FluidIndicator::fluid0)
     {
       if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
-  else if (vof_parameters.conservation.skip_mass_conservation_fluid_1)
+  else if (vof_parameters.conservation.conservative_fluid ==
+           Parameters::FluidIndicator::fluid1)
     {
       if (*max_phase_cell > phase_cutoff)
         solve_continuity = false;
@@ -986,12 +992,14 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
 
-  if (vof_parameters.conservation.skip_mass_conservation_fluid_0)
+  if (vof_parameters.conservation.conservative_fluid ==
+      Parameters::FluidIndicator::fluid0)
     {
       if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
-  else if (vof_parameters.conservation.skip_mass_conservation_fluid_1)
+  else if (vof_parameters.conservation.conservative_fluid ==
+           Parameters::FluidIndicator::fluid1)
     {
       if (*max_phase_cell > phase_cutoff)
         solve_continuity = false;
