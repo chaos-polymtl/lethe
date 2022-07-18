@@ -9,6 +9,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     set heat transfer 		= false
     set viscous dissipation 	= false
     set buoyancy force 		= false
+    set use average velocity field =false
 
     # Tracer
     set tracer 			= false
@@ -38,6 +39,11 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 * ``VOF``: enables multiphase flow simulations, with two fluids separated by a free surface, using the Volume-of-Fluid method. 
 
   See :doc:`volume_of_fluid` for advanced VOF parameters, :doc:`initial_conditions` for the definition of the VOF conditions and `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
+  
+* ``use average velocity field``: controls if the advection of the physics is done using the average velocity field instead of the current velocity field.
+
+.. note::
+	At this point, the average velocity field is only implemented in the heat transfer physic.
 
 .. seealso::
 
