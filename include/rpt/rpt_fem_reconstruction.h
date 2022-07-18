@@ -249,7 +249,7 @@ private:
 
 /**
  * @brief Sets-up, assembles and solves the linear system to find the location
- * of a particle for a given count in reference coordinates.
+ * of a particle in reference coordinates.
  *
  * @param vertex_count contains the photon counts of all detectors for a s
  * elected vertex of cell.
@@ -257,11 +257,15 @@ private:
  * @param experimental_count contains the experimental counts from all
  * detectors for a given particle position.
  *
+ * @param cost_function_type cost function type used to find the position of
+ * the particle in the reactor
+ *
  * @return Calculated reference position
  */
 template <int dim>
 Vector<double>
 assemble_matrix_and_rhs(std::vector<std::vector<double> > &vertex_count,
-                        std::vector<double> &experimental_count);
+                        std::vector<double> &experimental_count,
+                        Parameters::RPTFEMReconstructionParameters::FEMCostFunction &cost_function_type);
 
 #endif

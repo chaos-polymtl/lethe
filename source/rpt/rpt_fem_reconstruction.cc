@@ -307,43 +307,77 @@ template<int dim>
 Vector<double>
 assemble_matrix_and_rhs(
         std::vector<std::vector<double>> &vertex_count,
-        std::vector<double> &experimental_count)
-{   Vector<double> reference_location;
+        std::vector<double> &experimental_count,
+        Parameters::RPTFEMReconstructionParameters::FEMCostFunction &cost_function_type)
+{
+    Vector<double> reference_location;
     unsigned int detector_size = vertex_count.size();
     double sigma = 0;
-
-    // Assembling sys_matrix
     LAPACKFullMatrix<double> sys_matrix;
     sys_matrix.reinit(dim);
-
-    for (unsigned int i = 0; i < dim; ++i)
-      {
-        for (unsigned int j = 0; j < dim; ++j)
-          {
-            for (unsigned int d = 0;  d < detector_size; ++d )
-              {
-                sigma += (-vertex_count[d][0] + vertex_count[d][j+1])*
-                         (-vertex_count[d][0] + vertex_count[d][i+1]);
-              }
-            sys_matrix.set(i,j,sigma);
-            sigma = 0;
-          }
-      }
-
-
-    // Assembling sys_rhs
     Vector<double> sys_rhs;
     sys_rhs.reinit(dim);
 
-    for (unsigned int i = 0; i < dim; ++i)
+
+    if (cost_function_type == Parameters::RPTFEMReconstructionParameters::FEMCostFunction::absolute)
       {
-        for (unsigned int d = 0; d < detector_size; ++d)
+        // Assembling sys_matrix
+        for (unsigned int i = 0; i < dim; ++i)
           {
-            sigma += (vertex_count[d][0] - experimental_count[d]) *
-                     (-vertex_count[d][0] + vertex_count[d][i+1]);
+            for (unsigned int j = 0; j < dim; ++j)
+              {
+                for (unsigned int d = 0; d < detector_size; ++d)
+                  {
+                    sigma += (-vertex_count[d][0] + vertex_count[d][j + 1]) *
+                             (-vertex_count[d][0] + vertex_count[d][i + 1]);
+                  }
+                sys_matrix.set(i, j, sigma);
+                sigma = 0;
+              }
           }
-        sys_rhs[i] = -sigma;
-        sigma = 0;
+
+        // Assembling sys_rhs
+        for (unsigned int i = 0; i < dim; ++i)
+          {
+            for (unsigned int d = 0; d < detector_size; ++d)
+              {
+                sigma += (vertex_count[d][0] - experimental_count[d]) *
+                         (-vertex_count[d][0] + vertex_count[d][i + 1]);
+              }
+            sys_rhs[i] = -sigma;
+            sigma      = 0;
+          }
+      }
+    else if (cost_function_type == Parameters::RPTFEMReconstructionParameters::FEMCostFunction::relative)
+      {
+        // Assembling sys_matrix
+        for (unsigned int i = 0; i < dim; ++i)
+          {
+            for (unsigned int j = 0; j < dim; ++j)
+              {
+                for (unsigned int d = 0; d < detector_size; ++d)
+                  {
+                    sigma += (-vertex_count[d][0] + vertex_count[d][j + 1]) *
+                             (-vertex_count[d][0] + vertex_count[d][i + 1])/
+                             (experimental_count[d]*experimental_count[d]);
+                  }
+                sys_matrix.set(i, j, sigma);
+                sigma = 0;
+              }
+          }
+
+        // Assembling sys_rhs
+        for (unsigned int i = 0; i < dim; ++i)
+          {
+            for (unsigned int d = 0; d < detector_size; ++d)
+              {
+                sigma += (vertex_count[d][0] - experimental_count[d]) *
+                         (-vertex_count[d][0] + vertex_count[d][i + 1])/
+                         (experimental_count[d]*experimental_count[d]);
+              }
+            sys_rhs[i] = -sigma;
+            sigma      = 0;
+          }
       }
 
     // Setup and solve linear system
@@ -454,6 +488,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
     Point<dim> real_location;
     Vector<double> reference_location;
     std::vector<std::vector<double>> count_from_all_detectors (n_detector,std::vector<double>(4));
+    Parameters::RPTFEMReconstructionParameters::FEMCostFunction cost_function_type = rpt_parameters.fem_reconstruction_param.fem_cost_function;
 
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -468,7 +503,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
 
         // Solve linear system to find the location in reference coordinates
         reference_location =
-                assemble_matrix_and_rhs<dim>(count_from_all_detectors, experimental_count);
+                assemble_matrix_and_rhs<dim>(count_from_all_detectors, experimental_count, cost_function_type);
 
         // 4th constraint on the location of the particle in reference coordinates
         last_constraint_reference_location = 1 - reference_location[0] - reference_location[1] - reference_location[2];
@@ -558,7 +593,7 @@ RPTFEMReconstruction<dim>::checkpoint()
         triangulation.save(oa, 0);
     }
   */
-    // Save dof_handler
+    // Save dof_handler object
     {
         std::ofstream ofs("temp_dof_handler.dof");
         boost::archive::text_oarchive oa(ofs);
