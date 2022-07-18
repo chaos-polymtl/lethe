@@ -136,9 +136,9 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
                system_rhs,
                *ilu_preconditioner);
 
-
-  std::cout << "c" << std::endl;
   constraints.distribute(completely_distributed_solution);
+
+  return completely_distributed_solution;
 }
 
 template class PostProcessorSmoothing<2, TrilinosWrappers::MPI::Vector>;
@@ -206,6 +206,8 @@ QcriterionSmoothing<dim, VectorType>::generate_rhs(const VectorType &solution)
   Vector<double>                       local_rhs(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<double>                  phi_vf(dofs_per_cell);
+
+  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
   this->system_rhs = 0;
 
