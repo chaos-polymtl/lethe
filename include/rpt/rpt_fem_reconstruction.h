@@ -267,7 +267,14 @@ private:
     };
 // TO DO
     /**
-     * @brief
+     * @brief Assembles local linear system to get the nodal values of a given
+     * cell for a given detector
+     *
+     * @param cell
+     *
+     * @param scratch_data
+     *
+     * @param copy_data
      */
     void
     assemble_local_system(
@@ -277,6 +284,8 @@ private:
 
     /**
      * @brief
+     *
+     * @param copy_data
      */
     void
     copy_local_to_global(const AssemblyCopyData & copy_data
