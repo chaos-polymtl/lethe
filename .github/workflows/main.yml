@@ -81,7 +81,7 @@ jobs:
       #
       # Warnings
       #
-      - name: Compile Lethe (Debug-deal.ii:${{ matrix.dealii_version }})
+      - name: Compile Lethe to check for warnings (deal.ii:${{ matrix.dealii_version }})
         run: |
           mkdir build-warnings
           cd build-warnings
