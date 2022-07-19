@@ -265,8 +265,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   MappingQ<dim - 1, dim> local_face_map(
     (2 > this->simulation_parameters.fem_parameters.velocity_order) ?
       2 :
-      this->simulation_parameters.fem_parameters.velocity_order,
-    this->simulation_parameters.fem_parameters.qmapping_all);
+      this->simulation_parameters.fem_parameters.velocity_order);
 
   FESystem<dim - 1, dim> local_face_fe(
     FE_Q<dim - 1, dim>(
@@ -1307,7 +1306,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       particles_residual_vect.reinit(particles.size());
       ib_dem.integrate_particles_motion(
         dt, h_max, h_min, fluid_density, viscosity);
-      unsigned int worst_residual_particle_id;
+      unsigned int worst_residual_particle_id = UINT_MAX;
 
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
