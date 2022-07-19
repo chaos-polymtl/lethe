@@ -259,6 +259,10 @@ private:
   post_process_results();
 
 
+  void
+  match_periodic_boundaries(Parameters::Lagrangian::BCDEM &bc_param);
+
+
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
   const unsigned int                        this_mpi_process;

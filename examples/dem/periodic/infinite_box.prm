@@ -4,12 +4,13 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set time step                 		 = 1e-5
-  set time end       					 = 1
-  set log frequency				         = 1000
-  set output frequency            		 = 1000
-  set output path 					     = ./
+  set time step                 		 = 1e-4
+  set time end       					 = 0.75
+  set log frequency				         = 50
+  set output frequency            		 = 50
+  set output path 					     = ./output/
   set output name                        = simulation
+  set output boundaries                  = true
 end
 
 # --------------------------------------------------
@@ -59,9 +60,9 @@ subsection insertion info
     set insertion method				         = list
     set inserted number of particles at each time step  = 1
     set insertion frequency            		 	= 10000
-    set list x                                   = 0.075
+    set list x                                   = 0.0625
     set list y                                   = 0.175
-    set list z                                   = 0.075
+    set list z                                   = 0.0625
 end
 
 #---------------------------------------------------
@@ -70,8 +71,9 @@ end
 subsection mesh
     set type                 				= dealii
     set grid type            				= hyper_rectangle
-    set grid arguments       				= 0.0, 0.0, 0.0 : 0.1, 0.2, 0.1 : false
-    set initial refinement   				= 2
+    set grid arguments       				= 0.0, 0.0, 0.0 : 0.1, 0.2, 0.1 : true
+    set initial refinement   				= 1
+    set expand particle-wall contact search	= false
 end
 
 #---------------------------------------------------
@@ -85,6 +87,7 @@ subsection DEM boundary conditions
        set type                                        = periodic
        set boundary id                                 = 2
        set periodic id                                 = 3
+       set periodic direction                          = 1
    end
 
 end

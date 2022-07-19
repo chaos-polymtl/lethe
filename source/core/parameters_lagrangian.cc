@@ -870,6 +870,11 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Periodic boundary ID");
+      prm.declare_entry(
+        "periodic direction",
+        "0",
+        Patterns::Integer(),
+        "Periodic direction or normal direction of periodic boundary");
     }
 
     void
@@ -914,8 +919,10 @@ namespace Parameters
       else if (boundary_type == "periodic")
         {
           BC_type = BoundaryType::periodic;
-          const unsigned int boundary_id   = prm.get_integer("boundary id");
-
+          this->outlet_boundaries.push_back(boundary_id);
+          this->periodic_boundaries.push_back(prm.get_integer("periodic id"));
+          this->periodic_direction.push_back(
+            prm.get_integer("periodic direction"));
         }
       else
         {
@@ -956,7 +963,9 @@ namespace Parameters
       initialize_containers(boundary_translational_velocity,
                             boundary_rotational_speed,
                             boundary_rotational_vector,
-                            outlet_boundaries);
+                            outlet_boundaries,
+                            periodic_boundaries,
+                            periodic_direction);
 
       for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
         {
@@ -977,7 +986,9 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &boundary_rotational_speed,
       std::unordered_map<unsigned int, Tensor<1, 3>>
         &                        boundary_rotational_vector,
-      std::vector<unsigned int> &outlet_boundaries)
+      std::vector<unsigned int> &outlet_boundaries,
+      std::vector<unsigned int> &periodic_boundaries,
+      std::vector<unsigned int> &periodic_direction)
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
@@ -989,6 +1000,8 @@ namespace Parameters
         }
 
       outlet_boundaries.reserve(DEM_BC_number);
+      periodic_boundaries.reserve(DEM_BC_number);
+      periodic_direction.reserve(DEM_BC_number);
     }
 
     template <int dim>

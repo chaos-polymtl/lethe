@@ -327,8 +327,10 @@ namespace Parameters
       // Rotational axes of rotating boundaries
       std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
 
-      // Number of DEM periodic boundary conditions
-      unsigned int periodic_boundary_id;
+      // Periodic boundary IDs
+      std::vector<unsigned int> periodic_boundaries;
+      std::vector<unsigned int> periodic_direction;
+
 
       void
       declare_parameters(ParameterHandler &prm);
@@ -348,7 +350,9 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &boundary_rotational_speed,
         std::unordered_map<unsigned int, Tensor<1, 3>>
           &                        boundary_rotational_vector,
-        std::vector<unsigned int> &outlet_boundaries);
+        std::vector<unsigned int> &outlet_boundaries,
+        std::vector<unsigned int> &periodic_boundaries,
+        std::vector<unsigned int> &periodic_direction);
     };
 
     template <int dim>
