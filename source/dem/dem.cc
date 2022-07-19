@@ -216,8 +216,7 @@ DEMSolver<dim>::cell_weight(
   switch (status)
     {
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
-        {
+        case parallel::distributed::Triangulation<dim>::CELL_REFINE: {
           const unsigned int n_particles_in_cell =
             particle_handler.n_particles_in_cell(cell);
           return n_particles_in_cell * particle_weight;
@@ -227,8 +226,7 @@ DEMSolver<dim>::cell_weight(
       case parallel::distributed::Triangulation<dim>::CELL_INVALID:
         break;
 
-      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
-        {
+        case parallel::distributed::Triangulation<dim>::CELL_COARSEN: {
           unsigned int n_particles_in_cell = 0;
 
           for (unsigned int child_index = 0;
@@ -420,18 +418,14 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double> &                    MOI)
+  std::vector<double>                     &MOI)
 {
   MOI.resize(torque.size());
 
   for (auto &particle : particle_handler)
     {
       auto &particle_properties = particle.get_properties();
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      MOI[particle.get_id()] =
-#else
       MOI[particle.get_local_index()] =
-#endif
         0.1 * particle_properties[DEM::PropertiesIndex::mass] *
         particle_properties[DEM::PropertiesIndex::dp] *
         particle_properties[DEM::PropertiesIndex::dp];
@@ -754,16 +748,7 @@ DEMSolver<dim>::solve()
                       triangulation,
                       particle_handler);
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      {
-        unsigned int max_particle_id = 0;
-        for (const auto &particle : particle_handler)
-          max_particle_id = std::max(max_particle_id, particle.get_id());
-        displacement.resize(max_particle_id + 1);
-      }
-#else
       displacement.resize(particle_handler.get_max_local_particle_index());
-#endif
       force.resize(displacement.size());
       torque.resize(displacement.size());
 
@@ -825,31 +810,13 @@ DEMSolver<dim>::solve()
       particles_insertion_step = insert_particles();
 
       if (particles_insertion_step)
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-        {
-          unsigned int max_particle_id = 0;
-          for (const auto &particle : particle_handler)
-            max_particle_id = std::max(max_particle_id, particle.get_id());
-          displacement.resize(max_particle_id + 1);
-        }
-#else
         displacement.resize(particle_handler.get_max_local_particle_index());
-#endif
 
       // Load balancing
       load_balance_step = (this->*check_load_balance_step)();
 
       if (load_balance_step || checkpoint_step)
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-        {
-          unsigned int max_particle_id = 0;
-          for (const auto &particle : particle_handler)
-            max_particle_id = std::max(max_particle_id, particle.get_id());
-          displacement.resize(max_particle_id + 1);
-        }
-#else
         displacement.resize(particle_handler.get_max_local_particle_index());
-#endif
 
       // Check to see if it is contact search step
       contact_detection_step = (this->*check_contact_search_step)();
@@ -860,16 +827,7 @@ DEMSolver<dim>::solve()
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          {
-            unsigned int max_particle_id = 0;
-            for (const auto &particle : particle_handler)
-              max_particle_id = std::max(max_particle_id, particle.get_id());
-            displacement.resize(max_particle_id + 1);
-          }
-#else
           displacement.resize(particle_handler.get_max_local_particle_index());
-#endif
           force.resize(displacement.size());
           torque.resize(displacement.size());
 

@@ -13,9 +13,9 @@
 
 template <int dim>
 RPTCellReconstruction<dim>::RPTCellReconstruction(
-  Parameters::RPTParameters &              rpt_parameters,
+  Parameters::RPTParameters               &rpt_parameters,
   Parameters::RPTReconstructionParameters &rpt_reconstruction_parameters,
-  Parameters::DetectorParameters &         rpt_detector_parameters)
+  Parameters::DetectorParameters          &rpt_detector_parameters)
   : parameters(rpt_parameters)
   , reconstruction_parameters(rpt_reconstruction_parameters)
   , detector_parameters(rpt_detector_parameters)
@@ -464,7 +464,7 @@ RPTCellReconstruction<dim>::export_positions()
                                2));
 
           // Associate status to a status id
-          unsigned int status_id;
+          unsigned int status_id = UINT_MAX;
           if (cell_status[i_particle] == "right_cell")
             status_id = 0;
           else if (cell_status[i_particle] == "cost_function|right_cell")
