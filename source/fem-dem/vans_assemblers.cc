@@ -1365,12 +1365,11 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   auto        &beta_lift          = scratch_data.beta_lift;
 
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &velocity_divergence =
-    scratch_data.fluid_velocity_divergences_at_particle_location;
+  auto &velocity_curls =
+    scratch_data.fluid_velocity_curls_at_particle_location;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> lift_force;
-  Tensor<1, dim> re_shear;
 
   // Physical Properties
   Assert(
@@ -1405,36 +1404,26 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
                            particle_properties[DEM::PropertiesIndex::dp] /
                            (viscosity + DBL_MIN);
 
-      // calculate Shear Reynolds
-      for (int j = 0; j < dim; j++)
+      // Shear Reynolds number:
+      auto   shear_rate = velocity_curls[particle_number];
+      double re_shear   = 1e-7 + particle_properties[DEM::PropertiesIndex::dp] *
+                                 particle_properties[DEM::PropertiesIndex::dp] /
+                                 (viscosity + DBL_MIN) * shear_rate.norm();
+
+      // Epsilon
+      double eps = pow(re_shear, 0.5) / re;
+
+      // Vorticity
+      auto vorticity = eps * velocity_curls[particle_number];
+
+      // Saffman force
+      for (int d = 0; d < dim; d++)
         {
-          auto remaining_tensor = velocity_laplacians[particle_number].;
-          re_shear[j]           = operator*=(
-            particle_properties[DEM::PropertiesIndex::dp] *
-              particle_properties[DEM::PropertiesIndex::dp] / viscosity,
-            remaining_tensor);
-        }
-
-      // calculate Saffman force
-      lift_force = 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
-                   particle_properties[DEM::PropertiesIndex::dp] *
-                   density pow(viscosity, 0.5);
-
-
-
-      double momentum_transfer_coefficient =
-        (0.5 * c_d * M_PI *
-         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
-        relative_velocity.norm();
-
-      beta_drag += momentum_transfer_coefficient;
-
-      drag_force = density * momentum_transfer_coefficient * relative_velocity;
-
-      for (int d = 0; d < dim; ++d)
-        {
-          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            drag_force[d];
+          lift_force[d] = 1.61 * density * pow((viscosity + DBL_MIN), 0.5) *
+                          particle_properties[DEM::PropertiesIndex::dp] *
+                          particle_properties[DEM::PropertiesIndex::dp] *
+                          pow(1 / vorticity.norm(), 0.5) * eps *
+                          relative_velocity[d] * vorticity[dim];
         }
 
       particle_number += 1;
