@@ -131,17 +131,25 @@ private:
     output_results();
 
     /**
-     * @brief Outputs for every level of the triangulation the position of
+     * @brief Outputs the position of each vertex of every cell of the grid and
+     * the photon count at that position for every detector in a ".dat" file
+     * format.
+     */
+    void
+    output_raw_results();
+
+    /**
+     * @brief Outputs for every level of the triangulation, the position of
      * each vertex of every cell and the photon count at that position for
-     * every detector in ".dat" file format.
+     * every detector in a ".dat" file format.
      */
     void
     output_raw_results_per_level();
 
     /**
-     * @brief Outputs for a given level of the triangulation the position of
+     * @brief Outputs for a given level of the triangulation, the position of
      * each vertex of every cell and the photon count at that position for
-     * every detector in ".dat" file format with the use the
+     * every detector in a ".dat" file format with the use the
      * "output_counts_on_level" function.
      */
     void
@@ -270,22 +278,22 @@ private:
      * @brief Assembles local linear system to get the nodal values of a given
      * cell for a given detector
      *
-     * @param cell
+     * @param cell iterator on active cells of the grid
      *
-     * @param scratch_data
+     * @param scratch_data contains FEValues objects
      *
-     * @param copy_data
+     * @param copy_data contains elements of the local linear system
      */
     void
     assemble_local_system(
       const typename DoFHandler<dim>::active_cell_iterator &cell,
-      AssemblyScratchData &                                 scratch_data,
-      AssemblyCopyData &                                    copy_data);
+      AssemblyScratchData                                  &scratch_data,
+      AssemblyCopyData                                     &copy_data);
 
     /**
-     * @brief
+     * @brief Copies local linear system elements to the global linear system
      *
-     * @param copy_data
+     * @param copy_data contains elements of the local linear system
      */
     void
     copy_local_to_global(const AssemblyCopyData & copy_data
