@@ -179,6 +179,9 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::assemble_system(unsigned no_detector)
 {
+  system_rhs    = 0;
+  system_matrix = 0;
+
   AssemblyScratchData scratch(fe, no_detector);
 
   WorkStream::run(dof_handler.begin_active(),
@@ -410,7 +413,7 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::L2_project()
 {
-  // MultithreadInfo::set_thread_limit(4);
+  //MultithreadInfo::set_thread_limit(4);
   std::cout << "***********************************************" << std::endl;
   std::cout << "Assigning detector positions" << std::endl;
   assign_detector_positions();
