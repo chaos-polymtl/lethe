@@ -91,6 +91,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
         }
     }
 
+
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
@@ -274,6 +275,24 @@ template <int dim>
 void
 DEMSolver<dim>::setup_background_dofs()
 {
+  // Attempts for periodic boundaries
+  for (unsigned int i_bc = 0; i_bc < parameters.boundary_conditions.DEM_BC_number; ++i_bc)
+    {
+      if (parameters.boundary_conditions.BC_type ==
+          Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+        {
+          std::vector<GridTools::PeriodicFacePair<
+            typename Triangulation<dim, dim>::cell_iterator>>
+            periodicity_vector;
+          GridTools::collect_periodic_faces(triangulation,
+                                            parameters.boundary_conditions.outlet_boundaries[i_bc],
+                                            parameters.boundary_conditions.periodic_boundaries[i_bc],
+                                            parameters.boundary_conditions.periodic_direction[i_bc],
+                                            periodicity_vector);
+          triangulation.add_periodicity(periodicity_vector);
+        }
+    }
+
   FE_Q<dim> background_fe(1);
   background_dh.distribute_dofs(background_fe);
 }
