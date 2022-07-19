@@ -217,10 +217,6 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                     }
                 }
             }
-          else if (std::find(outlet_boundaries.begin(),
-                             outlet_boundaries.end(),
-                             cell->face(face_id)->boundary_id()) !=
-                   outlet_boundaries.end())
         }
     }
 }

@@ -870,10 +870,11 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Periodic boundary ID");
-      prm.declare_entry("periodic direction",
-                        "0",
-                        Patterns::Integer(),
-                        "Periodic direction or normal direction of periodic boundary");
+      prm.declare_entry(
+        "periodic direction",
+        "0",
+        Patterns::Integer(),
+        "Periodic direction or normal direction of periodic boundary");
     }
 
     void
@@ -920,7 +921,8 @@ namespace Parameters
           BC_type = BoundaryType::periodic;
           this->outlet_boundaries.push_back(boundary_id);
           this->periodic_boundaries.push_back(prm.get_integer("periodic id"));
-          this->periodic_direction.push_back(prm.get_integer("periodic direction"));
+          this->periodic_direction.push_back(
+            prm.get_integer("periodic direction"));
         }
       else
         {
@@ -985,8 +987,8 @@ namespace Parameters
       std::unordered_map<unsigned int, Tensor<1, 3>>
         &                        boundary_rotational_vector,
       std::vector<unsigned int> &outlet_boundaries,
-      std::vector<unsigned int> periodic_boundaries,
-      std::vector<unsigned int> periodic_direction)
+      std::vector<unsigned int>  periodic_boundaries,
+      std::vector<unsigned int>  periodic_direction)
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
