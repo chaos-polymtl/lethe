@@ -48,6 +48,10 @@ read_checkpoint(TimerOutput &                              computing_timer,
                   ExcMessage("Cannot open snapshot mesh file or read the "
                              "triangulation stored there."));
     }
+
+
+  // Unpack the information in the particle handler
+  particle_handler.deserialize();
 }
 
 template void

@@ -46,6 +46,20 @@ namespace Parameters
     adaptative
   };
 
+  /** @brief Class to account for different fluid indicator:
+   *  - fluid0: fluid 0 only,
+   *  - fluid1: fluid 1 only,
+   *  - both: both fluids
+   * This is used in VOF for the viscous dissipation (see parameter
+   * viscous_dissipative_fluid) and mass conservation
+   */
+  enum class FluidIndicator
+  {
+    fluid0,
+    fluid1,
+    both
+  };
+
   /**
    * @brief Defines the subparameters for free surface peeling/wetting mechanism.
    * Has to be declared before member creation in VOF structure.
@@ -105,16 +119,15 @@ namespace Parameters
    */
   struct VOF_MassConservation
   {
-    bool skip_mass_conservation_fluid_0;
-    bool skip_mass_conservation_fluid_1;
     bool monitoring;
-    int  id_fluid_monitored;
-
     // Conservation tolerance on the fluid monitored,
     // used with adaptative Sharpening
     double tolerance;
 
-    // Type of verbosity for the interface sharpening calculation
+    Parameters::FluidIndicator conservative_fluid;
+    Parameters::FluidIndicator monitored_fluid;
+
+    // Type of verbosity for the mass conservation algorithm
     Parameters::Verbosity verbosity;
 
     static void
@@ -200,6 +213,8 @@ namespace Parameters
     Parameters::VOF_InterfaceSharpening sharpening;
     Parameters::VOF_PeelingWetting      peeling_wetting;
     Parameters::VOF_SurfaceTensionForce surface_tension_force;
+
+    Parameters::FluidIndicator viscous_dissipative_fluid;
 
     void
     declare_parameters(ParameterHandler &prm);

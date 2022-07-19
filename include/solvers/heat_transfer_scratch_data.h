@@ -406,7 +406,6 @@ public:
   std::vector<double> viscosity_1;
   std::vector<double> grad_specific_heat_temperature_1;
 
-
   // FEValues for the HT problem
   FEValues<dim> fe_values_T;
   unsigned int  n_dofs;

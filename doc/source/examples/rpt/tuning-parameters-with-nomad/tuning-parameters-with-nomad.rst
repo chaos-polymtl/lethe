@@ -18,12 +18,14 @@ Features
 
 Locations of Files Used in the Example
 ---------------------------------------
-- Parameter file: ``examples/rpt/parameters_tuning/rpt_parameters.prm``
-- Python script for NOMAD: ``examples/rpt/parameters_tuning/rpt_lethe_nomad.py``
-- Text file used when running NOMAD: ``examples/rpt/parameters_tuning/param_nomad.txt``
+- Parameter file for tuning parameters: ``examples/rpt/parameters_tuning/rpt_parameters.prm``
+- Parameter file for calculating photon counts: ``examples/rpt/parameters_tuning/rpt_count_calculation.prm``
 - File containing particle positions: ``examples/rpt/parameters_tuning/positions.particle``
 - File containing experimental particle counts: ``examples/rpt/parameters_tuning/counts.experimental``
 - File containing detector positions: ``examples/rpt/parameters_tuning/positions.detector``
+- Python script for NOMAD: ``examples/rpt/parameters_tuning/rpt_lethe_nomad.py``
+- Text file used when running NOMAD: ``examples/rpt/parameters_tuning/param_nomad.txt``
+- Python script for post-processing the data: ``examples/rpt/parameters_tuning/rpt_parameter_tuning_plot.py``
 
 
 Description of the Case
@@ -95,7 +97,7 @@ Parameter Files
 RPT Parameters
 ^^^^^^^^^^^^^^^^
 
-As seen in the previous example, in the subsection ``rpt parameters``, we define the values of the set of parameter necessary for calculating the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
+As seen in the previous example (:doc:`../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel`), in the subsection ``rpt parameters``, we define the values of the set of parameter necessary for calculating the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the :doc:`../../../parameters/rpt/rpt_parameters` documentation page.
 
 .. code-block:: text
 
@@ -124,7 +126,7 @@ As seen in the previous example, in the subsection ``rpt parameters``, we define
 Parameter Tuning
 ^^^^^^^^^^^^^^^^^^
 
-In the subsection ``parameter tuning``, we enable parameters tuning, we specify a type of cost function and define a set of experimental counts to compare with the calculated counts. Parameters used for the tuning of the model parameters are described in the `Parameter tuning <../../../parameters/rpt/parameter_tuning.html>`_ documentation page.
+In the subsection ``parameter tuning``, we enable parameters tuning, we specify a type of cost function and define a set of experimental counts to compare with the calculated counts. Parameters used for the tuning of the model parameters are described in the :doc:`../../../parameters/rpt/parameter_tuning` documentation page.
 
 .. code-block:: text
 
@@ -141,7 +143,7 @@ In the subsection ``parameter tuning``, we enable parameters tuning, we specify 
 Detector Parameters
 ^^^^^^^^^^^^^^^^^^^^
 
-In the subsection ``detector parameters``, we specify the file that contains the position of the detector face center and the position of a point inside the detector on its axis. In this example, the detector face center position is :math:`(0.2,0,0.0750)` and :math:`(0.2381,0,0.075)` is another point on the detector’s axis. The detector parameters are described in the `Detector Parameters <../../../parameters/rpt/detector_parameters.html>`_ documentation page.
+In the subsection ``detector parameters``, we specify the file that contains the position of the detector face center and the position of a point inside the detector on its axis. In this example, the detector face center position is :math:`(0.2,0,0.0750)` and :math:`(0.2381,0,0.075)` is another point on the detector’s axis. The detector parameters are described in the :doc:`../../../parameters/rpt/detector_parameters` documentation page.
 
 .. code-block:: text
 
@@ -217,24 +219,24 @@ After running the optimization software, the best feasible solution will be disp
 .. tip::
     Changing the initial values of the optimization problem to ones that are closer to the solution seen above can reduce the computation time.
 
-We may now verify if these values correspond to the physical system. To do so, as it was done in the `previous example (Photon Count Calculation in a Cylindrical Vessel) <../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html>`_, we calculate the counts for the set of particle positions that the corresponding experimental counts are known. Assuming that the ``rpt_3d`` executable is within your path, the simulation can be launched by typing:
+We may now verify if these values correspond to the physical system. To do so, as it was done in the previous example (:doc:`../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel`), we calculate the counts for the set of particle positions that the corresponding experimental counts are known. Assuming that the ``rpt_3d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
     rpt_3d rpt_count_calculation.prm
 
 .. attention::
-    It is important to launch the simulation with ``rpt_count_calculation.prm`` and not ``rpt_parameters.prm``. The parameters in both files are set for different purposes. ``rpt_count_calculation.prm`` is suited for count calculation with the Monte Carlo technic, and ``rpt_parameters.prm`` is suited for tuning parameters.
+    It is important to launch the simulation with ``rpt_count_calculation.prm`` and not ``rpt_parameters.prm``. The parameters in both files are set for different purposes. ``rpt_count_calculation.prm`` is suited for count calculation with the Monte Carlo technique, and ``rpt_parameters.prm`` is suited for tuning parameters.
 
 The differences between ``rpt_count_calculation.prm`` and ``rpt_parameters.prm`` are described below.
 
-First, in ``rpt_count_calculation.prm``, in the ``rpt parameters`` subsection, the ``verbosity`` parameter has been set to ``verbose`` since NOMAD is not used anymore, we can display counts on the terminal. To be able to export the counts in a file, the ``export counts`` parameter was set to ``true``. The name of the ``counts file`` that will be exported may be changed in this subsection.
+- First, in ``rpt_count_calculation.prm``, in the ``rpt parameters`` subsection, the ``verbosity`` parameter has been set to ``verbose`` since NOMAD is not used anymore, we can display counts on the terminal. To be able to export the counts in a file, the ``export counts`` parameter was set to ``true``. The name of the ``counts file`` that will be exported may be changed in this subsection.
 
-Second, in the ``parameter tuning`` subsection, the ``tuning`` parameter was set to ``false`` since we're not trying to tune parameters anymore.
+- Second, in the ``parameter tuning`` subsection, the ``tuning`` parameter was set to ``false`` since we're not trying to tune parameters anymore.
 
-Lastly, in the ``detector parameters`` subsection, the values of the parameters that were tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) were replaced with the ones NOMAD gave us.
+- Lastly, in the ``detector parameters`` subsection, the values of the parameters that were tuned (``dead time``, ``activity``, and ``attenuation coefficient reactor``) were replaced with the ones NOMAD gave us.
 
-To visualize the data and obtain the figures shown below, a python script (``rpt_parameter_tuning_plot.py``) is provided. When running the script, the name of the ``.csv`` file containing the calculated counts must be specified as an argument. In the *Experimental and calculated counts comparison* figure, we can see very little difference between the experimental counts and the calculated counts with the tuned parameters. The linear regression between the experimental and calculated photon counts gives us an R² value of 0.9990 as seen in the *Linear fit* figure. This confirms the validity of the tuned parameters.
+To visualize the data and obtain the figures shown below, a Python script (``rpt_parameter_tuning_plot.py``) is provided. When running the script, the name of the ``.csv`` file containing the calculated counts must be specified as an argument. In the *Experimental and calculated counts comparison* figure, we can see very little difference between the experimental counts and the calculated counts with the tuned parameters. The linear regression between the experimental and calculated photon counts gives us an R² value of 0.9990 as seen in the *Linear fit* figure. This confirms the validity of the tuned parameters.
 
 .. figure:: images/results.png
     :alt: Experimental and calculated counts comparison

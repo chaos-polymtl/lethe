@@ -230,6 +230,45 @@ public:
                StabilizedMethodsCopyData &   copy_data) override;
 };
 
+/**
+ * @brief Class that assembles the viscous dissipation for the heat transfer solver,
+ * for the specific case of VOF simulations. The only difference compared to the
+ * regular one is that the viscous dissipation can be applied in one of the
+ * fluids rather than both, through the viscous_dissipative_fluid parameter.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerViscousDissipationVOF
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerViscousDissipationVOF(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::FluidIndicator         p_viscous_dissipative_fluid)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+    , viscous_dissipative_fluid(p_viscous_dissipative_fluid)
+  {}
+
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData &   copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData &   copy_data) override;
+
+
+protected:
+  Parameters::FluidIndicator viscous_dissipative_fluid;
+};
 
 /**
  * @brief Class that assembles the laser heat source for the heat
