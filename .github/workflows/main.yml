@@ -79,6 +79,16 @@ jobs:
           ctest -V --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
 
       #
+      # Warnings
+      #
+      - name: Compile Lethe (Debug-deal.ii:${{ matrix.dealii_version }})
+        run: |
+          mkdir build-warnings
+          cd build-warnings
+          cmake ../ -DCMAKE_BUILD_TYPE=Debug -DWARNINGERROR=ON
+          make -j${{ env.COMPILE_JOBS }}
+
+      #
       # Debug
       #
       - name: Compile Lethe (Debug-deal.ii:${{ matrix.dealii_version }})
