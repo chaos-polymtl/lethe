@@ -2,7 +2,7 @@
 Photon Count Calculation in a Cylindrical Vessel
 ==================================================
 
-In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-ray. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector.
+In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-rays. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector.
 
 
 Features
@@ -19,11 +19,12 @@ Locations of Files Used in the Example
 - File containing particle positions for the second scenario  ``examples/rpt/count_calculation/positions_horizontaly.particle``
 - File containing particle positions for the third scenario:  ``examples/rpt/count_calculation/positions_vertical.particle``
 - File containing particle positions for the fourth scenario:  ``examples/rpt/count_calculation/positions_diagonal.particle``
+- Python script for post-processing the data: ``examples/rpt/count_calculation/rpt_count_calculation_plot.py``
 
 
 Description of the Case
 -------------------------
-In this example, four different sets of particle positions are studied for a given detector position. The four different scenarios studied in this example are :
+In this example, four different sets of particle positions are studied for a given detector position. The four different scenarios studied in this example are:
 
 1. Horizontal translation of a particle along the x-axis
 2. Horizontal translation of a particle along the y-axis
@@ -70,7 +71,7 @@ where
 - :math:`f_a(\alpha, \theta)` is the probability function of the non-interaction between the :math:`\gamma`-rays emitted within :math:`\Omega` and the material inside the vessel, and
 - :math:`f_d(\alpha, \theta)` is the probability function of the interaction of the :math:`\gamma`-rays with the detector. 
 
-The two last functions may be re-written the following way :
+The two last functions may be re-written the following way:
 
 .. math::
 
@@ -91,7 +92,7 @@ where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alph
 
 Using the Monte Carlo algorithm, we approximate the previous closed surface integral by randomly selecting several thousands of photon path directions.
 
-Thus, the efficiency of the :math:`i_{th}` detector is calculated as follows :
+Thus, the efficiency of the :math:`i_{th}` detector is calculated as follows:
 
 .. math::
 
@@ -113,7 +114,7 @@ RPT Parameters
 ~~~~~~~~~~~~~~~
 
 
-In the subsection ``rpt parameters``, we define the values of the set of parameters necessary for calculating the counts using the Monte Carlo method.  Among these parameters, we have the name of the file which contains a set of different positions of the particle inside the vessel (``particle position file``), the number of Monte Carlo iterations (``monte carlo iteration``), the seed that is used to generate a random number (``random number seed``) and other parameters that describe the studied :math:`\gamma`-ray model. We also define the name of the file in which the counts for each position will be exported in with the parameter ``counts file``. These common parameters used for the RPT simulation are described in the `RPT parameters <../../../parameters/rpt/rpt_parameters.html>`_ documentation page.
+In the subsection ``rpt parameters``, we define the values of the set of parameters necessary for calculating the counts using the Monte Carlo method.  Among these parameters, we have the name of the file which contains a set of different positions of the particle inside the vessel (``particle position file``), the number of Monte Carlo iterations (``monte carlo iteration``), the seed that is used to generate a random number (``random number seed``) and other parameters that describe the studied :math:`\gamma`-ray model. We also define the name of the file in which the counts for each position will be exported in with the parameter ``counts file``. These common parameters used for the RPT simulation are described in the :doc:`../../../parameters/rpt/rpt_parameters` documentation page.
 
 .. code-block:: text
 
@@ -140,7 +141,7 @@ Detector Parameters
 ~~~~~~~~~~~~~~~~~~~~
 
 
-In the subsection ``detector parameters``, we specify the file that contains two positions located on the axis of symmetry of the detector. The first point is on the surface facing the vessel (face of the detector), and the second point can be any point located inside the detector. In the current example, the center position of the face is :math:`(0.200, 0, 0.075)`, and the second point on the axis is :math:`(0.238, 0, 0.075)`. We also specify the radius (``radius``) and the length (``length``) of the detector. A detailed description of these parameters can be found in the `Detector Parameters <../../../parameters/rpt/detector_parameters.html>`_ documentation page.
+In the subsection ``detector parameters``, we specify the file that contains two positions located on the axis of symmetry of the detector. The first point is on the surface facing the vessel (face of the detector), and the second point can be any point located inside the detector. In the current example, the center position of the face is :math:`(0.200, 0, 0.075)`, and the second point on the axis is :math:`(0.238, 0, 0.075)`. We also specify the radius (``radius``) and the length (``length``) of the detector. A detailed description of these parameters can be found in the :doc:`../../../parameters/rpt/detector_parameters` documentation page.
 
 
 .. code-block:: text
@@ -158,7 +159,7 @@ In the subsection ``detector parameters``, we specify the file that contains two
     end
 
 .. note::
-    The parameters ``dead time``, ``activity`` and ``attenuation coefficient reactor`` are obtained using the blackbox optimization software `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ . The second example `Tuning Parameters with NOMAD <../tuning-parameters-with-nomad/tuning-parameters-with-nomad.html>`_ explains how we can obtain the values of these parameters using NOMAD.
+    The parameters ``dead time``, ``activity`` and ``attenuation coefficient reactor`` are obtained using the blackbox optimization software `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ . The second example :doc:`../tuning-parameters-with-nomad/tuning-parameters-with-nomad` explains how we can obtain the values of these parameters using NOMAD.
 
 
 Running the Simulation
@@ -179,7 +180,7 @@ Lethe will generate a ``.csv`` file with the name specified next to the ``counts
 Results
 --------
 
-To visualize the data and obtain the figures shown below, a python script (``rpt_count_calculation_plot.py``) is provided. When running the script, the name of the ``.csv`` file you wish to open and read must be specified as an argument.
+To visualize the data and obtain the figures shown below, a Python script (``rpt_count_calculation_plot.py``) is provided. When running the script, the name of the ``.csv`` file you wish to open and read must be specified as an argument.
 
 .. tip::
     You may use the ``rpt_count_calculation_plot.py`` script to plot any other set of data saved in a ``.csv`` file format.
@@ -235,7 +236,7 @@ Lastly, as the particle travels across the vessel, we notice fluctuations in the
 |                                                                                                         |                                                                                                         |
 +---------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
 
-The Case II figure shows the evolution of the photon count in absence of attenuation due to the medium found inside the vessel and the vessel's wall, and in the absence of variation of the interaction between the emitted :math:`\gamma`-ray and the detector. By setting :math:`\mu_r = 0`, we set :math:`f_a(\alpha_j, \theta_j) = 1`. As a consequence, the count becomes independent of the path of the photon inside the vessel. In a similar manner, by setting :math:`\mu_d = 1e9`, we make :math:`f_d(\alpha_j, \theta_j)` tend to :math:`1`. Consequently, the path traveled by the photon in the detector doesn't affect the efficiency anymore. Only the weighting factors :math:`\omega(\alpha)` and :math:`\omega(\theta)` have an influence on the calculated efficiency and photon count (:math:`\xi_i \approx \omega(\alpha) \omega(\theta)`). Therefore, the Case II figure gives us an idea of how the photon count evolves according to the particle's position respective to the detector's position disregarding the interactions between the emitted ray and the medium inside the vessel and its walls, and disregarding the interactions between the ray and the detector. We can use this case as a base to understand the interactions that occur in other cases.
+The Case II figure shows the evolution of the photon count in absence of attenuation due to the medium found inside the vessel and the vessel's wall, and in the absence of variation of the interaction between the emitted :math:`\gamma`-ray and the detector. By setting :math:`\mu_r = 0`, we set :math:`f_a(\alpha_j, \theta_j) = 1`. As a consequence, the count becomes independent of the path of the photon inside the vessel. In a similar manner, by setting :math:`\mu_d = 1e9`, we make :math:`f_d(\alpha_j, \theta_j)` tend to :math:`1`. Consequently, the path traveled by the photon in the detector doesn't affect the efficiency anymore. Only the weighting factors :math:`\omega(\alpha)` and :math:`\omega(\theta)` have an influence on the calculated efficiency and photon count :math:`(\xi_i \approx \omega(\alpha) \omega(\theta))`. Therefore, the Case II figure gives us an idea of how the photon count evolves according to the particle's position respective to the detector's position disregarding the interactions between the emitted ray and the medium inside the vessel and its walls, and disregarding the interactions between the ray and the detector. We can use this case as a base to understand the interactions that occur in other cases.
 
 The Case III figure depicts the evolution of the photon count in absence of the attenuation due to the medium found inside the vessel and the vessel's wall. Since we use the same set of positions in all cases, :math:`\omega(\alpha)` and :math:`\omega(\theta)` remain the same for each given position of the tracer particle. The length of the path traveled by the photon inside the detector should also be the same since the same seed number is used. As seen on the Case III figure, when the particle is aligned with the axis of symmetry of the detector, the photon count reaches a maximum. At that position, the evolution of the product :math:`\omega(\alpha) \cdot \omega(\theta)` seen on the Case II figure also reaches a maximum. And the distance :math:`d(\alpha,\theta)` reaches a local maximum at that position. On the case III figure, we notice that the inflection points at :math:`y \approx -5.5` cm and at :math:`y \approx -3.7` cm (not too far from the edge of the detector's face), seen on the Case II figure, are not present anymore. This means that when :math:`y \in ]-10, -3.8[` cm, when the particle sees both the face and the lateral sides of the detector and as the particle approaches the detector's face, the distance :math:`d(\alpha,\theta)` increases making the count increase. And when :math:`y \in ]-3.8, -1.5[` cm the distance :math:`d(\alpha,\theta)` decreases in such way that it counters the rapid increase in weighting factors giving the evolution of the photon count a more parabolic shape. Finally, between :math:`y \in ]-1.5, 0]` cm, :math:`d(\alpha,\theta)` increases until reaching a local maximum.
 
