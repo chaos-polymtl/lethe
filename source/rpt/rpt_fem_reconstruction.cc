@@ -72,24 +72,11 @@ RPTFEMReconstruction<dim>::setup_triangulation()
                                                    triangulation);
   triangulation.set_all_manifold_ids(0);
 
-  /*
-  // Output the grid before transformation
-  GridOut grid_out;
-  {
-    std::ofstream output_file("original_triangulation.vtk");
-    grid_out.write_vtk(triangulation, output_file);
-  }
-
-  // Output the grid after transformation
+  // Grid transformation
   GridTools::rotate(M_PI_2, 1, triangulation);
   Tensor<1, dim> shift_vector(
     {0, 0, rpt_parameters.rpt_param.reactor_height / 2});
   GridTools::shift(shift_vector, triangulation);
-  {
-    std::ofstream output_file("rotated_triangulation.vtk");
-    grid_out.write_vtk(triangulation, output_file);
-  }
-   */
 }
 
 template <int dim>
@@ -312,7 +299,55 @@ RPTFEMReconstruction<dim>::output_results()
   data_out.write_vtu(output);
 }
 
+template <int dim>
+void
+RPTFEMReconstruction<dim>::output_raw_results()
+{
 
+    std::map<types::global_dof_index, Point<dim>> dof_index_and_location;
+
+    for (const auto &cell : dof_handler.active_cell_iterators())
+      {
+        for (unsigned int v = 0; v < cell->n_vertices(); ++v)
+          {
+            auto dof_index       = cell->vertex_dof_index(v, 0);
+            auto vertex_location = cell->vertex(v);
+            std::pair<types::global_dof_index, Point<dim>> dof_and_vertex(
+              dof_index, vertex_location);
+            dof_index_and_location.insert(dof_and_vertex);
+          }
+      }
+
+    std::string filename = "raw_counts.dat";
+
+    // Open a file
+    std::ofstream myfile;
+    std::string   sep = " ";
+    myfile.open(filename);
+    myfile << "vertex_positions_x vertex_position_y vertex_position_z ";
+    for (unsigned int i = 0; i < n_detector; ++i)
+      myfile << "detector_" + Utilities::to_string(i, 2) + sep;
+    myfile << std::endl;
+
+    // Adding content:
+    for (auto it = dof_index_and_location.begin();
+         it != dof_index_and_location.end();
+         ++it)
+      {
+        for (unsigned p = 0; p < dim; ++p)
+          myfile << it->second[p] << sep;
+
+        for (unsigned int d = 0; d < n_detector; ++d)
+          myfile << nodal_counts[d][it->first] << sep;
+
+        myfile << "\n";
+      }
+    myfile.close();
+
+}
+
+
+/*
 template <int dim>
 void
 RPTFEMReconstruction<dim>::output_raw_results_per_level()
@@ -369,6 +404,7 @@ RPTFEMReconstruction<dim>::output_counts_on_level(
     }
   myfile.close();
 }
+*/
 
 template <int dim>
 void
@@ -398,7 +434,8 @@ RPTFEMReconstruction<dim>::L2_project()
     }
   std::cout << "Outputting results" << std::endl;
   output_results();
-  output_raw_results_per_level();
+  output_raw_results();
+  //output_raw_results_per_level();
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << "Saving dof handler and nodal counts" << std::endl;
   checkpoint();
@@ -572,6 +609,11 @@ RPTFEMReconstruction<dim>::calculate_cost(
            Parameters::RPTFEMReconstructionParameters::FEMCostFunction::
              relative)
     {
+      std::vector<double>      denom(n_detector);
+
+      for (unsigned int d = 0; d < experimental_count.size(); ++d )
+        denom[d] = 1/(experimental_count[d]*experimental_count[d]);
+
       for (unsigned int d = 0; d < n_detector; ++d)
         {
           count +=
@@ -584,8 +626,7 @@ RPTFEMReconstruction<dim>::calculate_cost(
             }
 
           count -= experimental_count[d];
-          cost +=
-            count * count / (experimental_count[d] * experimental_count[d]);
+          cost += count * count * denom[d];
           count = 0;
         }
     }
@@ -637,7 +678,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
         check_reference_location_validity(reference_location,
                                           last_constraint_reference_location);
 
-      //
+      // Extrapolation limit
       if (norm_error_coordinates < 0.005)
         {
           // Calculate cost with the selected cost function
@@ -645,7 +686,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                                            reference_location,
                                            last_constraint_reference_location,
                                            experimental_count);
-
+          // Check if the new cost is lower than the previously stored real_location's
           if (calculated_cost < max_cost_function)
             {
               max_cost_function = calculated_cost;
