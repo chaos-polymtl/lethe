@@ -168,12 +168,12 @@ public:
    *
    * @param solution VOF solution (phase fraction)
    *
-   * @param id_fluid_monitored Phase value (0 or 1) corresponding to
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
    * the phase of interest.
    */
   void
   calculate_volume_and_mass(const TrilinosWrappers::MPI::Vector &solution,
-                            const int id_fluid_monitored);
+                            const Parameters::FluidIndicator monitored_fluid);
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -535,14 +535,14 @@ private:
    * test multiple sharpening threshold in the binary search algorithm
    * (adaptative sharpening).
    *
-   * @param id_fluid_monitored Phase value (0 or 1) corresponding to
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
    * the phase of interest.
    *
    * @param sharpening_threshold Interface sharpening threshold that represents the
    * mass conservation level
    */
   double
-  calculate_mass_deviation(const int    id_fluid_monitored,
+  calculate_mass_deviation(const Parameters::FluidIndicator monitored_fluid,
                            const double sharpening_threshold);
 
   /**

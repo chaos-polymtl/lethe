@@ -64,9 +64,21 @@ HeatTransfer<dim>::setup_assemblers()
 
   if (this->simulation_parameters.multiphysics.viscous_dissipation)
     {
-      this->assemblers.push_back(
-        std::make_shared<HeatTransferAssemblerViscousDissipation<dim>>(
-          this->simulation_control));
+      if (this->simulation_parameters.multiphysics.VOF)
+        {
+          // Call for the specific assembler
+          this->assemblers.push_back(
+            std::make_shared<HeatTransferAssemblerViscousDissipationVOF<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.multiphysics.vof_parameters
+                .viscous_dissipative_fluid));
+        }
+      else
+        {
+          this->assemblers.push_back(
+            std::make_shared<HeatTransferAssemblerViscousDissipation<dim>>(
+              this->simulation_control));
+        }
     }
 
   // Time-stepping schemes
