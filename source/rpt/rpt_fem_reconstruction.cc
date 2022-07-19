@@ -72,6 +72,7 @@ RPTFEMReconstruction<dim>::setup_triangulation()
                                                    triangulation);
   triangulation.set_all_manifold_ids(0);
 
+  /*
   // Output the grid before transformation
   GridOut grid_out;
   {
@@ -88,6 +89,7 @@ RPTFEMReconstruction<dim>::setup_triangulation()
     std::ofstream output_file("rotated_triangulation.vtk");
     grid_out.write_vtk(triangulation, output_file);
   }
+   */
 }
 
 template <int dim>
@@ -401,6 +403,8 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "Saving dof handler and nodal counts" << std::endl;
   checkpoint();
   std::cout << "***********************************************" << std::endl;
+  std::cout << "Done!" << std::endl;
+  std::cout << "***********************************************" << std::endl;
 }
 
 
@@ -415,11 +419,11 @@ assemble_matrix_and_rhs(
   Vector<double>           reference_location;
   unsigned int             detector_size = vertex_count.size();
   double                   sigma         = 0;
-  double                   denum;
   LAPACKFullMatrix<double> sys_matrix;
   sys_matrix.reinit(dim);
   Vector<double> sys_rhs;
   sys_rhs.reinit(dim);
+
 
 
   if (cost_function_type ==
@@ -455,6 +459,11 @@ assemble_matrix_and_rhs(
   else if (cost_function_type == Parameters::RPTFEMReconstructionParameters::
                                    FEMCostFunction::relative)
     {
+      std::vector<double>      denom(detector_size);
+
+      for (unsigned int d = 0; d < experimental_count.size(); ++d )
+        denom[d] = 1/(experimental_count[d]*experimental_count[d]);
+
       // Assembling sys_matrix
       for (unsigned int i = 0; i < dim; ++i)
         {
@@ -462,10 +471,9 @@ assemble_matrix_and_rhs(
             {
               for (unsigned int d = 0; d < detector_size; ++d)
                 {
-                  denum = 1/(experimental_count[d] * experimental_count[d]);
                   sigma += (-vertex_count[d][0] + vertex_count[d][j + 1]) *
                            (-vertex_count[d][0] + vertex_count[d][i + 1]) *
-                            denum;
+                            denom[d];
                 }
               sys_matrix.set(i, j, sigma);
               sigma = 0;
@@ -477,10 +485,9 @@ assemble_matrix_and_rhs(
         {
           for (unsigned int d = 0; d < detector_size; ++d)
             {
-              denum = 1/(experimental_count[d] * experimental_count[d]);
               sigma += (vertex_count[d][0] - experimental_count[d]) *
                        (-vertex_count[d][0] + vertex_count[d][i + 1]) *
-                        denum;
+                        denom[d];
             }
           sys_rhs[i] = -sigma;
           sigma      = 0;
@@ -840,6 +847,8 @@ RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << "Exporting particle positions " << std::endl;
   export_found_positions();
+  std::cout << "***********************************************" << std::endl;
+  std::cout << "Done!" << std::endl;
   std::cout << "***********************************************" << std::endl;
 }
 
