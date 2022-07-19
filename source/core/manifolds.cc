@@ -292,8 +292,7 @@ attach_manifolds_to_triangulation(
     }
 }
 
-void
-attach_cad_to_manifold(
+void attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>>,
   std::string,
   unsigned int)
@@ -301,8 +300,7 @@ attach_cad_to_manifold(
   throw std::runtime_error("IGES manifolds are not supported in 2D");
 }
 
-void
-attach_cad_to_manifold(
+void attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>>,
   std::string,
   unsigned int)
@@ -311,8 +309,7 @@ attach_cad_to_manifold(
 }
 
 #ifdef DEAL_II_WITH_OPENCASCADE
-void
-attach_cad_to_manifold(
+void attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   std::string                                                cad_name,
   unsigned int                                               manifold_id)
@@ -342,8 +339,7 @@ attach_cad_to_manifold(
   triangulation->set_manifold(manifold_id, normal_projector);
 }
 #else
-void
-attach_cad_to_manifold(
+void attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>>,
   std::string,
   unsigned int)
@@ -354,17 +350,14 @@ attach_cad_to_manifold(
 #endif // DEAL_II_WITH_OPENCASCADE
 
 
-template void
-attach_manifolds_to_triangulation(
+template void attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   Parameters::Manifolds                                      manifolds);
 
-template void
-attach_manifolds_to_triangulation(
+template void attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   Parameters::Manifolds                                      manifolds);
 
-template void
-attach_manifolds_to_triangulation(
+template void attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
   Parameters::Manifolds                                         manifolds);
