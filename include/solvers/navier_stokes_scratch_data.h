@@ -87,9 +87,9 @@ public:
    *
    */
   NavierStokesScratchData(PhysicalPropertiesManager &properties_manager,
-                          const FESystem<dim> &      fe,
-                          const Quadrature<dim> &    quadrature,
-                          const Mapping<dim> &       mapping,
+                          const FESystem<dim>       &fe,
+                          const Quadrature<dim>     &quadrature,
+                          const Mapping<dim>        &mapping,
                           const Quadrature<dim - 1> &face_quadrature)
     : properties_manager(properties_manager)
     , fe_values(mapping,
@@ -217,10 +217,10 @@ public:
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType &                                    current_solution,
+         const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages,
-         Function<dim> *                forcing_function,
+         Function<dim>                 *forcing_function,
          Tensor<1, dim>                 beta_force)
   {
     this->fe_values.reinit(cell);
@@ -463,19 +463,19 @@ public:
 
   void
   enable_vof(const FiniteElement<dim> &fe,
-             const Quadrature<dim> &   quadrature,
-             const Mapping<dim> &      mapping);
+             const Quadrature<dim>    &quadrature,
+             const Mapping<dim>       &mapping);
 
   void
   enable_filtered_phase_fraction_gradient(
     const FiniteElement<dim> &fe_filtered_phase_fraction_gradient,
-    const Quadrature<dim> &   quadrature,
-    const Mapping<dim> &      mapping);
+    const Quadrature<dim>    &quadrature,
+    const Mapping<dim>       &mapping);
 
   void
   enable_curvature(const FiniteElement<dim> &fe_curvature,
-                   const Quadrature<dim> &   quadrature,
-                   const Mapping<dim> &      mapping);
+                   const Quadrature<dim>    &quadrature,
+                   const Mapping<dim>       &mapping);
 
   /** @brief Reinitialize the content of the scratch for the vof
    *
@@ -494,7 +494,7 @@ public:
   template <typename VectorType>
   void
   reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
-             const VectorType &             current_solution,
+             const VectorType              &current_solution,
              const std::vector<VectorType> &previous_solutions,
              const std::vector<VectorType> & /*solution_stages*/)
   {
@@ -517,7 +517,7 @@ public:
   void
   reinit_filtered_phase_fraction_gradient(
     const typename DoFHandler<dim>::active_cell_iterator
-      &               filtered_phase_fraction_gradient_cell,
+                     &filtered_phase_fraction_gradient_cell,
     const VectorType &current_filtered_phase_fraction_gradient_solution)
   {
     this->fe_values_filtered_phase_fraction_gradient->reinit(
@@ -555,8 +555,8 @@ public:
 
   void
   enable_void_fraction(const FiniteElement<dim> &fe,
-                       const Quadrature<dim> &   quadrature,
-                       const Mapping<dim> &      mapping);
+                       const Quadrature<dim>    &quadrature,
+                       const Mapping<dim>       &mapping);
 
   /** @brief Reinitialize the content of the scratch for the void fraction
    *
@@ -576,8 +576,8 @@ public:
   void
   reinit_void_fraction(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
+    const VectorType                                     &current_solution,
+    const std::vector<VectorType>                        &previous_solutions,
     const std::vector<VectorType> & /*solution_stages*/)
   {
     this->fe_values_void_fraction->reinit(cell);
@@ -633,8 +633,8 @@ public:
     const VectorType                       previous_solution,
     const VectorType                       void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
-    DoFHandler<dim> &                      dof_handler,
-    DoFHandler<dim> &                      void_fraction_dof_handler)
+    DoFHandler<dim>                       &dof_handler,
+    DoFHandler<dim>                       &void_fraction_dof_handler)
   {
     const FiniteElement<dim> &fe = this->fe_values.get_fe();
     const FiniteElement<dim> &fe_void_fraction =
@@ -744,8 +744,13 @@ public:
     std::vector<Point<dim>> particle_reference_location(particle_number + 1);
     std::vector<double>     particle_weights(particle_number + 1);
     fluid_pressure_gradients_at_particle_location.resize(particle_number + 1);
-    fluid_velocity_gradients_at_particle_location.resize(particle_number + 1);
-    fluid_velocity_curls_at_particle_location.resize(particle_number + 1);
+
+    if (dim < 3)
+      fluid_velocity_curls_at_particle_location_2d.resize(particle_number + 1);
+
+    else
+      fluid_velocity_curls_at_particle_location_3d.resize(particle_number + 1);
+
     fluid_velocity_laplacian_at_particle_location.resize(particle_number + 1);
 
     // Loop over particles in cell
@@ -773,11 +778,20 @@ public:
     fe_values_local_particles[velocities].get_function_laplacians(
       previous_solution, fluid_velocity_laplacian_at_particle_location);
 
-    fe_values_local_particles[velocities].get_function_gradients(
-      previous_solution, fluid_velocity_gradients_at_particle_location);
-
-    fe_values_local_particles[velocities].get_function_curls(
-      previous_solution, fluid_velocity_curls_at_particle_location);
+    if (dim < 3)
+      {
+        fe_values_local_particles[velocities].get_function_curls(
+          previous_solution, fluid_velocity_curls_at_particle_location_2d);
+        auto fluid_velocity_curls_at_particle_location =
+          fluid_velocity_curls_at_particle_location_2d;
+      }
+    else
+      {
+        fe_values_local_particles[velocities].get_function_curls(
+          previous_solution, fluid_velocity_curls_at_particle_location_3d);
+        auto fluid_velocity_curls_at_particle_location =
+          fluid_velocity_curls_at_particle_location_3d;
+      }
 
     fe_values_local_particles[pressure].get_function_gradients(
       previous_solution, fluid_pressure_gradients_at_particle_location);
@@ -796,8 +810,8 @@ public:
 
   void
   enable_heat_transfer(const FiniteElement<dim> &fe,
-                       const Quadrature<dim> &   quadrature,
-                       const Mapping<dim> &      mapping);
+                       const Quadrature<dim>    &quadrature,
+                       const Mapping<dim>       &mapping);
 
 
   /** @brief Reinitialize the content of the scratch for the heat transfer
@@ -816,7 +830,7 @@ public:
   void
   reinit_heat_transfer(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution)
+    const VectorType                                     &current_solution)
   {
     this->fe_values_temperature->reinit(cell);
 
@@ -930,8 +944,8 @@ public:
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
-  std::vector<Tensor<1, dim>> fluid_velocity_gradients_at_particle_location;
-  std::vector<Tensor<1, dim>> fluid_velocity_curls_at_particle_location;
+  std::vector<Tensor<1, 1>>   fluid_velocity_curls_at_particle_location_2d;
+  std::vector<Tensor<1, 3>>   fluid_velocity_curls_at_particle_location_3d;
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
   std::vector<double>         cell_void_fraction;
   unsigned int                max_number_of_particles_per_cell;

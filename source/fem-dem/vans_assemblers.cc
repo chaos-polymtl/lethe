@@ -11,14 +11,14 @@
 template <int dim>
 void
 GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Viscosity at Gauss points
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -186,14 +186,14 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
 template <int dim>
 void
 GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -339,14 +339,14 @@ template class GLSVansAssemblerCoreModelB<3>;
 template <int dim>
 void
 GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -522,14 +522,14 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
 template <int dim>
 void
 GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -678,11 +678,11 @@ template class GLSVansAssemblerCoreModelA<3>;
 template <int dim>
 void
 GLSVansAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -740,7 +740,7 @@ GLSVansAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSVansAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Physical properties
@@ -748,7 +748,7 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
 
   // Loop and quadrature informations
   const double       h          = scratch_data.cell_size;
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -847,7 +847,7 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   unsigned int particle_number;
   double       cell_void_fraction = 0;
   double       c_d                = 0;
-  auto &       beta_drag          = scratch_data.beta_drag;
+  auto        &beta_drag          = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
@@ -924,7 +924,7 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   unsigned int particle_number;
   double       cell_void_fraction = 0;
   double       c_d                = 0;
-  auto &       beta_drag          = scratch_data.beta_drag;
+  auto        &beta_drag          = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
@@ -1001,7 +1001,7 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
 {
   unsigned int particle_number;
   double       c_d       = 0;
-  auto &       beta_drag = scratch_data.beta_drag;
+  auto        &beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
@@ -1071,7 +1071,7 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
 {
   unsigned int particle_number;
   double       cell_void_fraction = 0;
-  auto &       beta_drag          = scratch_data.beta_drag;
+  auto        &beta_drag          = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
@@ -1167,7 +1167,7 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   unsigned int particle_number;
   double       cell_void_fraction    = 0;
   double       normalized_drag_force = 0;
-  auto &       beta_drag             = scratch_data.beta_drag;
+  auto        &beta_drag             = scratch_data.beta_drag;
 
   Tensor<1, dim> superficial_velocity;
   Tensor<1, dim> relative_velocity;
@@ -1257,7 +1257,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   unsigned int particle_number;
   double       cell_void_fraction = 0;
   double       c_d                = 0;
-  auto &       beta_drag          = scratch_data.beta_drag;
+  auto        &beta_drag          = scratch_data.beta_drag;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> drag_force;
@@ -1359,13 +1359,20 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   // point to the element of the vectors relative_velocity and
   // fluid_velocity_at_particle_location corresponding to the particle being
   // looped over.
+
+  // This implementation follows the formulation in the book "Multiphase Flows
+  // with Droplets and Particles" by Crowe et al. (2011) and the brief
+  // communication article "An approximate expression for the shear lift force
+  // on a spherical particle at finite reynolds number" by Mei (1992)
   unsigned int particle_number;
   double       cell_void_fraction = 0;
-  auto &       beta_drag          = scratch_data.beta_drag;
-  auto &       beta_lift          = scratch_data.beta_lift;
+  double       C_s                = 0;
+  double       alpha              = 0;
+  auto        &beta_lift          = scratch_data.beta_lift;
 
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &velocity_curls = scratch_data.fluid_velocity_curls_at_particle_location;
+  auto &velocity_curls_2d = scratch_data.fluid_velocity_curls_at_particle_location_2d;
+  auto &velocity_curls_3d = scratch_data.fluid_velocity_curls_at_particle_location_3d;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> lift_force;
@@ -1374,13 +1381,13 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
   const double viscosity = scratch_data.properties_manager.viscosity_scale;
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
   const auto pic  = scratch_data.pic;
@@ -1409,26 +1416,43 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
                                  particle_properties[DEM::PropertiesIndex::dp] /
                                  (viscosity + DBL_MIN) * shear_rate.norm();
 
-      // Epsilon
+      // epsilon_ijk
       double eps = pow(re_shear, 0.5) / re;
 
       // Vorticity
       auto vorticity = eps * velocity_curls[particle_number];
 
-      // Saffman force
       for (int d = 0; d < dim; d++)
         {
-          lift_force[d] = 1.61 * density * pow((viscosity + DBL_MIN), 0.5) *
-                          particle_properties[DEM::PropertiesIndex::dp] *
-                          particle_properties[DEM::PropertiesIndex::dp] *
-                          pow(1 / vorticity.norm(), 0.5) * eps *
-                          relative_velocity[d] * vorticity[dim];
-        }
+          // Mei's alpha
+          alpha = particle_properties[DEM::PropertiesIndex::dp] *
+                  abs(vorticity[d]) / (2 * abs(relative_velocity[d]));
 
+          // Calculate C_s as described by Crowe
+          if (re <= 40)
+            C_s = (1 - 0.3314 * pow(alpha, 0.5)) * exp(-re / 10) +
+                  0.2214 * pow(alpha, 0.5);
+          else if (re > 40)
+            C_s = 0.0524 * pow(alpha * re, 0.5);
+
+          // Saffman force with Mei correction C_s for the Reynolds number
+          // effect
+          lift_force[d] = C_s * 1.61 * density *
+                          pow((viscosity + DBL_MIN), 0.5) *
+                          particle_properties[DEM::PropertiesIndex::dp] *
+                          particle_properties[DEM::PropertiesIndex::dp] *
+                          pow(1 / abs(vorticity[d]), 0.5) * eps *
+                          relative_velocity[d] * vorticity[d];
+
+          // Apply lift force on the particles
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+            lift_force[d];
+
+          // Apply lift on the fluid
+          undisturbed_flow_force[d] += lift_force[d] / scratch_data.cell_volume;
+        }
       particle_number += 1;
     }
-
-  beta_lift = beta_lift / scratch_data.cell_volume;
 }
 
 template class GLSVansAssemblerSaffmanMei<2>;
@@ -1480,7 +1504,7 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
 {
   unsigned int particle_number;
   const auto   pic                    = scratch_data.pic;
-  auto &       undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  auto        &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
   auto         pressure_gradients =
     scratch_data.fluid_pressure_gradients_at_particle_location;
   Tensor<1, dim> pressure_force;
@@ -1491,7 +1515,7 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "GLSVansAssemblerPressureForc<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions"));
 
 
   const double density = scratch_data.properties_manager.density_scale;
@@ -1537,8 +1561,8 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
 {
   unsigned int particle_number;
   const auto   pic                    = scratch_data.pic;
-  auto &       undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &       velocity_laplacians =
+  auto        &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  auto        &velocity_laplacians =
     scratch_data.fluid_velocity_laplacian_at_particle_location;
   Tensor<1, dim> shear_force;
 
@@ -1597,11 +1621,11 @@ template class GLSVansAssemblerShearForce<3>;
 template <int dim>
 void
 GLSVansAssemblerFPI<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -1665,11 +1689,11 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
 template <int dim>
 void
 GLSVansAssemblerFPI<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
