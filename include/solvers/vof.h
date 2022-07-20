@@ -718,8 +718,6 @@ private:
   double       mass_monitored;
   double       mass_first_iteration;
   double       sharpening_threshold;
-  double       interface_sharpness;
-
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;

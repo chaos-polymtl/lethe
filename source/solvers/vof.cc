@@ -754,8 +754,6 @@ VolumeOfFluid<dim>::calculate_mass_deviation(
   const double                     sharpening_threshold)
 {
   // Copy present solution VOF
-  auto mpi_communicator = this->triangulation->get_communicator();
-
   evaluation_point = this->present_solution;
 
   // Sharpen interface using the tested threshold value
@@ -1557,12 +1555,6 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
 
-  // Sharpen the interface of the initial solution
-  this->interface_sharpness = simulation_parameters.multiphysics.vof_parameters
-                                .sharpening.initial_interface_sharpness;
-  sharpen_interface(this->present_solution, this->sharpening_threshold, false);
-  this->interface_sharpness = simulation_parameters.multiphysics.vof_parameters
-                                .sharpening.interface_sharpness;
   finish_time_step();
 }
 
@@ -1714,7 +1706,9 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   TrilinosWrappers::MPI::Vector &solution,
   const double                   sharpening_threshold)
 {
-  const double interface_sharpness = this->interface_sharpness;
+  const double interface_sharpness =
+    this->simulation_parameters.multiphysics.vof_parameters.sharpening
+      .interface_sharpness;
 
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
@@ -1750,7 +1744,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               auto phase_value = phase_values[q];
-              phase_value      = std::min(std::max(phase_value, 0.), 1.);
+              // phase_value      = std::min(std::max(phase_value, 0.), 1.);
 
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
@@ -1770,7 +1764,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                   // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 -
                   // \alpha)
                   // * (1 - \phi) ^ \alpha}
-                  if (phase_value <= sharpening_threshold)
+                  if (phase_value >= 0 and phase_value <= sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
                       std::pow(sharpening_threshold,
                                (1. - interface_sharpness)) *
@@ -1827,7 +1821,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
     true,
     true);
 
-  TrilinosWrappers::SolverGMRES solver(solver_control);
+  TrilinosWrappers::SolverCG solver(solver_control);
 
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
