@@ -287,7 +287,7 @@ AverageVelocities<dim, VectorType, DofsType>::read(std::string prefix)
   sum_vectors.push_back(&sum_velocity_dt);
   sum_vectors.push_back(&sum_reynolds_normal_stress_dt);
   sum_vectors.push_back(&sum_reynolds_shear_stress_dt);
-  sum_vectors.push_back(&average_velocities);
+
 
   std::string   filename = prefix + ".averagevelocities";
   std::ifstream input(filename.c_str());

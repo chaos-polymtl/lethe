@@ -97,12 +97,6 @@ public:
   {
     return get_av = average_velocities;
   }
-  VectorType *
-  get_average_velocities_pointer()
-  {
-    get_av = average_velocities;
-    return &get_av;
-  }
 
   /**
    * @brief get_reynolds_normal_stresses. Gives the time-averaged Reynolds

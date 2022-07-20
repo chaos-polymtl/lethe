@@ -663,23 +663,6 @@ public:
     physics_average_solutions[physics_id] = solution_vector;
   }
 
-  /**
-   * @brief Sets the reference to the average solution of the physics in the multiphysics interface
-   *
-   * @param physics_id The physics of the DOF handler being requested
-   *
-   * @param solution_vector The reference to the solution vector of the physics
-   */
-  void
-  set_average_block_solution(PhysicsID                      physics_id,
-                             TrilinosWrappers::MPI::Vector *solution_vector)
-  {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    physics_average_solutions[physics_id] = solution_vector;
-  }
 
   /**
    * @brief Sets the reference to the Reynolds stress of the physics in the multiphysics interface.
