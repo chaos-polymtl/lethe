@@ -1371,8 +1371,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   auto        &beta_lift          = scratch_data.beta_lift;
 
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &velocity_curls_2d = scratch_data.fluid_velocity_curls_at_particle_location_2d;
-  auto &velocity_curls_3d = scratch_data.fluid_velocity_curls_at_particle_location_3d;
+  auto &velocity_curls = scratch_data.fluid_velocity_curls_at_particle_location;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> lift_force;
@@ -1422,17 +1421,17 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
       // Vorticity
       auto vorticity = eps * velocity_curls[particle_number];
 
-      for (int d = 0; d < dim; d++)
+      for (unsigned int d = 0; d < dim; d++)
         {
           // Mei's alpha
           alpha = particle_properties[DEM::PropertiesIndex::dp] *
                   abs(vorticity[d]) / (2 * abs(relative_velocity[d]));
 
           // Calculate C_s as described by Crowe
-          if (re <= 40)
+          if (re <= 40.0)
             C_s = (1 - 0.3314 * pow(alpha, 0.5)) * exp(-re / 10) +
                   0.2214 * pow(alpha, 0.5);
-          else if (re > 40)
+          else if (re > 40.0)
             C_s = 0.0524 * pow(alpha * re, 0.5);
 
           // Saffman force with Mei correction C_s for the Reynolds number

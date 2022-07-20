@@ -782,15 +782,25 @@ public:
       {
         fe_values_local_particles[velocities].get_function_curls(
           previous_solution, fluid_velocity_curls_at_particle_location_2d);
-        auto fluid_velocity_curls_at_particle_location =
-          fluid_velocity_curls_at_particle_location_2d;
+
+        for (unsigned int d = 0; d < dim; d++)
+          {
+            for (unsigned int p_i = 0; p_i < particle_number; p_i++)
+              fluid_velocity_curls_at_particle_location[p_i][d] =
+                fluid_velocity_curls_at_particle_location_2d[p_i][0];
+          }
       }
     else
       {
         fe_values_local_particles[velocities].get_function_curls(
           previous_solution, fluid_velocity_curls_at_particle_location_3d);
-        auto fluid_velocity_curls_at_particle_location =
-          fluid_velocity_curls_at_particle_location_3d;
+
+        for (unsigned int d = 0; d < dim; d++)
+          {
+            for (unsigned int p_i = 0; p_i < particle_number; p_i++)
+              fluid_velocity_curls_at_particle_location[p_i][d] =
+                fluid_velocity_curls_at_particle_location_3d[p_i][d];
+          }
       }
 
     fe_values_local_particles[pressure].get_function_gradients(
@@ -946,6 +956,7 @@ public:
   std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
   std::vector<Tensor<1, 1>>   fluid_velocity_curls_at_particle_location_2d;
   std::vector<Tensor<1, 3>>   fluid_velocity_curls_at_particle_location_3d;
+  std::vector<Tensor<1, 3>>   fluid_velocity_curls_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
   std::vector<double>         cell_void_fraction;
   unsigned int                max_number_of_particles_per_cell;
