@@ -82,6 +82,12 @@ RPTFEMReconstruction<dim>::setup_triangulation()
   Tensor<1, dim> shift_vector(
     {0, 0, rpt_parameters.rpt_param.reactor_height*0.5});
   GridTools::shift(shift_vector, triangulation);
+
+  GridOut grid_out;
+  {
+    std::ofstream output_file("triangulation.vtk");
+    grid_out.write_vtk(triangulation, output_file);
+  }
 }
 
 template <int dim>
@@ -355,65 +361,6 @@ RPTFEMReconstruction<dim>::output_raw_results()
 }
 
 
-/*
-template <int dim>
-void
-RPTFEMReconstruction<dim>::output_raw_results_per_level()
-{
-  for (unsigned int level = 0; level < triangulation.n_levels(); ++level)
-    {
-      std::map<types::global_dof_index, Point<dim>> dof_index_and_location;
-
-      for (const auto &cell : dof_handler.cell_iterators_on_level(level))
-        {
-          for (unsigned int v = 0; v < cell->n_vertices(); ++v)
-            {
-              auto dof_index       = cell->vertex_dof_index(v, 0);
-              auto vertex_location = cell->vertex(v);
-              std::pair<types::global_dof_index, Point<dim>> dof_and_vertex(
-                dof_index, vertex_location);
-              dof_index_and_location.insert(dof_and_vertex);
-            }
-        }
-      output_counts_on_level(level, dof_index_and_location);
-    }
-}
-
-template <int dim>
-void
-RPTFEMReconstruction<dim>::output_counts_on_level(
-  unsigned int                                   level,
-  std::map<types::global_dof_index, Point<dim>> &dof_index_and_location)
-{
-  std::cout << "Outputting on level : " << level << std::endl;
-  std::string filename = "raw_counts_" + Utilities::to_string(level) + ".dat";
-
-  // Open a file
-  std::ofstream myfile;
-  std::string   sep = " ";
-  myfile.open(filename);
-  myfile << "vertex_positions_x vertex_position_y vertex_position_z ";
-  for (unsigned int i = 0; i < n_detector; ++i)
-    myfile << "detector_" + Utilities::to_string(i, 2) + sep;
-  myfile << std::endl;
-
-  // showing contents:
-  for (auto it = dof_index_and_location.begin();
-       it != dof_index_and_location.end();
-       ++it)
-    {
-      for (unsigned d = 0; d < dim; ++d)
-        myfile << it->second[d] << sep;
-
-      for (unsigned int i = 0; i < n_detector; ++i)
-        myfile << nodal_counts[i][it->first] << sep;
-
-      myfile << "\n";
-    }
-  myfile.close();
-}
-*/
-
 template <int dim>
 void
 RPTFEMReconstruction<dim>::L2_project()
@@ -428,7 +375,7 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "***********************************************" << std::endl;
   setup_triangulation();
   setup_system();
-
+/*
   for (unsigned d = 0; d < n_detector; ++d)
     {
       std::cout << "Detector_id: " << Utilities::to_string(d, 2) << std::endl;
@@ -450,6 +397,7 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "***********************************************" << std::endl;
   std::cout << "Done!" << std::endl;
   std::cout << "***********************************************" << std::endl;
+  */
 }
 
 
@@ -750,8 +698,9 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::trajectory()
 {
-
-  const double  tol_reference_location = rpt_parameters.rpt_param.reactor_height*0.5/32;
+  const unsigned int power = pow(2,rpt_parameters.fem_reconstruction_param.mesh_refinement);
+  const unsigned int n_cell_z = 2*rpt_parameters.fem_reconstruction_param.z_subdivisions*power;
+  const double  tol_reference_location = rpt_parameters.rpt_param.reactor_height/n_cell_z*0.75;
   std::cout << "tol: " << tol_reference_location << std::endl ;
 
   // Read and store all experimental counts

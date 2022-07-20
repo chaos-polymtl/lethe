@@ -208,6 +208,9 @@ private:
      *
      * @param experimental_count experimental_count contains the experimental
      * counts of every detector for a given position.
+     *
+     * @param tol_reference_location tolerance on the validity of the found
+     * location in the reference space
      */
     void
     find_cell(std::vector<double> &experimental_count, const double tol_reference_location);
