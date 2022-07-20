@@ -398,7 +398,7 @@ HeatTransfer<dim>::calculate_L2_error()
 
   FEValues<dim> fe_values(*this->temperature_mapping,
                           *fe,
-                          *this->error_quadrature,
+                          *this->cell_quadrature,
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
 
@@ -410,7 +410,7 @@ HeatTransfer<dim>::calculate_L2_error()
   std::vector<types::global_dof_index> local_dof_indices(
     dofs_per_cell); //  Local connectivity
 
-  const unsigned int n_q_points = this->error_quadrature->size();
+  const unsigned int n_q_points = this->cell_quadrature->size();
 
   std::vector<double> q_exact_solution(n_q_points);
   std::vector<double> q_scalar_values(n_q_points);

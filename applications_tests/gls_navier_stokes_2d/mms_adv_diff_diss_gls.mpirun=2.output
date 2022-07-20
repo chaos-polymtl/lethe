@@ -8,7 +8,7 @@ Running on 2 MPI rank(s)...
 Steady iteration :        1/3
 *****************************************************************
 L2 error velocity : 0.00810306
-L2 error temperature : 3.72827e-07
+L2 error temperature : 2.82406e-07
 
 *****************************************************************
 Steady iteration :        2/3
@@ -18,7 +18,7 @@ Steady iteration :        2/3
    Volume of triangulation:      1
    Number of thermal degrees of freedom: 289
 L2 error velocity : 0.00208696
-L2 error temperature : 2.11317e-08
+L2 error temperature : 1.54803e-08
 
 *****************************************************************
 Steady iteration :        3/3
@@ -28,12 +28,12 @@ Steady iteration :        3/3
    Volume of triangulation:      1
    Number of thermal degrees of freedom: 1089
 L2 error velocity : 0.000528216
-L2 error temperature : 1.27525e-09
+L2 error temperature : 9.22042e-10
 cells  error_velocity    error_pressure   
    64 8.103056e-03    - 5.396812e-02    - 
   256 2.086963e-03 1.96 1.695858e-02 1.67 
  1024 5.282164e-04 1.98 5.327909e-03 1.67 
 cells error_temperature 
-   64 3.728268e-07    - 
-  256 2.113166e-08 4.14 
- 1024 1.275254e-09 4.05 
+   64 2.824062e-07    - 
+  256 1.548027e-08 4.19 
+ 1024 9.220417e-10 4.07 

@@ -2,58 +2,58 @@ Running on 1 MPI rank(s)...
    Number of active cells:       256
    Number of degrees of freedom: 867
    Volume of triangulation:      1
-   Number of VOF degrees of freedom: 289
    Number of thermal degrees of freedom: 289
+   Number of VOF degrees of freedom: 289
 
 *****************************************************************
 Transient iteration : 1        Time : 0.02     Time step : 0.02     CFL : 1.11831 
 *****************************************************************
 L2 error velocity : 0.993836
-L2 error phase : 0.00738681
-L2 error temperature : 3.514e-12
+L2 error temperature : 3.50656e-12
+L2 error phase : 0.00279384
 
 *****************************************************************
 Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 1.25812 
 *****************************************************************
 L2 error velocity : 1.09736
-L2 error phase : 0.00738976
-L2 error temperature : 2.36645e-11
+L2 error temperature : 2.35262e-11
+L2 error phase : 0.00279893
 
 *****************************************************************
 Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 1.28787 
 *****************************************************************
 L2 error velocity : 1.13746
-L2 error phase : 0.00739422
-L2 error temperature : 7.07336e-11
+L2 error temperature : 7.00086e-11
+L2 error phase : 0.00280593
 
 *****************************************************************
 Transient iteration : 4        Time : 0.08     Time step : 0.02     CFL : 1.29732 
 *****************************************************************
 L2 error velocity : 1.1537
-L2 error phase : 0.00740016
-L2 error temperature : 1.51368e-10
+L2 error temperature : 1.49103e-10
+L2 error phase : 0.00281468
 
 *****************************************************************
 Transient iteration : 5        Time : 0.1      Time step : 0.02     CFL : 1.30086 
 *****************************************************************
 L2 error velocity : 1.16031
-L2 error phase : 0.00740756
-L2 error temperature : 2.69991e-10
+L2 error temperature : 2.64646e-10
+L2 error phase : 0.00282509
  time  error_velocity error_pressure 
 0.0200 9.938357e-01   12.2389        
 0.0400 1.097359e+00   11.6680        
 0.0600 1.137459e+00   11.3960        
 0.0800 1.153698e+00   11.3436        
 0.1000 1.160307e+00   11.3416        
- time  error_phase  
-0.0200 7.386814e-03 
-0.0400 7.389763e-03 
-0.0600 7.394219e-03 
-0.0800 7.400160e-03 
-0.1000 7.407564e-03 
 cells error_temperature 
-256   3.513998e-12      
-256   2.366451e-11      
-256   7.073361e-11      
-256   1.513684e-10      
-256   2.699910e-10 
+256   3.506563e-12      
+256   2.352622e-11      
+256   7.000859e-11      
+256   1.491033e-10      
+256   2.646464e-10      
+ time  error_phase  
+0.0200 2.793838e-03 
+0.0400 2.798931e-03 
+0.0600 2.805926e-03 
+0.0800 2.814676e-03 
+0.1000 2.825094e-03 

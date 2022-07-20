@@ -6,9 +6,9 @@
 subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
-  set time end                = 0.01
-  set time step               = 0.005
-  set output name             = drop_wetting_inverted_VOF
+  set time end                = 0.1
+  set time step               = 0.02
+  set output name             = drop_wetting_adapt_VOF
   set output frequency        = 0
 end
 
@@ -45,7 +45,7 @@ subsection initial conditions
             set Function expression = 0; 0; 0
     end
     subsection VOF
-	set Function expression = if ( (y<0.1)&&(y>1e-3) ,0,1)
+	set Function expression = if ( (x>-0.06)&&(x<0.06)&&(y<0.1)&&(y>0.01) ,1,0)
     end
 end
 
@@ -65,11 +65,11 @@ end
 #---------------------------------------------------
 subsection physical properties
   set number of fluids     = 2
-  subsection fluid 0
+  subsection fluid 1
     set density              = 1
     set kinematic viscosity  = 0.01
   end
-  subsection fluid 1
+  subsection fluid 0
     set density              = 0.005
     set kinematic viscosity  = 0.1
   end
@@ -124,12 +124,12 @@ subsection boundary conditions
 end
 
 subsection boundary conditions VOF
-  set number                  = 4
-    subsection bc 2 #lower wall
+  set number                  = 2
+    subsection bc 0 #lower wall
 	set id = 2
         set type              = peeling/wetting
     end
-    subsection bc 3 #upper wall
+    subsection bc 1 #upper wall
 	set id = 3
         set type              = peeling/wetting
     end
@@ -148,7 +148,14 @@ end
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
-    set type                    = none
+    set type                    = kelly
+    set variable                = phase
+    set fraction type           = fraction
+    set max refinement level    = 7
+    set min refinement level    = 4
+    set frequency               = 1
+    set fraction refinement     = 0.80
+    set fraction coarsening     = 0.02
 end
 
 # --------------------------------------------------
@@ -167,10 +174,12 @@ end
 subsection linear solver
   set verbosity               = quiet
   set method                                 = gmres
+  set max iters                              = 500
   set relative residual                      = 1e-9
   set minimum residual                       = 1e-11
-  set ilu preconditioner fill                = 0
+  set ilu preconditioner fill                = 1
   set ilu preconditioner absolute tolerance  = 1e-12
   set ilu preconditioner relative tolerance  = 1.00
+  set max krylov vectors                     = 200
 end
 

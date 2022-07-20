@@ -26,9 +26,6 @@ subsection VOF
 	subsection peeling wetting
 		set enable = true
 		set verbosity = verbose
-		set peeling pressure gradient = 1e-3
-		set peeling pressure value = -0.005
-		#set diffusivity = 5e-3
 	end
 	subsection interface sharpening
 		set enable = true

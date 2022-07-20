@@ -374,40 +374,13 @@ Parameters::VOF_PeelingWetting::declare_parameters(ParameterHandler &prm)
       Patterns::Bool(),
       "Enable peeling/wetting mechanism in free surface simulation <true|false>");
 
-    prm.declare_entry("peeling pressure value",
-                      "-0.05",
-                      Patterns::Double(),
-                      "Value (Double) for pressure value at bc below which "
-                      "peeling of the higher density fluid can occur.");
-
-    prm.declare_entry("peeling pressure gradient",
-                      "-1e-3",
-                      Patterns::Double(),
-                      "Value (Double) for pressure gradient at bc below which "
-                      "peeling of the higher density fluid can occur.");
-
-    prm.declare_entry("wetting pressure value",
-                      "0.05",
-                      Patterns::Double(),
-                      "Value (Double) for pressure value at bc above which "
-                      "wetting of the lower density fluid can occur.");
-
-    prm.declare_entry(
-      "wetting phase distance",
-      "0",
-      Patterns::Double(),
-      "Value (Double) for wetting distance at bc, "
-      "distance (on the phase value) from the interface above which wetting can occur. "
-      "For wetting phase distance>0, the wetting area is larger than "
-      "the area occupied by the higher density fluid.");
-
     prm.declare_entry(
       "diffusivity",
       "0",
       Patterns::Double(),
       "Diffusivity (diffusion coefficient in L^2/s) in the VOF transport equation. "
-      "Default value is 0 to have pure advection. Use this parameter, "
-      "along with interface sharpening, to improve the wetting mechanism. "
+      "Default value is 0 to have pure advection. "
+      "Increase diffusivity, along with interface sharpening, to improve the wetting mechanism. "
       "See documentation for more details.");
 
     prm.declare_entry(
@@ -425,12 +398,8 @@ Parameters::VOF_PeelingWetting::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("peeling wetting");
   {
-    enable                 = prm.get_bool("enable");
-    peeling_p_value        = prm.get_double("peeling pressure value");
-    peeling_grad_p         = prm.get_double("peeling pressure gradient");
-    wetting_p_value        = prm.get_double("wetting pressure value");
-    wetting_phase_distance = prm.get_double("wetting phase distance");
-    diffusivity            = prm.get_double("diffusivity");
+    enable      = prm.get_bool("enable");
+    diffusivity = prm.get_double("diffusivity");
 
     const std::string op = prm.get("verbosity");
     if (op == "verbose")

@@ -2,8 +2,8 @@ Running on 1 MPI rank(s)...
    Number of active cells:       4096
    Number of degrees of freedom: 12675
    Volume of triangulation:      0.0064
-   Number of VOF degrees of freedom: 4225
    Number of thermal degrees of freedom: 4225
+   Number of VOF degrees of freedom: 4225
 Enstrophy  : 0
 Kinetic energy : 0
 

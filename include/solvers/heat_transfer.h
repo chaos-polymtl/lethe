@@ -75,7 +75,6 @@ public:
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
-        error_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 2);
       }
     else
       {
@@ -84,9 +83,8 @@ public:
           simulation_parameters.fem_parameters.temperature_order);
         temperature_mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
-        cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
-        face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
-        error_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 2);
+        cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+        face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
 
     // Allocate solution transfer
@@ -366,7 +364,6 @@ private:
   std::shared_ptr<Mapping<dim>>        temperature_mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
-  std::shared_ptr<Quadrature<dim>>     error_quadrature;
 
 
   // Solution storage:
