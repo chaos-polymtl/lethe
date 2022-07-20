@@ -99,8 +99,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim>                                  &scratch_data,
-  StabilizedMethodsCopyData                            &copy_data)
+  VOFScratchData<dim> &                                 scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -190,8 +190,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim>                                  &scratch_data,
-  StabilizedMethodsCopyData                            &copy_data)
+  VOFScratchData<dim> &                                 scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -379,14 +379,16 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
             {
               switch (monitored_fluid)
                 {
-                    case Parameters::FluidIndicator::fluid0: {
+                  case Parameters::FluidIndicator::fluid0:
+                    {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * (1 - phase_values[q]);
                       this->mass_monitored +=
                         this->volume_monitored * density_0[q];
                       break;
                     }
-                    case Parameters::FluidIndicator::fluid1: {
+                  case Parameters::FluidIndicator::fluid1:
+                    {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * phase_values[q];
                       this->mass_monitored +=
@@ -688,8 +690,9 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
           st_min             = st_avg;
           mass_deviation_min = mass_deviation_avg;
         }
-  } while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
-           nb_search_ite < max_iterations);
+    }
+  while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
+         nb_search_ite < max_iterations);
 
   // Take minimum deviation in between the two endpoints of the last
   // interval searched, if out of the do-while loop because max_iterations is
@@ -2170,9 +2173,9 @@ VolumeOfFluid<3>::apply_peeling_wetting<TrilinosWrappers::MPI::BlockVector>(
 template <int dim>
 void
 VolumeOfFluid<dim>::change_cell_phase(
-  const PhaseChange                          &type,
-  const double                               &new_phase,
-  TrilinosWrappers::MPI::Vector              &solution_pw,
+  const PhaseChange &                         type,
+  const double &                              new_phase,
+  TrilinosWrappers::MPI::Vector &             solution_pw,
   const std::vector<types::global_dof_index> &dof_indices_vof)
 {
   if (type == PhaseChange::wetting)
