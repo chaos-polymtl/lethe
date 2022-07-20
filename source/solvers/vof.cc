@@ -493,11 +493,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                   .vof_parameters.conservation.monitored_fluid);
 
       if (first_iteration)
-        {
-          this->mass_first_iteration = this->mass_monitored;
-          std::cout << "Mass at first iteration is "
-                    << this->mass_first_iteration << std::endl;
-        }
+        this->mass_first_iteration = this->mass_monitored;
 
       auto         mpi_communicator = this->triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -692,49 +688,8 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
           st_min             = st_avg;
           mass_deviation_min = mass_deviation_avg;
         }
-
-
-
-      // Adapt searching range
-      // switch (monitored_fluid)
-      //  {
-      //      case Parameters::FluidIndicator::fluid0: {
-      //        if (mass_deviation > 0.)
-      //          {
-      //            // Lower the sharpening threshold to reduce the
-      //            // area occupied by fluid at phase = 0
-      //            st_max = st_ave;
-      //          }
-      //        else
-      //          {
-      //            // Increase the sharpening threshold to increase
-      //            // the area occupied by fluid at phase = 0
-      //            st_min = st_ave;
-      //          }
-      //        break;
-      //      }
-      //      case Parameters::FluidIndicator::fluid1: {
-      //        if (mass_deviation > 0.)
-      //          {
-      //            // Increase the sharpening threshold to reduce the
-      //            // area occupied by fluid at phase = 1
-      //            st_min = st_ave;
-      //          }
-      //        else
-      //          {
-      //            // Lower the sharpening threshold to increase the
-      //            // area occupied by fluid at phase = 1
-      //            st_max = st_ave;
-      //          }
-      //        break;
-      //      }
-      //    default:
-      //      throw std::runtime_error("Unsupported number of fluids (>2)");
-      //  } // end switch to adapt searching range
   } while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
            nb_search_ite < max_iterations);
-
-
 
   // Take minimum deviation in between the two endpoints of the last
   // interval searched, if out of the do-while loop because max_iterations is
@@ -801,18 +756,13 @@ VolumeOfFluid<dim>::calculate_mass_deviation(
   // Copy present solution VOF
   auto mpi_communicator = this->triangulation->get_communicator();
 
-  // TODO, Fix this because right now this means a ton of memory allocation for
-  // no reason
-  TrilinosWrappers::MPI::Vector solution_copy(this->locally_owned_dofs,
-                                              this->locally_relevant_dofs,
-                                              mpi_communicator);
-  solution_copy = this->present_solution;
+  evaluation_point = this->present_solution;
 
   // Sharpen interface using the tested threshold value
-  sharpen_interface(solution_copy, sharpening_threshold, false);
+  sharpen_interface(evaluation_point, sharpening_threshold, false);
 
   // Calculate mass of the monitored phase
-  calculate_volume_and_mass(solution_copy, monitored_fluid);
+  calculate_volume_and_mass(evaluation_point, monitored_fluid);
 
   // Calculate mass deviation
   double mass_deviation = this->mass_monitored - this->mass_first_iteration;
@@ -1608,8 +1558,11 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->present_solution = this->newton_update;
 
   // Sharpen the interface of the initial solution
+  this->interface_sharpness = simulation_parameters.multiphysics.vof_parameters
+                                .sharpening.initial_interface_sharpness;
   sharpen_interface(this->present_solution, this->sharpening_threshold, false);
-
+  this->interface_sharpness = simulation_parameters.multiphysics.vof_parameters
+                                .sharpening.interface_sharpness;
   finish_time_step();
 }
 
@@ -1761,9 +1714,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   TrilinosWrappers::MPI::Vector &solution,
   const double                   sharpening_threshold)
 {
-  const double interface_sharpness =
-    this->simulation_parameters.multiphysics.vof_parameters.sharpening
-      .interface_sharpness;
+  const double interface_sharpness = this->interface_sharpness;
 
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,

@@ -293,6 +293,13 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "2",
       Patterns::Double(),
       "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
+
+    prm.declare_entry(
+      "initial interface sharpness",
+      "0.75",
+      Patterns::Double(),
+      "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
+
     prm.declare_entry("frequency",
                       "10",
                       Patterns::Integer(),
@@ -313,9 +320,10 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface sharpening");
   {
-    enable              = prm.get_bool("enable");
-    interface_sharpness = prm.get_double("interface sharpness");
-    frequency           = prm.get_integer("frequency");
+    enable                      = prm.get_bool("enable");
+    interface_sharpness         = prm.get_double("interface sharpness");
+    initial_interface_sharpness = prm.get_double("initial interface sharpness");
+    frequency                   = prm.get_integer("frequency");
 
     // Sharpening type
     const std::string t = prm.get("type");
