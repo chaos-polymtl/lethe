@@ -1368,10 +1368,13 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   double       cell_void_fraction = 0;
   double       C_s                = 0;
   double       alpha              = 0;
-  auto        &beta_lift          = scratch_data.beta_lift;
+
+  auto &velocity_curls_2d =
+    scratch_data.fluid_velocity_curls_at_particle_location_2d;
+  auto &velocity_curls_3d =
+    scratch_data.fluid_velocity_curls_at_particle_location_3d;
 
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &velocity_curls = scratch_data.fluid_velocity_curls_at_particle_location;
 
   Tensor<1, dim> relative_velocity;
   Tensor<1, dim> lift_force;
@@ -1390,67 +1393,49 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   const double density = scratch_data.properties_manager.density_scale;
 
   const auto pic  = scratch_data.pic;
-  beta_lift       = 0;
   particle_number = 0;
 
-  // Loop over particles in cell
-  for (auto &particle : pic)
+  if (dim == 2)
     {
-      auto particle_properties = particle.get_properties();
-
-      relative_velocity =
-        scratch_data.fluid_velocity_at_particle_location[particle_number] -
-        scratch_data.particle_velocity[particle_number];
-
-      cell_void_fraction = scratch_data.cell_void_fraction[particle_number];
-
-      // Particle's Reynolds number
-      double re = 1e-1 + cell_void_fraction * relative_velocity.norm() *
-                           particle_properties[DEM::PropertiesIndex::dp] /
-                           (viscosity + DBL_MIN);
-
-      // Shear Reynolds number:
-      auto   shear_rate = velocity_curls[particle_number];
-      double re_shear   = 1e-7 + particle_properties[DEM::PropertiesIndex::dp] *
-                                 particle_properties[DEM::PropertiesIndex::dp] /
-                                 (viscosity + DBL_MIN) * shear_rate.norm();
-
-      // epsilon_ijk
-      double eps = pow(re_shear, 0.5) / re;
-
-      // Vorticity
-      auto vorticity = eps * velocity_curls[particle_number];
-
-      for (unsigned int d = 0; d < dim; d++)
+      for (auto &particle : pic)
         {
-          // Mei's alpha
-          alpha = particle_properties[DEM::PropertiesIndex::dp] *
-                  abs(vorticity[d]) / (2 * abs(relative_velocity[d]));
+          auto particle_properties = particle.get_properties();
 
-          // Calculate C_s as described by Crowe
-          if (re <= 40.0)
-            C_s = (1 - 0.3314 * pow(alpha, 0.5)) * exp(-re / 10) +
-                  0.2214 * pow(alpha, 0.5);
-          else if (re > 40.0)
-            C_s = 0.0524 * pow(alpha * re, 0.5);
+          relative_velocity =
+            scratch_data.fluid_velocity_at_particle_location[particle_number] -
+            scratch_data.particle_velocity[particle_number];
 
-          // Saffman force with Mei correction C_s for the Reynolds number
-          // effect
-          lift_force[d] = C_s * 1.61 * density *
-                          pow((viscosity + DBL_MIN), 0.5) *
-                          particle_properties[DEM::PropertiesIndex::dp] *
-                          particle_properties[DEM::PropertiesIndex::dp] *
-                          pow(1 / abs(vorticity[d]), 0.5) * eps *
-                          relative_velocity[d] * vorticity[d];
+          // Particle's Reynolds number
+          double re = 1e-1 + cell_void_fraction * relative_velocity.norm() *
+                               particle_properties[DEM::PropertiesIndex::dp] /
+                               (viscosity + DBL_MIN);
 
-          // Apply lift force on the particles
-          particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
-            lift_force[d];
-
-          // Apply lift on the fluid
-          undisturbed_flow_force[d] += lift_force[d] / scratch_data.cell_volume;
+          lift_force = 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
+                       particle_properties[DEM::PropertiesIndex::dp] * density *
+                       pow(viscosity, 0.5) * pow(velocity_curls_2d[particle_number].norm(), -0.5) *
+                       (relative_velocity.cross_product_2d(velocity_curls_2d[particle_number]));
         }
-      particle_number += 1;
+    }
+  else if (dim == 3)
+    {
+      for (auto &particle : pic)
+        {
+          auto particle_properties = particle.get_properties();
+
+          relative_velocity =
+            scratch_data.fluid_velocity_at_particle_location[particle_number] -
+            scratch_data.particle_velocity[particle_number];
+
+          // Particle's Reynolds number
+          double re = 1e-1 + cell_void_fraction * relative_velocity.norm() *
+                               particle_properties[DEM::PropertiesIndex::dp] /
+                               (viscosity + DBL_MIN);
+
+          lift_force = 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
+                       particle_properties[DEM::PropertiesIndex::dp] * density *
+                       pow(viscosity, 0.5) * pow(velocity_curls_2d[particle_number].norm(), -0.5) *
+                       (relative_velocity.cross_product_2d(velocity_curls_2d[particle_number]));
+        }
     }
 }
 
