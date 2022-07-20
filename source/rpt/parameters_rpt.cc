@@ -309,6 +309,11 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
 {
   prm.enter_subsection("fem reconstruction");
   {
+    prm.declare_entry("z subdivisions",
+                      "1",
+                      Patterns::Integer(),
+                      "Number of subdivisions of the initial grid in z");
+
     prm.declare_entry("mesh refinement",
                       "1",
                       Patterns::Integer(),
@@ -347,6 +352,7 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(ParameterHandler &p
 {
   prm.enter_subsection("fem reconstruction");
   {
+    z_subdivisions                  = prm.get_integer("z subdivisions");
     mesh_refinement                 = prm.get_integer("mesh refinement");
     experimental_counts_file        = prm.get("experimental counts file");
     export_positions_file           = prm.get("export positions file");

@@ -57,10 +57,15 @@ RPTFEMReconstruction<dim>::setup_triangulation()
 {
   Triangulation<dim> temp_triangulation;
   Triangulation<dim> flat_temp_triangulation;
-
+/*
   GridGenerator::cylinder(temp_triangulation,
                           rpt_parameters.rpt_param.reactor_radius,
                           rpt_parameters.rpt_param.reactor_height / 2);
+*/
+  GridGenerator::subdivided_cylinder(temp_triangulation,
+                                     rpt_parameters.fem_reconstruction_param.z_subdivisions,
+                                     rpt_parameters.rpt_param.reactor_radius,
+                                     rpt_parameters.rpt_param.reactor_height*0.5);
   temp_triangulation.refine_global(
     rpt_parameters.fem_reconstruction_param.mesh_refinement);
 
@@ -75,7 +80,7 @@ RPTFEMReconstruction<dim>::setup_triangulation()
   // Grid transformation
   GridTools::rotate(M_PI_2, 1, triangulation);
   Tensor<1, dim> shift_vector(
-    {0, 0, rpt_parameters.rpt_param.reactor_height / 2});
+    {0, 0, rpt_parameters.rpt_param.reactor_height*0.5});
   GridTools::shift(shift_vector, triangulation);
 }
 
@@ -413,7 +418,7 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::L2_project()
 {
-  //MultithreadInfo::set_thread_limit(4);
+  // MultithreadInfo::set_thread_limit(4);
   std::cout << "***********************************************" << std::endl;
   std::cout << "Assigning detector positions" << std::endl;
   assign_detector_positions();
@@ -640,7 +645,7 @@ RPTFEMReconstruction<dim>::calculate_cost(
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
+RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count, const double tol_reference_location)
 {
   double                           max_cost_function                  = DBL_MAX;
   double                           last_constraint_reference_location;
@@ -682,7 +687,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> experimental_count)
                                           last_constraint_reference_location);
 
       // Extrapolation limit
-      if (norm_error_coordinates < 0.005)
+      if (norm_error_coordinates < tol_reference_location)
         {
           // Calculate cost with the selected cost function
           calculated_cost = calculate_cost(cell,
@@ -745,6 +750,10 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::trajectory()
 {
+
+  const double  tol_reference_location = rpt_parameters.rpt_param.reactor_height*0.5/32;
+  std::cout << "tol: " << tol_reference_location << std::endl ;
+
   // Read and store all experimental counts
   std::vector<std::vector<double>> all_experimental_counts;
   read_experimental_counts(all_experimental_counts);
@@ -752,7 +761,7 @@ RPTFEMReconstruction<dim>::trajectory()
   // Find the position of the particle with the experimental counts
   for (std::vector<double> &experimental_counts : all_experimental_counts)
     {
-      find_cell(experimental_counts);
+      find_cell(experimental_counts, tol_reference_location);
     }
 }
 
