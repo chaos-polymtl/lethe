@@ -210,7 +210,7 @@ private:
      * counts of every detector for a given position.
      */
     void
-    find_cell(std::vector<double> experimental_count);
+    find_cell(std::vector<double> &experimental_count, const double tol_reference_location);
 
 
     /**

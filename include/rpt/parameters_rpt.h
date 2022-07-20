@@ -159,6 +159,7 @@ namespace Parameters
    */
   struct RPTFEMReconstructionParameters
   {
+    unsigned int              z_subdivisions; // number of subdivisions of the initial grid in z
     unsigned int              mesh_refinement; // number of refinement the grid undergoes
     std::string               experimental_counts_file; // file with experimental counts from all detectors
     std::string               export_positions_file; // file with all found positions
