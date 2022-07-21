@@ -82,12 +82,13 @@ RPTFEMReconstruction<dim>::setup_triangulation()
   Tensor<1, dim> shift_vector(
     {0, 0, rpt_parameters.rpt_param.reactor_height*0.5});
   GridTools::shift(shift_vector, triangulation);
-
+/*
   GridOut grid_out;
   {
     std::ofstream output_file("triangulation.vtk");
     grid_out.write_vtk(triangulation, output_file);
   }
+*/
 }
 
 template <int dim>
@@ -193,14 +194,12 @@ RPTFEMReconstruction<dim>::assemble_system(unsigned no_detector)
   system_rhs    = 0;
   system_matrix = 0;
 
-  AssemblyScratchData scratch(fe, no_detector);
-
   WorkStream::run(dof_handler.begin_active(),
                   dof_handler.end(),
                   *this,
                   &RPTFEMReconstruction::assemble_local_system,
                   &RPTFEMReconstruction::copy_local_to_global,
-                  scratch,
+                  AssemblyScratchData(fe, no_detector),
                   AssemblyCopyData());
 }
 
@@ -375,7 +374,7 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "***********************************************" << std::endl;
   setup_triangulation();
   setup_system();
-/*
+
   for (unsigned d = 0; d < n_detector; ++d)
     {
       std::cout << "Detector_id: " << Utilities::to_string(d, 2) << std::endl;
@@ -390,14 +389,12 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "Outputting results" << std::endl;
   output_results();
   output_raw_results();
-  //output_raw_results_per_level();
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << "Saving dof handler and nodal counts" << std::endl;
   checkpoint();
   std::cout << "***********************************************" << std::endl;
   std::cout << "Done!" << std::endl;
   std::cout << "***********************************************" << std::endl;
-  */
 }
 
 
@@ -839,6 +836,7 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
 {
+  // MultithreadInfo::set_thread_limit(4);
   std::cout << "***********************************************" << std::endl;
   std::cout << "Loading dof handler and nodal counts from " << std::endl;
   std::cout << "saved files " << std::endl;
