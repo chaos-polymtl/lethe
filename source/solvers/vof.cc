@@ -639,8 +639,9 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
   const double mass_deviation_tol = this->simulation_parameters.multiphysics
                                       .vof_parameters.conservation.tolerance *
                                     this->mass_first_iteration;
-  const int max_iterations = this->simulation_parameters.multiphysics
-                               .vof_parameters.sharpening.max_iterations;
+  const unsigned int max_iterations =
+    this->simulation_parameters.multiphysics.vof_parameters.sharpening
+      .max_iterations;
 
   const Parameters::FluidIndicator monitored_fluid =
     this->simulation_parameters.multiphysics.vof_parameters.conservation
