@@ -17,7 +17,12 @@ add_compile_options(-Wall)
 #add_compile_options(-Werror)
 #add_compile_options(-Weffc++)
 
-FIND_PACKAGE(deal.II 9.3.0 QUIET
+option(WARNINGERROR "Consider compilation warnings as errors" OFF)
+IF(WARNINGERROR)
+    add_compile_options(-Werror)
+ENDIF()
+
+FIND_PACKAGE(deal.II 9.4.0 QUIET
   HINTS ${deal.II_DIR} ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
   )
 IF(NOT ${deal.II_FOUND})
