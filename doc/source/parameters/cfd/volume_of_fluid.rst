@@ -216,11 +216,11 @@ The default values of the VOF parameters are given in the text box below.
 
 	Sharpening interface at step 2
 	   Adapting the sharpening threshold
-	   ... step 1 of the search algorithm
-	   ... step 2 of the search algorithm
+	   ... step 1 of the search algorithm, min, avg, max mass deviation is : -0.1 -0.05 0.05
+	   ... step 1 of the search algorithm, min, avg, max mass deviation is : -0.05 -0.025 0.04
 	   ... search algorithm took : 2 step(s) 
 	   ... error on mass conservation reached: -0.03
-	   ... final sharpening
+	   ... final sharpening is : 0.458224
 
 
 * ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. 
