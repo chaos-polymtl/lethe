@@ -1436,9 +1436,9 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
                     C_s * 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
                     particle_properties[DEM::PropertiesIndex::dp] * density *
                     pow(viscosity + DBL_MIN, 0.5) *
-                    pow(velocity_curls_3d[particle_number].norm(), -0.5) *
+                    pow(velocity_curls_2d[particle_number].norm(), -0.5) *
                     (eps_ijk * relative_velocity[j - 1] *
-                     velocity_curls_3d[particle_number][0]);
+                     velocity_curls_2d[particle_number][0]);
                 }
             }
 
@@ -1477,7 +1477,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           // Saffman-Mei coefficient C_s
           alpha = 0.5 * particle_properties[DEM::PropertiesIndex::dp] /
                   relative_velocity.norm() *
-                  velocity_curls_2d[particle_number].norm();
+                  velocity_curls_3d[particle_number].norm();
 
           if (re <= 40)
             C_s =
