@@ -646,21 +646,25 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
     this->simulation_parameters.multiphysics.vof_parameters.conservation
       .monitored_fluid;
 
-  int nb_search_ite = 0;
+  unsigned int nb_search_ite = 0;
   // Local variable for the tested sharpening_threshold values
 
-  double st_avg             = (st_min + st_max) / 2.;
-  double mass_deviation_avg = calculate_mass_deviation(monitored_fluid, st_avg);
   double mass_deviation_min = calculate_mass_deviation(monitored_fluid, st_min);
   double mass_deviation_max = calculate_mass_deviation(monitored_fluid, st_max);
+  double mass_deviation_avg = DBL_MAX;
+  double st_avg             = 0;
 
 
-  // Binary search of an interface sharpening value that would ensure
-  // mass conservation of the monitored phase (do-while loop, see
+  // Bissection algorithm to calculate an interface sharpening value that would
+  // ensure mass conservation of the monitored phase (do-while loop, see
   // condition below)
   do
     {
       nb_search_ite++;
+      // Calculate middle point value
+      st_avg = (st_min + st_max) / 2.;
+
+      mass_deviation_avg = calculate_mass_deviation(monitored_fluid, st_avg);
 
       if (this->simulation_parameters.multiphysics.vof_parameters.conservation
             .verbosity != Parameters::Verbosity::quiet)
@@ -671,14 +675,6 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
             << mass_deviation_min << " " << mass_deviation_avg << " "
             << mass_deviation_max << std::endl;
         }
-
-      // Define tested sharpening threshold value
-      // NB: the first value tested is always 0.5 (see definition of st_min and
-      // st_max above)
-      st_avg = (st_min + st_max) / 2.;
-      // st_tested = st_ave;
-
-      mass_deviation_avg = calculate_mass_deviation(monitored_fluid, st_avg);
 
       if (mass_deviation_avg * mass_deviation_min < 0)
         {
@@ -765,8 +761,9 @@ VolumeOfFluid<dim>::calculate_mass_deviation(
   // Calculate mass of the monitored phase
   calculate_volume_and_mass(evaluation_point, monitored_fluid);
 
-  // Calculate mass deviation
-  double mass_deviation = this->mass_monitored - this->mass_first_iteration;
+  // Calculate relative mass deviation
+  double mass_deviation = (this->mass_monitored - this->mass_first_iteration) /
+                          this->mass_first_iteration;
 
   return mass_deviation;
 }
@@ -1767,7 +1764,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                   // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 -
                   // \alpha)
                   // * (1 - \phi) ^ \alpha}
-                  if (phase_value >= 0 and phase_value <= sharpening_threshold)
+                  if (phase_value >= 0 && phase_value <= sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
                       std::pow(sharpening_threshold,
                                (1. - interface_sharpness)) *

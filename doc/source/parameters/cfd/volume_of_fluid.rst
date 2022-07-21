@@ -29,7 +29,7 @@ The default values of the VOF parameters are given in the text box below.
 
 			# parameters for adaptative sharpening
 			set threshold max deviation = 0.20
-			set max iterations = 5
+			set max iterations = 20
 
 			set verbosity 	= quiet
 		end
@@ -50,7 +50,7 @@ The default values of the VOF parameters are given in the text box below.
 			set monitored fluid 	= fluid 1
 
 			# parameters used with adaptative sharpening
-			set tolerance		= 1e-2
+			set tolerance		= 1e-6
 			set verbosity 		= quiet
 		end
 

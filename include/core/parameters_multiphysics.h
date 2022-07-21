@@ -161,11 +161,6 @@ namespace Parameters
     double interface_sharpness;
     int    frequency;
 
-    // Initial interface sharpness to smooth the initial description of the
-    // interface
-    double initial_interface_sharpness;
-
-
     // Type of verbosity for the interface sharpening calculation
     Parameters::Verbosity verbosity;
 
