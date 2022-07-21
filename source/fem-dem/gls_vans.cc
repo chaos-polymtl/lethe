@@ -1227,6 +1227,13 @@ GLSVANSSolver<dim>::setup_assemblers()
         }
     }
 
+  if (this->cfd_dem_simulation_parameters.cfd_dem.saffman_lift_force == true)
+    // Saffman Mei Lift Force Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerSaffmanMei<dim>>(
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties));
+
   if (this->cfd_dem_simulation_parameters.cfd_dem.buoyancy_force == true)
     // Buoyancy Force Assembler
     particle_fluid_assemblers.push_back(

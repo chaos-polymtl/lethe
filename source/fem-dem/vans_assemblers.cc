@@ -1368,6 +1368,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   double       cell_void_fraction = 0;
   double       C_s                = 0;
   double       alpha              = 0;
+  double       eps_ijk            = 0;
 
   auto &velocity_curls_2d =
     scratch_data.fluid_velocity_curls_at_particle_location_2d;
@@ -1410,10 +1411,49 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
                                particle_properties[DEM::PropertiesIndex::dp] /
                                (viscosity + DBL_MIN);
 
-          lift_force = 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
-                       particle_properties[DEM::PropertiesIndex::dp] * density *
-                       pow(viscosity, 0.5) * pow(velocity_curls_2d[particle_number].norm(), -0.5) *
-                       (relative_velocity.cross_product_2d(velocity_curls_2d[particle_number]));
+          // Clear lift force
+          lift_force.clear();
+
+          // Saffman-Mei coefficient
+          alpha = 0.5 * particle_properties[DEM::PropertiesIndex::dp] /
+                  relative_velocity.norm() *
+                  abs(velocity_curls_2d[particle_number][0]);
+
+          if (re <= 40)
+            C_s =
+              (1 - 0.3314 * alpha) * exp(-0.1 * re) + 0.3314 * pow(alpha, 0.5);
+          else if (re > 40)
+            C_s = 0.0524 * pow(alpha * re, 0.5);
+
+          // Saffman Lift force
+          for (unsigned int i = 1; i <= dim; i++)
+            {
+              for (unsigned int j = 1; j <= dim; j++)
+                {
+                  // Levi-Civita symbol
+                  eps_ijk = 0.5 * (i - j) * j * (-i);
+                  lift_force[i - 1] +=
+                    C_s * 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
+                    particle_properties[DEM::PropertiesIndex::dp] * density *
+                    pow(viscosity + DBL_MIN, 0.5) *
+                    pow(velocity_curls_3d[particle_number].norm(), -0.5) *
+                    (eps_ijk * relative_velocity[j - 1] *
+                     velocity_curls_3d[particle_number][0]);
+                }
+            }
+
+          for (int d = 0; d < dim; ++d)
+            {
+              // Apply lift force on the particle
+              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+                lift_force[d];
+
+              // Apply lift force on the fluid
+              undisturbed_flow_force[d] +=
+                lift_force[d] / scratch_data.cell_volume;
+            }
+
+          particle_number += 1;
         }
     }
   else if (dim == 3)
@@ -1431,11 +1471,52 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
                                particle_properties[DEM::PropertiesIndex::dp] /
                                (viscosity + DBL_MIN);
 
-          lift_force = 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
-                       particle_properties[DEM::PropertiesIndex::dp] * density *
-                       pow(viscosity, 0.5) * pow(velocity_curls_2d[particle_number].norm(), -0.5) *
-                       (relative_velocity.cross_product_2d(velocity_curls_2d[particle_number]));
+          // Clear lift force
+          lift_force.clear();
+
+          // Saffman-Mei coefficient C_s
+          alpha = 0.5 * particle_properties[DEM::PropertiesIndex::dp] /
+                  relative_velocity.norm() *
+                  velocity_curls_2d[particle_number].norm();
+
+          if (re <= 40)
+            C_s =
+              (1 - 0.3314 * alpha) * exp(-0.1 * re) + 0.3314 * pow(alpha, 0.5);
+          else if (re > 40)
+            C_s = 0.0524 * pow(alpha * re, 0.5);
+
+          for (unsigned int i = 1; i <= dim; i++)
+            {
+              for (unsigned int j = 1; j <= dim; j++)
+                {
+                  for (unsigned int k = 1; k <= dim; k++)
+                    {
+                      // Levi-Civita symbol
+                      eps_ijk = 0.5 * (i - j) * (j - k) * (k - i);
+                      lift_force[i - 1] +=
+                        C_s * 1.61 *
+                        particle_properties[DEM::PropertiesIndex::dp] *
+                        particle_properties[DEM::PropertiesIndex::dp] *
+                        density * pow(viscosity + DBL_MIN, 0.5) *
+                        pow(velocity_curls_3d[particle_number].norm(), -0.5) *
+                        (eps_ijk * relative_velocity[j - 1] *
+                         velocity_curls_3d[particle_number][k - 1]);
+                    }
+                }
+            }
+
+          for (int d = 0; d < dim; ++d)
+            {
+              // Apply lift force on the particle
+              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+                lift_force[d];
+
+              // Apply lift force on the fluid
+              undisturbed_flow_force[d] +=
+                lift_force[d] / scratch_data.cell_volume;
+            }
         }
+      particle_number += 1;
     }
 }
 

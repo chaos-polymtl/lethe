@@ -443,20 +443,26 @@ template <int dim>
 class GLSVansAssemblerSaffmanMei : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerSaffmanMei(Parameters::CFDDEM cfd_dem)
-    : cfd_dem(cfd_dem)
+  GLSVansAssemblerSaffmanMei(Parameters::Lagrangian::LagrangianPhysicalProperties
+                             lagrangian_physical_properties)
+    : lagrangian_physical_properties(lagrangian_physical_properties)
+
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-  Parameters::CFDDEM cfd_dem;
+
+  Parameters::Lagrangian::LagrangianPhysicalProperties
+    lagrangian_physical_properties;
 };
+
+
 /**
  * @brief Class that assembles the Buoyancy force  for the
  * VANS equations whe F_b =  -g *
