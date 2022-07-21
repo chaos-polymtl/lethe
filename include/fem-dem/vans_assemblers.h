@@ -78,7 +78,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -87,7 +87,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const bool SUPG = true;
@@ -120,7 +120,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -129,7 +129,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const bool SUPG = true;
@@ -166,7 +166,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -175,7 +175,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
@@ -443,8 +443,9 @@ template <int dim>
 class GLSVansAssemblerSaffmanMei : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerSaffmanMei(Parameters::Lagrangian::LagrangianPhysicalProperties
-                             lagrangian_physical_properties)
+  GLSVansAssemblerSaffmanMei(
+    Parameters::Lagrangian::LagrangianPhysicalProperties
+      lagrangian_physical_properties)
     : lagrangian_physical_properties(lagrangian_physical_properties)
 
   {}
@@ -580,7 +581,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -589,7 +590,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   Parameters::CFDDEM cfd_dem;
