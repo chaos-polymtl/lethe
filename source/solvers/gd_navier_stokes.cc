@@ -17,17 +17,6 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include <core/bdf.h>
-#include <core/grids.h>
-#include <core/manifolds.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/gd_navier_stokes.h>
-#include <solvers/navier_stokes_assemblers.h>
-#include <solvers/navier_stokes_vof_assemblers.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -36,6 +25,16 @@
 #include <deal.II/lac/full_matrix.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/manifolds.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/gd_navier_stokes.h>
+#include <solvers/navier_stokes_assemblers.h>
+#include <solvers/navier_stokes_vof_assemblers.h>
 
 
 
@@ -1193,6 +1192,9 @@ GDNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
+      this->forcing_function->set_time(
+        this->simulation_control->get_current_time());
+
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
 
