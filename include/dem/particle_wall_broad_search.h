@@ -138,9 +138,10 @@ public:
                 typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
       &                                    moving_mesh_information,
     const Particles::ParticleHandler<dim> &particle_handler,
-    std::unordered_map<types::global_cell_index,
-                       std::unordered_map<types::particle_index,
-                                          Particles::ParticleIterator<dim>>>
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                Particles::ParticleIterator<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>
       &particle_moving_mesh_contact_candidates,
     std::unordered_map<
       types::global_cell_index,

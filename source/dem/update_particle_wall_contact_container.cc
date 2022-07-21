@@ -34,11 +34,11 @@ update_particle_wall_contact_container_iterators(
 }
 
 template <int dim>
-void
-update_particle_moving_wall_contact_container_iterators(
-  std::unordered_map<types::global_cell_index,
-                     std::unordered_map<types::particle_index,
-                                        particle_wall_contact_info_struct<dim>>>
+void update_particle_moving_wall_contact_container_iterators(
+  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<dim>>,
+           dem_data_containers::cut_cell_comparison<dim>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &particle_container)
@@ -81,17 +81,19 @@ update_particle_wall_contact_container_iterators(
     &particle_container);
 
 template void update_particle_moving_wall_contact_container_iterators(
-  std::unordered_map<types::global_cell_index,
-                     std::unordered_map<types::particle_index,
-                                        particle_wall_contact_info_struct<2>>>
+  std::map<typename Triangulation<1, 2>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<2>>,
+           dem_data_containers::cut_cell_comparison<2>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
     &particle_container);
 
 template void update_particle_moving_wall_contact_container_iterators(
-  std::unordered_map<types::global_cell_index,
-                     std::unordered_map<types::particle_index,
-                                        particle_wall_contact_info_struct<3>>>
+  std::map<typename Triangulation<2, 3>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<3>>,
+           dem_data_containers::cut_cell_comparison<3>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>
     &particle_container);

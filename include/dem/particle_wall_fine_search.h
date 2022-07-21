@@ -122,15 +122,15 @@ public:
 
   void
   particle_moving_mesh_fine_search(
-    const std::unordered_map<
-      types::global_cell_index,
-      std::unordered_map<types::particle_index,
-                         Particles::ParticleIterator<dim>>>
+    const std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+                   std::unordered_map<types::particle_index,
+                                      Particles::ParticleIterator<dim>>,
+                   dem_data_containers::cut_cell_comparison<dim>>
       &particle_moving_mesh_contact_candidates,
-    std::unordered_map<
-      types::global_cell_index,
-      std::unordered_map<types::particle_index,
-                         particle_wall_contact_info_struct<dim>>>
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>
       &particle_moving_mesh_in_contact);
 };
 

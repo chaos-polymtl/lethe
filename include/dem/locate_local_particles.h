@@ -80,9 +80,10 @@ locate_local_particles_in_cells(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
-  std::unordered_map<types::global_cell_index,
-                     std::unordered_map<types::particle_index,
-                                        particle_wall_contact_info_struct<dim>>>
+  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<dim>>,
+           dem_data_containers::cut_cell_comparison<dim>>
     &particle_moving_mesh_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>

@@ -50,11 +50,11 @@ update_particle_wall_contact_container_iterators(
  */
 
 template <int dim>
-void
-update_particle_moving_wall_contact_container_iterators(
-  std::unordered_map<types::global_cell_index,
-                     std::unordered_map<types::particle_index,
-                                        particle_wall_contact_info_struct<dim>>>
+void update_particle_moving_wall_contact_container_iterators(
+  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<dim>>,
+           dem_data_containers::cut_cell_comparison<dim>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &particle_container);

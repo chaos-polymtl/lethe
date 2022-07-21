@@ -217,18 +217,15 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
 
 
 template <int dim>
-void
-ParticleWallLinearForce<dim>::calculate_particle_moving_wall_contact_force(
-  std::unordered_map<types::global_cell_index,
-                     std::unordered_map<types::particle_index,
-                                        particle_wall_contact_info_struct<dim>>>
+void ParticleWallLinearForce<dim>::calculate_particle_moving_wall_contact_force(
+  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<dim>>,
+           dem_data_containers::cut_cell_comparison<dim>>
     &                        particle_moving_mesh_in_contact,
   const double &             dt,
   std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force,
-  const std::map<types::global_cell_index,
-                 typename Triangulation<dim - 1, dim>::active_cell_iterator>
-    &cut_cells_map)
+  std::vector<Tensor<1, 3>> &force)
 {
   /*
 for (auto &&pairs_in_contact_content :

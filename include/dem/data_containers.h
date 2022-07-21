@@ -72,29 +72,22 @@ namespace dem_data_containers
     }
   };
 
+  /**
+   * Operator overloading to enable using triangulation cells as map keys.
+   */
+  using namespace dealii;
+
   template <int dim>
-  class CellKey
+  struct cut_cell_comparison
   {
-    typename Triangulation<dim>::active_cell_iterator m_cell;
-    unsigned int                                      m_global_index;
-
-  public:
-    CellKey(typename Triangulation<dim>::active_cell_iterator cell,
-            unsigned int                                      global_index)
-      : m_cell(cell)
-      , m_global_index(global_index)
-    {}
-
-    const typename Triangulation<dim>::active_cell_iterator &
-    get_cell() const
-    {
-      return m_cell;
-    }
-
     bool
-    operator<(const CellKey &src) const
+    operator()(
+      const typename Triangulation<dim - 1, dim>::active_cell_iterator &cell_1,
+      const typename Triangulation<dim - 1, dim>::active_cell_iterator &cell_2)
+      const
     {
-      return (this->m_global_index < src.m_global_index);
+      return cell_1->global_active_cell_index() <
+             cell_2->global_active_cell_index();
     }
   };
 

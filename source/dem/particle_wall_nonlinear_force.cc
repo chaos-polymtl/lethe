@@ -230,28 +230,23 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
 
 template <int dim>
 void
-ParticleWallNonLinearForce<dim>::calculate_particle_moving_wall_contact_force(
-  std::unordered_map<types::global_cell_index,
-                     std::unordered_map<types::particle_index,
-                                        particle_wall_contact_info_struct<dim>>>
-    &                        particle_moving_mesh_in_contact,
-  const double &             dt,
-  std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force,
-  const std::map<types::global_cell_index,
-                 typename Triangulation<dim - 1, dim>::active_cell_iterator>
-    &cut_cells_map)
+  ParticleWallNonLinearForce<dim>::calculate_particle_moving_wall_contact_force(
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>
+      &                        particle_moving_mesh_in_contact,
+    const double &             dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force)
 {
   std::vector<Particles::ParticleIterator<dim>> particle_locations;
   std::vector<Point<dim>>                       triangle;
 
-  for (auto &[cut_cell_key, map_info] : particle_moving_mesh_in_contact)
+  for (auto &[cut_cell, map_info] : particle_moving_mesh_in_contact)
     {
       if (!map_info.empty())
         {
-          const typename Triangulation<dim - 1, dim>::active_cell_iterator
-            cut_cell = cut_cells_map.at(cut_cell_key);
-
           // Clear the particle locations vector for the new cut cell
           particle_locations.clear();
           const unsigned int n_particles = map_info.size();

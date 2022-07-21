@@ -595,8 +595,7 @@ DEMSolver<dim>::particle_wall_contact_force()
           particle_moving_mesh_in_contact,
           simulation_control->get_time_step(),
           torque,
-          force,
-          cut_cells_map);
+          force);
     }
 
   particle_point_line_contact_force_object
@@ -827,13 +826,6 @@ DEMSolver<dim>::solve()
       floating_mesh_information[i_solid] =
         solids[i_solid]->map_solid_in_background_triangulation(
           triangulation, solids[i_solid]->get_solid_triangulation());
-
-      for (const auto &solid_cell :
-           solids[i_solid]->get_solid_triangulation()->active_cell_iterators())
-        {
-          cut_cells_map.insert(
-            {solid_cell->global_active_cell_index(), solid_cell});
-        }
     }
 
 
