@@ -1,5 +1,6 @@
 #include <core/lethegridtools.h>
 #include <core/serial_solid.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/dem_properties.h>
 
@@ -1110,15 +1111,15 @@ LetheGridTools::find_cells_cut_by_object(
 
 
 template <int dim>
-std::tuple<std::vector<bool>, std::vector<Point<dim>>, Tensor<1, dim>>
+std::tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
 LetheGridTools::calculate_particle_triangle_distance(
-  const std::vector<Point<dim>> &triangle,
-  const typename Particles::ParticleHandler<dim>::particle_iterator_range
-    &                 particles,
-  const unsigned int &n_particles_in_base_cell)
+  const std::vector<Point<dim>> &                      triangle,
+  const std::vector<Particles::ParticleIterator<dim>> &particles,
+  const unsigned int &                                 n_particles_in_base_cell)
 {
-  std::vector<bool>       pass_distance_check(n_particles_in_base_cell);
-  std::vector<Point<dim>> projection_points(n_particles_in_base_cell);
+  std::vector<bool>         pass_distance_check(n_particles_in_base_cell);
+  std::vector<Point<3>>     projection_points(n_particles_in_base_cell);
+  std::vector<Tensor<1, 3>> normal_vectors(n_particles_in_base_cell);
 
   auto &p_0 = triangle[0];
   auto &p_1 = triangle[1];
@@ -1130,6 +1131,8 @@ LetheGridTools::calculate_particle_triangle_distance(
   const Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
   const double         norm_normal = normal.norm();
   Tensor<1, dim>       unit_normal = normal / norm_normal;
+  Tensor<1, 3>         unit_normal_3d;
+  Point<3>             pt_in_triangle_3d;
 
   const double a   = e_0.norm_square();
   const double b   = scalar_product(e_0, e_1);
@@ -1145,8 +1148,8 @@ LetheGridTools::calculate_particle_triangle_distance(
   for (auto &part : particles)
     {
       const double radius =
-        part.get_properties()[DEM::PropertiesIndex::dp] * 0.5;
-      Point<dim> particle_position = part.get_location();
+        part->get_properties()[DEM::PropertiesIndex::dp] * 0.5;
+      Point<dim> particle_position = part->get_location();
       vector_to_plane              = p_0 - particle_position;
 
       // Check to see if the particle is located on the correct side (with
@@ -1156,6 +1159,12 @@ LetheGridTools::calculate_particle_triangle_distance(
           unit_normal = -1.0 * unit_normal;
         }
 
+      // Cast unit_normal to a tensor<1, 3>
+      if constexpr (dim == 3)
+        unit_normal_3d = unit_normal;
+
+      if constexpr (dim == 2)
+        unit_normal_3d = tensor_nd_to_3d(unit_normal);
 
       double distance_squared = scalar_product(vector_to_plane, unit_normal);
 
@@ -1311,22 +1320,32 @@ LetheGridTools::calculate_particle_triangle_distance(
 
       pt_in_triangle = p_0 + s * e_0 + t * e_1;
 
-      projection_points[k]   = pt_in_triangle;
+      // Cast pt_in_triangle on Point<3>
+      if constexpr (dim == 3)
+        pt_in_triangle_3d = pt_in_triangle;
+
+      if constexpr (dim == 2)
+        pt_in_triangle_3d = point_nd_to_3d(pt_in_triangle);
+
+      projection_points[k]   = pt_in_triangle_3d;
       pass_distance_check[k] = true;
+      normal_vectors[k]      = unit_normal_3d;
       ++k;
     }
-  return std::make_tuple(pass_distance_check, projection_points, unit_normal);
+  return std::make_tuple(pass_distance_check,
+                         projection_points,
+                         normal_vectors);
 }
 
-template std::tuple<std::vector<bool>, std::vector<Point<2>>, Tensor<1, 2>>
-LetheGridTools::calculate_particle_triangle_distance(
-  const std::vector<Point<2>> &triangle,
-  const typename Particles::ParticleHandler<2>::particle_iterator_range
-    &                 particles,
-  const unsigned int &n_particles_in_base_cell);
-template std::tuple<std::vector<bool>, std::vector<Point<3>>, Tensor<1, 3>>
-LetheGridTools::calculate_particle_triangle_distance(
-  const std::vector<Point<3>> &triangle,
-  const typename Particles::ParticleHandler<3>::particle_iterator_range
-    &                 particles,
-  const unsigned int &n_particles_in_base_cell);
+template std::
+  tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
+  LetheGridTools::calculate_particle_triangle_distance(
+    const std::vector<Point<2>> &                      triangle,
+    const std::vector<Particles::ParticleIterator<2>> &particles,
+    const unsigned int &n_particles_in_base_cell);
+template std::
+  tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
+  LetheGridTools::calculate_particle_triangle_distance(
+    const std::vector<Point<3>> &                      triangle,
+    const std::vector<Particles::ParticleIterator<3>> &particles,
+    const unsigned int &n_particles_in_base_cell);

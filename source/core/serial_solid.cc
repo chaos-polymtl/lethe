@@ -125,8 +125,11 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
             }
         }
     }
+
   return mapped_solid;
 }
+
+
 
 template <int dim, int spacedim>
 void

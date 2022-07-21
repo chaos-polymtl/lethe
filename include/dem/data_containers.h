@@ -20,7 +20,7 @@
 
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/particles/particle_handler.h>
+#include <deal.II/particles/particle_iterator.h>
 
 #include <boost/range/adaptor/map.hpp>
 
@@ -36,23 +36,65 @@
  * operators here, but finally all the data containers of the DEM solver will be
  * moved here
  */
-
+// UPDATE ********
 namespace dem_data_containers
 {
   /**
    * Operator overloading to enable using triangulation cells as map keys.
    */
+  using namespace dealii;
 
   template <int dim>
   struct cell_comparison
   {
     bool
     operator()(
-      const typename dealii::Triangulation<dim>::active_cell_iterator &cell_1,
-      const typename dealii::Triangulation<dim>::active_cell_iterator &cell_2)
-      const
+      const typename Triangulation<dim>::active_cell_iterator &cell_1,
+      const typename Triangulation<dim>::active_cell_iterator &cell_2) const
     {
-      return cell_1->id().to_string() < cell_2->id().to_string();
+      return cell_1->global_active_cell_index() <
+             cell_2->global_active_cell_index();
+    }
+  };
+
+  /**
+   * Operator overloading to enable using particle iterators as map keys.
+   */
+
+  template <int dim>
+  struct particle_comparison
+  {
+    bool
+    operator()(const Particles::ParticleIterator<dim> &particle_1,
+               const Particles::ParticleIterator<dim> &particle_2)
+    {
+      return particle_1->id() < particle_2->id();
+    }
+  };
+
+  template <int dim>
+  class CellKey
+  {
+    typename Triangulation<dim>::active_cell_iterator m_cell;
+    unsigned int                                      m_global_index;
+
+  public:
+    CellKey(typename Triangulation<dim>::active_cell_iterator cell,
+            unsigned int                                      global_index)
+      : m_cell(cell)
+      , m_global_index(global_index)
+    {}
+
+    const typename Triangulation<dim>::active_cell_iterator &
+    get_cell() const
+    {
+      return m_cell;
+    }
+
+    bool
+    operator<(const CellKey &src) const
+    {
+      return (this->m_global_index < src.m_global_index);
     }
   };
 

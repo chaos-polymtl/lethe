@@ -16,6 +16,7 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <dem/data_containers.h>
 #include <dem/particle_wall_contact_info_struct.h>
 
 using namespace dealii;
@@ -40,5 +41,23 @@ update_particle_wall_contact_container_iterators(
     &particle_wall_pairs_in_contact,
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &particle_container);
+
+/**
+ * Updates the iterators to particles in particle_moving_wall_contact_container
+ *
+ * @param particle_moving_wall_pairs_in_contact Output of particle-moving wall fine search
+ * @param particle_container Output of update_particle_container function
+ */
+
+template <int dim>
+void
+update_particle_moving_wall_contact_container_iterators(
+  std::unordered_map<types::global_cell_index,
+                     std::unordered_map<types::particle_index,
+                                        particle_wall_contact_info_struct<dim>>>
+    &particle_wall_pairs_in_contact,
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
+    &particle_container);
+
 
 #endif /* update_particle_wall_contact_container_h */

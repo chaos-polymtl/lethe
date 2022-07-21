@@ -272,15 +272,15 @@ private:
     types::particle_index,
     std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates;
-  std::unordered_map<
-    types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+
+  std::unordered_map<types::global_cell_index,
+                     std::unordered_map<types::particle_index,
+                                        particle_wall_contact_info_struct<dim>>>
     particle_moving_mesh_in_contact;
+
   std::unordered_map<
-    types::particle_index,
-    std::unordered_map<
-      unsigned int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+    types::global_cell_index,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
     particle_moving_mesh_contact_candidates;
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     particle_container;

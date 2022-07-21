@@ -186,6 +186,13 @@ private:
   particle_wall_fine_search();
 
   /**
+   * @brief Performs particle-floating mesh contact search
+   *
+   */
+  void
+  particle_floating_mesh_contact_search();
+
+  /**
    * @brief Calculates particles-wall contact forces
    *
    */
@@ -310,17 +317,20 @@ private:
               typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
     floating_mesh_information;
 
-  std::unordered_map<
-    types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+  std::map<types::global_cell_index,
+           typename Triangulation<dim - 1, dim>::active_cell_iterator>
+    cut_cells_map;
+
+  std::unordered_map<types::global_cell_index,
+                     std::unordered_map<types::particle_index,
+                                        particle_wall_contact_info_struct<dim>>>
     particle_moving_mesh_in_contact;
 
   std::unordered_map<
-    types::particle_index,
-    std::unordered_map<
-      unsigned int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+    types::global_cell_index,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
     particle_moving_mesh_contact_candidates;
+
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
@@ -413,6 +423,7 @@ private:
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
+  unsigned int    n_solids;
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;

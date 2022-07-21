@@ -99,12 +99,16 @@ public:
   virtual void
   calculate_particle_moving_wall_contact_force(
     std::unordered_map<
-      types::particle_index,
-      std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
-      &                        particle_floating_wall_pairs_in_contact,
+      types::global_cell_index,
+      std::unordered_map<types::particle_index,
+                         particle_wall_contact_info_struct<dim>>>
+      &                        particle_moving_mesh_in_contact,
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    std::vector<Tensor<1, 3>> &force,
+    const std::map<types::global_cell_index,
+                   typename Triangulation<dim - 1, dim>::active_cell_iterator>
+      &cut_cells_map) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This

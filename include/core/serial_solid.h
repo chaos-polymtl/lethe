@@ -80,6 +80,8 @@ public:
     const parallel::distributed::Triangulation<spacedim> &background_tr,
     const std::shared_ptr<Triangulation<dim, spacedim>> & solid_tr);
 
+
+
   /**
    * @brief Manages solid triangulation setup
    */

@@ -132,25 +132,20 @@ public:
    */
 
   void
-  find_particle_moving_mesh_contact_pairs(
+  particle_moving_mesh_contact_search(
     const std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
                 typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
       &                                    moving_mesh_information,
     const Particles::ParticleHandler<dim> &particle_handler,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<unsigned int,
-                         std::tuple<Particles::ParticleIterator<dim>,
-                                    Tensor<1, dim>,
-                                    Point<dim>>>>
+    std::unordered_map<types::global_cell_index,
+                       std::unordered_map<types::particle_index,
+                                          Particles::ParticleIterator<dim>>>
       &particle_moving_mesh_contact_candidates,
     std::unordered_map<
       types::global_cell_index,
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
       &cells_total_neighbor_list);
-
-  const unsigned int vertices_per_triangle = 3;
 };
 
 #endif /* particle_wall_broad_search_h */

@@ -1,3 +1,4 @@
+#include <core/lethegridtools.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/particle_wall_linear_force.h>
@@ -218,81 +219,86 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
 template <int dim>
 void
 ParticleWallLinearForce<dim>::calculate_particle_moving_wall_contact_force(
-  std::unordered_map<
-    types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
-    &                        particle_floating_wall_pairs_in_contact,
+  std::unordered_map<types::global_cell_index,
+                     std::unordered_map<types::particle_index,
+                                        particle_wall_contact_info_struct<dim>>>
+    &                        particle_moving_mesh_in_contact,
   const double &             dt,
   std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force)
+  std::vector<Tensor<1, 3>> &force,
+  const std::map<types::global_cell_index,
+                 typename Triangulation<dim - 1, dim>::active_cell_iterator>
+    &cut_cells_map)
 {
-  for (auto &&pairs_in_contact_content :
-       particle_floating_wall_pairs_in_contact | boost::adaptors::map_values)
-    {
-      for (auto &&contact_information :
-           pairs_in_contact_content | boost::adaptors::map_values)
-        {
-          // Defining total force of the contact, properties of particle as
-          // local parameters
-          auto particle            = contact_information.particle;
-          auto particle_properties = particle->get_properties();
-          auto particle_projection_on_face =
-            contact_information.point_on_boundary;
+  /*
+for (auto &&pairs_in_contact_content :
+     particle_floating_wall_pairs_in_contact | boost::adaptors::map_values)
+  {
+    for (auto &&contact_information :
+         pairs_in_contact_content | boost::adaptors::map_values)
+      {
+        // Defining total force of the contact, properties of particle as
+        // local parameters
+        auto particle            = contact_information.particle;
+        auto particle_properties = particle->get_properties();
+        auto particle_projection_on_face =
+          contact_information.point_on_boundary;
 
-          Point<3> particle_location_3d;
+        Point<3> particle_location_3d;
 
-          if constexpr (dim == 3)
-            particle_location_3d = particle->get_location();
+        if constexpr (dim == 3)
+          particle_location_3d = particle->get_location();
 
-          if constexpr (dim == 2)
-            particle_location_3d = point_nd_to_3d(particle->get_location());
+        if constexpr (dim == 2)
+          particle_location_3d = point_nd_to_3d(particle->get_location());
 
-          double normal_overlap =
-            ((particle_properties[DEM::PropertiesIndex::dp]) * 0.5) -
-            (particle_projection_on_face.distance(particle_location_3d));
+        double normal_overlap =
+          ((particle_properties[DEM::PropertiesIndex::dp]) * 0.5) -
+          (particle_projection_on_face.distance(particle_location_3d));
 
-          if (normal_overlap > 0)
-            {
-              contact_information.normal_overlap = normal_overlap;
+        if (normal_overlap > 0)
+          {
+            contact_information.normal_overlap = normal_overlap;
 
-              this->update_contact_information(contact_information,
-                                               particle_properties,
-                                               dt);
+            this->update_contact_information(contact_information,
+                                             particle_properties,
+                                             dt);
 
-              // This tuple (forces and torques) contains four elements which
-              // are: 1, normal force, 2, tangential force, 3, tangential torque
-              // and 4, rolling resistance torque, respectively
-              std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-                forces_and_torques =
-                  this->calculate_linear_contact_force_and_torque(
-                    contact_information, particle_properties);
+            // This tuple (forces and torques) contains four elements which
+            // are: 1, normal force, 2, tangential force, 3, tangential torque
+            // and 4, rolling resistance torque, respectively
+            std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
+              forces_and_torques =
+                this->calculate_linear_contact_force_and_torque(
+                  contact_information, particle_properties);
 
-              // Getting particle's torque and force
+            // Getting particle's torque and force
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-              types::particle_index particle_id = particle->get_id();
+            types::particle_index particle_id = particle->get_id();
 #else
-              types::particle_index particle_id = particle->get_local_index();
+            types::particle_index particle_id = particle->get_local_index();
 #endif
 
-              Tensor<1, 3> &particle_torque = torque[particle_id];
-              Tensor<1, 3> &particle_force  = force[particle_id];
+            Tensor<1, 3> &particle_torque = torque[particle_id];
+            Tensor<1, 3> &particle_force  = force[particle_id];
 
-              // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque(forces_and_torques,
-                                           particle_torque,
-                                           particle_force,
-                                           particle_projection_on_face,
-                                           contact_information.boundary_id);
-            }
-          else
-            {
-              for (int d = 0; d < dim; ++d)
-                {
-                  contact_information.tangential_overlap[d] = 0;
-                }
-            }
-        }
-    }
+            // Apply the calculated forces and torques on the particle pair
+            this->apply_force_and_torque(forces_and_torques,
+                                         particle_torque,
+                                         particle_force,
+                                         particle_projection_on_face,
+                                         contact_information.boundary_id);
+          }
+        else
+          {
+            for (int d = 0; d < dim; ++d)
+              {
+                contact_information.tangential_overlap[d] = 0;
+              }
+          }
+      }
+  }
+  */
 }
 
 

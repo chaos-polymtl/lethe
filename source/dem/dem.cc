@@ -77,6 +77,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
+  , n_solids(parameters.solid_objects->number_solids)
 {
   // Check if the output directory exists
   std::string output_dir_name = parameters.simulation_control.output_folder;
@@ -211,8 +212,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                            simulation_control->get_time_step());
 
   // Generate solid objects
-  const unsigned int n_solids = this->parameters.solid_objects->number_solids;
   floating_mesh_information.resize(n_solids);
+
   if (n_solids > 0)
     floating_mesh = true;
 
@@ -495,11 +496,10 @@ DEMSolver<dim>::particle_wall_broad_search()
           pfw_contact_candidates);
     }
 
-
   // Particle - floating mesh broad search
   if (floating_mesh)
     {
-      particle_wall_broad_search_object.find_particle_moving_mesh_contact_pairs(
+      particle_wall_broad_search_object.particle_moving_mesh_contact_search(
         floating_mesh_information,
         particle_handler,
         particle_moving_mesh_contact_candidates,
@@ -595,7 +595,8 @@ DEMSolver<dim>::particle_wall_contact_force()
           particle_moving_mesh_in_contact,
           simulation_control->get_time_step(),
           torque,
-          force);
+          force,
+          cut_cells_map);
     }
 
   particle_point_line_contact_force_object
@@ -816,15 +817,26 @@ DEMSolver<dim>::solve()
             triangulation,
             triangulation_cell_diameter);
 
+
+
   const unsigned int n_solids = this->parameters.solid_objects->number_solids;
   for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
       // Create a container that contains all the combinations of background and
       // solid cells
-      floating_mesh_information.push_back(
+      floating_mesh_information[i_solid] =
         solids[i_solid]->map_solid_in_background_triangulation(
-          triangulation, solids[i_solid]->get_solid_triangulation()));
+          triangulation, solids[i_solid]->get_solid_triangulation());
+
+      for (const auto &solid_cell :
+           solids[i_solid]->get_solid_triangulation()->active_cell_iterators())
+        {
+          cut_cells_map.insert(
+            {solid_cell->global_active_cell_index(), solid_cell});
+        }
     }
+
+
 
   if (parameters.restart.restart == true)
     {
@@ -997,7 +1009,6 @@ DEMSolver<dim>::solve()
                                  pfw_contact_candidates,
                                  particle_moving_mesh_contact_candidates);
 
-
           locate_local_particles_in_cells<dim>(particle_handler,
                                                particle_container,
                                                ghost_adjacent_particles,
@@ -1007,6 +1018,7 @@ DEMSolver<dim>::solve()
                                                particle_moving_mesh_in_contact,
                                                particle_points_in_contact,
                                                particle_lines_in_contact);
+
 
           // Particle-particle fine search
           particle_particle_fine_search_object.particle_particle_fine_search(

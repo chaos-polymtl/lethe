@@ -17,6 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/data_containers.h>
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_info_struct.h>
@@ -107,6 +108,7 @@ public:
       std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
       &pfw_pairs_in_contact);
 
+
   /**
    * Iterates over the contact candidates from particle-moving mesh broad
    * search (particle_moving_mesh_contact_candidates) to add new contact pairs
@@ -117,18 +119,18 @@ public:
    * @param particle_moving_mesh_in_contact An unordered_map of maps which stores
    * all the particle-moving mesh pairs which are in contact
    */
+
   void
   particle_moving_mesh_fine_search(
     const std::unordered_map<
-      types::particle_index,
-      std::unordered_map<unsigned int,
-                         std::tuple<Particles::ParticleIterator<dim>,
-                                    Tensor<1, dim>,
-                                    Point<dim>>>>
+      types::global_cell_index,
+      std::unordered_map<types::particle_index,
+                         Particles::ParticleIterator<dim>>>
       &particle_moving_mesh_contact_candidates,
     std::unordered_map<
-      types::particle_index,
-      std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+      types::global_cell_index,
+      std::unordered_map<types::particle_index,
+                         particle_wall_contact_info_struct<dim>>>
       &particle_moving_mesh_in_contact);
 };
 

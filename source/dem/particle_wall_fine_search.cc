@@ -199,71 +199,33 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
     }
 }
 
+
 template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_moving_mesh_fine_search(
   const std::unordered_map<
-    types::particle_index,
-    std::unordered_map<
-      unsigned int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+    types::global_cell_index,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
     &particle_moving_mesh_contact_candidates,
-  std::unordered_map<
-    types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+  std::unordered_map<types::global_cell_index,
+                     std::unordered_map<types::particle_index,
+                                        particle_wall_contact_info_struct<dim>>>
     &particle_moving_mesh_in_contact)
 {
-  for (auto const &[particle_id, particle_moving_mesh_candidates] :
+  for (auto const &[cut_cell_key, candidate_particles] :
        particle_moving_mesh_contact_candidates)
     {
-      if (!particle_moving_mesh_candidates.empty())
+      if (!candidate_particles.empty())
         {
-          for (auto particle_moving_mesh_candidate_iterator =
-                 particle_moving_mesh_candidates.begin();
-               particle_moving_mesh_candidate_iterator !=
-               particle_moving_mesh_candidates.end();
-               ++particle_moving_mesh_candidate_iterator)
+          for (auto &particle_moving_mesh_candidate_iterator :
+               candidate_particles)
             {
-              unsigned int cut_cell_id =
-                particle_moving_mesh_candidate_iterator->first;
-
-              auto &particle_moving_mesh_info =
-                particle_moving_mesh_candidate_iterator->second;
-
-              auto           particle = std::get<0>(particle_moving_mesh_info);
-              Tensor<1, dim> normal_vector =
-                std::get<1>(particle_moving_mesh_info);
-              Point<dim> projection = std::get<2>(particle_moving_mesh_info);
-
-              Tensor<1, 3> tangential_overlap({0, 0, 0});
-
-              Tensor<1, 3> normal_vector_3d;
-              if constexpr (dim == 3)
-                normal_vector_3d = normal_vector;
-
-              if constexpr (dim == 2)
-                normal_vector_3d = tensor_nd_to_3d(normal_vector);
-
-              Point<3> point_on_boundary_3d;
-              if constexpr (dim == 3)
-                point_on_boundary_3d = projection;
-
-              if constexpr (dim == 2)
-                point_on_boundary_3d = point_nd_to_3d(projection);
-
               particle_wall_contact_info_struct<dim> contact_info;
+              contact_info.particle =
+                particle_moving_mesh_candidate_iterator.second;
 
-              contact_info.particle                     = particle;
-              contact_info.normal_vector                = normal_vector_3d;
-              contact_info.normal_overlap               = .0;
-              contact_info.normal_relative_velocity     = .0;
-              contact_info.point_on_boundary            = point_on_boundary_3d;
-              contact_info.boundary_id                  = cut_cell_id;
-              contact_info.tangential_overlap           = tangential_overlap;
-              contact_info.tangential_relative_velocity = .0;
-
-              particle_moving_mesh_in_contact[particle_id].insert(
-                {cut_cell_id, contact_info});
+              particle_moving_mesh_in_contact[cut_cell_key].insert(
+                {particle_moving_mesh_candidate_iterator.first, contact_info});
             }
         }
     }

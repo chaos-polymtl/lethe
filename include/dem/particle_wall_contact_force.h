@@ -18,6 +18,7 @@
  */
 #include <core/auxiliary_math_functions.h>
 
+#include <dem/data_containers.h>
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_info_struct.h>
@@ -83,12 +84,16 @@ public:
   virtual void
   calculate_particle_moving_wall_contact_force(
     std::unordered_map<
-      types::particle_index,
-      std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
-      &                        particle_floating_wall_pairs_in_contact,
+      types::global_cell_index,
+      std::unordered_map<types::particle_index,
+                         particle_wall_contact_info_struct<dim>>>
+      &                        particle_moving_mesh_in_contact,
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) = 0;
+    std::vector<Tensor<1, 3>> &force,
+    const std::map<types::global_cell_index,
+                   typename Triangulation<dim - 1, dim>::active_cell_iterator>
+      &cut_cells_map) = 0;
 
   std::map<unsigned int, Tensor<1, 3>>
   get_force()
@@ -171,6 +176,23 @@ protected:
     const double &                          dt);
 
   /**
+   * Carries out updating the contact pair information for particle-floating
+   * wall contacts
+   *
+   * @param contact_pair_information Contact information of a particle-wall pair
+   * in neighborhood
+   * @param particle_properties Properties of particle in contact
+   * @param dt DEM time step
+   */
+  void
+  update_particle_moving_wall_contact_information(
+    particle_wall_contact_info_struct<dim> &contact_pair_information,
+    const ArrayView<const double> &         particle_properties,
+    const double &                          dt,
+    const Tensor<1, 3> &                    cut_cell_translational_velocity,
+    const Tensor<1, 3> &                    cut_cell_rotational_velocity);
+
+  /**
    * Carries out applying the calculated force and torque on the local-local
    * particle pair in contact, for both non-linear and linear contact force
    * calculations
@@ -185,11 +207,11 @@ protected:
   inline void
   apply_force_and_torque(
     const std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-      &           forces_and_torques,
-    Tensor<1, 3> &particle_torque,
-    Tensor<1, 3> &particle_force,
-    Point<3> &    point_on_boundary,
-    int           boundary_id = 0)
+      &             forces_and_torques,
+    Tensor<1, 3> &  particle_torque,
+    Tensor<1, 3> &  particle_force,
+    const Point<3> &point_on_boundary,
+    int             boundary_id = 0)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling
@@ -248,9 +270,11 @@ protected:
                                        effective_coefficient_of_rolling_friction;
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;
   std::map<unsigned int, Tensor<1, 3>> torque_on_walls;
-  bool                                 calculate_force_torque_on_boundary;
-  Point<3>                             center_mass_container;
-  std::vector<types::boundary_id>      boundary_index;
+
+  bool                            calculate_force_torque_on_boundary;
+  Point<3>                        center_mass_container;
+  std::vector<types::boundary_id> boundary_index;
+  const unsigned int              vertices_per_triangle = 3;
 };
 
 #endif /* particle_wall_contact_force_h */
