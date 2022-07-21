@@ -170,7 +170,7 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry(
       "tolerance",
-      "1e-2",
+      "1e-6",
       Patterns::Double(),
       "Tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening");
 
@@ -282,9 +282,9 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry(
       "max iterations",
-      "5",
+      "20",
       Patterns::Integer(),
-      "Maximum number of iteration in the binary search algorithm");
+      "Maximum number of iteration in the bissection algorithm that ensures mass conservation");
 
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.
@@ -293,6 +293,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "2",
       Patterns::Double(),
       "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
+
     prm.declare_entry("frequency",
                       "10",
                       Patterns::Integer(),
