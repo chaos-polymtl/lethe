@@ -334,7 +334,8 @@ private:
 
   /**
    * @brief
-   *This function abstracts the generation of cell candidates that possibly are cut
+   *This function abstracts the generation of cell candidates that possibly are
+   *cut
    */
   std::pair<bool, bool>
   generate_cut_cell_candidates(
