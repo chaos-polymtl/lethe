@@ -93,8 +93,8 @@ private:
   void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
+    NavierStokesScratchData<dim>                         &scratch_data,
+    StabilizedMethodsTensorCopyData<dim>                 &copy_data) override;
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -112,8 +112,8 @@ private:
   void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
+    NavierStokesScratchData<dim>                         &scratch_data,
+    StabilizedMethodsTensorCopyData<dim>                 &copy_data) override;
 
   /**
    * @brief sets up the vector of assembler functions
@@ -314,7 +314,7 @@ private:
    *are spheres, it uses the optimized_generate_cut_cells.
    */
   void
-  check_particles_all_sphere();
+  check_whether_all_particles_are_sphere();
   /**
    * @brief
    *This function creates a map (cut_cells_map) that indicates if a cell is
@@ -325,9 +325,11 @@ private:
 
   /**
    * @brief
-   *This function creates a map (cut_cells_map) that indicates if a cell is cut,
-   *and the particle id of the particle that cut it.
-   *The algorithm was optimized to reduce the cost of this step.
+   * This function is only applied if all particles are spheres.
+   * It creates two maps (cut_cells_map and cells_inside_map) to access the
+   * cells cut by particles and inside the particles, respectively. The map keys
+   * are the particle's IDs. The algorithm was optimized to reduce the cost of
+   * this step.
    */
   void
   optimized_generate_cut_cells_map();
@@ -357,7 +359,7 @@ private:
    */
   std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
   cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,
-           std::vector<types::global_dof_index> &         local_dof_indices,
+           std::vector<types::global_dof_index>          &local_dof_indices,
            std::map<types::global_dof_index, Point<dim>> &support_points);
   bool
   cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
@@ -378,7 +380,7 @@ private:
    */
   std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
   cell_inside(const typename DoFHandler<dim>::active_cell_iterator &cell,
-              std::vector<types::global_dof_index> &         local_dof_indices,
+              std::vector<types::global_dof_index>          &local_dof_indices,
               std::map<types::global_dof_index, Point<dim>> &support_points);
 
 

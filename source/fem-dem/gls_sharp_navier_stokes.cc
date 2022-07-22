@@ -42,6 +42,7 @@ template <int dim>
 GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
   SimulationParameters<dim> &p_nsparam)
   : GLSNavierStokesSolver<dim>(p_nsparam)
+  , all_spheres(true)
 {}
 
 template <int dim>
@@ -61,7 +62,7 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::check_that_all_particles_are_sphere()
+GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
 {
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
@@ -90,12 +91,12 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        support_points);
   cut_cells_map.clear();
   cells_inside_map.clear();
-  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  auto &             v_x_fe                  = this->fe->get_sub_fe(0, 1);
+  auto              &v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
@@ -189,7 +190,11 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
         }
     }
 
-  // Loop over particles
+  // Loop over particles in reverse.
+  // This is done in reverse to guarantee that the lowest particle ID is
+  // associated to the cut cell or the inside particle cell. For instance, if
+  // you have two particles cutting the same cell, it guarantees that the lowest
+  // ID particle is associated with the cell in the map.
   for (int p = particles.size() - 1; p >= 0; --p)
     {
       bool         empty    = true;
@@ -439,7 +444,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
                     this->mpi_communicator,
                     particles);
 
-  check_particles_all_sphere();
+  check_whether_all_particles_are_sphere();
 }
 
 
@@ -708,7 +713,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // IB stencil to extrapolate the fluid stress tensor.
 
                       std::vector<Tensor<2, dim>>
-                                                  local_face_viscous_stress_tensor(dofs_per_face);
+                        local_face_viscous_stress_tensor(dofs_per_face);
                       std::vector<Tensor<2, dim>> local_face_pressure_tensor(
                         dofs_per_face);
                       for (unsigned int i = 0;
@@ -1611,15 +1616,17 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             (particles[p].impulsion) / particles[p].mass / dt;
           // Approximate a diagonal Jacobian with a secant methods.
 
-          double d_residual_dv = -bdf_coefs[0] - 0.5 * volume * fluid_density /
-                                                   particles[p].mass / dt;
+          double d_residual_dv =
+            -bdf_coefs[0] -
+            0.5 * volume * fluid_density / particles[p].mass / dt + DBL_MIN;
           if ((particles[p].velocity - particles[p].velocity_iter).norm() != 0)
             {
               d_residual_dv =
                 -bdf_coefs[0] -
                 (particles[p].impulsion - particles[p].impulsion_iter).norm() /
                   (particles[p].velocity - particles[p].velocity_iter).norm() /
-                  particles[p].mass / dt;
+                  particles[p].mass / dt +
+                DBL_MIN;
             }
           // Relaxation parameter for the particle dynamics.
           double local_alpha = 1;
@@ -2897,8 +2904,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -2991,8 +2998,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -3398,7 +3405,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
         }
     }
   // Check if particles are spheres
-  check_particles_all_sphere();
+  check_whether_all_particles_are_sphere();
 
   // Create the list of contact candidates
   ib_dem.update_contact_candidates();
