@@ -751,7 +751,7 @@ public:
           particle_velocity[particle_number];
 
         Re_particle[particle_number] =
-          1e-1 + cell_void_fraction[particle_number] *
+          1e-3 + cell_void_fraction[particle_number] *
                    fluid_particle_relative_velocity_at_particle_location
                      [particle_number]
                        .norm() *
