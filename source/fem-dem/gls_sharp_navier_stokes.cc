@@ -61,7 +61,7 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::check_particles_all_sphere()
+GLSSharpNavierStokesSolver<dim>::check_that_all_particles_are_sphere()
 {
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
@@ -70,7 +70,7 @@ GLSSharpNavierStokesSolver<dim>::check_particles_all_sphere()
         {
           all_spheres = false;
           std::cout
-            << "Non spherical particle found: using regular cut_cells_mapping."
+            << "Non spherical particle were found: using regular cut_cells_mapping."
             << std::endl;
           break;
         }

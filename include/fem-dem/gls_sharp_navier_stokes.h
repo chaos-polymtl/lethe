@@ -317,7 +317,7 @@ private:
   check_particles_all_sphere();
   /**
    * @brief
-   *This function create a map (cut_cells_map) that indicates if a cell is
+   *This function creates a map (cut_cells_map) that indicates if a cell is
    *cut, and the particle id of the particle that cut it.
    */
   void
@@ -325,7 +325,7 @@ private:
 
   /**
    * @brief
-   *This function create a map (cut_cells_map) that indicates if a cell is cut,
+   *This function creates a map (cut_cells_map) that indicates if a cell is cut,
    *and the particle id of the particle that cut it.
    *The algorithm was optimized to reduce the cost of this step.
    */
@@ -334,7 +334,7 @@ private:
 
   /**
    * @brief
-   *This function abstracts the generation of cell candidates that possibly are
+   *This function abstracts the generation of cell candidates that possibly are cut
    */
   std::pair<bool, bool>
   generate_cut_cell_candidates(
