@@ -43,18 +43,20 @@ update_particle_wall_contact_container_iterators(
     &particle_container);
 
 /**
- * Updates the iterators to particles in particle_moving_wall_contact_container
+ * Updates the iterators to particles in
+ * particle_floating_wall_contact_container
  *
- * @param particle_moving_wall_pairs_in_contact Output of particle-moving wall fine search
+ * @param particle_floating_wall_pairs_in_contact Output of particle-floating wall fine search
  * @param particle_container Output of update_particle_container function
  */
 
 template <int dim>
-void update_particle_moving_wall_contact_container_iterators(
-  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-           std::unordered_map<types::particle_index,
-                              particle_wall_contact_info_struct<dim>>,
-           dem_data_containers::cut_cell_comparison<dim>>
+void update_particle_floating_wall_contact_container_iterators(
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &particle_container);

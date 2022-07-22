@@ -41,12 +41,12 @@ using namespace std;
  * @param ghost_adjacent_particles Local-ghost adjacent particle pairs
  * @param particle_wall_pairs_in_contact Particle-wall contact pairs
  * @param pfw_pairs_in_contact Particle-floating wall contact pairs
- * @param particle_moving_mesh_in_contact Particle-moving mesh contact pairs
+ * @param particle_floating_mesh_in_contact Particle-floating mesh contact pairs
  * @param local_contact_pair_candidates Local-local particle-particle contact candidates
  * @param ghost_contact_pair_candidates Local-ghost particle-particle contact candidates
  * @param particle_wall_contact_candidates Particle-wall contact candidates
  * @param pfw_contact_candidates Particle-floating wall contact candidates
- * @param particle_moving_mesh_contact_candidates Particle-moving mesh contact candidates
+ * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact candidates
  *
  */
 
@@ -71,11 +71,12 @@ localize_contacts(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
-  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-           std::unordered_map<types::particle_index,
-                              particle_wall_contact_info_struct<dim>>,
-           dem_data_containers::cut_cell_comparison<dim>>
-    &particle_moving_mesh_in_contact,
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
+    &particle_floating_mesh_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -93,10 +94,10 @@ localize_contacts(
     types::particle_index,
     std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
     &pfw_contact_candidates,
-  std::map<
+  std::vector<std::map<
     typename Triangulation<dim - 1, dim>::active_cell_iterator,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
-    dem_data_containers::cut_cell_comparison<dim>>
-    &particle_moving_mesh_contact_candidates);
+    dem_data_containers::cut_cell_comparison<dim>>>
+    &particle_floating_mesh_contact_candidates);
 
 #endif /* localize_contacts_h */

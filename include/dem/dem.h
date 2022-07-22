@@ -267,6 +267,13 @@ private:
   void
   post_process_results();
 
+  /**
+   * @brief Updates the translational and rotational velocities and center of
+   * rotation of floating meshes
+   */
+  void
+  update_floating_mesh_info();
+
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
   const unsigned int                        this_mpi_process;
@@ -317,17 +324,18 @@ private:
               typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
     floating_mesh_information;
 
-  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-           std::unordered_map<types::particle_index,
-                              particle_wall_contact_info_struct<dim>>,
-           dem_data_containers::cut_cell_comparison<dim>>
-    particle_moving_mesh_in_contact;
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
+    particle_floating_mesh_in_contact;
 
-  std::map<
+  std::vector<std::map<
     typename Triangulation<dim - 1, dim>::active_cell_iterator,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
-    dem_data_containers::cut_cell_comparison<dim>>
-    particle_moving_mesh_contact_candidates;
+    dem_data_containers::cut_cell_comparison<dim>>>
+    particle_floating_mesh_contact_candidates;
 
   std::unordered_map<
     types::particle_index,
@@ -425,7 +433,10 @@ private:
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
-  bool                                                    floating_mesh = false;
+  std::map<unsigned int, Tensor<1, 3>> floating_mesh_translational_velocity;
+  std::map<unsigned int, Tensor<1, 3>> floating_mesh_rotational_velocity;
+  std::map<unsigned int, Point<3>>     floating_mesh_center_of_rotation;
+  bool                                 floating_mesh = false;
 };
 
 #endif

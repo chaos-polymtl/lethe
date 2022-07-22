@@ -110,28 +110,30 @@ public:
 
 
   /**
-   * Iterates over the contact candidates from particle-moving mesh broad
-   * search (particle_moving_mesh_contact_candidates) to add new contact pairs
-   * to the particle_moving_mesh_in_contact container
+   * Iterates over the contact candidates from particle-floating mesh broad
+   * search (particle_floating_mesh_contact_candidates) to add new contact pairs
+   * to the particle_floating_mesh_in_contact container
    *
-   * @param particle_moving_mesh_contact_candidates The output of particle-moving mesh
+   * @param particle_floating_mesh_contact_candidates The output of particle-floating mesh
    * broad search which shows contact pair candidates
-   * @param particle_moving_mesh_in_contact An unordered_map of maps which stores
-   * all the particle-moving mesh pairs which are in contact
+   * @param particle_floating_mesh_in_contact An map of maps which stores
+   * all the particle-floating mesh pairs which are in contact
    */
 
   void
-  particle_moving_mesh_fine_search(
-    const std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-                   std::unordered_map<types::particle_index,
-                                      Particles::ParticleIterator<dim>>,
-                   dem_data_containers::cut_cell_comparison<dim>>
-      &particle_moving_mesh_contact_candidates,
-    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-             std::unordered_map<types::particle_index,
-                                particle_wall_contact_info_struct<dim>>,
-             dem_data_containers::cut_cell_comparison<dim>>
-      &particle_moving_mesh_in_contact);
+  particle_floating_mesh_fine_search(
+    const std::vector<
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               std::unordered_map<types::particle_index,
+                                  Particles::ParticleIterator<dim>>,
+               dem_data_containers::cut_cell_comparison<dim>>>
+      &particle_floating_mesh_contact_candidates,
+    std::vector<
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               std::unordered_map<types::particle_index,
+                                  particle_wall_contact_info_struct<dim>>,
+               dem_data_containers::cut_cell_comparison<dim>>>
+      &particle_floating_mesh_in_contact);
 };
 
 #endif /* particle_wall_fine_search_h */

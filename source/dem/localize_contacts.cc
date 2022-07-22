@@ -23,11 +23,12 @@ localize_contacts(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
-  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-           std::unordered_map<types::particle_index,
-                              particle_wall_contact_info_struct<dim>>,
-           dem_data_containers::cut_cell_comparison<dim>>
-    &particle_moving_mesh_in_contact,
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
+    &particle_floating_mesh_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -45,11 +46,11 @@ localize_contacts(
     types::particle_index,
     std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
     &pfw_contact_candidates,
-  std::map<
+  std::vector<std::map<
     typename Triangulation<dim - 1, dim>::active_cell_iterator,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
-    dem_data_containers::cut_cell_comparison<dim>>
-    &particle_moving_mesh_contact_candidates)
+    dem_data_containers::cut_cell_comparison<dim>>>
+    &particle_floating_mesh_contact_candidates)
 
 {
   for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
@@ -206,35 +207,46 @@ localize_contacts(
         }
     }
 
-  // Particle-moving mesh contacts
-  for (auto pmm_pairs_in_contact_iterator =
-         particle_moving_mesh_in_contact.begin();
-       pmm_pairs_in_contact_iterator != particle_moving_mesh_in_contact.end();
-       ++pmm_pairs_in_contact_iterator)
+  // Particle-floating mesh contacts
+  for (unsigned int solid_counter = 0;
+       solid_counter < particle_floating_mesh_in_contact.size();
+       ++solid_counter)
     {
-      auto triangle = pmm_pairs_in_contact_iterator->first;
+      auto &particle_floating_mesh_contact_pair =
+        particle_floating_mesh_in_contact[solid_counter];
 
-      auto pairs_in_contant_content = &pmm_pairs_in_contact_iterator->second;
-
-      for (auto pmm_map_iterator = pairs_in_contant_content->begin();
-           pmm_map_iterator != pairs_in_contant_content->end();)
+      for (auto pmm_pairs_in_contact_iterator =
+             particle_floating_mesh_contact_pair.begin();
+           pmm_pairs_in_contact_iterator !=
+           particle_floating_mesh_contact_pair.end();
+           ++pmm_pairs_in_contact_iterator)
         {
-          unsigned int particle_id = pmm_map_iterator->first;
+          auto triangle = pmm_pairs_in_contact_iterator->first;
 
-          auto pmm_contact_candidate_element =
-            &particle_moving_mesh_contact_candidates[triangle];
+          auto pairs_in_contant_content =
+            &pmm_pairs_in_contact_iterator->second;
 
-          auto search_iterator =
-            pmm_contact_candidate_element->find(particle_id);
-
-          if (search_iterator != pmm_contact_candidate_element->end())
+          for (auto pmm_map_iterator = pairs_in_contant_content->begin();
+               pmm_map_iterator != pairs_in_contant_content->end();)
             {
-              pmm_contact_candidate_element->erase(search_iterator);
-              ++pmm_map_iterator;
-            }
-          else
-            {
-              pairs_in_contant_content->erase(pmm_map_iterator++);
+              unsigned int particle_id = pmm_map_iterator->first;
+
+              auto pmm_contact_candidate_element =
+                &particle_floating_mesh_contact_candidates[solid_counter]
+                                                          [triangle];
+
+              auto search_iterator =
+                pmm_contact_candidate_element->find(particle_id);
+
+              if (search_iterator != pmm_contact_candidate_element->end())
+                {
+                  pmm_contact_candidate_element->erase(search_iterator);
+                  ++pmm_map_iterator;
+                }
+              else
+                {
+                  pairs_in_contant_content->erase(pmm_map_iterator++);
+                }
             }
         }
     }
@@ -259,11 +271,11 @@ template void localize_contacts(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<2>>>
     &pfw_pairs_in_contact,
-  std::map<typename Triangulation<1, 2>::active_cell_iterator,
-           std::unordered_map<types::particle_index,
-                              particle_wall_contact_info_struct<2>>,
-           dem_data_containers::cut_cell_comparison<2>>
-    &particle_moving_mesh_in_contact,
+  std::vector<std::map<typename Triangulation<1, 2>::active_cell_iterator,
+                       std::unordered_map<types::particle_index,
+                                          particle_wall_contact_info_struct<2>>,
+                       dem_data_containers::cut_cell_comparison<2>>>
+    &particle_floating_mesh_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -281,11 +293,11 @@ template void localize_contacts(
     types::particle_index,
     std::unordered_map<unsigned int, Particles::ParticleIterator<2>>>
     &pfw_contact_candidates,
-  std::map<
+  std::vector<std::map<
     typename Triangulation<1, 2>::active_cell_iterator,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>,
-    dem_data_containers::cut_cell_comparison<2>>
-    &particle_moving_mesh_contact_candidates);
+    dem_data_containers::cut_cell_comparison<2>>>
+    &particle_floating_mesh_contact_candidates);
 
 template void localize_contacts(
   std::unordered_map<
@@ -306,11 +318,11 @@ template void localize_contacts(
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<3>>>
     &pfw_pairs_in_contact,
-  std::map<typename Triangulation<2, 3>::active_cell_iterator,
-           std::unordered_map<types::particle_index,
-                              particle_wall_contact_info_struct<3>>,
-           dem_data_containers::cut_cell_comparison<3>>
-    &particle_moving_mesh_in_contact,
+  std::vector<std::map<typename Triangulation<2, 3>::active_cell_iterator,
+                       std::unordered_map<types::particle_index,
+                                          particle_wall_contact_info_struct<3>>,
+                       dem_data_containers::cut_cell_comparison<3>>>
+    &particle_floating_mesh_in_contact,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     &local_contact_pair_candidates,
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -328,8 +340,8 @@ template void localize_contacts(
     types::particle_index,
     std::unordered_map<unsigned int, Particles::ParticleIterator<3>>>
     &pfw_contact_candidates,
-  std::map<
+  std::vector<std::map<
     typename Triangulation<2, 3>::active_cell_iterator,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>,
-    dem_data_containers::cut_cell_comparison<3>>
-    &particle_moving_mesh_contact_candidates);
+    dem_data_containers::cut_cell_comparison<3>>>
+    &particle_floating_mesh_contact_candidates);

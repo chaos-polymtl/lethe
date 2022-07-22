@@ -137,6 +137,24 @@ public:
   get_solid_velocity();
 
   /**
+   * @return translational veclocity
+   */
+  Tensor<1, 3>
+  get_translational_velocity();
+
+  /**
+   * @return rotational (angular) veclocity
+   */
+  Tensor<1, 3>
+  get_rotational_velocity();
+
+  /**
+   * @return center of rotation
+   */
+  Point<3>
+  get_center_of_rotation();
+
+  /**
    * @return id of the solid
    */
   unsigned int

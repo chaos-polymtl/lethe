@@ -305,7 +305,7 @@ DEMSolver<dim>::load_balance()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
 
-  // Get total (with repetition) neighbors list for moving mesh
+  // Get total (with repetition) neighbors list for floating mesh
   if (floating_mesh)
     {
       cells_total_neighbor_list.clear();
@@ -499,10 +499,10 @@ DEMSolver<dim>::particle_wall_broad_search()
   // Particle - floating mesh broad search
   if (floating_mesh)
     {
-      particle_wall_broad_search_object.particle_moving_mesh_contact_search(
+      particle_wall_broad_search_object.particle_floating_mesh_contact_search(
         floating_mesh_information,
         particle_handler,
-        particle_moving_mesh_contact_candidates,
+        particle_floating_mesh_contact_candidates,
         cells_total_neighbor_list);
     }
 
@@ -541,9 +541,9 @@ DEMSolver<dim>::particle_wall_fine_search()
   // Particle - floating mesh fine search
   if (floating_mesh)
     {
-      particle_wall_fine_search_object.particle_moving_mesh_fine_search(
-        particle_moving_mesh_contact_candidates,
-        particle_moving_mesh_in_contact);
+      particle_wall_fine_search_object.particle_floating_mesh_fine_search(
+        particle_floating_mesh_contact_candidates,
+        particle_floating_mesh_in_contact);
     }
 
   particle_points_in_contact =
@@ -591,11 +591,14 @@ DEMSolver<dim>::particle_wall_contact_force()
   if (floating_mesh)
     {
       particle_wall_contact_force_object
-        ->calculate_particle_moving_wall_contact_force(
-          particle_moving_mesh_in_contact,
+        ->calculate_particle_floating_wall_contact_force(
+          particle_floating_mesh_in_contact,
           simulation_control->get_time_step(),
           torque,
-          force);
+          force,
+          floating_mesh_translational_velocity,
+          floating_mesh_rotational_velocity,
+          floating_mesh_center_of_rotation);
     }
 
   particle_point_line_contact_force_object
@@ -642,6 +645,21 @@ DEMSolver<dim>::finish_simulation()
         simulation_control->get_time_step(),
         forces_boundary_information,
         torques_boundary_information);
+    }
+}
+
+template <int dim>
+void
+DEMSolver<dim>::update_floating_mesh_info()
+{
+  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
+    {
+      floating_mesh_translational_velocity.insert(
+        {i_solid, solids[i_solid]->get_translational_velocity()});
+      floating_mesh_rotational_velocity.insert(
+        {i_solid, solids[i_solid]->get_rotational_velocity()});
+      floating_mesh_center_of_rotation.insert(
+        {i_solid, solids[i_solid]->get_center_of_rotation()});
     }
 }
 
@@ -907,6 +925,11 @@ DEMSolver<dim>::solve()
             updated_boundary_points_and_normal_vectors);
         }
 
+      // Update floating mesh information (translational and rotational
+      // velocities and center of rotation)
+      if (floating_mesh)
+        update_floating_mesh_info();
+
       // Keep track if particles were inserted this step
       particles_insertion_step = insert_particles();
 
@@ -994,22 +1017,23 @@ DEMSolver<dim>::solve()
                                  ghost_adjacent_particles,
                                  particle_wall_pairs_in_contact,
                                  pfw_pairs_in_contact,
-                                 particle_moving_mesh_in_contact,
+                                 particle_floating_mesh_in_contact,
                                  local_contact_pair_candidates,
                                  ghost_contact_pair_candidates,
                                  particle_wall_contact_candidates,
                                  pfw_contact_candidates,
-                                 particle_moving_mesh_contact_candidates);
+                                 particle_floating_mesh_contact_candidates);
 
-          locate_local_particles_in_cells<dim>(particle_handler,
-                                               particle_container,
-                                               ghost_adjacent_particles,
-                                               local_adjacent_particles,
-                                               particle_wall_pairs_in_contact,
-                                               pfw_pairs_in_contact,
-                                               particle_moving_mesh_in_contact,
-                                               particle_points_in_contact,
-                                               particle_lines_in_contact);
+          locate_local_particles_in_cells<dim>(
+            particle_handler,
+            particle_container,
+            ghost_adjacent_particles,
+            local_adjacent_particles,
+            particle_wall_pairs_in_contact,
+            pfw_pairs_in_contact,
+            particle_floating_mesh_in_contact,
+            particle_points_in_contact,
+            particle_lines_in_contact);
 
 
           // Particle-particle fine search

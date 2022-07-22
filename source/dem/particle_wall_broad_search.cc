@@ -148,44 +148,50 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
 
 template <int dim>
 void
-ParticleWallBroadSearch<dim>::particle_moving_mesh_contact_search(
+ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
   const std::vector<std::vector<
     std::pair<typename Triangulation<dim>::active_cell_iterator,
               typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
-    &                                    moving_mesh_information,
+    &                                    floating_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
-  std::map<
+  std::vector<std::map<
     typename Triangulation<dim - 1, dim>::active_cell_iterator,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
-    dem_data_containers::cut_cell_comparison<dim>>
-    &particle_moving_mesh_contact_candidates,
+    dem_data_containers::cut_cell_comparison<dim>>>
+    &particle_floating_mesh_contact_candidates,
   std::unordered_map<
     types::global_cell_index,
     std::vector<typename Triangulation<dim>::active_cell_iterator>>
     &cells_total_neighbor_list)
 {
-  // Clear the candidate container
-  particle_moving_mesh_contact_candidates.clear();
-
-  std::vector<Particles::ParticleIterator<dim>> contact_candidates;
-
-  // I am assuming that triangles in different solids have different unique
-  // global ids. If it's not the case, we have to modify the code
-
-  // Loop through solids
-  for (auto &solid_iterator : moving_mesh_information)
+  for (unsigned int solid_counter = 0;
+       solid_counter < particle_floating_mesh_contact_candidates.size();
+       ++solid_counter)
     {
-      // Loop through the pairs (first -> background cell, second -> moving
+      // Clear the candidate container
+      auto &candidates =
+        particle_floating_mesh_contact_candidates[solid_counter];
+      candidates.clear();
+
+      std::vector<Particles::ParticleIterator<dim>> contact_candidates;
+
+      // I am assuming that triangles in different solids have different unique
+      // global ids. If it's not the case, we have to modify the code
+
+      // Loop through solids
+      auto &solid_iterator = floating_mesh_information[solid_counter];
+
+      // Loop through the pairs (first -> background cell, second -> floating
       // cell)
-      for (auto moving_mesh_iterator = solid_iterator.begin();
-           moving_mesh_iterator != solid_iterator.end();
-           ++moving_mesh_iterator)
+      for (auto floating_mesh_iterator = solid_iterator.begin();
+           floating_mesh_iterator != solid_iterator.end();
+           ++floating_mesh_iterator)
         {
           // Get background cell
-          auto background_cell = moving_mesh_iterator->first;
+          auto background_cell = floating_mesh_iterator->first;
 
-          // Get cut cells (moving mesh cells)
-          auto cut_cells = moving_mesh_iterator->second;
+          // Get cut cells (floating mesh cells)
+          auto cut_cells = floating_mesh_iterator->second;
 
           // Get neighbors of the background cell
           auto cell_list = cells_total_neighbor_list.at(
@@ -206,30 +212,6 @@ ParticleWallBroadSearch<dim>::particle_moving_mesh_contact_search(
               // If the main cell is not empty
               if (particles_exist_in_cell)
                 {
-                  //   std::vector<Point<dim>> triangle;
-
-                  //     for (unsigned int vertex = 0; vertex <
-                  //     vertices_per_triangle;
-                  //       ++vertex)
-                  //    {
-                  // Find vertex-floating wall distance
-                  //         triangle.push_back(cut_cells->vertex(vertex));
-                  //     }
-
-                  // Call calculate_particle_triangle_distance to get the
-                  // distance and projection of particles on the triangle
-                  // (moving mesh cell)
-                  //     auto particle_triangle_information =
-                  //        LetheGridTools::calculate_particle_triangle_distance(
-                  //          triangle, particles_in_cell, n_particles_in_cell);
-
-                  //       const std::vector<bool> pass_distance_check =
-                  //          std::get<0>(particle_triangle_information);
-                  //         const std::vector<Point<dim>> projection_points =
-                  //           std::get<1>(particle_triangle_information);
-
-                  //         unsigned int particle_counter = 0;
-
                   // Loop through particles in the main cell and build contact
                   // candidate pairs
                   for (typename Particles::ParticleHandler<
@@ -238,27 +220,14 @@ ParticleWallBroadSearch<dim>::particle_moving_mesh_contact_search(
                        particles_in_cell_iterator != particles_in_cell.end();
                        ++particles_in_cell_iterator)
                     {
-                      //  if (pass_distance_check[particle_counter])
-                      //   {
-                      //     auto particle_mesh_info = std::make_tuple(
-                      //        particles_in_cell_iterator,
-                      //        std::get<2>(particle_triangle_information),
-                      //         projection_points[particle_counter]);
-
-
-                      //  contact_candidates.push_back(particles_in_cell_iterator);
-
-                      particle_moving_mesh_contact_candidates[cut_cells].insert(
+                      candidates[cut_cells].insert(
                         {particles_in_cell_iterator->get_id(),
                          particles_in_cell_iterator});
-                      //  }
                     }
                 }
             }
-
-          // particle_moving_mesh_contact_candidates.insert({cut_cells,
-          // contact_candidates});
         }
+      //  }
     }
 }
 

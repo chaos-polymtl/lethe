@@ -87,12 +87,14 @@ ParticleWallContactForce<dim>::update_contact_information(
 
 template <int dim>
 void
-ParticleWallContactForce<dim>::update_particle_moving_wall_contact_information(
-  particle_wall_contact_info_struct<dim> &contact_info,
-  const ArrayView<const double> &         particle_properties,
-  const double &                          dt,
-  const Tensor<1, 3> &                    cut_cell_translational_velocity,
-  const Tensor<1, 3> &                    cut_cell_rotational_velocity)
+ParticleWallContactForce<dim>::
+  update_particle_floating_wall_contact_information(
+    particle_wall_contact_info_struct<dim> &contact_info,
+    const ArrayView<const double> &         particle_properties,
+    const double &                          dt,
+    const Tensor<1, 3> &                    cut_cell_translational_velocity,
+    const Tensor<1, 3> &                    cut_cell_rotational_velocity,
+    const double &center_of_rotation_particle_distance)
 {
   const Tensor<1, 3> normal_vector = contact_info.normal_vector;
 
@@ -109,14 +111,13 @@ ParticleWallContactForce<dim>::update_particle_moving_wall_contact_information(
   particle_omega[1] = particle_properties[DEM::PropertiesIndex::omega_y];
   particle_omega[2] = particle_properties[DEM::PropertiesIndex::omega_z];
 
-
   // Defining relative contact velocity
   Tensor<1, 3> contact_relative_velocity =
     particle_velocity - cut_cell_translational_velocity +
-    cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
-                        particle_omega +
-                      cut_cell_rotational_velocity),
-                     normal_vector);
+    cross_product_3d(
+      (0.5 * particle_properties[DEM::PropertiesIndex::dp] * particle_omega +
+       center_of_rotation_particle_distance * cut_cell_rotational_velocity),
+      normal_vector);
 
   // Calculation of normal relative velocity
   double normal_relative_velocity_value =

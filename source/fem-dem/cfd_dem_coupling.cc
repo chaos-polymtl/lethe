@@ -1027,12 +1027,12 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                              ghost_adjacent_particles,
                              particle_wall_pairs_in_contact,
                              pfw_pairs_in_contact,
-                             particle_moving_mesh_in_contact,
+                             particle_floating_mesh_in_contact,
                              local_contact_pair_candidates,
                              ghost_contact_pair_candidates,
                              particle_wall_contact_candidates,
                              pfw_contact_candidates,
-                             particle_moving_mesh_contact_candidates);
+                             particle_floating_mesh_contact_candidates);
 
 
       locate_local_particles_in_cells<dim>(this->particle_handler,
@@ -1041,7 +1041,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                                            local_adjacent_particles,
                                            particle_wall_pairs_in_contact,
                                            pfw_pairs_in_contact,
-                                           particle_moving_mesh_in_contact,
+                                           particle_floating_mesh_in_contact,
                                            particle_points_in_contact,
                                            particle_lines_in_contact);
 

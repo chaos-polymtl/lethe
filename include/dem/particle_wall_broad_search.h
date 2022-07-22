@@ -117,32 +117,34 @@ public:
       &pfw_contact_candidates);
 
   /**
-   * Finds a two-layered unordered map (particle_moving_mesh_contact_candidates)
-   * of particle iterators that shows the candidate particle-floating mesh
-   * collision candidates. These collision pairs will be investigated in the
-   * fine search to check if they are in contact or not
+   * Finds a two-layered unordered map
+   * (particle_floating_mesh_contact_candidates) of particle iterators that
+   * shows the candidate particle-floating mesh collision candidates. These
+   * collision pairs will be investigated in the fine search to check if they
+   * are in contact or not
    *
-   * @param moving_mesh_information Information of the moving mesh mapped in the
+   * @param floating_mesh_information Information of the floating mesh mapped in the
    * background triangulation
    * @param particle_handler
-   * @param particle_moving_mesh_contact_candidates Particle-moving mesh contact
+   * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact
    * candidates
    * @param cells_total_neighbor_list A container in which all the neighbor cells
    * of the local cells are stored
    */
 
   void
-  particle_moving_mesh_contact_search(
+  particle_floating_mesh_contact_search(
     const std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
                 typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
-      &                                    moving_mesh_information,
+      &                                    floating_mesh_information,
     const Particles::ParticleHandler<dim> &particle_handler,
-    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-             std::unordered_map<types::particle_index,
-                                Particles::ParticleIterator<dim>>,
-             dem_data_containers::cut_cell_comparison<dim>>
-      &particle_moving_mesh_contact_candidates,
+    std::vector<
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               std::unordered_map<types::particle_index,
+                                  Particles::ParticleIterator<dim>>,
+               dem_data_containers::cut_cell_comparison<dim>>>
+      &particle_floating_mesh_contact_candidates,
     std::unordered_map<
       types::global_cell_index,
       std::vector<typename Triangulation<dim>::active_cell_iterator>>

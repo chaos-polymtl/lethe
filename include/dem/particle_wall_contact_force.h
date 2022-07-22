@@ -72,24 +72,34 @@ public:
     std::vector<Tensor<1, 3>> &force) = 0;
 
   /**
-   * Carries out the calculation of particle-moving mesh contact force using the
-   * contact pair container
+   * Carries out the calculation of particle-floating mesh contact force using
+   * the contact pair container
    *
-   * @param particle_floating_wall_pairs_in_contact A container that stores the information of
-   * particle-moving wall contact
+   * @param particle_floating_mesh_in_contact A container that stores the information of
+   * particle-floating mesh contact
    * @param dt DEM time step
    * @param torque Torque acting on particles
    * @param force Force acting on particles
+   * @param floating_mesh_translational_velocity
+   * @param floating_mesh_rotational_velocity
+   * @param floating_mesh_center_of_rotation
    */
-  virtual void calculate_particle_moving_wall_contact_force(
-    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-             std::unordered_map<types::particle_index,
-                                particle_wall_contact_info_struct<dim>>,
-             dem_data_containers::cut_cell_comparison<dim>>
-      &                        particle_moving_mesh_in_contact,
+  virtual void calculate_particle_floating_wall_contact_force(
+    std::vector<
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               std::unordered_map<types::particle_index,
+                                  particle_wall_contact_info_struct<dim>>,
+               dem_data_containers::cut_cell_comparison<dim>>>
+      &                        particle_floating_mesh_in_contact,
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) = 0;
+    std::vector<Tensor<1, 3>> &force,
+    const std::map<unsigned int, Tensor<1, 3>>
+      &floating_mesh_translational_velocity,
+    const std::map<unsigned int, Tensor<1, 3>>
+      &floating_mesh_rotational_velocity,
+    const std::map<unsigned int, Point<3>>
+      &floating_mesh_center_of_rotation) = 0;
 
   std::map<unsigned int, Tensor<1, 3>>
   get_force()
@@ -179,14 +189,19 @@ protected:
    * in neighborhood
    * @param particle_properties Properties of particle in contact
    * @param dt DEM time step
+   * @param cut_cell_translational_velocity Translational velocity of the cut cell
+   * @param cut_cell_rotational_veclocity Rotational veclocity of the cut cell
+   * @param center_of_rotation_particle_distance distance between particle and
+   * the center of rotation of the floating mesh
    */
   void
-  update_particle_moving_wall_contact_information(
+  update_particle_floating_wall_contact_information(
     particle_wall_contact_info_struct<dim> &contact_pair_information,
     const ArrayView<const double> &         particle_properties,
     const double &                          dt,
     const Tensor<1, 3> &                    cut_cell_translational_velocity,
-    const Tensor<1, 3> &                    cut_cell_rotational_velocity);
+    const Tensor<1, 3> &                    cut_cell_rotational_velocity,
+    const double &center_of_rotation_particle_distance);
 
   /**
    * Carries out applying the calculated force and torque on the local-local

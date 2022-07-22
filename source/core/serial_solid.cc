@@ -17,6 +17,7 @@
 
 #include <core/serial_solid.h>
 #include <core/solutions_output.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
@@ -304,6 +305,35 @@ SerialSolid<dim, spacedim>::get_solid_velocity()
   return translational_velocity;
 }
 
+template <int dim, int spacedim>
+Tensor<1, 3>
+SerialSolid<dim, spacedim>::get_translational_velocity()
+{
+  if constexpr (spacedim == 3)
+    return this->current_translational_velocity;
+
+  if constexpr (spacedim == 2)
+    return tensor_nd_to_3d(this->current_translational_velocity);
+}
+
+template <int dim, int spacedim>
+Tensor<1, 3>
+SerialSolid<dim, spacedim>::get_rotational_velocity()
+{
+  return this->current_angular_velocity;
+}
+
+template <int dim, int spacedim>
+Point<3>
+SerialSolid<dim, spacedim>::get_center_of_rotation()
+{
+  if constexpr (spacedim == 3)
+    return this->center_of_rotation;
+
+  if constexpr (spacedim == 2)
+    return point_nd_to_3d(this->center_of_rotation);
+}
+
 template <>
 void
 SerialSolid<1, 2>::rotate_grid(double /*angle*/, int /*axis*/)
@@ -357,7 +387,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   translational_velocity->set_time(initial_time);
-  // angular_velocity->set_time(initial_time);
+  angular_velocity->set_time(initial_time);
 
   for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
     {

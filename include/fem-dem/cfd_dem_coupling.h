@@ -273,17 +273,19 @@ private:
     std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates;
 
-  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-           std::unordered_map<types::particle_index,
-                              particle_wall_contact_info_struct<dim>>,
-           dem_data_containers::cut_cell_comparison<dim>>
-    particle_moving_mesh_in_contact;
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
+    particle_floating_mesh_in_contact;
 
-  std::map<
+  std::vector<std::map<
     typename Triangulation<dim - 1, dim>::active_cell_iterator,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
-    dem_data_containers::cut_cell_comparison<dim>>
-    particle_moving_mesh_contact_candidates;
+    dem_data_containers::cut_cell_comparison<dim>>>
+    particle_floating_mesh_contact_candidates;
+
 
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     particle_container;

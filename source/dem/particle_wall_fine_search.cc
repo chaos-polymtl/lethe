@@ -202,32 +202,41 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
 
 template <int dim>
 void
-ParticleWallFineSearch<dim>::particle_moving_mesh_fine_search(
-  const std::map<
+ParticleWallFineSearch<dim>::particle_floating_mesh_fine_search(
+  const std::vector<std::map<
     typename Triangulation<dim - 1, dim>::active_cell_iterator,
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
-    dem_data_containers::cut_cell_comparison<dim>>
-    &particle_moving_mesh_contact_candidates,
-  std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-           std::unordered_map<types::particle_index,
-                              particle_wall_contact_info_struct<dim>>,
-           dem_data_containers::cut_cell_comparison<dim>>
-    &particle_moving_mesh_in_contact)
+    dem_data_containers::cut_cell_comparison<dim>>>
+    &particle_floating_mesh_contact_candidates,
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
+    &particle_floating_mesh_in_contact)
 {
-  for (auto const &[cut_cell_key, candidate_particles] :
-       particle_moving_mesh_contact_candidates)
+  for (unsigned int solid_counter = 0;
+       solid_counter < particle_floating_mesh_contact_candidates.size();
+       ++solid_counter)
     {
-      if (!candidate_particles.empty())
-        {
-          for (auto &particle_moving_mesh_candidate_iterator :
-               candidate_particles)
-            {
-              particle_wall_contact_info_struct<dim> contact_info;
-              contact_info.particle =
-                particle_moving_mesh_candidate_iterator.second;
+      auto &candidates =
+        particle_floating_mesh_contact_candidates[solid_counter];
 
-              particle_moving_mesh_in_contact[cut_cell_key].insert(
-                {particle_moving_mesh_candidate_iterator.first, contact_info});
+      for (auto const &[cut_cell_key, candidate_particles] : candidates)
+        {
+          if (!candidate_particles.empty())
+            {
+              for (auto &particle_floating_mesh_candidate_iterator :
+                   candidate_particles)
+                {
+                  particle_wall_contact_info_struct<dim> contact_info;
+                  contact_info.particle =
+                    particle_floating_mesh_candidate_iterator.second;
+
+                  particle_floating_mesh_in_contact[solid_counter][cut_cell_key]
+                    .insert({particle_floating_mesh_candidate_iterator.first,
+                             contact_info});
+                }
             }
         }
     }
