@@ -172,7 +172,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 {
   TimerOutput::Scope t(this->computing_timer, "optimized_cut_cells_mapping");
   MappingQ1<dim>     mapping;
-  unsigned int       max_childs = GeometryInfo<dim>::max_children_per_cell;
+  unsigned int       max_children = GeometryInfo<dim>::max_children_per_cell;
 
   std::set<typename DoFHandler<dim>::cell_iterator> all_candidate_cells;
   std::set<typename DoFHandler<dim>::cell_iterator>
@@ -261,7 +261,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                         {
                           // If we are here, the cell has children.
                           all_cells_are_active = false;
-                          for (unsigned int j = 0; j < max_childs; ++j)
+                          for (unsigned int j = 0; j < max_children; ++j)
                             {
                               // Store the children of the cell for
                               // further checks.
@@ -281,7 +281,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                         {
                           // If we are here, the cell has children.
                           all_cells_are_active = false;
-                          for (unsigned int j = 0; j < max_childs; ++j)
+                          for (unsigned int j = 0; j < max_children; ++j)
                             {
                               // Store the children of the cell for
                               // further checks.
