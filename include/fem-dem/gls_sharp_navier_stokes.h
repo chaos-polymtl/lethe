@@ -93,8 +93,8 @@ private:
   void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim>                         &scratch_data,
-    StabilizedMethodsTensorCopyData<dim>                 &copy_data) override;
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -112,8 +112,8 @@ private:
   void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim>                         &scratch_data,
-    StabilizedMethodsTensorCopyData<dim>                 &copy_data) override;
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
 
   /**
    * @brief sets up the vector of assembler functions
@@ -359,7 +359,7 @@ private:
    */
   std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
   cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,
-           std::vector<types::global_dof_index>          &local_dof_indices,
+           std::vector<types::global_dof_index> &         local_dof_indices,
            std::map<types::global_dof_index, Point<dim>> &support_points);
   bool
   cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
@@ -380,7 +380,7 @@ private:
    */
   std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
   cell_inside(const typename DoFHandler<dim>::active_cell_iterator &cell,
-              std::vector<types::global_dof_index>          &local_dof_indices,
+              std::vector<types::global_dof_index> &         local_dof_indices,
               std::map<types::global_dof_index, Point<dim>> &support_points);
 
 
