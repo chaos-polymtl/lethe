@@ -71,7 +71,7 @@ GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
         {
           all_spheres = false;
           std::cout
-            << "Non spherical particle were found: using regular cut_cells_mapping."
+            << "A non-spherical particle was found: using regular cut_cells_mapping."
             << std::endl;
           break;
         }
