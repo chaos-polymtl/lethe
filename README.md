@@ -4,7 +4,7 @@
 
 [![Build Status](https://github.com/lethe-cfd/lethe/workflows/CI/badge.svg)](https://github.com/lethe-cfd/lethe/workflows/CI/badge.svg)
 
-Lethe (pronounced /ˈliːθiː/) is open-source computational fluid dynamics
+Lethe (pronounced /ˈliːθiː/) is an open-source computational fluid dynamics
 (CFD) software which uses high-order continuous Galerkin formulations to
 solve the incompressible Navier–Stokes equations (among others).
 Lethe contains a family of solvers that are based on
