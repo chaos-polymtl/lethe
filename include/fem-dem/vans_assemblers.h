@@ -198,7 +198,6 @@ public:
  * @ingroup assemblers
  */
 
-
 template <int dim>
 class GLSVansAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
 {
