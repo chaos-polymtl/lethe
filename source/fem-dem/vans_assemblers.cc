@@ -847,7 +847,7 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   unsigned int particle_number;
   double       cell_void_fraction = 0;
   double       C_d                = 0;
-  auto &       relative_velocity =
+  const auto & relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -919,7 +919,7 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   unsigned int particle_number;
   double       cell_void_fraction = 0;
   double       C_d                = 0;
-  auto &       relative_velocity =
+  const auto & relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -988,7 +988,7 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
 {
   unsigned int particle_number;
   double       C_d = 0;
-  auto &       relative_velocity =
+  const auto & relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -1051,7 +1051,7 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
 {
   unsigned int particle_number;
   double       cell_void_fraction = 0;
-  auto &       relative_velocity =
+  const auto & relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -1141,7 +1141,7 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   unsigned int particle_number;
   double       cell_void_fraction    = 0;
   double       normalized_drag_force = 0;
-  auto &       relative_velocity =
+  const auto & relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -1229,7 +1229,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   unsigned int particle_number;
   double       cell_void_fraction = 0;
   double       C_d                = 0;
-  auto &       relative_velocity =
+  const auto & relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
