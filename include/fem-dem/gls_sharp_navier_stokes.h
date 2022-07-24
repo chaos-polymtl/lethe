@@ -532,7 +532,7 @@ Return a bool that describes  if a cell contains a specific point
    */
 
 private:
-  bool all_spheres = true;
+  bool all_spheres;
 
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>

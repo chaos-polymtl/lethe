@@ -353,9 +353,11 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
       return {cell_is_inside, cell_is_cut};
     }
 
-  // The last test is to project the particles' position on the cells' face and
-  // check whether the projected points are within the particle.
-  //
+  // The last check consists of projecting the particle's position on the cells'
+  // face and checking whether the projected points are within the particle. If
+  // one of the projected points is inside the particle, either the cell is
+  // inside or is cut by the particles. If this is true, the next
+  // generation will be tested again by this function.
 
   // Initialize superpoint of manifold
   std::vector<Point<dim>> manifold_points(
@@ -378,9 +380,10 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
       auto surrounding_face_points =
         make_array_view(manifold_points.begin(), manifold_points.end());
 
-      // Project particles' position on faces
+      // Loop through face vertices
       for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i)
         {
+          // Project points to face
           Point<dim> projected_point =
             local_face_manifold.project_to_manifold(surrounding_face_points,
                                                     position);
@@ -410,8 +413,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
 
           for (unsigned int d = 0; d != dim; d++)
             {
-              if (unit_cell_projected_point[d] < 0 ||
-                  unit_cell_projected_point[d] > 1)
+              if (projected_point_tensor[d] < 0 ||
+                  projected_point_tensor[d] > 1)
                 {
                   projected_point_over_face = false;
                 }
