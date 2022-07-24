@@ -8,8 +8,6 @@ subsection simulation control
   set time step               = 0.03125
   set number mesh adapt       = 1
   set time end                = 0.0625
-  set output name             = test
-  set output frequency        = 0
 end
 #---------------------------------------------------
 # Physical Properties

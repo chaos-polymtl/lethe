@@ -8,8 +8,6 @@ subsection simulation control
   set time step               = 0.03125
   set number mesh adapt       = 3
   set time end                = 0.125
-  set output name             = test
-  set output frequency        = 0
   set subdivision             = 1
 end
 #---------------------------------------------------
