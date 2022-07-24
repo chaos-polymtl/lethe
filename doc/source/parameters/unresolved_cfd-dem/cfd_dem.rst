@@ -10,7 +10,7 @@ This subsection includes parameters related to multiphase flow simulations using
       set void fraction time derivative = false
       set interpolated void fraction = true
       set drag force = true
-      set saffman lift force = true
+      set saffman lift force = false
       set buoyancy force = true
       set shear force = true
       set pressure force = true

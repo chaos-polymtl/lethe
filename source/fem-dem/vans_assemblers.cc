@@ -849,8 +849,8 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   double       C_d                = 0;
   auto &       relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
-  auto &Re_p      = scratch_data.Re_particle;
-  auto &beta_drag = scratch_data.beta_drag;
+  const auto &Re_p      = scratch_data.Re_particle;
+  auto &      beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> drag_force;
 
@@ -921,8 +921,8 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   double       C_d                = 0;
   auto &       relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
-  auto &Re_p      = scratch_data.Re_particle;
-  auto &beta_drag = scratch_data.beta_drag;
+  const auto &Re_p      = scratch_data.Re_particle;
+  auto &      beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> drag_force;
 
@@ -990,8 +990,8 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   double       C_d = 0;
   auto &       relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
-  auto &Re_p      = scratch_data.Re_particle;
-  auto &beta_drag = scratch_data.beta_drag;
+  const auto &Re_p      = scratch_data.Re_particle;
+  auto &      beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> drag_force;
 
@@ -1053,8 +1053,8 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
   double       cell_void_fraction = 0;
   auto &       relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
-  auto &Re_p      = scratch_data.Re_particle;
-  auto &beta_drag = scratch_data.beta_drag;
+  const auto &Re_p      = scratch_data.Re_particle;
+  auto &      beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> drag_force;
 
@@ -1143,8 +1143,8 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   double       normalized_drag_force = 0;
   auto &       relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
-  auto &Re_p      = scratch_data.Re_particle;
-  auto &beta_drag = scratch_data.beta_drag;
+  const auto &Re_p      = scratch_data.Re_particle;
+  auto &      beta_drag = scratch_data.beta_drag;
 
 
   Tensor<1, dim> superficial_velocity;
@@ -1231,8 +1231,8 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   double       C_d                = 0;
   auto &       relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
-  auto &Re_p      = scratch_data.Re_particle;
-  auto &beta_drag = scratch_data.beta_drag;
+  const auto &Re_p      = scratch_data.Re_particle;
+  auto &      beta_drag = scratch_data.beta_drag;
 
   Tensor<1, dim> drag_force;
 
@@ -1337,9 +1337,9 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   double       C_s   = 0;
   double       alpha = 0;
 
-  auto &relative_velocity =
+  const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
-  auto &Re_p = scratch_data.Re_particle;
+  const auto &Re_p = scratch_data.Re_particle;
 
   auto &velocity_curls_2d =
     scratch_data.fluid_velocity_curls_at_particle_location_2d;
