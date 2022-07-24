@@ -357,7 +357,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
   // face and checking whether the projected points are within the particle. If
   // one of the projected points is inside the particle, either the cell is
   // inside or is cut by the particles. If this is true, the next
-  // generation will be tested again by this function.
+  // level will be tested again by this function.
 
   // Initialize superpoint of manifold
   std::vector<Point<dim>> manifold_points(
