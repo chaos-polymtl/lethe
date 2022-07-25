@@ -363,12 +363,6 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
   std::vector<Point<dim>> manifold_points(
     GeometryInfo<dim - 1>::vertices_per_cell);
 
-  // The last check consists of projecting the particle's position on the cells'
-  // face and checking whether the projected points are within the particle. If
-  // one of the projected points is inside the particle, either the cell is
-  // inside or is cut by the particles. If this is true, the next
-  // level will be tested again by this function.
-
   // Loop through faces
   for (const auto face : cell->face_indices())
     {
