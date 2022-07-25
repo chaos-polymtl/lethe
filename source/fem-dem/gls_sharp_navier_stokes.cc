@@ -42,6 +42,7 @@ template <int dim>
 GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
   SimulationParameters<dim> &p_nsparam)
   : GLSNavierStokesSolver<dim>(p_nsparam)
+  , all_spheres(true)
 {}
 
 template <int dim>
@@ -57,6 +58,24 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
   TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
 
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
+}
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
+{
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      if (particles[p_i].shape->get_shape_name().second !=
+          Shape<dim>::ShapeType::sphere)
+        {
+          all_spheres = false;
+          std::cout
+            << "A non-spherical particle was found: using regular cut_cells_mapping."
+            << std::endl;
+          break;
+        }
+    }
 }
 
 template <int dim>
@@ -106,7 +125,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   if (0 == this->fe->system_to_component_index(j).first)
                     {
                       if (particles[p].get_levelset(
-                            support_points[local_dof_indices[j]]) <= 0)
+                            support_points[local_dof_indices[j]]) < 0)
                         ++nb_dof_inside;
                     }
                 }
@@ -150,6 +169,263 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
 template <int dim>
 void
+GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
+{
+  TimerOutput::Scope t(this->computing_timer, "optimized_cut_cells_mapping");
+  MappingQ1<dim>     mapping;
+  unsigned int       max_children = GeometryInfo<dim>::max_children_per_cell;
+
+  std::set<typename DoFHandler<dim>::cell_iterator> all_candidate_cells;
+  std::set<typename DoFHandler<dim>::cell_iterator>
+    previous_all_candidate_cells;
+
+  cut_cells_map.clear();
+  cells_inside_map.clear();
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          cut_cells_map[cell]    = {false, 0};
+          cells_inside_map[cell] = {false, 0};
+        }
+    }
+
+  // Loop over particles in reverse.
+  // This is done in reverse to guarantee that the lowest particle ID is
+  // associated to the cut cell or the inside particle cell. For instance, if
+  // you have two particles cutting the same cell, it guarantees that the lowest
+  // ID particle is associated with the cell in the map.
+  for (int p = particles.size() - 1; p >= 0; --p)
+    {
+      bool         empty    = true;
+      unsigned int lvl_iter = 0;
+
+      // Fix max level search
+      unsigned int max_lvl_search =
+        this->dof_handler.get_triangulation().n_levels() - 2;
+      if (max_lvl_search < 4)
+        max_lvl_search = this->dof_handler.get_triangulation().n_levels();
+
+      // Search for candidates until at least one is found or until the
+      // max_lvl_search is reached
+      while (empty || lvl_iter < max_lvl_search)
+        {
+          const auto &cell_iterator =
+            this->dof_handler.cell_iterators_on_level(lvl_iter);
+
+          // Loop over the cells on level lvl_iter of the mesh
+          for (const auto &cell : cell_iterator)
+            {
+              auto is_candidate = generate_cut_cell_candidates(cell, p);
+
+              // check whether the cell is candidate for inside of cut
+              if (is_candidate.first)
+                {
+                  all_candidate_cells.insert(cell);
+                }
+              if (is_candidate.second)
+                {
+                  all_candidate_cells.insert(cell);
+                }
+            }
+          if (all_candidate_cells.size() > 0)
+            empty = false;
+
+          lvl_iter += 1;
+        }
+
+      // Store list with all candidate cells
+      previous_all_candidate_cells = all_candidate_cells;
+
+      // If there are candidate cells
+      if (all_candidate_cells.size() != 0)
+        {
+          bool all_cells_are_active = false;
+
+          // Loop until candidate cells are active
+          while (!all_cells_are_active)
+            {
+              all_cells_are_active = true;
+              all_candidate_cells.clear();
+
+              // loop over the last set of candidates to check if it is still a
+              // candidate
+              for (auto cell : previous_all_candidate_cells)
+                {
+                  auto is_candidate = generate_cut_cell_candidates(cell, p);
+
+                  // Check if cell is inside particles
+                  if (is_candidate.first)
+                    {
+                      // If it is an active cell, add it to cells_inside_map
+                      if (cell->is_active())
+                        {
+                          cells_inside_map[cell] = {true, p};
+                        }
+                      else
+                        {
+                          // If we are here, the cell has children.
+                          all_cells_are_active = false;
+                          for (unsigned int j = 0; j < max_children; ++j)
+                            {
+                              // Store the children of the cell for
+                              // further checks.
+                              all_candidate_cells.insert(cell->child(j));
+                            }
+                        }
+                    }
+
+                  if (is_candidate.second)
+                    {
+                      // If it is an active cell, add it to cells_cut_map
+                      if (cell->is_active())
+                        {
+                          cut_cells_map[cell] = {true, p};
+                        }
+                      else
+                        {
+                          // If we are here, the cell has children.
+                          all_cells_are_active = false;
+                          for (unsigned int j = 0; j < max_children; ++j)
+                            {
+                              // Store the children of the cell for
+                              // further checks.
+                              all_candidate_cells.insert(cell->child(j));
+                            }
+                        }
+                    }
+                }
+              previous_all_candidate_cells.clear();
+              previous_all_candidate_cells = all_candidate_cells;
+            }
+        }
+    }
+}
+
+
+template <int dim>
+std::pair<bool, bool>
+GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
+  const typename DoFHandler<dim>::cell_iterator &cell,
+  const unsigned int                             p_id)
+{
+  bool cell_is_inside = false;
+  bool cell_is_cut    = false;
+
+  double search_radius = particles[p_id].radius * (1.0 - 1e-07);
+  auto   position      = particles[p_id].position;
+
+  bool point_inside_cell = cell->point_inside(position);
+
+  // Check how many vertices are inside the particle
+  unsigned int nb_vertices_inside = 0;
+  for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
+    {
+      if ((cell->vertex(i) - position).norm() < search_radius)
+        ++nb_vertices_inside;
+    }
+
+  // If vertices are found inside the particle
+  if (nb_vertices_inside > 0)
+    {
+      // If the number of vertices inside the cell is equal to the number of
+      // vertices per cell, the cell is inside the particle
+      if (nb_vertices_inside == GeometryInfo<dim>::vertices_per_cell)
+        {
+          cell_is_inside = true;
+          cell_is_cut    = false;
+        }
+      // Otherwise, the cell is cut
+      else
+        {
+          cell_is_inside = false;
+          cell_is_cut    = true;
+        }
+      return {cell_is_inside, cell_is_cut};
+    }
+
+  // If the particles is inside the cell and it is not known whether all
+  // vertices are inside the particles or not, set all true by default
+  if (point_inside_cell)
+    {
+      cell_is_inside = true;
+      cell_is_cut    = true;
+      return {cell_is_inside, cell_is_cut};
+    }
+
+  // The last check consists of projecting the particle's position on the cells'
+  // face and checking whether the projected points are within the particle. If
+  // one of the projected points is inside the particle, either the cell is
+  // inside or is cut by the particles. If this is true, the next
+  // level will be tested again by this function.
+
+  // Initialize superpoint of manifold
+  std::vector<Point<dim>> manifold_points(
+    GeometryInfo<dim - 1>::vertices_per_cell);
+
+  // Loop through faces
+  for (const auto face : cell->face_indices())
+    {
+      auto  face_iter           = cell->face(face);
+      auto &local_face_manifold = face_iter->get_manifold();
+
+      // Loop through face vertices
+      for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i)
+        {
+          // Assign vertex to manifold superpoint
+          manifold_points[i] = face_iter->vertex(i);
+        }
+
+      // Create array of points on face
+      auto surrounding_face_points =
+        make_array_view(manifold_points.begin(), manifold_points.end());
+
+      // Loop through face vertices
+      for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i)
+        {
+          // Project points to face
+          Point<dim> projected_point =
+            local_face_manifold.project_to_manifold(surrounding_face_points,
+                                                    position);
+
+          bool           projected_point_over_face = true;
+          Point<dim>     unit_cell_projected_point;
+          Tensor<1, dim> projected_point_tensor(projected_point);
+
+          // Check whether the projected point is within the cell
+          try
+            {
+              projected_point_over_face = cell->point_inside(projected_point);
+
+              if ((position - projected_point).norm() < search_radius &&
+                  projected_point_over_face)
+                {
+                  cell_is_inside = true;
+                  cell_is_cut    = true;
+                  return {cell_is_inside, cell_is_cut};
+                }
+            }
+          // If the method crashes, change default for false
+          catch (...)
+            {
+              projected_point_over_face = false;
+            }
+
+          for (unsigned int d = 0; d != dim; d++)
+            {
+              if (projected_point_tensor[d] < 0 ||
+                  projected_point_tensor[d] > 1)
+                {
+                  projected_point_over_face = false;
+                }
+            }
+        }
+    }
+  return {cell_is_inside, cell_is_cut};
+}
+
+template <int dim>
+void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
   // initialized the particles
@@ -174,6 +450,8 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
   ib_dem.initialize(this->simulation_parameters.particlesParameters,
                     this->mpi_communicator,
                     particles);
+
+  check_whether_all_particles_are_sphere();
 }
 
 
@@ -1024,7 +1302,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
 
-          if (cell_is_cut == false && cell_is_inside == false)
+          if (!cell_is_cut && !cell_is_inside)
             {
               auto &evaluation_point = this->evaluation_point;
               fe_values.reinit(cell);
@@ -1152,7 +1430,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                 }
             }
 
-          if (cell_is_cut == false)
+          if (!cell_is_cut)
             {
               auto &evaluation_point = this->evaluation_point;
               auto &present_solution = this->present_solution;
@@ -1200,7 +1478,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                       l2errorU += (uz_sim - uz_exact) * (uz_sim - uz_exact) *
                                   fe_values.JxW(q);
                     }
-                  if (cell_is_inside == false)
+                  if (!cell_is_inside)
                     {
                       total_velocity_divergence +=
                         (present_velocity_divergence - mass_source) *
@@ -1345,15 +1623,17 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             (particles[p].impulsion) / particles[p].mass / dt;
           // Approximate a diagonal Jacobian with a secant methods.
 
-          double d_residual_dv = -bdf_coefs[0] - 0.5 * volume * fluid_density /
-                                                   particles[p].mass / dt;
+          double d_residual_dv =
+            -bdf_coefs[0] -
+            0.5 * volume * fluid_density / particles[p].mass / dt + DBL_MIN;
           if ((particles[p].velocity - particles[p].velocity_iter).norm() != 0)
             {
               d_residual_dv =
                 -bdf_coefs[0] -
                 (particles[p].impulsion - particles[p].impulsion_iter).norm() /
                   (particles[p].velocity - particles[p].velocity_iter).norm() /
-                  particles[p].mass / dt;
+                  particles[p].mass / dt +
+                DBL_MIN;
             }
           // Relaxation parameter for the particle dynamics.
           double local_alpha = 1;
@@ -1362,61 +1642,61 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           // domain. If this is the case, the particle won't be updated.
           IBParticle<dim> save_particle_state         = particles[p];
           bool            save_particle_state_is_used = false;
-          try
+          // Define the correction vector.
+          Tensor<1, 3> dv = residual_velocity * 1 / d_residual_dv;
+
+          // Update the particle state and keep in memory the last iteration
+          // information.
+
+          particles[p].velocity_iter = particles[p].velocity;
+          particles[p].velocity =
+            particles[p].velocity_iter - dv * alpha * local_alpha;
+          particles[p].impulsion_iter                = particles[p].impulsion;
+          particles[p].previous_d_velocity           = dv;
+          particles[p].previous_local_alpha_velocity = local_alpha;
+
+
+          // If the particles have impacted a wall or another particle, we
+          // want to use the sub-time step position. Otherwise, we solve the
+          // new position directly with the new velocity found.
+          if (particles[p].contact_impulsion.norm() < 1e-12)
             {
-              // Define the correction vector.
-              Tensor<1, 3> dv = residual_velocity * 1 / d_residual_dv;
-
-              // Update the particle state and keep in memory the last iteration
-              // information.
-
-              particles[p].velocity_iter = particles[p].velocity;
-              particles[p].velocity =
-                particles[p].velocity_iter - dv * alpha * local_alpha;
-              particles[p].impulsion_iter      = particles[p].impulsion;
-              particles[p].previous_d_velocity = dv;
-              particles[p].previous_local_alpha_velocity = local_alpha;
-
-
-              // If the particles have impacted a wall or another particle, we
-              // want to use the sub-time step position. Otherwise, we solve the
-              // new position directly with the new velocity found.
-              if (particles[p].contact_impulsion.norm() < 1e-12)
+              particles[p].position.clear();
+              for (unsigned int d = 0; d < dim; ++d)
                 {
-                  particles[p].position.clear();
-                  for (unsigned int d = 0; d < dim; ++d)
+                  for (unsigned int i = 1;
+                       i < number_of_previous_solutions(method) + 1;
+                       ++i)
                     {
-                      for (unsigned int i = 1;
-                           i < number_of_previous_solutions(method) + 1;
-                           ++i)
-                        {
-                          double position_update =
-                            -bdf_coefs[i] *
-                            particles[p].previous_positions[i - 1][d] /
-                            bdf_coefs[0];
-
-                          particles[p].set_position(particles[p].position[d] +
-                                                      position_update,
-                                                    d);
-                        }
-
                       double position_update =
-                        particles[p].velocity[d] / bdf_coefs[0];
+                        -bdf_coefs[i] *
+                        particles[p].previous_positions[i - 1][d] /
+                        bdf_coefs[0];
+
                       particles[p].set_position(particles[p].position[d] +
                                                   position_update,
                                                 d);
                     }
+
+                  double position_update =
+                    particles[p].velocity[d] / bdf_coefs[0];
+                  particles[p].set_position(particles[p].position[d] +
+                                              position_update,
+                                            d);
                 }
-              else
-                {
-                  Tensor<1, dim> position_update =
-                    local_alpha *
-                    (ib_dem.dem_particles[p].position - particles[p].position);
-                  particles[p].set_position(particles[p].position +
-                                            position_update);
-                }
-              // Check if the particle is in the domain. Throw an error if it's
-              // the case.
+            }
+          else
+            {
+              Tensor<1, dim> position_update =
+                local_alpha *
+                (ib_dem.dem_particles[p].position - particles[p].position);
+              particles[p].set_position(particles[p].position +
+                                        position_update);
+            }
+          // Check if the particle is in the domain. Throw an error if it's
+          // the case.
+          try
+            {
               const auto &cell =
                 LetheGridTools::find_cell_around_point_with_tree(
                   this->dof_handler, particles[p].position);
@@ -1955,6 +2235,8 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
         }
     }
 }
+
+
 
 template <int dim>
 void
@@ -3129,8 +3411,12 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
             }
         }
     }
+  // Check if particles are spheres
+  check_whether_all_particles_are_sphere();
+
   // Create the list of contact candidates
   ib_dem.update_contact_candidates();
+
   // Finish the time step of the particle.
 }
 
@@ -3169,20 +3455,22 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].orientation[2] = restart_data["orientation_z"][p_i];
           // Initialize shape of particles according to the type parameter in
           // the file
-          if (restart_data["type"][p_i] == 0)
+          if (restart_data["type"][p_i] == Shape<dim>::ShapeType::sphere)
             {
               std::vector<double> shape_argument(1);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
               particles[p_i].initialize_shape("sphere", shape_argument);
             }
-          else if (restart_data["type"][p_i] == 1)
+          else if (restart_data["type"][p_i] ==
+                   Shape<dim>::ShapeType::rectangle)
             {
               std::vector<double> shape_argument(2);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
               shape_argument[1] = restart_data["shape_argument_1"][p_i];
               particles[p_i].initialize_shape("rectangle", shape_argument);
             }
-          else if (restart_data["type"][p_i] == 2)
+          else if (restart_data["type"][p_i] ==
+                   Shape<dim>::ShapeType::ellipsoid)
             {
               std::vector<double> shape_argument(2);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
@@ -3370,7 +3658,11 @@ GLSSharpNavierStokesSolver<dim>::solve()
         temp_coarse;
 
       vertices_cell_mapping();
-      generate_cut_cells_map();
+
+      if (all_spheres)
+        optimized_generate_cut_cells_map();
+      else
+        generate_cut_cells_map();
     }
 
   this->set_initial_condition(
@@ -3402,7 +3694,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-          generate_cut_cells_map();
+
+          if (all_spheres)
+            optimized_generate_cut_cells_map();
+          else
+            generate_cut_cells_map();
+
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,
@@ -3417,7 +3714,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
           vertices_cell_mapping();
-          generate_cut_cells_map();
+
+          if (all_spheres)
+            optimized_generate_cut_cells_map();
+          else
+            generate_cut_cells_map();
+
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,
