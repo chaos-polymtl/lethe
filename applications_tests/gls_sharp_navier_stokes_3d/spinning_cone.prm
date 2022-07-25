@@ -1,21 +1,20 @@
 # Listing of Parameters
-# ---------------------
-# --------------------------------------------------
+#----------------------
+#---------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
   set method                  = bdf1
   set time step               = 0.03125
-  set number mesh adapt       = 1
   set time end                = 0.0625
 end
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-  subsection fluid 0
-    set kinematic viscosity            = 1
-  end
+    subsection fluid 0
+        set kinematic viscosity            = 1
+    end
 end
 
 #---------------------------------------------------
@@ -35,7 +34,7 @@ subsection FEM
     set pressure order        = 1
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
@@ -63,7 +62,7 @@ set number                  = 3
 	end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # IB particles
 #---------------------------------------------------
 subsection particles
@@ -86,7 +85,7 @@ subsection particles
 	end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
@@ -101,7 +100,7 @@ subsection mesh adaptation
   set variable             = velocity
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Forces
 #---------------------------------------------------
 subsection forces
@@ -118,7 +117,7 @@ subsection initial conditions
     end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
@@ -127,7 +126,7 @@ subsection non-linear solver
 	set max iterations          = 10
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
 subsection linear solver
