@@ -52,11 +52,40 @@ FindCellNeighbors<dim>::find_cell_neighbors(
 
           totall_cell_list.push_back(cell);
 
+          // Build a list of vertex id to check
+          std::vector<unsigned int> vertices_list(GeometryInfo<dim>::vertices_per_cell);
+
+          // Fill for each vertices of the current cell
           for (unsigned int vertex = 0;
                vertex < GeometryInfo<dim>::vertices_per_cell;
                ++vertex)
             {
-              for (const auto &neighbor : v_to_c[cell->vertex_index(vertex)])
+              vertices_list[vertex] = cell->vertex_index(vertex);
+            }
+
+          // Add vertices of the periodic face of the cell
+          for (int face_id = 0; face_id < int(GeometryInfo<dim>::faces_per_cell);
+               ++face_id)
+            {
+              if (cell->face(face_id)->at_boundary() &&
+                  cell->has_periodic_neighbor(face_id))
+                {
+                  typename Triangulation<dim>::active_cell_iterator
+                    periodic_cell = cell->periodic_neighbor(face_id);
+                    unsigned int periodic_face = cell->periodic_neighbor_face_no(face_id);
+
+                    for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_face;
+                         ++v)
+                      {
+                        vertices_list.push_back(
+                          periodic_cell->face(periodic_face)->vertex_index(v));
+                      }
+                }
+            }
+
+          for (const auto &vertex_id : vertices_list)
+            {
+              for (const auto &neighbor : v_to_c[vertex_id])
                 {
                   if (neighbor->is_locally_owned())
                     {

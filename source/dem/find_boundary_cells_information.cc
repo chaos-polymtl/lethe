@@ -157,22 +157,33 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
         {
           // We search to see if the boundary is defined as an outlet or
           // not. If it is not defined as an outlet we proceed.
-          if (std::find(outlet_boundaries.begin(),
-                        outlet_boundaries.end(),
-                        cell->face(face_id)->boundary_id()) ==
-              outlet_boundaries.end())
+
+          if (cell->face(face_id)->at_boundary())
             {
-              // Check to see if the face is located at boundary
-              if (cell->face(face_id)->at_boundary())
+              bool boundary_is_outlet =
+                std::find(outlet_boundaries.begin(),
+                          outlet_boundaries.end(),
+                          cell->face(face_id)->boundary_id()) !=
+                outlet_boundaries.end();
+
+              /*if (boundary_is_outlet && cell->has_periodic_neighbor(face_id))
                 {
-                  fe_face_values.reinit(cell, face_id);
+
+
+                  /*typename Triangulation<dim>::active_cell_iterator
+                  periodic_cell = cell->periodic_neighbor(face_id);
+
+                  int periodic_face = cell->periodic_neighbor_face_no(face_id);
+
+                  // FE face values are those from periodic boundary
+                  fe_face_values.reinit(periodic_cell, periodic_face);
 
                   for (unsigned int f_q_point = 0; f_q_point < n_face_q_points;
                        ++f_q_point)
                     {
                       // Finding the normal vector of the boundary face
                       Tensor<1, dim> normal_vector =
-                        -fe_face_values.normal_vector(f_q_point);
+                        fe_face_values.normal_vector(f_q_point);
 
                       // Finding a point on the boundary face
                       Point<dim> quad_point =
@@ -195,7 +206,7 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                       // output_vector as well as the search_vector to avoid
                       // repetition
                       auto information_search_element =
-                        std::make_pair(face_id, cell);
+                        std::make_pair(periodic_face, periodic_cell);
                       auto search_iterator =
                         std::find(search_vector.begin(),
                                   search_vector.end(),
@@ -213,6 +224,65 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                             }
                           global_boundary_cells_information.insert(
                             {cell->face_index(face_id), boundary_information});
+                        }
+                    }
+                }
+              else */if (!boundary_is_outlet)
+                {
+                  // Check to see if the face is located at boundary
+                  if (cell->face(face_id)->at_boundary())
+                    {
+                      fe_face_values.reinit(cell, face_id);
+
+                      for (unsigned int f_q_point = 0;
+                           f_q_point < n_face_q_points;
+                           ++f_q_point)
+                        {
+                          // Finding the normal vector of the boundary face
+                          Tensor<1, dim> normal_vector =
+                            -fe_face_values.normal_vector(f_q_point);
+
+                          // Finding a point on the boundary face
+                          Point<dim> quad_point =
+                            fe_face_values.quadrature_point(0);
+
+                          // Storing these information into the
+                          // boundary_cells_info_struct
+                          boundary_cells_info_struct<dim> boundary_information;
+                          boundary_information.cell = cell;
+                          boundary_information.boundary_id =
+                            cell->face(face_id)->boundary_id();
+                          boundary_information.global_face_id =
+                            cell->face_index(face_id);
+                          boundary_information.normal_vector = normal_vector;
+                          boundary_information.point_on_face = quad_point;
+
+                          // Searching to see if boundary with these information
+                          // were already found or not. If this is a new
+                          // boundary face, it will be added to the
+                          // output_vector as well as the search_vector to avoid
+                          // repetition
+                          auto information_search_element =
+                            std::make_pair(face_id, cell);
+                          auto search_iterator =
+                            std::find(search_vector.begin(),
+                                      search_vector.end(),
+                                      information_search_element);
+                          if (search_iterator == search_vector.end())
+                            {
+                              if (cell->is_locally_owned())
+                                {
+                                  boundary_cells_information.insert(
+                                    {cell->face_index(face_id),
+                                     boundary_information});
+                                  boundary_cells_with_faces.push_back(cell);
+                                  search_vector.push_back(
+                                    information_search_element);
+                                }
+                              global_boundary_cells_information.insert(
+                                {cell->face_index(face_id),
+                                 boundary_information});
+                            }
                         }
                     }
                 }
