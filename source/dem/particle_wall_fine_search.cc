@@ -215,34 +215,34 @@ ParticleWallFineSearch<dim>::particle_floating_mesh_fine_search(
              dem_data_containers::cut_cell_comparison<dim>>>
     &particle_floating_mesh_in_contact)
 {
-    for (unsigned int solid_counter = 0;
-         solid_counter < particle_floating_mesh_contact_candidates.size();
-         ++solid_counter)
-      {
-        auto &particle_floating_mesh_element = particle_floating_mesh_in_contact[solid_counter];
+  for (unsigned int solid_counter = 0;
+       solid_counter < particle_floating_mesh_contact_candidates.size();
+       ++solid_counter)
+    {
+      auto &particle_floating_mesh_element =
+        particle_floating_mesh_in_contact[solid_counter];
 
-        auto &candidates =
-          particle_floating_mesh_contact_candidates[solid_counter];
+      auto &candidates =
+        particle_floating_mesh_contact_candidates[solid_counter];
 
-        for (auto const &[cut_cell_key, candidate_particles] : candidates)
-          {
+      for (auto const &[cut_cell_key, candidate_particles] : candidates)
+        {
+          if (!candidate_particles.empty())
+            {
+              for (auto &particle_floating_mesh_candidate_iterator :
+                   candidate_particles)
+                {
+                  particle_wall_contact_info_struct<dim> contact_info;
+                  contact_info.particle =
+                    particle_floating_mesh_candidate_iterator.second;
 
-            if (!candidate_particles.empty())
-              {
-                for (auto &particle_floating_mesh_candidate_iterator :
-                     candidate_particles)
-                  {
-                    particle_wall_contact_info_struct<dim> contact_info;
-                    contact_info.particle =
-                      particle_floating_mesh_candidate_iterator.second;
-
-                    particle_floating_mesh_element[cut_cell_key]
-                      .insert({particle_floating_mesh_candidate_iterator.first,
-                               contact_info});
-                  }
-              }
-          }
-      }
+                  particle_floating_mesh_element[cut_cell_key].insert(
+                    {particle_floating_mesh_candidate_iterator.first,
+                     contact_info});
+                }
+            }
+        }
+    }
 }
 
 template class ParticleWallFineSearch<2>;

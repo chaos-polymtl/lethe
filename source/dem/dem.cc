@@ -225,8 +225,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
 
   // Resize particle_floating_mesh_in_contact
-    if (floating_mesh)
-        particle_floating_mesh_in_contact.resize(n_solids);
+  if (floating_mesh)
+    particle_floating_mesh_in_contact.resize(n_solids);
 }
 
 template <int dim>
@@ -839,8 +839,6 @@ DEMSolver<dim>::solve()
             triangulation,
             triangulation_cell_diameter);
 
-
-
   const unsigned int n_solids = this->parameters.solid_objects->number_solids;
   for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
@@ -850,8 +848,6 @@ DEMSolver<dim>::solve()
         solids[i_solid]->map_solid_in_background_triangulation(
           triangulation, solids[i_solid]->get_solid_triangulation());
     }
-
-
 
   if (parameters.restart.restart == true)
     {
