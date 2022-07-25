@@ -351,8 +351,8 @@ namespace Parameters
         std::unordered_map<unsigned int, Tensor<1, 3>>
           &                        boundary_rotational_vector,
         std::vector<unsigned int> &outlet_boundaries,
-        std::vector<unsigned int> periodic_boundaries,
-        std::vector<unsigned int> periodic_direction);
+        std::vector<unsigned int> &periodic_boundaries,
+        std::vector<unsigned int> &periodic_direction);
     };
 
     template <int dim>

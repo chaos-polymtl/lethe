@@ -10,7 +10,7 @@ subsection simulation control
   set output frequency            		 = 50
   set output path 					     = ./output/
   set output name                        = simulation
-  set output boundaries                  = false
+  set output boundaries                  = true
 end
 
 # --------------------------------------------------
@@ -72,7 +72,7 @@ subsection mesh
     set type                 				= dealii
     set grid type            				= hyper_rectangle
     set grid arguments       				= 0.0, 0.0, 0.0 : 0.1, 0.2, 0.1 : true
-    set initial refinement   				= 2
+    set initial refinement   				= 1
     set expand particle-wall contact search	= false
 end
 

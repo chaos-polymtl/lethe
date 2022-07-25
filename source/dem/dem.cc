@@ -43,6 +43,7 @@
 #include <dem/uniform_insertion.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
+#include <core/manifolds.h>
 
 #include <deal.II/base/table_handler.h>
 
@@ -131,8 +132,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     &Particles::ParticleHandler<dim>::register_store_callback_function,
     &particle_handler));
 
-  triangulation.signals.pre_refinement.connect(
-    [&](){return match_periodic_boundaries(parameters.boundary_conditions);});
+  //triangulation.signals.pre_refinement.connect(
+  //  [&](){return match_periodic_boundaries(parameters.boundary_conditions);});
 
   triangulation.signals.post_distributed_refinement.connect(
     std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
@@ -709,28 +710,13 @@ DEMSolver<dim>::write_output_results()
   if (simulation_control->get_output_boundaries())
   {
     DataOutFaces<dim> data_out_faces;
-    /*Vector<float> boundary_id(triangulation.n_active_cells());
 
-    for (const auto &current_cell : triangulation.active_cell_iterators())
-      {
-        unsigned int i = 0;
-        for (const auto face : current_cell->face_indices())
-          {
-            if (current_cell->face(face)->at_boundary())
-              {
-                for (const auto vertex :
-                     current_cell->face(face)->vertex_indices())
-                  {
-                        boundary_id(i) = current_cell->face(face)->boundary_id();
-                  }
-              }
-            i++;
-          }
-      } */
-
-
+      this->setup_background_dofs();
       data_out_faces.attach_dof_handler(background_dh);
-      //data_out_faces.add_data_vector(boundary_id, "boundary_id");
+      Vector<float> boundary_id(background_dh.n_locally_owned_dofs());
+      BoundaryPostprocessor<dim> boundary;
+      data_out_faces.attach_dof_handler(background_dh);
+      data_out_faces.add_data_vector(boundary_id, boundary);
       data_out_faces.build_patches();
 
       write_boundaries_vtu<dim>(
@@ -783,8 +769,12 @@ DEMSolver<dim>::post_process_results()
             std::vector<GridTools::PeriodicFacePair<
               typename Triangulation<dim, dim>::cell_iterator>>
               periodicity_vector;
+            std::cout << bc_param.outlet_boundaries[i_bc] << " "
+                      << bc_param.periodic_boundaries[i_bc] << " "
+                      << bc_param.periodic_direction[i_bc] << std::endl;
             GridTools::collect_periodic_faces(triangulation,
                                               bc_param.outlet_boundaries[i_bc],
+                                              bc_param.periodic_boundaries[i_bc],
                                               bc_param.periodic_direction[i_bc],
                                               periodicity_vector);
             triangulation.add_periodicity(periodicity_vector);
@@ -802,11 +792,24 @@ DEMSolver<dim>::post_process_results()
 
 
   // Reading mesh
-  read_mesh(parameters.mesh,
-            parameters.restart.restart,
-            pcout,
-            triangulation,
-            triangulation_cell_diameter);
+  if (parameters.boundary_conditions.BC_type ==
+      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+    {
+      read_mesh(parameters.mesh,
+                parameters.restart.restart,
+                pcout,
+                triangulation,
+                triangulation_cell_diameter,
+                parameters.boundary_conditions);
+    }
+  else
+    {
+      read_mesh(parameters.mesh,
+                parameters.restart.restart,
+                pcout,
+                triangulation,
+                triangulation_cell_diameter);
+    }
 
     if (parameters.restart.restart == true)
     {
