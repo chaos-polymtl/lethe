@@ -53,11 +53,11 @@ read_mesh(const Parameters::Mesh &      mesh_params,
 
 template <int dim, int spacedim = dim>
 void
-read_mesh(const Parameters::Mesh &      mesh_params,
-          const bool &                  restart,
-          const ConditionalOStream &    pcout,
-          Triangulation<dim, spacedim> &triangulation,
-          double &                      triangulation_cell_diameter,
+read_mesh(const Parameters::Mesh &       mesh_params,
+          const bool &                   restart,
+          const ConditionalOStream &     pcout,
+          Triangulation<dim, spacedim> & triangulation,
+          double &                       triangulation_cell_diameter,
           Parameters::Lagrangian::BCDEM &bc_param);
 
 template <int dim, int spacedim>

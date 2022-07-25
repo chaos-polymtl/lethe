@@ -833,7 +833,8 @@ namespace Parameters
       prm.declare_entry(
         "type",
         "fixed_wall",
-        Patterns::Selection("fixed_wall|outlet|translational|rotational|periodic"),
+        Patterns::Selection(
+          "fixed_wall|outlet|translational|rotational|periodic"),
         "Type of boundary condition"
         "Choices are <fixed_wall|outlet|translational|rotational|periodic>.");
 
