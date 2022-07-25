@@ -164,71 +164,72 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
     std::vector<typename Triangulation<dim>::active_cell_iterator>>
     &cells_total_neighbor_list)
 {
-  for (unsigned int solid_counter = 0;
-       solid_counter < particle_floating_mesh_contact_candidates.size();
-       ++solid_counter)
+    // Clear the candidate container
+    particle_floating_mesh_contact_candidates.clear();
+particle_floating_mesh_contact_candidates.resize(floating_mesh_information.size());
+
+for (unsigned int solid_counter = 0;
+   solid_counter < floating_mesh_information.size();
+   ++solid_counter)
+{
+  auto &candidates =
+    particle_floating_mesh_contact_candidates[solid_counter];
+
+  //std::vector<Particles::ParticleIterator<dim>> contact_candidates;
+
+  // I am assuming that triangles in different solids have different unique
+  // global ids. If it's not the case, we have to modify the code
+
+  // Loop through solids
+  auto &solid_iterator = floating_mesh_information[solid_counter];
+
+  // Loop through the pairs (first -> background cell, second -> floating
+  // cell)
+  for (auto floating_mesh_iterator = solid_iterator.begin();
+       floating_mesh_iterator != solid_iterator.end();
+       ++floating_mesh_iterator)
     {
-      // Clear the candidate container
-      auto &candidates =
-        particle_floating_mesh_contact_candidates[solid_counter];
-      candidates.clear();
+      // Get background cell
+      auto background_cell = floating_mesh_iterator->first;
 
-      std::vector<Particles::ParticleIterator<dim>> contact_candidates;
+      // Get cut cells (floating mesh cells)
+      auto cut_cells = floating_mesh_iterator->second;
 
-      // I am assuming that triangles in different solids have different unique
-      // global ids. If it's not the case, we have to modify the code
+      // Get neighbors of the background cell
+      auto cell_list = cells_total_neighbor_list.at(
+        background_cell->global_active_cell_index());
 
-      // Loop through solids
-      auto &solid_iterator = floating_mesh_information[solid_counter];
+      //contact_candidates.clear();
 
-      // Loop through the pairs (first -> background cell, second -> floating
-      // cell)
-      for (auto floating_mesh_iterator = solid_iterator.begin();
-           floating_mesh_iterator != solid_iterator.end();
-           ++floating_mesh_iterator)
+      // Loop through neighbors
+      for (auto &cell_iterator : cell_list)
         {
-          // Get background cell
-          auto background_cell = floating_mesh_iterator->first;
+          // Find particles located in cell
+          typename Particles::ParticleHandler<dim>::particle_iterator_range
+            particles_in_cell =
+              particle_handler.particles_in_cell(cell_iterator);
 
-          // Get cut cells (floating mesh cells)
-          auto cut_cells = floating_mesh_iterator->second;
+          const bool particles_exist_in_cell = !particles_in_cell.empty();
 
-          // Get neighbors of the background cell
-          auto cell_list = cells_total_neighbor_list.at(
-            background_cell->global_active_cell_index());
-
-          contact_candidates.clear();
-
-          // Loop through neighbors
-          for (auto &cell_iterator : cell_list)
+          // If the main cell is not empty
+          if (particles_exist_in_cell)
             {
-              // Find particles located in cell
-              typename Particles::ParticleHandler<dim>::particle_iterator_range
-                particles_in_cell =
-                  particle_handler.particles_in_cell(cell_iterator);
-
-              const bool particles_exist_in_cell = !particles_in_cell.empty();
-
-              // If the main cell is not empty
-              if (particles_exist_in_cell)
+              // Loop through particles in the main cell and build contact
+              // candidate pairs
+              for (typename Particles::ParticleHandler<
+                     dim>::particle_iterator_range::iterator
+                     particles_in_cell_iterator = particles_in_cell.begin();
+                   particles_in_cell_iterator != particles_in_cell.end();
+                   ++particles_in_cell_iterator)
                 {
-                  // Loop through particles in the main cell and build contact
-                  // candidate pairs
-                  for (typename Particles::ParticleHandler<
-                         dim>::particle_iterator_range::iterator
-                         particles_in_cell_iterator = particles_in_cell.begin();
-                       particles_in_cell_iterator != particles_in_cell.end();
-                       ++particles_in_cell_iterator)
-                    {
-                      candidates[cut_cells].insert(
-                        {particles_in_cell_iterator->get_id(),
-                         particles_in_cell_iterator});
-                    }
+                  candidates[cut_cells].insert(
+                    {particles_in_cell_iterator->get_id(),
+                     particles_in_cell_iterator});
                 }
             }
         }
-      //  }
     }
+}
 }
 
 

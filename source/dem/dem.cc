@@ -222,6 +222,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       solids.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
         this->parameters.solid_objects->solids[i_solid], i_solid));
     }
+
+
+  // Resize particle_floating_mesh_in_contact
+    if (floating_mesh)
+        particle_floating_mesh_in_contact.resize(n_solids);
 }
 
 template <int dim>
