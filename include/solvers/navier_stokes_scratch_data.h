@@ -739,9 +739,6 @@ public:
       }
 
     // Relative velocity and particle Reynolds
-    fluid_particle_relative_velocity_at_particle_location.resize(
-      particle_number + 1);
-    Re_particle.resize(particle_number + 1);
     particle_number = 0;
     for (auto &particle : pic)
       {
