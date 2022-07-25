@@ -29,7 +29,7 @@ The default values of the VOF parameters are given in the text box below.
 
 			# parameters for adaptative sharpening
 			set threshold max deviation = 0.20
-			set max iterations = 5
+			set max iterations = 20
 
 			set verbosity 	= quiet
 		end
@@ -50,7 +50,7 @@ The default values of the VOF parameters are given in the text box below.
 			set monitored fluid 	= fluid 1
 
 			# parameters used with adaptative sharpening
-			set tolerance		= 1e-2
+			set tolerance		= 1e-6
 			set verbosity 		= quiet
 		end
 
@@ -216,11 +216,11 @@ The default values of the VOF parameters are given in the text box below.
 
 	Sharpening interface at step 2
 	   Adapting the sharpening threshold
-	   ... step 1 of the search algorithm
-	   ... step 2 of the search algorithm
+	   ... step 1 of the search algorithm, min, avg, max mass deviation is : -0.1 -0.05 0.05
+	   ... step 1 of the search algorithm, min, avg, max mass deviation is : -0.05 -0.025 0.04
 	   ... search algorithm took : 2 step(s) 
 	   ... error on mass conservation reached: -0.03
-	   ... final sharpening
+	   ... final sharpening is : 0.458224
 
 
 * ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. 

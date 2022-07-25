@@ -1193,6 +1193,9 @@ GDNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
+      this->forcing_function->set_time(
+        this->simulation_control->get_current_time());
+
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
 
