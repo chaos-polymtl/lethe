@@ -1547,7 +1547,7 @@ namespace Parameters
         "fraction type",
         "number",
         Patterns::Selection("number|fraction"),
-        "How the fraction of refinement/coarsening are interepreted"
+        "How the fraction of refinement/coarsening are interpreted"
         "Choices are <number|fraction>.");
       prm.declare_entry("max number elements",
                         "100000000",
