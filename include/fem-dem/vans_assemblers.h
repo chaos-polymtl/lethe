@@ -426,6 +426,47 @@ public:
   Parameters::CFDDEM cfd_dem;
 };
 
+
+
+/**
+ * @brief Class that assembles the Lift force using Saffman-Mei model
+ *
+ * This implementation follows the formulation in the book "Multiphase Flows
+ * with Droplets and Particles" by Crowe et al. (2011) and the brief
+ * communication article "An approximate expression for the shear lift force
+ * on a spherical particle at finite reynolds number" by Mei (1992)
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerSaffmanMei : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerSaffmanMei(
+    Parameters::Lagrangian::LagrangianPhysicalProperties
+      lagrangian_physical_properties)
+    : lagrangian_physical_properties(lagrangian_physical_properties)
+
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::Lagrangian::LagrangianPhysicalProperties
+    lagrangian_physical_properties;
+};
+
+
+
 /**
  * @brief Class that assembles the Buoyancy force  for the
  * VANS equations whe F_b =  -g *
