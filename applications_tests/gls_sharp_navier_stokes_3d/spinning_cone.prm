@@ -1,0 +1,142 @@
+# Listing of Parameters
+#----------------------
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = bdf1
+  set time step               = 0.03125
+  set time end                = 0.0625
+end
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+    subsection fluid 0
+        set kinematic viscosity            = 1
+    end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = dealii
+    set grid type            = subdivided_hyper_rectangle
+    set grid arguments       = 1,1,1: -4,-4,-4 : 4,4,4  : true
+    set initial refinement   = 4
+end
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order        = 1
+    set pressure order        = 1
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+set number                  = 3
+	subsection bc 0
+		set id = 0
+        	set type              = function
+        	subsection u
+			set Function expression = 1
+		end
+		subsection v
+			set Function expression = 0
+		end
+		subsection w
+			set Function expression = 0
+		end
+	end
+	subsection bc 1
+		set id = 2
+		set type              = slip
+	end
+	subsection bc 2
+		set id = 3
+		set type              = slip
+	end
+end
+
+#---------------------------------------------------
+# IB particles
+#---------------------------------------------------
+subsection particles
+	set number of particles = 1
+	set stencil order = 2
+	set refine mesh inside radius factor = 0.7
+	set refine mesh outside radius factor = 1.5
+	set initial refinement = 2
+	set integrate motion = false
+	set assemble Navier-Stokes inside particles = false
+	subsection particle info 0
+		set type = cone
+		set shape arguments = 1; 1.5
+		subsection position
+		    set Function expression =0.01;0.01;0.01
+		end
+		subsection orientation
+		    set Function expression = 0;0;t
+		end
+	end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+  set fraction coarsening  = 0
+  set fraction refinement  = 0
+  set fraction type        = number
+  set frequency            = 1
+  set max number elements  = 40000
+  set min refinement level = 0
+  set max refinement level = 5
+  set type                 = kelly
+  set variable             = velocity
+end
+
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+subsection forces
+  set verbosity               = verbose
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+subsection initial conditions
+    set type = nodal
+    subsection uvwp
+            set Function expression = 1; 0; 0; 0
+    end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+	set verbosity               = quiet
+	set tolerance               = 1e-4
+	set max iterations          = 10
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+	set verbosity               = quiet
+	set method                  = gmres
+	set max iters               = 5000
+	set max krylov vectors      = 1000
+	set relative residual       = 1e-4
+	set minimum residual        = 1e-9
+	set ilu preconditioner fill = 0
+	set ilu preconditioner absolute tolerance = 1e-12
+	set ilu preconditioner relative tolerance = 1.00
+end
