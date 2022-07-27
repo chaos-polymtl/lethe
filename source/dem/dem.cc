@@ -318,6 +318,14 @@ DEMSolver<dim>::load_balance()
                                                      cells_total_neighbor_list);
     }
 
+  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
+    {
+      // Create a container that contains all the combinations of background and
+      // solid cells
+      floating_mesh_information[i_solid] =
+        solids[i_solid]->map_solid_in_background_triangulation(
+          triangulation, solids[i_solid]->get_solid_triangulation());
+    }
 
   boundary_cell_object.build(
     triangulation,
@@ -839,7 +847,6 @@ DEMSolver<dim>::solve()
             triangulation,
             triangulation_cell_diameter);
 
-  const unsigned int n_solids = this->parameters.solid_objects->number_solids;
   for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
       // Create a container that contains all the combinations of background and
@@ -876,7 +883,7 @@ DEMSolver<dim>::solve()
       checkpoint_step = true;
     }
 
-  // Finding the smallest contact search frequency criterion between (smallest
+  // Find the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blab
   // diamater
   // - 1) *  largest particle radius). This value is used in
@@ -888,10 +895,15 @@ DEMSolver<dim>::solve()
               (parameters.model_parameters.neighborhood_threshold - 1) *
               maximum_particle_diameter * 0.5));
 
-  // Finding cell neighbors
+  // Find cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
+
+  // Find full cell neighbor list for floating mesh
+  if (floating_mesh)
+    cell_neighbors_object.find_full_cell_neighbors(triangulation,
+                                                   cells_total_neighbor_list);
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
@@ -1035,7 +1047,6 @@ DEMSolver<dim>::solve()
             particle_floating_mesh_in_contact,
             particle_points_in_contact,
             particle_lines_in_contact);
-
 
           // Particle-particle fine search
           particle_particle_fine_search_object.particle_particle_fine_search(
