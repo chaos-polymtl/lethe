@@ -316,7 +316,7 @@ private:
 
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
+    std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates;
 
   std::vector<std::vector<
@@ -351,22 +351,22 @@ private:
 
   std::unordered_map<
     types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     particle_wall_pairs_in_contact;
 
   std::unordered_map<
     types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     pfw_pairs_in_contact;
 
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<unsigned int,
+    std::unordered_map<types::boundary_id,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
-                                  unsigned int,
-                                  unsigned int>>>
+                                  types::boundary_id,
+                                  types::global_cell_index>>>
     particle_wall_contact_candidates;
 
   std::unordered_map<types::particle_index,
@@ -385,7 +385,7 @@ private:
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     particle_container;
 
-  std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
+  std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
                                            updated_boundary_points_and_normal_vectors;
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
@@ -421,9 +421,9 @@ private:
   std::vector<double>       displacement;
   std::vector<double>       MOI;
 
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
+  std::map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
     forces_boundary_information;
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
+  std::map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
     torques_boundary_information;
 
   // Information for parallel grid processing
@@ -433,9 +433,9 @@ private:
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
-  std::map<unsigned int, Tensor<1, 3>> floating_mesh_translational_velocity;
-  std::map<unsigned int, Tensor<1, 3>> floating_mesh_rotational_velocity;
-  std::map<unsigned int, Point<3>>     floating_mesh_center_of_rotation;
+  std::map<types::global_cell_index, Tensor<1, 3>> floating_mesh_translational_velocity;
+  std::map<types::global_cell_index, Tensor<1, 3>> floating_mesh_rotational_velocity;
+  std::map<types::global_cell_index, Point<3>>     floating_mesh_center_of_rotation;
   bool                                 floating_mesh = false;
 };
 

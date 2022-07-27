@@ -75,14 +75,14 @@ public:
     const std::map<int, boundary_cells_info_struct<dim>>
       &                                    boundary_cells_information,
     const Particles::ParticleHandler<dim> &particle_handler,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<unsigned int,
-                         std::tuple<Particles::ParticleIterator<dim>,
-                                    Tensor<1, dim>,
-                                    Point<dim>,
-                                    types::boundary_id,
-                                    unsigned int>>>
+          std::unordered_map<
+            types::particle_index,
+            std::unordered_map<types::boundary_id,
+                               std::tuple<Particles::ParticleIterator<dim>,
+                                          Tensor<1, dim>,
+                                          Point<dim>,
+                                          types::boundary_id,
+                                          types::global_cell_index>>>
       &particle_wall_contact_candidates);
 
   /**
@@ -113,7 +113,7 @@ public:
     const double &                                    simulation_time,
     std::unordered_map<
       types::particle_index,
-      std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
+      std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
       &pfw_contact_candidates);
 
   /**

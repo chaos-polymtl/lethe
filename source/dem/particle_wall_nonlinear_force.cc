@@ -124,7 +124,7 @@ void
 ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
   std::unordered_map<
     types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &                        particle_wall_pairs_in_contact,
   const double &             dt,
   std::vector<Tensor<1, 3>> &torque,
@@ -240,11 +240,11 @@ void ParticleWallNonLinearForce<dim>::
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    const std::map<unsigned int, Tensor<1, 3>>
+    const std::map<types::global_cell_index, Tensor<1, 3>>
       &floating_mesh_translational_velocity,
-    const std::map<unsigned int, Tensor<1, 3>>
+    const std::map<types::global_cell_index, Tensor<1, 3>>
       &                                     floating_mesh_rotational_velocity,
-    const std::map<unsigned int, Point<3>> &floating_mesh_center_of_rotation)
+    const std::map<types::global_cell_index, Point<3>> &floating_mesh_center_of_rotation)
 {
   std::vector<Particles::ParticleIterator<dim>> particle_locations;
   std::vector<Point<dim>>                       triangle;

@@ -37,7 +37,7 @@ void
 update_particle_wall_contact_container_iterators(
   std::unordered_map<
     types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &particle_container);

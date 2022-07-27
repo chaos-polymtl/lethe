@@ -15,17 +15,17 @@ template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_wall_fine_search(
   const std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       std::tuple<Particles::ParticleIterator<dim>,
-                                  Tensor<1, dim>,
-                                  Point<dim>,
-                                  types::boundary_id,
-                                  unsigned int>>>
+        types::particle_index,
+        std::unordered_map<types::boundary_id,
+                           std::tuple<Particles::ParticleIterator<dim>,
+                                      Tensor<1, dim>,
+                                      Point<dim>,
+                                      types::boundary_id,
+                                      types::global_cell_index>>>
     &particle_wall_contact_pair_candidates,
   std::unordered_map<
     types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &particle_wall_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search and adding the pairs to
@@ -91,13 +91,13 @@ void
 ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
   const std::unordered_map<
     types::particle_index,
-    std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
+    std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
     &                                               pfw_contact_candidates,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double &                                    simulation_time,
   std::unordered_map<
     types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact)
 {
   // Reading floating wall properties
@@ -120,7 +120,7 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
                ++particle_pair_candidate_iterator)
             {
               // Getting the floating wall id once to improve efficiency
-              unsigned int floating_wall_id =
+              auto floating_wall_id =
                 particle_pair_candidate_iterator->first;
 
               // Checking simulation time for temporary floating walls

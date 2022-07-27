@@ -299,13 +299,6 @@ SerialSolid<dim, spacedim>::get_solid_triangulation()
 }
 
 template <int dim, int spacedim>
-Function<spacedim> *
-SerialSolid<dim, spacedim>::get_solid_velocity()
-{
-  return translational_velocity;
-}
-
-template <int dim, int spacedim>
 Tensor<1, 3>
 SerialSolid<dim, spacedim>::get_translational_velocity()
 {

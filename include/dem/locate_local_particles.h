@@ -74,7 +74,7 @@ locate_local_particles_in_cells(
     &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,

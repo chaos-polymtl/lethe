@@ -65,7 +65,7 @@ public:
   calculate_particle_wall_contact_force(
     std::unordered_map<
       types::particle_index,
-      std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
       &                        particle_wall_pairs_in_contact,
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
@@ -94,20 +94,20 @@ public:
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    const std::map<unsigned int, Tensor<1, 3>>
+    const std::map<types::global_cell_index, Tensor<1, 3>>
       &floating_mesh_translational_velocity,
-    const std::map<unsigned int, Tensor<1, 3>>
+    const std::map<types::global_cell_index, Tensor<1, 3>>
       &floating_mesh_rotational_velocity,
-    const std::map<unsigned int, Point<3>>
+    const std::map<types::global_cell_index, Point<3>>
       &floating_mesh_center_of_rotation) = 0;
 
-  std::map<unsigned int, Tensor<1, 3>>
+  std::map<types::boundary_id, Tensor<1, 3>>
   get_force()
   {
     return force_on_walls;
   }
 
-  std::map<unsigned int, Tensor<1, 3>>
+  std::map<types::boundary_id, Tensor<1, 3>>
   get_torque()
   {
     return torque_on_walls;

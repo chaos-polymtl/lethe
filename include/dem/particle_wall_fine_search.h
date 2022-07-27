@@ -67,17 +67,17 @@ public:
   void
   particle_wall_fine_search(
     const std::unordered_map<
-      types::particle_index,
-      std::unordered_map<unsigned int,
-                         std::tuple<Particles::ParticleIterator<dim>,
-                                    Tensor<1, dim>,
-                                    Point<dim>,
-                                    types::boundary_id,
-                                    unsigned int>>>
+          types::particle_index,
+          std::unordered_map<types::boundary_id,
+                             std::tuple<Particles::ParticleIterator<dim>,
+                                        Tensor<1, dim>,
+                                        Point<dim>,
+                                        types::boundary_id,
+                                        types::global_cell_index>>>
       &particle_wall_contact_pair_candidates,
     std::unordered_map<
       types::particle_index,
-      std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
       &particle_wall_pairs_in_contact);
 
   /**
@@ -99,13 +99,13 @@ public:
   particle_floating_wall_fine_search(
     const std::unordered_map<
       types::particle_index,
-      std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
+      std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
       &                                               pfw_contact_candidates,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double &                                    simulation_time,
     std::unordered_map<
       types::particle_index,
-      std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
       &pfw_pairs_in_contact);
 
 

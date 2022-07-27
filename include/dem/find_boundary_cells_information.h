@@ -128,7 +128,7 @@ public:
    */
   void
   update_boundary_info_after_grid_motion(
-    std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
+    std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
       &updated_boundary_points_and_normal_vectors);
 
 private:

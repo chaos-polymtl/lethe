@@ -131,12 +131,6 @@ public:
   get_displacement_vector();
 
   /**
-   * @return Function<spacedim> of the solid velocity
-   */
-  Function<spacedim> *
-  get_solid_velocity();
-
-  /**
    * @return translational veclocity
    */
   Tensor<1, 3>
