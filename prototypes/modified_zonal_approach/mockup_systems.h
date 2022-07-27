@@ -21,7 +21,7 @@ generate_case_0(unsigned int n_pts, unsigned int axis)
   triangle.push_back(p_1);
   triangle.push_back(p_2);
 
-  // Generate a line f points varying along the z direction
+  // Generate a line of points varying along the z direction
   srand(0);
   std::vector<Point<dim>> pts;
   for (unsigned int p = 0; p < n_pts; ++p)
@@ -55,7 +55,7 @@ generate_case_1(const unsigned int n_pts, const unsigned int seed)
   triangle.push_back(p_1);
   triangle.push_back(p_2);
 
-  // Generate a n_pts random point between 0.5 and 1.5 in all directions.
+  // Generate n_pts random points between 0.5 and 1.5 in all directions.
   srand(seed);
   std::vector<Point<dim>> pts;
   for (unsigned int p = 0; p < n_pts; ++p)
@@ -85,7 +85,7 @@ generate_case_2(const unsigned int n_pts, const unsigned int seed)
   triangle.push_back(p_1);
   triangle.push_back(p_2);
 
-  // Generate a n_pts random point between 0.5 and 1.5 in all directions.
+  // Generate n_pts random points between 0.5 and 1.5 in all directions.
   srand(seed);
   std::vector<Point<dim>> pts;
   for (unsigned int p = 0; p < n_pts; ++p)

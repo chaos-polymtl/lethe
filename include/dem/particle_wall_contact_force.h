@@ -17,8 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 #include <core/auxiliary_math_functions.h>
+#include <core/data_containers.h>
+#include <core/serial_solid.h>
 
-#include <dem/data_containers.h>
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_info_struct.h>
@@ -80,9 +81,7 @@ public:
    * @param dt DEM time step
    * @param torque Torque acting on particles
    * @param force Force acting on particles
-   * @param floating_mesh_translational_velocity
-   * @param floating_mesh_rotational_velocity
-   * @param floating_mesh_center_of_rotation
+   * @param solids Floating solids
    */
   virtual void calculate_particle_floating_wall_contact_force(
     std::vector<
@@ -94,12 +93,7 @@ public:
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    const std::map<types::global_cell_index, Tensor<1, 3>>
-      &floating_mesh_translational_velocity,
-    const std::map<types::global_cell_index, Tensor<1, 3>>
-      &floating_mesh_rotational_velocity,
-    const std::map<types::global_cell_index, Point<3>>
-      &floating_mesh_center_of_rotation) = 0;
+    const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids) = 0;
 
   std::map<types::boundary_id, Tensor<1, 3>>
   get_force()
@@ -204,16 +198,17 @@ protected:
     const double &center_of_rotation_particle_distance);
 
   /**
-   * Carries out applying the calculated force and torque on the local-local
-   * particle pair in contact, for both non-linear and linear contact force
+   * Carries out applying the calculated force and torque on the particle in
+   * contact with the given wall, for both non-linear and linear contact force
    * calculations
    *
-   * @param particle_properties Properties of particle in contact with wall
    * @param forces_and_torques A tuple which contains: 1, normal force, 2,
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
    * @param particle_torque Torque acting on particle
    * @param particle_force Force acting on particle
+   * @param point_on_boundary Contact point on the wall
+   * @param boundary_id ID of the boundary
    */
   inline void
   apply_force_and_torque(

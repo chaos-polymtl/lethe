@@ -1112,7 +1112,7 @@ LetheGridTools::find_cells_cut_by_object(
 
 template <int dim>
 std::tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-LetheGridTools::calculate_particle_triangle_distance(
+LetheGridTools::find_particle_triangle_projection(
   const std::vector<Point<dim>> &                      triangle,
   const std::vector<Particles::ParticleIterator<dim>> &particles,
   const unsigned int &                                 n_particles_in_base_cell)
@@ -1172,7 +1172,6 @@ LetheGridTools::calculate_particle_triangle_distance(
       // arbitrary distance and continue
       if (distance_squared > (radius * radius))
         {
-          // distances[k] = std::sqrt(distance_squared);
           pass_distance_check[k] = false;
           ++k;
           continue;
@@ -1185,9 +1184,7 @@ LetheGridTools::calculate_particle_triangle_distance(
       // Calculate necessary values;
       double s = b * e - c * d;
       double t = b * d - a * e;
-      // std::cout << "s " << s << " t " << t << std::endl;
 
-      // const double f = vector_to_plane.norm_square();
       if (s + t <= det)
         {
           if (s < 0)
@@ -1339,13 +1336,13 @@ LetheGridTools::calculate_particle_triangle_distance(
 
 template std::
   tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-  LetheGridTools::calculate_particle_triangle_distance(
+  LetheGridTools::find_particle_triangle_projection(
     const std::vector<Point<2>> &                      triangle,
     const std::vector<Particles::ParticleIterator<2>> &particles,
     const unsigned int &n_particles_in_base_cell);
 template std::
   tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-  LetheGridTools::calculate_particle_triangle_distance(
+  LetheGridTools::find_particle_triangle_projection(
     const std::vector<Point<3>> &                      triangle,
     const std::vector<Particles::ParticleIterator<3>> &particles,
     const unsigned int &n_particles_in_base_cell);

@@ -73,8 +73,7 @@ void update_particle_floating_wall_contact_container_iterators(
     }
 }
 
-template void
-update_particle_wall_contact_container_iterators(
+template void update_particle_wall_contact_container_iterators(
   std::unordered_map<
     types::particle_index,
     std::map<types::boundary_id, particle_wall_contact_info_struct<2>>>
@@ -82,8 +81,7 @@ update_particle_wall_contact_container_iterators(
   std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
     &particle_container);
 
-template void
-update_particle_wall_contact_container_iterators(
+template void update_particle_wall_contact_container_iterators(
   std::unordered_map<
     types::particle_index,
     std::map<types::boundary_id, particle_wall_contact_info_struct<3>>>

@@ -17,10 +17,10 @@
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
+#include <core/data_containers.h>
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
 
-#include <dem/data_containers.h>
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
@@ -186,13 +186,6 @@ private:
   particle_wall_fine_search();
 
   /**
-   * @brief Performs particle-floating mesh contact search
-   *
-   */
-  void
-  particle_floating_mesh_contact_search();
-
-  /**
    * @brief Calculates particles-wall contact forces
    *
    */
@@ -266,13 +259,6 @@ private:
    */
   void
   post_process_results();
-
-  /**
-   * @brief Updates the translational and rotational velocities and center of
-   * rotation of floating meshes
-   */
-  void
-  update_floating_mesh_info();
 
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
@@ -429,14 +415,10 @@ private:
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
-  unsigned int    n_solids;
+  bool            floating_mesh;
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
-  std::map<types::global_cell_index, Tensor<1, 3>> floating_mesh_translational_velocity;
-  std::map<types::global_cell_index, Tensor<1, 3>> floating_mesh_rotational_velocity;
-  std::map<types::global_cell_index, Point<3>>     floating_mesh_center_of_rotation;
-  bool                                 floating_mesh = false;
 };
 
 #endif

@@ -12,14 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Authors: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020
- * Jeanne Joachim, Polytechnique Montreal, 2020-
  */
 
-#ifndef lethe_serial_solid_base_h
-#define lethe_serial_solid_base_h
+#ifndef lethe_serial_solid_h
+#define lethe_serial_solid_h
 
 
 // Lethe Includes
@@ -29,7 +25,7 @@
 #include <core/solid_objects_parameters.h>
 
 // Dealii Includes
-#include <dem/data_containers.h>
+#include <core/data_containers.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -159,7 +155,6 @@ public:
    * uses explicitEuler scheme time integrator to displace the vertices
    * of the solid triangulation and stores the displacement in an array
    * in order to allow correct checkpointing of the triangulation.
-   *               See
    *
    * @param time_step The time_step value for this iteration
    *
@@ -171,7 +166,7 @@ public:
 
   /**
    * @brief Moves the dofs of the solid_triangulation by using the displacement vector.
-   * This is only use to move the solid triangulation at the correct location
+   * This is only used to move the solid triangulation at the correct location
    * when the simulation is restarted.
    */
   void

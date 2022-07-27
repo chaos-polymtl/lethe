@@ -27,8 +27,8 @@
 #include <iostream>
 #include <vector>
 
-#ifndef data_containers_h
-#  define data_containers_h
+#ifndef lethe_data_containers_h
+#  define lethe_data_containers_h
 
 /**
  * This namespace defines all the data containers and required operations on
@@ -36,7 +36,6 @@
  * operators here, but finally all the data containers of the DEM solver will be
  * moved here
  */
-// UPDATE ********
 namespace dem_data_containers
 {
   /**

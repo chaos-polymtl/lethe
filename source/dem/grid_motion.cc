@@ -69,9 +69,9 @@ template <int dim, int spacedim>
 void
 GridMotion<dim, spacedim>::
   update_boundary_points_and_normal_vectors_in_contact_list(
-    std::unordered_map<types::particle_index,
-                       std::map<types::boundary_id,
-                                particle_wall_contact_info_struct<spacedim>>>
+    std::unordered_map<
+      types::particle_index,
+      std::map<types::boundary_id, particle_wall_contact_info_struct<spacedim>>>
       &particle_wall_pairs_in_contact,
     const std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
       &updated_boundary_points_and_normal_vectors)

@@ -13,14 +13,14 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
   const std::map<int, boundary_cells_info_struct<dim>>
     &                                    boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
-        std::unordered_map<
-          types::particle_index,
-          std::unordered_map<types::boundary_id,
-                             std::tuple<Particles::ParticleIterator<dim>,
-                                        Tensor<1, dim>,
-                                        Point<dim>,
-                                        types::boundary_id,
-                                        types::global_cell_index>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::boundary_id,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  types::boundary_id,
+                                  types::global_cell_index>>>
     &particle_wall_contact_candidates)
 {
   // Clearing particle_wall_contact_candidates (output of this function)
@@ -104,8 +104,7 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
        boundary_cells_for_floating_walls.end();
        ++fw_boundary_cells_information_iterator)
     {
-      auto floating_wall_id =
-        fw_boundary_cells_information_iterator->first;
+      auto floating_wall_id = fw_boundary_cells_information_iterator->first;
 
       // Checking simulation time for temporary floating walls
       if (simulation_time >=

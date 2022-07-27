@@ -17,7 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/data_containers.h>
+#include <core/data_containers.h>
+
 #include <dem/particle_point_line_contact_info_struct.h>
 #include <dem/update_ghost_particle_particle_contact_container.h>
 #include <dem/update_local_particle_particle_contact_container.h>
@@ -47,7 +48,7 @@ using namespace dealii;
  * information of particle-wall contacts
  * @param pfw_pairs_in_contact Container that contains all the contact
  * information of particle-floating wall contacts
- * @param particle_floating_mesh_in_contact Container that contains all the contact
+ * @param pfm_pairs_in_contact Container that contains all the contact
  * information of particle-floating mesh contacts
  * @param particle_points_in_contact Container that contains all the contact
  * information of particle-point contacts
@@ -85,7 +86,7 @@ locate_local_particles_in_cells(
              std::unordered_map<types::particle_index,
                                 particle_wall_contact_info_struct<dim>>,
              dem_data_containers::cut_cell_comparison<dim>>>
-    &particle_floating_mesh_in_contact,
+    &pfm_pairs_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,

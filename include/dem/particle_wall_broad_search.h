@@ -17,8 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/data_containers.h>
+
 #include <dem/boundary_cells_info_struct.h>
-#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
@@ -75,14 +76,14 @@ public:
     const std::map<int, boundary_cells_info_struct<dim>>
       &                                    boundary_cells_information,
     const Particles::ParticleHandler<dim> &particle_handler,
-          std::unordered_map<
-            types::particle_index,
-            std::unordered_map<types::boundary_id,
-                               std::tuple<Particles::ParticleIterator<dim>,
-                                          Tensor<1, dim>,
-                                          Point<dim>,
-                                          types::boundary_id,
-                                          types::global_cell_index>>>
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::boundary_id,
+                         std::tuple<Particles::ParticleIterator<dim>,
+                                    Tensor<1, dim>,
+                                    Point<dim>,
+                                    types::boundary_id,
+                                    types::global_cell_index>>>
       &particle_wall_contact_candidates);
 
   /**

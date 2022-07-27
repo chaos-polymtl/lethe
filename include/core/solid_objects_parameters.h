@@ -214,7 +214,7 @@ namespace Parameters
       prm.declare_entry("number of solids",
                         "1",
                         Patterns::Integer(),
-                        "Number of immersed object");
+                        "Number of solid object");
 
       for (unsigned int i_solid = 0; i_solid < max_nitsche_solids; ++i_solid)
         {
@@ -346,7 +346,7 @@ namespace Parameters
     // Calculate forces
     Verbosity verbosity;
 
-    // Nitsche solid objects
+    // DEM solid objects
     std::vector<std::shared_ptr<RigidSolidObject<dim>>> solids;
     unsigned int                                        number_solids;
     static const unsigned int max_number_of_solids = 5;
@@ -364,7 +364,7 @@ namespace Parameters
       prm.declare_entry("number of solids",
                         "0",
                         Patterns::Integer(),
-                        "Number of immersed object");
+                        "Number of solid object");
 
       for (unsigned int i_solid = 0; i_solid < max_number_of_solids; ++i_solid)
         {

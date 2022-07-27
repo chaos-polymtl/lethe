@@ -32,9 +32,11 @@ using namespace dealii;
 
 /**
  * Finds the neighbors lists of all the active cells in the input triangulation.
- * It is written to avoid any repetition, for instance if cell B is recognized
- * as the neighbor of cell A once, cell A will not appear in the neighbor list
- * of cell B again.
+ * find_cell_neighbors() is written to avoid any repetition, for instance if
+ * cell B is recognized as the neighbor of cell A once, cell A will not appear
+ * in the neighbor list of cell B again. On the other hand,
+ * find_full_cell_neighbors()\ function finds the neighbors list with
+ * repetition.
  *
  * @note
  *

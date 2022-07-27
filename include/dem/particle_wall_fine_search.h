@@ -17,7 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/data_containers.h>
+#include <core/data_containers.h>
+
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_info_struct.h>
@@ -67,13 +68,13 @@ public:
   void
   particle_wall_fine_search(
     const std::unordered_map<
-          types::particle_index,
-          std::unordered_map<types::boundary_id,
-                             std::tuple<Particles::ParticleIterator<dim>,
-                                        Tensor<1, dim>,
-                                        Point<dim>,
-                                        types::boundary_id,
-                                        types::global_cell_index>>>
+      types::particle_index,
+      std::unordered_map<types::boundary_id,
+                         std::tuple<Particles::ParticleIterator<dim>,
+                                    Tensor<1, dim>,
+                                    Point<dim>,
+                                    types::boundary_id,
+                                    types::global_cell_index>>>
       &particle_wall_contact_pair_candidates,
     std::unordered_map<
       types::particle_index,

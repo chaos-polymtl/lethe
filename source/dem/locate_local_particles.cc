@@ -31,7 +31,7 @@ locate_local_particles_in_cells(
              std::unordered_map<types::particle_index,
                                 particle_wall_contact_info_struct<dim>>,
              dem_data_containers::cut_cell_comparison<dim>>>
-    &particle_floating_mesh_in_contact,
+    &pfm_pairs_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
@@ -56,7 +56,7 @@ locate_local_particles_in_cells(
 
   // Calling the same function for floating mesh
   update_particle_floating_wall_contact_container_iterators<dim>(
-    particle_floating_mesh_in_contact, particle_container);
+    pfm_pairs_in_contact, particle_container);
 
   update_particle_point_line_contact_container_iterators<dim>(
     particle_points_in_contact, particle_lines_in_contact, particle_container);
@@ -89,7 +89,7 @@ locate_local_particles_in_cells(
                        std::unordered_map<types::particle_index,
                                           particle_wall_contact_info_struct<2>>,
                        dem_data_containers::cut_cell_comparison<2>>>
-    &particle_floating_mesh_in_contact,
+    &pfm_pairs_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<2>>
     &particle_points_in_contact,
@@ -124,7 +124,7 @@ locate_local_particles_in_cells(
                        std::unordered_map<types::particle_index,
                                           particle_wall_contact_info_struct<3>>,
                        dem_data_containers::cut_cell_comparison<3>>>
-    &particle_floating_mesh_in_contact,
+    &pfm_pairs_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<3>>
     &particle_points_in_contact,

@@ -238,10 +238,9 @@ namespace LetheGridTools
    * Function returns all the cells cut by a list of object defined by a mesh
    *
    * @param dof_handler the dof handler containing all the elements.
+   * @param vertices_cell_map An objects that maps the vertices to cells.
+   * @param list_of_objects Solid objects
    *
-   * @param center The center of the sphere.
-   *
-   * @param radius The radius of the sphere.
    *
    */
   template <int spacedim, int structdim>
@@ -273,7 +272,7 @@ namespace LetheGridTools
   template <int dim>
   std::
     tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-    calculate_particle_triangle_distance(
+    find_particle_triangle_projection(
       const std::vector<Point<dim>> &                      triangle,
       const std::vector<Particles::ParticleIterator<dim>> &particles,
       const unsigned int &n_particles_in_base_cell);

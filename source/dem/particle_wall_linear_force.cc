@@ -186,17 +186,13 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
                   this->calculate_linear_contact_force_and_torque(
                     contact_information, particle_properties);
 
-              // Getting particle's torque and force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-              types::particle_index particle_id = particle->get_id();
-#else
+              // Get particle's torque and force
               types::particle_index particle_id = particle->get_local_index();
-#endif
 
               Tensor<1, 3> &particle_torque = torque[particle_id];
               Tensor<1, 3> &particle_force  = force[particle_id];
 
-              // Apply the calculated forces and torques on the particle pair
+              // Apply the calculated forces and torques on the particle
               this->apply_force_and_torque(forces_and_torques,
                                            particle_torque,
                                            particle_force,
@@ -228,19 +224,23 @@ void
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    const std::map<types::global_cell_index, Tensor<1, 3>>
-      &floating_mesh_translational_velocity,
-    const std::map<types::global_cell_index, Tensor<1, 3>>
-      &                                     floating_mesh_rotational_velocity,
-    const std::map<types::global_cell_index, Point<3>> &floating_mesh_center_of_rotation)
+    const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
 {
   std::vector<Particles::ParticleIterator<dim>> particle_locations;
-  std::vector<Point<dim>>                       triangle;
+  std::vector<Point<dim>> triangle(this->vertices_per_triangle);
 
-  for (unsigned int solid_counter = 0;
-       solid_counter < particle_floating_mesh_in_contact.size();
+  for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
     {
+      // Get translational and rotational velocities and center of
+      // rotation
+      Tensor<1, 3> translational_velocity =
+        solids[solid_counter]->get_translational_velocity();
+      Tensor<1, 3> rotational_velocity =
+        solids[solid_counter]->get_rotational_velocity();
+      Point<3> center_of_rotation =
+        solids[solid_counter]->get_center_of_rotation();
+
       auto &particle_floating_mesh_contact_pair =
         particle_floating_mesh_in_contact[solid_counter];
 
@@ -248,15 +248,6 @@ void
         {
           if (!map_info.empty())
             {
-              // Get translational and rotational velocities and center of
-              // rotation
-              Tensor<1, 3> translational_velocity =
-                floating_mesh_translational_velocity.at(solid_counter);
-              Tensor<1, 3> rotational_velocity =
-                floating_mesh_rotational_velocity.at(solid_counter);
-              Point<3> center_of_rotation =
-                floating_mesh_center_of_rotation.at(solid_counter);
-
               // Clear the particle locations vector for the new cut cell
               particle_locations.clear();
               const unsigned int n_particles = map_info.size();
@@ -267,24 +258,20 @@ void
                   particle_locations.push_back(contact_info.particle);
                 }
 
-              // Get cut cell id
-              // const unsigned int cut_cell_id = cut_cell_key;
-
               // Build triangle vector
-              triangle.clear();
               for (unsigned int vertex = 0;
                    vertex < this->vertices_per_triangle;
                    ++vertex)
                 {
                   // Find vertex-floating wall distance
-                  triangle.push_back(cut_cell->vertex(vertex));
+                  triangle[vertex] = cut_cell->vertex(vertex);
                 }
 
-              // Call calculate_particle_triangle_distance to get the
+              // Call find_particle_triangle_projection to get the
               // distance and projection of particles on the triangle
               // (floating mesh cell)
               auto particle_triangle_information =
-                LetheGridTools::calculate_particle_triangle_distance(
+                LetheGridTools::find_particle_triangle_projection(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =
@@ -359,19 +346,15 @@ void
                               this->calculate_linear_contact_force_and_torque(
                                 contact_info, particle_properties);
 
-                          // Getting particle's torque and force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-                          types::particle_index particle_id =
-                            particle->get_id();
-#else
+                          // Get particle's torque and force
                           types::particle_index particle_id =
                             particle->get_local_index();
-#endif
+
                           Tensor<1, 3> &particle_torque = torque[particle_id];
                           Tensor<1, 3> &particle_force  = force[particle_id];
 
                           // Apply the calculated forces and torques on the
-                          // particle pair
+                          // particle
                           this->apply_force_and_torque(
                             forces_and_torques,
                             particle_torque,

@@ -137,7 +137,7 @@ void
 SerialSolid<dim, spacedim>::initial_setup()
 {
   // initial_setup is called if the simulation is not a restarted one
-  // Set-up of Nitsche triangulation, then particles (order important)
+  // Set-up of solid triangulation
   setup_triangulation(false);
   setup_displacement();
 }
@@ -171,9 +171,7 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
   else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
       if (param->solid_mesh.simplex)
-        { // TODO Using dealii generated meshes with simplices in Nitsche solver
-          // generates and error. "boundary_id !=
-          // numbers::internal_face_boundary_id"
+        {
           Triangulation<dim, spacedim> temporary_quad_triangulation;
           GridGenerator::generate_from_name_and_arguments(
             temporary_quad_triangulation,

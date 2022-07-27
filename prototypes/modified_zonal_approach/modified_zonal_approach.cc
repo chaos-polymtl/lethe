@@ -4,7 +4,7 @@
  *
  * This file is part of the Lethe library.
  *
- * The LEthe library is free software; you can use it, redistribute
+ * The Lethe library is free software; you can use it, redistribute
  * it, and/or modify it under the terms of the GNU Lesser General
  * Public License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
@@ -14,12 +14,8 @@
  * ---------------------------------------------------------------------
 
  *
- * Author: Bruno Blais, Polytechnique Montreal, 2019
+ * Author: Bruno Blais, Polytechnique Montreal, 2022
  */
-
-
-// This is a template folder for prototype executables to be created when
-// developing totally new Lethe functionnalities
 
 #include <deal.II/base/logstream.h>
 #include <deal.II/base/point.h>
@@ -84,7 +80,6 @@ calculate_distance(std::vector<Point<dim>> triangle,
       double t = b * d - a * e;
       // std::cout << "s " << s << " t " << t << std::endl;
 
-      // const double f = vector_to_plane.norm_square();
       if (s + t <= det)
         {
           if (s < 0)

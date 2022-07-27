@@ -15,13 +15,13 @@ template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_wall_fine_search(
   const std::unordered_map<
-        types::particle_index,
-        std::unordered_map<types::boundary_id,
-                           std::tuple<Particles::ParticleIterator<dim>,
-                                      Tensor<1, dim>,
-                                      Point<dim>,
-                                      types::boundary_id,
-                                      types::global_cell_index>>>
+    types::particle_index,
+    std::unordered_map<types::boundary_id,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  types::boundary_id,
+                                  types::global_cell_index>>>
     &particle_wall_contact_pair_candidates,
   std::unordered_map<
     types::particle_index,
@@ -120,8 +120,7 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
                ++particle_pair_candidate_iterator)
             {
               // Getting the floating wall id once to improve efficiency
-              auto floating_wall_id =
-                particle_pair_candidate_iterator->first;
+              auto floating_wall_id = particle_pair_candidate_iterator->first;
 
               // Checking simulation time for temporary floating walls
               if (simulation_time >=

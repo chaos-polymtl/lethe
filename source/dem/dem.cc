@@ -77,7 +77,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
-  , n_solids(parameters.solid_objects->number_solids)
+  , floating_mesh(false)
 {
   // Check if the output directory exists
   std::string output_dir_name = parameters.simulation_control.output_folder;
@@ -211,22 +211,23 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
                                            simulation_control->get_time_step());
 
-  // Generate solid objects
-  floating_mesh_information.resize(n_solids);
-
-  if (n_solids > 0)
-    floating_mesh = true;
-
-  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
+  for (unsigned int i_solid = 0;
+       i_solid < parameters.solid_objects->number_solids;
+       ++i_solid)
     {
       solids.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
         this->parameters.solid_objects->solids[i_solid], i_solid));
     }
 
+  // Generate solid objects
+  floating_mesh_information.resize(solids.size());
+
+  if (solids.size() > 0)
+    floating_mesh = true;
 
   // Resize particle_floating_mesh_in_contact
   if (floating_mesh)
-    particle_floating_mesh_in_contact.resize(n_solids);
+    particle_floating_mesh_in_contact.resize(solids.size());
 }
 
 template <int dim>
@@ -310,7 +311,10 @@ DEMSolver<dim>::load_balance()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
 
-  // Get total (with repetition) neighbors list for floating mesh
+  // Get total (with repetition) neighbors list for floating mesh. In
+  // find_cell_neighbors function, if cell i is a neighbor of cell j, in the
+  // neighbor list of cell j, cell i is not included (without repetition). In
+  // find_full_cell_neighbors function, however, these repetitions are allowed.
   if (floating_mesh)
     {
       cells_total_neighbor_list.clear();
@@ -318,7 +322,7 @@ DEMSolver<dim>::load_balance()
                                                      cells_total_neighbor_list);
     }
 
-  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
       // Create a container that contains all the combinations of background and
       // solid cells
@@ -609,9 +613,7 @@ DEMSolver<dim>::particle_wall_contact_force()
           simulation_control->get_time_step(),
           torque,
           force,
-          floating_mesh_translational_velocity,
-          floating_mesh_rotational_velocity,
-          floating_mesh_center_of_rotation);
+          solids);
     }
 
   particle_point_line_contact_force_object
@@ -658,21 +660,6 @@ DEMSolver<dim>::finish_simulation()
         simulation_control->get_time_step(),
         forces_boundary_information,
         torques_boundary_information);
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::update_floating_mesh_info()
-{
-  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
-    {
-      floating_mesh_translational_velocity.insert(
-        {i_solid, solids[i_solid]->get_translational_velocity()});
-      floating_mesh_rotational_velocity.insert(
-        {i_solid, solids[i_solid]->get_rotational_velocity()});
-      floating_mesh_center_of_rotation.insert(
-        {i_solid, solids[i_solid]->get_center_of_rotation()});
     }
 }
 
@@ -796,9 +783,7 @@ DEMSolver<dim>::write_output_results()
 
   // Write all solid objects
   for (const auto &solid_object : solids)
-    {
-      solid_object->write_output_results(simulation_control);
-    }
+    solid_object->write_output_results(simulation_control);
 }
 
 template <int dim>
@@ -847,7 +832,7 @@ DEMSolver<dim>::solve()
             triangulation,
             triangulation_cell_diameter);
 
-  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
       // Create a container that contains all the combinations of background and
       // solid cells
@@ -937,11 +922,6 @@ DEMSolver<dim>::solve()
           boundary_cell_object.update_boundary_info_after_grid_motion(
             updated_boundary_points_and_normal_vectors);
         }
-
-      // Update floating mesh information (translational and rotational
-      // velocities and center of rotation)
-      if (floating_mesh)
-        update_floating_mesh_info();
 
       // Keep track if particles were inserted this step
       particles_insertion_step = insert_particles();

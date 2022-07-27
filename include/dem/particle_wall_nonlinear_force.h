@@ -95,9 +95,7 @@ public:
    * @param dt DEM time step
    * @param torque Torque acting on particles
    * @param force Force acting on particles
-   * @param floating_mesh_translational_velocity
-   * @param floating_mesh_rotational_velocity
-   * @param floating_mesh_center_of_rotation
+   * @param solids Floating solids
    */
   virtual void calculate_particle_floating_wall_contact_force(
     std::vector<
@@ -109,11 +107,7 @@ public:
     const double &             dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    const std::map<types::global_cell_index, Tensor<1, 3>>
-      &floating_mesh_translational_velocity,
-    const std::map<types::global_cell_index, Tensor<1, 3>>
-      &                                     floating_mesh_rotational_velocity,
-    const std::map<types::global_cell_index, Point<3>> &floating_mesh_center_of_rotation)
+    const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
     override;
 
   /**
