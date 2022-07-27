@@ -331,8 +331,12 @@ void ParticleWallNonLinearForce<dim>::
                         {
                           contact_info.normal_overlap = normal_overlap;
                           // Update normal vector
-                          contact_info.normal_vector =
-                            normal_vectors[particle_counter];
+                          const Tensor<1, 3> normal =
+                            particle_location_3d - projection_point;
+
+                          const double norm_normal = normal.norm();
+                          contact_info.normal_vector = normal / norm_normal;
+
                           contact_info.point_on_boundary = projection_point;
 
                           contact_info.boundary_id = solid_counter;
