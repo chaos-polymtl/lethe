@@ -9,7 +9,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     set heat transfer 		= false
     set viscous dissipation 	= false
     set buoyancy force 		= false
-    set use average velocity field =false
+    set use average velocity field = false
 
     # Tracer
     set tracer 			= false
