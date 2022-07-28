@@ -464,7 +464,6 @@ As we can see in the image above, for :math:`Re < 100` (laminar regime), the Let
 
 Possibility for Extension
 ----------------------------
-
 It could be interesting to simulate at higher Reynolds numbers in a transient simulation and compare the results with the experimental data.
 
 References

@@ -24,7 +24,7 @@ Re = np.logspace(-1,np.log10(100),25)       # Re values (different cases)
 nu = N * D * D / Re                         # kinematic vicosity values
 
 
-folder_prefix="mixers_"
+folder_prefix="mixer_"
 values=nu
 
 template_folder="template"
