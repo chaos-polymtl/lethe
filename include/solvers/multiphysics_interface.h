@@ -525,7 +525,8 @@ public:
 
 
   /**
-   * @brief Request the reynolds_stress solution of a given physics. This is WIP and is not yet implemented in the solver.
+   * @brief Request the reynolds_stress solution of a given physics.
+   * WIP for an upcoming PR, not yet implemented in the solver.
    *
    * @param physics_id The physics of the solution being requested
    */
@@ -666,7 +667,7 @@ public:
 
   /**
    * @brief Sets the reference to the Reynolds stress of the physics in the multiphysics interface.
-   * This is WIP and is not yet implemented in the solver.
+   * WIP for an upcoming PR, not yet implemented in the solver.
    *
    * @param physics_id The physics of the DOF handler being requested
    *

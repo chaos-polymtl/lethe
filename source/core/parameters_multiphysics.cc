@@ -71,7 +71,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
       "use average velocity field",
       "false",
       Patterns::Bool(),
-      "Use the average velocity field instead of the present velocity field <true|false>");
+      "Use the average velocity field in subphysics, instead of the present velocity field <true|false>");
 
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",

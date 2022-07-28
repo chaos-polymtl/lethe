@@ -37,9 +37,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   velocity_dt.equ(dt, local_evaluation_point);
   sum_velocity_dt += velocity_dt;
 
-  // Get the inverse of the total time with the first time step since
-  // the weighted velocities are calculated with the first velocity when
-  // total time = 0.
+  // Get the inverse of the time since the beginning of the time averaging
   total_time_for_average = (current_time - real_initial_time) + dt_0;
   inv_range_time         = 1. / total_time_for_average;
 
@@ -54,9 +52,8 @@ template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::update_average_velocities()
 {
-  // Get the inverse of the total time with the first time step since
-  // the weighted velocities are calculated with the first velocity when
-  // total time = 0.
+  // Use the inverse of the time since the beginning of the time averaging to
+  // reevaluate the average velocity field and Reynolds stress.
   if (total_time_for_average > 0)
     {
       inv_range_time = 1.0 / total_time_for_average;

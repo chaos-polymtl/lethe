@@ -108,7 +108,7 @@ protected:
   assemble_system_rhs() override;
 
   /**
-   * @brief  Update the average velocity field solution in the multiphyscics interface
+   * @brief  Updates the average velocity field solution in the multiphyscics interface
    */
   virtual void
   update_multiphysics_average_solution() override;
@@ -118,7 +118,6 @@ protected:
    */
   void
   setup_preconditioner();
-
 
 
   /**
