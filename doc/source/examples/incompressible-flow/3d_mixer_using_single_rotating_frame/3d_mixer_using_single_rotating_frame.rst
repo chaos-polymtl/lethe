@@ -350,7 +350,7 @@ On your **local computer**, you may copy the ``Np_vs_Re`` folder to your ``scrat
 
 .. code-block:: text
 
-    scp -r /home/PathToNp_vs_Re username@clustername.computecanada.ca:/scratchPathInCluster
+    scp -r /home/Path/To/Np_vs_Re username@clustername.computecanada.ca:/scratchPathInCluster
 
 
 .. tip::
@@ -370,7 +370,7 @@ On your **local computer**, you may copy the ``Np_vs_Re`` folder to your ``scrat
 
 Submitting Jobs and Launching Simulations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-After logging in your preferred cluster, you can submit your jobs by running the ``launch_all.py`` Python script located in the ``Np_vs_Re`` folder. After running the script, :math:`25` new jobs should have been generated. You may check if it's the case with the ``sq`` command. In the ``ST`` column of the output, you may see the status of each job. The two most common states are ``PD`` for *pending* or ``R`` for *running*.
+After connecting on your preferred cluster, you can submit your jobs by running the ``launch_all.py`` Python script located in the ``Np_vs_Re`` folder. After running the script, :math:`25` new jobs should have been generated. You may check if it's the case with the ``sq`` command. In the ``ST`` column of the output, you may see the status of each job. The two most common states are ``PD`` for *pending* or ``R`` for *running*.
 
 .. note::
 
@@ -385,8 +385,35 @@ Simulating for a Specific Flow Condition (:math:`Re = 1`)
 
 
 
-Generating :math:`N_p` vs :math:`Re` curves (:math:`Re \in [0.1, 100]`)
+Generating :math:`N_p` vs :math:`Re` Curves (:math:`Re \in [0.1, 100]`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Copying Files to Local Computer (with SFTP)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Before postprocessing the results of the simulation, you may want to copy the files from the remote machine to your local one and you may do so by connecting to the remote computer with the Secure File Transfer Protocol (SFTP):
+
+.. code-block:: text
+
+    sftp username@clustername.computecanada.ca
+
+With the ``get`` command your may copy the remote ``Np_vs_Re`` folder:
+
+.. code-block:: text
+
+    get -r Path/To/Remote_Np_vs_Re Path/To/Local_directory
+
+.. note::
+
+    Earlier, before launching the simulations, we could have also uploaded the initial ``Np_vs_Re`` folder using this methode with the ``put`` command:
+
+    .. code-block:: text
+
+        put -r Path/To/Local_Np_vs_Re Path/To/Remote_scratch_directory
+
+Once you are done, you may exit with the ``exit`` command.
+
+Postprocess Data
+^^^^^^^^^^^^^^^^^
 In order to generate the :math:`N_p` vs :math:`Re` curves, we must first gather all the calculated :math:`\Gamma` from all different cases. You may do so by executing the ``gather_torques.sh`` Bash script. A new ``gather.dat`` file will be generated containing the number of cells and the :math:`\Gamma` components of each case.
 
 .. note::
