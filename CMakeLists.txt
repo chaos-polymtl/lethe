@@ -48,8 +48,8 @@ IF(EXISTS ${CMAKE_SOURCE_DIR}/tests/CMakeLists.txt)
 ENDIF()
 
 #set(PROTOTYPES "FALSE" CACHE BOOL)
-option(PROTOTYPES "Enable prototypes applications" OFF)
-option(MARCH_NATIVE "Enable prototypes applications" OFF)
+option(PROTOTYPES "Enable prototype applications" OFF)
+option(MARCH_NATIVE "Enable the -march=native flag" OFF)
 
 
 Project(lethe)
