@@ -66,7 +66,6 @@ The dimensions of the system are listed in the following table:
 | :math:`D`               | Impeller diameter                | :math:`27` cm           |
 +-------------------------+----------------------------------+-------------------------+
 
-
 To simulate the flow in such complex geometry, we take advantage of the system's symmetry and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or "lab reference frame"), we place ourselves on the impeller's reference making it static and inducing a no-slip boundary condition. This way, the cylindrical tank will be the only moving geometry in our system. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames.
 
 .. image:: images/eulerian_vs_langrangian_reference.jpg
@@ -467,7 +466,6 @@ Possibility for Extension
 ----------------------------
 
 It could be interesting to simulate at higher Reynolds numbers in a transient simulation and compare the results with the experimental data.
-
 
 References
 -----------
