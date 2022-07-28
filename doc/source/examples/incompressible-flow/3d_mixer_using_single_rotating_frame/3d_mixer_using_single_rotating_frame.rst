@@ -326,7 +326,7 @@ After that, the ``{{N}}`` expression in the ``Physical Properties`` subsection o
 
 .. note::
 
-    If you don't have the Jinja2 module installed, you may install it using ``pip`` with the following command line:
+    If you don't have the Jinja2 module installed, you may install it using ``pip`` with the following command line:)
 
     .. code-block:: text
 
