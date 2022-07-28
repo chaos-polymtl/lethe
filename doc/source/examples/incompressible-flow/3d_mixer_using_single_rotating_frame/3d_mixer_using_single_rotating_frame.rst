@@ -22,7 +22,7 @@ Locations of Files Used in the Example
 - Step file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/db_helical.step``
 - Mesh file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/diff_step_mesh.msh``
 - Python script for generating different cases: ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/lethe_case_generator.py``
-- Bash script for running simulations on a cluster: ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/launch.sh``
+- Bash script for running simulations on a cluster (job script): ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/launch.sh``
 
 **Double check all files and their names**
 
@@ -293,13 +293,58 @@ In order to generate a :math:`N_p` vs :math:`Re` curves, we are going to launch 
     If it's your first time running simulations from Lethe on a Compute Canada cluster, you may want to see our installation guide on how to set-up and install all the necessary softwares and modules: :doc:`../../../installation/compute_canada`.
 
 
-Using ``lethe_case_generator.py``, we generate the 25 cases with :math:`Re` ranging from :math:`0.1` to :math:`100`. Before running the Pyhton script, 
+Using ``lethe_case_generator.py``, we generate the 25 cases with :math:`Re` ranging from :math:`0.1` to :math:`100`. Before running the Python script, it is important to specify your account, next to ``#SBATCH --account=`` among the job directives of the ``launch.sh`` script located in the ``template`` folder.
+
+.. warning::
+    
+    In order to run a job on a Compute Canada cluster, it is required to at least specify the time limit (``-- time``) and your account (``--account``).
+
+
+Here are a few examples of other job directives you may want to specify:
+
+.. code-block:: text
+
+    #!/bin/bash
+    #SBATCH --account=$yourgroupaccount
+    #SBATCH --time=1:00:00                  #maximum time for the simulation (hh:mm:ss or d-hh:mm:ss)
+    #SBATCH --ntasks-per-node=$X            #number of parallel tasks (as in mpirun -np X)
+    #SBATCH --nodes=1                       #number of whole nodes used (each with up to 40 tasks-per-node)
+    #SBATCH --mem=120G                      #memory usage per node. See cluster specification for maximal amount.
+    #SBATCH --job-name=$yourjobname
+    #SBATCH --mail-type=END                 #email preferences
+    #SBATCH --mail-type=FAIL
+    #SBATCH --mail-user=$your.email.adress@email.provider
+
+.. note::
+
+    In this example, it is not necessary to specify the job name in the job script, we will be specifying it when launching the simulations.
+
+For our example, we will be running every job on :math:`1` node with :math:`40` tasks per node.
+
+Once you've added your account and all the other job directives you wanted to add in the Bash script, we may generate the different cases by running the ``lethe_case_generator.py`` script.
+
+.. note::
+
+    The cases are generated using the Jinja module. You may install it using ``pip`` with the following command line:
+
+    .. code-block:: text
+
+        pip install Jinja2
+
+
+After running the ``lethe_case_generator.py`` script you should have 25 new folders named with the following syntax ``mixer_$kinematic_viscosity``, and a new ``.txt`` file named ``case_index.txt`` should also have been generated.
 
 
 Results
 --------
 
+Simulating for a Specific Flow Condition (:math:`Re = 1`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+
+Generating :math:`N_p` vs :math:`Re` curves (:math:`Re \in [0.1, 100]`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 References
