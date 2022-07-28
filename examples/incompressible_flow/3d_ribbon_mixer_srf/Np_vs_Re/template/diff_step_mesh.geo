@@ -19,7 +19,7 @@ Mesh.HighOrderOptimize = 1;
 
 Cylinder(1) = {0, 0, z0, 0, 0, H, T/2, 	2*Pi}; 
 
-Merge "db_helical_Tiff.step";
+Merge "db_helical.step";
 Translate {x0, y0, 0} { Volume{2:6}; }
 
 BooleanDifference(7)= { Volume{1}; Delete; }{ Volume{2:6}; Delete; };
