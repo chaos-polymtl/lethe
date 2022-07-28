@@ -1152,19 +1152,15 @@ LetheGridTools::find_particle_triangle_projection(
       Point<dim> particle_position = part->get_location();
       vector_to_plane              = p_0 - particle_position;
 
+      // A bool variable for region 0
+      bool region_zero = 0;
+
       // Check to see if the particle is located on the correct side (with
       // respect to the normal vector) of the triangle
       if (vector_to_plane * unit_normal > 0)
         {
           unit_normal = -1.0 * unit_normal;
         }
-
-      // Cast unit_normal to a tensor<1, 3>
-      if constexpr (dim == 3)
-        unit_normal_3d = unit_normal;
-
-      if constexpr (dim == 2)
-        unit_normal_3d = tensor_nd_to_3d(unit_normal);
 
       double distance_squared = scalar_product(vector_to_plane, unit_normal);
 
@@ -1240,6 +1236,16 @@ LetheGridTools::find_particle_triangle_projection(
               const double inv_det = 1. / det;
               s *= inv_det;
               t *= inv_det;
+
+              // In region 0, normal vector is the face normal vector
+              // Cast unit_normal to a tensor<1, 3>
+              if constexpr (dim == 3)
+                unit_normal_3d = unit_normal;
+
+              if constexpr (dim == 2)
+                unit_normal_3d = tensor_nd_to_3d(unit_normal);
+
+              region_zero = 1;
             }
         }
       else
@@ -1316,6 +1322,21 @@ LetheGridTools::find_particle_triangle_projection(
         }
 
       pt_in_triangle = p_0 + s * e_0 + t * e_1;
+
+      if (region_zero)
+        region_zero = 0;
+      else
+        {
+          // normal vector
+          const Tensor<1, dim> normal = particle_position - pt_in_triangle;
+
+          if constexpr (dim == 3)
+            unit_normal_3d = normal / normal.norm();
+
+          if constexpr (dim == 2)
+            unit_normal_3d = tensor_nd_to_3d(normal / normal.norm());
+        }
+
 
       // Cast pt_in_triangle on Point<3>
       if constexpr (dim == 3)
