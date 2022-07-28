@@ -2,23 +2,29 @@
 3D Ribbon Mixer using a Single Rotating Reference Frame
 ========================================================
 
-When designing an industrial mixer, it is essential to evaluate the power consumed by the agitator. To do so, we usually refer to graphs correlating the power number (:math:`N_p`) as a function of the Reynolds number (:math:`Re`). :math:`N_p` is a dimensionless number that relates the power consumed by the agitator to the geometry of the system, the speed of the agitator, and the properties of the material being mixed (density :math:`\rho` and viscosity :math:`\mu`). In this example, using a single rotating frame (SRF) model, we simulate a fluid being mixed in a ribbon mixer for different flow conditions (different values :math:`Re`) to generate :math:`N_p` vs :math:`Re` curves.
+When designing an industrial mixer, it is essential to evaluate the power consumed by the agitator. To do so, we usually refer to graphs correlating the power number (:math:`N_p`) as a function of the Reynolds number (:math:`Re`). :math:`N_p` is a dimensionless number that relates the power consumed by the agitator to the geometry of the system, the speed of the agitator, and the properties of the material being mixed (density :math:`\rho` and viscosity :math:`\mu`). In this example, using a single rotating frame (SRF) model, we simulate a fluid being mixed in a ribbon mixer for different flow conditions (different values of :math:`Re`) to generate :math:`N_p` vs :math:`Re` curves.
 
 
 Features
 -------------
 - Solver: ``gls_navier_stokes_3d`` (with Q1-Q1)
 - Steady-state problem
-- Displays the use of a single rotating frame (srf) when modeling a complex rotating geometry
+- Displays the use of a single rotating frame (``srf``) when modeling a complex rotating geometry
 - Calculation of the power number (:math:`N_p`) with a python script
 - Use of a cluster to run simulations
 
 
 Locations of Files Used in the Example
 ---------------------------------------
-- Parameter file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/ribbon_gls.prm``
+- Parameter file for :math:`Re = 1`: ``examples/incompressible_flow/3d_ribbon_mixer_srf/ribbon_gls_Re1.prm``
+- Parameter file for generating multiple cases: ``examples/incompressible_flow/3d_ribbon_mixer_srf/ribbon_gls.prm``
 - Geometry file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/diff_step_mesh.geo``
+- Step file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/db_helical.step``
+- Mesh file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/diff_step_mesh.msh``
+- Python script for generating different cases: ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/lethe_case_generator.py``
+- Bash script for running simulations on a cluster: ``examples/incompressible_flow/3d_ribbon_mixer_srf/template/launch.sh``
 
+**Double check all files and their names**
 
 Description of the Case
 -------------------------
@@ -32,18 +38,18 @@ The following figure represents the geometry of our system:
    :name: Ribbon Mixer Geometry
    :height: 15 cm
 
-The dimensions of the parameters seen in the figure above are listed in the following table:
+The dimensions of the system are listed in the following table:
 
 +-------------------------+----------------------------------+-------------------------+
 | Symbol                  | Description                      | Value                   |
 +=========================+==================================+=========================+
-| :math:`T`               | Tank diameter                    | 28.57 **unités**        |
+| :math:`T`               | Tank diameter                    | :math:`28.57` cm        |
 +-------------------------+----------------------------------+-------------------------+
-| :math:`H`               | Tank height                      | 17.4625 **unités**      |
+| :math:`H`               | Tank height                      | :math:`17.4625` cm      |
 +-------------------------+----------------------------------+-------------------------+
 | :math:`C`               | Impeller off-bottom clearance    | :math:`T/4`             |
 +-------------------------+----------------------------------+-------------------------+
-| :math:`D`               | Impeller diameter                | :math:`0.27` m          |
+| :math:`D`               | Impeller diameter                | :math:`27` cm           |
 +-------------------------+----------------------------------+-------------------------+
 
 
@@ -60,15 +66,15 @@ In this example, we will start by simulating the case when :math:`Re = 1` and th
 The Reynolds number for our system is defined as follows:
 
 .. math::
-    Re = \frac{ND²}{\nu}
+    Re = \frac{ND^2}{\nu}
 
 where
 
 - N is the angular velocity :math:`[rad \cdot s^{-1}]` of the agitator;
 - D is the diameter of the impeller :math:`[m]`, and
-- \nu is the kinematic viscosity of the fluid :math:`[m^2 \cdot s^{-1}]`.
+- :math:`\nu` is the kinematic viscosity of the fluid :math:`[m^2 \cdot s^{-1}]`.
 
-In order to genrate :math:`N_p` vs :math:`Re` curves, we have to calculate :math:`N_p`. In this example, we will be using the torque (:math:`\Gamma`) to calculate :math:`N_p`:
+In order to genrate :math:`N_p` vs :math:`Re` curves, we have to calculate :math:`N_p`. In this example, we will be using the torque (:math:`\Gamma`) to calculate :math:`N_p` with the following expression: 
 
 .. math::
     N_p = \frac{2 \pi \Gamma}{\rho N^2 D^5}
@@ -128,7 +134,7 @@ Mesh Adaptation Control
       set fraction coarsening     = 0.00
     end
 
-The ``min refinement level`` refers to the base mesh which has been used in the previous static simulations. The mesh can only become finer than it, not coarser. The ``max refinement level`` is set at 2, **giving a maximum possible number of cells of 2 million**. However, the ``max number elements`` limits the number of cells to 600,000 to keep the simulation within feasible computational expense.
+The ``min refinement level`` refers to the base mesh which has been used in the previous static simulations. The mesh can only become finer than it, not coarser. The ``max refinement level`` is set at 2. And the ``max number elements`` limits the number of cells to 600,000 to keep the simulation within feasible computational expense.
 
 
 Boundary Conditions
@@ -182,7 +188,7 @@ Physical Properties
        end
     end
 
-The kinematic viscosity is set for a :math:`Re = 1`, when the angular velocity is :math:`10 \ Hz` and the diameter of the impeller of :math:`0.27` m.
+The kinematic viscosity is set for a :math:`Re = 1`, when the angular velocity is :math:`10` Hz and the diameter of the impeller of :math:`0.27` m.
 
 
 FEM Interpolation
@@ -208,7 +214,7 @@ Velocity Source
         set omega_z      = -10
     end
 
-In the ``velocity source`` subsection, we specify with ``type = srf``t hat we are in a single rotating reference frame. Since a centrifugal and a Coriolis force are induced by the rotating movement of the system, we are in a non-Galilean reference frame. These two additional force contributions must be taken into account in the Navier-Stokes equations and by setting the ``type`` parameter to ``srf`` we do so. The ``omega_z`` parameter represents the angular velocity of the reference frame.
+In the ``velocity source`` subsection, we specify with ``type = srf`` that we are in a single rotating reference frame. Since a centrifugal and a Coriolis force are induced by the rotating movement of the system, we are in a non-Galilean reference frame. These two additional force contributions must be taken into account in the Navier-Stokes equations and by setting the ``type`` parameter to ``srf`` we do so. The ``omega_z`` parameter represents the angular velocity of the reference frame.
 
 
 Force
@@ -243,7 +249,7 @@ Lethe is an implicit CFD solver. Consequently, each time-step requires the solut
 
 Linear Solver Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Relatively standard parameters are used for the linear solver. From our experience, the ``AMG`` preconditioner is more robust with the ``Nitsche IB`` than the traditional ``ILU``.
+Relatively standard parameters are used for the linear solver. From our experience, the ``AMG`` preconditioner is more robust.
 
 .. code-block:: text
 
@@ -265,6 +271,7 @@ Relatively standard parameters are used for the linear solver. From our experien
     end
 
 
+
 Running the Simulation
 ------------------------------------
 
@@ -274,11 +281,19 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-    gls_navier_stokes_3d ribbon_gls.prm
+    gls_navier_stokes_3d ribbon_gls_Re1.prm
+
 
 Generating :math:`N_p` vs :math:`Re` curves (:math:`Re \in [0.1, 100]`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In order to generate a :math:`N_p` vs :math:`Re` curves, we are going to launch the simulation for 25 different values of :math:`Re` while maintaining a laminar regime. In this example, we will be launching these simulations on a Compute Canada cluster.
 
+.. seealso::
+
+    If it's your first time running simulations from Lethe on a Compute Canada cluster, you may want to see our installation guide on how to set-up and install all the necessary softwares and modules: :doc:`../../../installation/compute_canada`.
+
+
+Using ``lethe_case_generator.py``, we generate the 25 cases with :math:`Re` ranging from :math:`0.1` to :math:`100`. Before running the Pyhton script, 
 
 
 Results
