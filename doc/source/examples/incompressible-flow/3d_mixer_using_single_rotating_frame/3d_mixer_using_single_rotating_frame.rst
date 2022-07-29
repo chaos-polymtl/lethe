@@ -382,7 +382,10 @@ Results
 
 Simulating for a Specific Flow Condition (:math:`Re = 1`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+.. image:: images/velocity_magnitude.png
+   :alt: Ribbon Mixer Velocity magnitude
+   :align: center
+   :name: Ribbon Mixer Velocity magnitude
 
 
 Generating :math:`N_p` vs :math:`Re` Curves (:math:`Re \in [0.1, 100]`)
