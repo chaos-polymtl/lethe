@@ -1,4 +1,4 @@
-name: CI
+name: CI-Release
 
 on:
   # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
@@ -73,50 +73,6 @@ jobs:
           export OMPI_ALLOW_RUN_AS_ROOT=1
           export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
           cd build-release
-          # Print the tests to be executed
-          ctest -N --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
-          # Run sequencially
-          ctest -V --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
-
-      #
-      # Warnings
-      #
-      - name: Compile Lethe to check for warnings (deal.ii:${{ matrix.dealii_version }})
-        run: |
-          mkdir build-warnings
-          cd build-warnings
-          cmake ../ -DCMAKE_BUILD_TYPE=Debug -DWARNINGERROR=ON
-          make -j${{ env.COMPILE_JOBS }}
-
-      #
-      # Debug
-      #
-      - name: Compile Lethe (Debug-deal.ii:${{ matrix.dealii_version }})
-        run: |
-          mkdir build-debug
-          cd build-debug
-          cmake ../ -DCMAKE_BUILD_TYPE=Debug
-          make -j${{ env.COMPILE_JOBS }}
-
-      # These tests require a single core each so we will run them in parallel
-      - name: Run Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
-        run: |
-          #Allow OMPI to run as root
-          export OMPI_ALLOW_RUN_AS_ROOT=1
-          export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
-          cd build-debug
-          # Print the tests to be executed
-          ctest -N --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
-          # Run in parallel
-          ctest -V -j${{ env.COMPILE_JOBS }} --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
-
-      # These tests require two cores each so we will run them sequencially
-      - name: Run multi-core Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
-        run: |
-          #Allow OMPI to run as root
-          export OMPI_ALLOW_RUN_AS_ROOT=1
-          export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
-          cd build-debug
           # Print the tests to be executed
           ctest -N --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
           # Run sequencially
