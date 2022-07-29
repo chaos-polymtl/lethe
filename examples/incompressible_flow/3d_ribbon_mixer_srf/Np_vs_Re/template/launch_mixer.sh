@@ -1,4 +1,8 @@
 #!/bin/bash
+<<<<<<< HEAD
+=======
+#SBATCH --time=3:00:00
+>>>>>>> 43eb1dfa (Small changes)
 #SBATCH --account=
 #SBATCH --time=00:30:00
 #SBATCH --nodes=1
