@@ -379,13 +379,17 @@ The next step is to connect to a Compute Canada cluster:
 
 After connecting to your preferred cluster, you can submit your jobs by running the ``launch_all_mixers.py`` Python script located in the ``Np_vs_Re`` folder. After running the script, :math:`25` new jobs should have been generated. You may check if it's the case with the ``sq`` command. In the ``ST`` column of the output, you may see the status of each job. The two most common states are ``PD`` for *pending* or ``R`` for *running*.
 
-.. caution::
+.. admonition:: Have trouble submitting the jobs?
+    :class: caution
 
     If you are having issues with submitting the jobs please return to the :ref:`Generating_the_Different_Cases` subsection and make sure that you added the required information in the ``launch_mixer.sh`` script.
 
-.. note::
+.. seealso::
 
-    For more information on running jobs on a Compute Canada cluster, you may visit their wiki page on `Running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_
+    For more information on the scheduler and running jobs on a Compute Canada cluster, you may visit their wiki pages:
+
+    - `What is a scheduler? <https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3f>`_
+    - `Running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_
 
 Results
 --------
