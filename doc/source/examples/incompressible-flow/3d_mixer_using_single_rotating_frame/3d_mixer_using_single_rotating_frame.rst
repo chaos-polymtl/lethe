@@ -294,14 +294,14 @@ To generate a :math:`N_p` vs :math:`Re` curves, we are going to launch simulatio
 
 .. seealso::
 
-    If it's your first time running simulations from Lethe on a Compute Canada cluster, you may want to see our installation guide on how to setup and install all the necessary software and modules: :doc:`../../../installation/compute_canada`.
+    If it is your first time running simulations from Lethe on a Compute Canada cluster, you may want to see our installation guide on how to setup and install all the necessary software and modules: :doc:`../../../installation/compute_canada`.
 
 .. _Generating_the_Different_Cases:
 
 Generating the Different Cases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Using ``lethe_case_generator.py``, we generate the :math:`25` cases with :math:`Re` ranging from :math:`0.1` to :math:`100`. Before running the Python script, it is important to specify your account, next to ``#SBATCH --account=`` among the job directives of the ``launch_mixer.sh`` script located in the ``template`` folder.
+Using ``lethe_case_generator.py``, we generate the :math:`25` cases with :math:`Re` ranging from :math:`0.1` to :math:`100`. Before running the Python script, it is important to **specify your group account name**, next to ``#SBATCH --account=`` among the job directives of the ``launch_mixer.sh`` script located in the ``template`` folder.
 
 .. warning::
 
@@ -329,7 +329,7 @@ Here are a few examples of other job directives you may want to specify in your 
 
 For our example, we will be running every job on :math:`1` node with :math:`40` tasks per node.
 
-Once you've added your account and all the other job directives you wanted to add in the Bash script, we may generate the different cases by running the ``lethe_case_generator.py`` script.
+Once you have added your account and all the other job directives you wanted to add in the Bash script, we may generate the different cases by running the ``lethe_case_generator.py`` script.
 
 .. note::
 
@@ -356,7 +356,7 @@ On your **local computer**, you may copy the ``Np_vs_Re`` folder to your ``scrat
 
 .. tip::
 
-    You may want to save the path to your ``scratch`` folder in the cluster in an environment variable on your local computer so that you don't have to type the long expression every time you copy files there. You may do so by adding the following line to your ``~/.bashrc`` file (or any equivalent file) and sourcing the file:
+    You may want to save the path to your ``scratch`` folder in the cluster in an environment variable on your local computer so that you do not have to type the long expression every time you copy files there. You may do so by adding the following line to your ``~/.bashrc`` file (or any equivalent file) and sourcing the file:
 
     .. code-block:: text
 
@@ -377,7 +377,7 @@ The next step is to connect to a Compute Canada cluster:
 
     ssh username@clustername.computecanada.ca
 
-After connecting to your preferred cluster, you can submit your jobs by running the ``launch_all_mixers.py`` Python script located in the ``Np_vs_Re`` folder. After running the script, :math:`25` new jobs should have been generated. You may check if it's the case with the ``sq`` command. In the ``ST`` column of the output, you may see the status of each job. The two most common states are ``PD`` for *pending* or ``R`` for *running*.
+After connecting to your preferred cluster, you can submit your jobs by running the ``launch_all_mixers.py`` Python script located in the ``Np_vs_Re`` folder. After running the script, :math:`25` new jobs should have been generated. You may check if it is the case with the ``sq`` command. In the ``ST`` column of the output, you may see the status of each job. The two most common states are ``PD`` for *pending* or ``R`` for *running*.
 
 .. admonition:: Have trouble submitting the jobs?
     :class: caution
@@ -396,7 +396,7 @@ Results
 
 Simulating for a Specific Flow Condition :math:`(Re = 1)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In the figure below, the velocity magnitude and streamlines are shown for a flow at :math:`Re = 1`. Because a SRF is used, the rotational velocity imposed on the walls and the no-slip condition on the ribbon is visualised.
+In the ``output`` subdirectory, you will find the ``mixer.pvd`` file that can be visualized using `Paraview <https://www.paraview.org/download/>`_. In the figure below, the velocity magnitude and streamlines are shown for a flow at :math:`Re = 1`. Because a SRF is used, the rotational velocity imposed on the walls and the no-slip condition on the ribbon is visualised.
 
 .. image:: images/velocity_magnitude.png
    :alt: Ribbon Mixer Velocity magnitude

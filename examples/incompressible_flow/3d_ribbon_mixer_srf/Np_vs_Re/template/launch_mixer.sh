@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --time=3:00:00
 #SBATCH --account=
+#SBATCH --time=3:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=40
 #SBATCH --mem=90G
