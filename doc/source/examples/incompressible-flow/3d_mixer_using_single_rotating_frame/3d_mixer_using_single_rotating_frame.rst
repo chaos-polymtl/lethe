@@ -24,7 +24,8 @@ Locations of Files Used in the Example
 - Bash script for running simulations on a cluster (job script): ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/template/launch.sh``
 - Python script for generating different cases: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/template/lethe_case_generator.py``
 - Python script for launching all the simulations on the cluster: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/launch_all.py``
-- Bash script for gathering torques: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/launch_all.py``
+- Bash script for gathering torques: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/gather_torques.sh``
+- Experimental data file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/experimental.dat``
 
 **Double check all files and their names at the end**
 
@@ -393,11 +394,6 @@ In the figure below, the velocity magnitude and streamlines are shown for a flow
 Generating :math:`N_p` vs :math:`Re` Curves (:math:`Re \in [0.1, 100]`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. image:: images/Np-Re.png
-   :alt: Power curve
-   :align: center
-   :name: Power curve
-
 Copying Files to Local Computer (with SFTP)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Before postprocessing the results of the simulation, you may want to copy the files from the remote machine to your local one and you may do so by connecting to the remote computer with the Secure File Transfer Protocol (SFTP):
@@ -435,6 +431,11 @@ In order to generate the :math:`N_p` vs :math:`Re` curves, we must first gather 
         chmod +x gather_torques.sh
 
 After that, you may run the ``plot_Np_vs_Re.py`` Python script to get the figure shown below.
+
+.. image:: images/Np-Re.png
+   :alt: Power curve
+   :align: center
+   :name: Power curve
 
 
 References
