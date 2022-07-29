@@ -303,8 +303,8 @@ Generating the Different Cases
 Using ``lethe_case_generator.py``, we generate the :math:`25` cases with :math:`Re` ranging from :math:`0.1` to :math:`100`. Before running the Python script, it is important to specify your account, next to ``#SBATCH --account=`` among the job directives of the ``launch.sh`` script located in the ``template`` folder.
 
 .. warning::
-    
-    In order to run a job on a Compute Canada cluster, it is required to at least specify the time limit of the job (``-- time``) and your account (``--account``).
+
+	In order to run a job on a Compute Canada cluster, it is required to at least specify the time limit of the job (``-- time``) and your account (``--account``).
 
 
 Here are a few examples of other job directives you may want to specify in your job script:
@@ -382,6 +382,8 @@ Results
 
 Simulating for a Specific Flow Condition (:math:`Re = 1`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In the figure below, the velocity magnitude and streamlines are shown for a flow at :math:`Re = 1`. Because a SRF is used, the rotational velocity imposed on the walls and the no-slip condition on the ribbon is vizualised.
+
 .. image:: images/velocity_magnitude.png
    :alt: Ribbon Mixer Velocity magnitude
    :align: center
@@ -390,6 +392,11 @@ Simulating for a Specific Flow Condition (:math:`Re = 1`)
 
 Generating :math:`N_p` vs :math:`Re` Curves (:math:`Re \in [0.1, 100]`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. image:: images/Np-Re.png
+   :alt: Power curve
+   :align: center
+   :name: Power curve
 
 Copying Files to Local Computer (with SFTP)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
