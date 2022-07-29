@@ -18,12 +18,12 @@ Locations of Files Used in the Example
 ---------------------------------------
 - Parameter file for :math:`Re = 1`: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Re1/ribbon_gls_Re1.prm``
 - Parameter file for generating multiple cases: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/ribbon_gls.prm``
-- Geometry file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Re1/template/diff_step_mesh.geo``
-- Step file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Re1/template/db_helical.step``
-- Mesh file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Re1/template/diff_step_mesh.msh``
-- Bash script for running simulations on a cluster (job script): ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/template/launch.sh``
+- Geometry file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/diff_step_mesh.geo``
+- Step file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/db_helical.step``
+- Mesh file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/template/diff_step_mesh.msh``
+- Bash script for running simulations on a cluster (job script): ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/template/launch_mixer.sh``
 - Python script for generating different cases: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/template/lethe_case_generator.py``
-- Python script for launching all the simulations on the cluster: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/launch_all.py``
+- Python script for launching all the simulations on the cluster: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/launch_all_mixers.py``
 - Bash script for gathering torques: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/gather_torques.sh``
 - Experimental data file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/experimental.dat``
 
@@ -279,7 +279,7 @@ Relatively standard parameters are used for the linear solver. From our experien
 Running the Simulation
 ------------------------------------
 
-Simulating for a Specific Flow Condition (:math:`Re = 1`)
+Simulating for a Specific Flow Condition :math:`(Re = 1)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the gls_navier_stokes_3d executable is within your path, the simulation can be launched by typing:
 
@@ -288,7 +288,7 @@ Launching the simulation is as simple as specifying the executable name and the 
     mpirun -np $number_of_CPUs gls_navier_stokes_3d ribbon_gls_Re1.prm
 
 
-Generating :math:`N_p` vs :math:`Re` Curves (:math:`Re \in [0.1, 100]`)
+Generating :math:`N_p` vs :math:`Re` Curves :math:`(Re \in [0.1, 100])`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 To generate a :math:`N_p` vs :math:`Re` curves, we are going to launch simulations for :math:`25` different values of :math:`Re` while maintaining a laminar regime. In this example, we will be launching these simulations on a Compute Canada cluster.
 
@@ -301,7 +301,7 @@ To generate a :math:`N_p` vs :math:`Re` curves, we are going to launch simulatio
 Generating the Different Cases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Using ``lethe_case_generator.py``, we generate the :math:`25` cases with :math:`Re` ranging from :math:`0.1` to :math:`100`. Before running the Python script, it is important to specify your account, next to ``#SBATCH --account=`` among the job directives of the ``launch.sh`` script located in the ``template`` folder.
+Using ``lethe_case_generator.py``, we generate the :math:`25` cases with :math:`Re` ranging from :math:`0.1` to :math:`100`. Before running the Python script, it is important to specify your account, next to ``#SBATCH --account=`` among the job directives of the ``launch_mixer.sh`` script located in the ``template`` folder.
 
 .. warning::
 
@@ -371,17 +371,26 @@ On your **local computer**, you may copy the ``Np_vs_Re`` folder to your ``scrat
 
 Submitting Jobs and Launching Simulations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-After connecting to your preferred cluster, you can submit your jobs by running the ``launch_all.py`` Python script located in the ``Np_vs_Re`` folder. After running the script, :math:`25` new jobs should have been generated. You may check if it's the case with the ``sq`` command. In the ``ST`` column of the output, you may see the status of each job. The two most common states are ``PD`` for *pending* or ``R`` for *running*.
+The next step is to connect to a Compute Canada cluster:
+
+.. code-block:: text
+
+    ssh username@clustername.computecanada.ca
+
+After connecting to your preferred cluster, you can submit your jobs by running the ``launch_all_mixers.py`` Python script located in the ``Np_vs_Re`` folder. After running the script, :math:`25` new jobs should have been generated. You may check if it's the case with the ``sq`` command. In the ``ST`` column of the output, you may see the status of each job. The two most common states are ``PD`` for *pending* or ``R`` for *running*.
+
+.. caution::
+
+    If you are having issues with submitting the jobs please return to the :ref:`Generating_the_Different_Cases` subsection and make sure that you added the required information in the ``launch_mixer.sh`` script.
 
 .. note::
 
-    If you are having issues with submitting the jobs please return to the :ref:`Generating_the_Different_Cases` subsection and make sure that you added the required information in the ``launch.sh`` script.
-
+    For more information on running jobs on a Compute Canada cluster, you may visit their wiki page on `Running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_
 
 Results
 --------
 
-Simulating for a Specific Flow Condition (:math:`Re = 1`)
+Simulating for a Specific Flow Condition :math:`(Re = 1)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In the figure below, the velocity magnitude and streamlines are shown for a flow at :math:`Re = 1`. Because a SRF is used, the rotational velocity imposed on the walls and the no-slip condition on the ribbon is visualised.
 
@@ -391,7 +400,7 @@ In the figure below, the velocity magnitude and streamlines are shown for a flow
    :name: Ribbon Mixer Velocity magnitude
 
 
-Generating :math:`N_p` vs :math:`Re` Curves (:math:`Re \in [0.1, 100]`)
+Generating :math:`N_p` vs :math:`Re` Curves :math:`(Re \in [0.1, 100])`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Copying Files to Your Local Computer (Using SFTP)
@@ -440,4 +449,4 @@ After that, you may run the ``plot_Np_vs_Re.py`` Python script to get the figure
 
 References
 -----------
-
+[1]
