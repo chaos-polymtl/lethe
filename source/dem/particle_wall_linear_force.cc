@@ -268,7 +268,7 @@ void
                 }
 
               // Call find_particle_triangle_projection to get the
-              // distance and projection of particles on the triangle
+              // projection of particles on the triangle
               // (floating mesh cell)
               auto particle_triangle_information =
                 LetheGridTools::find_particle_triangle_projection(

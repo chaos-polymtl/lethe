@@ -1323,9 +1323,7 @@ LetheGridTools::find_particle_triangle_projection(
 
       pt_in_triangle = p_0 + s * e_0 + t * e_1;
 
-      if (region_zero)
-        region_zero = 0;
-      else
+      if (!region_zero)
         {
           // normal vector
           const Tensor<1, dim> normal = particle_position - pt_in_triangle;
