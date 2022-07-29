@@ -36,6 +36,7 @@
 #include <dem/particle_wall_contact_info_struct.h>
 #include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
+#include <dem/particle_wall_periodic_displacement.h>
 #include <dem/print_initial_information.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
@@ -1019,6 +1020,13 @@ DEMSolver<dim>::solve()
             force,
             MOI);
         }
+
+      ParticleWallPeriodicDisplacement<dim> move_particle;
+
+      move_particle.execute_particle_displacement(
+        boundary_cell_object.get_periodic_boundary_cells_information(),
+        particle_handler);
+
 
       // Visualization
       if (simulation_control->is_output_iteration())
