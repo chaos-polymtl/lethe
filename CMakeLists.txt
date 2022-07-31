@@ -35,7 +35,14 @@ option(MARCH_NATIVE "Enable the -march=native flag" OFF)
 
 
 Project(lethe)
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
+  "${CMAKE_INSTALL_PREFIX}/lib" _libdir_index)
+if(_libdir_index LESS 0)
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+endif()
+
 ENABLE_TESTING()
 ADD_SUBDIRECTORY(source)
 ADD_SUBDIRECTORY(applications)
