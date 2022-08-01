@@ -64,7 +64,7 @@ To be able to simulate the flow in such complex geometry, we take advantage of t
    :name: Eulerian and Lagrangian reference frames
    :height: 5cm
 
-In this example, we will start by simulating the case when :math:`Re = 1` and then follow with simulation a for :math:`Re` values ranging for :math:`0.1` to :math:`100`.
+In this example, we will start by simulating the case when :math:`Re = 1` and then follow with simulation a for :math:`Re` values ranging from :math:`0.1` to :math:`100`.
 
 The Reynolds number for our system is defined as follows:
 
