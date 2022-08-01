@@ -450,6 +450,13 @@ After that, you may run the ``plot_Np_vs_Re.py`` Python script to get the figure
    :align: center
    :name: Power curve
 
+As you can see, :math:`N_p` decreases when :math:`Re` increases. It is explained by:
+
+.. math::
+
+    N_p = \frac{2 \pi \Gamma}{\rho N^2 D^5} =\frac{1}{Re}  \frac{2 \pi \Gamma}{\mu  N D^3}
+
+As we can see in the image above, for :math:`Re < 10`, the Lethe curve fits well with the experimental values.
 
 References
 -----------
