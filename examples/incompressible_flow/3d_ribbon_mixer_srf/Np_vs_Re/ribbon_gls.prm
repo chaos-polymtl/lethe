@@ -77,7 +77,7 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                 = gmsh
-    set file name            = diff_step_mesh.msh
+    set file name            = ../diff_step_mesh.msh
     set initial refinement   = 0
     set simplex = true
 end
@@ -91,7 +91,7 @@ subsection boundary conditions
         set id = 1
         set type              = function
         subsection u
-            set Function expression = -10*y#2*0.314159*y
+            set Function expression = -10*y #2*0.314159*y
         end
         subsection v
             set Function expression = 10*x #2*0.314159*x
