@@ -68,6 +68,8 @@ public:
     , filtered_phase_fraction_gradient_dof_handler(*triangulation)
     , curvature_dof_handler(*triangulation)
     , solution_transfer(dof_handler)
+    , sharpening_threshold(
+        simulation_parameters.multiphysics.vof_parameters.sharpening.threshold)
   {
     if (simulation_parameters.mesh.simplex)
       {

@@ -733,18 +733,44 @@ public:
           cell_void_fraction[j] = cell_void_fraction_bulk;
       }
 
-
     if (particle_number != 0)
       {
         average_particle_velocity = average_particle_velocity / particle_number;
       }
 
-    // Vectors for interpolation of pressure gradients and velocity laplacians
-    // at particle positions
+    // Relative velocity and particle Reynolds
+    particle_number = 0;
+    for (auto &particle : pic)
+      {
+        auto particle_properties = particle.get_properties();
+        fluid_particle_relative_velocity_at_particle_location[particle_number] =
+          fluid_velocity_at_particle_location[particle_number] -
+          particle_velocity[particle_number];
+
+        Re_particle[particle_number] =
+          1e-3 + cell_void_fraction[particle_number] *
+                   fluid_particle_relative_velocity_at_particle_location
+                     [particle_number]
+                       .norm() *
+                   particle_properties[DEM::PropertiesIndex::dp] /
+                   (properties_manager.viscosity_scale + DBL_MIN);
+        particle_number += 1;
+      }
+
+    // Vectors for interpolation of pressure gradients, velocity laplacians, and
+    // velocity curls at particle positions
     std::vector<Point<dim>> particle_reference_location(particle_number + 1);
     std::vector<double>     particle_weights(particle_number + 1);
     fluid_pressure_gradients_at_particle_location.resize(particle_number + 1);
     fluid_velocity_laplacian_at_particle_location.resize(particle_number + 1);
+
+
+
+    if constexpr (dim == 2)
+      fluid_velocity_curls_at_particle_location_2d.resize(particle_number + 1);
+    else if constexpr (dim == 3)
+      fluid_velocity_curls_at_particle_location_3d.resize(particle_number + 1);
+
 
     // Loop over particles in cell
     for (auto &particle : pic)
@@ -770,6 +796,17 @@ public:
 
     fe_values_local_particles[velocities].get_function_laplacians(
       previous_solution, fluid_velocity_laplacian_at_particle_location);
+
+    if constexpr (dim == 2)
+      {
+        fe_values_local_particles[velocities].get_function_curls(
+          previous_solution, fluid_velocity_curls_at_particle_location_2d);
+      }
+    else if constexpr (dim == 3)
+      {
+        fe_values_local_particles[velocities].get_function_curls(
+          previous_solution, fluid_velocity_curls_at_particle_location_3d);
+      }
 
     fe_values_local_particles[pressure].get_function_gradients(
       previous_solution, fluid_pressure_gradients_at_particle_location);
@@ -921,9 +958,14 @@ public:
   std::vector<Tensor<1, dim>> particle_velocity;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
+  std::vector<Tensor<1, dim>>
+                              fluid_particle_relative_velocity_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
+  std::vector<Tensor<1, 1>>   fluid_velocity_curls_at_particle_location_2d;
+  std::vector<Tensor<1, 3>>   fluid_velocity_curls_at_particle_location_3d;
   std::vector<double>         cell_void_fraction;
+  std::vector<double>         Re_particle;
   unsigned int                max_number_of_particles_per_cell;
   unsigned int                number_of_locally_owned_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;

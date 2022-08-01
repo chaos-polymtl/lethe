@@ -97,10 +97,10 @@ subsection particles
 	set particle nonlinear tolerance = 1e-5
 	set DEM coupling frequency = 10000
 	set alpha = 1
-	
+
 	set load particles from file = true
 	set particles file = particles
-	
+
 	subsection gravity
             	set Function expression =0;-981;0
         end
@@ -220,3 +220,4 @@ subsection linear solver
   set verbosity               =quiet
   set max krylov vectors = 1000
 end
+

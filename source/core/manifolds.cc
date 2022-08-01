@@ -308,13 +308,12 @@ void attach_cad_to_manifold(
   throw std::runtime_error("IGES manifolds are not supported in 2D/3D");
 }
 
+#ifdef DEAL_II_WITH_OPENCASCADE
 void attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   std::string                                                cad_name,
   unsigned int                                               manifold_id)
 {
-#ifdef DEAL_II_WITH_OPENCASCADE
-
   TopoDS_Shape cad_surface = OpenCASCADE::read_IGES(cad_name, 1e-3);
 
   // Enforce manifold over boundary ID
@@ -338,12 +337,17 @@ void attach_cad_to_manifold(
     cad_surface, tolerance);
 
   triangulation->set_manifold(manifold_id, normal_projector);
+}
 #else
+void attach_cad_to_manifold(
+  std::shared_ptr<parallel::DistributedTriangulationBase<3>>,
+  std::string,
+  unsigned int)
+{
   throw std::runtime_error(
     "IGES manifolds require DEAL_II to be compiled with OPENCASCADE");
-
-#endif // DEAL_II_WITH_OPENCASCADE
 }
+#endif // DEAL_II_WITH_OPENCASCADE
 
 
 template void attach_manifolds_to_triangulation(
