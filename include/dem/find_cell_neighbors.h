@@ -72,7 +72,10 @@ public:
 
   /**
    * Finds the full neighbor list (with repetition) of all the active cells in
-   * the triangulation
+   * the triangulation. This function is used in particle-floating mesh
+   * contacts, as in this situation, we need to define all the particles located
+   * in the neighbor cells of the background cell (cut by the floating mesh) as
+   * contact candidates
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param cells_total_neighbor_list An unordered_map (with size of the local cell

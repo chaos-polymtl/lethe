@@ -118,7 +118,7 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
     types::particle_index,
     std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &                        particle_wall_pairs_in_contact,
-  const double &             dt,
+  const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
 {
@@ -221,7 +221,7 @@ void
                                   particle_wall_contact_info_struct<dim>>,
                dem_data_containers::cut_cell_comparison<dim>>>
       &                        particle_floating_mesh_in_contact,
-    const double &             dt,
+    const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
@@ -481,7 +481,7 @@ ParticleWallLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   const double & /*wall_restitution_coefficient*/,
   const double & /*wall_friction_coefficient*/,
   const double & /*wall_rolling_friction_coefficient*/,
-  const double & /*dt*/,
+  const double /*dt*/,
   const double &,
   const double &)
 {}

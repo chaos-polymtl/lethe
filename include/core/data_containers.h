@@ -32,8 +32,8 @@
 
 /**
  * This namespace defines all the data containers and required operations on
- * these containers for the DEM solver. At the moment, I only added overloaded
- * operators here, but finally all the data containers of the DEM solver will be
+ * these containers for the DEM solver. At the moment, only overloaded operators
+ * are here, but eventually all the data containers of the DEM solver will be
  * moved here
  */
 namespace dem_data_containers

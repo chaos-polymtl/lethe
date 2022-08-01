@@ -79,6 +79,9 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , background_dh(triangulation)
   , floating_mesh(false)
 {
+  // Print simulation starting information
+  print_initial_information(pcout, n_mpi_processes);
+
   // Check if the output directory exists
   std::string output_dir_name = parameters.simulation_control.output_folder;
   struct stat buffer;
@@ -202,6 +205,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     std::pow(parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
+
   if (this_mpi_process == 0)
     input_parameter_inspection(parameters,
                                pcout,
@@ -822,9 +826,6 @@ template <int dim>
 void
 DEMSolver<dim>::solve()
 {
-  // Print simulation starting information
-  print_initial_information(pcout, n_mpi_processes);
-
   // Reading mesh
   read_mesh(parameters.mesh,
             parameters.restart.restart,

@@ -1,6 +1,4 @@
-DEM time-step is 1.46845% of Rayleigh time step
-***************************************************************** 
-Starting simulation with Lethe/DEM on 1 processors
+Running on 1 rank(s)
 ***************************************************************** 
 
 Reading triangulation 

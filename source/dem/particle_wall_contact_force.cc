@@ -26,7 +26,7 @@ void
 ParticleWallContactForce<dim>::update_contact_information(
   particle_wall_contact_info_struct<dim> &contact_info,
   const ArrayView<const double> &         particle_properties,
-  const double &                          dt)
+  const double                            dt)
 {
   auto               normal_vector = contact_info.normal_vector;
   const unsigned int boundary_id   = contact_info.boundary_id;
@@ -90,7 +90,7 @@ ParticleWallContactForce<dim>::
   update_particle_floating_wall_contact_information(
     particle_wall_contact_info_struct<dim> &contact_info,
     const ArrayView<const double> &         particle_properties,
-    const double &                          dt,
+    const double                            dt,
     const Tensor<1, 3> &                    cut_cell_translational_velocity,
     const Tensor<1, 3> &                    cut_cell_rotational_velocity,
     const double &center_of_rotation_particle_distance)
