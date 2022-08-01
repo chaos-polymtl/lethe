@@ -25,8 +25,8 @@ Locations of Files Used in the Example
 - Python script for launching all the simulations on the cluster: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/launch_all_mixers.py``
 - Bash script for gathering torques: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/gather_torques.sh``
 - Experimental data file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/experimental.dat``
+- Python script for generating the :math:`N_p` vs :math:`Re` curves: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/plot_Np_vs_Re.py``
 
-**Double check all files and their names at the end**
 
 Description of the Case
 -------------------------
@@ -314,7 +314,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 Generating :math:`N_p` vs :math:`Re` Curves :math:`(Re \in [0.1, 100])`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-To generate a :math:`N_p` vs :math:`Re` curves, we are going to launch simulations for :math:`25` different values of :math:`Re` while maintaining a laminar regime. In this example, we will be launching these simulations on a Compute Canada cluster.
+To generate a :math:`N_p` vs :math:`Re` curves, we are going to launch simulations for :math:`25` different values of :math:`Re`. In this example, we will be launching these simulations on a Compute Canada cluster.
 
 .. seealso::
 
@@ -480,8 +480,8 @@ As you can see, :math:`N_p` decreases when :math:`Re` increases. It is explained
 
     N_p = \frac{2 \pi \Gamma}{\rho N^2 D^5} =\frac{1}{Re}  \frac{2 \pi \Gamma}{\mu  N D^3}
 
-As we can see in the image above, for :math:`Re < 10`, the Lethe curve fits well with the experimental values.
+As we can see in the image above, for :math:`Re < 10` (laminar regime), the Lethe curve fits well with the experimental values.
 
 References
 -----------
-[1]
+[1] Delacroix, B., Bouarab, A., Fradette, L., Bertrand, F., & Blais, B. (2020). Simulation of granular flow in a rotating frame of reference using the discrete element method. *Powder Technology*. *369*, 146-161. https://doi.org/10.1016/j.powtec.2020.05.006
