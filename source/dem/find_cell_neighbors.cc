@@ -52,44 +52,11 @@ FindCellNeighbors<dim>::find_cell_neighbors(
 
           totall_cell_list.push_back(cell);
 
-          // Build a list of vertex id to check
-          std::vector<unsigned int> vertices_list(
-            GeometryInfo<dim>::vertices_per_cell);
-
-          // Fill for each vertices of the current cell
           for (unsigned int vertex = 0;
                vertex < GeometryInfo<dim>::vertices_per_cell;
                ++vertex)
             {
-              vertices_list[vertex] = cell->vertex_index(vertex);
-            }
-
-          // Add vertices of the periodic face of the cell
-          for (int face_id = 0;
-               face_id < int(GeometryInfo<dim>::faces_per_cell);
-               ++face_id)
-            {
-              if (cell->face(face_id)->at_boundary() &&
-                  cell->has_periodic_neighbor(face_id))
-                {
-                  typename Triangulation<dim>::active_cell_iterator
-                               periodic_cell = cell->periodic_neighbor(face_id);
-                  unsigned int periodic_face =
-                    cell->periodic_neighbor_face_no(face_id);
-
-                  for (unsigned int v = 0;
-                       v < GeometryInfo<dim>::vertices_per_face;
-                       ++v)
-                    {
-                      vertices_list.push_back(
-                        periodic_cell->face(periodic_face)->vertex_index(v));
-                    }
-                }
-            }
-
-          for (const auto &vertex_id : vertices_list)
-            {
-              for (const auto &neighbor : v_to_c[vertex_id])
+              for (const auto &neighbor : v_to_c[cell->vertex_index(vertex)])
                 {
                   if (neighbor->is_locally_owned())
                     {
@@ -140,6 +107,125 @@ FindCellNeighbors<dim>::find_cell_neighbors(
         cells_ghost_neighbor_list.push_back(ghost_neighbor_vector);
       local_neighbor_vector.clear();
       ghost_neighbor_vector.clear();
+      ++cell_number_iterator;
+    }
+}
+
+
+template <int dim>
+void
+FindCellNeighbors<dim>::find_cell_neighbors_and_periodic(
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    &cells_local_neighbor_list,
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    &cells_ghost_neighbor_list,
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    &cells_local_periodic_neighbor_list,
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    &cells_ghost_periodic_neighbor_list)
+{
+  // Find cell neighbors as no periodic boundaries
+  find_cell_neighbors(triangulation,
+                      cells_local_neighbor_list,
+                      cells_ghost_neighbor_list);
+
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+    local_periodic_neighbor_vector;
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+    ghost_periodic_neighbor_vector;
+
+  // This vector is used to avoid repetition of adjacent cells. For instance if
+  // cell B is recognized as the neighbor of cell A, cell A will not be added to
+  // the neighbor list of cell B again. This is done using the totall_cell_list
+  // vector
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+    totall_cell_list;
+
+  // For each cell, the cell vertices are found and used to find adjacent cells.
+  // The reason is to find the cells located on the corners of the main cell.
+  auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
+
+  unsigned int cell_number_iterator = 0;
+
+  // Looping over cells
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      // If the cell is owned by the processor
+      if (cell->is_locally_owned())
+        {
+          // The first element of each vector is the cell itself.
+          local_periodic_neighbor_vector.push_back(cell);
+          totall_cell_list.push_back(cell);
+
+          for (int face_id = 0;
+               face_id < int(GeometryInfo<dim>::faces_per_cell);
+               ++face_id)
+            {
+              if (cell->face(face_id)->at_boundary() &&
+                  cell->has_periodic_neighbor(face_id))
+                {
+                  for (unsigned int vertex = 0;
+                       vertex < GeometryInfo<dim>::vertices_per_cell;
+                       ++vertex)
+                    {
+                      for (const auto &periodic_neighbor :
+                           v_to_c[cell->vertex_index(vertex)])
+                        {
+                          if (periodic_neighbor->is_locally_owned())
+                            {
+                              auto search_iterator =
+                                std::find(totall_cell_list.begin(),
+                                          totall_cell_list.end(),
+                                          periodic_neighbor);
+                              auto local_search_iterator = std::find(
+                                local_periodic_neighbor_vector.begin(),
+                                local_periodic_neighbor_vector.end(),
+                                periodic_neighbor);
+
+                              if (search_iterator == totall_cell_list.end() &&
+                                  local_search_iterator ==
+                                    local_periodic_neighbor_vector.end())
+                                {
+                                  local_periodic_neighbor_vector.push_back(
+                                    periodic_neighbor);
+                                }
+
+                              // If the neighbor cell is a ghost, it should be
+                              // added in the ghost_neighbor_vector container
+                            }
+                          else if (periodic_neighbor->is_ghost())
+                            {
+                              auto ghost_search_iterator = std::find(
+                                ghost_periodic_neighbor_vector.begin(),
+                                ghost_periodic_neighbor_vector.end(),
+                                periodic_neighbor);
+                              if (ghost_search_iterator ==
+                                  ghost_periodic_neighbor_vector.end())
+                                {
+                                  if (ghost_periodic_neighbor_vector.empty())
+                                    {
+                                      ghost_periodic_neighbor_vector.push_back(
+                                        cell);
+                                    }
+
+                                  ghost_periodic_neighbor_vector.push_back(
+                                    periodic_neighbor);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+      if (!local_periodic_neighbor_vector.empty())
+        cells_local_periodic_neighbor_list.push_back(
+          local_periodic_neighbor_vector);
+      if (!ghost_periodic_neighbor_vector.empty())
+        cells_ghost_periodic_neighbor_list.push_back(
+          ghost_periodic_neighbor_vector);
+      local_periodic_neighbor_vector.clear();
+      ghost_periodic_neighbor_vector.clear();
       ++cell_number_iterator;
     }
 }

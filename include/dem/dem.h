@@ -41,7 +41,7 @@
 #include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_fine_search.h>
-#include <dem/particle_wall_periodic_displacement.h>
+#include <dem/periodic_boundaries_manupulator.h>
 #include <dem/visualization.h>
 
 #include <deal.II/base/tensor.h>
@@ -291,6 +291,18 @@ private:
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_ghost_neighbor_list;
 
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    cells_local_periodic_neighbor_list;
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    cells_ghost_periodic_neighbor_list;
+
+  std::unordered_map<types::particle_index,
+                     std::vector<std::pair<types::particle_index, Point<3>>>>
+    local_periodic_contact_pair_candidates;
+  std::unordered_map<types::particle_index,
+                     std::vector<std::pair<types::particle_index, Point<3>>>>
+    ghost_periodic_contact_pair_candidates;
+
   BoundaryCellsInformation<dim> boundary_cell_object;
 
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
@@ -361,8 +373,10 @@ private:
   ParticleWallFineSearch<dim>       particle_wall_fine_search_object;
   ParticlePointLineFineSearch<dim>  particle_point_line_fine_search_object;
   ParticlePointLineForce<dim>       particle_point_line_contact_force_object;
-  std::shared_ptr<Integrator<dim>>  integrator_object;
-  std::shared_ptr<Insertion<dim>>   insertion_object;
+  ParticleWallPeriodicDisplacement<dim> particle_periodic_object;
+
+  std::shared_ptr<Integrator<dim>> integrator_object;
+  std::shared_ptr<Insertion<dim>>  insertion_object;
   std::shared_ptr<ParticleParticleContactForce<dim>>
     particle_particle_contact_force_object;
   std::shared_ptr<ParticleWallContactForce<dim>>

@@ -48,7 +48,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
           auto particle_two = adjacent_pair_information.particle_two;
 
           // Finding the properties of the particles in contact
-          double dummy_distance = 0.025;
+          double     dummy_distance = 0.025;
           Point<dim> dummy_point(0, 0, 0.05);
 
           Point<dim, double> particle_one_location =
@@ -56,10 +56,11 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
           Point<dim, double> particle_two_location =
             particle_two->get_location();
 
-          double distance = std::fabs(particle_one_location.distance(particle_two_location));
+          double distance =
+            std::fabs(particle_one_location.distance(particle_two_location));
           if (distance > dummy_distance)
             {
-              particle_two_location += dummy_point;
+              particle_two_location -= dummy_point;
             }
 
           // Finding distance

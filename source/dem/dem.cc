@@ -36,7 +36,7 @@
 #include <dem/particle_wall_contact_info_struct.h>
 #include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
-#include <dem/particle_wall_periodic_displacement.h>
+#include <dem/periodic_boundaries_manupulator.h>
 #include <dem/print_initial_information.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
@@ -821,9 +821,13 @@ DEMSolver<dim>::solve()
               maximum_particle_diameter * 0.5));
 
   // Finding cell neighbors
-  cell_neighbors_object.find_cell_neighbors(triangulation,
-                                            cells_local_neighbor_list,
-                                            cells_ghost_neighbor_list);
+  cell_neighbors_object.find_cell_neighbors_and_periodic(
+    triangulation,
+    cells_local_neighbor_list,
+    cells_ghost_neighbor_list,
+    cells_local_periodic_neighbor_list,
+    cells_ghost_periodic_neighbor_list);
+
   // Finding boundary cells with faces
   boundary_cell_object.build(
     triangulation,
@@ -934,6 +938,16 @@ DEMSolver<dim>::solve()
               local_contact_pair_candidates,
               ghost_contact_pair_candidates);
 
+          particle_particle_broad_search_object
+            .find_particle_particle_periodic_contact_pairs(
+              particle_handler,
+              boundary_cell_object.get_periodic_boundary_cells_information(),
+              &cells_local_periodic_neighbor_list,
+              &cells_ghost_periodic_neighbor_list,
+              local_periodic_contact_pair_candidates,
+              ghost_periodic_contact_pair_candidates);
+
+
           // Updating number of contact builds
           contact_build_number++;
 
@@ -1021,9 +1035,7 @@ DEMSolver<dim>::solve()
             MOI);
         }
 
-      ParticleWallPeriodicDisplacement<dim> move_particle;
-
-      move_particle.execute_particle_displacement(
+      particle_periodic_object.execute_particle_displacement(
         boundary_cell_object.get_periodic_boundary_cells_information(),
         particle_handler);
 

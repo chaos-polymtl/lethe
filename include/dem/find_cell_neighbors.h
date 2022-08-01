@@ -65,6 +65,18 @@ public:
       &cells_local_neighbor_list,
     std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
       &cells_ghost_neighbor_list);
+
+  void
+  find_cell_neighbors_and_periodic(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      &cells_local_neighbor_list,
+    std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      &cells_ghost_neighbor_list,
+    std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      &cells_local_periodic_neighbor_list,
+    std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      &cells_ghost_periodic_neighbor_list);
 };
 
 #endif /* find_cell_neighbors_h */

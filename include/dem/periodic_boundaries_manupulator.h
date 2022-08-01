@@ -43,18 +43,29 @@ using namespace dealii;
  */
 
 template <int dim>
-class ParticleWallPeriodicDisplacement
+class PeriodicBoundariesManipulator
 {
 public:
-  ParticleWallPeriodicDisplacement<dim>();
+  PeriodicBoundariesManipulator<dim>();
 
   void
+  map_periodic_cells(
+    const parallel::distributed::Triangulation<dim> & triangulation,
+    const std::vector<unsigned int> &                 outlet_boundaries);
+
+    void
   execute_particle_displacement(
     const std::map<int,
                    std::pair<boundary_cells_info_struct<dim>,
                              boundary_cells_info_struct<dim>>>
       &                                    periodic_boundary_cells_information,
     const Particles::ParticleHandler<dim> &particle_handler);
+
+private:
+  std::map<
+    int,
+    std::pair<boundary_cells_info_struct<dim>, boundary_cells_info_struct<dim>>>
+    periodic_boundary_cells_information;
 };
 
 #endif /* particle_wall_periodic_displacement_h */

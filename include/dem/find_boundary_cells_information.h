@@ -93,14 +93,6 @@ public:
     return boundary_cells_information;
   }
 
-  std::map<
-    int,
-    std::pair<boundary_cells_info_struct<dim>, boundary_cells_info_struct<dim>>>
-  get_periodic_boundary_cells_information()
-  {
-    return periodic_boundary_cells_information;
-  }
-
   std::unordered_map<
     std::string,
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>> &
@@ -252,11 +244,6 @@ private:
   // add_cells_with_boundary_lines_to_boundary_cells function
   std::map<int, boundary_cells_info_struct<dim>>
     global_boundary_cells_information;
-
-  std::map<
-    int,
-    std::pair<boundary_cells_info_struct<dim>, boundary_cells_info_struct<dim>>>
-    periodic_boundary_cells_information;
 
   // Structure that contains the boundary cells which have a line
   std::unordered_map<
