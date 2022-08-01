@@ -455,7 +455,6 @@ As you can see, :math:`N_p` decreases when :math:`Re` increases. It is explained
 
 As we can see in the image above, for :math:`Re < 10` (laminar regime), the Lethe curve fits well with the experimental values.
 
-
 References
 -----------
 [1] Delacroix, B., Bouarab, A., Fradette, L., Bertrand, F., & Blais, B. (2020). Simulation of granular flow in a rotating frame of reference using the discrete element method. *Powder Technology*. *369*, 146-161. https://doi.org/10.1016/j.powtec.2020.05.006
