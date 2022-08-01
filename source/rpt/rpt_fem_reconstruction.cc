@@ -204,62 +204,6 @@ RPTFEMReconstruction<dim>::assemble_system(unsigned no_detector)
 }
 
 
-/*
-template <int dim>
-void
-RPTFEMReconstruction<dim>::assemble_system(unsigned detector_no)
-{
-    system_rhs    = 0;
-    system_matrix = 0;
-
-    const QGaussSimplex<dim> quadrature_formula(fe.degree + 1);
-    FEValues<dim>            fe_values(mapping,
-                                       fe,
-                                       quadrature_formula,
-                                       update_values | update_quadrature_points |
-                                       update_JxW_values);
-    const unsigned int       dofs_per_cell = fe.n_dofs_per_cell();
-    FullMatrix<double>       cell_matrix(dofs_per_cell, dofs_per_cell);
-    Vector<double>           cell_rhs(dofs_per_cell);
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-    for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-        cell_matrix = 0;
-        cell_rhs    = 0;
-        fe_values.reinit(cell);
-        for (const unsigned int q_index : fe_values.quadrature_point_indices())
-        {
-            Point<dim> q_point_position = fe_values.quadrature_point(q_index);
-            RadioParticle<dim> particle(q_point_position, 0);
-
-            ParticleDetectorInteractions<dim> p_q_interaction(
-                    particle, detectors[detector_no], rpt_parameters.rpt_param);
-
-            double count = p_q_interaction.calculate_count();
-
-            for (const unsigned int i : fe_values.dof_indices())
-            {
-                for (const unsigned int j : fe_values.dof_indices())
-                  {
-                    cell_matrix(i, j) +=
-                      (fe_values.shape_value(i, q_index) * // phi_i(x_q)
-                       fe_values.shape_value(j, q_index) * // phi_j(x_q)
-                       fe_values.JxW(q_index));            // dx
-                  }
-                cell_rhs(i) += (count *                             // f(x)
-                                fe_values.shape_value(i, q_index) * //
-phi_i(x_q) fe_values.JxW(q_index));            // dx
-            }
-        }
-        cell->get_dof_indices(local_dof_indices);
-        constraints.distribute_local_to_global(
-                cell_matrix, cell_rhs, local_dof_indices, system_matrix,
-system_rhs);
-    }
-}
-*/
-
 template <int dim>
 void
 RPTFEMReconstruction<dim>::assign_detector_positions()
@@ -410,11 +354,10 @@ assemble_matrix_and_rhs(
   unsigned int             detector_size = vertex_count.size();
   double                   sigma         = 0;
   LAPACKFullMatrix<double> sys_matrix;
-  sys_matrix.reinit(dim);
   Vector<double> sys_rhs;
+
+  sys_matrix.reinit(dim);
   sys_rhs.reinit(dim);
-
-
 
   if (cost_function_type ==
       Parameters::RPTFEMReconstructionParameters::FEMCostFunction::absolute)
@@ -496,7 +439,7 @@ assemble_matrix_and_rhs(
 
 template <int dim>
 double
-RPTFEMReconstruction<dim>::check_reference_location_validity(
+RPTFEMReconstruction<dim>::calculate_reference_location_error(
   Vector<double> &reference_location,
   const double   &last_constraint)
 {
@@ -628,7 +571,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count, co
       // Evaluate the error of the reference position (Is it outside the
       // reference tetrahedron ?)
       norm_error_coordinates =
-        check_reference_location_validity(reference_location,
+        calculate_reference_location_error(reference_location,
                                           last_constraint_reference_location);
 
       // Extrapolation limit
@@ -697,7 +640,7 @@ RPTFEMReconstruction<dim>::trajectory()
 {
   const unsigned int power = pow(2,rpt_parameters.fem_reconstruction_param.mesh_refinement);
   const unsigned int n_cell_z = 2*rpt_parameters.fem_reconstruction_param.z_subdivisions*power;
-  const double  tol_reference_location = rpt_parameters.rpt_param.reactor_height/n_cell_z*0.75;
+  const double  tol_reference_location = rpt_parameters.rpt_param.reactor_height/n_cell_z;
   std::cout << "tol: " << tol_reference_location << std::endl ;
 
   // Read and store all experimental counts

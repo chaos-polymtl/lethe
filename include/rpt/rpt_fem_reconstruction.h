@@ -189,7 +189,7 @@ private:
                    , std::vector<double> &experimental_count);
 
     /**
-     * @brief Evaluates the validity of the found location in reference
+     * @brief Evaluates the error vector of the found location in reference
      * coordinates and returns the error vector's L2 norm
      *
      * @param reference_location Location of the point in reference coordinates
@@ -200,7 +200,7 @@ private:
      * @return norm_error_coordinates
      */
     double
-    check_reference_location_validity(Vector<double> &reference_location
+    calculate_reference_location_error(Vector<double> &reference_location
                             , const double &last_constraint);
 
     /**
