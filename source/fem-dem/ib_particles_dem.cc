@@ -298,7 +298,7 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
       // Find the new cells that are at a boundary and in proximity of the
       // particle.
       auto cells_at_boundary = LetheGridTools::find_boundary_cells_in_sphere(
-        dof_handler, particles[p_i].position, particles[p_i].radius * 1.5);
+        dof_handler, particles[p_i].position, particles[p_i].radius * parameters->contact_search_radius_factor);
 
       // Loop over the cells at the boundary.
       for (unsigned int i = 0; i < cells_at_boundary.size(); ++i)
