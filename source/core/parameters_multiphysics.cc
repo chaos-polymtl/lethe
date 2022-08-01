@@ -99,7 +99,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     tracer         = prm.get_bool("tracer");
     VOF            = prm.get_bool("VOF");
     use_time_average_velocity_field =
-      prm.get_bool("use the average velocity field");
+      prm.get_bool("use time average velocity field");
 
     // subparameter for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
