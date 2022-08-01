@@ -111,6 +111,10 @@ namespace Parameters
                       "false",
                       Patterns::Bool(),
                       "Choose whether or not to apply pressure force");
+    prm.declare_entry("saffman lift force",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply Saffman-Mei lift force");
     prm.declare_entry("drag model",
                       "difelice",
                       Patterns::Selection(
@@ -162,6 +166,7 @@ namespace Parameters
     buoyancy_force             = prm.get_bool("buoyancy force");
     shear_force                = prm.get_bool("shear force");
     pressure_force             = prm.get_bool("pressure force");
+    saffman_lift_force         = prm.get_bool("saffman lift force");
     post_processing            = prm.get_bool("post processing");
     inlet_boundary_id          = prm.get_integer("inlet boundary id");
     outlet_boundary_id         = prm.get_integer("outlet boundary id");
