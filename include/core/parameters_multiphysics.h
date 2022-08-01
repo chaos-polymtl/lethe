@@ -233,7 +233,7 @@ namespace Parameters
     bool tracer;
     bool VOF;
 
-    bool use_average_velocity_field;
+    bool use_time_average_velocity_field;
 
     // subparameters for heat_transfer
     bool viscous_dissipation;

@@ -140,7 +140,7 @@ GDNavierStokesSolver<dim>::update_multiphysics_average_solution()
 {
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      this->multiphysics->set_block_average_solution(
+      this->multiphysics->set_block_time_average_solution(
         PhysicsID::fluid_dynamics,
         &this->average_velocities->get_average_velocities());
     }

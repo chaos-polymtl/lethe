@@ -505,7 +505,7 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return physics_average_solutions[physics_id];
+    return physics_time_average_solutions[physics_id];
   }
 
   /**
@@ -520,7 +520,7 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return block_physics_average_solutions[physics_id];
+    return block_physics_time_average_solutions[physics_id];
   }
 
 
@@ -647,21 +647,21 @@ public:
   }
 
   /**
-   * @brief Sets the reference to the average solution of the physics in the multiphysics interface
+   * @brief Sets the reference to the time-average solution of the physics in the multiphysics interface
    *
    * @param physics_id The physics of the DOF handler being requested
    *
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_average_solution(PhysicsID                      physics_id,
-                       TrilinosWrappers::MPI::Vector *solution_vector)
+  set_time_average_solution(PhysicsID                      physics_id,
+                            TrilinosWrappers::MPI::Vector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    physics_average_solutions[physics_id] = solution_vector;
+    physics_time_average_solutions[physics_id] = solution_vector;
   }
 
 
@@ -681,7 +681,7 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    physics_average_solutions[physics_id] = solution_vector;
+    physics_time_average_solutions[physics_id] = solution_vector;
   }
 
 
@@ -705,14 +705,14 @@ public:
   }
 
   /**
-   * @brief Sets the reference to the average solution of the physics in the multiphysics interface
+   * @brief Sets the reference to the time-average solution of the physics in the multiphysics interface
    *
    * @param physics_id The physics of the DOF handler being requested
    *
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_block_average_solution(
+  set_block_time_average_solution(
     PhysicsID                           physics_id,
     TrilinosWrappers::MPI::BlockVector *solution_vector)
   {
@@ -720,7 +720,7 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    block_physics_average_solutions[physics_id] = solution_vector;
+    block_physics_time_average_solutions[physics_id] = solution_vector;
   }
 
   /**
@@ -845,11 +845,11 @@ private:
 
   // average solution
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *>
-    physics_average_solutions;
+    physics_time_average_solutions;
 
   // average solution
   std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
-    block_physics_average_solutions;
+    block_physics_time_average_solutions;
 
   // reynolds stress solution. This is WIP and is not yet implemented in the
   // solver.

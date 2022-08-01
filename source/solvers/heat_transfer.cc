@@ -161,7 +161,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      if (this->simulation_parameters.multiphysics.use_average_velocity_field)
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
         {
           scratch_data.reinit_velocity(
             velocity_cell,
@@ -177,7 +178,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
     }
   else
     {
-      if (this->simulation_parameters.multiphysics.use_average_velocity_field)
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_average_solution(
@@ -302,7 +304,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      if (this->simulation_parameters.multiphysics.use_average_velocity_field)
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
         {
           scratch_data.reinit_velocity(
             velocity_cell,
@@ -320,7 +323,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
     }
   else
     {
-      if (this->simulation_parameters.multiphysics.use_average_velocity_field)
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
         {
           scratch_data.reinit_velocity(velocity_cell,
                                        *multiphysics->get_average_solution(
