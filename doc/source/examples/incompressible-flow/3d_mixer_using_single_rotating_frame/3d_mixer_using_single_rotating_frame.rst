@@ -20,7 +20,6 @@ Locations of Files Used in the Example
 - Parameter file for generating multiple cases: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/ribbon_gls.prm``
 - Geometry file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/diff_step_mesh.geo``
 - Step file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/db_helical.step``
-- Mesh file: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/template/diff_step_mesh.msh``
 - Bash script for running simulations on a cluster (job script): ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/template/launch_mixer.sh``
 - Python script for generating different cases: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/template/lethe_case_generator.py``
 - Python script for launching all the simulations on the cluster: ``examples/incompressible_flow/3d_ribbon_mixer_srf/Np_vs_Re/launch_all_mixers.py``
@@ -278,6 +277,31 @@ Relatively standard parameters are used for the linear solver. From our experien
 
 Running the Simulation
 ------------------------------------
+
+Generating the mesh
+~~~~~~~~~~~~~~~~~~~~~
+Before launching the simulation, the mesh has to be generated.
+Using Gmsh, with the ``diff_step_mesh.geo`` file we generate the ``diff_step_mesh.msh`` file.
+
+Assuming the ``gmsh`` executable is within your path variable, you may generate the ``msh`` file by typing:
+
+.. code-block:: text
+
+     gmsh -3 diff_step_mesh.geo -o diff_step_mesh.msh
+
+You can then copy this file in the ``Re1`` folder:
+
+.. code-block:: text
+
+     cp diff_step_mesh.msh Re1
+
+and then move it to the ``Np_vs_Re`` folder:
+
+.. code-block:: text
+
+     mv diff_step_mesh.msh Np_vs_Re
+
+
 
 Simulating for a Specific Flow Condition :math:`(Re = 1)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
