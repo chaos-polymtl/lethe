@@ -494,12 +494,12 @@ public:
   }
 
   /**
-   * @brief Request the average solution of a given physics
+   * @brief Request the time-average solution of a given physics
    *
    * @param physics_id The physics of the solution being requested
    */
   TrilinosWrappers::MPI::Vector *
-  get_average_solution(PhysicsID physics_id)
+  get_time_average_solution(PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -514,7 +514,7 @@ public:
    * @param physics_id The physics of the solution being requested
    */
   TrilinosWrappers::MPI::BlockVector *
-  get_block_average_solution(PhysicsID physics_id)
+  get_block_time_average_solution(PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -655,7 +655,7 @@ public:
    */
   void
   set_time_average_solution(PhysicsID                      physics_id,
-                            TrilinosWrappers::MPI::Vector *solution_vector)
+                       TrilinosWrappers::MPI::Vector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
