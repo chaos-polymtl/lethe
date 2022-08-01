@@ -392,6 +392,9 @@ On your **local computer**, you may copy the ``Np_vs_Re`` folder to your ``scrat
 
         scp -r Path/To/Np_vs_Re $SCRATCH_PATH
 
+.. seealso::
+
+	To avoid copying the ``Np_vs_Re`` folder, it is also possible to run the ``lethe_case_generator.py`` script directly into the cluster. To do so, you need to create a Python virtual environment and install Jinja2. See here the `documentation <https://www.paraview.org/download/>`_ from the Alliance.
 
 Submitting Jobs and Launching Simulations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -420,13 +423,19 @@ Results
 
 Simulating for a Specific Flow Condition :math:`(Re = 1)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In the ``output`` subdirectory, you will find the ``mixer.pvd`` file that can be visualized using `Paraview <https://www.paraview.org/download/>`_. In the figure below, the velocity magnitude and streamlines are shown for a flow at :math:`Re = 1`. Because a SRF is used, the rotational velocity imposed on the walls and the no-slip condition on the ribbon is visualised.
+In the ``output`` subdirectory, you will find the ``mixer.pvd`` file that can be visualized using `Paraview <https://www.paraview.org/download/>`_. In the figure below, the velocity magnitude are shown for a flow at :math:`Re = 1`. Because a SRF is used, we can notice the rotational velocity imposed on the walls and the no-slip condition on the ribbon.
 
 .. image:: images/velocity_magnitude.png
    :alt: Ribbon Mixer Velocity magnitude
    :align: center
    :name: Ribbon Mixer Velocity magnitude
 
+In reality, the velocity field and its streamlines are visualized in an Eulerian frame. It is possible to do so by simply selecting ``velocity_eulerian`` in Paraview.
+
+.. image:: images/velocity_eulerian.png
+   :alt: Ribbon Mixer Velocity in an Eulerian frame
+   :align: center
+   :name: Ribbon Mixer Velocity in an Eulerian frame
 
 Generating :math:`N_p` vs :math:`Re` Curves :math:`(Re \in [0.1, 100])`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
