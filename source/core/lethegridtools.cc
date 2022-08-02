@@ -589,10 +589,10 @@ LetheGridTools::find_cells_around_edge(
   const DoFHandler<dim> &dof_handler,
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
-    &                                                   vertices_cell_map,
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  Point<dim> &                                          point_1,
-  Point<dim> &                                          point_2)
+    &vertices_cell_map,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
+  Point<dim> &point_1,
+  Point<dim> &point_2)
 {
   std::set<typename DoFHandler<dim>::active_cell_iterator> cells_pierced_set;
   DoFHandler<1, dim>       local_edge_dof_handler;
@@ -625,7 +625,9 @@ LetheGridTools::find_cells_around_edge(
         find_cell_around_point_with_tree(dof_handler, point_1);
       Tensor<1, dim> unit_direction =
         (point_2 - point_1) / (point_2 - point_1).norm();
-      double total_dist = (point_2 - point_1).norm();
+
+      // Temporarily commented to clean warnings
+      // double total_dist = (point_2 - point_1).norm();
 
       std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
                          LetheGridTools::hash_cell<dim>,
@@ -942,19 +944,20 @@ LetheGridTools::find_cells_cut_by_object(
             {
               if (cell->at_boundary())
                 {
-                  for (const auto face : cell->face_indices())
-                    {
-                      std::vector<
-                        typename DoFHandler<spacedim>::active_cell_iterator>
-                        cells_cut = LetheGridTools::find_cells_around_flat_cell(
-                          dof_handler, cell, vertices_cell_map);
-                      for (unsigned int j = 0; j < cells_cut.size(); ++j)
-                        {
-                          cells_cut_by_object[cells_cut[j]][list_of_objects[i]
-                                                              .get_solid_id()] =
-                            cell;
-                        }
-                    }
+                  // Temporarily commented to clean warnings
+                  // for (const auto face : cell->face_indices())
+                  {
+                    std::vector<
+                      typename DoFHandler<spacedim>::active_cell_iterator>
+                      cells_cut = LetheGridTools::find_cells_around_flat_cell(
+                        dof_handler, cell, vertices_cell_map);
+                    for (unsigned int j = 0; j < cells_cut.size(); ++j)
+                      {
+                        cells_cut_by_object[cells_cut[j]]
+                                           [list_of_objects[i].get_solid_id()] =
+                                             cell;
+                      }
+                  }
                 }
             }
         }
