@@ -270,6 +270,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 Generating :math:`N_p` vs :math:`Re` Curves :math:`(Re \in [0.1, 100])`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 To generate :math:`N_p` vs :math:`Re` curves, we are going to launch simulations for :math:`25` different values of :math:`Re`. In this example, we will be launching these simulations on an Alliance cluster.
+
 .. seealso::
 
     If it is your first time running simulations from Lethe on an Alliance cluster, you may want to see our installation guide on how to setup and install all the necessary software and modules: :doc:`../../../installation/compute_canada`.
