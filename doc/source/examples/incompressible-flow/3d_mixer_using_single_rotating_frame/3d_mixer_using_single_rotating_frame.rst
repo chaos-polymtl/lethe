@@ -11,7 +11,7 @@ Features
 - Steady-state problem
 - Displays the use of a single rotating frame (``srf``) when modeling a complex rotating geometry
 - Calculation of the power number (:math:`N_p`) using a python script
-- Use of a cluster to run simulations
+- Use of a Digital Research Alliance of Canada (Alliance) cluster to run simulations
 
 
 Locations of Files Used in the Example
@@ -63,7 +63,7 @@ To be able to simulate the flow in such complex geometry, we take advantage of t
    :name: Eulerian and Lagrangian reference frames
    :height: 5cm
 
-In this example, we will start by simulating the case when :math:`Re = 1` and then follow with simulation a for :math:`Re` values ranging from :math:`0.1` to :math:`100`.
+In this example, we will start by simulating the case when :math:`Re = 1` and then follow with a simulation for :math:`Re` values ranging from :math:`0.1` to :math:`100`.
 
 The Reynolds number for our system is defined as follows:
 
@@ -283,7 +283,7 @@ Generating the mesh
 Before launching the simulation, the mesh has to be generated.
 Using Gmsh, with the ``diff_step_mesh.geo`` file we generate the ``diff_step_mesh.msh`` file.
 
-Assuming the ``gmsh`` executable is within your path variable, you may generate the ``msh`` file by typing:
+Assuming the ``gmsh`` executable is within your ``$PATH`` variable, you may generate the ``msh`` file by typing:
 
 .. code-block:: text
 
@@ -314,11 +314,11 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 Generating :math:`N_p` vs :math:`Re` Curves :math:`(Re \in [0.1, 100])`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-To generate a :math:`N_p` vs :math:`Re` curves, we are going to launch simulations for :math:`25` different values of :math:`Re`. In this example, we will be launching these simulations on a Compute Canada cluster.
+To generate :math:`N_p` vs :math:`Re` curves, we are going to launch simulations for :math:`25` different values of :math:`Re`. In this example, we will be launching these simulations on an Alliance cluster.
 
 .. seealso::
 
-    If it is your first time running simulations from Lethe on a Compute Canada cluster, you may want to see our installation guide on how to setup and install all the necessary software and modules: :doc:`../../../installation/compute_canada`.
+    If it is your first time running simulations from Lethe on an Alliance cluster, you may want to see our installation guide on how to setup and install all the necessary software and modules: :doc:`../../../installation/compute_canada`.
 
 .. _Generating_the_Different_Cases:
 
@@ -329,7 +329,7 @@ Using ``lethe_case_generator.py``, we generate the :math:`25` cases with :math:`
 
 .. warning::
 
-	In order to run a job on a Compute Canada cluster, it is required to at least specify the time limit of the job (``-- time``) and your account (``--account``).
+	In order to run a job on an Alliance cluster, it is required to at least specify the time limit of the job (``-- time``) and your account (``--account``).
 
 
 Here are a few examples of other job directives you may want to specify in your job script:
@@ -394,11 +394,11 @@ On your **local computer**, you may copy the ``Np_vs_Re`` folder to your ``scrat
 
 .. seealso::
 
-	To avoid copying the ``Np_vs_Re`` folder, it is also possible to run the ``lethe_case_generator.py`` script directly into the cluster. To do so, you need to create a Python virtual environment and install Jinja2. See here the `documentation <https://www.paraview.org/download/>`_ from the Alliance.
+	To avoid copying the ``Np_vs_Re`` folder, it is also possible to run the ``lethe_case_generator.py`` script directly into the cluster. To do so, you need to create a Python virtual environment and install Jinja2. See here the `documentation <https://docs.alliancecan.ca/wiki/Python>`_ from the Alliance.
 
 Submitting Jobs and Launching Simulations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The next step is to connect to a Compute Canada cluster:
+The next step is to connect to an Alliance cluster:
 
 .. code-block:: text
 
@@ -413,7 +413,7 @@ After connecting to your preferred cluster, you can submit your jobs by running 
 
 .. seealso::
 
-    For more information on the scheduler and running jobs on a Compute Canada cluster, you may visit their wiki pages:
+    For more information on the scheduler and running jobs on an Alliance cluster, you may visit their wiki pages:
 
     - `What is a scheduler? <https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3f>`_
     - `Running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_
