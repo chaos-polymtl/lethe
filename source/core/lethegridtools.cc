@@ -944,17 +944,16 @@ LetheGridTools::find_cells_cut_by_object(
                 {
                   for (const auto /*face*/ : cell->face_indices())
                     {
-                          std::vector<
-                            typename DoFHandler<spacedim>::active_cell_iterator>
-                            cells_cut =
-                              LetheGridTools::find_cells_around_flat_cell(
-                                dof_handler, cell, vertices_cell_map);
-                          for (unsigned int j = 0; j < cells_cut.size(); ++j)
-                            {
-                              cells_cut_by_object[cells_cut[j]]
-                                                 [list_of_objects[i]
-                                                    .get_solid_id()] = cell;
-                            }
+                      std::vector<
+                        typename DoFHandler<spacedim>::active_cell_iterator>
+                        cells_cut = LetheGridTools::find_cells_around_flat_cell(
+                          dof_handler, cell, vertices_cell_map);
+                      for (unsigned int j = 0; j < cells_cut.size(); ++j)
+                        {
+                          cells_cut_by_object[cells_cut[j]][list_of_objects[i]
+                                                              .get_solid_id()] =
+                            cell;
+                        }
                     }
                 }
             }
