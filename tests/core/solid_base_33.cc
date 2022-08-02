@@ -25,9 +25,9 @@
 #include <deal.II/particles/data_out.h>
 
 // Lethe
-#include <core/nitsche.h>
 #include <core/parameters.h>
 #include <core/solid_base.h>
+#include <core/solid_objects_parameters.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -37,7 +37,7 @@ test()
 {
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
-  auto param = std::make_shared<Parameters::NitscheSolid<3>>();
+  auto param = std::make_shared<Parameters::NitscheObject<3>>();
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> fluid_tria =
     std::make_shared<parallel::distributed::Triangulation<3>>(
       mpi_communicator,

@@ -17,10 +17,14 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/data_containers.h>
+
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
+
+#include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
@@ -28,6 +32,7 @@
 
 #include <iostream>
 #include <vector>
+
 
 using namespace dealii;
 
@@ -73,12 +78,12 @@ public:
     const Particles::ParticleHandler<dim> &particle_handler,
     std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::particle_index,
+      std::unordered_map<types::boundary_id,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,
                                     types::boundary_id,
-                                    unsigned int>>>
+                                    types::global_cell_index>>>
       &particle_wall_contact_candidates);
 
   /**
@@ -107,10 +112,44 @@ public:
     const Particles::ParticleHandler<dim> &particle_handler,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double &                                    simulation_time,
-    std::unordered_map<types::particle_index,
-                       std::unordered_map<types::particle_index,
-                                          Particles::ParticleIterator<dim>>>
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
       &pfw_contact_candidates);
+
+  /**
+   * Finds a two-layered unordered map
+   * (particle_floating_mesh_contact_candidates) of particle iterators that
+   * shows the candidate particle-floating mesh collision candidates. These
+   * collision pairs will be investigated in the fine search to check if they
+   * are in contact or not
+   *
+   * @param floating_mesh_information Information of the floating mesh mapped in the
+   * background triangulation
+   * @param particle_handler
+   * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact
+   * candidates
+   * @param cells_total_neighbor_list A container in which all the neighbor cells
+   * of the local cells are stored
+   */
+
+  void
+  particle_floating_mesh_contact_search(
+    const std::vector<std::vector<
+      std::pair<typename Triangulation<dim>::active_cell_iterator,
+                typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
+      &                                    floating_mesh_information,
+    const Particles::ParticleHandler<dim> &particle_handler,
+    std::vector<
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               std::unordered_map<types::particle_index,
+                                  Particles::ParticleIterator<dim>>,
+               dem_data_containers::cut_cell_comparison<dim>>>
+      &particle_floating_mesh_contact_candidates,
+    std::unordered_map<
+      types::global_cell_index,
+      std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      &cells_total_neighbor_list);
 };
 
 #endif /* particle_wall_broad_search_h */
