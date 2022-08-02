@@ -944,7 +944,6 @@ LetheGridTools::find_cells_cut_by_object(
                 {
                   for (const auto face : cell->face_indices())
                     {
-                      auto local_face = cell->face(face);
                       if (cell->at_boundary())
                         {
                           std::vector<
