@@ -35,8 +35,8 @@ template <int dim>
 void
 IBParticlesDEM<dim>::initialize(
   const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
-  const MPI_Comm                                      &mpi_communicator_input,
-  const std::vector<IBParticle<dim>>                  &particles)
+  const MPI_Comm &                                     mpi_communicator_input,
+  const std::vector<IBParticle<dim>> &                 particles)
 {
   parameters       = p_nsparam;
   mpi_communicator = mpi_communicator_input;
@@ -117,7 +117,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
            ++particle_contact_candidates_id)
         {
           const auto &particle_contact_id = *particle_contact_candidates_id;
-          auto       &particle_two        = dem_particles[particle_contact_id];
+          auto &      particle_two        = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {
@@ -230,7 +230,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
            ++particle_contact_candidates_id)
         {
           const auto &particle_contact_id = *particle_contact_candidates_id;
-          auto       &particle_two        = dem_particles[particle_contact_id];
+          auto &      particle_two        = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {
@@ -289,9 +289,9 @@ template <int dim>
 void
 IBParticlesDEM<dim>::update_particles_boundary_contact(
   const std::vector<IBParticle<dim>> &particles,
-  const DoFHandler<dim>              &dof_handler,
-  const Quadrature<dim - 1>          &face_quadrature_formula,
-  const Mapping<dim>                 &mapping)
+  const DoFHandler<dim> &             dof_handler,
+  const Quadrature<dim - 1> &         face_quadrature_formula,
+  const Mapping<dim> &                mapping)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
