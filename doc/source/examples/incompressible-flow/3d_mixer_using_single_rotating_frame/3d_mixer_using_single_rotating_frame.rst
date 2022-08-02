@@ -72,9 +72,9 @@ The Reynolds number for our system is defined as follows:
 
 where
 
-- N is the angular velocity :math:`[rad \cdot s^{-1}]` of the agitator;
-- D is the diameter of the impeller :math:`[m]`, and
-- :math:`\nu` is the kinematic viscosity of the fluid :math:`[m^2 \cdot s^{-1}]`.
+- :math:`N` is the angular velocity :math:`[\text{rad} \cdot \text{s}^{-1}]` of the agitator;
+- :math:`D` is the diameter of the impeller [m], and
+- :math:`\nu` is the kinematic viscosity of the fluid :math:`[\text{m}^2 \cdot \text{s}^{-1}]`.
 
 In order to generate :math:`N_p` vs :math:`Re` curves, we have to calculate :math:`N_p`. In this example, we will be using the torque (:math:`\Gamma`) to calculate :math:`N_p` with the following expression:
 
@@ -82,7 +82,7 @@ In order to generate :math:`N_p` vs :math:`Re` curves, we have to calculate :mat
     N_p = \frac{2 \pi \Gamma}{\rho N^2 D^5}
 
 
-where :math:`\rho` is the density of the fluid :math:`[kg \cdot m^{-3}]`.
+where :math:`\rho` is the density of the fluid :math:`[\text{kg} \cdot \text{m}^{-3}]`.
 
 
 Parameter File
@@ -430,7 +430,7 @@ In the ``output`` subdirectory, you will find the ``mixer.pvd`` file that can be
    :align: center
    :name: Ribbon Mixer Velocity magnitude
 
-In reality, the velocity field and its streamlines are visualized in an Eulerian frame. It is possible to do so by simply selecting ``velocity_eulerian`` in Paraview.
+In the reference frame of the tank, the velocity field and its streamlines are visualized in an Eulerian frame. It is possible to do so by simply selecting ``velocity_eulerian`` in Paraview.
 
 .. image:: images/velocity_eulerian.png
    :alt: Ribbon Mixer Velocity in an Eulerian frame
