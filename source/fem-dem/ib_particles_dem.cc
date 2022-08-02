@@ -27,6 +27,10 @@
 #include <dem/particle_wall_nonlinear_force.h>
 #include <fem-dem/ib_particles_dem.h>
 
+#include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_fe.h>
+
 template <int dim>
 void
 IBParticlesDEM<dim>::initialize(

@@ -19,7 +19,7 @@
 
 #include <core/bdf.h>
 #include <core/grids.h>
-#include <core/lethegridtools.h>
+#include <core/lethe_grid_tools.h>
 #include <core/sdirk.h>
 #include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
