@@ -28,6 +28,7 @@
 #include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/post_processors.h>
+#include <solvers/post_processors_smoothing.h>
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
 
@@ -1671,6 +1672,16 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   QCriterionPostprocessor<dim> qcriterion;
   if (!this->simulation_parameters.post_processing.smoothing)
     data_out.add_data_vector(solution, qcriterion);
+
+  QcriterionSmoothing<dim, VectorType> qcriterion_smoothing(
+    triangulation,
+    simulation_parameters,
+    number_quadrature_points,
+    this->mpi_communicator);
+
+  qcriterion_smoothing.generate_mass_matrix();
+  qcriterion_smoothing.generate_rhs(solution);
+  TrilinosWrappers::MPI::Vector q = qcriterion_smoothing.solve_L2_projection();
 
   SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
                             simulation_parameters.velocity_sources.omega_y,
