@@ -942,10 +942,8 @@ LetheGridTools::find_cells_cut_by_object(
             {
               if (cell->at_boundary())
                 {
-                  for (const auto face : cell->face_indices())
+                  for (const auto /*face*/ : cell->face_indices())
                     {
-                      if (cell->at_boundary())
-                        {
                           std::vector<
                             typename DoFHandler<spacedim>::active_cell_iterator>
                             cells_cut =
@@ -957,7 +955,6 @@ LetheGridTools::find_cells_cut_by_object(
                                                  [list_of_objects[i]
                                                     .get_solid_id()] = cell;
                             }
-                        }
                     }
                 }
             }
