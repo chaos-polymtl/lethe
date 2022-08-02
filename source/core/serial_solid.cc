@@ -352,7 +352,9 @@ template <>
 void
 SerialSolid<2, 3>::rotate_grid(double angle, int axis)
 {
-  GridTools::rotate(angle, axis, *solid_tria);
+  Tensor<1, 3> t_axis;
+  t_axis[axis] = 1;
+  GridTools::rotate(t_axis, angle, *solid_tria);
 }
 
 

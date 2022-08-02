@@ -16,7 +16,7 @@
 
 #include <core/bdf.h>
 #include <core/grids.h>
-#include <core/lethegridtools.h>
+#include <core/lethe_grid_tools.h>
 #include <core/sdirk.h>
 #include <core/solutions_output.h>
 #include <core/tensors_and_points_dimension_manipulation.h>

@@ -1,4 +1,4 @@
-#include <core/lethegridtools.h>
+#include <core/lethe_grid_tools.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/particle_wall_nonlinear_force.h>
