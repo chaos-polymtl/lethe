@@ -23,12 +23,11 @@
 
 #include <core/ib_particle.h>
 #include <core/ib_stencil.h>
-#include <core/lethegridtools.h>
-
-#include <solvers/navier_stokes_base.h>
+#include <core/lethe_grid_tools.h>
 
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_contact_info_struct.h>
 
 #include <deal.II/base/tensor.h>
@@ -68,7 +67,7 @@ public:
    */
   void
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
-             const MPI_Comm &                    mpi_communicator_input,
+             const MPI_Comm                     &mpi_communicator_input,
              const std::vector<IBParticle<dim>> &particles);
 
 
@@ -210,9 +209,9 @@ public:
   void
   update_particles_boundary_contact(
     const std::vector<IBParticle<dim>> &particles,
-    const DoFHandler<dim> &             dof_handler,
-    const Quadrature<dim - 1> &         face_quadrature_formula,
-    const Mapping<dim> &                mapping);
+    const DoFHandler<dim>              &dof_handler,
+    const Quadrature<dim - 1>          &face_quadrature_formula,
+    const Mapping<dim>                 &mapping);
 
 
   std::vector<IBParticle<dim>> dem_particles;
