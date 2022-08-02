@@ -624,7 +624,9 @@ LetheGridTools::find_cells_around_edge(
         find_cell_around_point_with_tree(dof_handler, point_1);
       Tensor<1, dim> unit_direction =
         (point_2 - point_1) / (point_2 - point_1).norm();
-      double total_dist = (point_2 - point_1).norm();
+
+      // Temporarily commented to clean warnings
+      // double total_dist = (point_2 - point_1).norm();
 
       std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
                          LetheGridTools::hash_cell<dim>,
