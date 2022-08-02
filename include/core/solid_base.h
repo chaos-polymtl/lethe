@@ -23,8 +23,8 @@
 
 
 // Lethe Includes
-#include <core/nitsche.h>
 #include <core/parameters.h>
+#include <core/solid_objects_parameters.h>
 
 // Dealii Includes
 
@@ -63,7 +63,7 @@ class SolidBase
 {
 public:
   // Member functions
-  SolidBase(std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param,
+  SolidBase(std::shared_ptr<Parameters::NitscheObject<spacedim>> &param,
             std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
                                                fluid_tria,
             std::shared_ptr<Mapping<spacedim>> fluid_mapping);
@@ -234,7 +234,7 @@ private:
   TrilinosWrappers::MPI::Vector            displacement_relevant;
 
 
-  std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param;
+  std::shared_ptr<Parameters::NitscheObject<spacedim>> &param;
 
   Function<spacedim> *velocity;
 

@@ -1,3 +1,4 @@
+#include <core/lethegridtools.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/particle_wall_nonlinear_force.h>
@@ -123,9 +124,9 @@ void
 ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &                        particle_wall_pairs_in_contact,
-  const double &             dt,
+  const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
 {
@@ -133,6 +134,7 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
     ParticleWallContactForce<dim>::initialize();
   ParticleWallContactForce<dim>::torque_on_walls =
     ParticleWallContactForce<dim>::initialize();
+
   // Looping over particle_wall_pairs_in_contact, which means looping over all
   // the active particles with iterator particle_wall_pairs_in_contact_iterator
   for (auto &&pairs_in_contact_content :
@@ -152,6 +154,8 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
 
           auto normal_vector     = contact_information.normal_vector;
           auto point_on_boundary = contact_information.point_on_boundary;
+
+
 
           Point<3> particle_location_3d;
 
@@ -175,7 +179,7 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
+            ((particle_properties[DEM::PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
           if (normal_overlap > 0)
@@ -194,16 +198,13 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
                   this->calculate_nonlinear_contact_force_and_torque(
                     contact_information, particle_properties);
 
-              // Getting particle's torque and force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-              types::particle_index particle_id = particle->get_id();
-#else
+              // Get particle's torque and force
               types::particle_index particle_id = particle->get_local_index();
-#endif
+
               Tensor<1, 3> &particle_torque = torque[particle_id];
               Tensor<1, 3> &particle_force  = force[particle_id];
 
-              // Apply the calculated forces and torques on the particle pair
+              // Apply the calculated forces and torques on the particle
               this->apply_force_and_torque(forces_and_torques,
                                            particle_torque,
                                            particle_force,
@@ -222,6 +223,177 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
     }
   this->mpi_correction_over_calculation_of_forces_and_torques();
 }
+
+
+template <int dim>
+void ParticleWallNonLinearForce<dim>::
+  calculate_particle_floating_wall_contact_force(
+    std::vector<
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               std::unordered_map<types::particle_index,
+                                  particle_wall_contact_info_struct<dim>>,
+               dem_data_containers::cut_cell_comparison<dim>>>
+      &                        particle_floating_mesh_in_contact,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force,
+    const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
+{
+  std::vector<Particles::ParticleIterator<dim>> particle_locations;
+  std::vector<Point<dim>> triangle(this->vertices_per_triangle);
+
+  for (unsigned int solid_counter = 0; solid_counter < solids.size();
+       ++solid_counter)
+    {
+      // Get translational and rotational velocities and center of
+      // rotation
+      Tensor<1, 3> translational_velocity =
+        solids[solid_counter]->get_translational_velocity();
+      Tensor<1, 3> rotational_velocity =
+        solids[solid_counter]->get_rotational_velocity();
+      Point<3> center_of_rotation =
+        solids[solid_counter]->get_center_of_rotation();
+
+      auto &particle_floating_mesh_contact_pair =
+        particle_floating_mesh_in_contact[solid_counter];
+
+      for (auto &[cut_cell, map_info] : particle_floating_mesh_contact_pair)
+        {
+          if (!map_info.empty())
+            {
+              // Clear the particle locations vector for the new cut cell
+              particle_locations.clear();
+              const unsigned int n_particles = map_info.size();
+
+              // Gather all the particles locations in a vector
+              for (auto &&contact_info : map_info | boost::adaptors::map_values)
+                {
+                  particle_locations.push_back(contact_info.particle);
+                }
+
+              // Build triangle vector
+              for (unsigned int vertex = 0;
+                   vertex < this->vertices_per_triangle;
+                   ++vertex)
+                {
+                  // Find vertex-floating wall distance
+                  triangle[vertex] = cut_cell->vertex(vertex);
+                }
+
+              // Call find_particle_triangle_projection to get the
+              // distance and projection of particles on the triangle
+              // (floating mesh cell)
+              auto particle_triangle_information =
+                LetheGridTools::find_particle_triangle_projection(
+                  triangle, particle_locations, n_particles);
+
+              const std::vector<bool> pass_distance_check =
+                std::get<0>(particle_triangle_information);
+              const std::vector<Point<3>> projection_points =
+                std::get<1>(particle_triangle_information);
+              const std::vector<Tensor<1, 3>> normal_vectors =
+                std::get<2>(particle_triangle_information);
+
+              unsigned int particle_counter = 0;
+
+              for (auto &&contact_info : map_info | boost::adaptors::map_values)
+                {
+                  // If particle passes the distance check
+                  if (pass_distance_check[particle_counter])
+                    {
+                      // Define the total force of contact, properties of
+                      // particle as local parameters
+                      auto &particle            = contact_info.particle;
+                      auto &particle_properties = particle->get_properties();
+
+                      const Point<3> &projection_point =
+                        projection_points[particle_counter];
+
+                      Point<3> particle_location_3d;
+
+                      if constexpr (dim == 3)
+                        particle_location_3d = particle->get_location();
+
+                      if constexpr (dim == 2)
+                        particle_location_3d =
+                          point_nd_to_3d(particle->get_location());
+
+                      const double particle_triangle_distance =
+                        particle_location_3d.distance(projection_point);
+
+                      // Find normal overlap
+                      double normal_overlap =
+                        ((particle_properties[DEM::PropertiesIndex::dp]) *
+                         0.5) -
+                        particle_triangle_distance;
+
+                      if (normal_overlap > 0)
+                        {
+                          contact_info.normal_overlap = normal_overlap;
+
+                          contact_info.normal_vector =
+                            normal_vectors[particle_counter];
+
+                          contact_info.point_on_boundary = projection_point;
+
+                          contact_info.boundary_id = solid_counter;
+
+                          this
+                            ->update_particle_floating_wall_contact_information(
+                              contact_info,
+                              particle_properties,
+                              dt,
+                              translational_velocity,
+                              rotational_velocity,
+                              center_of_rotation.distance(
+                                particle_location_3d));
+
+                          // This tuple (forces and torques) contains four
+                          // elements which are: 1, normal force, 2, tangential
+                          // force, 3, tangential torque and 4, rolling
+                          // resistance torque, respectively
+                          std::tuple<Tensor<1, 3>,
+                                     Tensor<1, 3>,
+                                     Tensor<1, 3>,
+                                     Tensor<1, 3>>
+                            forces_and_torques =
+                              this
+                                ->calculate_nonlinear_contact_force_and_torque(
+                                  contact_info, particle_properties);
+
+                          // Get particle's torque and force
+                          types::particle_index particle_id =
+                            particle->get_local_index();
+
+                          Tensor<1, 3> &particle_torque = torque[particle_id];
+                          Tensor<1, 3> &particle_force  = force[particle_id];
+
+                          // Apply the calculated forces and torques on the
+                          // particle
+                          this->apply_force_and_torque(
+                            forces_and_torques,
+                            particle_torque,
+                            particle_force,
+                            projection_point,
+                            contact_info.boundary_id);
+                        }
+                      else
+                        {
+                          contact_info.normal_overlap = 0;
+                          for (int d = 0; d < dim; ++d)
+                            {
+                              contact_info.tangential_overlap[d] = 0;
+                            }
+                        }
+                    }
+                  particle_counter++;
+                }
+            }
+        }
+    }
+}
+
+
 
 // Calculates nonlinear contact force and torques
 template <int dim>
@@ -323,7 +495,7 @@ ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   const double &                          wall_restitution_coefficient,
   const double &                          wall_friction_coefficient,
   const double &                          wall_rolling_friction_coefficient,
-  const double &                          dt,
+  const double                            dt,
   const double &                          mass,
   const double &                          radius)
 {

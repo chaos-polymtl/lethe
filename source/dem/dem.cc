@@ -77,7 +77,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
+  , floating_mesh(false)
 {
+  // Print simulation starting information
+  print_initial_information(pcout, n_mpi_processes);
+
   // Check if the output directory exists
   std::string output_dir_name = parameters.simulation_control.output_folder;
   struct stat buffer;
@@ -180,6 +184,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     std::pow(parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
+
   if (this_mpi_process == 0)
     input_parameter_inspection(parameters,
                                pcout,
@@ -188,6 +193,24 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   grid_motion_object =
     std::make_shared<GridMotion<dim, dim>>(parameters.grid_motion,
                                            simulation_control->get_time_step());
+
+  for (unsigned int i_solid = 0;
+       i_solid < parameters.solid_objects->number_solids;
+       ++i_solid)
+    {
+      solids.push_back(std::make_shared<SerialSolid<dim - 1, dim>>(
+        this->parameters.solid_objects->solids[i_solid], i_solid));
+    }
+
+  // Generate solid objects
+  floating_mesh_information.resize(solids.size());
+
+  if (solids.size() > 0)
+    floating_mesh = true;
+
+  // Resize particle_floating_mesh_in_contact
+  if (floating_mesh)
+    particle_floating_mesh_in_contact.resize(solids.size());
 }
 
 template <int dim>
@@ -277,6 +300,26 @@ DEMSolver<dim>::load_balance()
   cell_neighbors_object.find_cell_neighbors(triangulation,
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
+
+  // Get total (with repetition) neighbors list for floating mesh. In
+  // find_cell_neighbors function, if cell i is a neighbor of cell j, in the
+  // neighbor list of cell j, cell i is not included (without repetition). In
+  // find_full_cell_neighbors function, however, these repetitions are allowed.
+  if (floating_mesh)
+    {
+      cells_total_neighbor_list.clear();
+      cell_neighbors_object.find_full_cell_neighbors(triangulation,
+                                                     cells_total_neighbor_list);
+    }
+
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      // Create a container that contains all the combinations of background and
+      // solid cells
+      floating_mesh_information[i_solid] =
+        solids[i_solid]->map_solid_in_background_triangulation(
+          triangulation, solids[i_solid]->get_solid_triangulation());
+    }
 
   boundary_cell_object.build(
     triangulation,
@@ -456,6 +499,16 @@ DEMSolver<dim>::particle_wall_broad_search()
           pfw_contact_candidates);
     }
 
+  // Particle - floating mesh broad search
+  if (floating_mesh)
+    {
+      particle_wall_broad_search_object.particle_floating_mesh_contact_search(
+        floating_mesh_information,
+        particle_handler,
+        particle_floating_mesh_contact_candidates,
+        cells_total_neighbor_list);
+    }
+
   particle_point_contact_candidates =
     particle_point_line_broad_search_object.find_particle_point_contact_pairs(
       particle_handler, boundary_cell_object.get_boundary_cells_with_points());
@@ -486,6 +539,14 @@ DEMSolver<dim>::particle_wall_fine_search()
         parameters.floating_walls,
         simulation_control->get_current_time(),
         pfw_pairs_in_contact);
+    }
+
+  // Particle - floating mesh fine search
+  if (floating_mesh)
+    {
+      particle_wall_fine_search_object.particle_floating_mesh_fine_search(
+        particle_floating_mesh_contact_candidates,
+        particle_floating_mesh_in_contact);
     }
 
   particle_points_in_contact =
@@ -527,6 +588,18 @@ DEMSolver<dim>::particle_wall_contact_force()
         simulation_control->get_time_step(),
         torque,
         force);
+    }
+
+  // Particle - floating mesh contact force
+  if (floating_mesh)
+    {
+      particle_wall_contact_force_object
+        ->calculate_particle_floating_wall_contact_force(
+          particle_floating_mesh_in_contact,
+          simulation_control->get_time_step(),
+          torque,
+          force,
+          solids);
     }
 
   particle_point_line_contact_force_object
@@ -693,6 +766,10 @@ DEMSolver<dim>::write_output_results()
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);
     }
+
+  // Write all solid objects
+  for (const auto &solid_object : solids)
+    solid_object->write_output_results(simulation_control);
 }
 
 template <int dim>
@@ -731,15 +808,21 @@ template <int dim>
 void
 DEMSolver<dim>::solve()
 {
-  // Print simulation starting information
-  print_initial_information(pcout, n_mpi_processes);
-
   // Reading mesh
   read_mesh(parameters.mesh,
             parameters.restart.restart,
             pcout,
             triangulation,
             triangulation_cell_diameter);
+
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      // Create a container that contains all the combinations of background and
+      // solid cells
+      floating_mesh_information[i_solid] =
+        solids[i_solid]->map_solid_in_background_triangulation(
+          triangulation, solids[i_solid]->get_solid_triangulation());
+    }
 
   if (parameters.restart.restart == true)
     {
@@ -759,7 +842,7 @@ DEMSolver<dim>::solve()
       checkpoint_step = true;
     }
 
-  // Finding the smallest contact search frequency criterion between (smallest
+  // Find the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blab
   // diamater
   // - 1) *  largest particle radius). This value is used in
@@ -771,10 +854,16 @@ DEMSolver<dim>::solve()
               (parameters.model_parameters.neighborhood_threshold - 1) *
               maximum_particle_diameter * 0.5));
 
-  // Finding cell neighbors
+  // Find cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
+
+  // Find full cell neighbor list for floating mesh
+  if (floating_mesh)
+    cell_neighbors_object.find_full_cell_neighbors(triangulation,
+                                                   cells_total_neighbor_list);
+
   // Finding boundary cells with faces
   boundary_cell_object.build(
     triangulation,
@@ -868,20 +957,23 @@ DEMSolver<dim>::solve()
                                  ghost_adjacent_particles,
                                  particle_wall_pairs_in_contact,
                                  pfw_pairs_in_contact,
+                                 particle_floating_mesh_in_contact,
                                  local_contact_pair_candidates,
                                  ghost_contact_pair_candidates,
                                  particle_wall_contact_candidates,
-                                 pfw_contact_candidates);
+                                 pfw_contact_candidates,
+                                 particle_floating_mesh_contact_candidates);
 
-
-          locate_local_particles_in_cells<dim>(particle_handler,
-                                               particle_container,
-                                               ghost_adjacent_particles,
-                                               local_adjacent_particles,
-                                               particle_wall_pairs_in_contact,
-                                               pfw_pairs_in_contact,
-                                               particle_points_in_contact,
-                                               particle_lines_in_contact);
+          locate_local_particles_in_cells<dim>(
+            particle_handler,
+            particle_container,
+            ghost_adjacent_particles,
+            local_adjacent_particles,
+            particle_wall_pairs_in_contact,
+            pfw_pairs_in_contact,
+            particle_floating_mesh_in_contact,
+            particle_points_in_contact,
+            particle_lines_in_contact);
 
           // Particle-particle fine search
           particle_particle_fine_search_object.particle_particle_fine_search(
@@ -917,6 +1009,13 @@ DEMSolver<dim>::solve()
           ->update_boundary_points_and_normal_vectors_in_contact_list(
             particle_wall_pairs_in_contact,
             updated_boundary_points_and_normal_vectors);
+
+      // Move the solid triangulations, previous time must be used here instead
+      // of current time.
+      for (auto &solid_object : solids)
+        solid_object->move_solid_triangulation(
+          simulation_control->get_time_step(),
+          simulation_control->get_previous_time());
 
       // Particles-walls contact force:
       particle_wall_contact_force();

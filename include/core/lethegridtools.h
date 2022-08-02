@@ -16,6 +16,7 @@
 #ifndef lethe_lethegridtools_h
 #define lethe_lethegridtools_h
 
+#include <core/serial_solid.h>
 
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
@@ -230,6 +231,51 @@ namespace LetheGridTools
   find_boundary_cells_in_sphere(const DoFHandler<dim> &dof_handler,
                                 const Point<dim> &     center,
                                 const double           radius);
+
+
+  /**
+   * @brief
+   * Function returns all the cells cut by a list of object defined by a mesh
+   *
+   * @param dof_handler the dof handler containing all the elements.
+   * @param vertices_cell_map An objects that maps the vertices to cells.
+   * @param list_of_objects Solid objects
+   *
+   *
+   */
+  template <int spacedim, int structdim>
+  std::map<
+    typename DoFHandler<spacedim>::active_cell_iterator,
+    std::map<unsigned int,
+             typename DoFHandler<structdim, spacedim>::active_cell_iterator>>
+  find_cells_cut_by_object(
+    const DoFHandler<spacedim> &dof_handler,
+    std::map<unsigned int,
+             std::set<typename DoFHandler<spacedim>::active_cell_iterator>>
+      &                                            vertices_cell_map,
+    std::vector<SerialSolid<structdim, spacedim>> &list_of_objects);
+
+  /**
+   * @brief Calculates the distance between particles and a triangle (defined using
+   * three vertices)
+   *
+   * @return A tuple in which 0. a vector of bools to determine if the particle is
+   * close to the triangle plane, 1. a vector of projected location of particles
+   * on the triangle, 2. a vector of normal vectors of the triangles
+   *
+   * @param triangle A vector of points that defines a triangle
+   * @param particles A particle_iterator_range that refers to all the particles
+   * located in the background (base) cell
+   * @param n_particles_in_base_cell Number of particles in the base cell
+   *
+   */
+  template <int dim>
+  std::
+    tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
+    find_particle_triangle_projection(
+      const std::vector<Point<dim>> &                      triangle,
+      const std::vector<Particles::ParticleIterator<dim>> &particles,
+      const unsigned int &n_particles_in_base_cell);
 
   /**
    * @brief
