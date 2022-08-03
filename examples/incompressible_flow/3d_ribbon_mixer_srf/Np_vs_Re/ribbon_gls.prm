@@ -8,17 +8,8 @@
 subsection simulation control
   set method                  = steady
   set output name             = mixer
-  set output frequency        = 1
   set output boundaries       = true
   set output path = ./output/
-end
-
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
 end
 
 #---------------------------------------------------
@@ -57,28 +48,12 @@ subsection forces
     set output frequency      = 1         # Frequency of file update
 end
 
-# --------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-subsection mesh adaptation
-  set type                    = kelly
-  set variable                = velocity
-  set fraction type           = number
-  set max number elements     = 600000
-  set max refinement level    = 2
-  set min refinement level    = 0
-  set frequency               = 1
-  set fraction refinement     = 0.15
-  set fraction coarsening     = 0.00
-end
-
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 subsection mesh
     set type                 = gmsh
     set file name            = ../diff_step_mesh.msh
-    set initial refinement   = 0
     set simplex = true
 end
 
@@ -91,10 +66,10 @@ subsection boundary conditions
         set id = 1
         set type              = function
         subsection u
-            set Function expression = -10*y #2*0.314159*y
+            set Function expression = -10*y
         end
         subsection v
-            set Function expression = 10*x #2*0.314159*x
+            set Function expression = 10*x
         end
         subsection w
             set Function expression = 0
@@ -117,7 +92,6 @@ end
 #---------------------------------------------------
 subsection non-linear solver
   set tolerance               = 1e-10
-  set verbosity               = verbose
   end
 
 # --------------------------------------------------
