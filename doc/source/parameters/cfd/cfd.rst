@@ -29,3 +29,4 @@ General, CFD and Multiphysics
    dynamic_flow_control
    laser_heat_source
    box_refinement
+   velocity_source.rst
