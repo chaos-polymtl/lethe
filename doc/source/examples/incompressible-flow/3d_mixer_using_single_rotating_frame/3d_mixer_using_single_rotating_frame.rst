@@ -466,6 +466,7 @@ Possibility for Extension
 ----------------------------
 It could be interesting to simulate at higher Reynolds numbers in a transient simulation and compare the results with the experimental data.
 
+
 References
 -----------
 [1] Delacroix, B., Bouarab, A., Fradette, L., Bertrand, F., & Blais, B. (2020). Simulation of granular flow in a rotating frame of reference using the discrete element method. *Powder Technology*. *369*, 146-161. https://doi.org/10.1016/j.powtec.2020.05.006
