@@ -12,9 +12,9 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-*
-* Author: Bruno Blais, Polytechnique Montreal, 2019-
-*/
+ *
+ * Author: Bruno Blais, Polytechnique Montreal, 2019-
+ */
 
 #include <rpt/rpt_calculating_parameters.h>
 #include <rpt/rpt_fem_reconstruction.h>
