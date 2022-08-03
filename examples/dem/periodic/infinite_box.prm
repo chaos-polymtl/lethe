@@ -6,9 +6,9 @@
 subsection simulation control
   set time step                 		 = 1e-4
   set time end       					 = 0.75
-  set log frequency				         = 50
-  set output frequency            		 = 50
-  set output path 					     = ./output/
+  set log frequency				         = 1
+  set output frequency            		 = 1
+  set output path 					     = ./output4/
   set output name                        = simulation
   set output boundaries                  = false
 end
@@ -61,7 +61,7 @@ subsection insertion info
     set inserted number of particles at each time step  = 1
     set insertion frequency            		 	= 10000
     set list x                                   = 0.0625
-    set list y                                   = 0.175
+    set list y                                   = 0.075
     set list z                                   = 0.0625
 end
 
@@ -71,8 +71,8 @@ end
 subsection mesh
     set type                 				= dealii
     set grid type            				= hyper_rectangle
-    set grid arguments       				= 0.0, 0.0, 0.0 : 0.1, 0.2, 0.1 : true
-    set initial refinement   				= 1
+    set grid arguments       				= 0.0, 0.0, 0.0 : 0.1, 0.1, 0.1 : true
+    set initial refinement   				= 2
     set expand particle-wall contact search	= false
 end
 

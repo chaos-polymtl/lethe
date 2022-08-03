@@ -89,26 +89,6 @@ public:
     std::unordered_map<types::particle_index,
                        std::vector<types::particle_index>>
       &ghost_contact_pair_candidates);
-
-  void
-  find_particle_particle_periodic_contact_pairs(
-    dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const std::map<int,
-                   std::pair<boundary_cells_info_struct<dim>,
-                             boundary_cells_info_struct<dim>>>
-      &periodic_boundaries_info,
-    const std::vector<
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      *cells_local_periodic_neighbor_list,
-    const std::vector<
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      *cells_ghost_periodic_neighbor_list,
-    std::unordered_map<types::particle_index,
-                       std::vector<std::pair<types::particle_index, Point<3>>>>
-      &local_periodic_contact_pair_candidates,
-    std::unordered_map<types::particle_index,
-                       std::vector<std::pair<types::particle_index, Point<3>>>>
-      &ghost_periodic_contact_pair_candidates);
 };
 
 #endif /* particle_particle_broad_search_h */
