@@ -12,10 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-*
-* Authors: Bruno Blais, Ghazaleh Mirakhori, Audrey Collard-Daigneault,
-* Polytechnique Montreal, 2020-
-*/
+ *
+ * Authors: Bruno Blais, Ghazaleh Mirakhori, Audrey Collard-Daigneault,
+ * Polytechnique Montreal, 2020-
+ */
 
 #ifndef lethe_rpt_h
 #define lethe_rpt_h

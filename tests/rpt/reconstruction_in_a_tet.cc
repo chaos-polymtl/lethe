@@ -23,8 +23,8 @@
 #include <deal.II/base/point.h>
 
 #include <../tests/tests.h>
-#include <rpt/rpt_fem_reconstruction.h>
 #include <rpt/parameters_rpt.h>
+#include <rpt/rpt_fem_reconstruction.h>
 
 #include <vector>
 
@@ -40,9 +40,11 @@ test()
 
   std::vector<double> measured_count({0.3, 0.3, 0.3});
   Vector<double>      solution(3);
-  Parameters::RPTFEMReconstructionParameters::FEMCostFunction cost_function = Parameters::RPTFEMReconstructionParameters::FEMCostFunction::absolute;
+  Parameters::RPTFEMReconstructionParameters::FEMCostFunction cost_function =
+    Parameters::RPTFEMReconstructionParameters::FEMCostFunction::absolute;
 
-  solution = assemble_matrix_and_rhs<3>(vertex_counts, measured_count, cost_function);
+  solution =
+    assemble_matrix_and_rhs<3>(vertex_counts, measured_count, cost_function);
 
 
   deallog << "The final solution is : " << solution[0] << " " << solution[1]

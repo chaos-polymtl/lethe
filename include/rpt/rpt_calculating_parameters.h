@@ -42,10 +42,10 @@ public:
   void
   parse(ParameterHandler &prm);
 
-  Parameters::RPTParameters               rpt_param;
-  Parameters::RPTTuningParameters         tuning_param;
-  Parameters::DetectorParameters          detector_param;
-  Parameters::RPTReconstructionParameters reconstruction_param;
+  Parameters::RPTParameters                  rpt_param;
+  Parameters::RPTTuningParameters            tuning_param;
+  Parameters::DetectorParameters             detector_param;
+  Parameters::RPTReconstructionParameters    reconstruction_param;
   Parameters::RPTFEMReconstructionParameters fem_reconstruction_param;
 };
 

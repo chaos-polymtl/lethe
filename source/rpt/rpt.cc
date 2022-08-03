@@ -33,7 +33,7 @@ RPT<dim>::setup_and_calculate()
   if (rpt_parameters.rpt_param.export_counts)
     export_data();
 
-    // Calculate the cost function for parameters tuning
+  // Calculate the cost function for parameters tuning
   if (rpt_parameters.tuning_param.tuning)
     {
       std::vector<double> measured_counts =
@@ -96,7 +96,7 @@ RPT<dim>::export_data()
   std::size_t csv_file = filename.find(".csv");
   std::size_t dat_file = filename.find("dat");
   if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
-      filename += ".csv";
+    filename += ".csv";
 
   myfile.open(filename);
   if (filename.substr(filename.find_last_of(".") + 1) == ".dat")

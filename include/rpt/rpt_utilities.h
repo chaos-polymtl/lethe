@@ -12,9 +12,9 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-*
-* Authors: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
-*/
+ *
+ * Authors: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
+ */
 
 
 #ifndef LETHE_RPT_UTILITIES_H
