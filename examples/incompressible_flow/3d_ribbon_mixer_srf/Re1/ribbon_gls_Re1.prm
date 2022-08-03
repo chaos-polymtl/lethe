@@ -66,10 +66,10 @@ subsection boundary conditions
         set id = 1
         set type              = function
         subsection u
-            set Function expression = -10*y#2*0.314159*y
+            set Function expression = -10*y
         end
         subsection v
-            set Function expression = 10*x #2*0.314159*x
+            set Function expression = 10*x 
         end
         subsection w
             set Function expression = 0
