@@ -4,6 +4,18 @@
 
 When designing an industrial mixer, it is essential to evaluate the power consumed by the agitator. To do so, we usually refer to graphs correlating the power number (:math:`N_p`) as a function of the Reynolds number (:math:`Re`). :math:`N_p` is a dimensionless number that relates the power consumed by the agitator to the geometry of the system, the speed of the agitator, and the properties of the material being mixed (density :math:`\rho` and viscosity :math:`\mu`). In this example, using a single rotating frame (SRF) model, we simulate a fluid being mixed in a ribbon mixer for different flow conditions (different values of :math:`Re`) to generate :math:`N_p` vs :math:`Re` curves.
 
+In this example, we will be using the torque :math:`(\Gamma \ [=] \ \text{N} \cdot \text{m})` to calculate :math:`N_p` with the following expression:
+
+.. math::
+    N_p = \frac{2 \pi \Gamma}{\rho N^2 D^5}
+
+
+where
+
+- :math:`N` is the angular velocity :math:`[\text{rad} \cdot \text{s}^{-1}]` of the agitator;
+- :math:`D` is the diameter of the impeller [m], and
+- :math:`\rho` is the density of the fluid :math:`[\text{kg} \cdot \text{m}^{-3}]`.
+
 
 Features
 -------------
@@ -63,26 +75,14 @@ To be able to simulate the flow in such complex geometry, we take advantage of t
    :name: Eulerian and Lagrangian reference frames
    :height: 5cm
 
-In this example, we will start by simulating the case when :math:`Re = 1` and then follow with a simulation for :math:`Re` values ranging from :math:`0.1` to :math:`100`.
+In this example, we will start by simulating the case when :math:`Re = 1` and then follow with simulations for :math:`Re` values ranging from :math:`0.1` to :math:`100` to generate :math:`N_p` vs :math:`Re` curves.
 
 The Reynolds number for our system is defined as follows:
 
 .. math::
     Re = \frac{ND^2}{\nu}
 
-where
-
-- :math:`N` is the angular velocity :math:`[\text{rad} \cdot \text{s}^{-1}]` of the agitator;
-- :math:`D` is the diameter of the impeller [m], and
-- :math:`\nu` is the kinematic viscosity of the fluid :math:`[\text{m}^2 \cdot \text{s}^{-1}]`.
-
-In order to generate :math:`N_p` vs :math:`Re` curves, we have to calculate :math:`N_p`. In this example, we will be using the torque (:math:`\Gamma`) to calculate :math:`N_p` with the following expression:
-
-.. math::
-    N_p = \frac{2 \pi \Gamma}{\rho N^2 D^5}
-
-
-where :math:`\rho` is the density of the fluid :math:`[\text{kg} \cdot \text{m}^{-3}]`.
+where :math:`\nu` is the kinematic viscosity of the fluid :math:`[\text{m}^2 \cdot \text{s}^{-1}]`.
 
 
 Parameter File
@@ -154,7 +154,6 @@ Three different boundary conditions are considered.
 - On the ribbon blades, a no-slip boundary condition applies (``id=3``).
 
 The boundary conditions are described in the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section of the documentation.
-
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -286,7 +285,6 @@ Using ``lethe_case_generator.py``, we generate the :math:`25` cases with :math:`
 
 	In order to run a job on an Alliance cluster, it is required to at least specify the time limit of the job (``-- time``) and your account (``--account``).
 
-
 Here are a few examples of other job directives you may want to specify in your job script:
 
 .. code-block:: text
@@ -401,6 +399,7 @@ In the reference frame of the tank, the velocity field and its streamlines are v
    :align: center
    :name: Ribbon Mixer Velocity in an Eulerian frame
 
+
 Generating :math:`N_p` vs :math:`Re` Curves :math:`(Re \in [0.1, 100])`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -454,6 +453,13 @@ As you can see, :math:`N_p` decreases when :math:`Re` increases. It is explained
     N_p = \frac{2 \pi \Gamma}{\rho N^2 D^5} =\frac{1}{Re}  \frac{2 \pi \Gamma}{\mu  N D^3}
 
 As we can see in the image above, for :math:`Re < 100` (laminar regime), the Lethe curve fits well with the experimental values.
+
+
+Possibility for Extension
+----------------------------
+
+It could be interesting to simulate at higher Reynolds numbers in a transient simulation and compare the results with the experimental data.
+
 
 References
 -----------

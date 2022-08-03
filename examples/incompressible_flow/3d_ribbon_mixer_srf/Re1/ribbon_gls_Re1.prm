@@ -41,7 +41,7 @@ end
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate torque     = true     # Enable torque calculation
+    set calculate torque      = true      # Enable torque calculation
     set torque name           = torque    # Name prefix of torque files
     set output precision      = 14        # Output precision
     set calculation frequency = 1         # Frequency of the force calculation
