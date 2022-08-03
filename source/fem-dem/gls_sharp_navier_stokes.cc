@@ -2302,7 +2302,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
       this->simulation_parameters.simulation_control.method)
     dt = 1;
 
-  if(this->simulation_parameters.particlesParameters->assemble_navier_stokes_inside==true)
+  if (this->simulation_parameters.particlesParameters
+        ->assemble_navier_stokes_inside == true)
     {
       // impose pressure reference in each of the particle
       for (unsigned int p = 0; p < particles.size(); ++p)
@@ -2330,7 +2331,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
               sum_line = volume / dt;
               // Clear the line in the matrix
               unsigned int inside_index = local_dof_indices[dim];
-              // Check on which DOF of the cell to impose the pressure. If the dof is on a hanging node, it is already constrained and the pressure cannot be imposed there. So we just go to the next pressure DOF of the cell.
+              // Check on which DOF of the cell to impose the pressure. If the
+              // dof is on a hanging node, it is already constrained and the
+              // pressure cannot be imposed there. So we just go to the next
+              // pressure DOF of the cell.
 
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                 {
@@ -2361,7 +2365,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
             }
         }
     }
-  
+
   ib_done.clear();
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
@@ -3728,7 +3732,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           if (this->simulation_control->get_step_number() == 0 ||
               this->simulation_control->get_step_number() %
                   this->simulation_parameters.particlesParameters
-                    ->contact_search_frequency !=
+                    ->contact_search_frequency ==
                 0)
             ib_dem.update_contact_candidates();
 
