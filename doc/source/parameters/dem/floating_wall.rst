@@ -1,4 +1,4 @@
-Floating Walls
+Floating Wall
 -------------------
 Floating wall is a temporary (its start and end times are defined) flat wall, generally used for holding the particles during the filling and before the discharge stage.
 
