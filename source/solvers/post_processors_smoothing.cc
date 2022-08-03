@@ -221,8 +221,8 @@ QcriterionSmoothing<dim, VectorType>::generate_rhs(const VectorType &solution)
         {
           fe_values.reinit(cell);
 
-          //fe_values[velocities].get_function_gradients(
-            //solution, present_velocity_gradients);
+          // fe_values[velocities].get_function_gradients(
+          // solution, present_velocity_gradients);
 
           local_rhs = 0;
           for (unsigned int q = 0; q < n_q_points; ++q)
