@@ -109,7 +109,7 @@ Simulation Control
         set output path             = ./output/
     end
 
-For this example, we consider that the regime is at a steady state so we use a ``steady`` method. We set ``output boundaries = true`` to generate an auxiliary file that highlights the equipment walls by hiding the cells of the mesh. This allows a clearer visualization of the mixing setup.
+For this example, we consider that the regime is at a steady state, so we use a ``steady`` method. We set ``output boundaries = true`` to generate an auxiliary file that highlights the equipment walls by hiding the cells of the mesh. This allows a clearer visualization of the mixing setup.
 
 Mesh
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
