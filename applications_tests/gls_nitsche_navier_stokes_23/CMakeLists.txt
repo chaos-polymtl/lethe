@@ -1,5 +1,5 @@
 SET(TEST_LIBRARIES lethe)
 SET(TEST_TARGET gls_nitsche_navier_stokes_23)
-file(COPY cylinder.msh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY cylinder.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 DEAL_II_PICKUP_TESTS()
 
