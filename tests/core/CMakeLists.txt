@@ -1,7 +1,7 @@
 SET (TEST_LIBRARIES lethe-core)
 
-string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_LOWER_BUILD_TYPE)
-	file(COPY table_read_input.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/table_read.${CMAKE_LOWER_BUILD_TYPE})
+string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
+file(COPY table_read_input.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/table_read.${_build_type})
 
 DEAL_II_PICKUP_TESTS()
 
