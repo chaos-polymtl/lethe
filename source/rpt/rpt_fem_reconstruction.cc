@@ -9,6 +9,8 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/grid_in.h>
+#include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/lac/lapack_full_matrix.h>
 #include <deal.II/lac/precondition.h>
@@ -56,33 +58,55 @@ void
 RPTFEMReconstruction<dim>::setup_triangulation()
 {
   Triangulation<dim> temp_triangulation;
-  Triangulation<dim> flat_temp_triangulation;
   /*
     GridGenerator::cylinder(temp_triangulation,
                             rpt_parameters.rpt_param.reactor_radius,
                             rpt_parameters.rpt_param.reactor_height / 2);
   */
-  GridGenerator::subdivided_cylinder(
-    temp_triangulation,
-    rpt_parameters.fem_reconstruction_param.z_subdivisions,
-    rpt_parameters.rpt_param.reactor_radius,
-    rpt_parameters.rpt_param.reactor_height * 0.5);
-  temp_triangulation.refine_global(
-    rpt_parameters.fem_reconstruction_param.mesh_refinement);
+  if (rpt_parameters.fem_reconstruction_param.mesh_type == Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
+  {
+      GridIn<dim> grid_in;
+      grid_in.attach_triangulation(temp_triangulation);
+      std::ifstream input_file(rpt_parameters.fem_reconstruction_param.mesh_file);
+      grid_in.read_msh(input_file);
 
-  // Flatten the triangulation
-  GridGenerator::flatten_triangulation(temp_triangulation,
-                                       flat_temp_triangulation);
-  // Convert to simplex elements
-  GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
-                                                   triangulation);
-  triangulation.set_all_manifold_ids(0);
+      const unsigned int z_axis = 2;
+      const CylindricalManifold<dim> boundary(z_axis);
+      temp_triangulation.set_all_manifold_ids_on_boundary(0);
+      temp_triangulation.set_manifold(0, boundary);
 
-  // Grid transformation
-  GridTools::rotate(M_PI_2, 1, triangulation);
-  Tensor<1, dim> shift_vector(
-    {0, 0, rpt_parameters.rpt_param.reactor_height * 0.5});
-  GridTools::shift(shift_vector, triangulation);
+      temp_triangulation.refine_global(rpt_parameters.fem_reconstruction_param.mesh_refinement);
+
+      GridGenerator::flatten_triangulation(temp_triangulation,
+                                           triangulation);
+      triangulation.set_all_manifold_ids(0);
+  }
+  else
+  {
+      Triangulation<dim> flat_temp_triangulation;
+
+      GridGenerator::subdivided_cylinder(
+              temp_triangulation,
+              rpt_parameters.fem_reconstruction_param.z_subdivisions,
+              rpt_parameters.rpt_param.reactor_radius,
+              rpt_parameters.rpt_param.reactor_height * 0.5);
+      temp_triangulation.refine_global(
+              rpt_parameters.fem_reconstruction_param.mesh_refinement);
+
+      // Flatten the triangulation
+      GridGenerator::flatten_triangulation(temp_triangulation,
+                                           flat_temp_triangulation);
+      // Convert to simplex elements
+      GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
+                                                       triangulation);
+      triangulation.set_all_manifold_ids(0);
+
+      // Grid transformation
+      GridTools::rotate(M_PI_2, 1, triangulation);
+      Tensor<1, dim> shift_vector(
+              {0, 0, rpt_parameters.rpt_param.reactor_height * 0.5});
+      GridTools::shift(shift_vector, triangulation);
+  }
   /*
     GridOut grid_out;
     {
