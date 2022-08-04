@@ -41,7 +41,7 @@
 #include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_fine_search.h>
-#include <dem/periodic_boundaries_manupulator.h>
+#include <dem/periodic_boundaries_manipulator.h>
 #include <dem/visualization.h>
 
 #include <deal.II/base/tensor.h>

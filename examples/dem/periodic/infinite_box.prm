@@ -6,8 +6,8 @@
 subsection simulation control
   set time step                 		 = 1e-4
   set time end       					 = 0.75
-  set log frequency				         = 1
-  set output frequency            		 = 1
+  set log frequency				         = 50
+  set output frequency            		 = 50
   set output path 					     = ./output4/
   set output name                        = simulation
   set output boundaries                  = false

@@ -8,9 +8,9 @@ subsection simulation control
   set time end       					 = 2
   set log frequency				         = 50
   set output frequency            		 = 50
-  set output path 					     = ./output_full_par/
+  set output path 					     = ./output_full_par2/
   set output name                        = simulation
-  set output boundaries                  = true
+  set output boundaries                  = false
 end
 
 # --------------------------------------------------

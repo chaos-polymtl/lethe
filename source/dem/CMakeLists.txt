@@ -15,7 +15,6 @@ SET(TARGET "lethe-dem")
 
 FILE(GLOB_RECURSE TARGET_SRC *.cc)
 FILE(GLOB_RECURSE TARGET_INC ${CMAKE_SOURCE_DIR}/include/dem/*.h)
-SET(TARGET_SRC ${TARGET_SRC}  ${TARGET_INC} periodic_boundaries_manupulator.cc ../../include/dem/periodic_boundaries_manupulator.h)
 
 # Usually, you will not need to modify anything beyond this point...
 

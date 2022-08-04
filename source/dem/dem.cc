@@ -36,7 +36,7 @@
 #include <dem/particle_wall_contact_info_struct.h>
 #include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
-#include <dem/periodic_boundaries_manupulator.h>
+#include <dem/periodic_boundaries_manipulator.h>
 #include <dem/print_initial_information.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
