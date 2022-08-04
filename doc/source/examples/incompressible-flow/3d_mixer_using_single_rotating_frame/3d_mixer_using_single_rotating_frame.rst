@@ -213,7 +213,7 @@ Non-linear Solver Control
       set tolerance               = 1e-10
     end
 
-Lethe is an implicit CFD solver. Consequently, each time step requires the solution of a non-linear system of equations. By default, Lethe uses a Newton solver for which a ``tolerance`` must be specified. Here, we set our tolerance at ``1e-10``.
+Lethe is an implicit CFD solver. Solving a steady-state problem requires the solution of a non-linear system of equations. By default, Lethe uses a Newton solver for which a ``tolerance`` must be specified. Here, we set our tolerance at ``1e-10``.
 
 Linear Solver Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
