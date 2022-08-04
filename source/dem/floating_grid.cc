@@ -17,11 +17,16 @@ FloatingGrid<dim, spacedim>::FloatingGrid(
 {
   if (floating_grid_parameters.mesh.file_name != "none")
     {
+      // Default boundary condition parameters
+      Parameters::Lagrangian::BCDEM bc_parameters;
+      bc_parameters.BC_type = Parameters::Lagrangian::BCDEM::BoundaryType::fixed_wall;
+
       read_mesh(floating_grid_parameters.mesh,
                 restart,
                 pcout,
                 triangulation,
-                triangulation_cell_diameter);
+                triangulation_cell_diameter,
+                bc_parameters);
     }
 }
 

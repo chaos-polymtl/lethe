@@ -10,7 +10,7 @@ subsection simulation control
   set output frequency            		 = 50
   set output path 					     = ./output_full_par2/
   set output name                        = simulation
-  set output boundaries                  = false
+  set output boundaries                  = true
 end
 
 # --------------------------------------------------
