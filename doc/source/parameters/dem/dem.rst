@@ -12,6 +12,7 @@ There are two discrete element method (DEM) solvers in Lethe: ``dem_2d`` and ``d
    model_parameters
    lagrangian_physical_properties
    insertion_info
-   floating_walls
+   floating_wall
+   floating_mesh
    mesh
    boundary_conditions
