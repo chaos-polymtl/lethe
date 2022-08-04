@@ -19,7 +19,8 @@ FloatingGrid<dim, spacedim>::FloatingGrid(
     {
       // Default boundary condition parameters
       Parameters::Lagrangian::BCDEM bc_parameters;
-      bc_parameters.BC_type = Parameters::Lagrangian::BCDEM::BoundaryType::fixed_wall;
+      bc_parameters.BC_type =
+        Parameters::Lagrangian::BCDEM::BoundaryType::fixed_wall;
 
       read_mesh(floating_grid_parameters.mesh,
                 restart,

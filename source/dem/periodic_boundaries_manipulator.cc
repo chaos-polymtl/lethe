@@ -54,66 +54,65 @@ void
 PeriodicBoundariesManipulator<dim>::map_periodic_cells(
   const parallel::distributed::Triangulation<dim> &triangulation)
 {
-  // Initializing output_vector and a search_vector (containing boundary_id and
-  // cell) to avoid replication of a boundary face. All the found boundary faces
-  // will be searched in this vector before being added to the output_vector. If
-  // they are not found in this search_vector they will be added to the
-  // output_vector as well as the search_vector
-  // std::map<int, boundary_cells_info_struct<dim>> output_vector;
-  std::vector<std::pair<int, typename Triangulation<dim>::active_cell_iterator>>
-    search_vector;
+  periodic_boundary_cells_information.clear();
 
   // Iterating over the active cells in the trangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
-      // Iterating over the faces of each cell
-      for (int face_id = 0; face_id < int(GeometryInfo<dim>::faces_per_cell);
-           ++face_id)
+      if (cell->at_boundary())
         {
-          if (cell->has_periodic_neighbor(face_id))
+          // Iterating over the faces of each cell
+          for (int face_id = 0;
+               face_id < int(GeometryInfo<dim>::faces_per_cell);
+               ++face_id)
             {
-              // Check to have unique pair
-              if (!periodic_cell_pair.count(
-                    cell->periodic_neighbor(face_id)->active_cell_index()))
+              if (cell->has_periodic_neighbor(face_id))
                 {
-                  // Save boundaries information related to cell, face and
-                  // boundary ids Cell on boundary tagged as outlet
-                  boundary_cells_info_struct<dim> boundary_information;
-
-                  get_boundary_info(cell, face_id, boundary_information);
-
-                  boundary_cells_info_struct<dim> periodic_boundary_information;
-                  typename Triangulation<dim>::active_cell_iterator
-                    periodic_cell = cell->periodic_neighbor(face_id);
-
-                  get_boundary_info(periodic_cell,
-                                    cell->periodic_neighbor_face_no(face_id),
-                                    periodic_boundary_information);
-
-                  auto information_search_element =
-                    std::make_pair(face_id, cell);
-                  auto search_iterator = std::find(search_vector.begin(),
-                                                   search_vector.end(),
-                                                   information_search_element);
-                  if (search_iterator == search_vector.end())
+                  // Check the global cell index key prior having unique pair
+                  if (!global_periodic_cell_pair.count(
+                        cell->periodic_neighbor(face_id)->active_cell_index()))
                     {
+                      // Save boundaries information related to the cell on
+                      // boundary tagged as outlet
+                      boundary_cells_info_struct<dim> boundary_information;
+                      get_boundary_info(cell, face_id, boundary_information);
+
+                      // Save boundaries information related to the cell on
+                      // boundary tagged as periodic
+                      boundary_cells_info_struct<dim>
+                        periodic_boundary_information;
+                      typename Triangulation<dim>::active_cell_iterator
+                        periodic_cell = cell->periodic_neighbor(face_id);
+                      get_boundary_info(periodic_cell,
+                                        cell->periodic_neighbor_face_no(
+                                          face_id),
+                                        periodic_boundary_information);
+
+                      // Store both cell information in map with cell id at
+                      // outlet as key
                       if (cell->is_locally_owned())
                         {
-                          search_vector.push_back(information_search_element);
                           periodic_boundary_cells_information.insert(
                             {boundary_information.cell->active_cell_index(),
                              std::make_pair(boundary_information,
                                             periodic_boundary_information)});
-                          periodic_cell_pair.insert(
-                            {boundary_information.cell->active_cell_index(),
-                             periodic_boundary_information.cell
-                               ->active_cell_index()});
                         }
+
+                      // Map of the periodic cell related to the cell at outlet
+                      global_periodic_cell_pair.insert(
+                        {boundary_information.cell->active_cell_index(),
+                         periodic_boundary_information.cell
+                           ->active_cell_index()});
+
+
                     }
                 }
             }
         }
     }
+
+  std::cout << " is empty " << periodic_boundary_cells_information.empty()
+            << std::endl;
 }
 
 template <int dim>
@@ -129,7 +128,7 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
        ++particle)
     {
       Point<3> particle_position;
-      double   distance_with_face;
+      double   distance_with_face = 0;
 
       if constexpr (dim == 3)
         {
@@ -183,55 +182,74 @@ void
 PeriodicBoundariesManipulator<dim>::execute_particle_displacement(
   const Particles::ParticleHandler<dim> &particle_handler)
 {
-  for (auto boundary_cells_information_iterator =
-         periodic_boundary_cells_information.begin();
-       boundary_cells_information_iterator !=
-       periodic_boundary_cells_information.end();
-       ++boundary_cells_information_iterator)
+  for(auto const &x : periodic_boundary_cells_information)
     {
-      // Get the cell and periodic cell content from map
-      auto boundary_cells_content =
-        boundary_cells_information_iterator->second.first;
-      auto cell = boundary_cells_content.cell;
+      std::cout
+        << "Cell index key: "
+        << x.second.first.cell->active_cell_index()
+        << std::endl;
+      std::cout << "Periodic index key "
+                << x.second.second.cell->active_cell_index()
+                << std::endl;}
 
-      auto periodic_boundary_cells_content =
-        boundary_cells_information_iterator->second.second;
-      auto periodic_cell = periodic_boundary_cells_content.cell;
-
-
-      // Get particle in cell only for locally owned cells
-      typename Particles::ParticleHandler<dim>::particle_iterator_range
-        particles_in_cell;
-      typename Particles::ParticleHandler<dim>::particle_iterator_range
-        particles_in_periodic_cell;
-
-      if (cell->is_locally_owned())
+  if (!periodic_boundary_cells_information.empty())
+    {
+      int i = 0;
+      for (auto boundary_cells_information_iterator =
+             periodic_boundary_cells_information.begin();
+           boundary_cells_information_iterator !=
+           periodic_boundary_cells_information.end();
+           ++boundary_cells_information_iterator)
         {
-          particles_in_cell = particle_handler.particles_in_cell(cell);
-        }
+          // Get the cell and periodic cell content from map
+          auto boundary_cells_content =
+            boundary_cells_information_iterator->second.first;
+          auto cell = boundary_cells_content.cell;
 
-      if (periodic_cell->is_locally_owned())
-        {
-          particles_in_periodic_cell =
-            particle_handler.particles_in_cell(periodic_cell);
-        }
+          auto periodic_boundary_cells_content =
+            boundary_cells_information_iterator->second.second;
+          auto periodic_cell = periodic_boundary_cells_content.cell;
 
-      const bool particles_exist_in_main_cell = !particles_in_cell.empty();
-      const bool particles_exist_in_periodic_cell =
-        !particles_in_periodic_cell.empty();
+          std::cout << "Cell index key: "
+                    << boundary_cells_information_iterator->first << std::endl;
+          std::cout << "Cell ID:        " << cell->active_cell_index()
+                    << std::endl;
+          std::cout << "Periodic cell ID: "
+                    << periodic_cell->active_cell_index() << std::endl;
+          std::cout << "i:" << i << std::endl;
 
-      // Check if there is cell outside of cell on periodic boundary
-      if (particles_exist_in_main_cell)
-        {
-          check_and_move_particles(boundary_cells_content,
-                                   periodic_boundary_cells_content,
-                                   particles_in_cell);
-        }
-      if (particles_exist_in_periodic_cell)
-        {
-          check_and_move_particles(periodic_boundary_cells_content,
-                                   boundary_cells_content,
-                                   particles_in_periodic_cell);
+          if (cell->is_locally_owned())
+            {
+              typename Particles::ParticleHandler<dim>::particle_iterator_range
+                         particles_in_cell = particle_handler.particles_in_cell(cell);
+              const bool particles_exist_in_main_cell =
+                !particles_in_cell.empty();
+
+              if (particles_exist_in_main_cell)
+                {
+                  check_and_move_particles(boundary_cells_content,
+                                           periodic_boundary_cells_content,
+                                           particles_in_cell);
+                }
+            }
+
+          if (periodic_cell->is_locally_owned())
+            {
+              typename Particles::ParticleHandler<dim>::particle_iterator_range
+                particles_in_periodic_cell =
+                  particle_handler.particles_in_cell(periodic_cell);
+
+              const bool particles_exist_in_periodic_cell =
+                !particles_in_periodic_cell.empty();
+
+              if (particles_exist_in_periodic_cell)
+                {
+                  check_and_move_particles(periodic_boundary_cells_content,
+                                           boundary_cells_content,
+                                           particles_in_periodic_cell);
+                }
+            }
+          i++;
         }
     }
 }

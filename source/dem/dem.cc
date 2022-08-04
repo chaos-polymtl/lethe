@@ -764,12 +764,12 @@ DEMSolver<dim>::solve()
   print_initial_information(pcout, n_mpi_processes);
 
   // Reading mesh
-    read_mesh(parameters.mesh,
-              parameters.restart.restart,
-              pcout,
-              triangulation,
-              triangulation_cell_diameter,
-              parameters.boundary_conditions);
+  read_mesh(parameters.mesh,
+            parameters.restart.restart,
+            pcout,
+            triangulation,
+            triangulation_cell_diameter,
+            parameters.boundary_conditions);
 
 
   if (parameters.restart.restart == true)

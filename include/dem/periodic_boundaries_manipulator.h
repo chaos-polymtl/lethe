@@ -83,7 +83,7 @@ private:
       &particles_in_cell);
 
   std::map<types::global_cell_index, types::global_cell_index>
-    periodic_cell_pair;
+    global_periodic_cell_pair;
 
   unsigned int direction;
 };
