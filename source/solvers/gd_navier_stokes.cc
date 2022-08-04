@@ -136,7 +136,7 @@ GDNavierStokesSolver<dim>::setup_assemblers()
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::update_multiphysics_average_solution()
+GDNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
@@ -1202,7 +1202,7 @@ GDNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
-  this->update_multiphysics_average_solution();
+  this->update_multiphysics_time_average_solution();
 
   while (this->simulation_control->integrate())
     {

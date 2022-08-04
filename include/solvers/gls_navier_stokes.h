@@ -111,7 +111,7 @@ protected:
    * @brief  Updates the average velocity field solution in the multiphyscics interface
    */
   virtual void
-  update_multiphysics_average_solution() override;
+  update_multiphysics_time_average_solution() override;
 
   /**
    * @brief  Set-up the appropriate preconditioner

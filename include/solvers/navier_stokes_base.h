@@ -258,10 +258,10 @@ protected:
   setup_dofs_fd() = 0;
 
   /**
-   * @brief  Update the average velocity field solution
+   * @brief  Update the time average velocity field solution
    */
   virtual void
-  update_multiphysics_average_solution() = 0;
+  update_multiphysics_time_average_solution() = 0;
 
   virtual void
   set_initial_condition_fd(
