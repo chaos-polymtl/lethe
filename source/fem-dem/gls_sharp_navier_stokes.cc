@@ -2302,62 +2302,67 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
       this->simulation_parameters.simulation_control.method)
     dt = 1;
 
-  // impose pressure reference in each of the particle
-  for (unsigned int p = 0; p < particles.size(); ++p)
+  if (this->simulation_parameters.particlesParameters
+        ->assemble_navier_stokes_inside == true)
     {
-      Point<dim> pressure_reference_location =
-        particles[p].pressure_location + particles[p].position;
-
-
-      const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
-        this->dof_handler, pressure_reference_location);
-
-      if (cell->is_locally_owned())
+      // impose pressure reference in each of the particle
+      for (unsigned int p = 0; p < particles.size(); ++p)
         {
-          cell->get_dof_indices(local_dof_indices);
-          double sum_line = 0;
-          double volume   = 0;
-          fe_values.reinit(cell);
-          std::vector<int> set_pressure_cell;
-          set_pressure_cell.resize(particles.size());
+          Point<dim> pressure_reference_location =
+            particles[p].pressure_location + particles[p].position;
 
-          // Define the order of magnitude for the stencil.
-          for (unsigned int qf = 0; qf < n_q_points; ++qf)
-            volume += fe_values.JxW(qf);
 
-          sum_line = volume / dt;
-          // Clear the line in the matrix
-          unsigned int inside_index = local_dof_indices[dim];
-          // Check on which DOF of the cell to impose the pressure. If the dof
-          // is on a hanging node, it is already constrained and the pressure
-          // cannot be imposed there. So we just go to the next pressure DOF of
-          // the cell.
+          const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
+            this->dof_handler, pressure_reference_location);
 
-          for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+          if (cell->is_locally_owned())
             {
-              const unsigned int component_i =
-                this->fe->system_to_component_index(i).first;
-              if (this->zero_constraints.is_constrained(local_dof_indices[i]) ==
-                    false &&
-                  this->locally_owned_dofs.is_element(local_dof_indices[i]) &&
-                  component_i == dim)
+              cell->get_dof_indices(local_dof_indices);
+              double sum_line = 0;
+              double volume   = 0;
+              fe_values.reinit(cell);
+              std::vector<int> set_pressure_cell;
+              set_pressure_cell.resize(particles.size());
+
+              // Define the order of magnitude for the stencil.
+              for (unsigned int qf = 0; qf < n_q_points; ++qf)
+                volume += fe_values.JxW(qf);
+
+              sum_line = volume / dt;
+              // Clear the line in the matrix
+              unsigned int inside_index = local_dof_indices[dim];
+              // Check on which DOF of the cell to impose the pressure. If the
+              // dof is on a hanging node, it is already constrained and the
+              // pressure cannot be imposed there. So we just go to the next
+              // pressure DOF of the cell.
+
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                 {
-                  inside_index = local_dof_indices[i];
-                  break;
+                  const unsigned int component_i =
+                    this->fe->system_to_component_index(i).first;
+                  if (this->zero_constraints.is_constrained(
+                        local_dof_indices[i]) == false &&
+                      this->locally_owned_dofs.is_element(
+                        local_dof_indices[i]) &&
+                      component_i == dim)
+                    {
+                      inside_index = local_dof_indices[i];
+                      break;
+                    }
                 }
+
+              this->system_matrix.clear_row(inside_index);
+              // this->system_matrix.clear_row(inside_index)
+              // is not reliable on edge case
+
+              // Set the new equation for the first pressure dofs of the
+              // cell. this is the new reference pressure inside a
+              // particle
+
+              this->system_matrix.add(inside_index, inside_index, sum_line);
+              this->system_rhs(inside_index) =
+                0 - this->evaluation_point(inside_index) * sum_line;
             }
-
-          this->system_matrix.clear_row(inside_index);
-          // this->system_matrix.clear_row(inside_index)
-          // is not reliable on edge case
-
-          // Set the new equation for the first pressure dofs of the
-          // cell. this is the new reference pressure inside a
-          // particle
-
-          this->system_matrix.add(inside_index, inside_index, sum_line);
-          this->system_rhs(inside_index) =
-            0 - this->evaluation_point(inside_index) * sum_line;
         }
     }
 
@@ -3727,7 +3732,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           if (this->simulation_control->get_step_number() == 0 ||
               this->simulation_control->get_step_number() %
                   this->simulation_parameters.particlesParameters
-                    ->contact_search_frequency !=
+                    ->contact_search_frequency ==
                 0)
             ib_dem.update_contact_candidates();
 
