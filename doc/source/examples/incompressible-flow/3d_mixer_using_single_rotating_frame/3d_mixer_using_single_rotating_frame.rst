@@ -67,7 +67,7 @@ The dimensions of the system are listed in the following table:
 +-------------------------+----------------------------------+-------------------------+
 
 
-To be able to simulate the flow in such complex geometry, we take advantage of the symmetry of the system and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or "lab reference frame"), we place ourselves on the impeller's reference making it static and inducing a static no-slip boundary condition on it. This way, the cylindrical tank is going to be the only moving geometry in our system. Since the cylindrical tank is fully symmetric with respect to rotation around the central axis of the system, the simulation can be done accurately with a static mesh. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames.
+To simulate the flow in such complex geometry, we take advantage of the system's symmetry and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or "lab reference frame"), we place ourselves on the impeller's reference making it static and inducing a no-slip boundary condition. This way, the cylindrical tank will be the only moving geometry in our system. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames.
 
 .. image:: images/eulerian_vs_langrangian_reference.jpg
    :alt: Eulerian and Lagrangian reference frames
