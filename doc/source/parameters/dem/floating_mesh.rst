@@ -1,11 +1,14 @@
 Floating Mesh (Solid Objects)
 --------------------------------------
-Floating meshes (solid objects) are finite (limited) auxiliary objects that can be stationary or moving. Rotating impellers, sliding surfaces, and finite stoppers are examples of floating meshes. Note that the main differences between floating meshes and floating walls are: 1. floating wall is a surface, while a floating mesh can be a volume or a plane; 2. floating wall is infinite, while floating mesh is finite; 3. floating wall is stationary while floating mesh may be stationary or moving.
+Floating meshes (solid objects) are finite (limited) auxiliary objects that can be stationary or moving. Rotating impellers, sliding surfaces, and finite stoppers are examples of floating meshes. The main differences between floating meshes and floating walls are:
+1. floating wall is a surface, while a floating mesh can be a volume or a plane
+2. floating wall is infinite, while floating mesh is finite
+3. floating wall is stationary while floating mesh may be stationary or moving.
 
 .. note:: 
-    Solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes.
+    At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in the dem_3d solver are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment.
 
-This subsection explains the solid objects (floating meshes) information. First of all, the ``number of solids`` is specified. Then for each solid object, we need a ``mesh`` subsection. In these subsections, the ``type``, ``initial refinement``, and other properties of the objects are defined. Note that ``simplex`` must be ``true`` for all the objects, since the solid objects are defined using simplex meshes.
+This subsection explains the solid objects (floating meshes) information. First of all, the ``number of solids`` is specified. Then, for each solid object, we need a ``mesh`` subsection. In these subsections, the ``type``, ``initial refinement``, and other properties of the objects are defined. Note that ``simplex`` must be ``true`` for all the objects since the solid objects are defined using simplex meshes. For more information on mesh subsection, visit `CFD mesh <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_
 
 .. code-block:: text
 
@@ -25,7 +28,7 @@ This subsection explains the solid objects (floating meshes) information. First 
         end
 
         subsection angular velocity
-        	    set Function expression = 0 ; 0 ; 0
+            set Function expression = 0 ; 0 ; 0
         end 
 
         subsection center of rotation
@@ -39,7 +42,7 @@ This subsection explains the solid objects (floating meshes) information. First 
     end
  end
 
-* ``number of solids`` parameter defines the total number of floating meshes we wish to use during the simulation.
+* The ``number of solids`` parameter defines the total number of floating meshes we wish to use during the simulation.
 
 * For each floating mesh, we need a separate subsection (for instance 	``subsection solid object 0``) in which the information of the floating mesh (``type``, ``file name``, ``initial refinement``) is defined.
 
