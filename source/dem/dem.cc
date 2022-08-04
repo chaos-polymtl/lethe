@@ -295,6 +295,12 @@ DEMSolver<dim>::load_balance()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
 
+  if (parameters.boundary_conditions.BC_type ==
+      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+    {
+      periodic_boundaries_object.map_periodic_cells(triangulation);
+    }
+
   boundary_cell_object.build(
     triangulation,
     parameters.floating_walls,
@@ -764,12 +770,12 @@ DEMSolver<dim>::solve()
   print_initial_information(pcout, n_mpi_processes);
 
   // Reading mesh
-    read_mesh(parameters.mesh,
-              parameters.restart.restart,
-              pcout,
-              triangulation,
-              triangulation_cell_diameter,
-              parameters.boundary_conditions);
+  read_mesh(parameters.mesh,
+            parameters.restart.restart,
+            pcout,
+            triangulation,
+            triangulation_cell_diameter,
+            parameters.boundary_conditions);
 
 
   if (parameters.restart.restart == true)
@@ -811,6 +817,11 @@ DEMSolver<dim>::solve()
               (parameters.model_parameters.neighborhood_threshold - 1) *
               maximum_particle_diameter * 0.5));
 
+  // Finding cell neighbors
+  cell_neighbors_object.find_cell_neighbors(triangulation,
+                                            cells_local_neighbor_list,
+                                            cells_ghost_neighbor_list);
+
   if (parameters.boundary_conditions.BC_type ==
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
     {
@@ -819,11 +830,6 @@ DEMSolver<dim>::solve()
 
       periodic_boundaries_object.map_periodic_cells(triangulation);
     }
-
-  // Finding cell neighbors
-  cell_neighbors_object.find_cell_neighbors(triangulation,
-                                            cells_local_neighbor_list,
-                                            cells_ghost_neighbor_list);
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
@@ -1021,11 +1027,12 @@ DEMSolver<dim>::solve()
             torque,
             force,
             MOI);
+
         }
 
+      // Particles displacement if passing through a periodic boundary
       periodic_boundaries_object.execute_particle_displacement(
         particle_handler);
-
 
       // Visualization
       if (simulation_control->is_output_iteration())
