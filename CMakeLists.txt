@@ -98,7 +98,7 @@ if(TXR_EXECUTABLE STREQUAL "TXR_EXECUTABLE-NOTFOUND")
 else()
   message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
   add_custom_target(update-golden
-    COMMAND ${TXR_EXECUTABLE}
-            ${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl
-            ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR})
+    COMMAND "${TXR_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl"
+            "${CMAKE_BINARY_DIR}" "${CMAKE_SOURCE_DIR}")
 endif()
