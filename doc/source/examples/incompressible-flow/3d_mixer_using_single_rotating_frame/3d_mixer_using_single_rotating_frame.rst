@@ -2,7 +2,7 @@
 3D Ribbon Mixer using a Single Rotating Reference Frame
 ========================================================
 
-When designing an industrial mixer, it is essential to evaluate the power consumed by the agitator. To do so, we usually refer to graphs correlating the power number (:math:`N_p`) as a function of the Reynolds number (:math:`Re`). :math:`N_p` is a dimensionless number that relates the power consumed by the agitator to the geometry of the system, the speed of the agitator, and the properties of the material being mixed (density :math:`\rho` and viscosity :math:`\mu`). In this example, using a single rotating frame (SRF) model, we simulate a fluid being mixed in a ribbon mixer for different flow conditions (different values of :math:`Re`) to generate :math:`N_p` vs :math:`Re` curves.
+When designing an industrial mixer, it is essential to evaluate the power consumed by the agitator. To do so, we usually refer to graphs correlating the power number (:math:`N_p`) as a function of the Reynolds number (:math:`Re`). :math:`N_p` is a dimensionless number that relates the power consumed by the agitator to the geometry of the system, the speed of the agitator, and the properties of the material being mixed (density :math:`\rho` and viscosity :math:`\mu`). In this example, using a single rotating frame (SRF) model, we simulate a fluid being mixed in a double helical ribbon mixer for different flow conditions (different values of :math:`Re`) to generate a numerical :math:`N_p` vs :math:`Re` curves.
 
 In this example, we will be using the torque :math:`(\Gamma \ [=] \ \text{N} \cdot \text{m})` to calculate :math:`N_p` with the following expression:
 
@@ -67,13 +67,21 @@ The dimensions of the system are listed in the following table:
 +-------------------------+----------------------------------+-------------------------+
 
 
-To be able to simulate the flow in such complex geometry, we take advantage of the symmetry of the system and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or "lab reference frame"), we place ourselves on the impeller's reference making it static and inducing a no-slip boundary condition on it. This way, the cylindrical tank is going to be the only moving geometry in our system. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames.
+To be able to simulate the flow in such complex geometry, we take advantage of the symmetry of the system and opt for a Lagrangian reference frame. Instead of observing the velocity profile from an Eulerian reference frame (or "lab reference frame"), we place ourselves on the impeller's reference making it static and inducing a static no-slip boundary condition on it. This way, the cylindrical tank is going to be the only moving geometry in our system. Since the cylindrical tank is fully symmetric with respect to rotation around the central axis of the system, the simulation can be done accurately with a static mesh. The figure below illustrates the difference between the Eulerian and Lagrangian reference frames.
 
 .. image:: images/eulerian_vs_langrangian_reference.jpg
    :alt: Eulerian and Lagrangian reference frames
    :align: center
    :name: Eulerian and Lagrangian reference frames
    :height: 5cm
+
+The rotating Lagrangian frame of reference is non-Galilean. Consequently, the Coriolis and the centrifugal forces must be added to the incompressible Navier-Stokes equations. The resulting set of equations is:
+
+.. math::
+    \nabla \cdot \mathbf{u} &= 0   \\
+    \frac{\partial \mathbf{u}}{\partial t}  + \mathbf{u} \cdot \nabla \mathbf{u} &= -\frac{1}{\rho} \nabla p  + \nu \nabla^2 \mathbf{u} +\mathbf{f} - \underbrace{\Omega \times \mathbf{u}}_{Coriolis} - \underbrace{\Omega \times (\mathbf{q} \times \mathbf{u})}_{Centrifugal}
+
+where :math:`\mathbf{q}` is the position in the fluid with respect to the center of rotation and :math:`\mathbf{\Omega}` is the angular velocity of the rotating reference frame. The Coriolis force adds a velocity dependant force to the Navier-Stokes equations whereas the centrifugal forces is independent of the flow and only modifies the pressure fiedl.
 
 In this example, we will start by simulating the case when :math:`Re = 1` and then follow with simulations for :math:`Re` values ranging from :math:`0.1` to :math:`100` to generate :math:`N_p` vs :math:`Re` curves.
 
