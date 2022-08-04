@@ -100,6 +100,12 @@ private:
   void
   assemble_system_rhs();
 
+  /**
+   * @brief  Update the average velocity field solution in the multiphyscics interface
+   */
+  virtual void
+  update_multiphysics_time_average_solution() override;
+
 
   /**
    * @brief Assemble the local matrix for a given cell.
