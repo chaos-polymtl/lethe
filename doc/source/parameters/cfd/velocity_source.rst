@@ -1,7 +1,7 @@
 Velocity Source
 ~~~~~~~~~~~~~~~~
 
-This subsection allows you to change the reference frame of the calculated velocity in a given system. This is especially useful when it is easier to solve a problem in a Lagrangian reference frame.
+This subsection allows you to defined velocity-dependant source term. At the moment, this used to solve a problems in a Lagrangian reference frame for which the Coriolis and centrifugal forces must be added.
 
 The default values are:
 
