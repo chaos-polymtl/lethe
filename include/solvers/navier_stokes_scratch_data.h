@@ -648,9 +648,8 @@ public:
 
     pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
 
-    unsigned int particle_number = 0;
-    average_particle_velocity    = 0;
-    cell_volume                  = this->fe_values.get_cell()->measure();
+    average_particle_velocity = 0;
+    cell_volume               = this->fe_values.get_cell()->measure();
 
     // Get the local dof indices for velocity and void fraction field
     // interpolation at particle's position
@@ -665,63 +664,67 @@ public:
 
     // Loop over particles in cell
     double total_particle_volume = 0;
-    for (auto &particle : pic)
-      {
-        auto particle_properties = particle.get_properties();
-        // Set the particle_fluid_interactions properties and vectors to 0
-        for (int d = 0; d < dim; ++d)
-          {
-            particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
-            undisturbed_flow_force[d]                                  = 0;
-          }
+    {
+      unsigned int particle_no = 0;
+      for (auto &particle : pic)
+        {
+          auto particle_properties = particle.get_properties();
+          // Set the particle_fluid_interactions properties and vectors to 0
+          for (int d = 0; d < dim; ++d)
+            {
+              particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
+              undisturbed_flow_force[d]                                  = 0;
+            }
 
-        fluid_velocity_at_particle_location[particle_number] = 0;
+          fluid_velocity_at_particle_location[particle_no] = 0;
 
-        // Stock the values of particle velocity in a tensor
-        particle_velocity[particle_number][0] =
-          particle_properties[DEM::PropertiesIndex::v_x];
-        particle_velocity[particle_number][1] =
-          particle_properties[DEM::PropertiesIndex::v_y];
-        if (dim == 3)
-          particle_velocity[particle_number][2] =
-            particle_properties[DEM::PropertiesIndex::v_z];
+          // Stock the values of particle velocity in a tensor
+          particle_velocity[particle_no][0] =
+            particle_properties[DEM::PropertiesIndex::v_x];
+          particle_velocity[particle_no][1] =
+            particle_properties[DEM::PropertiesIndex::v_y];
+          if (dim == 3)
+            particle_velocity[particle_no][2] =
+              particle_properties[DEM::PropertiesIndex::v_z];
 
-        // Interpolate velocity and void fraction at particle position
-        // Reference location of the particle
-        auto reference_location = particle.get_reference_location();
+          // Interpolate velocity and void fraction at particle position
+          // Reference location of the particle
+          auto reference_location = particle.get_reference_location();
 
-        for (unsigned int j = 0; j < dofs_per_cell; ++j)
-          {
-            const auto comp_j = fe.system_to_component_index(j).first;
-            if (comp_j < dim)
-              {
-                auto &evaluation_point = previous_solution;
-                fluid_velocity_at_particle_location[particle_number][comp_j] +=
-                  evaluation_point[fluid_dof_indices[j]] *
-                  fe.shape_value(j, reference_location);
-              }
-          }
+          for (unsigned int j = 0; j < dofs_per_cell; ++j)
+            {
+              const auto comp_j = fe.system_to_component_index(j).first;
+              if (comp_j < dim)
+                {
+                  auto &evaluation_point = previous_solution;
+                  fluid_velocity_at_particle_location[particle_no][comp_j] +=
+                    evaluation_point[fluid_dof_indices[j]] *
+                    fe.shape_value(j, reference_location);
+                }
+            }
 
-        cell_void_fraction[particle_number] = 0;
-        if (interpolated_void_fraction == true)
-          {
-            for (unsigned int j = 0; j < fe_void_fraction.dofs_per_cell; ++j)
-              {
-                cell_void_fraction[particle_number] +=
-                  void_fraction_solution[void_fraction_dof_indices[j]] *
-                  fe_void_fraction.shape_value(j, reference_location);
-              }
-          }
-        else
-          {
-            total_particle_volume +=
-              M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
-              (2 * dim);
-          }
+          cell_void_fraction[particle_no] = 0;
+          if (interpolated_void_fraction == true)
+            {
+              for (unsigned int j = 0; j < fe_void_fraction.dofs_per_cell; ++j)
+                {
+                  cell_void_fraction[particle_no] +=
+                    void_fraction_solution[void_fraction_dof_indices[j]] *
+                    fe_void_fraction.shape_value(j, reference_location);
+                }
+            }
+          else
+            {
+              total_particle_volume +=
+                M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                (2 * dim);
+            }
 
-        average_particle_velocity += particle_velocity[particle_number];
-        particle_number += 1;
-      }
+          average_particle_velocity += particle_velocity[particle_no];
+          particle_no++;
+        }
+      number_of_particles = particle_no;
+    }
 
     if (interpolated_void_fraction == false)
       {
@@ -729,66 +732,71 @@ public:
         cell_void_fraction_bulk =
           (cell_volume - total_particle_volume) / cell_volume;
 
-        for (unsigned int j = 0; j < particle_number; ++j)
+        for (unsigned int j = 0; j < number_of_particles; ++j)
           cell_void_fraction[j] = cell_void_fraction_bulk;
       }
 
-    if (particle_number != 0)
-      {
-        average_particle_velocity = average_particle_velocity / particle_number;
-      }
+    if (number_of_particles > 0)
+      average_particle_velocity =
+        average_particle_velocity / number_of_particles;
 
     // Relative velocity and particle Reynolds
-    particle_number = 0;
-    for (auto &particle : pic)
-      {
-        auto particle_properties = particle.get_properties();
-        fluid_particle_relative_velocity_at_particle_location[particle_number] =
-          fluid_velocity_at_particle_location[particle_number] -
-          particle_velocity[particle_number];
+    {
+      unsigned int particle_no = 0;
+      for (auto &particle : pic)
+        {
+          auto particle_properties = particle.get_properties();
+          fluid_particle_relative_velocity_at_particle_location[particle_no] =
+            fluid_velocity_at_particle_location[particle_no] -
+            particle_velocity[particle_no];
 
-        Re_particle[particle_number] =
-          1e-3 + cell_void_fraction[particle_number] *
-                   fluid_particle_relative_velocity_at_particle_location
-                     [particle_number]
-                       .norm() *
-                   particle_properties[DEM::PropertiesIndex::dp] /
-                   (properties_manager.viscosity_scale + DBL_MIN);
-        particle_number += 1;
-      }
+          Re_particle[particle_no] =
+            1e-3 +
+            cell_void_fraction[particle_no] *
+              fluid_particle_relative_velocity_at_particle_location[particle_no]
+                .norm() *
+              particle_properties[DEM::PropertiesIndex::dp] /
+              (properties_manager.viscosity_scale + DBL_MIN);
+          particle_no++;
+        }
+    }
 
-    // Vectors for interpolation of pressure gradients, velocity laplacians, and
-    // velocity curls at particle positions
-    std::vector<Point<dim>> particle_reference_location(particle_number + 1);
-    std::vector<double>     particle_weights(particle_number + 1);
-    fluid_pressure_gradients_at_particle_location.resize(particle_number + 1);
-    fluid_velocity_laplacian_at_particle_location.resize(particle_number + 1);
+    // If there are no particles in the cell,there is no need to try and gather
+    // the rest of the information
+    if (number_of_particles == 0)
+      return;
 
+    // If particles are in the cell, gather the rest of the
+    // information
 
+    // Create local vector that will be use to spawn an in-situ quadrature to
+    // interpolate at the location of the particles
+    std::vector<Point<dim>> particle_reference_location(number_of_particles);
+    std::vector<double>     particle_weights(number_of_particles, 1);
 
-    if constexpr (dim == 2)
-      fluid_velocity_curls_at_particle_location_2d.resize(particle_number + 1);
-    else if constexpr (dim == 3)
-      fluid_velocity_curls_at_particle_location_3d.resize(particle_number + 1);
+    // Resize arrays to be of the right size
+    fluid_velocity_laplacian_at_particle_location.resize(number_of_particles);
+    fluid_velocity_curls_at_particle_location_2d.resize(number_of_particles);
+    fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
+    fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
 
-
-    // Loop over particles in cell
-    for (auto &particle : pic)
-      {
-        // Store particle positions and weights
-        // Reference location of the particle
-        auto reference_location = particle.get_reference_location();
-        particle_reference_location[particle_number] = reference_location;
-        particle_weights[particle_number]            = 1;
-      }
+    // Loop over particles in cell and cache their reference location
+    {
+      unsigned int particle_no = 0;
+      for (auto &particle : pic)
+        {
+          // Store particle positions and weights
+          // Reference location of the particle
+          particle_reference_location[particle_no] =
+            particle.get_reference_location();
+          particle_no++;
+        }
+    }
 
     // Create a quadrature that is based on the particle reference location
     Quadrature<dim> q_local(particle_reference_location, particle_weights);
-    FEValues<dim>   fe_values_local_particles(fe,
-                                            q_local,
-                                            update_quadrature_points |
-                                              update_gradients | update_values |
-                                              update_hessians);
+    FEValues<dim>   fe_values_local_particles(
+      fe, q_local, update_gradients | update_values | update_hessians);
 
     // Evaluate the relevant information at the
     // quadrature points to do the interpolation.
@@ -964,10 +972,12 @@ public:
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
   std::vector<Tensor<1, 1>>   fluid_velocity_curls_at_particle_location_2d;
   std::vector<Tensor<1, 3>>   fluid_velocity_curls_at_particle_location_3d;
+  std::vector<Point<dim>>     particle_reference_location;
+  std::vector<double>         particle_weights;
   std::vector<double>         cell_void_fraction;
   std::vector<double>         Re_particle;
   unsigned int                max_number_of_particles_per_cell;
-  unsigned int                number_of_locally_owned_particles;
+  unsigned int                number_of_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double                                                            cell_volume;
   double                                                            beta_drag;
