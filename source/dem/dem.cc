@@ -709,9 +709,11 @@ DEMSolver<dim>::write_output_results()
     {
       DataOutFaces<dim> data_out_faces;
 
-      this->setup_background_dofs();
-      data_out_faces.attach_dof_handler(background_dh);
-      Vector<float> boundary_id(background_dh.n_locally_owned_dofs());
+      // Setup background dofs to initiate right sized boundary_id vector
+      setup_background_dofs();
+      Vector<float> boundary_id(background_dh.n_dofs());
+
+      // Attach the boundary_id to data_out_faces object
       BoundaryPostprocessor<dim> boundary;
       data_out_faces.attach_dof_handler(background_dh);
       data_out_faces.add_data_vector(boundary_id, boundary);
@@ -762,27 +764,13 @@ DEMSolver<dim>::solve()
   print_initial_information(pcout, n_mpi_processes);
 
   // Reading mesh
-  if (parameters.boundary_conditions.BC_type ==
-      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
-    {
-      read_mesh(parameters.mesh,
-                parameters.restart.restart,
-                pcout,
-                triangulation,
-                triangulation_cell_diameter,
-                parameters.boundary_conditions);
+    read_mesh(parameters.mesh,
+              parameters.restart.restart,
+              pcout,
+              triangulation,
+              triangulation_cell_diameter,
+              parameters.boundary_conditions);
 
-      periodic_boundaries_object.set_periodic_boundaries_direction(
-        parameters.boundary_conditions.periodic_direction[0]);
-    }
-  else
-    {
-      read_mesh(parameters.mesh,
-                parameters.restart.restart,
-                pcout,
-                triangulation,
-                triangulation_cell_diameter);
-    }
 
   if (parameters.restart.restart == true)
     {
@@ -823,7 +811,14 @@ DEMSolver<dim>::solve()
               (parameters.model_parameters.neighborhood_threshold - 1) *
               maximum_particle_diameter * 0.5));
 
-  periodic_boundaries_object.map_periodic_cells(triangulation);
+  if (parameters.boundary_conditions.BC_type ==
+      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+    {
+      periodic_boundaries_object.set_periodic_boundaries_direction(
+        parameters.boundary_conditions.periodic_direction[0]);
+
+      periodic_boundaries_object.map_periodic_cells(triangulation);
+    }
 
   // Finding cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,
