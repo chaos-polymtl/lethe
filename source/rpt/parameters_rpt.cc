@@ -309,6 +309,18 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
 {
   prm.enter_subsection("fem reconstruction");
   {
+
+    prm.declare_entry(
+          "mesh type",
+          "dealii",
+          Patterns::Selection("dealii|gmsh"),
+          "Type of mesh used");
+
+      prm.declare_entry("mesh filename",
+                        "reactor.msh",
+                        Patterns::FileName(),
+                        "Imported mesh filename");
+
     prm.declare_entry("z subdivisions",
                       "1",
                       Patterns::Integer(),
@@ -355,6 +367,16 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
 {
   prm.enter_subsection("fem reconstruction");
   {
+    const std::string fem_mesh = prm.get("mesh type");
+    if (fem_mesh == "dealii")
+        mesh_type = FEMMeshType::dealii;
+    else if (fem_mesh == "gmsh")
+        mesh_type = FEMMeshType::gmsh;
+    else
+        throw std::logic_error(
+        "Error, invalid mesh type. Choices are 'dealii' or 'gmsh'");
+
+    mesh_file                = prm.get("mesh filename");
     z_subdivisions           = prm.get_integer("z subdivisions");
     mesh_refinement          = prm.get_integer("mesh refinement");
     experimental_counts_file = prm.get("experimental counts file");
