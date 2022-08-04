@@ -3,9 +3,9 @@
 ##
 
 # Set the name of the project and target:
-SET(TARGET "directSteadyNS")
+SET(TARGET "direct_steady_navier_stokes")
 
-ADD_EXECUTABLE(${TARGET} directSteadyNS.cc
+ADD_EXECUTABLE(${TARGET} direct_steady_navier_stokes.cc
   boundaryconditions.h
   exactsolutions.h
   forcingfunctions.h)
