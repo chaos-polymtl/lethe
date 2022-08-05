@@ -1,6 +1,6 @@
-########################################
-Running Lethe on Compute Canada clusters
-########################################
+###############################################################
+Running Lethe on Digital Research Alliance of Canada clusters
+###############################################################
 
 
 
@@ -216,7 +216,7 @@ and use it in your ``.sh`` script (see Launching simulations below).
 Launching simulations
 ================================
 
-Simulations are sent to the scheduler via batch scripts. Visit the Compute Canada wiki page for more information about the `scheduler <https://docs.computecanada.ca/wiki/What_is_a_scheduler%3F>`_ and `running jobs <https://docs.computecanada.ca/wiki/Running_jobs>`_. For your convenience, an example of ``job.sh`` used on Beluga is given below:
+Simulations are sent to the scheduler via batch scripts. Visit the Digital Research Alliance of Canada (Alliance) wiki page for more information about the `scheduler <https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3F>`_ and `running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_. For your convenience, an example of ``job.sh`` used on Beluga is given below:
 
 .. code-block:: text
 

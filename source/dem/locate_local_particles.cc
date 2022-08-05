@@ -20,12 +20,18 @@ locate_local_particles_in_cells(
     &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
+    &pfm_pairs_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
@@ -48,6 +54,10 @@ locate_local_particles_in_cells(
   update_particle_wall_contact_container_iterators<dim>(pfw_pairs_in_contact,
                                                         particle_container);
 
+  // Calling the same function for floating mesh
+  update_particle_floating_wall_contact_container_iterators<dim>(
+    pfm_pairs_in_contact, particle_container);
+
   update_particle_point_line_contact_container_iterators<dim>(
     particle_points_in_contact, particle_lines_in_contact, particle_container);
 }
@@ -69,12 +79,17 @@ locate_local_particles_in_cells(
     &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<2>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<2>>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<2>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<2>>>
     &pfw_pairs_in_contact,
+  std::vector<std::map<typename Triangulation<1, 2>::active_cell_iterator,
+                       std::unordered_map<types::particle_index,
+                                          particle_wall_contact_info_struct<2>>,
+                       dem_data_containers::cut_cell_comparison<2>>>
+    &pfm_pairs_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<2>>
     &particle_points_in_contact,
@@ -99,12 +114,17 @@ locate_local_particles_in_cells(
     &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<3>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<3>>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<3>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<3>>>
     &pfw_pairs_in_contact,
+  std::vector<std::map<typename Triangulation<2, 3>::active_cell_iterator,
+                       std::unordered_map<types::particle_index,
+                                          particle_wall_contact_info_struct<3>>,
+                       dem_data_containers::cut_cell_comparison<3>>>
+    &pfm_pairs_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<3>>
     &particle_points_in_contact,

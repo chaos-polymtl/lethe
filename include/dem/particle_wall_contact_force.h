@@ -17,6 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 #include <core/auxiliary_math_functions.h>
+#include <core/data_containers.h>
+#include <core/serial_solid.h>
 
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
@@ -64,19 +66,42 @@ public:
   calculate_particle_wall_contact_force(
     std::unordered_map<
       types::particle_index,
-      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
       &                        particle_wall_pairs_in_contact,
-    const double &             dt,
+    const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
 
-  std::map<unsigned int, Tensor<1, 3>>
+  /**
+   * Carries out the calculation of particle-floating mesh contact force using
+   * the contact pair container
+   *
+   * @param particle_floating_mesh_in_contact A container that stores the information of
+   * particle-floating mesh contact
+   * @param dt DEM time step
+   * @param torque Torque acting on particles
+   * @param force Force acting on particles
+   * @param solids Floating solids
+   */
+  virtual void calculate_particle_floating_wall_contact_force(
+    std::vector<
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               std::unordered_map<types::particle_index,
+                                  particle_wall_contact_info_struct<dim>>,
+               dem_data_containers::cut_cell_comparison<dim>>>
+      &                        particle_floating_mesh_in_contact,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force,
+    const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids) = 0;
+
+  std::map<types::boundary_id, Tensor<1, 3>>
   get_force()
   {
     return force_on_walls;
   }
 
-  std::map<unsigned int, Tensor<1, 3>>
+  std::map<types::boundary_id, Tensor<1, 3>>
   get_torque()
   {
     return torque_on_walls;
@@ -115,7 +140,7 @@ public:
     const double &                          wall_restitution_coefficient,
     const double &                          wall_friction_coefficient,
     const double &                          wall_rolling_friction_coefficient,
-    const double &                          dt,
+    const double                            dt,
     const double &                          mass,
     const double &                          radius) = 0;
 
@@ -148,28 +173,51 @@ protected:
   update_contact_information(
     particle_wall_contact_info_struct<dim> &contact_pair_information,
     const ArrayView<const double> &         particle_properties,
-    const double &                          dt);
+    const double                            dt);
 
   /**
-   * Carries out applying the calculated force and torque on the local-local
-   * particle pair in contact, for both non-linear and linear contact force
+   * Carries out updating the contact pair information for particle-floating
+   * wall contacts
+   *
+   * @param contact_pair_information Contact information of a particle-wall pair
+   * in neighborhood
+   * @param particle_properties Properties of particle in contact
+   * @param dt DEM time step
+   * @param cut_cell_translational_velocity Translational velocity of the cut cell
+   * @param cut_cell_rotational_veclocity Rotational veclocity of the cut cell
+   * @param center_of_rotation_particle_distance distance between particle and
+   * the center of rotation of the floating mesh
+   */
+  void
+  update_particle_floating_wall_contact_information(
+    particle_wall_contact_info_struct<dim> &contact_pair_information,
+    const ArrayView<const double> &         particle_properties,
+    const double                            dt,
+    const Tensor<1, 3> &                    cut_cell_translational_velocity,
+    const Tensor<1, 3> &                    cut_cell_rotational_velocity,
+    const double &center_of_rotation_particle_distance);
+
+  /**
+   * Carries out applying the calculated force and torque on the particle in
+   * contact with the given wall, for both non-linear and linear contact force
    * calculations
    *
-   * @param particle_properties Properties of particle in contact with wall
    * @param forces_and_torques A tuple which contains: 1, normal force, 2,
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
    * @param particle_torque Torque acting on particle
    * @param particle_force Force acting on particle
+   * @param point_on_boundary Contact point on the wall
+   * @param boundary_id ID of the boundary
    */
   inline void
   apply_force_and_torque(
     const std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-      &           forces_and_torques,
-    Tensor<1, 3> &particle_torque,
-    Tensor<1, 3> &particle_force,
-    Point<3> &    point_on_boundary,
-    int           boundary_id = 0)
+      &             forces_and_torques,
+    Tensor<1, 3> &  particle_torque,
+    Tensor<1, 3> &  particle_force,
+    const Point<3> &point_on_boundary,
+    int             boundary_id = 0)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling
@@ -228,9 +276,11 @@ protected:
                                        effective_coefficient_of_rolling_friction;
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;
   std::map<unsigned int, Tensor<1, 3>> torque_on_walls;
-  bool                                 calculate_force_torque_on_boundary;
-  Point<3>                             center_mass_container;
-  std::vector<types::boundary_id>      boundary_index;
+
+  bool                            calculate_force_torque_on_boundary;
+  Point<3>                        center_mass_container;
+  std::vector<types::boundary_id> boundary_index;
+  const unsigned int              vertices_per_triangle = 3;
 };
 
 #endif /* particle_wall_contact_force_h */

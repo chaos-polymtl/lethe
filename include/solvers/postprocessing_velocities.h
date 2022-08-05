@@ -74,6 +74,10 @@ public:
     const double &                    current_time,
     const double &                    time_step);
 
+
+  void
+  update_average_velocities();
+
   /**
    * @brief calculate_reynolds_stress. This function calculates normal and
    * other resolved time-averaged Reynold stresses (<u'u'>, <v'v'>, <w'w'>
@@ -88,7 +92,7 @@ public:
    * @brief get_average_velocities. Gives the average of solutions with ghost
    * cells.
    */
-  const VectorType &
+  VectorType &
   get_average_velocities()
   {
     return get_av = average_velocities;
@@ -204,6 +208,7 @@ private:
 
   double       dt;
   double       real_initial_time;
+  double       total_time_for_average;
   bool         average_calculation;
   unsigned int n_dofs_per_vertex;
 };

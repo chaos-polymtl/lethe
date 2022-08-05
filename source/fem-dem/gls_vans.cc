@@ -1,4 +1,4 @@
-#include <core/lethegridtools.h>
+#include <core/lethe_grid_tools.h>
 
 #include "solvers/postprocessing_cfd.h"
 

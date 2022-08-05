@@ -31,10 +31,10 @@ using namespace dealii;
 namespace Parameters
 {
   template <int dim>
-  class NitscheSolid
+  class NitscheObject
   {
   public:
-    NitscheSolid()
+    NitscheObject()
       : solid_velocity(dim)
     {}
 
@@ -72,7 +72,7 @@ namespace Parameters
 
   template <int dim>
   void
-  NitscheSolid<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
+  NitscheObject<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
   {
     prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
@@ -145,7 +145,7 @@ namespace Parameters
 
   template <int dim>
   void
-  NitscheSolid<dim>::parse_parameters(ParameterHandler &prm, unsigned int id)
+  NitscheObject<dim>::parse_parameters(ParameterHandler &prm, unsigned int id)
   {
     prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
@@ -190,9 +190,9 @@ namespace Parameters
     Verbosity verbosity;
 
     // Nitsche solid objects
-    std::vector<std::shared_ptr<NitscheSolid<dim>>> nitsche_solids;
-    unsigned int                                    number_solids;
-    static const unsigned int                       max_nitsche_solids = 10;
+    std::vector<std::shared_ptr<NitscheObject<dim>>> nitsche_solids;
+    unsigned int                                     number_solids;
+    static const unsigned int                        max_nitsche_solids = 10;
   };
 
   template <int dim>
@@ -214,11 +214,11 @@ namespace Parameters
       prm.declare_entry("number of solids",
                         "1",
                         Patterns::Integer(),
-                        "Number of immersed object");
+                        "Number of solid object");
 
       for (unsigned int i_solid = 0; i_solid < max_nitsche_solids; ++i_solid)
         {
-          nitsche_solids[i_solid] = std::make_shared<NitscheSolid<dim>>();
+          nitsche_solids[i_solid] = std::make_shared<NitscheObject<dim>>();
           nitsche_solids[i_solid]->declare_parameters(prm, i_solid);
         }
     }
@@ -241,6 +241,150 @@ namespace Parameters
       for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
         {
           nitsche_solids[i_solid]->parse_parameters(prm, i_solid);
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  class RigidSolidObject
+  {
+  public:
+    RigidSolidObject()
+      : translational_velocity(dim)
+      , angular_velocity(3)
+    {}
+
+    void
+    declare_parameters(ParameterHandler &prm, unsigned int id);
+    void
+    parse_parameters(ParameterHandler &prm, unsigned int id);
+
+    // Solid mesh
+    Parameters::Mesh solid_mesh;
+
+    // Solid velocity
+    Functions::ParsedFunction<dim> translational_velocity;
+    Functions::ParsedFunction<dim> angular_velocity;
+    Point<dim>
+      center_of_rotation; // Center of rotation used to locate the center of the
+                          // object and also used to rotate the object
+  };
+
+
+  template <int dim>
+  void
+  RigidSolidObject<dim>::declare_parameters(ParameterHandler &prm,
+                                            unsigned int      id)
+  {
+    prm.enter_subsection("solid object " + Utilities::int_to_string(id, 1));
+    {
+      solid_mesh.declare_parameters(prm);
+
+      prm.enter_subsection("translational velocity");
+      translational_velocity.declare_parameters(prm, dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0");
+      prm.leave_subsection();
+
+      prm.enter_subsection("angular velocity");
+      angular_velocity.declare_parameters(prm, dim);
+      prm.set("Function expression", "0; 0; 0");
+      prm.leave_subsection();
+
+
+      prm.enter_subsection("center of rotation");
+      prm.declare_entry("x", "0", Patterns::Double(), "X COR");
+      prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
+      prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  RigidSolidObject<dim>::parse_parameters(ParameterHandler &prm,
+                                          unsigned int      id)
+  {
+    prm.enter_subsection("solid object " + Utilities::int_to_string(id, 1));
+    {
+      solid_mesh.parse_parameters(prm);
+      prm.enter_subsection("translational velocity");
+      translational_velocity.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("angular velocity");
+      angular_velocity.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("center of rotation");
+      center_of_rotation[0] = prm.get_double("x");
+      center_of_rotation[1] = prm.get_double("y");
+      if (dim == 3)
+        center_of_rotation[2] = prm.get_double("z");
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+
+  template <int dim>
+  class DEMSolidObjects
+  {
+  public:
+    DEMSolidObjects()
+    {}
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+
+    // Calculate forces
+    Verbosity verbosity;
+
+    // DEM solid objects
+    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solids;
+    unsigned int                                        number_solids;
+    static const unsigned int max_number_of_solids = 5;
+  };
+
+  template <int dim>
+  void
+  DEMSolidObjects<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    solids.resize(max_number_of_solids);
+    number_solids = 0;
+
+    prm.enter_subsection("solid objects");
+    {
+      prm.declare_entry("number of solids",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of solid object");
+
+      for (unsigned int i_solid = 0; i_solid < max_number_of_solids; ++i_solid)
+        {
+          solids[i_solid] = std::make_shared<RigidSolidObject<dim>>();
+          solids[i_solid]->declare_parameters(prm, i_solid);
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  DEMSolidObjects<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("solid objects");
+    {
+      number_solids = prm.get_integer("number of solids");
+      for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
+        {
+          solids[i_solid]->parse_parameters(prm, i_solid);
         }
     }
     prm.leave_subsection();

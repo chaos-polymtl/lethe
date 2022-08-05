@@ -227,9 +227,8 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
 // Updated points and normal vectors are then used to update the particle-wall
 // contact list.
 template <int dim>
-void
-BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
-  std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
+void BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
+  std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
     &updated_boundary_points_and_normal_vectors)
 {
   // Initialize a simple quadrature for on the system. This will be used to

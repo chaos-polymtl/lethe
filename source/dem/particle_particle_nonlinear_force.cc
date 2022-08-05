@@ -120,7 +120,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info_struct<dim>>>
       &                        ghost_adjacent_particles,
-    const double &             dt,
+    const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
 {
@@ -365,7 +365,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
-    const double &                              dt,
+    const double                                dt,
     const double &                              particle_one_radius,
     const double &                              particle_two_radius,
     const double &                              particle_one_mass,
@@ -720,7 +720,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info_struct<dim>>>
       &                        ghost_adjacent_particles,
-    const double &             dt,
+    const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
 {
@@ -962,7 +962,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
-    const double &                              dt,
+    const double                                dt,
     const double &                              particle_one_radius,
     const double &                              particle_two_radius,
     const double &                              particle_one_mass,
@@ -1307,7 +1307,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
     &                        ghost_adjacent_particles,
-  const double &             dt,
+  const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
 {
@@ -1546,7 +1546,7 @@ ParticleParticleHertz<dim>::calculate_IB_particle_particle_contact_force(
   IBParticle<dim> &                           particle_two,
   const Point<dim> &                          particle_one_location,
   const Point<dim> &                          particle_two_location,
-  const double &                              dt,
+  const double                                dt,
   const double &                              particle_one_radius,
   const double &                              particle_two_radius,
   const double &                              particle_one_mass,
