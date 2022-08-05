@@ -70,6 +70,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
               if (cell->has_periodic_neighbor(face_id))
                 {
                   // Check the global cell index key prior having unique pair
+                  std::cout << cell->periodic_neighbor(face_id)->active_cell_index() << std::endl;
                   if (!global_periodic_cell_pair.count(
                         cell->periodic_neighbor(face_id)->active_cell_index()))
                     {
