@@ -27,7 +27,7 @@
 #include <deal.II/particles/data_out.h>
 
 // Lethe
-#include <core/lethegridtools.h>
+#include <core/lethe_grid_tools.h>
 
 #include <deal.II/numerics/data_out.h>
 

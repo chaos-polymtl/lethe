@@ -174,6 +174,17 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    &this->present_solution);
 }
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
+{
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      this->multiphysics->set_time_average_solution(
+        PhysicsID::fluid_dynamics,
+        &this->average_velocities->get_average_velocities());
+    }
+}
 
 template <int dim>
 void
@@ -1559,6 +1570,7 @@ GLSNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
+  this->update_multiphysics_time_average_solution();
 
   while (this->simulation_control->integrate())
     {
