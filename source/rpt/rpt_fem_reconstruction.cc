@@ -63,23 +63,27 @@ RPTFEMReconstruction<dim>::setup_triangulation()
                             rpt_parameters.rpt_param.reactor_radius,
                             rpt_parameters.rpt_param.reactor_height / 2);
   */
+
   if (rpt_parameters.fem_reconstruction_param.mesh_type == Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
   {
+
       GridIn<dim> grid_in;
-      grid_in.attach_triangulation(temp_triangulation);
+      grid_in.attach_triangulation(triangulation);
       std::ifstream input_file(rpt_parameters.fem_reconstruction_param.mesh_file);
       grid_in.read_msh(input_file);
 
-      const unsigned int z_axis = 2;
-      const CylindricalManifold<dim> boundary(z_axis);
-      temp_triangulation.set_all_manifold_ids_on_boundary(0);
-      temp_triangulation.set_manifold(0, boundary);
+      const CylindricalManifold<dim> boundary(2);
+      triangulation.set_all_manifold_ids(0);
+      triangulation.set_manifold(0, boundary);
 
+      std::cout << "Number of active cells: " << triangulation.n_active_cells() << std::endl;
+
+/*
       temp_triangulation.refine_global(rpt_parameters.fem_reconstruction_param.mesh_refinement);
 
       GridGenerator::flatten_triangulation(temp_triangulation,
                                            triangulation);
-      triangulation.set_all_manifold_ids(0);
+*/
   }
   else
   {
@@ -102,18 +106,19 @@ RPTFEMReconstruction<dim>::setup_triangulation()
       triangulation.set_all_manifold_ids(0);
 
       // Grid transformation
-      GridTools::rotate(M_PI_2, triangulation);
+      Tensor<1,dim, double> axis({0,1,0});
+      GridTools::rotate(axis, M_PI_2, triangulation);
       Tensor<1, dim> shift_vector(
               {0, 0, rpt_parameters.rpt_param.reactor_height * 0.5});
       GridTools::shift(shift_vector, triangulation);
   }
-  /*
+/*
     GridOut grid_out;
     {
       std::ofstream output_file("triangulation.vtk");
       grid_out.write_vtk(triangulation, output_file);
     }
-  */
+*/
 }
 
 template <int dim>
@@ -339,7 +344,10 @@ RPTFEMReconstruction<dim>::L2_project()
   n_detector = detectors.size();
   std::cout << "Number of detectors identified: " << n_detector << std::endl;
   std::cout << "***********************************************" << std::endl;
+  std::cout << "Setting up the grid" << std::endl;
   setup_triangulation();
+  std::cout << "***********************************************" << std::endl;
+
   setup_system();
 
   for (unsigned d = 0; d < n_detector; ++d)
@@ -667,7 +675,7 @@ RPTFEMReconstruction<dim>::trajectory()
   const unsigned int n_cell_z =
     2 * rpt_parameters.fem_reconstruction_param.z_subdivisions * power;
   const double tol_reference_location =
-    rpt_parameters.rpt_param.reactor_height / n_cell_z;
+    rpt_parameters.rpt_param.reactor_height / n_cell_z*1.15;
   std::cout << "tol: " << tol_reference_location << std::endl;
 
   // Read and store all experimental counts
@@ -778,10 +786,10 @@ RPTFEMReconstruction<dim>::export_found_positions()
   // Open a file
   std::ofstream myfile;
   myfile.open(filename);
-  myfile << "position_x position_y position_z " << std::endl;
 
   if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
     {
+      myfile << "position_x position_y position_z " << std::endl;
       for (const Point<dim> &position : found_positions)
         {
           myfile << position << std::endl;
@@ -789,6 +797,7 @@ RPTFEMReconstruction<dim>::export_found_positions()
     }
   else
     {
+      myfile << "position_x, position_y, position_z " << std::endl;
       std::string sep = ",";
 
       for (const Point<dim> &position : found_positions)
@@ -806,7 +815,7 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
 {
-  // MultithreadInfo::set_thread_limit(4);
+  //MultithreadInfo::set_thread_limit(4);
   std::cout << "***********************************************" << std::endl;
   std::cout << "Loading dof handler and nodal counts from " << std::endl;
   std::cout << "saved files " << std::endl;
