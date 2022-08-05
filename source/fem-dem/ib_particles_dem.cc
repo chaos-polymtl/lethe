@@ -27,6 +27,10 @@
 #include <dem/particle_wall_nonlinear_force.h>
 #include <fem-dem/ib_particles_dem.h>
 
+#include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_fe.h>
+
 template <int dim>
 void
 IBParticlesDEM<dim>::initialize(
@@ -298,7 +302,9 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
       // Find the new cells that are at a boundary and in proximity of the
       // particle.
       auto cells_at_boundary = LetheGridTools::find_boundary_cells_in_sphere(
-        dof_handler, particles[p_i].position, particles[p_i].radius * 1.5);
+        dof_handler,
+        particles[p_i].position,
+        particles[p_i].radius * parameters->contact_search_radius_factor);
 
       // Loop over the cells at the boundary.
       for (unsigned int i = 0; i < cells_at_boundary.size(); ++i)
@@ -699,7 +705,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
           std::fill(lubrication_wall_torque.begin(),
                     lubrication_wall_torque.end(),
                     0);
-
           // Calculate particle-particle and particle-wall contact force
           calculate_pp_contact_force(dt_dem, contact_force, contact_torque);
           calculate_pw_contact_force(dt_dem,
@@ -713,6 +718,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                                          mu,
                                          lubrication_wall_force,
                                          lubrication_wall_torque);
+
           // define local time of the rk step
           double local_dt = dt_dem * 0.5;
           if (step == 3)

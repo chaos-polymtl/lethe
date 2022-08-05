@@ -340,7 +340,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::calculate_volume_and_mass(
   const TrilinosWrappers::MPI::Vector &solution,
-  const int                            id_fluid_monitored)
+  const Parameters::FluidIndicator     monitored_fluid)
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
@@ -377,9 +377,9 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              switch (id_fluid_monitored)
+              switch (monitored_fluid)
                 {
-                  case 0:
+                  case Parameters::FluidIndicator::fluid0:
                     {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * (1 - phase_values[q]);
@@ -387,7 +387,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                         this->volume_monitored * density_0[q];
                       break;
                     }
-                  case 1:
+                  case Parameters::FluidIndicator::fluid1:
                     {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * phase_values[q];
@@ -490,15 +490,12 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         .monitoring)
     {
       // Calculate volume and mass (this->mass_monitored)
-      calculate_volume_and_mass(
-        this->present_solution,
-        simulation_parameters.multiphysics.vof_parameters.conservation
-          .id_fluid_monitored);
+      calculate_volume_and_mass(this->present_solution,
+                                simulation_parameters.multiphysics
+                                  .vof_parameters.conservation.monitored_fluid);
 
       if (first_iteration)
-        {
-          this->mass_first_iteration = this->mass_monitored;
-        }
+        this->mass_first_iteration = this->mass_monitored;
 
       auto         mpi_communicator = this->triangulation->get_communicator();
       unsigned int this_mpi_process(
@@ -518,11 +515,20 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 "time", this->simulation_control->get_current_time());
             }
 
-          std::string fluid_id =
-            "fluid_" + Utilities::int_to_string(
-                         this->simulation_parameters.multiphysics.vof_parameters
-                           .conservation.id_fluid_monitored,
-                         1);
+          std::string fluid_id("");
+
+          if (this->simulation_parameters.multiphysics.vof_parameters
+                .conservation.monitored_fluid ==
+              Parameters::FluidIndicator::fluid1)
+            {
+              fluid_id = "fluid_1";
+            }
+          else if (this->simulation_parameters.multiphysics.vof_parameters
+                     .conservation.monitored_fluid ==
+                   Parameters::FluidIndicator::fluid0)
+            {
+              fluid_id = "fluid_0";
+            }
 
           // Add volume column
           this->table_monitoring_vof.add_value("volume_" + fluid_id,
@@ -604,7 +610,8 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
       if (this->simulation_parameters.multiphysics.vof_parameters.conservation
             .verbosity != Parameters::Verbosity::quiet)
         {
-          this->pcout << "   ... final sharpening" << std::endl;
+          this->pcout << "   ... final sharpening is : "
+                      << this->sharpening_threshold << std::endl;
         }
     }
   else
@@ -632,102 +639,78 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
   const double mass_deviation_tol = this->simulation_parameters.multiphysics
                                       .vof_parameters.conservation.tolerance *
                                     this->mass_first_iteration;
-  const int max_iterations = this->simulation_parameters.multiphysics
-                               .vof_parameters.sharpening.max_iterations;
+  const unsigned int max_iterations =
+    this->simulation_parameters.multiphysics.vof_parameters.sharpening
+      .max_iterations;
 
-  const int id_fluid_monitored =
+  const Parameters::FluidIndicator monitored_fluid =
     this->simulation_parameters.multiphysics.vof_parameters.conservation
-      .id_fluid_monitored;
+      .monitored_fluid;
 
-  double mass_deviation = 0.;
-  int    nb_search_ite  = 0;
-  double st_ave         = 0.;
+  unsigned int nb_search_ite = 0;
   // Local variable for the tested sharpening_threshold values
-  double st_tested = 0.;
 
-  // Binary search of an interface sharpening value that would ensure
-  // mass conservation of the monitored phase (do-while loop, see
+  double mass_deviation_min = calculate_mass_deviation(monitored_fluid, st_min);
+  double mass_deviation_max = calculate_mass_deviation(monitored_fluid, st_max);
+  double mass_deviation_avg = DBL_MAX;
+  double st_avg             = 0;
+
+
+  // Bissection algorithm to calculate an interface sharpening value that would
+  // ensure mass conservation of the monitored phase (do-while loop, see
   // condition below)
   do
     {
       nb_search_ite++;
+      // Calculate middle point value
+      st_avg = (st_min + st_max) / 2.;
+
+      mass_deviation_avg = calculate_mass_deviation(monitored_fluid, st_avg);
 
       if (this->simulation_parameters.multiphysics.vof_parameters.conservation
             .verbosity != Parameters::Verbosity::quiet)
         {
-          this->pcout << "   ... step " << nb_search_ite
-                      << " of the search algorithm" << std::endl;
+          this->pcout
+            << "   ... step " << nb_search_ite
+            << " of the search algorithm, min, avg, max mass deviation is : "
+            << mass_deviation_min << " " << mass_deviation_avg << " "
+            << mass_deviation_max << std::endl;
         }
 
-      // Define tested sharpening threshold value
-      // NB: the first value tested is always 0.5 (see definition of st_min and
-      // st_max above)
-      st_ave    = (st_min + st_max) / 2.;
-      st_tested = st_ave;
-
-      mass_deviation = calculate_mass_deviation(id_fluid_monitored, st_tested);
-
-      // Adapt searching range
-      switch (id_fluid_monitored)
+      if (mass_deviation_avg * mass_deviation_min < 0)
         {
-          case 0:
-            {
-              if (mass_deviation > 0.)
-                {
-                  // Lower the sharpening threshold to reduce the
-                  // area occupied by fluid at phase = 0
-                  st_max = st_ave;
-                }
-              else
-                {
-                  // Increase the sharpening threshold to increase
-                  // the area occupied by fluid at phase = 0
-                  st_min = st_ave;
-                }
-              break;
-            }
-          case 1:
-            {
-              if (mass_deviation > 0.)
-                {
-                  // Increase the sharpening threshold to reduce the
-                  // area occupied by fluid at phase = 1
-                  st_min = st_ave;
-                }
-              else
-                {
-                  // Lower the sharpening threshold to increase the
-                  // area occupied by fluid at phase = 1
-                  st_max = st_ave;
-                }
-              break;
-            }
-          default:
-            throw std::runtime_error("Unsupported number of fluids (>2)");
-        } // end switch to adapt searching range
+          st_max             = st_avg;
+          mass_deviation_max = mass_deviation_avg;
+        }
+      else
+        {
+          st_min             = st_avg;
+          mass_deviation_min = mass_deviation_avg;
+        }
     }
-  while (std::abs(mass_deviation) > mass_deviation_tol &&
+  while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
          nb_search_ite < max_iterations);
 
   // Take minimum deviation in between the two endpoints of the last
   // interval searched, if out of the do-while loop because max_iterations is
   // reached
-  if (std::abs(mass_deviation) > mass_deviation_tol)
+  if (std::abs(mass_deviation_avg) > mass_deviation_tol)
     {
       double mass_deviation_endpoint = 0.;
-      if (st_min == st_ave)
+      double st_tested               = 0;
+      if (st_min == st_avg)
         st_tested = st_max;
-      else if (st_max == st_ave)
+      else if (st_max == st_avg)
         st_tested = st_min;
 
       mass_deviation_endpoint =
-        calculate_mass_deviation(id_fluid_monitored, st_tested);
+        calculate_mass_deviation(monitored_fluid, st_tested);
 
       // Retake st_ave value if mass deviation is not lowered at endpoint
       // values
-      if (std::abs(mass_deviation_endpoint) > std::abs(mass_deviation))
+      if (std::abs(mass_deviation_endpoint) > std::abs(mass_deviation_avg))
         {
-          st_tested = st_ave;
+          st_tested = st_avg;
         }
 
       // Output message
@@ -761,29 +744,27 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
                   << std::endl;
     }
 
-  return st_tested;
+  return st_avg;
 }
 
 template <int dim>
 double
-VolumeOfFluid<dim>::calculate_mass_deviation(const int    id_fluid_monitored,
-                                             const double sharpening_threshold)
+VolumeOfFluid<dim>::calculate_mass_deviation(
+  const Parameters::FluidIndicator monitored_fluid,
+  const double                     sharpening_threshold)
 {
   // Copy present solution VOF
-  auto mpi_communicator = this->triangulation->get_communicator();
-
-  TrilinosWrappers::MPI::Vector solution_copy;
-  solution_copy.reinit(this->locally_owned_dofs, mpi_communicator);
-  solution_copy = this->present_solution;
+  evaluation_point = this->present_solution;
 
   // Sharpen interface using the tested threshold value
-  sharpen_interface(solution_copy, sharpening_threshold, false);
+  sharpen_interface(evaluation_point, sharpening_threshold, false);
 
   // Calculate mass of the monitored phase
-  calculate_volume_and_mass(solution_copy, id_fluid_monitored);
+  calculate_volume_and_mass(evaluation_point, monitored_fluid);
 
-  // Calculate mass deviation
-  double mass_deviation = this->mass_monitored - this->mass_first_iteration;
+  // Calculate relative mass deviation
+  double mass_deviation = (this->mass_monitored - this->mass_first_iteration) /
+                          this->mass_first_iteration;
 
   return mass_deviation;
 }
@@ -1764,6 +1745,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               auto phase_value = phase_values[q];
+              // phase_value      = std::min(std::max(phase_value, 0.), 1.);
 
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
@@ -1783,23 +1765,24 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
                   // $$ (if c <  \phi <= 1)  {\Phi = 1 - (1 - c) ^ (1 -
                   // \alpha)
                   // * (1 - \phi) ^ \alpha}
-                  if (phase_value >= 0.0 && phase_value <= sharpening_threshold)
+                  if (phase_value >= 0 && phase_value <= sharpening_threshold)
                     local_rhs_phase_fraction(i) +=
                       std::pow(sharpening_threshold,
-                               (1 - interface_sharpness)) *
+                               (1. - interface_sharpness)) *
                       std::pow(phase_value, interface_sharpness) *
                       phi_phase[i] * fe_values_vof.JxW(q);
                   else
                     {
                       local_rhs_phase_fraction(i) +=
                         (1 -
-                         std::pow((1 - sharpening_threshold),
-                                  (1 - interface_sharpness)) *
-                           std::pow((1 - phase_value), interface_sharpness)) *
+                         std::pow((1. - sharpening_threshold),
+                                  (1. - interface_sharpness)) *
+                           std::pow((1. - phase_value), interface_sharpness)) *
                         phi_phase[i] * fe_values_vof.JxW(q);
                     }
                 }
             }
+
           cell->get_dof_indices(local_dof_indices);
           this->nonzero_constraints.distribute_local_to_global(
             local_matrix_phase_fraction,
@@ -1933,19 +1916,14 @@ VolumeOfFluid<dim>::handle_peeling_wetting()
           // Parse fluid present solution to apply_peeling_wetting method
           if (multiphysics->fluid_dynamics_is_block())
             {
-              const TrilinosWrappers::MPI::BlockVector current_solution_fd(
-                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
-              // apply_peeling_wetting is templated with
-              // current_solution_fd VectorType
-              apply_peeling_wetting(i_bc, current_solution_fd);
+              apply_peeling_wetting(i_bc,
+                                    *multiphysics->get_block_solution(
+                                      PhysicsID::fluid_dynamics));
             }
           else
             {
-              const TrilinosWrappers::MPI::Vector current_solution_fd(
-                *multiphysics->get_solution(PhysicsID::fluid_dynamics));
-              // apply_peeling_wetting is templated with
-              // current_solution_fd VectorType
-              apply_peeling_wetting(i_bc, current_solution_fd);
+              apply_peeling_wetting(
+                i_bc, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
             }
         }
     } // end loop on boundary_conditions_vof
@@ -1998,12 +1976,12 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                                       update_values | update_quadrature_points |
                                         update_gradients);
 
-  const unsigned int n_q_points = this->cell_quadrature->size();
+  const unsigned int n_q_points_face = this->face_quadrature->size();
 
   const FEValuesExtractors::Scalar pressure(dim);
-  std::vector<double>              pressure_values(n_q_points);
-  std::vector<Tensor<1, dim>>      pressure_gradients(n_q_points);
-  std::vector<double>              phase_values(n_q_points);
+  std::vector<double>              pressure_values(n_q_points_face);
+  std::vector<Tensor<1, dim>>      pressure_gradients(n_q_points_face);
+  std::vector<double>              phase_values(n_q_points_face);
 
   unsigned int boundary_id =
     this->simulation_parameters.boundary_conditions.id[i_bc];
@@ -2014,8 +1992,8 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
       .get_density_vector();
   std::map<field, std::vector<double>> fields;
 
-  std::vector<double> density_0(n_q_points);
-  std::vector<double> density_1(n_q_points);
+  std::vector<double> density_0(n_q_points_face);
+  std::vector<double> density_1(n_q_points_face);
 
   // Useful definitions for readability
   const double wetting_p_value =
@@ -2080,7 +2058,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                   density_models[1]->vector_value(fields, density_1);
 
                   // Loop on the quadrature points
-                  for (unsigned int q = 0; q < n_q_points; q++)
+                  for (unsigned int q = 0; q < n_q_points_face; q++)
                     {
                       // Get denser/lighter fluid id
                       if (density_1[q] > density_0[q])
@@ -2112,11 +2090,11 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
             {
               // Caculate average values on the cell
               unsigned int phase_denser_fluid_cell =
-                round(phase_denser_fluid_q / n_q_points);
+                round(phase_denser_fluid_q / n_q_points_face);
               unsigned int phase_lighter_fluid_cell =
-                round(phase_lighter_fluid_q / n_q_points);
+                round(phase_lighter_fluid_q / n_q_points_face);
               double phase_values_cell =
-                phase_values_q / static_cast<double>(n_q_points);
+                phase_values_q / static_cast<double>(n_q_points_face);
 
               // Check wetting condition on the distance (on the phase) and
               // wet the lower density fluid.
@@ -2145,7 +2123,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
               else if (pressure_values_q < peeling_p_value)
                 {
                   if (nb_pressure_grad_meet_peel_condition >
-                      dim * n_q_points / 2)
+                      n_q_points_face / 2)
                     {
                       // Peel the higher density fluid
                       // conditions phase_values_cell < 1 or phase_values_cell

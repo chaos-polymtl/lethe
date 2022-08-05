@@ -12,19 +12,20 @@ ParticleWallFineSearch<dim>::ParticleWallFineSearch()
 {}
 
 template <int dim>
-void ParticleWallFineSearch<dim>::particle_wall_fine_search(
-  std::unordered_map<
+void
+ParticleWallFineSearch<dim>::particle_wall_fine_search(
+  const std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index,
+    std::unordered_map<types::boundary_id,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
                                   types::boundary_id,
-                                  unsigned int>>>
+                                  types::global_cell_index>>>
     &particle_wall_contact_pair_candidates,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &particle_wall_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search and adding the pairs to
@@ -88,15 +89,15 @@ void ParticleWallFineSearch<dim>::particle_wall_fine_search(
 template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
-  std::unordered_map<
+  const std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
+    std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
     &                                               pfw_contact_candidates,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double &                                    simulation_time,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact)
 {
   // Reading floating wall properties
@@ -119,8 +120,7 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
                ++particle_pair_candidate_iterator)
             {
               // Getting the floating wall id once to improve efficiency
-              unsigned int floating_wall_id =
-                particle_pair_candidate_iterator->first;
+              auto floating_wall_id = particle_pair_candidate_iterator->first;
 
               // Checking simulation time for temporary floating walls
               if (simulation_time >=
@@ -192,6 +192,52 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
 
                   pfw_pairs_in_contact[particle_id].insert(
                     {floating_wall_id, contact_info});
+                }
+            }
+        }
+    }
+}
+
+
+template <int dim>
+void
+ParticleWallFineSearch<dim>::particle_floating_mesh_fine_search(
+  const std::vector<std::map<
+    typename Triangulation<dim - 1, dim>::active_cell_iterator,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
+    dem_data_containers::cut_cell_comparison<dim>>>
+    &particle_floating_mesh_contact_candidates,
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
+    &particle_floating_mesh_in_contact)
+{
+  for (unsigned int solid_counter = 0;
+       solid_counter < particle_floating_mesh_contact_candidates.size();
+       ++solid_counter)
+    {
+      auto &particle_floating_mesh_element =
+        particle_floating_mesh_in_contact[solid_counter];
+
+      auto &candidates =
+        particle_floating_mesh_contact_candidates[solid_counter];
+
+      for (auto const &[cut_cell_key, candidate_particles] : candidates)
+        {
+          if (!candidate_particles.empty())
+            {
+              for (auto &particle_floating_mesh_candidate_iterator :
+                   candidate_particles)
+                {
+                  particle_wall_contact_info_struct<dim> contact_info;
+                  contact_info.particle =
+                    particle_floating_mesh_candidate_iterator.second;
+
+                  particle_floating_mesh_element[cut_cell_key].insert(
+                    {particle_floating_mesh_candidate_iterator.first,
+                     contact_info});
                 }
             }
         }

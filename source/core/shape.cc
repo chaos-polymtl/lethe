@@ -17,7 +17,7 @@
 
 template <int dim>
 double
-Shape<dim>::displaced_volume(const double fluid_density)
+Shape<dim>::displaced_volume(const double /*fluid_density*/)
 {
   StandardExceptions::ExcNotImplemented();
   return 1.;
@@ -74,7 +74,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
         {
           if (std::abs(theta[i]) > 1e-10)
             {
-              Point<3> axis;
+              Tensor<1, 3> axis;
               axis[i] = 1.;
               Tensor<2, 3> rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
@@ -132,8 +132,8 @@ Shape<dim>::get_orientation()
 
 template <int dim>
 double
-Sphere<dim>::value(const Point<dim> & evaluation_point,
-                   const unsigned int component) const
+Sphere<dim>::value(const Point<dim> &evaluation_point,
+                   const unsigned int /*component*/) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   return evaluation_point.distance(this->position) - this->effective_radius;
@@ -155,8 +155,8 @@ Sphere<dim>::static_copy() const
 
 template <int dim>
 Tensor<1, dim>
-Sphere<dim>::gradient(const Point<dim> & evaluation_point,
-                      const unsigned int component) const
+Sphere<dim>::gradient(const Point<dim> &evaluation_point,
+                      const unsigned int /*component*/) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   const Tensor<1, dim> center_to_point = evaluation_point - this->position;
@@ -197,8 +197,8 @@ Sphere<dim>::set_position(const Point<dim> &position)
 
 template <int dim>
 double
-Rectangle<dim>::value(const Point<dim> & evaluation_point,
-                      const unsigned int component) const
+Rectangle<dim>::value(const Point<dim> &evaluation_point,
+                      const unsigned int /*component*/) const
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
@@ -233,7 +233,7 @@ Rectangle<dim>::static_copy() const
 
 template <int dim>
 double
-Rectangle<dim>::displaced_volume(const double fluid_density)
+Rectangle<dim>::displaced_volume(const double /*fluid_density*/)
 {
   double solid_volume = 1.;
   for (unsigned int i = 0; i < dim; i++)
@@ -245,8 +245,8 @@ Rectangle<dim>::displaced_volume(const double fluid_density)
 
 template <int dim>
 double
-Ellipsoid<dim>::value(const Point<dim> & evaluation_point,
-                      const unsigned int component) const
+Ellipsoid<dim>::value(const Point<dim> &evaluation_point,
+                      const unsigned int /*component*/) const
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
@@ -274,7 +274,7 @@ Ellipsoid<dim>::static_copy() const
 
 template <int dim>
 double
-Ellipsoid<dim>::displaced_volume(const double fluid_density)
+Ellipsoid<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
   double solid_volume = PI * 4. / 3.;
@@ -287,8 +287,8 @@ Ellipsoid<dim>::displaced_volume(const double fluid_density)
 
 template <int dim>
 double
-Torus<dim>::value(const Point<dim> & evaluation_point,
-                  const unsigned int component) const
+Torus<dim>::value(const Point<dim> &evaluation_point,
+                  const unsigned int /*component*/) const
 {
   AssertDimension(dim, 3);
 
@@ -310,7 +310,7 @@ Torus<dim>::static_copy() const
 
 template <int dim>
 double
-Torus<dim>::displaced_volume(const double fluid_density)
+Torus<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
   return 2. * PI * PI * ring_radius * ring_thickness * ring_thickness;
@@ -318,8 +318,8 @@ Torus<dim>::displaced_volume(const double fluid_density)
 
 template <int dim>
 double
-Cone<dim>::value(const Point<dim> & evaluation_point,
-                 const unsigned int component) const
+Cone<dim>::value(const Point<dim> &evaluation_point,
+                 const unsigned int /*component*/) const
 {
   AssertDimension(dim, 3);
 
@@ -357,7 +357,7 @@ Cone<dim>::static_copy() const
 
 template <int dim>
 double
-Cone<dim>::displaced_volume(const double fluid_density)
+Cone<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
   return PI / 3. * base_radius * base_radius * height;
@@ -365,8 +365,8 @@ Cone<dim>::displaced_volume(const double fluid_density)
 
 template <int dim>
 double
-CutHollowSphere<dim>::value(const Point<dim> & evaluation_point,
-                            const unsigned int component) const
+CutHollowSphere<dim>::value(const Point<dim> &evaluation_point,
+                            const unsigned int /*component*/) const
 {
   AssertDimension(dim, 3);
 
@@ -397,7 +397,7 @@ CutHollowSphere<dim>::static_copy() const
 
 template <int dim>
 double
-CutHollowSphere<dim>::displaced_volume(const double fluid_density)
+CutHollowSphere<dim>::displaced_volume(const double /*fluid_density*/)
 {
   std::cout
     << "Warning: For a cut hollow sphere, the real volume will be lower than "
@@ -412,8 +412,8 @@ CutHollowSphere<dim>::displaced_volume(const double fluid_density)
 
 template <int dim>
 double
-DeathStar<dim>::value(const Point<dim> & evaluation_point,
-                      const unsigned int component) const
+DeathStar<dim>::value(const Point<dim> &evaluation_point,
+                      const unsigned int /*component*/) const
 {
   AssertDimension(dim, 3);
 
@@ -446,7 +446,7 @@ DeathStar<dim>::static_copy() const
 
 template <int dim>
 double
-DeathStar<dim>::displaced_volume(const double fluid_density)
+DeathStar<dim>::displaced_volume(const double /*fluid_density*/)
 {
   std::cout
     << "Warning: For a death star, the real volume will be lower than output."
@@ -457,8 +457,8 @@ DeathStar<dim>::displaced_volume(const double fluid_density)
 
 template <int dim>
 double
-CompositeShape<dim>::value(const Point<dim> & evaluation_point,
-                           const unsigned int component) const
+CompositeShape<dim>::value(const Point<dim> &evaluation_point,
+                           const unsigned int /*component*/) const
 {
   double levelset = DBL_MAX;
   for (const std::shared_ptr<Shape<dim>> &elem : components)
@@ -481,7 +481,7 @@ template <int dim>
 double
 CompositeShape<dim>::displaced_volume(const double fluid_density)
 {
-  double solid_volume;
+  double solid_volume = 0;
   std::cout
     << "Warning: For composite shapes, the real volume may be bigger than output "
        "since intersections aren't considered in the calculation."
@@ -499,13 +499,9 @@ template class Rectangle<2>;
 template class Rectangle<3>;
 template class Ellipsoid<2>;
 template class Ellipsoid<3>;
-template class Torus<2>;
 template class Torus<3>;
-template class Cone<2>;
 template class Cone<3>;
-template class CutHollowSphere<2>;
 template class CutHollowSphere<3>;
-template class DeathStar<2>;
 template class DeathStar<3>;
 template class CompositeShape<2>;
 template class CompositeShape<3>;

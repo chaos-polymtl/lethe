@@ -14,8 +14,8 @@ Initial refinement around IB particles - Step : 2 of 2
 *****************************************************************
 Transient iteration : 1        Time : 0.03125  Time step : 0.03125  CFL : 0       
 *****************************************************************
-particule 0 position 0.999953 0.998351
-particule 0 velocity -0.00149357 -0.0527785
+particle 0 position 0.999953 0.998351
+particle 0 velocity -0.00149357 -0.0527785
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
@@ -28,8 +28,8 @@ Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.0117
    Number of active cells:       457
    Number of degrees of freedom: 1524
    Volume of triangulation:      16
-particule 0 position 0.999851 0.995231
-particule 0 velocity -0.00326875 -0.099823
+particle 0 position 0.999851 0.995231
+particle 0 velocity -0.00326875 -0.099823
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
@@ -42,8 +42,8 @@ Transient iteration : 3        Time : 0.09375  Time step : 0.03125  CFL : 0.0221
    Number of active cells:       457
    Number of degrees of freedom: 1524
    Volume of triangulation:      16
-particule 0 position 0.999689 0.990746
-particule 0 velocity -0.00519415 -0.143521
+particle 0 position 0.999689 0.990746
+particle 0 velocity -0.00519415 -0.143521
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
@@ -56,8 +56,8 @@ Transient iteration : 4        Time : 0.125    Time step : 0.03125  CFL : 0.0318
    Number of active cells:       457
    Number of degrees of freedom: 1524
    Volume of triangulation:      16
-particule 0 position 0.999462 0.984983
-particule 0 velocity -0.00725351 -0.184414
+particle 0 position 0.999462 0.984983
+particle 0 velocity -0.00725351 -0.184414
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+

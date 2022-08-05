@@ -1,10 +1,17 @@
 Nitsche
 ---------
 
-These parameters are used for simulations using the Nitsche immersed boundary method. 
+These parameters are used for simulations using the Nitsche immersed boundary method. Nitsche immersed boundary method works by forcing the fluid at the location of the Gauss points of the solid triangulation in order to apply the ``noslip`` boundary condition within the solid object.
 
 .. seealso::
 	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to this article (to be published).
+
+.. warning::
+	Specific solvers must be used for the Nitsche solid to be accounted for:
+
+	* ``gls_nitsche_navier_stokes_22``: 2D flow simulations, with a 2D solid,
+	* ``gls_nitsche_navier_stokes_33``: 3D flow simulations, with a 3D solid,
+	* ``gls_nitsche_navier_stokes_23``: 3D flow simulations, with a 2D solid.
 
 .. code-block:: text
 
@@ -51,7 +58,7 @@ These parameters are used for simulations using the Nitsche immersed boundary me
       # Force and torque calculation on solid
       set calculate force on solid = false
       set solid force name = force_solid
-      set calculate torque on solid = true
+      set calculate torque on solid = false
       set solid torque name = torque_solid
 
       # Enable stopping the simulation if Nitsche particles have been lost
@@ -66,25 +73,39 @@ These parameters are used for simulations using the Nitsche immersed boundary me
   end
 
 * ``verbosity``: controls if Nitsche intermediate results are printed to the terminal.
+
+.. note::
+	Even when ``verbosity = false``, Lethe produces additional files corresponding to the Nitsche immersed boundary:
+
+	* the ``<output-name>_solid_triangulation_<id>.pvd``, corresponding to the mesh of the solid with index ``<id>`` ;
+	* the ``<output-name>_solid_particles_<id>.pvd``, corresponding to the discrete particles inserted at the Gauss points of the solid triangulation, for the index ``<id>`` .
+
+	The solid particles enable the Nitsche restriction visualization, while the solid triangulation is used for animation purposes.
+
+* the ``mixer_solid_particles_00.pvd``, corresponding to the discrete particles inserted at the Gauss points of the solid triangulation. 
+
 * ``number of solids``: number of Nitsche solids in the simulation.
 
 .. important::
 	Each solid will then correspond to a ``subsection nitsche solid``.
 
 * ``subsection nitsche solid 0``: defines a solid object, with index ``0``, on which the Nitsche immersed boundary is applied. Multiple solids can be added in the same fashion (``subsection nitsche solid 1`` etc.).
-* ``beta``: parameter needed to apply the immersed boundary conditions on the fluid domain.
+* ``beta``: controls the intensity of the Nitsche method application in the fluid region (restriction parameter). Higher values of ``beta`` lead to stiffer problems but prevent the fluid from penetrating the solid.
 
 .. tip::
-	``beta`` value is normally between 1 and 1000. A classical value is ``beta = 10`` (default parameter value).
+	For flows with Reynolds numbers :math:`Re > 1`, we found that setting ``beta = 10`` (default value) leads to satisfactory results. 
 
 	For ``beta = 0``, the solid has no influence on the flow: this value can be used for debugging purposes.
 	
-	In case of a static solid, ``beta`` parameter has to be greatly increased, up to ``100`` or ``1000``, to prevent the fluid moving through the solid.
+	In case of a static solid, ``beta`` parameter has to be greatly increased, up to ``100`` or ``1000``, to prevent the fluid moving through the solid. For highly viscous flows, even higher values of ``beta`` could be used to compensate for the larger shear stresses acting on the immersed solid.
 
 * ``subsection mesh``: defines the solid mesh used to apply Nitsche immersed boundary. The syntax is the same as that of the mesh subsection, see :doc:`mesh` for more details.
 
 .. warning::
 	If ``set type = gmsh`` and a simplex mesh is given, do not forget to ``set simplex = true`` (default value is ``false``)
+
+.. tip::
+	The solid mesh should have a characteristic size of the same order as the fluid dynamics mesh. Using a finer mesh will not cause any problem, but will increase the computational cost without benefits. 
 
 * ``subsection solid velocity``: defines the velocity of the solid mesh. This velocity is defined by a ``Function expression`` and can depend on both space and time.
 
@@ -106,6 +127,9 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 .. tip ::
 	For a rotating cylinder, the ``Nitsche solid`` rotates but the boundary location does not change. For such static boundaries, the shape does not have to move within the fluid and this option can be set to ``false``. This saves significant computational time.
 
+.. warning ::
+	When the ``solid velocity`` leads to a motion of the solid, use ``enable particles motion = true``.
+
 * ``calculate force on solid``: controls if force calculation on the immersed geometry is enabled. If set to ``true``, forces will written in the output file named ``solid force name``, with the solid index automatically added at the end.
 * ``calculate torque on solid``: controls if torque calculation on the immersed geometry is enabled. If set to ``true``, torques will be written in the file in the output file named ``solid torque name``, with the solid index automatically added at the end. 
 * ``stop if particles lost``: controls if the simulation is stopped when Nitsche particles have been lost. If ``false``, the simulation will continue. 
@@ -119,7 +143,9 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 .. tip ::
 	When ``set particles sub iterations = 1`` (default value), there is no sub iteration: the motion of the particle is solved at each ``time step`` (see :doc:`simulation_control`). 
 
-	In case of particle loss, this parameter can be increased (``set particles sub iterations = 5`` is a good start value), but at a higher computational cost.
+	In case of particle loss, this parameter can be increased (``set particles sub iterations = 5`` is a good start value) to ensure that particles are always located efficiently as they move through the cell. This increases the computational cost, but not as much as lowering the ``time step`` (in :doc:`simulation_control`) would.
+
+	Generally, it is a good practice to have sufficient ``particles sub iterations`` so as to ensure that particles do not move more than half a cell during a particle sub iteration.
 
 * ``number of quadrature points``: number of Nitsche (quadrature) points to insert in a 1D cell. The number of inserted points will be higher for higher dimensions. Increasing this number will lead to a higher points density inside the solid.
 

@@ -1,4 +1,4 @@
-#include <core/lethegridtools.h>
+#include <core/lethe_grid_tools.h>
 
 #include "solvers/postprocessing_cfd.h"
 
@@ -163,17 +163,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::read_dem()
 {
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
-
   std::string prefix =
     this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
-
-  parallel_triangulation->signals.post_distributed_load.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &particle_handler,
-              true));
 
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
@@ -218,6 +209,9 @@ GLSVANSSolver<dim>::read_dem()
         "VANS equations currently do not support "
         "triangulations other than parallel::distributed");
     }
+
+  // Deserialize particles have the triangulation has been read
+  particle_handler.deserialize();
 }
 
 template <int dim>
@@ -396,9 +390,7 @@ void
 GLSVANSSolver<dim>::particle_centered_method()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(1,
-                              this->cfd_dem_simulation_parameters.cfd_parameters
-                                .fem_parameters.qmapping_all);
+  const MappingQ<dim> mapping(1);
 
   FEValues<dim> fe_values_void_fraction(mapping,
                                         this->fe_void_fraction,
@@ -489,8 +481,7 @@ void
 GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(
-    1, this->simulation_parameters.fem_parameters.qmapping_all);
+  const MappingQ<dim> mapping(1);
 
   FEValues<dim> fe_values_void_fraction(mapping,
                                         this->fe_void_fraction,
@@ -861,9 +852,7 @@ void
 GLSVANSSolver<dim>::satellite_point_method()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(1,
-                              this->cfd_dem_simulation_parameters.cfd_parameters
-                                .fem_parameters.qmapping_all);
+  const MappingQ<dim> mapping(1);
 
   FEValues<dim> fe_values_void_fraction(mapping,
                                         this->fe_void_fraction,
@@ -1226,6 +1215,13 @@ GLSVANSSolver<dim>::setup_assemblers()
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
     }
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.saffman_lift_force == true)
+    // Saffman Mei Lift Force Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerSaffmanMei<dim>>(
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.buoyancy_force == true)
     // Buoyancy Force Assembler

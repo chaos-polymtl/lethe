@@ -1,5 +1,5 @@
-Volume of Fluid
---------------------
+Multiphase Flow - Volume of Fluid
+----------------------------------
 
 In this subsection, the parameters for multiphase flow simulation using the volume of fluid method (VOF) are specified. 
 
@@ -14,6 +14,9 @@ The default values of the VOF parameters are given in the text box below.
 .. code-block:: text
 
 	subsection VOF	
+
+		set viscous dissipative fluid = fluid 1
+
 		subsection interface sharpening
 			set enable 	= false
 			set frequency   = 10			
@@ -26,7 +29,7 @@ The default values of the VOF parameters are given in the text box below.
 
 			# parameters for adaptative sharpening
 			set threshold max deviation = 0.20
-			set max iterations = 5
+			set max iterations = 20
 
 			set verbosity 	= quiet
 		end
@@ -42,28 +45,27 @@ The default values of the VOF parameters are given in the text box below.
 		end
 
 		subsection mass conservation
-			set skip mass conservation in fluid 0 = false
-			set skip mass conservation in fluid 1 = false
+			set conservative fluid  = both
 			set monitoring 		= false
-			set fluid monitored 	= 1
+			set monitored fluid 	= fluid 1
 
 			# parameters used with adaptative sharpening
-			set tolerance		= 1e-2
+			set tolerance		= 1e-6
 			set verbosity 		= quiet
 		end
 
 		subsection surface tension force
 			set enable 	= false
 			set verbosity 	= quiet
-			set output auxiliary fields 	= false
-			set surface tension coefficient = 0.0
+			set output auxiliary fields 	   = false
+			set surface tension coefficient    = 0.0
 			set phase fraction gradient filter = 0.5
-			set curvature filter 		= 0.5	
+			set curvature filter 		   = 0.5	
             
-            subsection marangoni effect
-                set enable = false
-                set surface tension gradient = 0.0
-            end subsection		
+			subsection marangoni effect
+				set enable = false
+				set surface tension gradient = 0.0
+			end
 		end
 
 	end
@@ -75,6 +77,17 @@ The default values of the VOF parameters are given in the text box below.
 .. seealso::
   See :doc:`initial_conditions` for the definition of the VOF initial conditions and `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
 
+* ``viscous dissipative fluid``: defines fluid(s) to which viscous dissipation is applied. 
+
+  Choices are: ``fluid 0``, ``fluid 1`` (default) or ``both``, with the fluids defined in the :doc:`./physical_properties` for two phase simulations.
+
+  .. warning::
+
+	This parameter is used only if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`. 
+
+  .. tip::
+
+	Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, but we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature.
 
 * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
@@ -164,10 +177,13 @@ The default values of the VOF parameters are given in the text box below.
 
   As peeling/wetting mechanisms result in fluid creation and disparition, is it highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
 
-* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids. However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to skip mass conservation in one of the fluid, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
+* ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``). However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
 
-  * mass conservation can be skipped on the fluid with index 0 or 1, as defined in the subsection `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_, with ``skip mass conservation in fluid 0`` and ``skip mass conservation in fluid 1`` respectively.
-  * ``monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid with index ``fluid monitored``. Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
+  * ``conservative fluid``: defines fluid(s) to which conservation is solved. 
+
+    Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluids defined in the :doc:`./physical_properties` for two phase simulations.
+
+  * ``monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid given as ``monitored fluid`` (``fluid 0`` or ``fluid 1`` (default)). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
 
     .. admonition:: Example of file output, `VOF_monitoring_fluid_1.dat`:
 
@@ -190,7 +206,7 @@ The default values of the VOF parameters are given in the text box below.
 
   * ``tolerance``: value for the tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening (see the ``subsection sharpening``). 
   
-    For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``fluid monitored`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
+    For instance, with ``set tolerance = 0.02`` the sharpening threshold will be adapted so that the mass of the ``monitored fluid`` varies less than :math:`\pm 2\%` from the initial mass (at :math:`t = 0.0` sec).
 
   * ``verbosity``: states whether from the mass conservation data should be printed. Choices are quiet (no output), verbose (output information from the ``adaptive`` sharpening threshold) and extra verbose (output of the monitoring table in the terminal at the end of the simulation).
 
@@ -200,14 +216,14 @@ The default values of the VOF parameters are given in the text box below.
 
 	Sharpening interface at step 2
 	   Adapting the sharpening threshold
-	   ... step 1 of the search algorithm
-	   ... step 2 of the search algorithm
+	   ... step 1 of the search algorithm, min, avg, max mass deviation is : -0.1 -0.05 0.05
+	   ... step 1 of the search algorithm, min, avg, max mass deviation is : -0.05 -0.025 0.04
 	   ... search algorithm took : 2 step(s) 
 	   ... error on mass conservation reached: -0.03
-	   ... final sharpening
+	   ... final sharpening is : 0.458224
 
 
-* ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. ``subsection marangoni effect`` in the ``subsection surface tension force`` enables the calculation of Marangoni effect (thermocapillary effect) in simulations where the surface tension gradient (:math:`\frac{\partial \sigma}{\partial \T}`) is not equal to zero.
+* ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. 
 
   * ``enable``: controls if ``surface tension force`` is considered.
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
@@ -241,6 +257,8 @@ The default values of the VOF parameters are given in the text box below.
 
     Use the procedure suggested in: :ref:`choosing values for the surface tension force filters`.
 
+  * ``subsection marangoni effect``: Marangoni effect is a thermocapillary effect, considered in simulations if ``set enable = true`` and if the ``surface tension gradient`` is not zero :math:`\left(\frac{\partial \sigma}{\partial T} \neq 0\right)`.
+
 .. seealso::
 
   The surface tension force is used in the :doc:`../../examples/multiphysics/rising-bubble-VOF/rising-bubble-VOF` example.
@@ -259,7 +277,7 @@ In the framework of incompressible fluids, a layer of the lowest density fluid (
 .. tip::
   It is strongly advised to sharpen the interface more often (e.g. ``set frequency = 2``) to limit interface blurriness due the added diffusivity. As peeling-wetting is handled after the transport equation is solved, but before interface sharpening, this will not prevent the wetting from occuring.
 
-2. Remove the conservation condition on the lowest density fluid (e.g. ``set skip mass conservation in fluid 0 = false``). The mass conservation equation in the cells of interest is replaced by a zero-pressure condition, to allow the fluid to get out of the domain. 
+2. Remove the conservation condition on the lowest density fluid (e.g. ``set conservative fluid = fluid 1``). The mass conservation equation in the cells of interest is replaced by a zero-pressure condition, to allow the fluid to get out of the domain. 
 
 .. tip::
   This can give more precise results as the interface remains sharp, but the time step (in :doc:`simulation_control`) must be low enough to prevent numerical instabilities.

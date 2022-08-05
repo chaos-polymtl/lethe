@@ -156,6 +156,7 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
           thermal_conductivity_model->vector_value(fields,
                                                    thermal_conductivity);
           rheology_model->vector_value(fields, viscosity);
+
           break;
         }
       case 2:

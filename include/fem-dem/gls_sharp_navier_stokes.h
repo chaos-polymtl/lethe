@@ -165,7 +165,10 @@ private:
       {
         force_on_ib();
         integrate_particles();
-        generate_cut_cells_map();
+        if (all_spheres)
+          optimized_generate_cut_cells_map();
+        else
+          generate_cut_cells_map();
       }
     // this->simulation_control->set_assembly_method(this->time_stepping_method);
     {
@@ -303,14 +306,43 @@ private:
   void
   refine_ib();
 
+
   /**
    * @brief
-   *This function create a map (cut_cells_map) that indicates if a cell is cut,
-   *and the particle id of the particle that cut it.
+   *This function checks if all particles are spheres. If one of them is not,
+   *the code will use the regular generate_cut_cells function. If all particles
+   *are spheres, it uses the optimized_generate_cut_cells.
+   */
+  void
+  check_whether_all_particles_are_sphere();
+  /**
+   * @brief
+   *This function creates a map (cut_cells_map) that indicates if a cell is
+   *cut, and the particle id of the particle that cut it.
    */
   void
   generate_cut_cells_map();
 
+  /**
+   * @brief
+   * This function is only applied if all particles are spheres.
+   * It creates two maps (cut_cells_map and cells_inside_map) to access the
+   * cells cut by particles and inside the particles, respectively. The map keys
+   * are the particle's IDs. The algorithm was optimized to reduce the cost of
+   * this step.
+   */
+  void
+  optimized_generate_cut_cells_map();
+
+  /**
+   * @brief
+   *This function abstracts the generation of cell candidates that possibly are
+   *cut
+   */
+  std::pair<bool, bool>
+  generate_cut_cell_candidates(
+    const typename DoFHandler<dim>::cell_iterator &cell,
+    const unsigned int                             p_id);
 
   /**
    * @brief
@@ -385,6 +417,19 @@ private:
   virtual void
   read_checkpoint() override;
 
+
+  /*
+   * @brief Read file to load particles. The file must contain the following information for each particle (the header must be defined accordingly):
+   * type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y
+   * v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z
+   * density inertia pressure_x pressure_y pressure_z youngs_modulus
+   * restitution_coefficient friction_coefficient poisson_ratio
+   * rolling_friction_coefficient
+   * */
+  void
+  load_particles_from_file();
+
+
   /**
 * @brief
 Return a bool that describes  if a cell contains a specific point
@@ -450,6 +495,7 @@ Return a bool that describes  if a cell contains a specific point
     get_nonscalar_data_ranges() const;
 
 
+
     /**
      * Output information that is filled by build_patches() and
      * written by the write function of the base class.
@@ -486,6 +532,8 @@ Return a bool that describes  if a cell contains a specific point
    */
 
 private:
+  bool all_spheres;
+
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;

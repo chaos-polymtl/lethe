@@ -75,7 +75,7 @@ public:
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info_struct<dim>>>
       &                        ghost_adjacent_particles,
-    const double &             dt,
+    const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
 
@@ -115,7 +115,7 @@ public:
     IBParticle<dim> &                           particle_two,
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
-    const double &                              dt,
+    const double                                dt,
     const double &                              particle_one_radius,
     const double &                              particle_two_radius,
     const double &                              particle_one_mass,
@@ -143,7 +143,7 @@ protected:
     const ArrayView<const double> &             particle_two_properties,
     const Point<3> &                            particle_one_location,
     const Point<3> &                            particle_two_location,
-    const double &                              dt);
+    const double                                dt);
 
   /**
    * @brief Carries out applying the calculated force and torque on the local-local

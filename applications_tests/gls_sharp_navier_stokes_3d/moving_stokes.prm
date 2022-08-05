@@ -133,7 +133,8 @@ set time dependent =true
     end
     subsection bc 5
 	set id = 5
-        set type              = function
+        set type              = function weak
+        set beta = 100
         subsection u
             set Function expression = ((x - cos(t))^2*(-0.75*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.0625*sqrt(y^2 + z^2 + (x - cos(t))^2) + (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2)*(0.375*(y^2 + z^2 + (x - cos(t))^2)^(3/2) + 0.03125*sqrt(y^2 + z^2 + (x - cos(t))^2) - (y^2 + z^2 + (x - cos(t))^2)^2) - (y^2 + z^2 + (x - cos(t))^2)^3)*sin(t)/(y^2 + z^2 + (x - cos(t))^2)^3
         end
@@ -168,9 +169,6 @@ subsection particles
         subsection velocity
             set Function expression =-sin(t);0;0
         end
-	    set pressure x =-0.75001
-	    set pressure y =0.00001
-	    set pressure z =0.00001
 	    set type       = sphere
         set shape arguments = 0.5
 	    set density = 1

@@ -17,6 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/data_containers.h>
+
 #include <dem/particle_point_line_contact_info_struct.h>
 #include <dem/update_ghost_particle_particle_contact_container.h>
 #include <dem/update_local_particle_particle_contact_container.h>
@@ -46,6 +48,8 @@ using namespace dealii;
  * information of particle-wall contacts
  * @param pfw_pairs_in_contact Container that contains all the contact
  * information of particle-floating wall contacts
+ * @param pfm_pairs_in_contact Container that contains all the contact
+ * information of particle-floating mesh contacts
  * @param particle_points_in_contact Container that contains all the contact
  * information of particle-point contacts
  * @param particle_lines_in_contact Container that contains all the contact
@@ -71,12 +75,18 @@ locate_local_particles_in_cells(
     &local_adjacent_particles,
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     &particle_wall_pairs_in_contact,
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
+    &pfm_pairs_in_contact,
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,

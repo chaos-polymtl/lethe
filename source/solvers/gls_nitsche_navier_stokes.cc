@@ -46,7 +46,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
 
   for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
-      solid.push_back(std::make_shared<SolidBase<dim, spacedim>>(
+      solids.push_back(std::make_shared<SolidBase<dim, spacedim>>(
         this->simulation_parameters.nitsche->nitsche_solids[i_solid],
         this->triangulation,
         this->mapping));
@@ -81,10 +81,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
       std::shared_ptr<Particles::ParticleHandler<spacedim>> &solid_ph =
-        solid[i_solid]->get_solid_particle_handler();
+        solids[i_solid]->get_solid_particle_handler();
 
 
       const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
@@ -95,7 +95,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
       dealii::Vector<double> local_rhs(dofs_per_cell);
 
       Tensor<1, spacedim> velocity;
-      Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
+      Function<spacedim> *solid_velocity =
+        solids[i_solid]->get_solid_velocity();
 
       // Penalization terms
       const double beta =
@@ -241,7 +242,7 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<3>> &solid_ph =
-    solid[i_solid]->get_solid_particle_handler();
+    solids[i_solid]->get_solid_particle_handler();
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
@@ -335,7 +336,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<dim, spacedim>> &solid_ph =
-    solid[i_solid]->get_solid_particle_handler();
+    solids[i_solid]->get_solid_particle_handler();
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
@@ -345,7 +346,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
   const double beta =
     this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
   Tensor<1, spacedim> velocity;
-  Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
+  Function<spacedim> *solid_velocity = solids[i_solid]->get_solid_velocity();
   Tensor<1, spacedim> force;
   for (unsigned int i = 0; i < spacedim; ++i)
     force[i] = 0;
@@ -417,7 +418,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<spacedim>> &solid_ph =
-    solid[i_solid]->get_solid_particle_handler();
+    solids[i_solid]->get_solid_particle_handler();
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
@@ -427,7 +428,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
   const double beta =
     this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
   Tensor<1, spacedim> velocity;
-  Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
+  Function<spacedim> *solid_velocity = solids[i_solid]->get_solid_velocity();
 
 
   Tensor<1, 3> torque;
@@ -707,9 +708,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
     {
       TimerOutput::Scope t(this->computing_timer,
                            "Nitsche solid mesh and particles");
-      for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+      for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
         {
-          solid[i_solid]->initial_setup();
+          solids[i_solid]->initial_setup();
 
           // Output initial configuration, if output_frequency!=0
           if (this->simulation_control->is_output_iteration())
@@ -727,7 +728,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 
       {
         TimerOutput::Scope t(this->computing_timer, "Nitsche particles motion");
-        for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+        for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
           {
             if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
                   ->enable_particles_motion)
@@ -739,9 +740,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
                 const double initial_time =
                   this->simulation_control->get_current_time() - time_step;
 
-                solid[i_solid]->integrate_velocity(time_step, initial_time);
-                solid[i_solid]->move_solid_triangulation(time_step,
-                                                         initial_time);
+                solids[i_solid]->integrate_velocity(time_step, initial_time);
+                solids[i_solid]->move_solid_triangulation(time_step,
+                                                          initial_time);
               }
           }
       }
@@ -781,21 +782,17 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 
           if (this->simulation_control->is_output_iteration())
             {
-              //              for (unsigned int i_solid = 0; i_solid <
-              //              solid.size(); ++i_solid)
-              //                {
               output_solid_particles(i_solid);
               output_solid_triangulation(i_solid);
-              //                }
             }
         }
       this->finish_time_step();
     }
   if (this->simulation_parameters.test.enabled)
     {
-      for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+      for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
         {
-          solid[i_solid]->print_particle_positions();
+          solids[i_solid]->print_particle_positions();
         }
     }
   this->finish_simulation();
@@ -807,7 +804,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<spacedim>> &particle_handler =
-    solid[i_solid]->get_solid_particle_handler();
+    solids[i_solid]->get_solid_particle_handler();
   Particles::DataOut<spacedim, spacedim> particles_out;
   particles_out.build_patches(*particle_handler);
 
@@ -839,11 +836,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
 #else
   DataOut<dim, spacedim> data_out;
 #endif
-  DoFHandler<dim, spacedim> &solid_dh = solid[i_solid]->get_solid_dof_handler();
+  DoFHandler<dim, spacedim> &solid_dh =
+    solids[i_solid]->get_solid_dof_handler();
   data_out.attach_dof_handler(solid_dh);
 
   DoFHandler<dim, spacedim> &displacement_dh =
-    solid[i_solid]->get_displacement_dof_handler();
+    solids[i_solid]->get_displacement_dof_handler();
   data_out.attach_dof_handler(displacement_dh);
 
   std::vector<std::string> solution_names(spacedim, "displacement");
@@ -851,7 +849,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
     data_component_interpretation(
       spacedim, DataComponentInterpretation::component_is_part_of_vector);
   TrilinosWrappers::MPI::Vector &displacement_vector =
-    solid[i_solid]->get_displacement_vector();
+    solids[i_solid]->get_displacement_vector();
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   data_out.add_data_vector(
@@ -890,6 +888,42 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
 
 template <int dim, int spacedim>
 void
+GLSNitscheNavierStokesSolver<dim, spacedim>::refine_mesh()
+{
+  if (this->simulation_control->get_step_number() %
+        this->simulation_parameters.mesh_adaptation.frequency ==
+      0)
+    {
+      // If no adaptation is to be carried out, get out of the function
+      if (this->simulation_parameters.mesh_adaptation.type ==
+          Parameters::MeshAdaptation::Type::none)
+        return;
+
+      // Prepare the solid particle handlers for the mesh refinement
+      // All type of refinement except none will require that the particle
+      // handler be prepared for refinement
+      for (const auto &solid : solids)
+        solid->get_solid_particle_handler()
+          ->prepare_for_coarsening_and_refinement();
+
+
+      if (this->simulation_parameters.mesh_adaptation.type ==
+          Parameters::MeshAdaptation::Type::kelly)
+        this->refine_mesh_kelly();
+
+      else if (this->simulation_parameters.mesh_adaptation.type ==
+               Parameters::MeshAdaptation::Type::uniform)
+        this->refine_mesh_uniform();
+
+      // Unpact them after refinement has occured
+      for (const auto &solid : solids)
+        solid->get_solid_particle_handler()
+          ->unpack_after_coarsening_and_refinement();
+    }
+}
+
+template <int dim, int spacedim>
+void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs()
 {
   this->GLSNavierStokesSolver<
@@ -914,6 +948,11 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
 {
+  // Prepare solid particles for serialization
+  for (auto solid : solids)
+    solid->get_solid_particle_handler()->prepare_for_serialization();
+
+  // Call regular checkpointing routine
   this->GLSNavierStokesSolver<spacedim>::write_checkpoint();
 
   std::string prefix =
@@ -927,7 +966,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
       // Navier-Stokes
       this->pvdhandler.save(prefix);
       // Nitche
-      for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+      for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
         {
           pvdhandler_solid_particles[i_solid].save(
             prefix + "_solid_particles_" +
@@ -939,13 +978,13 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
     }
 
   // Write solid base checkpoint
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
       std::string filename =
         this->simulation_parameters.simulation_control.output_folder +
         this->simulation_parameters.restart_parameters.filename + "_solid_" +
         Utilities::int_to_string(i_solid, 2);
-      this->solid[i_solid]->write_checkpoint(filename);
+      this->solids[i_solid]->write_checkpoint(filename);
     }
 }
 
@@ -960,21 +999,21 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
 
 
   // Reload initial configurations
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
       std::string prefix =
         this->simulation_parameters.simulation_control.output_folder +
         this->simulation_parameters.restart_parameters.filename + "_solid_" +
         Utilities::int_to_string(i_solid, 2);
 
-      solid[i_solid]->read_checkpoint(prefix);
+      solids[i_solid]->read_checkpoint(prefix);
     }
 
   // Reload particle and solid pvd handlers
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
       // Load Paraview pvd handler for solid triangulation and particles
       pvdhandler_solid_particles[i_solid].read(

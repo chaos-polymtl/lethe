@@ -2,7 +2,7 @@
 Rotating Drum
 ==================================
 
-This is the third example of Lethe-DEM. This example simulates a rotating drum. We setup this simulation according to the experiments of Alizadeh et al [1]. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
+This is the third example of Lethe-DEM. This example simulates a rotating drum. We setup this simulation according to the experiments of Alizadeh et al `[1] <https://doi.org/10.1002/aic.13982>`_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
 Features
 ----------------------------------
@@ -183,4 +183,4 @@ Animation of the rotating drum simulation:
 Reference
 ---------
 
-[1] Alizadeh, E., Dubé, O., Bertrand, F. and Chaouki, J., 2013. Characterization of mixing and size segregation in a rotating drum by a particle tracking method. AIChE Journal, 59(6), pp.1894-1905.
+`[1] <https://doi.org/10.1002/aic.13982>`_ Alizadeh, E., Dubé, O., Bertrand, F. and Chaouki, J., 2013. Characterization of mixing and size segregation in a rotating drum by a particle tracking method. AIChE Journal, 59(6), pp.1894-1905.

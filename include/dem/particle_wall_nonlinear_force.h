@@ -80,11 +80,35 @@ public:
   calculate_particle_wall_contact_force(
     std::unordered_map<
       types::particle_index,
-      std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
       &                        particle_wall_pairs_in_contact,
-    const double &             dt,
+    const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;
+
+  /**
+   * Carries out the calculation of particle-floating mesh contact force using
+   * non-linear (Hertzian) model
+   *
+   * @param particle_floating_mesh_in_contact A container that stores the information of
+   * particle-floating mesh contact
+   * @param dt DEM time step
+   * @param torque Torque acting on particles
+   * @param force Force acting on particles
+   * @param solids Floating solids
+   */
+  virtual void calculate_particle_floating_wall_contact_force(
+    std::vector<
+      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               std::unordered_map<types::particle_index,
+                                  particle_wall_contact_info_struct<dim>>,
+               dem_data_containers::cut_cell_comparison<dim>>>
+      &                        particle_floating_mesh_in_contact,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force,
+    const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
+    override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -117,7 +141,7 @@ public:
     const double &                          wall_restitution_coefficient,
     const double &                          wall_friction_coefficient,
     const double &                          wall_rolling_friction_coefficient,
-    const double &                          dt,
+    const double                            dt,
     const double &                          mass,
     const double &                          radius) override;
 

@@ -22,6 +22,7 @@
 #include <deal.II/grid/grid_tools.h>
 
 #include <iostream>
+#include <unordered_set>
 #include <vector>
 
 using namespace dealii;
@@ -31,9 +32,11 @@ using namespace dealii;
 
 /**
  * Finds the neighbors lists of all the active cells in the input triangulation.
- * It is written to avoid any repetition, for instance if cell B is recognized
- * as the neighbor of cell A once, cell A will not appear in the neighbor list
- * of cell B again.
+ * find_cell_neighbors() is written to avoid any repetition, for instance if
+ * cell B is recognized as the neighbor of cell A once, cell A will not appear
+ * in the neighbor list of cell B again. On the other hand,
+ * find_full_cell_neighbors() function finds the neighbors list with this
+ * repetition.
  *
  * @note
  *
@@ -47,7 +50,8 @@ public:
   FindCellNeighbors<dim>();
 
   /**
-   * Find the neighbor list of all the active cells in the triangulation
+   * Finds the neighbor list (without repetition) of all the active cells in the
+   * triangulation
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param cells_local_neighbor_list A vector (with size of the local cell
@@ -65,6 +69,26 @@ public:
       &cells_local_neighbor_list,
     std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
       &cells_ghost_neighbor_list);
+
+  /**
+   * Finds the full neighbor list (with repetition) of all the active cells in
+   * the triangulation. This function is used in particle-floating mesh
+   * contacts, as in this situation, we need to define all the particles located
+   * in the neighbor cells of the background cell (cut by the floating mesh) as
+   * contact candidates
+   *
+   * @param triangulation Triangulation to access the information of the cells
+   * @param cells_total_neighbor_list An unordered_map (with size of the local cell
+   * number) of vectors (all adjacent cells of each local cell)
+   */
+
+  void
+  find_full_cell_neighbors(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    std::unordered_map<
+      types::global_cell_index,
+      std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      &cells_total_neighbor_list);
 };
 
 #endif /* find_cell_neighbors_h */

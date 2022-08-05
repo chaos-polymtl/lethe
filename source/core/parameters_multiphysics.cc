@@ -33,6 +33,14 @@ DeclException1(
   << "Adaptative sharpening requires to set 'monitoring = true', and to define"
   << " the 'fluid monitored' and the 'tolerance' to reach. See documentation for further details.");
 
+DeclException1(
+  MonitoringConservationError,
+  bool,
+  << "Sharpening type is set to 'adaptative' and monitoring is set to " << arg1
+  << " but " << std::endl
+  << "conservative fluid (choices are <fluid 0, fluid 1, both>) does not include the monitored fluid. "
+  << std::endl
+  << "Conservation must be solved on the monitored fluid for adaptative sharpening to work properly.");
 
 void
 Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
@@ -59,6 +67,12 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "VOF calculation <true|false>");
 
+    prm.declare_entry(
+      "use time average velocity field",
+      "false",
+      Patterns::Bool(),
+      "Use the average velocity field in subphysics, instead of the present velocity field <true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       "false",
@@ -84,6 +98,8 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     heat_transfer  = prm.get_bool("heat transfer");
     tracer         = prm.get_bool("tracer");
     VOF            = prm.get_bool("VOF");
+    use_time_average_velocity_field =
+      prm.get_bool("use time average velocity field");
 
     // subparameter for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
@@ -102,6 +118,12 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
     sharpening.declare_parameters(prm);
     peeling_wetting.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
+
+    prm.declare_entry("viscous dissipative fluid",
+                      "fluid 1",
+                      Patterns::Selection("fluid 0|fluid 1|both"),
+                      "Fluid to which the viscous dissipation is applied "
+                      "in the heat equation <fluid 0|fluid 1|both>");
   }
   prm.leave_subsection();
 }
@@ -116,10 +138,29 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     peeling_wetting.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
 
+    // Viscous dissipative fluid
+    const std::string op = prm.get("viscous dissipative fluid");
+    if (op == "fluid 1")
+      viscous_dissipative_fluid = Parameters::FluidIndicator::fluid1;
+    else if (op == "fluid 0")
+      viscous_dissipative_fluid = Parameters::FluidIndicator::fluid0;
+    else if (op == "both")
+      viscous_dissipative_fluid = Parameters::FluidIndicator::both;
+    else
+      throw(std::runtime_error("Invalid viscous dissipative fluid. "
+                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
+
     // Error definitions
     if (sharpening.type == Parameters::SharpeningType::adaptative)
       Assert(conservation.monitoring == true,
              AdaptativeSharpeningError(conservation.monitoring));
+
+    if (sharpening.type == Parameters::SharpeningType::adaptative)
+
+      Assert(
+        (conservation.conservative_fluid == Parameters::FluidIndicator::both) or
+          (conservation.conservative_fluid == conservation.monitored_fluid),
+        MonitoringConservationError(conservation.monitoring));
   }
   prm.leave_subsection();
 }
@@ -130,38 +171,30 @@ Parameters::VOF_MassConservation::declare_parameters(ParameterHandler &prm)
   prm.enter_subsection("mass conservation");
   {
     prm.declare_entry(
-      "skip mass conservation in fluid 0",
-      "false",
-      Patterns::Bool(),
-      "Enable skipping mass conservation in fluid 0 <true|false>."
-      "Can be used to improve the wetting mechanism, along with a small time step."
-      "See documentation for further details.");
-
-    prm.declare_entry(
-      "skip mass conservation in fluid 1",
-      "false",
-      Patterns::Bool(),
-      "Enable skipping mass conservation in fluid 1 <true|false>."
-      "Can be used to improve the wetting mechanism, along with a small time step."
-      "See documentation for further details.");
-
-    prm.declare_entry(
       "monitoring",
       "false",
       Patterns::Bool(),
       "Enable conservation monitoring in free surface calculation <true|false>");
 
     prm.declare_entry(
-      "fluid monitored",
-      "1",
-      Patterns::Integer(),
-      "Index of the fluid which conservation is monitored <0|1>");
-
-    prm.declare_entry(
       "tolerance",
-      "1e-2",
+      "1e-6",
       Patterns::Double(),
       "Tolerance on the mass conservation of the monitored fluid, used with adaptative sharpening");
+
+    prm.declare_entry(
+      "conservative fluid",
+      "both",
+      Patterns::Selection("fluid 0|fluid 1|both"),
+      "Fluid for which conservation is solved <fluid 0|fluid 1|both>. "
+      "Conservation on one fluid instead of both can be used to improve the wetting mechanism. "
+      "See documentation for further details.");
+
+    prm.declare_entry(
+      "monitored fluid",
+      "fluid 1",
+      Patterns::Selection("fluid 0|fluid 1"),
+      "Fluid for which conservation is monitored <fluid 0|fluid 1>.");
 
     prm.declare_entry(
       "verbosity",
@@ -178,21 +211,40 @@ Parameters::VOF_MassConservation::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("mass conservation");
   {
-    skip_mass_conservation_fluid_0 =
-      prm.get_bool("skip mass conservation in fluid 0");
-    skip_mass_conservation_fluid_1 =
-      prm.get_bool("skip mass conservation in fluid 1");
-    monitoring         = prm.get_bool("monitoring");
-    id_fluid_monitored = prm.get_integer("fluid monitored");
-    tolerance          = prm.get_double("tolerance");
+    monitoring = prm.get_bool("monitoring");
+    tolerance  = prm.get_double("tolerance");
+
+    // Conservative fluid
+    const std::string op_cf = prm.get("conservative fluid");
+    if (op_cf == "fluid 1")
+      conservative_fluid = Parameters::FluidIndicator::fluid1;
+    else if (op_cf == "fluid 0")
+      conservative_fluid = Parameters::FluidIndicator::fluid0;
+    else if (op_cf == "both")
+      conservative_fluid = Parameters::FluidIndicator::both;
+    else
+      throw(std::runtime_error("Invalid conservative fluid. "
+                               "Options are 'fluid 0', 'fluid 1' or 'both'."));
+
+    // Monitored fluid
+    const std::string op_mf = prm.get("monitored fluid");
+    if (op_mf == "fluid 1")
+      monitored_fluid = Parameters::FluidIndicator::fluid1;
+    else if (op_mf == "fluid 0")
+      monitored_fluid = Parameters::FluidIndicator::fluid0;
+    else if (op_mf == "both")
+      monitored_fluid = Parameters::FluidIndicator::both;
+    else
+      throw(std::runtime_error("Invalid monitored fluid. "
+                               "Options are 'fluid 0' or 'fluid 1'."));
 
     // Verbosity
-    const std::string op = prm.get("verbosity");
-    if (op == "verbose")
+    const std::string op_v = prm.get("verbosity");
+    if (op_v == "verbose")
       verbosity = Parameters::Verbosity::verbose;
-    else if (op == "quiet")
+    else if (op_v == "quiet")
       verbosity = Parameters::Verbosity::quiet;
-    else if (op == "extra verbose")
+    else if (op_v == "extra verbose")
       verbosity = Parameters::Verbosity::extra_verbose;
     else
       throw(std::runtime_error("Invalid verbosity level"));
@@ -238,9 +290,9 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry(
       "max iterations",
-      "5",
+      "20",
       Patterns::Integer(),
-      "Maximum number of iteration in the binary search algorithm");
+      "Maximum number of iteration in the bissection algorithm that ensures mass conservation");
 
     // This parameter must be larger than 1 for interface sharpening. Choosing
     // values less than 1 leads to interface smoothing instead of sharpening.
@@ -249,6 +301,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "2",
       Patterns::Double(),
       "Sharpness of the moving interface (parameter alpha in the interface sharpening model)");
+
     prm.declare_entry("frequency",
                       "10",
                       Patterns::Integer(),
@@ -471,10 +524,6 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
     prm.enter_subsection("marangoni effect");
     {
       enable_marangoni_effect = prm.get_bool("enable");
-
-      if (enable_marangoni_effect & !enable)
-        throw(std::runtime_error(
-          "Marangoni effect cannot be enabled without enabling surface tension force"));
 
       // Surface tension gradient
       surface_tension_gradient = prm.get_double("surface tension gradient");

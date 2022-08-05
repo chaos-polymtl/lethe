@@ -2,7 +2,7 @@
 Referencing Lethe
 ###################
 
- If you write a paper using results obtained with the help of Lethe, please cite the main Lethe reference as well as the reference that pertain to the features you used.
+If you write a paper using results obtained with the help of Lethe or use Lethe in your research, please cite the main Lethe reference as well as the reference that pertain to the features you used. Lethe relies heavily on deal.II and its active and vibrant community. When citing Lethe, please ensure that you also cite the `latest version deal.II <https://www.dealii.org/publications.html>`_.
 
 Main articles
 ---------------
