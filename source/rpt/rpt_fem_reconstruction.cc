@@ -102,7 +102,7 @@ RPTFEMReconstruction<dim>::setup_triangulation()
       triangulation.set_all_manifold_ids(0);
 
       // Grid transformation
-      GridTools::rotate(M_PI_2, 1, triangulation);
+      GridTools::rotate(M_PI_2, triangulation);
       Tensor<1, dim> shift_vector(
               {0, 0, rpt_parameters.rpt_param.reactor_height * 0.5});
       GridTools::shift(shift_vector, triangulation);
