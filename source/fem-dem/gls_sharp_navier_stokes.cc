@@ -2468,6 +2468,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         {
                           particle_close_to_wall = true;
                           cell_2                 = cell;
+                          continue;
                         }
 
                       cell_2->get_dof_indices(local_dof_indices_2);

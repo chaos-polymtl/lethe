@@ -81,18 +81,18 @@ IBParticlesDEM<dim>::update_contact_candidates()
 
   for (auto &particle_one : dem_particles)
     {
+      const Point<dim> particle_one_location = particle_one.position;
       for (auto &particle_two : dem_particles)
         {
           if (particle_one.particle_id < particle_two.particle_id)
             {
-              const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
 
               if ((particle_one_location - particle_two_location).norm() <
                   (particle_one.radius + particle_two.radius) * radius_factor)
                 {
-                  particles_contact_candidates[particle_one.particle_id].insert(
-                    particle_two.particle_id);
+                  (particles_contact_candidates[particle_one.particle_id])
+                    .insert(particle_two.particle_id);
                 }
             }
         }
@@ -110,14 +110,17 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
 {
   for (auto &particle_one : dem_particles)
     {
-      for (auto particle_contact_candidates_id =
-             particles_contact_candidates[particle_one.id].begin();
+      std::set<unsigned int>::iterator particle_contact_candidates_id;
+      for (particle_contact_candidates_id =
+             particles_contact_candidates[particle_one.particle_id].begin();
            particle_contact_candidates_id !=
-           particles_contact_candidates[particle_one.id].end();
+           particles_contact_candidates[particle_one.particle_id].end();
            ++particle_contact_candidates_id)
         {
-          const auto &particle_contact_id = *particle_contact_candidates_id;
-          auto &      particle_two        = dem_particles[particle_contact_id];
+          const unsigned int particle_contact_id =
+            *particle_contact_candidates_id;
+
+          auto &particle_two = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {
@@ -224,9 +227,9 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   for (auto &particle_one : dem_particles)
     {
       for (auto particle_contact_candidates_id =
-             particles_contact_candidates[particle_one.id].begin();
+             particles_contact_candidates[particle_one.particle_id].begin();
            particle_contact_candidates_id !=
-           particles_contact_candidates[particle_one.id].end();
+           particles_contact_candidates[particle_one.particle_id].end();
            ++particle_contact_candidates_id)
         {
           const auto &particle_contact_id = *particle_contact_candidates_id;
