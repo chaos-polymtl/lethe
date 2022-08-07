@@ -62,6 +62,6 @@ This subsection includes parameters related to multiphase flow simulations using
 
 `[8] <https://doi.org/10.1016/j.ces.2013.05.014>`_  D. Jajcevic, E. Siegmann, C. Radeke, J. G. Khinast, Large-scale cfd–dem simulations of fluidized granular systems, Chemical Engineering Science 98 (2013) 298–310.
 
-`[9] <https://doi.org/10.1002/aic.11065>`_ R. Beetstra, M. A. van der Hoef, J. A. M. Kuipers. Drag Force of Intermediate Reynolds Number Flow Past Mono- and Bidisperse Arrays of Spheres. AIChE journal, v. 53, n. 2, p. 489-501, 2007.
+`[9] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_ Tim M.J. Nijssen, Hans A.M. Kuipers, Jan van der Stel, Allert T. Adema, Kay A. Buist, Complete liquid-solid momentum coupling for unresolved CFD-DEM simulations, International Journal of Multiphase Flow, Volume 132, 2020, 103425
 
 `[10] <https://books.google.ca/books?id=fHecceQyaYkC&lpg=PP1&ots=uhExYvWrkv&lr&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_ D. Gidaspow. Multiphase flow and fluidization: continuum and kinetic theory descriptions. Academic press, 1994.

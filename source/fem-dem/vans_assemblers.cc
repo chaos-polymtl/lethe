@@ -1156,7 +1156,7 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "GLSVansAssemblerBeestra<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
