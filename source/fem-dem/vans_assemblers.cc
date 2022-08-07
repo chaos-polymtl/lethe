@@ -1248,6 +1248,8 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
       "GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
 
   const auto pic                           = scratch_data.pic;
   double     momentum_transfer_coefficient = 0;
@@ -1294,9 +1296,10 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force =
-        1.0 / 6 * M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], 3) *
-        momentum_transfer_coefficient * relative_velocity[particle_number];
+      drag_force = 1.0 / 6 * M_PI *
+                   pow(particle_properties[DEM::PropertiesIndex::dp], 3) *
+                   density * momentum_transfer_coefficient *
+                   relative_velocity[particle_number];
 
       for (int d = 0; d < dim; ++d)
         {
