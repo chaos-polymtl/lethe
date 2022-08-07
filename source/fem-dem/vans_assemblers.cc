@@ -1101,7 +1101,7 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
         }
 
       double f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
-                  0.0232 * pow(cell_void_fraction, -5);
+                  0.0232 / pow(cell_void_fraction, 5);
 
       double momentum_transfer_coefficient =
         ((18 * viscosity * pow(cell_void_fraction, 2) *
@@ -1156,7 +1156,7 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerBeestra<dim>::calculate_particle_fluid_interactions"));
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
@@ -1272,7 +1272,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
           C_d = 0.44;
         }
 
-      if (cell_void_fraction > 0.8)
+      if (cell_void_fraction >= 0.8)
         {
           momentum_transfer_coefficient =
             0.75 * C_d * cell_void_fraction *

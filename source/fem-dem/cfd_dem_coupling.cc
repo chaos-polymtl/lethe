@@ -1267,22 +1267,7 @@ CFDDEMSolver<dim>::print_particles_summary()
         << "--------------------------------------------------------------------------"
         << "--------------------------------------------------------------------------"
         << std::endl;
-
-      particle_velocity_table.add_value(
-        "time", this->simulation_control->get_current_time());
-      particle_velocity_table.add_value(
-        "particle-velocity", particle_properties[DEM::PropertiesIndex::v_y]);
     }
-
-  {
-    std::string filename =
-      this->simulation_parameters.simulation_control.output_folder +
-      "particle_velocity" + ".dat";
-    std::ofstream output(filename.c_str());
-    particle_velocity_table.set_precision("time", 12);
-    particle_velocity_table.set_precision("particle-velocity", 12);
-    particle_velocity_table.write_text(output);
-  }
 }
 
 template <int dim>
