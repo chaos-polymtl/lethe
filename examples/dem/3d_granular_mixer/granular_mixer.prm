@@ -40,7 +40,7 @@ subsection lagrangian physical properties
     		set diameter            	 	= 0.0015
 		set number				= 23500
     		set density particles            	= 1500
-    		set young modulus particles         	= 1000000
+    		set young modulus particles         	= 1e6
     		set poisson ratio particles          	= 0.5
     		set restitution coefficient particles	= 0.5
     		set friction coefficient particles      = 0.5
@@ -51,13 +51,13 @@ subsection lagrangian physical properties
     		set diameter            	 	= 0.0015
 		set number				= 23500
     		set density particles            	= 1500
-    		set young modulus particles         	= 1000000
+    		set young modulus particles         	= 1e6
     		set poisson ratio particles          	= 0.5
     		set restitution coefficient particles	= 0.5
     		set friction coefficient particles      = 0.5
     		set rolling friction particles         	= 0.2
 	end
-    set young modulus wall            			= 1000000
+    set young modulus wall            			= 1e6
     set poisson ratio wall            			= 0.5
     set restitution coefficient wall           		= 0.5
     set friction coefficient wall         		= 0.5

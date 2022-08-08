@@ -9,7 +9,7 @@ Features
 - Solvers: ``dem_3d``
 - Floating mesh
 - Gmsh grids
-- Bidispersed particles
+- Bidispersed particles (same size and properties, but different types)
 
 
 Location of the examples
@@ -20,7 +20,7 @@ Location of the examples
 Description of the case
 -----------------------
 
-This simulation consists of two stages: packing (0-0.5 s) and mixing (0.5-5 s). There are two types of particles in this simulation (bidispersed system), that are inserted on top of each other during the packing stage. At :math:`t=0.5` s, the pitched-blade impeller starts rotating with an angular velocity of 6 rad/s and mixes the particles.
+This simulation consists of two stages: packing (0-0.5 s) and mixing (0.5-5 s) of particles. There are two types of particles in this simulation (bidispersed system), that are inserted on top of each other during the packing stage. The size and properties of the two particle types are the same, we only need to define two particle types to make the visualization easier during post-processing. At :math:`t=0.5` s, the pitched-blade impeller starts rotating with an angular velocity of 6 rad/s and mixes the particles.
 
 
 Parameter file
@@ -43,7 +43,7 @@ The background mesh (mixer body) is created using dealii ``subdivided_cylinder``
 Lagrangian physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two types of particles with the same size and properties. We only need to define two particle types to make the visualization easier during post-processing.
+As mentioned earlier, there are two types of particles with the same size and properties.
 
 .. code-block:: text
 
@@ -57,7 +57,7 @@ There are two types of particles with the same size and properties. We only need
                 set diameter                            = 0.0015
                 set number                              = 23500
                 set density particles                   = 1500
-                set young modulus particles         	  = 1000000
+                set young modulus particles         	  = 1e6
                 set poisson ratio particles             = 0.5
                 set restitution coefficient particles   = 0.5
                 set friction coefficient particles      = 0.5
@@ -68,13 +68,13 @@ There are two types of particles with the same size and properties. We only need
                 set diameter                            = 0.0015
                 set number                              = 23500
                 set density particles                   = 1500
-                set young modulus particles             = 1000000
+                set young modulus particles             = 1e6
                 set poisson ratio particles             = 0.5
                 set restitution coefficient particles   = 0.5
                 set friction coefficient particles      = 0.5
                 set rolling friction particles          = 0.2
         	end
-                set young modulus wall                  = 1000000
+                set young modulus wall                  = 1e6
                 set poisson ratio wall                  = 0.5
                 set restitution coefficient wall        = 0.5
                 set friction coefficient wall           = 0.5
@@ -85,7 +85,7 @@ There are two types of particles with the same size and properties. We only need
 Solid objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this subsection, the floating meshes are defined. We can use dealii or gmsh to create the floating meshes. At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in the dem_3d solver are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment. For each floating mesh, we need to specify a ``translational velocity``, a ``angular velocity``, and a ``center of rotation``. In this example, we only need an angular motion of the impeller. Note that the ``center of rotation`` of the impeller is at 0, 0, 0.
+In this subsection, the floating meshes are defined. We can use dealii or gmsh to create the floating meshes. At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in the dem_3d solver are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment. For each floating mesh, we need to specify a ``translational velocity``, an ``angular velocity``, and a ``center of rotation``. In this example, we only need an angular motion of the impeller. Note that the ``center of rotation`` of the impeller is at 0, 0, 0.
 
 .. code-block:: text
 
@@ -142,3 +142,8 @@ Animation of the granular mixing simulation:
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/ms-gAyZcOXk" frameborder="0" allowfullscreen></iframe>
 
+
+Possibility for extension
+-----------------------------
+
+The same simulation can be carried out with particles of different sizes and properties to study segregation.
