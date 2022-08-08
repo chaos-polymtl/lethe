@@ -1093,7 +1093,7 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
                 16.14 * (1 - cell_void_fraction)) /
                (1 + 0.681 * (1 - cell_void_fraction) -
                 8.48 * pow(1 - cell_void_fraction, 2) +
-                8.14 * pow(1 - cell_void_fraction, 3));
+                8.16 * pow(1 - cell_void_fraction, 3));
         }
       else if ((1 - cell_void_fraction) >= 0.4)
         {
@@ -1107,7 +1107,7 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
         ((18 * viscosity * pow(cell_void_fraction, 2) *
           (1 - cell_void_fraction)) /
          pow(particle_properties[DEM::PropertiesIndex::dp], 2)) *
-        (f0 + 0.5 * f3 * cell_void_fraction * Re_p[particle_number]) *
+        (f0 + 0.5 * f3 * Re_p[particle_number]) *
         (M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
          (2 * dim)) /
         (1 - cell_void_fraction);
@@ -1139,8 +1139,8 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
 
 {
   unsigned int particle_number;
-  double       cell_void_fraction    = 0;
-  double       normalized_drag_force = 0;
+  double       cell_void_fraction = 0;
+  double       C_d                = 0;
   const auto & relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
@@ -1157,7 +1157,6 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
       "GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
-  const double viscosity = scratch_data.properties_manager.viscosity_scale;
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
@@ -1179,26 +1178,27 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
       superficial_velocity =
         relative_velocity[particle_number] * cell_void_fraction;
 
-      // Beetstra normalized frag force
-      normalized_drag_force =
-        10 * (1 - cell_void_fraction) / (pow(cell_void_fraction, 2)) +
-        pow(cell_void_fraction, 2) *
-          (1 + 1.5 * sqrt((1 - cell_void_fraction))) +
-        0.413 * Re_p[particle_number] / (24 * pow(cell_void_fraction, 2)) *
-          ((1 / cell_void_fraction) +
-           3 * (1 - cell_void_fraction) * cell_void_fraction +
-           8.4 * pow(Re_p[particle_number], -0.343)) /
-          (1 + pow(10, 3 * (1 - cell_void_fraction)) *
-                 pow(Re_p[particle_number],
-                     -(1 + 4 * (1 - cell_void_fraction)) * 0.5));
+      // Beetstra drag coefficient
+      C_d = (24.0 / (Re_p[particle_number] / cell_void_fraction)) * 10 *
+              (1 - cell_void_fraction) / (pow(cell_void_fraction, 2)) +
+            pow(cell_void_fraction, 2) *
+              (1 + 1.5 * sqrt((1 - cell_void_fraction))) +
+            0.413 * Re_p[particle_number] / (24 * pow(cell_void_fraction, 2)) *
+              ((1 / cell_void_fraction) +
+               3 * (1 - cell_void_fraction) * cell_void_fraction +
+               8.4 * pow(Re_p[particle_number], -0.343)) /
+              (1 + pow(10, 3 * (1 - cell_void_fraction)) *
+                     pow(Re_p[particle_number],
+                         -(1 + 4 * (1 - cell_void_fraction)) * 0.5));
 
-      drag_force = normalized_drag_force * 3 * M_PI * viscosity * density *
-                   particle_properties[DEM::PropertiesIndex::dp] *
-                   superficial_velocity;
+      double momentum_transfer_coefficient =
+        (M_PI / 8) * pow(particle_properties[DEM::PropertiesIndex::dp], 2) *
+        C_d * relative_velocity[particle_number].norm();
 
-      beta_drag +=
-        drag_force.norm() /
-        (density * (relative_velocity[particle_number].norm()) + 1e-15);
+      beta_drag += momentum_transfer_coefficient;
+
+      drag_force = density * momentum_transfer_coefficient *
+                   relative_velocity[particle_number];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1250,6 +1250,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
       "GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
+
   const auto pic                           = scratch_data.pic;
   double     momentum_transfer_coefficient = 0;
   beta_drag                                = 0;
@@ -1277,16 +1278,15 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
         {
           momentum_transfer_coefficient =
             0.75 * C_d * cell_void_fraction *
-            relative_velocity[particle_number].norm() * density *
-            (1 - cell_void_fraction) /
-            particle_properties[DEM::PropertiesIndex::dp] *
-            pow(cell_void_fraction, -2.65);
+            relative_velocity[particle_number].norm() *
+            (1 - cell_void_fraction) * pow(cell_void_fraction, -2.65) /
+            particle_properties[DEM::PropertiesIndex::dp];
         }
       else
         {
           // Assuming the sphericity of particles = 1
           momentum_transfer_coefficient =
-            150 * pow((1 - cell_void_fraction), 2) * viscosity * density /
+            150 * pow((1 - cell_void_fraction), 2) * viscosity /
               (cell_void_fraction *
                pow(particle_properties[DEM::PropertiesIndex::dp], 2)) +
             1.75 * (1 - cell_void_fraction) *
@@ -1294,13 +1294,12 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
               particle_properties[DEM::PropertiesIndex::dp];
         }
 
-      drag_force =
-        1.0 / 6 * M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], 3) *
-        momentum_transfer_coefficient * relative_velocity[particle_number];
+      beta_drag += momentum_transfer_coefficient;
 
-      beta_drag +=
-        drag_force.norm() /
-        (density * (relative_velocity[particle_number].norm()) + 1e-15);
+      drag_force = 1.0 / 6 * M_PI *
+                   pow(particle_properties[DEM::PropertiesIndex::dp], 3) *
+                   density * momentum_transfer_coefficient *
+                   relative_velocity[particle_number];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1310,8 +1309,6 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
 
       particle_number += 1;
     }
-
-  beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
 template class GLSVansAssemblerGidaspow<2>;

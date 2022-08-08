@@ -345,9 +345,11 @@ public:
           + 8.4 * pow(re, -0.343)) / (1 + pow(10, 3 * (1 - cell_void_fraction))
  * pow(re,
           -(1 + 4 * (1 - cell_void_fraction)) * 0.5));
- *the drag force = normalized_drag_force * 3 * M_PI * viscosity * dp *
-          superficial_velocity and the momentum exchange coefficient beta =
-          drag_force / (density * relative_velocity)
+ *the drag coefficient = normalized_drag_force * 24 / Re_p
+ *The reference for this formulation of the Beestra model is given in the
+ article *Complete liquid-solid momentum coupling for unresolved CFD-DEM
+ simulations:
+ https://www.sciencedirect.com/science/article/pii/S0301932220305346
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers
