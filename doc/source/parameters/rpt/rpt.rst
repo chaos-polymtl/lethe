@@ -12,3 +12,4 @@ The parameter file is composed of different subsections. The principal subsectio
    rpt_parameters
    detector_parameters
    parameter_tuning
+   fem_reconstruction
