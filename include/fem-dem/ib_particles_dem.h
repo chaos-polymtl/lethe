@@ -23,12 +23,11 @@
 
 #include <core/ib_particle.h>
 #include <core/ib_stencil.h>
-#include <core/lethegridtools.h>
-
-#include <solvers/navier_stokes_base.h>
+#include <core/lethe_grid_tools.h>
 
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_contact_info_struct.h>
 
 #include <deal.II/base/tensor.h>

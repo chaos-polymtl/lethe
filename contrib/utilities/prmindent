@@ -1,0 +1,336 @@
+#!/usr/bin/env -S awk -Wexec # -*- mode: awk; -*-
+# * prmindent — indent and format deal.II PRM configuration files
+#
+# SPDX-FileCopyrightText: Copyright (c) 2022 Paul A. Patience <paul@apatience.com>
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# This is a version of prmindent relicensed for inclusion in the Lethe
+# CFD project.
+# The original version and associated documentation is available at
+# https://git.sr.ht/~paulapatience/prmindent.
+
+# * Utilities
+#
+# The utility functions don't access any of the global variables created
+# by this script.
+#
+# ** General-purpose utilities
+#
+# The only one of these functions which modifies any global variables is
+# escapefiles, which modifies ARGV.
+
+function max(a, b) { return a > b ? a : b }
+
+# Return s trimmed of leading and trailing spaces and tabs.
+function trim(s) {
+  gsub(/^[ \t]+/, "", s)
+  gsub(/[ \t]+$/, "", s)
+  return s
+}
+
+# Return s split on FS then joined by OFS.
+function splitjoin(s,   a, i, n) {
+  n = split(s, a)
+  s = a[1]
+  for (i = 2; i <= n; i++) s = s OFS a[i]
+  return s
+}
+
+# Split s once by r into a.
+function splitonce(s, a, r) {
+  if (!match(s, r)) {
+    a[1] = s
+    return 1
+  }
+  a[1] = substr(s, 1, RSTART-1)
+  a[2] = substr(s, RSTART+RLENGTH)
+  return 2
+}
+
+# Return a string consisting of n copies of s.
+function repeat(s, n,   i, t) {
+  t = ""
+  for (i = 0; i < n; i++) t = t s
+  return t
+}
+
+# Return s with the last n characters removed.
+function droplast(n, s) {
+  return substr(s, 1, length(s)-n)
+}
+
+# Dot-slash–escape, when necessary, non-option arguments in ARGV
+# containing equals signs in order to prevent variable assignments.
+# Needed in case the script is run with awk -f.
+function escapefiles(  i) {
+  for (i = 1; i < ARGC; i++)
+    if (ARGV[i] ~ /^[A-Za-z_][A-Za-z0-9_]*=/)
+      ARGV[i] = "./" ARGV[i]
+}
+
+# ** PRM-specific utilities
+#
+# The only global variables these utility functions may modify are the
+# fields $0, $1, etc.
+
+# Return 1 if s is the name of a directive, 0 otherwise.
+function isdirective(s) {
+  return s ~ /^(set|SET|include|INCLUDE|subsection|SUBSECTION|end|END)$/
+}
+
+# Return the comment removed from $0.
+function popcom(  a, n) {
+  n = splitonce($0, a, "#")
+  if (n <= 1) return ""
+  $0 = trim(a[1])
+  return trim("#" a[2])
+}
+
+# Return the lowercased directive removed from $0.
+function popdir(  dir) {
+  if (!isdirective($1)) return ""
+  dir = tolower($1)
+  # Don't yet want to collapse the line's whitespace.
+  gsub(/^[^ \t]+[ \t]*/, "", $0)
+  return dir
+}
+
+# Return the length of a line with given indent, directive, and key,
+# value and comment lengths.
+function linelen(indent, dir, kn, vn, cn) {
+  return length(indent) + length(dir) + (kn>0) + kn + (vn?3:0) + vn + (cn>0) + cn
+}
+
+# Collect the equals-separated key and value in s into ks[i] and vs[i].
+# Runs of spaces and tabs in the key are collapsed.
+function collkeyval(s, ks, vs, i,   a, n) {
+  # frawk fails to fill the array when calling splitonce(s, a, "="), so
+  # manually inline the call.
+  if (!match(s, "=")) {
+    a[1] = s
+    n = 1
+  } else {
+    a[1] = substr(s, 1, RSTART-1)
+    a[2] = substr(s, RSTART+RLENGTH)
+    n = 2
+  }
+  ks[i] = splitjoin(trim(a[1]))
+  vs[i] = n > 1 ? trim(a[2]) : ""
+}
+
+# Return as a string the n collected keys, values and comments.
+function sprintkvcs(indent, ks, vs, cs, n,   i, j, kn, vn, ovn, vps, s, kspec, vspec) {
+  for (i = 0; i < n; i++) kn = max(kn, length(ks[i]))
+  # Value padding takes into account line lengths, unlike key padding.
+  for (i = 0; i < n; i++) {
+    if (cs[i]) {
+      ovn = -1 # Old vn
+      if (length(vs[i]) > vn) {
+        for (j = i-1; j >= 0 && cs[j] && !vps[j]; j--)
+          if (linelen(indent, "set", kn, length(vs[i]), length(cs[j])) > 100) {
+            # Previous comments don't fit within 100 columns.
+            ovn = vn
+            break
+          }
+        vn = length(vs[i])
+      } else if (linelen(indent, "set", kn, vn, length(cs[i])) > 100) {
+        # Current comment doesn't fit.
+        ovn = vn
+        vn = length(vs[i])
+      }
+      if (ovn > 0)
+        for (j = i-1; j >= 0 && cs[j] && !vps[j]; j--) vps[j] = ovn + 1
+    }
+    if (vn > 0 && (i+1 >= n || !cs[i+1])) {
+      for (j = i; j >= 0 && cs[j] && !vps[j]; j--) vps[j] = vn + 1
+      vn = 0
+    }
+  }
+  # frawk doesn't support the asterisk in printf specifiers.
+  kspec = "%-" sprintf("%ds", kn)
+  for (i = 0; i < n; i++) {
+    vspec = i > 0 && vps[i] == vps[i-1] ? vspec : "%-" sprintf("%ds", vps[i])
+    s = s indent sprintf("set " kspec " = " vspec "%s\n", ks[i], vs[i], cs[i])
+  }
+  return s
+}
+
+# * Main logic
+#
+# Globals abound.
+
+function parseargs(  i, j, arg, opt, org, size) {
+  inplace = 0
+  suffix = ""
+  size = 2
+  for (i = 1; i < ARGC; i++) {
+    arg = ARGV[i]
+    if (arg == "--") {
+      delete ARGV[i++]
+      break
+    }
+    if (arg ~ /^--/) {
+      printf("prmindent: unknown option: %s\n", arg) >"/dev/stderr"
+      exit 1
+    }
+    if (arg !~ /^-./)
+      break
+    for (j = 2; j <= length(arg); j++) {
+      opt = substr(arg, j, 1)
+      org = ""
+      if (opt ~ /i|s/) {
+        if (++j <= length(arg)) {
+          org = substr(arg, j)
+          j = length(arg)
+        } else if (opt == "s") {
+          delete ARGV[i++]
+          if (i < ARGC) org = ARGV[i]
+        }
+        if (org == "" && opt != "i") {
+          printf("prmindent: option provided without argument: -%s\n", opt) >"/dev/stderr"
+          exit 1
+        }
+      }
+      if (opt == "i") {
+        inplace = 1
+        suffix = org
+      } else if (opt == "s") {
+        if (org != org+0) {
+          printf("prmindent: nonnumeric indent size: %s\n", org) >"/dev/stderr"
+          exit 1
+        }
+        size = org > 0 ? org : 0
+      } else {
+        printf("prmindent: unknown option: -%s\n", opt) >"/dev/stderr"
+        exit 1
+      }
+    }
+    delete ARGV[i]
+  }
+  if (ARGC > 1 && i >= ARGC) ARGV[ARGC++] = "-" # For Plan 9 awk.
+  indentab[0] = ""
+  indentab[1] = repeat(" ", size)
+}
+
+BEGIN {
+  escapefiles(); parseargs()
+  FS = "[ \t]+"
+  # In case they're provided with -v.
+  delete keys; delete vals; delete coms; nkeys = 0
+  prevline = filename = ""; delete outbuf; outbufind = 0
+}
+
+function putstr(s) {
+  if (inplace) outbuf[outbufind++] = s
+  else printf "%s", s
+}
+
+function putline(s) {
+  putstr(s "\n")
+}
+
+function flushkvcs() {
+  if (nkeys) {
+    putstr(sprintkvcs(indentab[depth], keys, vals, coms, nkeys))
+    delete keys; delete vals; delete coms; nkeys = 0
+  }
+}
+
+function flushlines(  i, f) {
+  if (prevline) {
+    if (newlines) putline()
+    putline(prevline); prevline = ""
+  }
+  if (inplace && filename) {
+    # Mawk won't print to "-".
+    f = stdin ? "/dev/stdout" : filename
+    for (i = 0; i < outbufind; i++)
+      printf "%s", outbuf[i] >f
+    delete outbuf; outbufind = 0
+  }
+}
+
+FNR == 1 {
+  flushkvcs(); flushlines()
+  gotlines = newlines = cont = depth = 0
+  directive = oldir = ""
+  filename = FILENAME
+  stdin = filename == "-" || filename == "/dev/stdin"
+  outfile = suffix && !stdin ? filename suffix : ""
+}
+
+outfile { print >outfile }
+
+{ $0 = trim($0) }
+prevline { $0 = droplast(1, prevline) $0; prevline = "" }
+
+/^$/ {
+    if (cont) {
+      flushkvcs()
+      putline()
+      cont = 0
+    } else newlines = newlines || gotlines
+    next
+}
+
+{
+  comment = popcom()
+  wascont = cont
+  cont = /\\$/ && !comment
+  if (wascont) {
+    if (!contdir) contdir = directive
+    directive = ""
+  } else {
+    if (cont && !/[ \t]/) {
+      prevline = $0
+      cont = 0
+      next
+    }
+    contdir = ""
+    gotequals = 0
+    oldir = directive
+    directive = popdir() # After popcom in case of “end#…”
+  }
+  # Newlines only between recognized directives.
+  if (gotlines && !depth && !wascont && oldir != directive)
+    newlines = 1
+  gotlines = 1
+}
+
+newlines {
+  flushkvcs()
+  if (oldir != "subsection" && directive != "end") putline()
+  newlines = 0
+}
+
+directive == "set" && /=/ {
+  collkeyval($0, keys, vals, nkeys)
+  coms[nkeys++] = comment
+  next
+}
+
+nkeys { flushkvcs(); gotequals = wascont }
+# Gracefully handle spurious ends by lower-bounding depth to 0.
+directive == "end" { depth -= depth > 0 }
+{ putstr(indentab[depth] directive) }
+
+(contdir ? contdir : directive) == "set" {
+  if (!gotequals) {
+    if (/=/) {
+      collkeyval($0, keys, vals, 0)
+      $0 = keys[0] " = " vals[0]
+      gotequals = 1
+    } else $1 = $1
+  }
+}
+
+(contdir ? contdir : directive) == "subsection" { $1 = $1 }
+directive == "subsection" {
+  if (!(++depth in indentab))
+    indentab[depth] = indentab[depth-1] indentab[1]
+}
+
+{ putline((wascont ? indentab[1] : directive && ($0 || comment) ? " " : "")  \
+          $0 (($0 && comment) ? " " : "") comment) }
+
+END { flushkvcs(); flushlines() }

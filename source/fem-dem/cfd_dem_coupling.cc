@@ -50,16 +50,7 @@ check_contact_detection_method(
         (checkpoint_step || load_balance_step || contact_detection_step);
 
       if (sorting_in_subdomains_step)
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-        {
-          unsigned int max_particle_id = 0;
-          for (const auto &particle : particle_handler)
-            max_particle_id = std::max(max_particle_id, particle.get_id());
-          displacement.resize(max_particle_id + 1);
-        }
-#else
         displacement.resize(particle_handler.get_max_local_particle_index());
-#endif
 
       contact_detection_step =
         find_contact_detection_step<dim>(particle_handler,
@@ -254,45 +245,20 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   if (dem_parameters.model_parameters.load_balance_method !=
       Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
     {
-      parallel_triangulation->signals.cell_weight.connect(
+      parallel_triangulation->signals.weight.connect(
+        [](const typename Triangulation<dim>::cell_iterator &,
+           const typename Triangulation<dim>::CellStatus) -> unsigned int {
+          return 1000;
+        });
+
+      parallel_triangulation->signals.weight.connect(
         [&](const typename parallel::distributed::Triangulation<
               dim>::cell_iterator &cell,
             const typename parallel::distributed::Triangulation<dim>::CellStatus
               status) -> unsigned int {
           return this->cell_weight(cell, status);
         });
-
-      parallel_triangulation->signals.pre_distributed_repartition.connect(
-        std::bind(
-          &Particles::ParticleHandler<dim>::register_store_callback_function,
-          &this->particle_handler));
-
-      parallel_triangulation->signals.post_distributed_repartition.connect(
-        std::bind(
-          &Particles::ParticleHandler<dim>::register_load_callback_function,
-          &this->particle_handler,
-          false));
     }
-
-  // Necessary signals for solution transfer after load balancing
-  parallel_triangulation->signals.pre_distributed_refinement.connect(std::bind(
-    &Particles::ParticleHandler<dim>::register_store_callback_function,
-    &this->particle_handler));
-
-  parallel_triangulation->signals.post_distributed_refinement.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &this->particle_handler,
-              false));
-
-  // Necessary signals for writing and reading checkpoints
-  parallel_triangulation->signals.pre_distributed_save.connect(std::bind(
-    &Particles::ParticleHandler<dim>::register_store_callback_function,
-    &this->particle_handler));
-
-  parallel_triangulation->signals.post_distributed_load.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &this->particle_handler,
-              true));
 
   // Initilize contact detection step
   contact_detection_step = false;
@@ -366,6 +332,9 @@ CFDDEMSolver<dim>::read_dem()
         "VANS equations currently do not support triangulations other than parallel::distributed");
     }
 
+  // Deserialize particles have the triangulation has been read
+  this->particle_handler.deserialize();
+
   this->pcout << "Finished reading DEM checkpoint " << std::endl
               << this->particle_handler.n_global_particles()
               << " particles are in the simulation " << std::endl;
@@ -421,6 +390,8 @@ CFDDEMSolver<dim>::write_checkpoint()
     system_trans_vectors(this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
+  // Prepare particle handler for serialization
+  this->particle_handler.prepare_for_serialization();
 
   // Void Fraction
   std::vector<const TrilinosWrappers::MPI::Vector *> vf_set_transfer;
@@ -575,6 +546,9 @@ CFDDEMSolver<dim>::read_checkpoint()
   vf_system.clear();
 
   this->multiphysics->read_checkpoint();
+
+  // Deserialize particles have the triangulation has been read
+  this->particle_handler.deserialize();
 }
 
 template <int dim>
@@ -659,6 +633,8 @@ CFDDEMSolver<dim>::load_balance()
   vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
     vf_set_transfer);
 
+  // Prepare particle handle for serialization
+  this->particle_handler.prepare_for_coarsening_and_refinement();
 
   this->pcout << "-->Repartitionning triangulation" << std::endl;
 
@@ -768,6 +744,9 @@ CFDDEMSolver<dim>::load_balance()
     }
 
   vf_system.clear();
+
+  // Unpack particle handler after load balancing step
+  this->particle_handler.unpack_after_coarsening_and_refinement();
 }
 
 template <int dim>
@@ -807,16 +786,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  {
-    unsigned int max_particle_id = 0;
-    for (const auto &particle : this->particle_handler)
-      max_particle_id = std::max(max_particle_id, particle.get_id());
-    displacement.resize(max_particle_id + 1);
-  }
-#else
   displacement.resize(this->particle_handler.get_max_local_particle_index());
-#endif
 
   force.resize(displacement.size());
   torque.resize(displacement.size());
@@ -842,11 +812,7 @@ CFDDEMSolver<dim>::update_moment_of_inertia(
   for (auto &particle : particle_handler)
     {
       auto &particle_properties = particle.get_properties();
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      MOI[particle.get_id()] =
-#else
       MOI[particle.get_local_index()] =
-#endif
         0.1 * particle_properties[DEM::PropertiesIndex::mass] *
         particle_properties[DEM::PropertiesIndex::dp] *
         particle_properties[DEM::PropertiesIndex::dp];
@@ -891,11 +857,7 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
     {
       auto particle_properties = particle->get_properties();
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      types::particle_index particle_id = particle->get_id();
-#else
       types::particle_index particle_id = particle->get_local_index();
-#endif
 
       force[particle_id][0] +=
         particle_properties[DEM::PropertiesIndex::fem_force_x];
@@ -984,17 +946,8 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      {
-        unsigned int max_particle_id = 0;
-        for (const auto &particle : this->particle_handler)
-          max_particle_id = std::max(max_particle_id, particle.get_id());
-        displacement.resize(max_particle_id + 1);
-      }
-#else
       displacement.resize(
         this->particle_handler.get_max_local_particle_index());
-#endif
       force.resize(displacement.size());
       torque.resize(displacement.size());
 
@@ -1027,10 +980,12 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                              ghost_adjacent_particles,
                              particle_wall_pairs_in_contact,
                              pfw_pairs_in_contact,
+                             particle_floating_mesh_in_contact,
                              local_contact_pair_candidates,
                              ghost_contact_pair_candidates,
                              particle_wall_contact_candidates,
-                             pfw_contact_candidates);
+                             pfw_contact_candidates,
+                             particle_floating_mesh_contact_candidates);
 
 
       locate_local_particles_in_cells<dim>(this->particle_handler,
@@ -1039,6 +994,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                                            local_adjacent_particles,
                                            particle_wall_pairs_in_contact,
                                            pfw_pairs_in_contact,
+                                           particle_floating_mesh_in_contact,
                                            particle_points_in_contact,
                                            particle_lines_in_contact);
 

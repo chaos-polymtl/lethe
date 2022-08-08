@@ -55,6 +55,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
   const parallel::distributed::Triangulation<dim> &triangulation)
 {
   periodic_boundary_cells_information.clear();
+  global_periodic_cell_pair.clear();
 
   // Iterating over the active cells in the trangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -69,6 +70,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
               if (cell->has_periodic_neighbor(face_id))
                 {
                   // Check the global cell index key prior having unique pair
+                  std::cout << cell->periodic_neighbor(face_id)->active_cell_index() << std::endl;
                   if (!global_periodic_cell_pair.count(
                         cell->periodic_neighbor(face_id)->active_cell_index()))
                     {
@@ -103,7 +105,6 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                         {boundary_information.cell->active_cell_index(),
                          periodic_boundary_information.cell
                            ->active_cell_index()});
-
 
                     }
                 }
@@ -182,19 +183,8 @@ void
 PeriodicBoundariesManipulator<dim>::execute_particle_displacement(
   const Particles::ParticleHandler<dim> &particle_handler)
 {
-  for(auto const &x : periodic_boundary_cells_information)
-    {
-      std::cout
-        << "Cell index key: "
-        << x.second.first.cell->active_cell_index()
-        << std::endl;
-      std::cout << "Periodic index key "
-                << x.second.second.cell->active_cell_index()
-                << std::endl;}
-
   if (!periodic_boundary_cells_information.empty())
     {
-      int i = 0;
       for (auto boundary_cells_information_iterator =
              periodic_boundary_cells_information.begin();
            boundary_cells_information_iterator !=
@@ -210,13 +200,13 @@ PeriodicBoundariesManipulator<dim>::execute_particle_displacement(
             boundary_cells_information_iterator->second.second;
           auto periodic_cell = periodic_boundary_cells_content.cell;
 
-          std::cout << "Cell index key: "
+          /*std::cout << "Cell index key: "
                     << boundary_cells_information_iterator->first << std::endl;
           std::cout << "Cell ID:        " << cell->active_cell_index()
                     << std::endl;
           std::cout << "Periodic cell ID: "
                     << periodic_cell->active_cell_index() << std::endl;
-          std::cout << "i:" << i << std::endl;
+          std::cout << "i:" << i << std::endl;*/
 
           if (cell->is_locally_owned())
             {
@@ -249,7 +239,6 @@ PeriodicBoundariesManipulator<dim>::execute_particle_displacement(
                                            particles_in_periodic_cell);
                 }
             }
-          i++;
         }
     }
 }

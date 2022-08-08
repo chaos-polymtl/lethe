@@ -22,9 +22,9 @@
 
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
-#include <core/nitsche.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
+#include <core/solid_objects_parameters.h>
 
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>

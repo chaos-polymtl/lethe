@@ -17,7 +17,7 @@ Location of the example
 
 Description of the case
 -----------------------
-In this case a well-defined flow passes over a series of hills which repeat along a channel in a periodic fashion as it can be seen in the following figure (taken from ERCOFTAC [1]):
+In this case a well-defined flow passes over a series of hills which repeat along a channel in a periodic fashion as it can be seen in the following figure (taken from ERCOFTAC `[1] <https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg>`_):
 
 .. image:: images/geometry_description.jpg
     :alt: The geometry
@@ -237,7 +237,7 @@ Due to the complexity of this example we recommend that you run this example usi
 
 Results
 -------
-To summarize, a coarse mesh of 250K cells was simulated, using a time step of 0.1 and taking average quantities between 207s and 1000s. The results are compared against established test data from both experiments and another CFD simulation. The experimental data corresponds to the data obtained from Rapp [2] and the computational data is extracted from the results of the LESOCC CFD code by Breuer et al. [3]. 
+To summarize, a coarse mesh of 250K cells was simulated, using a time step of 0.1 and taking average quantities between 207s and 1000s. The results are compared against established test data from both experiments and another CFD simulation. The experimental data corresponds to the data obtained from Rapp `[2] <https://mediatum.ub.tum.de/doc/677970/677970.pdf>`_ and the computational data is extracted from the results of the LESOCC CFD code by Breuer et al. `[3] <https://doi.org/10.1016/j.compfluid.2008.05.002>`_.
 
 The following image shows the average velocity profiles in the x-direction:
 
@@ -273,8 +273,8 @@ Possibilities for extension
 
 References
 ----------
-[1] ERCOFTAC. File: hill3d.jpg. 2010. URL https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg.
+`[1] <https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg>`_ ERCOFTAC. File: hill3d.jpg. 2010. URL https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg.
 
-[2] Rapp C. Experimentelle studie der turbulenten strömung über periodische hügel. Ph.D. thesis; Technische Universität München; 2009
+`[2] <https://mediatum.ub.tum.de/doc/677970/677970.pdf>`_ Rapp C. Experimentelle studie der turbulenten strömung über periodische hügel. Ph.D. thesis; Technische Universität München; 2009
 
-[3] Breuer M, Peller N, Rapp C, Manhart M. Flow over periodic hills – numerical and experimental study in a wide range of Reynolds numbers. Computers & Fluids 2009;38(2):433–32, https://doi.org/10.1016/j.compfluid.2008.05.002.
+`[3] <https://doi.org/10.1016/j.compfluid.2008.05.002>`_ Breuer M, Peller N, Rapp C, Manhart M. Flow over periodic hills – numerical and experimental study in a wide range of Reynolds numbers. Computers & Fluids 2009;38(2):433–32, https://doi.org/10.1016/j.compfluid.2008.05.002.

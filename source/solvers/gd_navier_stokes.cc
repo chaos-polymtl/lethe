@@ -136,6 +136,18 @@ GDNavierStokesSolver<dim>::setup_assemblers()
 
 template <int dim>
 void
+GDNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
+{
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      this->multiphysics->set_block_time_average_solution(
+        PhysicsID::fluid_dynamics,
+        &this->average_velocities->get_average_velocities());
+    }
+}
+
+template <int dim>
+void
 GDNavierStokesSolver<dim>::assemble_system_matrix()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
@@ -1190,9 +1202,13 @@ GDNavierStokesSolver<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
+  this->update_multiphysics_time_average_solution();
 
   while (this->simulation_control->integrate())
     {
+      this->forcing_function->set_time(
+        this->simulation_control->get_current_time());
+
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
 

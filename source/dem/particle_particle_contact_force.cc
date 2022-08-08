@@ -33,7 +33,7 @@ ParticleParticleContactForce<dim>::update_contact_information(
   const ArrayView<const double> &             particle_two_properties,
   const Point<3> &                            particle_one_location,
   const Point<3> &                            particle_two_location,
-  const double &                              dt)
+  const double                                dt)
 {
   // Calculation of the contact vector (vector from particle one to particle two
   auto contact_vector = particle_two_location - particle_one_location;

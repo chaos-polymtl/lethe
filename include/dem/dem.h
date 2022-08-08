@@ -17,7 +17,9 @@
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
+#include <core/data_containers.h>
 #include <core/pvd_handler.h>
+#include <core/serial_solid.h>
 
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
@@ -259,11 +261,6 @@ private:
   void
   post_process_results();
 
-
-  void
-  match_periodic_boundaries(Parameters::Lagrangian::BCDEM &bc_param);
-
-
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
   const unsigned int                        this_mpi_process;
@@ -288,20 +285,14 @@ private:
 
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_local_neighbor_list;
+
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_ghost_neighbor_list;
 
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    cells_local_periodic_neighbor_list;
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    cells_ghost_periodic_neighbor_list;
-
-  std::unordered_map<types::particle_index,
-                     std::vector<std::pair<types::particle_index, Point<3>>>>
-    local_periodic_contact_pair_candidates;
-  std::unordered_map<types::particle_index,
-                     std::vector<std::pair<types::particle_index, Point<3>>>>
-    ghost_periodic_contact_pair_candidates;
+  std::unordered_map<
+    types::global_cell_index,
+    std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    cells_total_neighbor_list;
 
   BoundaryCellsInformation<dim> boundary_cell_object;
 
@@ -309,44 +300,71 @@ private:
     local_contact_pair_candidates;
   std::unordered_map<types::particle_index, std::vector<types::particle_index>>
     ghost_contact_pair_candidates;
+
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
+    std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates;
+
+  std::vector<std::vector<
+    std::pair<typename Triangulation<dim>::active_cell_iterator,
+              typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
+    floating_mesh_information;
+
+  std::vector<
+    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+             std::unordered_map<types::particle_index,
+                                particle_wall_contact_info_struct<dim>>,
+             dem_data_containers::cut_cell_comparison<dim>>>
+    particle_floating_mesh_in_contact;
+
+  std::vector<std::map<
+    typename Triangulation<dim - 1, dim>::active_cell_iterator,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
+    dem_data_containers::cut_cell_comparison<dim>>>
+    particle_floating_mesh_contact_candidates;
+
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
     local_adjacent_particles;
+
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index,
                        particle_particle_contact_info_struct<dim>>>
     ghost_adjacent_particles;
+
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     particle_wall_pairs_in_contact;
+
   std::unordered_map<
     types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
+    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
     pfw_pairs_in_contact;
+
   std::unordered_map<
     types::particle_index,
-    std::unordered_map<types::particle_index,
+    std::unordered_map<types::boundary_id,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
-                                  unsigned int,
-                                  unsigned int>>>
+                                  types::boundary_id,
+                                  types::global_cell_index>>>
     particle_wall_contact_candidates;
+
   std::unordered_map<types::particle_index,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
+
   std::unordered_map<
     types::particle_index,
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
     particle_line_contact_candidates;
+
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
     particle_points_in_contact, particle_lines_in_contact;
@@ -354,7 +372,7 @@ private:
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     particle_container;
 
-  std::map<unsigned int, std::pair<Tensor<1, 3>, Point<3>>>
+  std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
                                            updated_boundary_points_and_normal_vectors;
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
@@ -365,18 +383,19 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
-  std::shared_ptr<GridMotion<dim>>   grid_motion_object;
-  ParticleParticleBroadSearch<dim>   particle_particle_broad_search_object;
-  ParticleParticleFineSearch<dim>    particle_particle_fine_search_object;
-  ParticleWallBroadSearch<dim>       particle_wall_broad_search_object;
-  ParticlePointLineBroadSearch<dim>  particle_point_line_broad_search_object;
-  ParticleWallFineSearch<dim>        particle_wall_fine_search_object;
-  ParticlePointLineFineSearch<dim>   particle_point_line_fine_search_object;
-  ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
+  std::shared_ptr<GridMotion<dim>>  grid_motion_object;
+  ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
+  ParticleParticleFineSearch<dim>   particle_particle_fine_search_object;
+  ParticleWallBroadSearch<dim>      particle_wall_broad_search_object;
+  ParticlePointLineBroadSearch<dim> particle_point_line_broad_search_object;
+  ParticleWallFineSearch<dim>       particle_wall_fine_search_object;
+  ParticlePointLineFineSearch<dim>  particle_point_line_fine_search_object;
+  ParticlePointLineForce<dim>       particle_point_line_contact_force_object;
+  std::shared_ptr<Integrator<dim>>  integrator_object;
+  std::shared_ptr<Insertion<dim>>   insertion_object;
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
 
-  std::shared_ptr<Integrator<dim>> integrator_object;
-  std::shared_ptr<Insertion<dim>>  insertion_object;
+
   std::shared_ptr<ParticleParticleContactForce<dim>>
     particle_particle_contact_force_object;
   std::shared_ptr<ParticleWallContactForce<dim>>
@@ -392,14 +411,18 @@ private:
   std::vector<double>       displacement;
   std::vector<double>       MOI;
 
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
+  std::map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
     forces_boundary_information;
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
+  std::map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
     torques_boundary_information;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
+  bool            floating_mesh;
+
+  // Solid DEM objects
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
 };
 
 #endif
