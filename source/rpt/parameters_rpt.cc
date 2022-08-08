@@ -316,18 +316,18 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
           Patterns::Selection("dealii|gmsh"),
           "Type of mesh used");
 
-      prm.declare_entry("mesh filename",
-                        "reactor.msh",
-                        Patterns::FileName(),
-                        "Imported mesh filename");
+    prm.declare_entry("mesh filename",
+                      "reactor.msh",
+                      Patterns::FileName(),
+                      "Imported mesh filename");
 
     prm.declare_entry("z subdivisions",
-                      "1",
+                      "2",
                       Patterns::Integer(),
                       "Number of subdivisions of the initial grid in z");
 
     prm.declare_entry("mesh refinement",
-                      "1",
+                      "2",
                       Patterns::Integer(),
                       "Number of refinements the grid undergoes");
 
@@ -343,7 +343,7 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
 
     prm.declare_entry(
       "cost function type",
-      "absolute",
+      "relative",
       Patterns::Selection("absolute|relative"),
       "Type of cost function applied when evaluating the particle's real position");
 
@@ -376,7 +376,14 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
         throw std::logic_error(
         "Error, invalid mesh type. Choices are 'dealii' or 'gmsh'");
 
-    mesh_file                = prm.get("mesh filename");
+    const std::string mesh_filename = prm.get("mesh filename");
+    std::size_t msh_file = mesh_filename.find(".msh");
+
+    if (msh_file == std::string::npos)
+        throw std::logic_error("Error, the imported mesh must be in a '.msh' file format");
+    else
+        mesh_file            = mesh_filename;
+
     z_subdivisions           = prm.get_integer("z subdivisions");
     mesh_refinement          = prm.get_integer("mesh refinement");
     experimental_counts_file = prm.get("experimental counts file");

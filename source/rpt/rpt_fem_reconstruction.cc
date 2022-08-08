@@ -57,36 +57,20 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::setup_triangulation()
 {
-  Triangulation<dim> temp_triangulation;
-  /*
-    GridGenerator::cylinder(temp_triangulation,
-                            rpt_parameters.rpt_param.reactor_radius,
-                            rpt_parameters.rpt_param.reactor_height / 2);
-  */
-
   if (rpt_parameters.fem_reconstruction_param.mesh_type == Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
   {
-
       GridIn<dim> grid_in;
       grid_in.attach_triangulation(triangulation);
       std::ifstream input_file(rpt_parameters.fem_reconstruction_param.mesh_file);
       grid_in.read_msh(input_file);
 
-      const CylindricalManifold<dim> boundary(2);
+      const CylindricalManifold<dim> manifold(2);
       triangulation.set_all_manifold_ids(0);
-      triangulation.set_manifold(0, boundary);
-
-      std::cout << "Number of active cells: " << triangulation.n_active_cells() << std::endl;
-
-/*
-      temp_triangulation.refine_global(rpt_parameters.fem_reconstruction_param.mesh_refinement);
-
-      GridGenerator::flatten_triangulation(temp_triangulation,
-                                           triangulation);
-*/
+      triangulation.set_manifold(0, manifold);
   }
   else
   {
+      Triangulation<dim> temp_triangulation;
       Triangulation<dim> flat_temp_triangulation;
 
       GridGenerator::subdivided_cylinder(
@@ -336,7 +320,7 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::L2_project()
 {
-  // MultithreadInfo::set_thread_limit(4);
+  MultithreadInfo::set_thread_limit(1);
   std::cout << "***********************************************" << std::endl;
   std::cout << "Assigning detector positions" << std::endl;
   assign_detector_positions();
@@ -346,6 +330,7 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "***********************************************" << std::endl;
   std::cout << "Setting up the grid" << std::endl;
   setup_triangulation();
+  std::cout << "Number of active cells: " << triangulation.n_active_cells() << std::endl;
   std::cout << "***********************************************" << std::endl;
 
   setup_system();
@@ -631,7 +616,6 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
             }
         }
     }
-  // std::cout << final_result << std::endl;
   found_positions.push_back(real_location);
 }
 
@@ -670,13 +654,19 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::trajectory()
 {
-  const unsigned int power =
-    pow(2, rpt_parameters.fem_reconstruction_param.mesh_refinement);
-  const unsigned int n_cell_z =
-    2 * rpt_parameters.fem_reconstruction_param.z_subdivisions * power;
-  const double tol_reference_location =
-    rpt_parameters.rpt_param.reactor_height / n_cell_z*1.15;
-  std::cout << "tol: " << tol_reference_location << std::endl;
+   double tol_reference_location = 0.01;
+
+   if (rpt_parameters.fem_reconstruction_param.mesh_type == Parameters::RPTFEMReconstructionParameters::FEMMeshType::dealii)
+   {
+        const unsigned int power =
+                pow(2, rpt_parameters.fem_reconstruction_param.mesh_refinement);
+        const unsigned int n_cell_z =
+                2 * rpt_parameters.fem_reconstruction_param.z_subdivisions * power;
+        tol_reference_location =
+                rpt_parameters.rpt_param.reactor_height / n_cell_z * 1.15;
+   }
+
+   std::cout << "tol: " << tol_reference_location << std::endl;
 
   // Read and store all experimental counts
   std::vector<std::vector<double>> all_experimental_counts;
@@ -740,6 +730,7 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
         triangulation.load(ia, 0);
       }
   */
+
   // Import dof handler
   {
     dof_handler.distribute_dofs(fe);
@@ -763,9 +754,6 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
         nodal_counts[i] = counts_per_detector;
       }
   }
-
-  // Verification
-  // output_results();
 }
 
 template <int dim>
@@ -815,7 +803,6 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
 {
-  //MultithreadInfo::set_thread_limit(4);
   std::cout << "***********************************************" << std::endl;
   std::cout << "Loading dof handler and nodal counts from " << std::endl;
   std::cout << "saved files " << std::endl;
