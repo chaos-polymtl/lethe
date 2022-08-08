@@ -28,6 +28,7 @@
 #include <boost/range/adaptor/map.hpp>
 
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 
 using namespace dealii;
