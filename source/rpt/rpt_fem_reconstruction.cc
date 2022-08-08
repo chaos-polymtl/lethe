@@ -7,9 +7,9 @@
 #include <deal.II/fe/fe_values.h>
 
 #include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/lac/lapack_full_matrix.h>
@@ -57,29 +57,31 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::setup_triangulation()
 {
-  if (rpt_parameters.fem_reconstruction_param.mesh_type == Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
-  {
+  if (rpt_parameters.fem_reconstruction_param.mesh_type ==
+      Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
+    {
       GridIn<dim> grid_in;
       grid_in.attach_triangulation(triangulation);
-      std::ifstream input_file(rpt_parameters.fem_reconstruction_param.mesh_file);
+      std::ifstream input_file(
+        rpt_parameters.fem_reconstruction_param.mesh_file);
       grid_in.read_msh(input_file);
 
       const CylindricalManifold<dim> manifold(2);
       triangulation.set_all_manifold_ids(0);
       triangulation.set_manifold(0, manifold);
-  }
+    }
   else
-  {
+    {
       Triangulation<dim> temp_triangulation;
       Triangulation<dim> flat_temp_triangulation;
 
       GridGenerator::subdivided_cylinder(
-              temp_triangulation,
-              rpt_parameters.fem_reconstruction_param.z_subdivisions,
-              rpt_parameters.rpt_param.reactor_radius,
-              rpt_parameters.rpt_param.reactor_height * 0.5);
+        temp_triangulation,
+        rpt_parameters.fem_reconstruction_param.z_subdivisions,
+        rpt_parameters.rpt_param.reactor_radius,
+        rpt_parameters.rpt_param.reactor_height * 0.5);
       temp_triangulation.refine_global(
-              rpt_parameters.fem_reconstruction_param.mesh_refinement);
+        rpt_parameters.fem_reconstruction_param.mesh_refinement);
 
       // Flatten the triangulation
       GridGenerator::flatten_triangulation(temp_triangulation,
@@ -90,19 +92,19 @@ RPTFEMReconstruction<dim>::setup_triangulation()
       triangulation.set_all_manifold_ids(0);
 
       // Grid transformation
-      Tensor<1,dim, double> axis({0,1,0});
+      Tensor<1, dim, double> axis({0, 1, 0});
       GridTools::rotate(axis, M_PI_2, triangulation);
       Tensor<1, dim> shift_vector(
-              {0, 0, rpt_parameters.rpt_param.reactor_height * 0.5});
+        {0, 0, rpt_parameters.rpt_param.reactor_height * 0.5});
       GridTools::shift(shift_vector, triangulation);
-  }
-/*
-    GridOut grid_out;
-    {
-      std::ofstream output_file("triangulation.vtk");
-      grid_out.write_vtk(triangulation, output_file);
     }
-*/
+  /*
+      GridOut grid_out;
+      {
+        std::ofstream output_file("triangulation.vtk");
+        grid_out.write_vtk(triangulation, output_file);
+      }
+  */
 }
 
 template <int dim>
@@ -330,7 +332,8 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "***********************************************" << std::endl;
   std::cout << "Setting up the grid" << std::endl;
   setup_triangulation();
-  std::cout << "Number of active cells: " << triangulation.n_active_cells() << std::endl;
+  std::cout << "Number of active cells: " << triangulation.n_active_cells()
+            << std::endl;
   std::cout << "***********************************************" << std::endl;
 
   setup_system();
@@ -654,19 +657,20 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::trajectory()
 {
-   double tol_reference_location = 0.01;
+  double tol_reference_location = 0.01;
 
-   if (rpt_parameters.fem_reconstruction_param.mesh_type == Parameters::RPTFEMReconstructionParameters::FEMMeshType::dealii)
-   {
-        const unsigned int power =
-                pow(2, rpt_parameters.fem_reconstruction_param.mesh_refinement);
-        const unsigned int n_cell_z =
-                2 * rpt_parameters.fem_reconstruction_param.z_subdivisions * power;
-        tol_reference_location =
-                rpt_parameters.rpt_param.reactor_height / n_cell_z * 1.15;
-   }
+  if (rpt_parameters.fem_reconstruction_param.mesh_type ==
+      Parameters::RPTFEMReconstructionParameters::FEMMeshType::dealii)
+    {
+      const unsigned int power =
+        pow(2, rpt_parameters.fem_reconstruction_param.mesh_refinement);
+      const unsigned int n_cell_z =
+        2 * rpt_parameters.fem_reconstruction_param.z_subdivisions * power;
+      tol_reference_location =
+        rpt_parameters.rpt_param.reactor_height / n_cell_z * 1.15;
+    }
 
-   std::cout << "tol: " << tol_reference_location << std::endl;
+  std::cout << "tol: " << tol_reference_location << std::endl;
 
   // Read and store all experimental counts
   std::vector<std::vector<double>> all_experimental_counts;

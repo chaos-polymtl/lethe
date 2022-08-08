@@ -157,7 +157,7 @@ namespace Parameters
    */
   struct RPTFEMReconstructionParameters
   {
-    std::string mesh_file; //mesh filename
+    std::string mesh_file; // mesh filename
     unsigned int
                  z_subdivisions; // number of subdivisions of the initial grid in z
     unsigned int mesh_refinement; // number of refinement the grid undergoes
@@ -180,11 +180,11 @@ namespace Parameters
 
     enum class FEMMeshType
     {
-        dealii,
-        gmsh
+      dealii,
+      gmsh
     };
 
-    FEMMeshType mesh_type;
+    FEMMeshType     mesh_type;
     FEMCostFunction fem_cost_function;
 
     static void
