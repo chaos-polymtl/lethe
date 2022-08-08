@@ -22,6 +22,8 @@
 #include <dem/particle_particle_contact_info_struct.h>
 #include <dem/particle_wall_contact_info_struct.h>
 
+#include <unordered_map>
+
 using namespace std;
 
 #ifndef localize_contacts_h

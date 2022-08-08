@@ -18,6 +18,8 @@
  */
 #include <deal.II/particles/particle_handler.h>
 
+#include <unordered_map>
+
 using namespace dealii;
 
 #ifndef update_particle_container_h

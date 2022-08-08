@@ -18,6 +18,8 @@
  */
 #include <dem/particle_particle_contact_info_struct.h>
 
+#include <unordered_map>
+
 using namespace dealii;
 
 #ifndef update_local_particle_particle_contact_container_h
