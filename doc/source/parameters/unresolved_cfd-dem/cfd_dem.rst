@@ -32,7 +32,7 @@ This subsection includes parameters related to multiphase flow simulations using
 .. note::
     By setting ``set saffman lift force = true``, the applied Saffman lift force model is the often called Saffman-Mei model, developed by Mei (1992) `[2] <https://doi.org/10.1016/0301-9322(92)90012-6>`_ as an extension of the work by Saffman (1968) `[3] <https://doi.org/10.1017/S0022112065000824>`_. A complete description of the model is provided by Crowe et al. (2010) `[4] <https://doi.org/10.1201/b11103>`_.
 
-* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time of writing are: Di Felice `[5] <https://doi.org/10.1016/0301-9322(94)90011-6>`_, Rong `[6] <https://doi.org/10.1016/j.ces.2013.05.036>`_, Dallavalle `[7] <https://doi.org/10.1080/07373937.2010.482714>`_, Koch and Hill `[8] <https://doi.org/10.1016/j.ces.2013.05.014>`_, Beetstra `[9] <https://doi.org/10.1002/aic.11065>`_, and Gidaspow `[10] <https://books.google.ca/books?id=fHecceQyaYkC&lpg=PP1&ots=uhExYvWrkv&lr&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_.
+* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time of writing are: Di Felice `[5] <https://doi.org/10.1016/0301-9322(94)90011-6>`_, Rong `[6] <https://doi.org/10.1016/j.ces.2013.05.036>`_, Dallavalle `[7] <https://doi.org/10.1080/07373937.2010.482714>`_, Koch and Hill `[8] <https://doi.org/10.1016/j.ces.2013.05.014>`_, Beetstra `[9] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_, and Gidaspow `[10] <https://books.google.ca/books?id=fHecceQyaYkC&lpg=PP1&ots=uhExYvWrkv&lr&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_.
 * The ``post processing`` parameter, when enabled, allows the calculation of the pressure drop, void fraction in the packed region, and the mass conservation in a packed bed at each time step.
 * The ``coupling frequency`` parameter is only applicable for the cfd-dem solver and it determines the number of DEM iterations per 1 CFD iteration.
 
@@ -62,6 +62,6 @@ This subsection includes parameters related to multiphase flow simulations using
 
 `[8] <https://doi.org/10.1016/j.ces.2013.05.014>`_  D. Jajcevic, E. Siegmann, C. Radeke, J. G. Khinast, Large-scale cfd–dem simulations of fluidized granular systems, Chemical Engineering Science 98 (2013) 298–310.
 
-`[9] <https://doi.org/10.1002/aic.11065>`_ R. Beetstra, M. A. van der Hoef, J. A. M. Kuipers. Drag Force of Intermediate Reynolds Number Flow Past Mono- and Bidisperse Arrays of Spheres. AIChE journal, v. 53, n. 2, p. 489-501, 2007.
+`[9] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_ Tim M.J. Nijssen, Hans A.M. Kuipers, Jan van der Stel, Allert T. Adema, Kay A. Buist, Complete liquid-solid momentum coupling for unresolved CFD-DEM simulations, International Journal of Multiphase Flow, Volume 132, 2020, 103425.
 
 `[10] <https://books.google.ca/books?id=fHecceQyaYkC&lpg=PP1&ots=uhExYvWrkv&lr&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_ D. Gidaspow. Multiphase flow and fluidization: continuum and kinetic theory descriptions. Academic press, 1994.
