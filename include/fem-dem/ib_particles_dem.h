@@ -67,6 +67,8 @@ public:
    */
   void
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
+             const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
+                                                 floating_walls_parameters,
              const MPI_Comm &                    mpi_communicator_input,
              const std::vector<IBParticle<dim>> &particles);
 
@@ -228,16 +230,20 @@ private:
         {
           ar &normal_vector;
           ar &point_on_boundary;
+          ar &boundary_index;
         }
     }
 
     Tensor<1, dim> normal_vector;
     Point<dim>     point_on_boundary;
+    unsigned int   boundary_index;
   };
 
   std::shared_ptr<Parameters::IBParticles<dim>> parameters;
-  DEMSolverParameters<dim>                      dem_parameters{};
-  MPI_Comm                                      mpi_communicator;
+  std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
+                           floating_walls_parameters;
+  DEMSolverParameters<dim> dem_parameters{};
+  MPI_Comm                 mpi_communicator;
 
   std::shared_ptr<ParticleParticleContactForce<dim>>
     particle_particle_contact_force_object;

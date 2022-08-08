@@ -40,9 +40,11 @@
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
 GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
-  SimulationParameters<dim> &p_nsparam)
-  : GLSNavierStokesSolver<dim>(p_nsparam)
+  CFDDEMSimulationParameters<dim> &p_nsparam)
+  : GLSNavierStokesSolver<dim>(p_nsparam.cfd_parameters)
+  , cfd_dem_parameters(p_nsparam)
   , all_spheres(true)
+
 {}
 
 template <int dim>
@@ -447,9 +449,12 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
     }
 
   table_p.resize(particles.size());
-  ib_dem.initialize(this->simulation_parameters.particlesParameters,
-                    this->mpi_communicator,
-                    particles);
+  ib_dem.initialize(
+    this->simulation_parameters.particlesParameters,
+    std::make_shared<Parameters::Lagrangian::FloatingWalls<dim>>(
+      cfd_dem_parameters.dem_parameters.floating_walls),
+    this->mpi_communicator,
+    particles);
 
   check_whether_all_particles_are_sphere();
 }
@@ -3107,18 +3112,19 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
 {
   this->GLSNavierStokesSolver<dim>::write_checkpoint();
 
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
 
-  TableHandler particles_information_table;
-  std::string  filename =
-    this->simulation_parameters.simulation_control.output_folder + prefix +
-    ".ib_particles";
-  std::ofstream output(filename.c_str());
   // Write a table with all the relevant properties of the particle in a table.
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
+      std::string prefix =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename;
+
+      TableHandler particles_information_table;
+      std::string  filename =
+        this->simulation_parameters.simulation_control.output_folder + prefix +
+        ".ib_particles";
+      std::ofstream output(filename.c_str());
       this->simulation_control->save(prefix);
 
       this->pvdhandler.save(prefix);
