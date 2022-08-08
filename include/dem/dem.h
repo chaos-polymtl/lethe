@@ -383,16 +383,16 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
-  std::shared_ptr<GridMotion<dim>>  grid_motion_object;
-  ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
-  ParticleParticleFineSearch<dim>   particle_particle_fine_search_object;
-  ParticleWallBroadSearch<dim>      particle_wall_broad_search_object;
-  ParticlePointLineBroadSearch<dim> particle_point_line_broad_search_object;
-  ParticleWallFineSearch<dim>       particle_wall_fine_search_object;
-  ParticlePointLineFineSearch<dim>  particle_point_line_fine_search_object;
-  ParticlePointLineForce<dim>       particle_point_line_contact_force_object;
-  std::shared_ptr<Integrator<dim>>  integrator_object;
-  std::shared_ptr<Insertion<dim>>   insertion_object;
+  std::shared_ptr<GridMotion<dim>>   grid_motion_object;
+  ParticleParticleBroadSearch<dim>   particle_particle_broad_search_object;
+  ParticleParticleFineSearch<dim>    particle_particle_fine_search_object;
+  ParticleWallBroadSearch<dim>       particle_wall_broad_search_object;
+  ParticlePointLineBroadSearch<dim>  particle_point_line_broad_search_object;
+  ParticleWallFineSearch<dim>        particle_wall_fine_search_object;
+  ParticlePointLineFineSearch<dim>   particle_point_line_fine_search_object;
+  ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
+  std::shared_ptr<Integrator<dim>>   integrator_object;
+  std::shared_ptr<Insertion<dim>>    insertion_object;
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
 
 

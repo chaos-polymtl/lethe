@@ -35,9 +35,11 @@ using namespace dealii;
 #  define particle_wall_periodic_displacement_h
 
 /**
- * This class is used for ...
+ * This class is used to manipulate the particle location dealing with
+ * periodic boundaries.
  *
- * @note
+ * @note Currently not fully implemented to work with particle collision, only
+ *       allow the periodic cells mapping and particle displacement.
  *
  * @author Audrey Collard-Daigneault, Polytechnique Montreal 2022-
  */
@@ -48,33 +50,70 @@ class PeriodicBoundariesManipulator
 public:
   PeriodicBoundariesManipulator<dim>();
 
+  /**
+   * @brief Set the periodic boundaries parameters. Parameters are implemented
+   * to allow use of more than one PBC, but the feature is not implemented yet.
+   *
+   * @param outlet_boundaries Vector of periodic boundaries identified as outlet
+   * @param periodic_boundaries Vector of periodic boundaries identified as
+   *                            periodic
+   * @param periodic_directions Vector of directions, perpendicular axis of PB
+   */
   void
-  set_periodic_boundaries_direction(unsigned int direction)
+  set_periodic_boundaries_information(
+    std::vector<unsigned int> outlet_boundaries,
+    std::vector<unsigned int> periodic_boundaries,
+    std::vector<unsigned int> periodic_directions)
   {
-    this->direction = direction;
+    outlet_boundary_id   = outlet_boundaries[0];
+    periodic_boundary_id = periodic_boundaries[0];
+    direction            = periodic_directions[0];
   }
 
+  /**
+   * @brief Set the periodic boundaries parameters. Parameters are implemented
+   * to allow use of more than one PBC, but the feature is not implemented yet
+   *
+   * @param triangulation Triangulation of mesh
+   */
   void
   map_periodic_cells(
     const parallel::distributed::Triangulation<dim> &triangulation);
 
+  /**
+   * @brief Move particles passing through periodic boundaries (any side)
+   * particle_handle doesn't allow automated particle displacement since it is
+   * not linked to triangulation and its periodic mapping.
+   *
+   * @param particle_handler Particle handler of particles located in boundary
+   * cells
+   */
   void
-  execute_particle_displacement(
+  execute_particles_displacement(
     const Particles::ParticleHandler<dim> &particle_handler);
 
-
-
 private:
-  std::map<
-    types::global_cell_index,
-    std::pair<boundary_cells_info_struct<dim>, boundary_cells_info_struct<dim>>>
-    periodic_boundary_cells_information;
-
+  /**
+   * @brief Get boundary information related to the face at outlet or periodic
+   * boundary and store in boundary_cells_info_struct object.
+   *
+   * @param cell Current cell on boundary
+   * @param face_id Face located on boundary
+   * @param boundary_information Reference to the object with boundary info
+   */
   void
   get_boundary_info(typename Triangulation<dim>::cell_iterator cell,
                     unsigned int                               face_id,
                     boundary_cells_info_struct<dim> &boundary_information);
 
+  /**
+   * @brief Check if particle is outside of the cell, if so, modify the
+   * location of the particle with the distance between the periodic faces.
+   *
+   * @param cell_1 Cell where particles may get outside of domain
+   * @param cell_2 Periodic cell to the cell_1
+   * @param particles_in_cell Iterator to the particle in cell_1
+   */
   void
   check_and_move_particles(
     boundary_cells_info_struct<dim> &cell_1,
@@ -82,10 +121,15 @@ private:
     typename Particles::ParticleHandler<dim>::particle_iterator_range
       &particles_in_cell);
 
-  std::map<types::global_cell_index, types::global_cell_index>
-    global_periodic_cell_pair;
-
+  unsigned int outlet_boundary_id;
+  unsigned int periodic_boundary_id;
   unsigned int direction;
+
+  // Mapping the cell pair, cell index is outlet
+  std::map<
+    types::global_cell_index,
+    std::pair<boundary_cells_info_struct<dim>, boundary_cells_info_struct<dim>>>
+    periodic_boundary_cells_information;
 };
 
 #endif /* particle_wall_periodic_displacement_h */

@@ -5,10 +5,10 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 		 = 1e-4
-  set time end       					 = 2
+  set time end       					 = 1
   set log frequency				         = 50
   set output frequency            		 = 50
-  set output path 					     = ./output_full_par2/
+  set output path 					     = ./output/
   set output name                        = simulation
   set output boundaries                  = true
 end
@@ -40,13 +40,13 @@ subsection lagrangian physical properties
         set diameter            	 	        = 0.005
         set number				                = 25
         set density particles            	    = 2500
-        set young modulus particles         	= 1000000
+        set young modulus particles         	= 1e6
         set poisson ratio particles          	= 0.3
         set restitution coefficient particles	= 0.94
         set friction coefficient particles      = 0.2
         set rolling friction particles         	= 0.09
     end
-    set young modulus wall            			= 1000000
+    set young modulus wall            			= 1e6
     set poisson ratio wall            			= 0.3
     set friction coefficient wall         		= 0.2
     set restitution coefficient wall            = 0.9

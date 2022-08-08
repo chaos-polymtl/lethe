@@ -885,8 +885,10 @@ DEMSolver<dim>::solve()
   if (parameters.boundary_conditions.BC_type ==
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
     {
-      periodic_boundaries_object.set_periodic_boundaries_direction(
-        parameters.boundary_conditions.periodic_direction[0]);
+      periodic_boundaries_object.set_periodic_boundaries_information(
+        parameters.boundary_conditions.outlet_boundaries,
+        parameters.boundary_conditions.periodic_boundaries,
+        parameters.boundary_conditions.periodic_direction);
 
       periodic_boundaries_object.map_periodic_cells(triangulation);
     }
@@ -1069,11 +1071,10 @@ DEMSolver<dim>::solve()
             torque,
             force,
             MOI);
-
         }
 
       // Particles displacement if passing through a periodic boundary
-      periodic_boundaries_object.execute_particle_displacement(
+      periodic_boundaries_object.execute_particles_displacement(
         particle_handler);
 
       // Visualization
