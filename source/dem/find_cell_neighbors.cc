@@ -1,4 +1,5 @@
 #include <dem/find_cell_neighbors.h>
+
 #include <unordered_map>
 
 using namespace dealii;

@@ -22,8 +22,8 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 using namespace dealii;
 
