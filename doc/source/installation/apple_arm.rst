@@ -30,7 +30,7 @@ After installation, add an environment variable to your ``~/.zshrc`` either manu
 
 .. code-block:: text
 
-   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.zshrc`
+   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.zshrc
 
 Setting the Library and Include paths
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
