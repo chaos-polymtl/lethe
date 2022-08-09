@@ -64,30 +64,35 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
             {
               // Check if face is on the periodic boundary flaged as outlet.
               // Pairs of periodic cells are stored once.
-              if (face->boundary_id() == outlet_boundary_id)
+              for (unsigned int &outlet_boundary_id : outlet_boundary_ids)
                 {
-                  unsigned int face_id = cell->face_iterator_to_index(face);
+                  if (face->boundary_id() == outlet_boundary_id)
+                    {
+                      unsigned int face_id = cell->face_iterator_to_index(face);
 
-                  // Save boundaries information related to the cell on
-                  // outlet boundary.
-                  boundary_cells_info_struct<dim> boundary_information;
-                  get_boundary_info(cell, face_id, boundary_information);
+                      // Save boundaries information related to the cell on
+                      // outlet boundary.
+                      boundary_cells_info_struct<dim> boundary_information;
+                      get_boundary_info(cell, face_id, boundary_information);
 
-                  // Save boundaries information related to the cell on
-                  // Periodic boundary.
-                  boundary_cells_info_struct<dim> periodic_boundary_information;
-                  typename Triangulation<dim>::active_cell_iterator
-                    periodic_cell = cell->periodic_neighbor(face_id);
-                  get_boundary_info(periodic_cell,
-                                    cell->periodic_neighbor_face_no(face_id),
-                                    periodic_boundary_information);
+                      // Save boundaries information related to the cell on
+                      // Periodic boundary.
+                      boundary_cells_info_struct<dim>
+                        periodic_boundary_information;
+                      typename Triangulation<dim>::active_cell_iterator
+                        periodic_cell = cell->periodic_neighbor(face_id);
+                      get_boundary_info(periodic_cell,
+                                        cell->periodic_neighbor_face_no(
+                                          face_id),
+                                        periodic_boundary_information);
 
-                  // Store both cell information in map with cell id at
-                  // outlet as key
-                  periodic_boundary_cells_information.insert(
-                    {boundary_information.cell->global_active_cell_index(),
-                     std::make_pair(boundary_information,
-                                    periodic_boundary_information)});
+                      // Store both cell information in map with cell id at
+                      // outlet as key
+                      periodic_boundary_cells_information.insert(
+                        {boundary_information.cell->global_active_cell_index(),
+                         std::make_pair(boundary_information,
+                                        periodic_boundary_information)});
+                    }
                 }
             }
         }
@@ -119,11 +124,11 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
       // If so, particle location is modified to get moved in the periodic cell.
       if (distance_with_face >= 0.0)
         {
-          double distance_between_faces =
-            cell_2.point_on_face[direction] - cell_1.point_on_face[direction];
+          Point<dim, double> distance_between_faces;
+          distance_between_faces = cell_2.point_on_face - cell_1.point_on_face;
 
           // Move particle outside the current cell to the periodic cell.
-          particle_position[direction] += distance_between_faces;
+          particle_position += distance_between_faces;
           particle->set_location(particle_position);
         }
     }

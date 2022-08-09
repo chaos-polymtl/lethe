@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2022
  */
 
 #include <dem/boundary_cells_info_struct.h>
@@ -65,9 +62,9 @@ public:
     std::vector<unsigned int> periodic_boundaries,
     std::vector<unsigned int> periodic_directions)
   {
-    outlet_boundary_id   = outlet_boundaries[0];
-    periodic_boundary_id = periodic_boundaries[0];
-    direction            = periodic_directions[0];
+    outlet_boundary_ids   = outlet_boundaries;
+    periodic_boundary_ids = periodic_boundaries;
+    directions            = periodic_directions;
   }
 
   /**
@@ -121,9 +118,9 @@ private:
     typename Particles::ParticleHandler<dim>::particle_iterator_range
       &particles_in_cell);
 
-  unsigned int outlet_boundary_id;
-  unsigned int periodic_boundary_id;
-  unsigned int direction;
+  std::vector<unsigned int> outlet_boundary_ids;
+  std::vector<unsigned int> periodic_boundary_ids;
+  std::vector<unsigned int> directions;
 
   // Mapping the cell pair, cell index is outlet
   std::map<

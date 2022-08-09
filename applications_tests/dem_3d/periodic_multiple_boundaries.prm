@@ -4,8 +4,9 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
+
   set time step                 		 = 1.5e-5
-  set time end       					 = 0.25
+  set time end       					 = 0.2
   set log frequency				         = 10000
   set output frequency            		 = 10000
 end
@@ -34,13 +35,13 @@ end
 #---------------------------------------------------
 subsection lagrangian physical properties
     set gx            		 			        = 0.0
-    set gy            		 			        = -1
-    set gz            		 			        = 0.0
+    set gy            		 			        = -10
+    set gz            		 			        = -10
     set number of particle types	            = 1
     subsection particle type 0
         set size distribution type		        = uniform
         set diameter            	 	        = 0.0075
-        set number				                = 10
+        set number				                = 2
         set density particles            	    = 2500
         set young modulus particles         	= 1e6
         set poisson ratio particles          	= 0.3
@@ -59,18 +60,11 @@ end
 # Insertion Info
 #---------------------------------------------------
 subsection insertion info
-    set insertion method				                = non_uniform
-    set inserted number of particles at each time step  = 10
-    set insertion frequency            		 	        = 50
-    set insertion box minimum x            	 	        = 0.0
-    set insertion box minimum y            	            =  0.02
-    set insertion box minimum z            	            =  0.0
-    set insertion box maximum x            	            =  0.05
-    set insertion box maximum y           	 	        =  0.035
-    set insertion box maximum z            	            =  0.05
-    set insertion distance threshold			        = 1.5
-    set insertion random number range			        = 0.1
-    set insertion random number seed			        = 20
+    set insertion method				         = list
+    set list x                                   = 0.04, 0.01
+    set list y                                   = 0.02, 0.04
+    set list z                                   = 0.04, 0.01
+    set insertion frequency            		 	 = 100
 end
 
 #---------------------------------------------------
@@ -88,7 +82,7 @@ end
 # Boundary conditions
 #---------------------------------------------------
 subsection DEM boundary conditions
-   set number of boundary conditions                     = 1
+   set number of boundary conditions                     = 2
 
    subsection boundary condition 0
        # Choices are fixed_wall|outlet|rotational|translational|periodic
@@ -98,5 +92,11 @@ subsection DEM boundary conditions
        set periodic direction                          = 1
    end
 
+  subsection boundary condition 1
+      # Choices are fixed_wall|outlet|rotational|translational|periodic
+      set type                                        = periodic
+      set boundary id                                 = 4
+      set periodic id                                 = 5
+      set periodic direction                          = 2
+  end
 end
-
