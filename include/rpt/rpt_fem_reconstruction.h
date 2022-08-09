@@ -64,6 +64,7 @@ public:
     , dof_handler(triangulation)
     , rpt_parameters(RPTparameters)
     , mapping(FE_SimplexP<dim>(1))
+    , computing_timer(std::cout, TimerOutput::summary, TimerOutput::wall_times)
   {}
 
   /**
@@ -137,6 +138,7 @@ private:
   void
   output_raw_results();
 
+  // Unused
   /**
    * @brief Outputs for every level of the triangulation, the position of
    * each vertex of every cell and the photon count at that position for
@@ -145,6 +147,7 @@ private:
   void
   output_raw_results_per_level();
 
+  // Unused
   /**
    * @brief Outputs for a given level of the triangulation, the position of
    * each vertex of every cell and the photon count at that position for
@@ -261,7 +264,12 @@ private:
   std::vector<Detector<dim>>  detectors;
   std::vector<Point<dim>>     found_positions;
 
+  TimerOutput computing_timer;
 
+  // TO DO
+  /**
+   * @brief
+   */
   struct AssemblyScratchData
   {
     AssemblyScratchData(const FiniteElement<dim> &fe,
@@ -272,13 +280,17 @@ private:
     unsigned int  detector_id;
   };
 
+  /**
+   * @brief
+   */
+
   struct AssemblyCopyData
   {
     FullMatrix<double>                   cell_matrix;
     Vector<double>                       cell_rhs;
     std::vector<types::global_dof_index> local_dof_indices;
   };
-  // TO DO
+
   /**
    * @brief Assembles local linear system to get the nodal values of a given
    * cell for a given detector

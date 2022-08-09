@@ -57,6 +57,8 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::setup_triangulation()
 {
+  TimerOutput::Scope t(computing_timer, "setting_up_grid");
+
   if (rpt_parameters.fem_reconstruction_param.mesh_type ==
       Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
     {
@@ -111,6 +113,8 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::setup_system()
 {
+  TimerOutput::Scope t(computing_timer, "setup_system");
+
   dof_handler.distribute_dofs(fe);
 
   system_rhs.reinit(dof_handler.n_dofs());
@@ -134,6 +138,10 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::solve_linear_system(unsigned detector_no)
 {
+  TimerOutput::Scope t(computing_timer,
+                       "solve_linear_system_" +
+                         Utilities::to_string(detector_no, 2));
+
   SolverControl                          solver_control(1000, 1e-12);
   SolverCG<Vector<double>>               solver(solver_control);
   PreconditionSSOR<SparseMatrix<double>> preconditioner;
@@ -207,6 +215,9 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::assemble_system(unsigned no_detector)
 {
+  TimerOutput::Scope t(computing_timer,
+                       "assemble_system_" +
+                         Utilities::to_string(no_detector, 2));
   system_rhs    = 0;
   system_matrix = 0;
 
@@ -224,6 +235,8 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::assign_detector_positions()
 {
+  TimerOutput::Scope t(computing_timer, "assigning_detector_positions");
+
   // Read text file with detector positions and store it in vector
   std::ifstream detector_file(
     rpt_parameters.detector_param.detector_positions_file);
@@ -259,6 +272,8 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::output_results()
 {
+  TimerOutput::Scope t(computing_timer, "output_results_vtu");
+
   // Export ".vtu" file with the nodal counts
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
@@ -276,6 +291,8 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::output_raw_results()
 {
+  TimerOutput::Scope t(computing_timer, "output_results_raw");
+
   std::map<types::global_dof_index, Point<dim>> dof_index_and_location;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -301,22 +318,44 @@ RPTFEMReconstruction<dim>::output_raw_results()
     myfile << "detector_" + Utilities::to_string(i, 2) + sep;
   myfile << std::endl;
 
-  // Adding content:
-  for (auto it = dof_index_and_location.begin();
-       it != dof_index_and_location.end();
-       ++it)
+  if (rpt_parameters.rpt_param.verbosity == Parameters::Verbosity::verbose)
     {
-      for (unsigned p = 0; p < dim; ++p)
-        myfile << it->second[p] << sep;
-
-      for (unsigned int d = 0; d < n_detector; ++d)
+      // Adding content:
+      for (auto it = dof_index_and_location.begin();
+           it != dof_index_and_location.end();
+           ++it)
         {
-          myfile << nodal_counts[d][it->first] << sep;
-          std::cout << nodal_counts[d][it->first] << sep;
-        }
+          for (unsigned p = 0; p < dim; ++p)
+            myfile << it->second[p] << sep;
 
-      myfile << "\n";
-      std::cout << std::endl;
+          for (unsigned int d = 0; d < n_detector; ++d)
+            {
+              myfile << nodal_counts[d][it->first] << sep;
+              // Output counts on terminal also
+              std::cout << nodal_counts[d][it->first] << sep;
+            }
+
+          myfile << "\n";
+          std::cout << std::endl;
+        }
+    }
+  else
+    {
+      // Adding content:
+      for (auto it = dof_index_and_location.begin();
+           it != dof_index_and_location.end();
+           ++it)
+        {
+          for (unsigned p = 0; p < dim; ++p)
+            myfile << it->second[p] << sep;
+
+          for (unsigned int d = 0; d < n_detector; ++d)
+            {
+              myfile << nodal_counts[d][it->first] << sep;
+            }
+
+          myfile << "\n";
+        }
     }
   myfile.close();
 }
@@ -362,6 +401,10 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "***********************************************" << std::endl;
   std::cout << "Done!" << std::endl;
   std::cout << "***********************************************" << std::endl;
+
+  // Disable the output of time clock
+  if (!rpt_parameters.fem_reconstruction_param.verbose_clock_fem_reconstruction)
+    computing_timer.disable_output();
 }
 
 
@@ -631,6 +674,8 @@ void
 RPTFEMReconstruction<dim>::read_experimental_counts(
   std::vector<std::vector<double>> &all_experimental_counts)
 {
+  TimerOutput::Scope t(computing_timer, "read_experimental_counts");
+
   std::ifstream in(
     rpt_parameters.fem_reconstruction_param.experimental_counts_file);
   double value;
@@ -680,17 +725,23 @@ RPTFEMReconstruction<dim>::trajectory()
   std::vector<std::vector<double>> all_experimental_counts;
   read_experimental_counts(all_experimental_counts);
 
-  // Find the position of the particle with the experimental counts
-  for (std::vector<double> &experimental_counts : all_experimental_counts)
-    {
-      find_cell(experimental_counts, tol_reference_location);
-    }
+  {
+    TimerOutput::Scope t(computing_timer, "find_particle_positions");
+
+    // Find the position of the particle with the experimental counts
+    for (std::vector<double> &experimental_counts : all_experimental_counts)
+      {
+        find_cell(experimental_counts, tol_reference_location);
+      }
+  }
 }
 
 template <int dim>
 void
 RPTFEMReconstruction<dim>::checkpoint()
 {
+  TimerOutput::Scope t(computing_timer, "checkpoint");
+
   /*
     // Save triangulation
     {
@@ -724,10 +775,8 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::load_from_checkpoint()
 {
+  TimerOutput::Scope t(computing_timer, "load_from_checkpoint");
   n_detector = rpt_parameters.fem_reconstruction_param.nodal_counts_file.size();
-
-  // Set up the grid
-  setup_triangulation();
 
   /*
       // Import triangulation
@@ -746,7 +795,6 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
     boost::archive::text_iarchive ia(ifs);
     dof_handler.load(ia, 0);
   }
-
   // Import nodal counts
   {
     Vector<double> counts_per_detector;
@@ -768,6 +816,8 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::export_found_positions()
 {
+  TimerOutput::Scope t(computing_timer, "export_found_positions");
+
   std::string filename =
     rpt_parameters.fem_reconstruction_param.export_positions_file;
 
@@ -793,7 +843,7 @@ RPTFEMReconstruction<dim>::export_found_positions()
     }
   else
     {
-      myfile << "position_x, position_y, position_z " << std::endl;
+      myfile << "position_x,position_y,position_z " << std::endl;
       std::string sep = ",";
 
       for (const Point<dim> &position : found_positions)
@@ -812,6 +862,11 @@ void
 RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
 {
   std::cout << "***********************************************" << std::endl;
+  std::cout << "Setting up the grid" << std::endl;
+  setup_triangulation();
+  std::cout << "Number of active cells: " << triangulation.n_active_cells()
+            << std::endl;
+  std::cout << "-----------------------------------------------" << std::endl;
   std::cout << "Loading dof handler and nodal counts from " << std::endl;
   std::cout << "saved files " << std::endl;
   load_from_checkpoint();
@@ -824,6 +879,10 @@ RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
   std::cout << "***********************************************" << std::endl;
   std::cout << "Done!" << std::endl;
   std::cout << "***********************************************" << std::endl;
+
+  // Disable the output of time clock
+  if (!rpt_parameters.fem_reconstruction_param.verbose_clock_fem_reconstruction)
+    computing_timer.disable_output();
 }
 
 

@@ -355,6 +355,11 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
       "temp_nodal_counts_detector00.counts",
       Patterns::List(Patterns::FileName()),
       "Saved nodal counts of every detector for every cell of the mesh filename");
+
+    prm.declare_entry("verbose clock",
+                      "false",
+                      Patterns::Bool(),
+                      "Allow to show total wallclock time elapsed since start");
   }
   prm.leave_subsection();
 }
@@ -401,6 +406,7 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
     dof_handler_file              = prm.get("dof handler file");
     std::string nodal_counts_list = prm.get("nodal counts file");
     nodal_counts_file = Utilities::split_string_list(nodal_counts_list);
+    verbose_clock_fem_reconstruction = prm.get_bool("verbose clock");
   }
   prm.leave_subsection();
 }

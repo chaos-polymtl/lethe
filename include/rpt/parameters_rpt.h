@@ -152,8 +152,7 @@ namespace Parameters
   };
 
   /**
-   * @brief FEMReconstructionParameters - Gets filenames of files from which
-   * information must be read for the 3D FEM reconstruction.
+   * @brief FEMReconstructionParameters - Defines the parameters for the rpt_l2_projection_3d and rpt_fem_reconstruction_3d applications
    */
   struct RPTFEMReconstructionParameters
   {
@@ -178,6 +177,7 @@ namespace Parameters
       relative
     };
 
+    // type of mesh that is used to model the vessel's geometry
     enum class FEMMeshType
     {
       dealii,
@@ -186,6 +186,9 @@ namespace Parameters
 
     FEMMeshType     mesh_type;
     FEMCostFunction fem_cost_function;
+
+    bool verbose_clock_fem_reconstruction; // allow to show total wallclock time
+                                           // elapsed since start
 
     static void
     declare_parameters(ParameterHandler &prm);
