@@ -4,6 +4,7 @@
 # RPT Monte Carlo technique
 #---------------------------------------------------
 subsection rpt parameters
+    set verbosity                        = verbose
     set monte carlo iteration            = 1000
     set random number seed               = 0
     set reactor height                   = 0.15
