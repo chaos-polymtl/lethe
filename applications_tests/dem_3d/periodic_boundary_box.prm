@@ -5,12 +5,16 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 		 = 1e-4
-  set time end       					 = 1
-  set log frequency				         = 50
-  set output frequency            		 = 50
-  set output path 					     = ./output/
-  set output name                        = simulation
-  set output boundaries                  = true
+  set time end       					 = 0.25
+  set log frequency				         = 1000
+  set output frequency            		 = 1000
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+subsection test
+    set enable 						 = true
 end
 
 # --------------------------------------------------
@@ -37,8 +41,8 @@ subsection lagrangian physical properties
     set number of particle types	            = 1
     subsection particle type 0
         set size distribution type		        = uniform
-        set diameter            	 	        = 0.005
-        set number				                = 25
+        set diameter            	 	        = 0.0075
+        set number				                = 10
         set density particles            	    = 2500
         set young modulus particles         	= 1e6
         set poisson ratio particles          	= 0.3
@@ -58,13 +62,13 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				                = non_uniform
-    set inserted number of particles at each time step  = 25
+    set inserted number of particles at each time step  = 10
     set insertion frequency            		 	        = 50
     set insertion box minimum x            	 	        = 0.0
-    set insertion box minimum y            	            =  0.05
+    set insertion box minimum y            	            =  0.02
     set insertion box minimum z            	            =  0.0
     set insertion box maximum x            	            =  0.05
-    set insertion box maximum y           	 	        =  0.06
+    set insertion box maximum y           	 	        =  0.035
     set insertion box maximum z            	            =  0.05
     set insertion distance threshold			        = 1.5
     set insertion random number range			        = 0.1
@@ -76,8 +80,8 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                 				= dealii
-    set grid type            				= subdivided_hyper_rectangle
-    set grid arguments       				= 1, 2, 1 : 0.0, 0.0, 0.0 : 0.05, 0.1, 0.05 : true
+    set grid type            				= hyper_rectangle
+    set grid arguments       				= 0.0, 0.0, 0.0 : 0.05, 0.05, 0.05 : true
     set initial refinement   				= 2
     set expand particle-wall contact search	= false
 end
