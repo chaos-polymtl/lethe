@@ -20,6 +20,8 @@
 
 #include <dem/particle_wall_contact_info_struct.h>
 
+#include <unordered_map>
+
 using namespace dealii;
 
 #ifndef update_particle_wall_contact_container_h

@@ -18,6 +18,8 @@
  */
 #include <dem/particle_point_line_contact_info_struct.h>
 
+#include <unordered_map>
+
 using namespace dealii;
 
 #ifndef update_particle_point_line_contact_container_h
