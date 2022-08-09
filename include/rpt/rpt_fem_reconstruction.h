@@ -220,6 +220,11 @@ private:
   find_cell(std::vector<double> &experimental_count,
             const double         tol_reference_location);
 
+// TODO : @brief
+  bool
+  find_in_adjacent_cells(std::vector<double> &experimental_count,
+                         const double tol_reference_location,
+                         const typename DoFHandler<dim>::active_cell_iterator &cell);
 
   /**
    * @brief Reads the file with the experimental counts and finds the
@@ -263,6 +268,7 @@ private:
   std::vector<Vector<double>> nodal_counts;
   std::vector<Detector<dim>>  detectors;
   std::vector<Point<dim>>     found_positions;
+  typename DoFHandler<dim>::active_cell_iterator previous_position_cell;
 
   TimerOutput computing_timer;
 

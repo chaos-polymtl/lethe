@@ -187,6 +187,7 @@ namespace Parameters
     FEMMeshType     mesh_type;
     FEMCostFunction fem_cost_function;
 
+    unsigned int search_proximity_level;
     bool verbose_clock_fem_reconstruction; // allow to show total wallclock time
                                            // elapsed since start
 
