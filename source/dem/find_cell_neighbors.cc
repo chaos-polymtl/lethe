@@ -1,5 +1,7 @@
 #include <dem/find_cell_neighbors.h>
 
+#include <unordered_map>
+
 using namespace dealii;
 
 // The constructor of this class is empty
