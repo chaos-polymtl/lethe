@@ -66,6 +66,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
 {
+  all_spheres = false;
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       if (particles[p_i].shape->get_shape_name().second !=
@@ -127,7 +128,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   if (0 == this->fe->system_to_component_index(j).first)
                     {
                       if (particles[p].get_levelset(
-                            support_points[local_dof_indices[j]]) < 0)
+                            support_points[local_dof_indices[j]]) <= 0)
                         ++nb_dof_inside;
                     }
                 }
