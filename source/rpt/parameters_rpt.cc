@@ -356,6 +356,11 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
       Patterns::List(Patterns::FileName()),
       "Saved nodal counts of every detector for every cell of the mesh filename");
 
+    prm.declare_entry("search cell proximity level",
+                      "1",
+                      Patterns::Integer(),
+                      "Level of proximity of cells considered in the search of a position from the previous position");
+
     prm.declare_entry("verbose clock",
                       "false",
                       Patterns::Bool(),
@@ -406,6 +411,7 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
     dof_handler_file              = prm.get("dof handler file");
     std::string nodal_counts_list = prm.get("nodal counts file");
     nodal_counts_file = Utilities::split_string_list(nodal_counts_list);
+    search_proximity_level = prm.get_integer("search cell proximity level");
     verbose_clock_fem_reconstruction = prm.get_bool("verbose clock");
   }
   prm.leave_subsection();
