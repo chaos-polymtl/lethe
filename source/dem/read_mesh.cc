@@ -1,5 +1,6 @@
 #include <dem/read_mesh.h>
 
+
 template <int dim, int spacedim>
 void
 read_mesh(const Parameters::Mesh &       mesh_params,
@@ -7,7 +8,7 @@ read_mesh(const Parameters::Mesh &       mesh_params,
           const ConditionalOStream &     pcout,
           Triangulation<dim, spacedim> & triangulation,
           double &                       triangulation_cell_diameter,
-          Parameters::Lagrangian::BCDEM &bc_params)
+          const Parameters::Lagrangian::BCDEM &bc_params)
 {
   pcout << "Reading triangulation " << std::endl;
   // GMSH input
@@ -65,7 +66,7 @@ read_mesh(const Parameters::Mesh &       mesh_params,
 template <int dim, int spacedim>
 void
 match_periodic_boundaries(Triangulation<dim, spacedim> & triangulation,
-                          Parameters::Lagrangian::BCDEM &bc_param)
+                          const Parameters::Lagrangian::BCDEM &bc_param)
 {
   for (unsigned int i_bc = 0; i_bc < bc_param.DEM_BC_number; ++i_bc)
     {
@@ -89,7 +90,7 @@ read_mesh<1, 2>(const Parameters::Mesh &       mesh_params,
                 const ConditionalOStream &     pcout,
                 Triangulation<1, 2> &          triangulation,
                 double &                       triangulation_cell_diameter,
-                Parameters::Lagrangian::BCDEM &bc_params);
+                const Parameters::Lagrangian::BCDEM &bc_params);
 
 template void
 read_mesh<2, 2>(const Parameters::Mesh &       mesh_params,
@@ -97,7 +98,7 @@ read_mesh<2, 2>(const Parameters::Mesh &       mesh_params,
                 const ConditionalOStream &     pcout,
                 Triangulation<2, 2> &          triangulation,
                 double &                       triangulation_cell_diameter,
-                Parameters::Lagrangian::BCDEM &bc_params);
+                const Parameters::Lagrangian::BCDEM &bc_params);
 
 template void
 read_mesh<2, 3>(const Parameters::Mesh &       mesh_params,
@@ -105,7 +106,7 @@ read_mesh<2, 3>(const Parameters::Mesh &       mesh_params,
                 const ConditionalOStream &     pcout,
                 Triangulation<2, 3> &          triangulation,
                 double &                       triangulation_cell_diameter,
-                Parameters::Lagrangian::BCDEM &bc_params);
+                const Parameters::Lagrangian::BCDEM &bc_params);
 
 template void
 read_mesh<3, 3>(const Parameters::Mesh &       mesh_params,
@@ -113,4 +114,4 @@ read_mesh<3, 3>(const Parameters::Mesh &       mesh_params,
                 const ConditionalOStream &     pcout,
                 Triangulation<3, 3> &          triangulation,
                 double &                       triangulation_cell_diameter,
-                Parameters::Lagrangian::BCDEM &bc_params);
+                const Parameters::Lagrangian::BCDEM &bc_params);

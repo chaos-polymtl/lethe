@@ -19,12 +19,12 @@ PeriodicBoundariesManipulator<dim>::PeriodicBoundariesManipulator()
 
 template <int dim>
 void
-PeriodicBoundariesManipulator<dim>::get_boundary_info(
+PeriodicBoundariesManipulator<dim>::get_periodic_boundary_info(
   typename Triangulation<dim>::cell_iterator cell,
   unsigned int                               face_id,
   boundary_cells_info_struct<dim> &          boundary_information)
 {
-  // Initialize a simple quadrature for on the system. This will be used to
+  // Initialize a simple quadrature for the system. This will be used to
   // obtain a single sample point on the boundary faces.
   const FE_Q<dim>   fe(1);
   QGauss<dim - 1>   face_quadrature_formula(1);
@@ -73,7 +73,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                       // Save boundaries information related to the cell on
                       // outlet boundary.
                       boundary_cells_info_struct<dim> boundary_information;
-                      get_boundary_info(cell, face_id, boundary_information);
+                      get_periodic_boundary_info(cell, face_id, boundary_information);
 
                       // Save boundaries information related to the cell on
                       // Periodic boundary.
@@ -81,7 +81,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                         periodic_boundary_information;
                       typename Triangulation<dim>::active_cell_iterator
                         periodic_cell = cell->periodic_neighbor(face_id);
-                      get_boundary_info(periodic_cell,
+                      get_periodic_boundary_info(periodic_cell,
                                         cell->periodic_neighbor_face_no(
                                           face_id),
                                         periodic_boundary_information);
@@ -121,7 +121,8 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
 
 
       // If distance >= 0, particle is outside of cell (or on face).
-      // If so, particle location is modified to get moved in the periodic cell.
+      // If so, particle location is modified to get moved into the periodic
+      // cell.
       if (distance_with_face >= 0.0)
         {
           Point<dim, double> distance_between_faces;

@@ -32,13 +32,12 @@ using namespace dealii;
 #  define particle_wall_periodic_displacement_h
 
 /**
- * This class is used to manipulate the particle location dealing with
- * periodic boundaries.
+ * This class is used to manipulate the particle location when they cross a
+ * periodic boundary
  *
- * @note Currently not fully implemented to work with particle collision, only
- *       allow the periodic cells mapping and particle displacement.
- *
- * @author Audrey Collard-Daigneault, Polytechnique Montreal 2022-
+ * @note Particle collisions across periodic boundaries are currently not
+ * implemented.
+
  */
 
 template <int dim>
@@ -48,8 +47,7 @@ public:
   PeriodicBoundariesManipulator<dim>();
 
   /**
-   * @brief Set the periodic boundaries parameters. Parameters are implemented
-   * to allow use of more than one PBC, but the feature is not implemented yet.
+   * @brief Set the periodic boundaries parameters.
    *
    * @param outlet_boundaries Vector of periodic boundaries identified as outlet
    * @param periodic_boundaries Vector of periodic boundaries identified as
@@ -99,12 +97,12 @@ private:
    * @param boundary_information Reference to the object with boundary info
    */
   void
-  get_boundary_info(typename Triangulation<dim>::cell_iterator cell,
+  get_periodic_boundary_info(typename Triangulation<dim>::cell_iterator cell,
                     unsigned int                               face_id,
                     boundary_cells_info_struct<dim> &boundary_information);
 
   /**
-   * @brief Check if particle is outside of the cell, if so, modify the
+   * @brief Checks if particle is outside of the cell, if so, modify the
    * location of the particle with the distance between the periodic faces.
    *
    * @param cell_1 Cell where particles may get outside of domain
@@ -122,7 +120,7 @@ private:
   std::vector<unsigned int> periodic_boundary_ids;
   std::vector<unsigned int> directions;
 
-  // Mapping the cell pair, cell index is outlet
+  // Mapping the cell pair, cell index is the map key
   std::map<
     types::global_cell_index,
     std::pair<boundary_cells_info_struct<dim>, boundary_cells_info_struct<dim>>>

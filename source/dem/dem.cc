@@ -12,10 +12,8 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
+
 #include <core/manifolds.h>
 #include <core/solutions_output.h>
 #include <core/utilities.h>
