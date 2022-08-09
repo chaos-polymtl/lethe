@@ -310,9 +310,13 @@ RPTFEMReconstruction<dim>::output_raw_results()
         myfile << it->second[p] << sep;
 
       for (unsigned int d = 0; d < n_detector; ++d)
+      {
         myfile << nodal_counts[d][it->first] << sep;
+        std::cout << nodal_counts[d][it->first] << sep;
+      }
 
       myfile << "\n";
+      std::cout << std::endl;
     }
   myfile.close();
 }
