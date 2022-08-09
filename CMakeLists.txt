@@ -20,7 +20,7 @@ find_package(deal.II 9.4.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
 deal_ii_initialize_cached_variables()
 
-Project(lethe)
+project(lethe VERSION 0.1 LANGUAGES CXX)
 
 # Check for deal.II features after the PROJECT call — but still as close
 # as possible to the FIND_PACKAGE call — so that the messages appear
