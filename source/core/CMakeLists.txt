@@ -72,5 +72,3 @@ ADD_LIBRARY(${TARGET}
 
 DEAL_II_SETUP_TARGET(${TARGET})
 target_include_directories(lethe-core PUBLIC ../../include)
-
-install(TARGETS lethe-core ARCHIVE DESTINATION lib)
