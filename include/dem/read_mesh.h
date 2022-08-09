@@ -46,11 +46,11 @@ using namespace std;
  */
 template <int dim, int spacedim = dim>
 void
-read_mesh(const Parameters::Mesh &       mesh_params,
-          const bool &                   restart,
-          const ConditionalOStream &     pcout,
-          Triangulation<dim, spacedim> & triangulation,
-          double &                       triangulation_cell_diameter,
+read_mesh(const Parameters::Mesh &             mesh_params,
+          const bool &                         restart,
+          const ConditionalOStream &           pcout,
+          Triangulation<dim, spacedim> &       triangulation,
+          double &                             triangulation_cell_diameter,
           const Parameters::Lagrangian::BCDEM &bc_params);
 
 /**
@@ -62,7 +62,7 @@ read_mesh(const Parameters::Mesh &       mesh_params,
  */
 template <int dim, int spacedim>
 void
-match_periodic_boundaries(Triangulation<dim, spacedim> & triangulation,
+match_periodic_boundaries(Triangulation<dim, spacedim> &       triangulation,
                           const Parameters::Lagrangian::BCDEM &bc_params);
 
 #endif /* read_mesh_h */

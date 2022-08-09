@@ -97,9 +97,10 @@ private:
    * @param boundary_information Reference to the object with boundary info
    */
   void
-  get_periodic_boundary_info(typename Triangulation<dim>::cell_iterator cell,
-                    unsigned int                               face_id,
-                    boundary_cells_info_struct<dim> &boundary_information);
+  get_periodic_boundary_info(
+    typename Triangulation<dim>::cell_iterator cell,
+    unsigned int                               face_id,
+    boundary_cells_info_struct<dim> &          boundary_information);
 
   /**
    * @brief Checks if particle is outside of the cell, if so, modify the

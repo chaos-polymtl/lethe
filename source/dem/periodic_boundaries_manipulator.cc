@@ -73,7 +73,9 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                       // Save boundaries information related to the cell on
                       // outlet boundary.
                       boundary_cells_info_struct<dim> boundary_information;
-                      get_periodic_boundary_info(cell, face_id, boundary_information);
+                      get_periodic_boundary_info(cell,
+                                                 face_id,
+                                                 boundary_information);
 
                       // Save boundaries information related to the cell on
                       // Periodic boundary.
@@ -81,10 +83,10 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                         periodic_boundary_information;
                       typename Triangulation<dim>::active_cell_iterator
                         periodic_cell = cell->periodic_neighbor(face_id);
-                      get_periodic_boundary_info(periodic_cell,
-                                        cell->periodic_neighbor_face_no(
-                                          face_id),
-                                        periodic_boundary_information);
+                      get_periodic_boundary_info(
+                        periodic_cell,
+                        cell->periodic_neighbor_face_no(face_id),
+                        periodic_boundary_information);
 
                       // Store both cell information in map with cell id at
                       // outlet as key
