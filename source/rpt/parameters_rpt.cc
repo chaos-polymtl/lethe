@@ -26,7 +26,7 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
       "Enable to export counts result in a .csv file <true|false>");
 
     prm.declare_entry("counts file",
-                      "counts",
+                      "counts.csv",
                       Patterns::FileName(),
                       "Exported count's results filename");
 
