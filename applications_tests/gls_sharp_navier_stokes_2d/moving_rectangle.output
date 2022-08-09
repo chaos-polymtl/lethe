@@ -1,5 +1,4 @@
 Running on 1 MPI rank(s)...
-A non-spherical particle was found: using regular cut_cells_mapping.
    Number of active cells:       256
    Number of degrees of freedom: 867
    Volume of triangulation:      16
@@ -18,8 +17,8 @@ Transient iteration : 1        Time : 0.03125  Time step : 0.03125  CFL : 0.2215
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_z       f_x       f_y       f_xv     f_yv      f_xp       f_yp
-0           0.0312 1.031375 48.210650 -34.359519 6.567661 -9.557268 41.642989 -24.802251
+particle_ID  time    T_z       f_x       f_y       f_xv     f_yv      f_xp       f_yp    
+0           0.0312 1.031375 48.210650 -34.359519 6.567661 -9.557268 41.642989 -24.802251 
 
 *****************************************************************
 Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.327597
@@ -30,8 +29,8 @@ Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.3275
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_z       f_x       f_y       f_xv     f_yv      f_xp     f_yp
-0           0.0625 0.636359 13.247133 -13.174700 4.695696 -6.786179 8.551437 -6.388521
+particle_ID  time    T_z       f_x       f_y       f_xv     f_yv      f_xp     f_yp    
+0           0.0625 0.636359 13.247133 -13.174700 4.695696 -6.786179 8.551437 -6.388521 
 
 *****************************************************************
 Transient iteration : 3        Time : 0.09375  Time step : 0.03125  CFL : 0.302024
@@ -42,8 +41,8 @@ Transient iteration : 3        Time : 0.09375  Time step : 0.03125  CFL : 0.3020
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_z       f_x       f_y       f_xv     f_yv      f_xp     f_yp
-0           0.0938 0.513307 10.231565 -10.572770 3.847297 -5.617841 6.384268 -4.954930
+particle_ID  time    T_z       f_x       f_y       f_xv     f_yv      f_xp     f_yp    
+0           0.0938 0.513307 10.231565 -10.572770 3.847297 -5.617841 6.384268 -4.954930 
 
 *****************************************************************
 Transient iteration : 4        Time : 0.125    Time step : 0.03125  CFL : 0.286803
@@ -54,5 +53,5 @@ Transient iteration : 4        Time : 0.125    Time step : 0.03125  CFL : 0.2868
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_z      f_x       f_y      f_xv     f_yv      f_xp     f_yp
-0           0.1250 0.479542 8.660751 -9.216990 3.281002 -4.917278 5.379748 -4.299712
+particle_ID  time    T_z      f_x       f_y      f_xv     f_yv      f_xp     f_yp    
+0           0.1250 0.479542 8.660751 -9.216990 3.281002 -4.917278 5.379748 -4.299712 

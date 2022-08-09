@@ -67,6 +67,9 @@ void
 GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
 {
   all_spheres = false;
+
+  // WIP The optimized cut-cell mapping seems to lead to instability
+  /*
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       if (particles[p_i].shape->get_shape_name().second !=
@@ -74,11 +77,13 @@ GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
         {
           all_spheres = false;
           std::cout
-            << "A non-spherical particle was found: using regular cut_cells_mapping."
+            << "A non-spherical particle was found: using regular
+  cut_cells_mapping."
             << std::endl;
           break;
         }
     }
+    */
 }
 
 template <int dim>
@@ -2474,7 +2479,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         {
                           particle_close_to_wall = true;
                           cell_2                 = cell;
-                          continue;
+                          if (this->zero_constraints.is_constrained(
+                                global_index_overwrite) ||
+                              this->nonzero_constraints.is_constrained(
+                                global_index_overwrite))
+                            {
+                              continue;
+                            }
                         }
 
                       cell_2->get_dof_indices(local_dof_indices_2);
