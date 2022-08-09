@@ -22,5 +22,3 @@ ADD_LIBRARY(${TARGET}
 
 DEAL_II_SETUP_TARGET(${TARGET})
 TARGET_LINK_LIBRARIES(lethe-fem-dem lethe-solvers lethe-dem lethe-core )
-install(TARGETS lethe-fem-dem ARCHIVE DESTINATION lib)
-

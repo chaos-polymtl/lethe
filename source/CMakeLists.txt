@@ -1,7 +1,9 @@
-MESSAGE(STATUS "Setting up Lethe library")
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(solvers)
-ADD_SUBDIRECTORY(dem)
-ADD_SUBDIRECTORY(rpt)
-ADD_SUBDIRECTORY(fem-dem)
-
+foreach(_target IN ITEMS
+    core
+    dem
+    fem-dem
+    rpt
+    solvers)
+  add_subdirectory(${_target})
+  install(TARGETS ${PROJECT_NAME}-${_target})
+endforeach()
