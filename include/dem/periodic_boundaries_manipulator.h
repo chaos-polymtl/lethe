@@ -32,7 +32,7 @@ using namespace dealii;
 #  define particle_wall_periodic_displacement_h
 
 /**
- * This class is used to manipulate the particle location when they cross a
+ * This class is used to manipulate the particles location when they cross a
  * periodic boundary
  *
  * @note Particle collisions across periodic boundaries are currently not
@@ -47,7 +47,7 @@ public:
   PeriodicBoundariesManipulator<dim>();
 
   /**
-   * @brief Set the periodic boundaries parameters.
+   * @brief Sets the periodic boundaries parameters
    *
    * @param outlet_boundaries Vector of periodic boundaries identified as outlet
    * @param periodic_boundaries Vector of periodic boundaries identified as
@@ -66,8 +66,7 @@ public:
   }
 
   /**
-   * @brief Set the periodic boundaries parameters. Parameters are implemented
-   * to allow use of more than one PBC, but the feature is not implemented yet
+   * @brief Sets the periodic boundaries parameters
    *
    * @param triangulation Triangulation of mesh
    */
@@ -76,9 +75,9 @@ public:
     const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
-   * @brief Move particles passing through periodic boundaries (any side)
+   * @brief Moves particles crossing periodic boundaries (any side)
    * particle_handle doesn't allow automated particle displacement since it is
-   * not linked to triangulation and its periodic mapping.
+   * not linked to triangulation and its periodic mapping
    *
    * @param particle_handler Particle handler of particles located in boundary
    * cells
@@ -89,43 +88,46 @@ public:
 
 private:
   /**
-   * @brief Get boundary information related to the face at outlet or periodic
-   * boundary and store in boundary_cells_info_struct object.
+   * @brief Gets boundaries information related to the face at outlet and
+   * periodic boundaries and stores in  periodic_boundaries_cells_info_struct
+   * object
    *
    * @param cell Current cell on boundary
    * @param face_id Face located on boundary
-   * @param boundary_information Reference to the object with boundary info
+   * @param boundaries_information Reference to the object with periodic
+   * boundaries information
    */
   void
-  get_periodic_boundary_info(
-    typename Triangulation<dim>::cell_iterator cell,
-    unsigned int                               face_id,
-    boundary_cells_info_struct<dim> &          boundary_information);
+  get_periodic_boundaries_info(
+    typename Triangulation<dim>::cell_iterator  cell,
+    const unsigned int                          face_id,
+    periodic_boundaries_cells_info_struct<dim> &boundaries_information);
 
   /**
-   * @brief Checks if particle is outside of the cell, if so, modify the
+   * @brief Checks if particle is outside of the cell, if so, modifies the
    * location of the particle with the distance between the periodic faces.
    *
-   * @param cell_1 Cell where particles may get outside of domain
-   * @param cell_2 Periodic cell to the cell_1
-   * @param particles_in_cell Iterator to the particle in cell_1
+   * @param boundaries_cells_content Reference to the object with periodic
+   * boundaries information
+   * @param particles_in_cell Iterator to the particles in cell
+   * @param particles_in_outlet_cell If the particles are linked to the outlet
+   * cell or the periodic cell
    */
   void
   check_and_move_particles(
-    boundary_cells_info_struct<dim> &cell_1,
-    boundary_cells_info_struct<dim> &cell_2,
+    const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
     typename Particles::ParticleHandler<dim>::particle_iterator_range
-      &particles_in_cell);
+      &        particles_in_cell,
+    const bool particles_in_outlet_cell);
 
   std::vector<unsigned int> outlet_boundary_ids;
   std::vector<unsigned int> periodic_boundary_ids;
   std::vector<unsigned int> directions;
 
-  // Mapping the cell pair, cell index is the map key
-  std::map<
-    types::global_cell_index,
-    std::pair<boundary_cells_info_struct<dim>, boundary_cells_info_struct<dim>>>
-    periodic_boundary_cells_information;
+  // Mapping of periodic boundaries information, cell index at outlet is the
+  // map key
+  std::map<types::global_cell_index, periodic_boundaries_cells_info_struct<dim>>
+    periodic_boundaries_cells_information;
 };
 
 #endif /* particle_wall_periodic_displacement_h */

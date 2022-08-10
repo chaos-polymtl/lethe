@@ -19,32 +19,47 @@ PeriodicBoundariesManipulator<dim>::PeriodicBoundariesManipulator()
 
 template <int dim>
 void
-PeriodicBoundariesManipulator<dim>::get_periodic_boundary_info(
-  typename Triangulation<dim>::cell_iterator cell,
-  unsigned int                               face_id,
-  boundary_cells_info_struct<dim> &          boundary_information)
+PeriodicBoundariesManipulator<dim>::get_periodic_boundaries_info(
+  typename Triangulation<dim>::cell_iterator  cell,
+  const unsigned int                          face_id,
+  periodic_boundaries_cells_info_struct<dim> &boundaries_information)
 {
   // Initialize a simple quadrature for the system. This will be used to
-  // obtain a single sample point on the boundary faces.
+  // obtain a single sample point on the boundaries faces.
   const FE_Q<dim>   fe(1);
   QGauss<dim - 1>   face_quadrature_formula(1);
   FEFaceValues<dim> fe_face_values(fe,
                                    face_quadrature_formula,
                                    update_values | update_quadrature_points |
                                      update_normal_vectors);
+  Tensor<1, dim>    normal_vector;
+  Point<dim>        quad_point;
 
-  // Store information
-  boundary_information.cell           = cell;
-  boundary_information.boundary_id    = cell->face(face_id)->boundary_id();
-  boundary_information.global_face_id = cell->face_index(face_id);
+  // Store information of the cell
+  boundaries_information.cell           = cell;
+  boundaries_information.boundary_id    = cell->face(face_id)->boundary_id();
+  boundaries_information.global_face_id = cell->face_index(face_id);
 
-  // Finding the normal vector of the boundary face and point
+  // Store information of the periodic cell
+  boundaries_information.periodic_cell = cell->periodic_neighbor(face_id);
+  boundaries_information.periodic_boundary_id =
+    boundaries_information.periodic_cell->face(face_id)->boundary_id();
+  boundaries_information.global_periodic_face_id =
+    boundaries_information.periodic_cell->face_index(face_id);
+
+  // Find the normal vector of the boundary face and point
   fe_face_values.reinit(cell, face_id);
-  Tensor<1, dim> normal_vector = fe_face_values.normal_vector(0);
-  Point<dim>     quad_point    = fe_face_values.quadrature_point(0);
+  boundaries_information.normal_vector = fe_face_values.normal_vector(0);
+  boundaries_information.point_on_face = fe_face_values.quadrature_point(0);
 
-  boundary_information.normal_vector = normal_vector;
-  boundary_information.point_on_face = quad_point;
+  // Find the normal vector of the periodic boundary face and point with the
+  // reinit FE face values
+  fe_face_values.reinit(boundaries_information.periodic_cell,
+                        cell->periodic_neighbor_face_no(face_id));
+  normal_vector = fe_face_values.normal_vector(0);
+  quad_point    = fe_face_values.quadrature_point(0);
+  boundaries_information.periodic_normal_vector = normal_vector;
+  boundaries_information.point_on_periodic_face = quad_point;
 }
 
 template <int dim>
@@ -52,7 +67,7 @@ void
 PeriodicBoundariesManipulator<dim>::map_periodic_cells(
   const parallel::distributed::Triangulation<dim> &triangulation)
 {
-  periodic_boundary_cells_information.clear();
+  periodic_boundaries_cells_information.clear();
 
   // Iterating over the active cells in the trangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -68,32 +83,23 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                 {
                   if (face->boundary_id() == outlet_boundary_id)
                     {
+                      // Save boundaries information related to the cell on
+                      // the outlet boundary of periodic walls.
+                      // Information about both boundaries are stored in
+                      // periodic_boundary_cells_info_struct
+                      periodic_boundaries_cells_info_struct<dim>
+                                   boundaries_information;
                       unsigned int face_id = cell->face_iterator_to_index(face);
+                      get_periodic_boundaries_info(cell,
+                                                   face_id,
+                                                   boundaries_information);
 
-                      // Save boundaries information related to the cell on
-                      // outlet boundary.
-                      boundary_cells_info_struct<dim> boundary_information;
-                      get_periodic_boundary_info(cell,
-                                                 face_id,
-                                                 boundary_information);
-
-                      // Save boundaries information related to the cell on
-                      // Periodic boundary.
-                      boundary_cells_info_struct<dim>
-                        periodic_boundary_information;
-                      typename Triangulation<dim>::active_cell_iterator
-                        periodic_cell = cell->periodic_neighbor(face_id);
-                      get_periodic_boundary_info(
-                        periodic_cell,
-                        cell->periodic_neighbor_face_no(face_id),
-                        periodic_boundary_information);
-
-                      // Store both cell information in map with cell id at
+                      // Store boundaries information in map with cell id at
                       // outlet as key
-                      periodic_boundary_cells_information.insert(
-                        {boundary_information.cell->global_active_cell_index(),
-                         std::make_pair(boundary_information,
-                                        periodic_boundary_information)});
+                      periodic_boundaries_cells_information.insert(
+                        {boundaries_information.cell
+                           ->global_active_cell_index(),
+                         boundaries_information});
                     }
                 }
             }
@@ -104,22 +110,40 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
 template <int dim>
 void
 PeriodicBoundariesManipulator<dim>::check_and_move_particles(
-  boundary_cells_info_struct<dim> &cell_1,
-  boundary_cells_info_struct<dim> &cell_2,
+  const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
   typename Particles::ParticleHandler<dim>::particle_iterator_range
-    &particles_in_cell)
+    &        particles_in_cell,
+  const bool particles_in_outlet_cell)
 {
   for (auto particle = particles_in_cell.begin();
        particle != particles_in_cell.end();
        ++particle)
     {
-      Point<dim, double> particle_position = particle->get_location();
+      // Get the current particle location
+      Point<dim> particle_position = particle->get_location();
+
+      // Initialize points and normal vector related of the cell that contains
+      // the particle
+      Point<dim>     point_on_face, point_on_periodic_face;
+      Tensor<1, dim> normal_vector;
+      if (particles_in_outlet_cell)
+        {
+          point_on_face = boundaries_cells_content.point_on_face;
+          point_on_periodic_face =
+            boundaries_cells_content.point_on_periodic_face;
+          normal_vector = boundaries_cells_content.normal_vector;
+        }
+      else
+        {
+          point_on_face = boundaries_cells_content.point_on_periodic_face;
+          point_on_periodic_face = boundaries_cells_content.point_on_face;
+          normal_vector = boundaries_cells_content.periodic_normal_vector;
+        }
 
       // Calculate distance between particle position and the face of
       // boundary cell d = n•(pt_particle - pt_face)
       double distance_with_face =
-        scalar_product(particle_position - cell_1.point_on_face,
-                       cell_1.normal_vector);
+        scalar_product(particle_position - point_on_face, normal_vector);
 
 
       // If distance >= 0, particle is outside of cell (or on face).
@@ -128,7 +152,7 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
       if (distance_with_face >= 0.0)
         {
           Point<dim, double> distance_between_faces;
-          distance_between_faces = cell_2.point_on_face - cell_1.point_on_face;
+          distance_between_faces = point_on_periodic_face - point_on_face;
 
           // Move particle outside the current cell to the periodic cell.
           particle_position += distance_between_faces;
@@ -142,27 +166,22 @@ void
 PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
   const Particles::ParticleHandler<dim> &particle_handler)
 {
-  if (!periodic_boundary_cells_information.empty())
+  if (!periodic_boundaries_cells_information.empty())
     {
-      for (auto boundary_cells_information_iterator =
-             periodic_boundary_cells_information.begin();
-           boundary_cells_information_iterator !=
-           periodic_boundary_cells_information.end();
-           ++boundary_cells_information_iterator)
+      for (auto boundaries_cells_information_iterator =
+             periodic_boundaries_cells_information.begin();
+           boundaries_cells_information_iterator !=
+           periodic_boundaries_cells_information.end();
+           ++boundaries_cells_information_iterator)
         {
-          // Get the cell and periodic cell content from map
-          auto boundary_cells_content =
-            boundary_cells_information_iterator->second.first;
-          auto cell = boundary_cells_content.cell;
+          // Gets the cell and periodic cell from map
+          auto boundaries_cells_content =
+            boundaries_cells_information_iterator->second;
+          auto cell          = boundaries_cells_content.cell;
+          auto periodic_cell = boundaries_cells_content.periodic_cell;
 
-          auto periodic_boundary_cells_content =
-            boundary_cells_information_iterator->second.second;
-          auto periodic_cell = periodic_boundary_cells_content.cell;
-
-          // Since cell pairs are mapped once <cell at outlet, cell at PB>,
-          // both cells in pair are checked individually, so we know the
-          // cell the particle is coming from and will execute displacement
-          // with the locally owned cell.
+          // Checks and executes displacement of particles crossing a periodic
+          // wall.
           if (cell->is_locally_owned())
             {
               typename Particles::ParticleHandler<dim>::particle_iterator_range
@@ -172,9 +191,10 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
 
               if (particles_exist_in_main_cell)
                 {
-                  check_and_move_particles(boundary_cells_content,
-                                           periodic_boundary_cells_content,
-                                           particles_in_cell);
+                  bool particles_in_outlet_cell = true;
+                  check_and_move_particles(boundaries_cells_content,
+                                           particles_in_cell,
+                                           particles_in_outlet_cell);
                 }
             }
 
@@ -183,15 +203,15 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
               typename Particles::ParticleHandler<dim>::particle_iterator_range
                 particles_in_periodic_cell =
                   particle_handler.particles_in_cell(periodic_cell);
-
               const bool particles_exist_in_periodic_cell =
                 !particles_in_periodic_cell.empty();
 
               if (particles_exist_in_periodic_cell)
                 {
-                  check_and_move_particles(periodic_boundary_cells_content,
-                                           boundary_cells_content,
-                                           particles_in_periodic_cell);
+                  bool particles_in_outlet_cell = false;
+                  check_and_move_particles(boundaries_cells_content,
+                                           particles_in_periodic_cell,
+                                           particles_in_outlet_cell);
                 }
             }
         }
