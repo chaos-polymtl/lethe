@@ -59,82 +59,86 @@ if(NOT _had_deal_ii)
 endif()
 unset(_had_deal_ii)
 
-set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_compile_options(
-  -Wall -Wextra -Wpedantic # Actually already in DEAL_II_CXX_FLAGS
-  -Wunused-variable -Wdisabled-optimization)
+  add_compile_options(
+    -Wall -Wextra -Wpedantic # Actually already in DEAL_II_CXX_FLAGS
+    -Wunused-variable -Wdisabled-optimization)
 
-if(CMAKE_VERSION VERSION_LESS 3.24)
-  option(CMAKE_COMPILE_WARNING_AS_ERROR "Treat warnings on compile as errors")
-  if(CMAKE_COMPILE_WARNING_AS_ERROR)
-    add_compile_options(-Werror)
-  endif()
-endif()
-if(CMAKE_COMPILE_WARNING_AS_ERROR)
-  add_compile_options(-pedantic-errors) # Probably not added by CMake
-endif()
-
-# Tests may break when enabled.
-option(ENABLE_NATIVE_OPTIMIZATION "Enable native optimization (-march=native)")
-if(ENABLE_NATIVE_OPTIMIZATION)
-  add_compile_options(-march=native)
-endif()
-
-option(BUILD_PROTOTYPES "Build the prototype applications")
-mark_as_advanced(BUILD_PROTOTYPES)
-
-include(GNUInstallDirs)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
-  "${CMAKE_INSTALL_FULL_LIBDIR}" _libdir_index)
-if(_libdir_index LESS 0)
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
-endif()
-
-option(BUILD_TESTING "Build the tests" ON)
-if(BUILD_TESTING)
-  enable_testing()
-
-  if(DEFINED TXR_EXECUTABLE)
-    set(_had_txr_executable TRUE)
-  endif()
-  find_program(TXR_EXECUTABLE NAMES txr
-    DOC "Path to the TXR executable.")
-  mark_as_advanced(TXR_EXECUTABLE)
-  # Print the status information only if TXR_EXECUTABLE was neither
-  # provided on the command line nor found in the cache.
-  # Ideally, users would be informed whenever TXR_EXECUTABLE changes
-  # (which is what happens with PERL_EXECUTABLE), but there is no way to
-  # access a variable's cached value if it is also provided on the
-  # command line (except by defining additional variables).
-  if(NOT _had_txr_executable)
-    if(TXR_EXECUTABLE)
-      message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
-    else()
-      message(STATUS "Could not find TXR: omitting target \"update-golden\"")
+  if(CMAKE_VERSION VERSION_LESS 3.24)
+    option(CMAKE_COMPILE_WARNING_AS_ERROR "Treat warnings on compile as errors")
+    if(CMAKE_COMPILE_WARNING_AS_ERROR)
+      add_compile_options(-Werror)
     endif()
   endif()
-  unset(_had_txr_executable)
+  if(CMAKE_COMPILE_WARNING_AS_ERROR)
+    add_compile_options(-pedantic-errors) # Probably not added by CMake
+  endif()
+
+  # Tests may break when enabled.
+  option(ENABLE_NATIVE_OPTIMIZATION "Enable native optimization (-march=native)")
+  if(ENABLE_NATIVE_OPTIMIZATION)
+    add_compile_options(-march=native)
+  endif()
+
+  option(BUILD_PROTOTYPES "Build the prototype applications")
+  mark_as_advanced(BUILD_PROTOTYPES)
+
+  include(GNUInstallDirs)
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
+    "${CMAKE_INSTALL_FULL_LIBDIR}" _libdir_index)
+  if(_libdir_index LESS 0)
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+  endif()
+
+  option(BUILD_TESTING "Build the tests" ON)
+  if(BUILD_TESTING)
+    enable_testing()
+
+    if(DEFINED TXR_EXECUTABLE)
+      set(_had_txr_executable TRUE)
+    endif()
+    find_program(TXR_EXECUTABLE NAMES txr
+      DOC "Path to the TXR executable.")
+    mark_as_advanced(TXR_EXECUTABLE)
+    # Print the status information only if TXR_EXECUTABLE was neither
+    # provided on the command line nor found in the cache.
+    # Ideally, users would be informed whenever TXR_EXECUTABLE changes
+    # (which is what happens with PERL_EXECUTABLE), but there is no way
+    # to access a variable's cached value if it is also provided on the
+    # command line (except by defining additional variables).
+    if(NOT _had_txr_executable)
+      if(TXR_EXECUTABLE)
+        message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
+      else()
+        message(STATUS "Could not find TXR: omitting target \"update-golden\"")
+      endif()
+    endif()
+    unset(_had_txr_executable)
+  endif()
 endif()
 
 ADD_SUBDIRECTORY(source)
 ADD_SUBDIRECTORY(applications)
 
-if(BUILD_PROTOTYPES)
-  add_subdirectory(prototypes)
-endif()
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  if(BUILD_PROTOTYPES)
+    add_subdirectory(prototypes)
+  endif()
 
-if(BUILD_TESTING)
-  add_subdirectory(tests)
-  add_subdirectory(applications_tests)
+  if(BUILD_TESTING)
+    add_subdirectory(tests)
+    add_subdirectory(applications_tests)
 
-  if(TXR_EXECUTABLE)
-    add_custom_target(update-golden
-      COMMAND "${TXR_EXECUTABLE}"
-              "${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl"
-              "${CMAKE_BINARY_DIR}" "${CMAKE_SOURCE_DIR}")
+    if(TXR_EXECUTABLE)
+      add_custom_target(update-golden
+        COMMAND "${TXR_EXECUTABLE}"
+                "${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl"
+                "${CMAKE_BINARY_DIR}" "${CMAKE_SOURCE_DIR}")
+    endif()
   endif()
 endif()
