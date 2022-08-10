@@ -3,7 +3,12 @@ if(CMAKE_VERSION VERSION_LESS 3.12) # To support the version range
   cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
 
-SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
+# TARGET_SUPPORTS_SHARED_LIBS is set by PROJECT, but we have to call
+# FIND_PACKAGE before that, and deal.II's configuration calls
+# ADD_LIBRARY with the SHARED keyword, so setting
+# TARGET_SUPPORTS_SHARED_LIBS beforehand may be necessary in some
+# environments.
+set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 
 set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-pedantic)
