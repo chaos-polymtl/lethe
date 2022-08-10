@@ -208,7 +208,7 @@ private:
                                      const double &  last_constraint);
 
   /**
-   * @brief Finds the position of the particle and displays in the terminal.
+   * @brief Finds the position of the particle.
    *
    * @param experimental_count experimental_count contains the experimental
    * counts of every detector for a given position.
@@ -220,11 +220,27 @@ private:
   find_cell(std::vector<double> &experimental_count,
             const double         tol_reference_location);
 
-// TODO : @brief
+  /**
+   * @brief Finds the position of the particle by doing a local search around
+   * the previously found position's cell
+   *
+   * @param experimental_count experimental_count contains the experimental
+   * counts of every detector for a given position.
+   *
+   * @param tol_reference_location tolerance on the validity of the found
+   * location in the reference space
+   *
+   * @param previous_position_cell cell in which the previous position was
+   * found
+   *
+   * @return 'true' if the particle's position was found and 'false' if the
+   * particle's position couldn't be found
+   */
   bool
   find_in_adjacent_cells(std::vector<double> &experimental_count,
-                         const double tol_reference_location,
-                         const typename DoFHandler<dim>::active_cell_iterator &cell);
+                         const double         tol_reference_location,
+                         const typename DoFHandler<dim>::active_cell_iterator
+                           &previous_position_cell);
 
   /**
    * @brief Reads the file with the experimental counts and finds the
@@ -261,18 +277,18 @@ private:
   MappingFE<dim>           mapping;
   unsigned int             n_detector;
 
-  AffineConstraints<double>   constraints;
-  SparseMatrix<double>        system_matrix;
-  SparsityPattern             sparsity_pattern;
-  Vector<double>              system_rhs;
-  std::vector<Vector<double>> nodal_counts;
-  std::vector<Detector<dim>>  detectors;
-  std::vector<Point<dim>>     found_positions;
+  AffineConstraints<double>                      constraints;
+  SparseMatrix<double>                           system_matrix;
+  SparsityPattern                                sparsity_pattern;
+  Vector<double>                                 system_rhs;
+  std::vector<Vector<double>>                    nodal_counts;
+  std::vector<Detector<dim>>                     detectors;
+  std::vector<Point<dim>>                        found_positions;
   typename DoFHandler<dim>::active_cell_iterator previous_position_cell;
 
   TimerOutput computing_timer;
 
-  // TO DO
+  // TODO
   /**
    * @brief
    */
