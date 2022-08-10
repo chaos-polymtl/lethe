@@ -138,27 +138,6 @@ private:
   void
   output_raw_results();
 
-  // Unused
-  /**
-   * @brief Outputs for every level of the triangulation, the position of
-   * each vertex of every cell and the photon count at that position for
-   * every detector in a ".dat" file format.
-   */
-  void
-  output_raw_results_per_level();
-
-  // Unused
-  /**
-   * @brief Outputs for a given level of the triangulation, the position of
-   * each vertex of every cell and the photon count at that position for
-   * every detector in a ".dat" file format with the use the
-   * "output_counts_on_level" function.
-   */
-  void
-  output_counts_on_level(
-    unsigned int                                   level,
-    std::map<types::global_dof_index, Point<dim>> &dof_index_and_location);
-
   /**
    * @brief Reads the file with the experimental counts and returns a vector
    * of vectors containing the counts of all detectors for every particle
@@ -305,7 +284,6 @@ private:
   /**
    * @brief
    */
-
   struct AssemblyCopyData
   {
     FullMatrix<double>                   cell_matrix;

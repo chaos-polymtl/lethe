@@ -52,7 +52,6 @@ RPTFEMReconstruction<dim>::AssemblyScratchData::AssemblyScratchData(
 {}
 
 
-
 template <int dim>
 void
 RPTFEMReconstruction<dim>::setup_triangulation()
@@ -100,13 +99,6 @@ RPTFEMReconstruction<dim>::setup_triangulation()
         {0, 0, rpt_parameters.rpt_param.reactor_height * 0.5});
       GridTools::shift(shift_vector, triangulation);
     }
-  /*
-      GridOut grid_out;
-      {
-        std::ofstream output_file("triangulation.vtk");
-        grid_out.write_vtk(triangulation, output_file);
-      }
-  */
 }
 
 template <int dim>
@@ -318,9 +310,9 @@ RPTFEMReconstruction<dim>::output_raw_results()
     myfile << "detector_" + Utilities::to_string(i, 2) + sep;
   myfile << std::endl;
 
+  // Output in file and on terminal
   if (rpt_parameters.rpt_param.verbosity == Parameters::Verbosity::verbose)
     {
-      // Adding content:
       for (auto it = dof_index_and_location.begin();
            it != dof_index_and_location.end();
            ++it)
@@ -331,7 +323,6 @@ RPTFEMReconstruction<dim>::output_raw_results()
           for (unsigned int d = 0; d < n_detector; ++d)
             {
               myfile << nodal_counts[d][it->first] << sep;
-              // Output counts on terminal also
               std::cout << nodal_counts[d][it->first] << sep;
             }
 
@@ -339,9 +330,8 @@ RPTFEMReconstruction<dim>::output_raw_results()
           std::cout << std::endl;
         }
     }
-  else
+  else // Output in file only
     {
-      // Adding content:
       for (auto it = dof_index_and_location.begin();
            it != dof_index_and_location.end();
            ++it)
@@ -744,16 +734,6 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(
         }
     }
 
-  // TODO: erase the cout when done with this function
-  /*
-    // print adjacent cells
-      std::cout << "previous_position_cell: " << cell << std::endl ;
-    for (typename std::set<typename
-    DoFHandler<dim>::active_cell_iterator>::iterator
-    it=all_adjacent_cells.begin(); it!=all_adjacent_cells.end(); ++it) std::cout
-    << *it << " " ; std::cout << std::endl;
-  */
-
   // Loop over adjacent cells, loop over detectors and get nodal count values
   // for each vertex of the cell
   for (const auto &adjacent_cell : all_adjacent_cells)
@@ -820,9 +800,7 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(
       return true;
     }
   else
-    {
-      return false;
-    }
+    return false;
 }
 
 template <int dim>
@@ -862,7 +840,9 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::trajectory()
 {
-  double tol_reference_location = 0.01;
+  // Tolerance or the extrapolation limit in the reference space for a found
+  // position
+  double tol_reference_location = 0.005;
 
   if (rpt_parameters.fem_reconstruction_param.mesh_type ==
       Parameters::RPTFEMReconstructionParameters::FEMMeshType::dealii)
@@ -924,14 +904,6 @@ RPTFEMReconstruction<dim>::checkpoint()
 {
   TimerOutput::Scope t(computing_timer, "checkpoint");
 
-  /*
-    // Save triangulation
-    {
-        std::ofstream ofs("temp_tria.tria");
-        boost::archive::text_oarchive oa(ofs);
-        triangulation.save(oa, 0);
-    }
-  */
   // Save dof_handler object
   {
     std::ofstream                 ofs("temp_dof_handler.dof");
@@ -958,17 +930,8 @@ void
 RPTFEMReconstruction<dim>::load_from_checkpoint()
 {
   TimerOutput::Scope t(computing_timer, "load_from_checkpoint");
-  n_detector = rpt_parameters.fem_reconstruction_param.nodal_counts_file.size();
 
-  /*
-      // Import triangulation
-      {
-        std::ifstream
-     ifs(rpt_parameters.fem_reconstruction_param.triangulation_file);
-        boost::archive::text_iarchive ia(ifs);
-        triangulation.load(ia, 0);
-      }
-  */
+  n_detector = rpt_parameters.fem_reconstruction_param.nodal_counts_file.size();
 
   // Import dof handler
   {
@@ -1015,24 +978,53 @@ RPTFEMReconstruction<dim>::export_found_positions()
   std::ofstream myfile;
   myfile.open(filename);
 
-  if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+  // Output in file and in terminal
+  if (rpt_parameters.rpt_param.verbosity == Parameters::Verbosity::verbose)
     {
-      myfile << "position_x position_y position_z " << std::endl;
-      for (const Point<dim> &position : found_positions)
+      if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
         {
-          myfile << position << std::endl;
+          myfile << "position_x position_y position_z " << std::endl;
+          for (const Point<dim> &position : found_positions)
+            {
+              myfile << position << std::endl;
+              std::cout << position << std::endl;
+            }
+        }
+      else
+        {
+          myfile << "position_x,position_y,position_z " << std::endl;
+          std::string sep = ",";
+
+          for (const Point<dim> &position : found_positions)
+            {
+              for (unsigned int i = 0; i < dim; ++i)
+                myfile << position[i] << sep;
+              myfile << std::endl;
+              std::cout << position << std::endl;
+            }
         }
     }
-  else
+  else // Output only in file
     {
-      myfile << "position_x,position_y,position_z " << std::endl;
-      std::string sep = ",";
-
-      for (const Point<dim> &position : found_positions)
+      if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
         {
-          for (unsigned int i = 0; i < dim; ++i)
-            myfile << position[i] << sep;
-          myfile << std::endl;
+          myfile << "position_x position_y position_z " << std::endl;
+          for (const Point<dim> &position : found_positions)
+            {
+              myfile << position << std::endl;
+            }
+        }
+      else
+        {
+          myfile << "position_x,position_y,position_z " << std::endl;
+          std::string sep = ",";
+
+          for (const Point<dim> &position : found_positions)
+            {
+              for (unsigned int i = 0; i < dim; ++i)
+                myfile << position[i] << sep;
+              myfile << std::endl;
+            }
         }
     }
 
