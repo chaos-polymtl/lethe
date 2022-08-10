@@ -48,10 +48,9 @@ Where :
 .. figure:: images/collision_particles.png
     :width: 400
     :align: center
-    :name: particle-particle_collision
+    :alt: particle-particle_collision
 
-    Representation of a typical particle-particle contact. `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_
-
+    Representation of a typical particle-particle contact. [1]
 
 The contact normal vector :math:`\mathbf{n}_{ij}` is computed as : 
 
@@ -62,7 +61,7 @@ The normal overlap (:math:`\delta_n`) is the contact distance between the partic
 The normal and tangential overlaps are calculated as follow : 
 
 .. math::
-    \delta_n &= R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
+    \delta_n =& \:R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
     \mathbf{\delta}_{ij}^{t,\text{new}} &= \mathbf{\delta}_{ij}^{t,\text{old}}+\mathbf{v}_{rt}dt
 
 
@@ -137,13 +136,16 @@ Tangential torque is calculated thought :
 .. math::
     \mathbf{M}_{ij}^{t} = R_{i}\mathbf{n}_{ij} \times \mathbf{F}_{ij}^{c}
 
-The Coulomb's criterion must be respected otherwise collision is having gross sliding and is verified through :
+Coulomb's criterion is violated when this condition is not respected during a collision :
 
 .. math::
     |\mathbf{F}_{ij}^{t}| \geq \mu |\mathbf{F}_{ij}^{n}|
 
-Prior limiting the tangential force to the Coulomb limit, the tangential overlap is first limited and then the tangantial force is recalculated.
-The tangential overlap is calculated with the tangential force with no damping force as follow :
+
+A violation means the collision is having gross sliding and tangential force needs to be limited to the Coulomb limit.
+To do so, the tangential overlap :math:`\mathbf{\delta_t}` is first limited and then the tangential force is recalculated.
+
+The tangential overlap is calculated with the tangential force with no damping force as default nonlinear contact model as follow :
 
 .. math::
     \mathbf{\delta_t} &= \frac{\mathbf{\tilde{F}_{ij}}}{-k_{t}} \\
