@@ -23,6 +23,7 @@
 
 #include <solvers/gls_navier_stokes.h>
 
+#include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/ib_particles_dem.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -44,7 +45,7 @@ template <int dim>
 class GLSSharpNavierStokesSolver : public GLSNavierStokesSolver<dim>
 {
 public:
-  GLSSharpNavierStokesSolver(SimulationParameters<dim> &nsparam);
+  GLSSharpNavierStokesSolver(CFDDEMSimulationParameters<dim> &nsparam);
 
   ~GLSSharpNavierStokesSolver();
 
@@ -532,6 +533,9 @@ Return a bool that describes  if a cell contains a specific point
    */
 
 private:
+  // Parameters
+  CFDDEMSimulationParameters<dim> cfd_dem_parameters;
+
   bool all_spheres;
 
   std::map<unsigned int,

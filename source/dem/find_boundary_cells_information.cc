@@ -155,12 +155,15 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
       for (int face_id = 0; face_id < int(GeometryInfo<dim>::faces_per_cell);
            ++face_id)
         {
-          // We search to see if the boundary is defined as an outlet or
-          // not. If it is not defined as an outlet we proceed.
-          if (std::find(outlet_boundaries.begin(),
-                        outlet_boundaries.end(),
-                        cell->face(face_id)->boundary_id()) ==
-              outlet_boundaries.end())
+          // We search to see if the boundary is defined as an outlet, periodic
+          // or not. If it is not defined as one of those, we proceed.
+          bool is_outlet = std::find(outlet_boundaries.begin(),
+                                     outlet_boundaries.end(),
+                                     cell->face(face_id)->boundary_id()) !=
+                           outlet_boundaries.end();
+          bool is_periodic = cell->has_periodic_neighbor(face_id);
+
+          if (!is_outlet && !is_periodic)
             {
               // Check to see if the face is located at boundary
               if (cell->face(face_id)->at_boundary())

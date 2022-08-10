@@ -67,6 +67,8 @@ public:
    */
   void
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
+             const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
+                                                 floating_walls_parameters,
              const MPI_Comm &                    mpi_communicator_input,
              const std::vector<IBParticle<dim>> &particles);
 
@@ -228,16 +230,39 @@ private:
         {
           ar &normal_vector;
           ar &point_on_boundary;
+          ar &boundary_index;
         }
     }
 
     Tensor<1, dim> normal_vector;
     Point<dim>     point_on_boundary;
+    unsigned int   boundary_index;
+  };
+
+  // These structs are used to specify the default value of a variable in a map
+  // or set. This is used to find the best particle wall contact candidate.
+  struct DefaultDBL_MAX
+  {
+    double value = DBL_MAX;
+  };
+  struct DefaultUINT_MAX
+  {
+    int value = UINT_MAX;
+  };
+
+  // This enum defines the lowest index of a floating wall in the particle wall
+  // contact. This prevents a wall floating wall from shearing the same index as
+  // a standard boundary.
+  enum lowest_floating_wall_indices
+  {
+    lowest_floating_wall_indices = 1000000
   };
 
   std::shared_ptr<Parameters::IBParticles<dim>> parameters;
-  DEMSolverParameters<dim>                      dem_parameters{};
-  MPI_Comm                                      mpi_communicator;
+  std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
+                           floating_walls_parameters;
+  DEMSolverParameters<dim> dem_parameters{};
+  MPI_Comm                 mpi_communicator;
 
   std::shared_ptr<ParticleParticleContactForce<dim>>
     particle_particle_contact_force_object;

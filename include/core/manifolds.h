@@ -122,6 +122,40 @@ public:
           }
         computed_quantities[p][0] = boundary_id;
       }
+  };
+
+  virtual void
+  evaluate_scalar_field(
+    const DataPostprocessorInputs::Scalar<dim> &input_data,
+    std::vector<Vector<double>> &computed_quantities) const override
+  {
+    auto current_cell = input_data.template get_cell<dim>();
+
+    for (unsigned int p = 0; p < input_data.evaluation_points.size(); ++p)
+      {
+        unsigned int boundary_id  = 0;
+        double       min_distance = DBL_MAX;
+
+        for (const auto face : current_cell->face_indices())
+          {
+            if (current_cell->face(face)->at_boundary())
+              {
+                for (const auto vertex :
+                     current_cell->face(face)->vertex_indices())
+                  {
+                    double distance = input_data.evaluation_points[p].distance(
+                      current_cell->face(face)->vertex(vertex));
+                    if (distance < min_distance)
+                      {
+                        min_distance = distance;
+
+                        boundary_id = current_cell->face(face)->boundary_id();
+                      }
+                  }
+              }
+          }
+        computed_quantities[p][0] = boundary_id;
+      }
   }
 };
 
