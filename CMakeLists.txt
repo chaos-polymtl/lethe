@@ -14,9 +14,6 @@ find_package(deal.II 9.4.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
 deal_ii_initialize_cached_variables()
 
-#set(PROTOTYPES "FALSE" CACHE BOOL)
-option(PROTOTYPES "Enable prototype applications" OFF)
-
 Project(lethe)
 
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
@@ -43,6 +40,9 @@ if(ENABLE_NATIVE_OPTIMIZATION)
   add_compile_options(-march=native)
 endif()
 
+option(BUILD_PROTOTYPES "Build the prototype applications")
+mark_as_advanced(BUILD_PROTOTYPES)
+
 include(GNUInstallDirs)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
@@ -54,12 +54,13 @@ endif()
 ENABLE_TESTING()
 ADD_SUBDIRECTORY(source)
 ADD_SUBDIRECTORY(applications)
+
+if(BUILD_PROTOTYPES)
+  add_subdirectory(prototypes)
+endif()
+
 ADD_SUBDIRECTORY(applications_tests)
 ADD_SUBDIRECTORY(tests)
-IF(PROTOTYPES)
-    MESSAGE("Adding prototypes")
-    ADD_SUBDIRECTORY(prototypes)
- ENDIF()
 
 set(missing_dealii_features)
 
