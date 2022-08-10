@@ -37,18 +37,32 @@ using namespace std;
  * Defines or reads the mesh based on the information provided by the user
  * Gmsh files can also be read in this function
  *
- * @param dem_parameters Input DEM parameters in the parameter handler file
+ * @param mesh_params Input DEM parameters in the parameter handler file
  * @param pcout Printing in parallel
+ * @param restart If in restart situation
  * @param triangulation Triangulation
  * @param triangulation_cell_diameter Triangulation cell diameter
+ * @param bc_params Boundary conditions parameters for DEM
  */
-
 template <int dim, int spacedim = dim>
 void
-read_mesh(const Parameters::Mesh &      mesh_params,
-          const bool &                  restart,
-          const ConditionalOStream &    pcout,
-          Triangulation<dim, spacedim> &triangulation,
-          double &                      triangulation_cell_diameter);
+read_mesh(const Parameters::Mesh &             mesh_params,
+          const bool &                         restart,
+          const ConditionalOStream &           pcout,
+          Triangulation<dim, spacedim> &       triangulation,
+          double &                             triangulation_cell_diameter,
+          const Parameters::Lagrangian::BCDEM &bc_params);
+
+/**
+ * Allows periodic faces mapping in triangulation of mesh with boundary ids
+ * parameters.
+ *
+ * @param triangulation Triangulation
+ * @param bc_params Boundary conditions parameters for DEM
+ */
+template <int dim, int spacedim>
+void
+match_periodic_boundaries(Triangulation<dim, spacedim> &       triangulation,
+                          const Parameters::Lagrangian::BCDEM &bc_params);
 
 #endif /* read_mesh_h */

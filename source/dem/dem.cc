@@ -12,10 +12,9 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
+
+#include <core/manifolds.h>
 #include <core/solutions_output.h>
 #include <core/utilities.h>
 
@@ -35,6 +34,7 @@
 #include <dem/particle_wall_contact_info_struct.h>
 #include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
+#include <dem/periodic_boundaries_manipulator.h>
 #include <dem/print_initial_information.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
@@ -319,6 +319,12 @@ DEMSolver<dim>::load_balance()
       floating_mesh_information[i_solid] =
         solids[i_solid]->map_solid_in_background_triangulation(
           triangulation, solids[i_solid]->get_solid_triangulation());
+    }
+
+  if (parameters.boundary_conditions.BC_type ==
+      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+    {
+      periodic_boundaries_object.map_periodic_cells(triangulation);
     }
 
   boundary_cell_object.build(
@@ -760,7 +766,15 @@ DEMSolver<dim>::write_output_results()
   if (simulation_control->get_output_boundaries())
     {
       DataOutFaces<dim> data_out_faces;
+
+      // Setup background dofs to initiate right sized boundary_id vector
+      setup_background_dofs();
+      Vector<float> boundary_id(background_dh.n_dofs());
+
+      // Attach the boundary_id to data_out_faces object
+      BoundaryPostprocessor<dim> boundary;
       data_out_faces.attach_dof_handler(background_dh);
+      data_out_faces.add_data_vector(boundary_id, boundary);
       data_out_faces.build_patches();
 
       write_boundaries_vtu<dim>(
@@ -813,7 +827,9 @@ DEMSolver<dim>::solve()
             parameters.restart.restart,
             pcout,
             triangulation,
-            triangulation_cell_diameter);
+            triangulation_cell_diameter,
+            parameters.boundary_conditions);
+
 
   for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
@@ -863,6 +879,17 @@ DEMSolver<dim>::solve()
   if (floating_mesh)
     cell_neighbors_object.find_full_cell_neighbors(triangulation,
                                                    cells_total_neighbor_list);
+
+  if (parameters.boundary_conditions.BC_type ==
+      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+    {
+      periodic_boundaries_object.set_periodic_boundaries_information(
+        parameters.boundary_conditions.outlet_boundaries,
+        parameters.boundary_conditions.periodic_boundaries,
+        parameters.boundary_conditions.periodic_direction);
+
+      periodic_boundaries_object.map_periodic_cells(triangulation);
+    }
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
@@ -1043,6 +1070,10 @@ DEMSolver<dim>::solve()
             force,
             MOI);
         }
+
+      // Particles displacement if passing through a periodic boundary
+      periodic_boundaries_object.execute_particles_displacement(
+        particle_handler);
 
       // Visualization
       if (simulation_control->is_output_iteration())
