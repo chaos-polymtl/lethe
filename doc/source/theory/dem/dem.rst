@@ -1,9 +1,8 @@
 Discret Element Method (DEM)
 ############################
 *under construction*
-..
-    Must add introduction to DEM
 
+In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Golshan, Munch, Gassmöller, Kronbichler & Blais (2022) `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_
 
 .. math::
     m_i\frac{d\mathbf{v_i}}{dt} &= \sum_{j\in \mathcal C_i} (\mathbf{F}_{ij}^n + \mathbf{F}_{ij}^t) + m_i\mathbf{g} + \mathbf{F}_i^\text{ext} \\
@@ -26,10 +25,10 @@ Where :
 
 
 
-Contact force and torque Models
+Contact force and torque models
 --------------------------------
 
-The normal and tangental contact forces use linear and nonlinear viscoelastic models and are calculated as followed :
+The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as followed :
 
 .. math::
     \mathbf{F}_{ij}^n &= -(k_n\delta_n)\mathbf{n}_{ij}-(\eta_n\mathbf{v}_{rn}) \\
@@ -59,7 +58,7 @@ The contact normal vector :math:`\mathbf{n}_{ij}` is computed as :
 .. math::
     \mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}
 
-The normal overlap (:math:`\delta_n`) is the distance of contact between the particle i and j. The tangential overlap (:math:`\delta_t`) depends on the contact history and is updated during a contact.
+The normal overlap (:math:`\delta_n`) is the contact distance between the particles i and j. The tangential overlap (:math:`\delta_t`) depends on the contact history and is updated during a contact.
 The normal and tangential overlaps are calculated as follow : 
 
 .. math::
@@ -67,7 +66,7 @@ The normal and tangential overlaps are calculated as follow :
     \mathbf{\delta}_{ij}^{t,\text{new}} &= \mathbf{\delta}_{ij}^{t,\text{old}}+\mathbf{v}_{rt}dt
 
 
-The relative velocities calclated to allow to update the tangential overlap are then described by: 
+The relative velocities calculated to allow updating the tangential overlap are then described by :
 
 .. math::
     \mathbf{v}_{rn} &= \left(\mathbf{v}_{ij}.\mathbf{n}_{ij}\right)\mathbf{n}_{ij} \\
@@ -75,7 +74,7 @@ The relative velocities calclated to allow to update the tangential overlap are 
     \mathbf{v}_{ij} &= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij}
 
 
-The linear models used in Lethe-DEM are the following equation :
+The linear models used in Lethe-DEM are the following equations :
 
 .. math::
     k_n &= \frac{16}{15}\sqrt{R_{e}}Y_{e}\left(\frac{15m_{e}V^2}{16\sqrt{R_{e}}Y_{e}}\right)^{0.2} \\
@@ -102,7 +101,7 @@ Where :
 * :math:`e` coefficient of restitution;
 * :math:`G_e` effective shear modulus;
 
-The parameters are computed as followed:
+The parameters are computed as followed :
 
 .. math::
     \frac{1}{m_{e}} &= \frac{1}{m_i}+\frac{1}{m_j} \\
@@ -117,7 +116,7 @@ Where :
 
 * :math:`\nu_i, \nu_j` poisson coefficient of particle i or j;
 
-Rolling friction maybe be calculated through a constant torque model or a viscous torque model corresponding to those equations :
+Rolling friction may be calculated through a constant torque model or a viscous torque model corresponding to those equations :
 
 .. math::
     \mathbf{M}_{ij}^{r} &= -\mu_{r}R_{e}|\mathbf{F}_{ij}^{n}| \mathbf{\hat{\omega}}_{ij} \\
@@ -139,13 +138,11 @@ Tangential torque is calculated thought :
     \mathbf{M}_{ij}^{t} = R_{i}\mathbf{n}_{ij} \times \mathbf{F}_{ij}^{c}
 
 The Coulomb's criterion must be respected otherwise collision is having gross sliding and is verified through :
-..
-    Needs more explanation
 
 .. math::
     |\mathbf{F}_{ij}^{t}| \geq \mu |\mathbf{F}_{ij}^{n}|
 
-Prior limiting the tangential force to the Coulomb limit, the tangential overlap is limited in the recalculation of the tangantial force.
+Prior limiting the tangential force to the Coulomb limit, the tangential overlap is first limited and then the tangantial force is recalculated.
 The tangential overlap is calculated with the tangential force with no damping force as follow :
 
 .. math::
@@ -157,9 +154,10 @@ Regarding the particle-wall contacts, applied models are the same than particle-
 
 Integration methods
 --------------------
-Two types of integration methods are implemented in Lethe-DEM : explicit Euler method and velocity Verlet methods.
-..
-    Needs more explanation
+Two types of integration methods are implemented in Lethe-DEM :
+
+* Explicit Euler method;
+* Velocity Verlet method
 
 Explicit Euler method is calculated as :
 
@@ -167,7 +165,7 @@ Explicit Euler method is calculated as :
     \mathbf{v}_{i}^{n+1} &= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}dt \\
     \mathbf{x}_{i}^{n+1} &= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n}dt
 
-And velocity Verlet method is calculated with halft-step velocity as :
+And velocity Verlet method is calculated with half-step velocity as :
 
 .. math::
     \mathbf{v}_{i}^{n+\frac{1}{2}} &= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}\frac{dt}{2} \\
@@ -178,5 +176,5 @@ And velocity Verlet method is calculated with halft-step velocity as :
 
 References
 -------------
-`[1] <https://doi.org/10.1007/s40571-022-00478-6>`_ Golshan, Shahab, et al. "Lethe-DEM: An open-source parallel discrete element solver with load balancing." Computational Particle Mechanics (2022) p.1-20
+`[1] <https://doi.org/10.1007/s40571-022-00478-6>`_ Golshan et al. "Lethe-DEM: An open-source parallel discrete element solver with load balancing." Computational Particle Mechanics (2022) p.1-20
 
