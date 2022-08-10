@@ -31,16 +31,21 @@
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping_fe.h>
 
+
+
 template <int dim>
 void
 IBParticlesDEM<dim>::initialize(
   const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
-  const MPI_Comm &                                     mpi_communicator_input,
-  const std::vector<IBParticle<dim>> &                 particles)
+  const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
+                                      fw_parameters,
+  const MPI_Comm &                    mpi_communicator_input,
+  const std::vector<IBParticle<dim>> &particles)
 {
-  parameters       = p_nsparam;
-  mpi_communicator = mpi_communicator_input;
-  dem_particles    = particles;
+  parameters                = p_nsparam;
+  floating_walls_parameters = fw_parameters;
+  mpi_communicator          = mpi_communicator_input;
+  dem_particles             = particles;
   boundary_cells.resize(dem_particles.size());
 
   dem_parameters.model_parameters.particle_particle_contact_force_method =
@@ -81,18 +86,18 @@ IBParticlesDEM<dim>::update_contact_candidates()
 
   for (auto &particle_one : dem_particles)
     {
+      const Point<dim> particle_one_location = particle_one.position;
       for (auto &particle_two : dem_particles)
         {
           if (particle_one.particle_id < particle_two.particle_id)
             {
-              const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
 
               if ((particle_one_location - particle_two_location).norm() <
                   (particle_one.radius + particle_two.radius) * radius_factor)
                 {
-                  particles_contact_candidates[particle_one.particle_id].insert(
-                    particle_two.particle_id);
+                  (particles_contact_candidates[particle_one.particle_id])
+                    .insert(particle_two.particle_id);
                 }
             }
         }
@@ -110,14 +115,17 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
 {
   for (auto &particle_one : dem_particles)
     {
-      for (auto particle_contact_candidates_id =
-             particles_contact_candidates[particle_one.id].begin();
+      std::set<unsigned int>::iterator particle_contact_candidates_id;
+      for (particle_contact_candidates_id =
+             particles_contact_candidates[particle_one.particle_id].begin();
            particle_contact_candidates_id !=
-           particles_contact_candidates[particle_one.id].end();
+           particles_contact_candidates[particle_one.particle_id].end();
            ++particle_contact_candidates_id)
         {
-          const auto &particle_contact_id = *particle_contact_candidates_id;
-          auto &      particle_two        = dem_particles[particle_contact_id];
+          const unsigned int particle_contact_id =
+            *particle_contact_candidates_id;
+
+          auto &particle_two = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {
@@ -224,9 +232,9 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
   for (auto &particle_one : dem_particles)
     {
       for (auto particle_contact_candidates_id =
-             particles_contact_candidates[particle_one.id].begin();
+             particles_contact_candidates[particle_one.particle_id].begin();
            particle_contact_candidates_id !=
-           particles_contact_candidates[particle_one.id].end();
+           particles_contact_candidates[particle_one.particle_id].end();
            ++particle_contact_candidates_id)
         {
           const auto &particle_contact_id = *particle_contact_candidates_id;
@@ -337,6 +345,8 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
                       boundary_information.normal_vector = normal_vector;
                       boundary_information.point_on_boundary =
                         fe_face_values.quadrature_point(f_q_point);
+                      boundary_information.boundary_index =
+                        cells_at_boundary[i]->face(face_id)->boundary_id();
                       boundary_cells[p_i].push_back(boundary_information);
                     }
                 }
@@ -372,31 +382,64 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
   double wall_restitution_coefficient =
     parameters->wall_restitution_coefficient;
 
+
   // Loop over the particles
   for (auto &particle : dem_particles)
     {
-      unsigned int boundary_index = 0;
-      double       best_dist      = DBL_MAX;
-      unsigned int best_index     = UINT_MAX;
-      // For each particle loop over the point and normal identified as
+      // Defines map with default values.
+      unsigned int                              boundary_index = 0;
+      std::map<unsigned int, DefaultDBL_MAX>    best_dist;
+      std::map<unsigned int, DefaultUINT_MAX>   best_indices;
+      std::map<unsigned int, BoundaryCellsInfo> best_cells;
+      // Loop over the point and normal identified as
       // potential contact candidate.
       for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
         {
-          // find the best candidate (the closest point).
+          // Find the best candidate (the closest point) for each different
+          // wall.
           double dist =
             (boundary_cell_iter.point_on_boundary - particle.position).norm();
-          if (dist < best_dist)
+          // Check if the distance is smaller than the best distance.
+          // If it is the first time this boundary is encountered, the distance
+          // is compared to the default value of the map, which is DBL_MAX
+          if (dist < best_dist[boundary_cell_iter.boundary_index].value)
             {
-              best_dist  = dist;
-              best_index = boundary_index;
+              best_dist[boundary_cell_iter.boundary_index].value = dist;
+              best_indices[boundary_cell_iter.boundary_index].value =
+                boundary_index;
+              best_cells[boundary_cell_iter.boundary_index] =
+                boundary_cell_iter;
             }
           boundary_index += 1;
         }
-      // Do the particle wall contact calculation with the best candidate.
-      if (boundary_cells[particle.particle_id].size() > 0)
+
+      // Add all the floating wall has contact candidate. Their indices start
+      // from 1M (define in the definition of: lowest_floating_wall_indices).
+      // This prevents a floating wall from sharing the same indices as a normal
+      // boundary of the domain in the contact candidates list.
+      for (unsigned int i = 0;
+           i < floating_walls_parameters->points_on_walls.size();
+           ++i)
         {
-          auto &boundary_cell =
-            boundary_cells[particle.particle_id][best_index];
+          if (floating_walls_parameters->time_start[i] < cfd_time &&
+              floating_walls_parameters->time_end[i] > cfd_time)
+            {
+              BoundaryCellsInfo floating_wall_cell_info;
+              floating_wall_cell_info.point_on_boundary =
+                floating_walls_parameters->points_on_walls[i];
+              floating_wall_cell_info.normal_vector =
+                floating_walls_parameters->floating_walls_normal_vectors[i];
+              best_cells[lowest_floating_wall_indices + i + 1] =
+                floating_wall_cell_info;
+            }
+        }
+
+      // Do the particle wall contact calculation with the best candidate.
+      for (auto best_index_of_face = best_cells.begin();
+           best_index_of_face != best_cells.end();
+           ++best_index_of_face)
+        {
+          auto &boundary_cell = best_index_of_face->second;
 
           auto boundary_cell_information = boundary_cell;
           particle_wall_contact_info_struct<dim> contact_info;
@@ -406,8 +449,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           // contact history with 0 values.
           try
             {
-              contact_info =
-                pw_contact_map[particle.particle_id][boundary_index];
+              contact_info = pw_contact_map[particle.particle_id]
+                                           [boundary_cell.boundary_index];
             }
           catch (...)
             {
@@ -424,8 +467,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               contact_info.normal_relative_velocity = 0;
               // End BB
 
-              pw_contact_map[particle.particle_id][boundary_index] =
-                contact_info;
+              pw_contact_map[particle.particle_id]
+                            [boundary_cell.boundary_index] = contact_info;
             }
 
           Tensor<1, 3> normal =
@@ -434,9 +477,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
 
           // A vector (point_to_particle_vector) is defined which connects the
-          // center of particle to the point_on_boundary. This vector will then
-          // be projected on the normal vector of the boundary to obtain the
-          // particle-wall distance
+          // center of particle to the point_on_boundary. This vector will
+          // then be projected on the normal vector of the boundary to obtain
+          // the particle-wall distance
 
           Point<3> particle_position_3d = point_nd_to_3d(particle.position);
           Point<3> point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
@@ -444,9 +487,10 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           Tensor<1, 3> point_to_particle_vector =
             particle_position_3d - point_on_boundary_3d;
 
-          // Finding the projected vector on the normal vector of the boundary.
-          // Here we have used the private function find_projection. Using this
-          // projected vector, the particle-wall distance is calculated
+          // Finding the projected vector on the normal vector of the
+          // boundary. Here we have used the private function find_projection.
+          // Using this projected vector, the particle-wall distance is
+          // calculated
           Tensor<1, 3> projected_vector =
             particle_wall_contact_force_object->find_projection(
               point_to_particle_vector, normal);
@@ -456,7 +500,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
           if (normal_overlap > 0)
             {
-              // Do the calculation to evaluate the particle wall contact force.
+              // Do the calculation to evaluate the particle wall contact
+              // force.
               contact_info.normal_overlap = normal_overlap;
 
               Tensor<1, 3> normal_force;
@@ -523,28 +568,60 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
   // Loop over the particles
   for (auto &particle : dem_particles)
     {
-      unsigned int boundary_index = 0;
-      double       best_dist      = DBL_MAX;
-      unsigned int best_index     = UINT_MAX;
+      // Defines map with default values.
+      unsigned int                              boundary_index = 0;
+      std::map<unsigned int, DefaultDBL_MAX>    best_dist;
+      std::map<unsigned int, DefaultUINT_MAX>   best_indices;
+      std::map<unsigned int, BoundaryCellsInfo> best_cells;
       // For each particle loop over the point and normal identified as
       // potential contact candidate.
       for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
         {
-          // find the best candidate (the closest point).
+          // Find the best candidate (the closest point) for each different
+          // wall.
           double dist =
             (boundary_cell_iter.point_on_boundary - particle.position).norm();
-          if (dist < best_dist)
+          // Check if the distance is smaller than the best distance.
+          // If it is the first time this boundary is encountered, the distance
+          // is compared to the default value of the map, which is DBL_MAX
+          if (dist < best_dist[boundary_cell_iter.boundary_index].value)
             {
-              best_dist  = dist;
-              best_index = boundary_index;
+              best_dist[boundary_cell_iter.boundary_index].value = dist;
+              best_indices[boundary_cell_iter.boundary_index].value =
+                boundary_index;
+              best_cells[boundary_cell_iter.boundary_index] =
+                boundary_cell_iter;
             }
           boundary_index += 1;
         }
-      // Do the particle wall lubrication calculation with the best candidate.
-      if (boundary_cells[particle.particle_id].size() > 0)
+
+      // Add all the floating wall has contact candidate. Their indices start
+      // from 1M (define in the definition of: lowest_floating_wall_indices).
+      // This prevents a floating wall from sharing the same indices as a normal
+      // boundary of the domain in the contact candidates list.
+      for (unsigned int i = 0;
+           i < floating_walls_parameters->points_on_walls.size();
+           ++i)
         {
-          auto &boundary_cell =
-            boundary_cells[particle.particle_id][best_index];
+          if (floating_walls_parameters->time_start[i] < cfd_time &&
+              floating_walls_parameters->time_end[i] > cfd_time)
+            {
+              BoundaryCellsInfo floating_wall_cell_info;
+              floating_wall_cell_info.point_on_boundary =
+                floating_walls_parameters->points_on_walls[i];
+              floating_wall_cell_info.normal_vector =
+                floating_walls_parameters->floating_walls_normal_vectors[i];
+              best_cells[lowest_floating_wall_indices + i + 1] =
+                floating_wall_cell_info;
+            }
+        }
+
+      // Do the particle wall contact calculation with the best candidate.
+      for (auto best_index_of_face = best_cells.begin();
+           best_index_of_face != best_cells.end();
+           ++best_index_of_face)
+        {
+          auto &boundary_cell = best_index_of_face->second;
 
           auto         boundary_cell_information = boundary_cell;
           Tensor<1, 3> normal =

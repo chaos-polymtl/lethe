@@ -32,8 +32,8 @@ main(int argc, char *argv[])
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
         argc, argv, numbers::invalid_unsigned_int);
 
-      ParameterHandler        prm;
-      SimulationParameters<3> NSparam;
+      ParameterHandler              prm;
+      CFDDEMSimulationParameters<3> NSparam;
       NSparam.declare(prm);
       // Parsing of the file
       prm.parse_input(argv[1]);
