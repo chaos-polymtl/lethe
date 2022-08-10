@@ -10,19 +10,6 @@ endif()
 # environments.
 set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 
-set(CMAKE_CXX_STANDARD 17)
-add_compile_options(-pedantic)
-add_compile_options(-Wextra)
-add_compile_options(-Wunused-variable)
-add_compile_options(-Wdisabled-optimization)
-add_compile_options(-Wall)
-
-
-# Disabled by default, used to be necessary on the Cedar cluster of Compute Canada
-#add_compile_options(-fext-numeric-literals)
-
-#add_compile_options(-Weffc++)
-
 find_package(deal.II 9.4.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
 deal_ii_initialize_cached_variables()
@@ -31,6 +18,14 @@ deal_ii_initialize_cached_variables()
 option(PROTOTYPES "Enable prototype applications" OFF)
 
 Project(lethe)
+
+set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_compile_options(
+  -Wall -Wextra -Wpedantic # Actually already in DEAL_II_CXX_FLAGS
+  -Wunused-variable -Wdisabled-optimization)
 
 if(CMAKE_VERSION VERSION_LESS 3.24)
   option(CMAKE_COMPILE_WARNING_AS_ERROR "Treat warnings on compile as errors")
