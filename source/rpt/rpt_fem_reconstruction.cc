@@ -681,11 +681,11 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(
   double                           last_constraint_reference_location;
   double                           norm_error_coordinates;
   double                           calculated_cost;
+  bool                             position_found = false;
+  Point<dim>                       real_location;
   Vector<double>                   reference_location;
   std::vector<std::vector<double>> count_from_all_detectors(
     n_detector, std::vector<double>(4));
-  Point<dim> real_location;
-  bool       position_found = false;
 
   // Find cells adjacent to the cell were found the previous position
   std::vector<typename DoFHandler<dim>::active_cell_iterator> adjacent_cells;
@@ -694,7 +694,7 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(
   // Add previous solution's cell
   all_adjacent_cells.insert(cell);
 
-  // Search for adjacent cells
+  // Search for adjacent cells and stock them in the set container
   for (unsigned int v = 0; v < cell->n_vertices(); ++v)
     {
       auto v_index = cell->vertex_index(v);
