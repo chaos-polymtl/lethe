@@ -122,8 +122,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   endif()
 endif()
 
-ADD_SUBDIRECTORY(source)
-ADD_SUBDIRECTORY(applications)
+add_subdirectory(source)
+add_subdirectory(applications)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   if(BUILD_PROTOTYPES)
