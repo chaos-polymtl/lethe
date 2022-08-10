@@ -1,5 +1,4 @@
 Running on 1 MPI rank(s)...
-A non-spherical particle was found: using regular cut_cells_mapping.
    Number of active cells:       512
    Number of degrees of freedom: 2916
    Volume of triangulation:      512
