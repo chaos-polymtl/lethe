@@ -94,28 +94,31 @@ if(_libdir_index LESS 0)
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
 endif()
 
-ENABLE_TESTING()
+option(BUILD_TESTING "Build the tests" ON)
+if(BUILD_TESTING)
+  enable_testing()
 
-if(DEFINED TXR_EXECUTABLE)
-  set(_had_txr_executable TRUE)
-endif()
-find_program(TXR_EXECUTABLE NAMES txr
-  DOC "Path to the TXR executable.")
-mark_as_advanced(TXR_EXECUTABLE)
-# Print the status information only if TXR_EXECUTABLE was neither
-# provided on the command line nor found in the cache.
-# Ideally, users would be informed whenever TXR_EXECUTABLE changes
-# (which is what happens with PERL_EXECUTABLE), but there is no way to
-# access a variable's cached value if it is also provided on the command
-# line (except by defining additional variables).
-if(NOT _had_txr_executable)
-  if(TXR_EXECUTABLE)
-    message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
-  else()
-    message(STATUS "Could not find TXR: omitting target \"update-golden\"")
+  if(DEFINED TXR_EXECUTABLE)
+    set(_had_txr_executable TRUE)
   endif()
+  find_program(TXR_EXECUTABLE NAMES txr
+    DOC "Path to the TXR executable.")
+  mark_as_advanced(TXR_EXECUTABLE)
+  # Print the status information only if TXR_EXECUTABLE was neither
+  # provided on the command line nor found in the cache.
+  # Ideally, users would be informed whenever TXR_EXECUTABLE changes
+  # (which is what happens with PERL_EXECUTABLE), but there is no way to
+  # access a variable's cached value if it is also provided on the
+  # command line (except by defining additional variables).
+  if(NOT _had_txr_executable)
+    if(TXR_EXECUTABLE)
+      message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
+    else()
+      message(STATUS "Could not find TXR: omitting target \"update-golden\"")
+    endif()
+  endif()
+  unset(_had_txr_executable)
 endif()
-unset(_had_txr_executable)
 
 ADD_SUBDIRECTORY(source)
 ADD_SUBDIRECTORY(applications)
@@ -124,12 +127,14 @@ if(BUILD_PROTOTYPES)
   add_subdirectory(prototypes)
 endif()
 
-ADD_SUBDIRECTORY(applications_tests)
-ADD_SUBDIRECTORY(tests)
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+  add_subdirectory(applications_tests)
 
-if(TXR_EXECUTABLE)
-  add_custom_target(update-golden
-    COMMAND "${TXR_EXECUTABLE}"
-            "${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl"
-            "${CMAKE_BINARY_DIR}" "${CMAKE_SOURCE_DIR}")
+  if(TXR_EXECUTABLE)
+    add_custom_target(update-golden
+      COMMAND "${TXR_EXECUTABLE}"
+              "${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl"
+              "${CMAKE_BINARY_DIR}" "${CMAKE_SOURCE_DIR}")
+  endif()
 endif()
