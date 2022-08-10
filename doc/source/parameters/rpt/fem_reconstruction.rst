@@ -1,7 +1,7 @@
 FEM Reconstruction
 -------------------
 
-In this subsection are defined the parameters used for the ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications.
+In this subsection, the parameters used for ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications are defined.
 Here are the default values:
 
 .. code-block:: text
@@ -23,6 +23,8 @@ Here are the default values:
         set search cell proximity level     = 1
         set verbose clock                   = false
 
+For both ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications, we have to define the mesh:
+
 - ``mesh type``: Type of mesh used.
     Options: ``dealii`` or ``gmsh``
 - ``mesh filename``: Filename of the imported mesh. Specify only if ``gmsh`` was the selected option for the ``mesh type``.
@@ -31,6 +33,9 @@ Here are the default values:
     Options: Any positive integer
 - ``mesh refinement``: Number of global mesh refinements. Specify only if ``dealii`` was the selected option for the ``mesh type``.
     Options: Any positive integer
+
+For the ``rpt_fem_reconstruction_3d`` application only, we have to define the following parameters:
+
 - ``experimental counts file``: Filename of the file containing the experimental photon counts.
     Options: Any ``.txt`` file
 - ``export positions file``: Name of the file in which the calculated positions are exported.
