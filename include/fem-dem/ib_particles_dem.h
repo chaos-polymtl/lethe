@@ -239,6 +239,25 @@ private:
     unsigned int   boundary_index;
   };
 
+  // These structs are used to specify the default value of a variable in a map
+  // or set. This is used to find the best particle wall contact candidate.
+  struct DefaultDBL_MAX
+  {
+    double value = DBL_MAX;
+  };
+  struct DefaultUINT_MAX
+  {
+    int value = UINT_MAX;
+  };
+
+  // This enum defines the lowest index of a floating wall in the particle wall
+  // contact. This prevents a wall floating wall from shearing the same index as
+  // a standard boundary.
+  enum lowest_floating_wall_indices
+  {
+    lowest_floating_wall_indices = 1000000
+  };
+
   std::shared_ptr<Parameters::IBParticles<dim>> parameters;
   std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
                            floating_walls_parameters;

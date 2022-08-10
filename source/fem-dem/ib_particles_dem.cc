@@ -382,34 +382,26 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
   double wall_restitution_coefficient =
     parameters->wall_restitution_coefficient;
 
-  struct DefaultDBL_MAX
-  {
-    double value = DBL_MAX;
-  };
-  struct DefaultUINT_MAX
-  {
-    int value = UINT_MAX;
-  };
-  enum lowest_floating_wall_indices
-  {
-    lowest_floating_wall_indices = 1000000
-  };
-
 
   // Loop over the particles
   for (auto &particle : dem_particles)
     {
+      // Defines map with default values.
       unsigned int                              boundary_index = 0;
       std::map<unsigned int, DefaultDBL_MAX>    best_dist;
       std::map<unsigned int, DefaultUINT_MAX>   best_indices;
       std::map<unsigned int, BoundaryCellsInfo> best_cells;
-      // For each particle loop over the point and normal identified as
+      // Loop over the point and normal identified as
       // potential contact candidate.
       for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
         {
-          // find the best candidate (the closest point).
+          // Find the best candidate (the closest point) for each different
+          // wall.
           double dist =
             (boundary_cell_iter.point_on_boundary - particle.position).norm();
+          // Check if the distance is smaller than the best distance.
+          // If it is the first time this boundary is encountered, the distance
+          // is compared to the default value of the map, which is DBL_MAX
           if (dist < best_dist[boundary_cell_iter.boundary_index].value)
             {
               best_dist[boundary_cell_iter.boundary_index].value = dist;
@@ -421,10 +413,10 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           boundary_index += 1;
         }
 
-      // start the indexing of the floating wall at 1000000 so it doesn't
-
-      // add all the floating wall has contact candidates. Their indices start
-      // from 1000000 to avoid conflict with other boundary condition.
+      // Add all the floating wall has contact candidate. Their indices start
+      // from 1M (define in the definition of: lowest_floating_wall_indices).
+      // This prevents a floating wall from sharing the same indices as a normal
+      // boundary of the domain in the contact candidates list.
       for (unsigned int i = 0;
            i < floating_walls_parameters->points_on_walls.size();
            ++i)
@@ -573,22 +565,10 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
 {
   using numbers::PI;
 
-  struct DefaultDBL_MAX
-  {
-    double value = DBL_MAX;
-  };
-  struct DefaultUINT_MAX
-  {
-    int value = UINT_MAX;
-  };
-  enum lowest_floating_wall_indices
-  {
-    lowest_floating_wall_indices = 1000000
-  };
-
   // Loop over the particles
   for (auto &particle : dem_particles)
     {
+      // Defines map with default values.
       unsigned int                              boundary_index = 0;
       std::map<unsigned int, DefaultDBL_MAX>    best_dist;
       std::map<unsigned int, DefaultUINT_MAX>   best_indices;
@@ -597,9 +577,13 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
       // potential contact candidate.
       for (auto &boundary_cell_iter : boundary_cells[particle.particle_id])
         {
-          // find the best candidate (the closest point).
+          // Find the best candidate (the closest point) for each different
+          // wall.
           double dist =
             (boundary_cell_iter.point_on_boundary - particle.position).norm();
+          // Check if the distance is smaller than the best distance.
+          // If it is the first time this boundary is encountered, the distance
+          // is compared to the default value of the map, which is DBL_MAX
           if (dist < best_dist[boundary_cell_iter.boundary_index].value)
             {
               best_dist[boundary_cell_iter.boundary_index].value = dist;
@@ -611,10 +595,10 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
           boundary_index += 1;
         }
 
-      // start the indexing of the floating wall at 1M so it doesn't
-
-      // add all the floating wall has contact candidate their indices start
-      // from the largest indices of the face found in the candidate.
+      // Add all the floating wall has contact candidate. Their indices start
+      // from 1M (define in the definition of: lowest_floating_wall_indices).
+      // This prevents a floating wall from sharing the same indices as a normal
+      // boundary of the domain in the contact candidates list.
       for (unsigned int i = 0;
            i < floating_walls_parameters->points_on_walls.size();
            ++i)

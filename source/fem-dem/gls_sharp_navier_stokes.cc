@@ -2477,8 +2477,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         }
                       catch (...)
                         {
+                          // If we are here, the DOF is on a boundary.
                           particle_close_to_wall = true;
                           cell_2                 = cell;
+                          // If a boundary condition is already applied to this
+                          // DOF we skip it otherwise we impose a value base on
+                          // the velocity of the particle.
                           if (this->zero_constraints.is_constrained(
                                 global_index_overwrite) ||
                               this->nonzero_constraints.is_constrained(
