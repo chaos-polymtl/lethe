@@ -50,4 +50,39 @@ struct boundary_cells_info_struct
   Point<dim> point_on_face;
 };
 
+template <int dim>
+struct periodic_boundaries_cells_info_struct
+{
+  // The boundary cell
+  typename Triangulation<dim>::active_cell_iterator cell;
+
+  // ID of boundary
+  types::boundary_id boundary_id;
+
+  // ID of boundary face in the boundary cell
+  unsigned int global_face_id;
+
+  // Normal vector of the boundary face
+  Tensor<1, dim> normal_vector;
+
+  // A point on the boundary face
+  Point<dim> point_on_face;
+
+  // The periodic boundary cell
+  typename Triangulation<dim>::active_cell_iterator periodic_cell;
+
+  // ID of periodic boundary
+  types::boundary_id periodic_boundary_id;
+
+  // ID of periodic boundary face in the boundary cell
+  unsigned int global_periodic_face_id;
+
+  // Normal vector of the periodic boundary face
+  Tensor<1, dim> periodic_normal_vector;
+
+  // A point on the peridic boundary face
+  Point<dim> point_on_periodic_face;
+};
+
+
 #endif /* boundary_cells_info_struct_h */

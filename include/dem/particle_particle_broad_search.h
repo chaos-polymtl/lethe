@@ -16,6 +16,7 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <dem/find_boundary_cells_information.h>
 #include <dem/particle_particle_contact_info_struct.h>
 
 #include <deal.II/base/timer.h>

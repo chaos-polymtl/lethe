@@ -11,6 +11,7 @@ To use Lethe, you must install it. This can be done either through a regular ins
     :titlesonly:
 
     regular_installation
+    apple_arm
     docker
     compute_canada
 

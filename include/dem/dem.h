@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
 #include <core/data_containers.h>
@@ -43,6 +40,7 @@
 #include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_fine_search.h>
+#include <dem/periodic_boundaries_manipulator.h>
 #include <dem/visualization.h>
 
 #include <deal.II/base/tensor.h>
@@ -382,16 +380,19 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
-  std::shared_ptr<GridMotion<dim>>  grid_motion_object;
-  ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
-  ParticleParticleFineSearch<dim>   particle_particle_fine_search_object;
-  ParticleWallBroadSearch<dim>      particle_wall_broad_search_object;
-  ParticlePointLineBroadSearch<dim> particle_point_line_broad_search_object;
-  ParticleWallFineSearch<dim>       particle_wall_fine_search_object;
-  ParticlePointLineFineSearch<dim>  particle_point_line_fine_search_object;
-  ParticlePointLineForce<dim>       particle_point_line_contact_force_object;
-  std::shared_ptr<Integrator<dim>>  integrator_object;
-  std::shared_ptr<Insertion<dim>>   insertion_object;
+  std::shared_ptr<GridMotion<dim>>   grid_motion_object;
+  ParticleParticleBroadSearch<dim>   particle_particle_broad_search_object;
+  ParticleParticleFineSearch<dim>    particle_particle_fine_search_object;
+  ParticleWallBroadSearch<dim>       particle_wall_broad_search_object;
+  ParticlePointLineBroadSearch<dim>  particle_point_line_broad_search_object;
+  ParticleWallFineSearch<dim>        particle_wall_fine_search_object;
+  ParticlePointLineFineSearch<dim>   particle_point_line_fine_search_object;
+  ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
+  std::shared_ptr<Integrator<dim>>   integrator_object;
+  std::shared_ptr<Insertion<dim>>    insertion_object;
+  PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
+
+
   std::shared_ptr<ParticleParticleContactForce<dim>>
     particle_particle_contact_force_object;
   std::shared_ptr<ParticleWallContactForce<dim>>

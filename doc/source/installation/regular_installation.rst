@@ -16,7 +16,7 @@ Lethe cannot be installed if deal.II has not been configured with p4est, Trilino
 Installing deal.II using candi (Step #1)
 -----------------------------------------
 
-To install the dependencies (mpi, numdiff, p4est, trilinos and METIS) all together by Candi, the `procedure <https://github.com/dealii/candi.git>`_ on the candi repository can be followed.
+To install the dependencies (mpi, p4est, trilinos and METIS) all together by Candi, the `procedure <https://github.com/dealii/candi.git>`_ on the candi repository can be followed.
 
 Clone the candi git repository in a folder of your choice  (e.g. ``/home/username/software``). You can edit the ``candi.cfg`` file if you want to alter which dependencies are compiled. This can notably be used to force the installation of the deal.II master version instead of the current stable version by setting the ``STABLE_BUILD=false``
 

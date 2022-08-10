@@ -40,9 +40,11 @@
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
 GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
-  SimulationParameters<dim> &p_nsparam)
-  : GLSNavierStokesSolver<dim>(p_nsparam)
+  CFDDEMSimulationParameters<dim> &p_nsparam)
+  : GLSNavierStokesSolver<dim>(p_nsparam.cfd_parameters)
+  , cfd_dem_parameters(p_nsparam)
   , all_spheres(true)
+
 {}
 
 template <int dim>
@@ -64,6 +66,10 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
 {
+  all_spheres = false;
+
+  // WIP The optimized cut-cell mapping seems to lead to instability
+  /*
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       if (particles[p_i].shape->get_shape_name().second !=
@@ -71,11 +77,13 @@ GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
         {
           all_spheres = false;
           std::cout
-            << "A non-spherical particle was found: using regular cut_cells_mapping."
+            << "A non-spherical particle was found: using regular
+  cut_cells_mapping."
             << std::endl;
           break;
         }
     }
+    */
 }
 
 template <int dim>
@@ -125,7 +133,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   if (0 == this->fe->system_to_component_index(j).first)
                     {
                       if (particles[p].get_levelset(
-                            support_points[local_dof_indices[j]]) < 0)
+                            support_points[local_dof_indices[j]]) <= 0)
                         ++nb_dof_inside;
                     }
                 }
@@ -447,9 +455,12 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
     }
 
   table_p.resize(particles.size());
-  ib_dem.initialize(this->simulation_parameters.particlesParameters,
-                    this->mpi_communicator,
-                    particles);
+  ib_dem.initialize(
+    this->simulation_parameters.particlesParameters,
+    std::make_shared<Parameters::Lagrangian::FloatingWalls<dim>>(
+      cfd_dem_parameters.dem_parameters.floating_walls),
+    this->mpi_communicator,
+    particles);
 
   check_whether_all_particles_are_sphere();
 }
@@ -2466,8 +2477,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         }
                       catch (...)
                         {
+                          // If we are here, the DOF is on a boundary.
                           particle_close_to_wall = true;
                           cell_2                 = cell;
+                          // If a boundary condition is already applied to this
+                          // DOF we skip it otherwise we impose a value base on
+                          // the velocity of the particle.
+                          if (this->zero_constraints.is_constrained(
+                                global_index_overwrite) ||
+                              this->nonzero_constraints.is_constrained(
+                                global_index_overwrite))
+                            {
+                              continue;
+                            }
                         }
 
                       cell_2->get_dof_indices(local_dof_indices_2);
@@ -3106,18 +3128,19 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
 {
   this->GLSNavierStokesSolver<dim>::write_checkpoint();
 
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename;
 
-  TableHandler particles_information_table;
-  std::string  filename =
-    this->simulation_parameters.simulation_control.output_folder + prefix +
-    ".ib_particles";
-  std::ofstream output(filename.c_str());
   // Write a table with all the relevant properties of the particle in a table.
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
+      std::string prefix =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename;
+
+      TableHandler particles_information_table;
+      std::string  filename =
+        this->simulation_parameters.simulation_control.output_folder + prefix +
+        ".ib_particles";
+      std::ofstream output(filename.c_str());
       this->simulation_control->save(prefix);
 
       this->pvdhandler.save(prefix);
