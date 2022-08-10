@@ -36,10 +36,14 @@ deal_ii_initialize_cached_variables()
 
 #set(PROTOTYPES "FALSE" CACHE BOOL)
 option(PROTOTYPES "Enable prototype applications" OFF)
-option(MARCH_NATIVE "Enable the -march=native flag" OFF)
-
 
 Project(lethe)
+
+# Tests may break when enabled.
+option(ENABLE_NATIVE_OPTIMIZATION "Enable native optimization (-march=native)")
+if(ENABLE_NATIVE_OPTIMIZATION)
+  add_compile_options(-march=native)
+endif()
 
 include(GNUInstallDirs)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -58,11 +62,6 @@ IF(PROTOTYPES)
     MESSAGE("Adding prototypes")
     ADD_SUBDIRECTORY(prototypes)
  ENDIF()
- IF(MARCH_NATIVE)
-    MESSAGE("  Enabling -march=native flag. This may cause some tests to break.")
-    add_compile_options(-march=native)
- ENDIF()
-
 
 set(missing_dealii_features)
 
