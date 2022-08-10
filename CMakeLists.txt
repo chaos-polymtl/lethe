@@ -36,6 +36,7 @@ option(MARCH_NATIVE "Enable the -march=native flag" OFF)
 
 Project(lethe)
 
+include(GNUInstallDirs)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
   "${CMAKE_INSTALL_PREFIX}/lib" _libdir_index)
