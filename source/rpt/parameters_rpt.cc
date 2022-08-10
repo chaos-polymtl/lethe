@@ -356,10 +356,17 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
       Patterns::List(Patterns::FileName()),
       "Saved nodal counts of every detector for every cell of the mesh filename");
 
-    prm.declare_entry("search cell proximity level",
-                      "1",
-                      Patterns::Integer(),
-                      "Level of proximity of cells considered in the search of a position from the previous position");
+    prm.declare_entry(
+      "search type",
+      "local",
+      Patterns::Selection("local|global"),
+      "Type of search algorithm used when finding the particle's real position");
+
+    prm.declare_entry(
+      "search cell proximity level",
+      "1",
+      Patterns::Integer(),
+      "Level of proximity of cells considered in the search of a position from the previous position");
 
     prm.declare_entry("verbose clock",
                       "false",
@@ -407,10 +414,19 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
       throw std::logic_error(
         "Error, invalid cost function type. Choices are 'absolute' or 'relative'");
 
-
     dof_handler_file              = prm.get("dof handler file");
     std::string nodal_counts_list = prm.get("nodal counts file");
     nodal_counts_file = Utilities::split_string_list(nodal_counts_list);
+
+    const std::string fem_search_type = prm.get("search type");
+    if (fem_search_type == "local")
+      search_type = FEMSearchType::local;
+    else if (fem_search_type == "global")
+      search_type = FEMSearchType::global;
+    else
+      throw std::logic_error(
+        "Error, invalid search type. Choices are 'local' or 'global'");
+
     search_proximity_level = prm.get_integer("search cell proximity level");
     verbose_clock_fem_reconstruction = prm.get_bool("verbose clock");
   }

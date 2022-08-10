@@ -610,7 +610,8 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
   std::vector<std::vector<double>> count_from_all_detectors(
     n_detector, std::vector<double>(4));
 
-  // Loop over cell, loop over detectors and get nodal count values for each vertex of the cell
+  // Loop over cell, loop over detectors and get nodal count values for each
+  // vertex of the cell
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       for (unsigned int d = 0; d < n_detector; ++d)
@@ -651,7 +652,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
           // real_location's
           if (calculated_cost < max_cost_function)
             {
-              max_cost_function = calculated_cost;
+              max_cost_function      = calculated_cost;
               previous_position_cell = cell;
 
               // Evaluate the real location of the particle
@@ -671,7 +672,10 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
 
 template <int dim>
 bool
-RPTFEMReconstruction<dim>::find_in_adjacent_cells(std::vector<double> &experimental_count, const double tol_reference_location, const typename DoFHandler<dim>::active_cell_iterator &cell)
+RPTFEMReconstruction<dim>::find_in_adjacent_cells(
+  std::vector<double> &                                 experimental_count,
+  const double                                          tol_reference_location,
+  const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
   double                           max_cost_function = DBL_MAX;
   double                           last_constraint_reference_location;
@@ -680,79 +684,85 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(std::vector<double> &experimen
   Vector<double>                   reference_location;
   std::vector<std::vector<double>> count_from_all_detectors(
     n_detector, std::vector<double>(4));
-
-  Point<dim>                       real_location;
-  bool                             position_found = false;
+  Point<dim> real_location;
+  bool       position_found = false;
 
   // Find cells adjacent to the cell were found the previous position
   std::vector<typename DoFHandler<dim>::active_cell_iterator> adjacent_cells;
   std::set<typename DoFHandler<dim>::active_cell_iterator> all_adjacent_cells;
-  std::set<typename DoFHandler<dim>::active_cell_iterator> previous_adjacent_cells;
-  std::set<typename DoFHandler<dim>::active_cell_iterator> previous_main_cells;
 
   // Add previous solution's cell
   all_adjacent_cells.insert(cell);
-  previous_main_cells.insert(cell);
 
-    // Search for adjacent cells
-    for (unsigned int v = 0; v < cell->n_vertices(); ++v)
-      {
-        auto v_index                 = cell->vertex_index(v);
-        adjacent_cells =
-          GridTools::find_cells_adjacent_to_vertex(dof_handler, v_index);
+  // Search for adjacent cells
+  for (unsigned int v = 0; v < cell->n_vertices(); ++v)
+    {
+      auto v_index = cell->vertex_index(v);
+      adjacent_cells =
+        GridTools::find_cells_adjacent_to_vertex(dof_handler, v_index);
 
-        for (const auto &adjacent_cell : adjacent_cells)
-          all_adjacent_cells.insert(adjacent_cell);
-      }
+      for (const auto &adjacent_cell : adjacent_cells)
+        all_adjacent_cells.insert(adjacent_cell);
+    }
 
+  // Add adjacent cells according to the level of proximity
+  if (rpt_parameters.fem_reconstruction_param.search_proximity_level > 1)
+    {
+      std::set<typename DoFHandler<dim>::active_cell_iterator>
+        previous_adjacent_cells;
+      std::set<typename DoFHandler<dim>::active_cell_iterator>
+        previous_main_cells;
 
-    // Add adjacent cells according to the level of proximity
-    if (rpt_parameters.fem_reconstruction_param.search_proximity_level > 1)
-      {
-        for (unsigned int proximity_level = 2; proximity_level < rpt_parameters.fem_reconstruction_param.search_proximity_level+1 ; ++proximity_level )
-          {
+      previous_main_cells.insert(cell);
 
-            previous_adjacent_cells = all_adjacent_cells;
+      for (unsigned int proximity_level = 2;
+           proximity_level <
+           rpt_parameters.fem_reconstruction_param.search_proximity_level + 1;
+           ++proximity_level)
+        {
+          previous_adjacent_cells = all_adjacent_cells;
 
-            for (const auto &current_main_cell : previous_adjacent_cells)
-              {
-                if (*previous_main_cells.find(current_main_cell) != current_main_cell)
-                  {
-                    for (unsigned int v = 0;
-                         v < current_main_cell->n_vertices();
-                         ++v)
-                      {
-                        auto v_index = current_main_cell->vertex_index(v);
-                        adjacent_cells =
-                          GridTools::find_cells_adjacent_to_vertex(dof_handler,
-                                                                   v_index);
+          for (const auto &current_main_cell : previous_adjacent_cells)
+            {
+              if (*previous_main_cells.find(current_main_cell) !=
+                  current_main_cell)
+                {
+                  for (unsigned int v = 0; v < current_main_cell->n_vertices();
+                       ++v)
+                    {
+                      auto v_index = current_main_cell->vertex_index(v);
+                      adjacent_cells =
+                        GridTools::find_cells_adjacent_to_vertex(dof_handler,
+                                                                 v_index);
 
-                        for (const auto &adjacent_cell : adjacent_cells)
-                          all_adjacent_cells.insert(adjacent_cell);
-                      }
-                  }
-              }
+                      for (const auto &adjacent_cell : adjacent_cells)
+                        all_adjacent_cells.insert(adjacent_cell);
+                    }
+                }
+              previous_main_cells = previous_adjacent_cells;
+            }
+        }
+    }
 
-          }
-      }
+  // TODO: erase the cout when done with this function
+  /*
+    // print adjacent cells
+      std::cout << "previous_position_cell: " << cell << std::endl ;
+    for (typename std::set<typename
+    DoFHandler<dim>::active_cell_iterator>::iterator
+    it=all_adjacent_cells.begin(); it!=all_adjacent_cells.end(); ++it) std::cout
+    << *it << " " ; std::cout << std::endl;
+  */
 
-// TODO: erase the cout when done with this function
-/*
-  // print adjacent cells
-    std::cout << cell << std::endl ;
-  for (typename std::set<typename DoFHandler<dim>::active_cell_iterator>::iterator it=all_adjacent_cells.begin(); it!=all_adjacent_cells.end(); ++it)
-    std::cout << *it << " " ;
-  std::cout << std::endl;
-*/
-
-  // Loop over adjacent cells, loop over detectors and get nodal count values for each vertex of the cell
+  // Loop over adjacent cells, loop over detectors and get nodal count values
+  // for each vertex of the cell
   for (const auto &adjacent_cell : all_adjacent_cells)
     {
       for (unsigned int d = 0; d < n_detector; ++d)
         {
           for (unsigned int v = 0; v < adjacent_cell->n_vertices(); ++v)
             {
-              auto dof_index                 = adjacent_cell->vertex_dof_index(v, 0);
+              auto dof_index = adjacent_cell->vertex_dof_index(v, 0);
               count_from_all_detectors[d][v] = nodal_counts[d][dof_index];
             }
         }
@@ -773,8 +783,6 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(std::vector<double> &experimen
       norm_error_coordinates =
         calculate_reference_location_error(reference_location,
                                            last_constraint_reference_location);
-// TODO: erase next line
-      //std::cout << norm_error_coordinates  << " ";
 
       // Extrapolation limit
       if (norm_error_coordinates < tol_reference_location)
@@ -788,8 +796,8 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(std::vector<double> &experimen
           // real_location's
           if (calculated_cost < max_cost_function)
             {
-              position_found = true;
-              max_cost_function = calculated_cost;
+              position_found         = true;
+              max_cost_function      = calculated_cost;
               previous_position_cell = adjacent_cell;
 
               // Evaluate the real location of the particle
@@ -798,8 +806,9 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(std::vector<double> &experimen
                   if (v == 0)
                     real_location = adjacent_cell->vertex(v);
                   else
-                    real_location += reference_location[v - 1] *
-                                     (adjacent_cell->vertex(v) - adjacent_cell->vertex(0));
+                    real_location +=
+                      reference_location[v - 1] *
+                      (adjacent_cell->vertex(v) - adjacent_cell->vertex(0));
                 }
             }
         }
@@ -807,16 +816,13 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(std::vector<double> &experimen
 
   if (position_found)
     {
-      //std::cout << "local search" << std::endl;
       found_positions.push_back(real_location);
       return true;
     }
   else
     {
-      //std::cout << "global search" << std::endl;
       return false;
     }
-
 }
 
 template <int dim>
@@ -857,7 +863,6 @@ void
 RPTFEMReconstruction<dim>::trajectory()
 {
   double tol_reference_location = 0.01;
-  bool adjacent_cell_search = false;
 
   if (rpt_parameters.fem_reconstruction_param.mesh_type ==
       Parameters::RPTFEMReconstructionParameters::FEMMeshType::dealii)
@@ -867,7 +872,7 @@ RPTFEMReconstruction<dim>::trajectory()
       const unsigned int n_cell_z =
         2 * rpt_parameters.fem_reconstruction_param.z_subdivisions * power;
       tol_reference_location =
-        rpt_parameters.rpt_param.reactor_height / n_cell_z * 0.85;
+        rpt_parameters.rpt_param.reactor_height / n_cell_z * 1.15;
     }
 
   std::cout << "tol: " << tol_reference_location << std::endl;
@@ -879,21 +884,36 @@ RPTFEMReconstruction<dim>::trajectory()
   {
     TimerOutput::Scope t(computing_timer, "find_particle_positions");
 
-    // Find the position of the particle with the experimental counts
-    for (std::vector<double> &experimental_counts : all_experimental_counts)
+    if (rpt_parameters.fem_reconstruction_param.search_type ==
+        Parameters::RPTFEMReconstructionParameters::FEMSearchType::local)
       {
-        // for testing
-        // adjacent_cell_search = false ;
+        bool adjacent_cell_search = false;
 
-        if (adjacent_cell_search)
-            adjacent_cell_search = find_in_adjacent_cells(experimental_counts, tol_reference_location, previous_position_cell);
+        // Find the position of the particle with the experimental counts by
+        // prioritizing local search
+        for (std::vector<double> &experimental_counts : all_experimental_counts)
+          {
+            if (adjacent_cell_search)
+              adjacent_cell_search =
+                find_in_adjacent_cells(experimental_counts,
+                                       tol_reference_location,
+                                       previous_position_cell);
 
-        if (!adjacent_cell_search)
+            if (!adjacent_cell_search)
+              {
+                find_cell(experimental_counts, tol_reference_location);
+                adjacent_cell_search = true;
+              }
+          }
+      }
+    else
+      {
+        // Find the position of the particle with the experimental counts by
+        // global search only
+        for (std::vector<double> &experimental_counts : all_experimental_counts)
           {
             find_cell(experimental_counts, tol_reference_location);
-            adjacent_cell_search = true;
           }
-
       }
   }
 }

@@ -10,16 +10,18 @@ Here are the default values:
     # FEM reconstruction parameters
     #---------------------------------------------------
     subsection fem reconstruction
-        set mesh type                  = dealii
-        set mesh filename              = reactor.msh
-        set z subdivisions             = 2
-        set mesh refinement            = 2
-        set experimental counts file   = experimental_counts.txt
-        set export positions file      = found_positions.csv
-        set cost function type         = relative
-        set dof handler file           = temp_dof_handler.dof
-        set nodal counts file          = temp_nodal_counts_detector00.counts
-        set verbose clock              = false
+        set mesh type                       = dealii
+        set mesh filename                   = reactor.msh
+        set z subdivisions                  = 2
+        set mesh refinement                 = 2
+        set experimental counts file        = experimental_counts.txt
+        set export positions file           = found_positions.csv
+        set cost function type              = relative
+        set dof handler file                = temp_dof_handler.dof
+        set nodal counts file               = temp_nodal_counts_detector00.counts
+        set search type                     = local
+        set search cell proximity level     = 1
+        set verbose clock                   = false
 
 - ``mesh type``: Type of mesh used.
     Options: ``dealii`` or ``gmsh``
@@ -39,5 +41,9 @@ Here are the default values:
     Options: Any ``.dof`` file
 - ``nodal counts file``: List of files containing the nodal counts from each detector.
     Options: Any ``.counts`` file
-- ``verbose clock``: Enable to show total wallclock time elapsed since start
+- ``search type``: Type of search algorithm used to find particle positions. The ``local`` option refers to a search algorithm where the next particle position is searched in a scope around the previously found position's cell. The size of that scope is defined by the ``search cell proximity level`` parameter. And the ``global`` option refers to the algorithm  in which we go through every cell of the grid to find every particle position.
+    Options: ``local`` or ``global``
+- ``search cell proximity level``: Level of proximity of the search scope to find the next particle position. A ``search cell proximity level = 1`` includes in the search scope the previously found position's cell and all it's adjacent cells. Specify only if ``local`` was the selected option for the ``search type``.
+    Options: Any positive integer
+- ``verbose clock``: Enable to show total wallclock time elapsed since start.
     Options: ``true`` or ``false``

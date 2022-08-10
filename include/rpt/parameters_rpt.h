@@ -152,7 +152,8 @@ namespace Parameters
   };
 
   /**
-   * @brief FEMReconstructionParameters - Defines the parameters for the rpt_l2_projection_3d and rpt_fem_reconstruction_3d applications
+   * @brief FEMReconstructionParameters - Defines the parameters for the
+   * rpt_l2_projection_3d and rpt_fem_reconstruction_3d applications
    */
   struct RPTFEMReconstructionParameters
   {
@@ -176,6 +177,7 @@ namespace Parameters
       absolute,
       relative
     };
+    FEMCostFunction fem_cost_function;
 
     // type of mesh that is used to model the vessel's geometry
     enum class FEMMeshType
@@ -183,11 +185,18 @@ namespace Parameters
       dealii,
       gmsh
     };
+    FEMMeshType mesh_type;
 
-    FEMMeshType     mesh_type;
-    FEMCostFunction fem_cost_function;
+    // type of searching algorithm
+    enum class FEMSearchType
+    {
+      local,
+      global
+    };
+    FEMSearchType search_type;
 
-    unsigned int search_proximity_level;
+    unsigned int
+         search_proximity_level; // level of proximity of the search scope
     bool verbose_clock_fem_reconstruction; // allow to show total wallclock time
                                            // elapsed since start
 
