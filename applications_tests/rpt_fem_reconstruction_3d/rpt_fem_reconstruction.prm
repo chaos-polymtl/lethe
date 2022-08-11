@@ -39,6 +39,5 @@ subsection fem reconstruction
     set cost function type              = relative
     set dof handler file                = temp_dof_handler.dof
     set nodal counts file               = temp_nodal_counts_detector00.counts, temp_nodal_counts_detector01.counts, temp_nodal_counts_detector02.counts, temp_nodal_counts_detector03.counts, temp_nodal_counts_detector04.counts, temp_nodal_counts_detector05.counts
-    set search type                     = local
-    set search cell proximity level     = 1
+    set search type                     = global
 end 
