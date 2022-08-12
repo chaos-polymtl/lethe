@@ -12,7 +12,6 @@ set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 
 set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-pedantic)
-add_compile_options(-pedantic-errors)
 add_compile_options(-Wextra)
 add_compile_options(-Wunused-variable)
 add_compile_options(-Wdisabled-optimization)
@@ -22,13 +21,7 @@ add_compile_options(-Wall)
 # Disabled by default, used to be necessary on the Cedar cluster of Compute Canada
 #add_compile_options(-fext-numeric-literals)
 
-#add_compile_options(-Werror)
 #add_compile_options(-Weffc++)
-
-option(WARNINGERROR "Consider compilation warnings as errors" OFF)
-IF(WARNINGERROR)
-    add_compile_options(-Werror)
-ENDIF()
 
 find_package(deal.II 9.4.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
@@ -38,6 +31,16 @@ deal_ii_initialize_cached_variables()
 option(PROTOTYPES "Enable prototype applications" OFF)
 
 Project(lethe)
+
+if(CMAKE_VERSION VERSION_LESS 3.24)
+  option(CMAKE_COMPILE_WARNING_AS_ERROR "Treat warnings on compile as errors")
+  if(CMAKE_COMPILE_WARNING_AS_ERROR)
+    add_compile_options(-Werror)
+  endif()
+endif()
+if(CMAKE_COMPILE_WARNING_AS_ERROR)
+  add_compile_options(-pedantic-errors) # Probably not added by CMake
+endif()
 
 # Tests may break when enabled.
 option(ENABLE_NATIVE_OPTIMIZATION "Enable native optimization (-march=native)")
