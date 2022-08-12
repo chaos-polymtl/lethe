@@ -26,6 +26,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <iterator>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -233,7 +235,26 @@ RPTFEMReconstruction<dim>::assign_detector_positions()
   std::ifstream detector_file(
     rpt_parameters.detector_param.detector_positions_file);
 
+  std::string         header;
   std::vector<double> values;
+  size_t              pos = 0;
+  std::string         coordinate;
+
+  // remove header if the header is present
+  std::getline(detector_file, header);
+  if (!isalpha(header[0]))
+    {
+      std::string delimiter = " ";
+      while ((pos = header.find(delimiter)) != std::string::npos)
+        {
+          coordinate = header.substr(0, pos);
+          header.erase(0, pos + delimiter.length());
+          values.push_back(std::stod(coordinate));
+        }
+      values.push_back(std::stod(header));
+    }
+
+
   std::copy(std::istream_iterator<double>(detector_file),
             std::istream_iterator<double>(),
             std::back_inserter(values));
