@@ -1,9 +1,4 @@
 MESSAGE(STATUS "Setting up Lethe library")
-INCLUDE_DIRECTORIES(
-  ${CMAKE_SOURCE_DIR}/include/
-  SYSTEM
-  )
-
 ADD_SUBDIRECTORY(core)
 ADD_SUBDIRECTORY(solvers)
 ADD_SUBDIRECTORY(dem)

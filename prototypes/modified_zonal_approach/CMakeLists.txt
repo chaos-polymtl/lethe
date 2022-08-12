@@ -27,10 +27,6 @@ SET(TARGET_SRC ${TARGET_SRC}  ${TARGET_INC})
 
 # Usually, you will not need to modify anything beyond this point...
 
-INCLUDE_DIRECTORIES(
-  lethe
-  ${CMAKE_SOURCE_DIR}/src/
-  )
 ADD_EXECUTABLE(${TARGET} ${TARGET_SRC})
 DEAL_II_SETUP_TARGET(${TARGET})
 TARGET_LINK_LIBRARIES(${TARGET} lethe-core lethe-solvers)

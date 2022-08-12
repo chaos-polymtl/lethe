@@ -1,7 +1,3 @@
-INCLUDE_DIRECTORIES(
-  lethe
-  ${CMAKE_SOURCE_DIR}/include/
-  )
 ADD_EXECUTABLE(gls_nitsche_navier_stokes_33 gls_nitsche_navier_stokes_33.cc)
 DEAL_II_SETUP_TARGET(gls_nitsche_navier_stokes_33)
 TARGET_LINK_LIBRARIES(gls_nitsche_navier_stokes_33 lethe-core lethe-solvers)
