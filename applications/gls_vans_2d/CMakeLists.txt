@@ -1,3 +1,3 @@
-ADD_EXECUTABLE(gls_vans_2d gls_vans_2d.cc)
-DEAL_II_SETUP_TARGET(gls_vans_2d)
-TARGET_LINK_LIBRARIES(gls_vans_2d lethe-fem-dem)
+add_executable(gls_vans_2d gls_vans_2d.cc)
+deal_ii_setup_target(gls_vans_2d)
+target_link_libraries(gls_vans_2d lethe-fem-dem)

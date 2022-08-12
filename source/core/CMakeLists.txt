@@ -1,8 +1,4 @@
-
-# Set the name of the project and target:
-SET(TARGET "lethe-core")
-
-ADD_LIBRARY(${TARGET}
+add_library(lethe-core
   # Sources
   bdf.cc
   boundary_conditions.cc
@@ -70,5 +66,9 @@ ADD_LIBRARY(${TARGET}
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/utilities.h)
 
-DEAL_II_SETUP_TARGET(${TARGET})
+deal_ii_setup_target(lethe-core)
 target_include_directories(lethe-core PUBLIC ../../include)
+
+# Don't add Boost in TARGET_LINK_LIBRARIES (here and in the other Lethe
+# libraries) because it's added anyway by DEAL_II_SETUP_TARGET as part
+# of deal.II's dependencies.

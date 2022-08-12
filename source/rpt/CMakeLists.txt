@@ -1,8 +1,4 @@
-
-# Set the name of the project and target:
-SET(TARGET "lethe-rpt")
-
-ADD_LIBRARY(${TARGET}
+add_library(lethe-rpt
   # Sources
   parameters_rpt.cc
   particle_detector_interactions.cc
@@ -21,5 +17,5 @@ ADD_LIBRARY(${TARGET}
   ../../include/rpt/rpt_cell_reconstruction.h
   ../../include/rpt/rpt_utilities.h)
 
-DEAL_II_SETUP_TARGET(${TARGET})
-TARGET_LINK_LIBRARIES(lethe-rpt lethe-core)
+deal_ii_setup_target(lethe-rpt)
+target_link_libraries(lethe-rpt lethe-core)

@@ -1,3 +1,3 @@
-ADD_EXECUTABLE(dem_3d dem_3d.cc)
-DEAL_II_SETUP_TARGET(dem_3d)
-TARGET_LINK_LIBRARIES(dem_3d lethe-core lethe-dem)
+add_executable(dem_3d dem_3d.cc)
+deal_ii_setup_target(dem_3d)
+target_link_libraries(dem_3d lethe-core lethe-dem)

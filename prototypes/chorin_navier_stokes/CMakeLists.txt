@@ -1,6 +1,2 @@
-# Set the name of the project and target:
-SET(TARGET "chorin_navier_stokes")
-
-ADD_EXECUTABLE(${TARGET} chorin_navier_stokes.cc)
-DEAL_II_SETUP_TARGET(${TARGET})
-TARGET_LINK_LIBRARIES(${TARGET}) 
+add_executable(chorin_navier_stokes chorin_navier_stokes.cc)
+deal_ii_setup_target(chorin_navier_stokes)

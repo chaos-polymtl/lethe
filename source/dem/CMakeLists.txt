@@ -1,8 +1,4 @@
-
-# Set the name of the project and target:
-SET(TARGET "lethe-dem")
-
-ADD_LIBRARY(${TARGET}
+add_library(lethe-dem
   # Sources
   data_containers.cc
   dem.cc
@@ -107,5 +103,5 @@ ADD_LIBRARY(${TARGET}
   ../../include/dem/visualization.h
   ../../include/dem/write_checkpoint.h)
 
-DEAL_II_SETUP_TARGET(${TARGET})
-TARGET_LINK_LIBRARIES(lethe-dem lethe-core)
+deal_ii_setup_target(lethe-dem)
+target_link_libraries(lethe-dem lethe-core)

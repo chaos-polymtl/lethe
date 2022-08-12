@@ -1,3 +1,3 @@
-ADD_EXECUTABLE(gls_sharp_navier_stokes_2d gls_sharp_navier_stokes_2d.cc)
-DEAL_II_SETUP_TARGET(gls_sharp_navier_stokes_2d)
-TARGET_LINK_LIBRARIES(gls_sharp_navier_stokes_2d lethe-fem-dem)
+add_executable(gls_sharp_navier_stokes_2d gls_sharp_navier_stokes_2d.cc)
+deal_ii_setup_target(gls_sharp_navier_stokes_2d)
+target_link_libraries(gls_sharp_navier_stokes_2d lethe-fem-dem)
