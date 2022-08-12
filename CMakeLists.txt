@@ -95,6 +95,28 @@ if(_libdir_index LESS 0)
 endif()
 
 ENABLE_TESTING()
+
+if(DEFINED TXR_EXECUTABLE)
+  set(_had_txr_executable TRUE)
+endif()
+find_program(TXR_EXECUTABLE NAMES txr
+  DOC "Path to the TXR executable.")
+mark_as_advanced(TXR_EXECUTABLE)
+# Print the status information only if TXR_EXECUTABLE was neither
+# provided on the command line nor found in the cache.
+# Ideally, users would be informed whenever TXR_EXECUTABLE changes
+# (which is what happens with PERL_EXECUTABLE), but there is no way to
+# access a variable's cached value if it is also provided on the command
+# line (except by defining additional variables).
+if(NOT _had_txr_executable)
+  if(TXR_EXECUTABLE)
+    message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
+  else()
+    message(STATUS "Could not find TXR: omitting target \"update-golden\"")
+  endif()
+endif()
+unset(_had_txr_executable)
+
 ADD_SUBDIRECTORY(source)
 ADD_SUBDIRECTORY(applications)
 
@@ -105,13 +127,7 @@ endif()
 ADD_SUBDIRECTORY(applications_tests)
 ADD_SUBDIRECTORY(tests)
 
-find_program(TXR_EXECUTABLE
-  NAMES txr
-  DOC "Path to the TXR executable.")
-if(TXR_EXECUTABLE STREQUAL "TXR_EXECUTABLE-NOTFOUND")
-  message(STATUS "Could not find TXR: omitting target \"update-golden\"")
-else()
-  message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
+if(TXR_EXECUTABLE)
   add_custom_target(update-golden
     COMMAND "${TXR_EXECUTABLE}"
             "${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl"
