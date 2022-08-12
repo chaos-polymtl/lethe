@@ -10,11 +10,54 @@ endif()
 # environments.
 set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 
+# Assume that deal.II_DIR won't be provided on the command line in favor
+# of DEAL_II_DIR and can thus be used to detect whether CMake was
+# already run.
+if(DEFINED deal.II_DIR)
+  set(_had_deal_ii TRUE)
+endif()
 find_package(deal.II 9.4.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
 deal_ii_initialize_cached_variables()
 
 Project(lethe)
+
+# Check for deal.II features after the PROJECT call — but still as close
+# as possible to the FIND_PACKAGE call — so that the messages appear
+# after the CXX compiler–related messages, which is where FIND_PACKAGE
+# is usually invoked (i.e., after PROJECT).
+if(NOT _had_deal_ii)
+  set(_missing_deal_ii_features)
+  foreach(_feat IN ITEMS
+      DEAL_II_WITH_METIS
+      # MPI is required for p4est and Trilinos, but leave it here as
+      # additional documentation.
+      DEAL_II_WITH_MPI
+      DEAL_II_WITH_P4EST
+      DEAL_II_WITH_TRILINOS)
+    message(STATUS "Checking required ${_feat}: " ${${_feat}})
+    if(NOT DEFINED ${_feat} OR NOT ${${_feat}})
+      list(APPEND _missing_deal_ii_features ${_feat})
+    endif()
+  endforeach()
+
+  foreach(_feat IN ITEMS
+      DEAL_II_WITH_OPENCASCADE
+      DEAL_II_WITH_SUNDIALS)
+    message(STATUS "Checking optional ${_feat}: " ${${_feat}})
+  endforeach()
+
+  list(LENGTH _missing_deal_ii_features _num_missing_deal_ii_features)
+  if(_num_missing_deal_ii_features GREATER 0)
+    message(FATAL_ERROR
+      "Lethe requires the following features that deal.II was compiled without: "
+      "${_missing_deal_ii_features}")
+  endif()
+
+  unset(_num_missing_deal_ii_features)
+  unset(_missing_deal_ii_features)
+endif()
+unset(_had_deal_ii)
 
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -61,37 +104,6 @@ endif()
 
 ADD_SUBDIRECTORY(applications_tests)
 ADD_SUBDIRECTORY(tests)
-
-set(missing_dealii_features)
-
-foreach(feat
-    DEAL_II_WITH_METIS
-    # MPI is required for p4est and Trilinos, but leave it here as
-    # additional documentation.
-    DEAL_II_WITH_MPI
-    DEAL_II_WITH_P4EST
-    DEAL_II_WITH_TRILINOS)
-  message(STATUS "Checking required ${feat}: " ${${feat}})
-  if(NOT DEFINED ${feat} OR NOT ${${feat}})
-    list(APPEND missing_dealii_features ${feat})
-  endif()
-endforeach()
-
-foreach(feat
-    DEAL_II_WITH_OPENCASCADE
-    DEAL_II_WITH_SUNDIALS)
-  message(STATUS "Checking optional ${feat}: " ${${feat}})
-endforeach()
-
-list(LENGTH missing_dealii_features num_missing_dealii_features)
-if(num_missing_dealii_features GREATER 0)
-  message(FATAL_ERROR
-    "Lethe requires the following features that deal.II was compiled without: "
-    "${missing_dealii_features}")
-endif()
-
-unset(num_missing_dealii_features)
-unset(missing_dealii_features)
 
 find_program(TXR_EXECUTABLE
   NAMES txr
