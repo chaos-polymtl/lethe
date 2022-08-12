@@ -25,30 +25,9 @@ IF(WARNINGERROR)
     add_compile_options(-Werror)
 ENDIF()
 
-FIND_PACKAGE(deal.II 9.4.0 QUIET
-  HINTS ${deal.II_DIR} ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
-  )
-IF(NOT ${deal.II_FOUND})
-  MESSAGE(FATAL_ERROR "\n"
-    "*** Could not locate a (sufficiently recent) version of deal.II. ***\n\n"
-    "You may want to either pass a flag -DDEAL_II_DIR=/path/to/deal.II to cmake\n"
-    "or set an environment variable \"DEAL_II_DIR\" that contains this path."
-    )
-ENDIF()
-
-DEAL_II_INITIALIZE_CACHED_VARIABLES()
-
-IF(EXISTS ${CMAKE_SOURCE_DIR}/bundled/CMakeLists.txt)
-  SET(DEAL_II_HAVE_BUNDLED_DIRECTORY TRUE)
-ENDIF()
-
-IF(EXISTS ${CMAKE_SOURCE_DIR}/doc/CMakeLists.txt)
-  SET(DEAL_II_HAVE_DOC_DIRECTORY TRUE)
-ENDIF()
-
-IF(EXISTS ${CMAKE_SOURCE_DIR}/tests/CMakeLists.txt)
-  SET(DEAL_II_HAVE_TESTS_DIRECTORY TRUE)
-ENDIF()
+find_package(deal.II 9.4.0 QUIET REQUIRED
+  HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
+deal_ii_initialize_cached_variables()
 
 #set(PROTOTYPES "FALSE" CACHE BOOL)
 option(PROTOTYPES "Enable prototype applications" OFF)
