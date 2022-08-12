@@ -1,3 +1,3 @@
-ADD_EXECUTABLE(dem_parameter_template dem_parameter_template.cc)
-DEAL_II_SETUP_TARGET(dem_parameter_template)
-TARGET_LINK_LIBRARIES(dem_parameter_template lethe-dem)
+add_executable(dem_parameter_template dem_parameter_template.cc)
+deal_ii_setup_target(dem_parameter_template)
+target_link_libraries(dem_parameter_template lethe-dem)

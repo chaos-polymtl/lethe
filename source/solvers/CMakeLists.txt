@@ -1,8 +1,4 @@
-
-# Set the name of the project and target:
-SET(TARGET "lethe-solvers")
-
-ADD_LIBRARY(${TARGET}
+add_library(lethe-solvers
   # Sources
   analytical_solutions.cc
   auxiliary_physics.cc
@@ -61,5 +57,5 @@ ADD_LIBRARY(${TARGET}
   ../../include/solvers/vof_assemblers.h
   ../../include/solvers/vof_scratch_data.h)
 
-DEAL_II_SETUP_TARGET(${TARGET})
-TARGET_LINK_LIBRARIES(lethe-solvers lethe-core)
+deal_ii_setup_target(lethe-solvers)
+target_link_libraries(lethe-solvers lethe-core)

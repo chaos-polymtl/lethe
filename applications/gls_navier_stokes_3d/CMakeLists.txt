@@ -1,3 +1,3 @@
-ADD_EXECUTABLE(gls_navier_stokes_3d gls_navier_stokes_3d.cc)
-DEAL_II_SETUP_TARGET(gls_navier_stokes_3d)
-TARGET_LINK_LIBRARIES(gls_navier_stokes_3d lethe-solvers)
+add_executable(gls_navier_stokes_3d gls_navier_stokes_3d.cc)
+deal_ii_setup_target(gls_navier_stokes_3d)
+target_link_libraries(gls_navier_stokes_3d lethe-solvers)

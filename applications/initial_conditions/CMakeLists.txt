@@ -1,3 +1,3 @@
-ADD_EXECUTABLE(initial_conditions initial_conditions.cc)
-DEAL_II_SETUP_TARGET(initial_conditions)
-TARGET_LINK_LIBRARIES(initial_conditions lethe-core lethe-solvers)
+add_executable(initial_conditions initial_conditions.cc)
+deal_ii_setup_target(initial_conditions)
+target_link_libraries(initial_conditions lethe-core lethe-solvers)
