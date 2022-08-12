@@ -194,8 +194,11 @@ private:
    *
    * @param tol_reference_location tolerance on the validity of the found
    * location in the reference space
+   *
+   * @return 'true' if the particle's position was found and 'false' if the
+   * particle's position couldn't be found
    */
-  void
+  bool
   find_cell(std::vector<double> &experimental_count,
             const double         tol_reference_location);
 
@@ -209,17 +212,17 @@ private:
    * @param tol_reference_location tolerance on the validity of the found
    * location in the reference space
    *
-   * @param previous_position_cell cell in which the previous position was
+   * @param cell cell in which the previous position was
    * found
    *
    * @return 'true' if the particle's position was found and 'false' if the
    * particle's position couldn't be found
    */
   bool
-  find_in_adjacent_cells(std::vector<double> &experimental_count,
-                         const double         tol_reference_location,
-                         const typename DoFHandler<dim>::active_cell_iterator
-                           &previous_position_cell);
+  find_in_adjacent_cells(
+    std::vector<double> &experimental_count,
+    const double         tol_reference_location,
+    const typename DoFHandler<dim>::active_cell_iterator &cell);
 
   /**
    * @brief Reads the file with the experimental counts and finds the

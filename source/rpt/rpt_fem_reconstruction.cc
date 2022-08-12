@@ -587,7 +587,7 @@ RPTFEMReconstruction<dim>::calculate_cost(
 
 
 template <int dim>
-void
+bool
 RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
                                      const double tol_reference_location)
 {
@@ -595,6 +595,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
   double                           last_constraint_reference_location;
   double                           norm_error_coordinates;
   double                           calculated_cost;
+  bool                             position_found = false;
   Point<dim>                       real_location;
   Vector<double>                   reference_location;
   std::vector<std::vector<double>> count_from_all_detectors(
@@ -643,6 +644,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
           if (calculated_cost < max_cost_function)
             {
               max_cost_function      = calculated_cost;
+              position_found         = true;
               previous_position_cell = cell;
 
               // Evaluate the real location of the particle
@@ -658,6 +660,10 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
         }
     }
   found_positions.push_back(real_location);
+  if (position_found)
+    return true;
+  else
+    return false;
 }
 
 template <int dim>
@@ -881,8 +887,8 @@ RPTFEMReconstruction<dim>::trajectory()
 
             if (!adjacent_cell_search)
               {
-                find_cell(experimental_counts, tol_reference_location);
-                adjacent_cell_search = true;
+                adjacent_cell_search =
+                  find_cell(experimental_counts, tol_reference_location);
               }
           }
       }
