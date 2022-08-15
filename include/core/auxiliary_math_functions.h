@@ -15,6 +15,7 @@
  */
 #include "core/parameters.h"
 
+#include <cfloat>
 
 #ifndef LETHE_AUXILIARY_MATH_FUNCTIONS_H
 #  define LETHE_AUXILIARY_MATH_FUNCTIONS_H

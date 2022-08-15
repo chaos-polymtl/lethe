@@ -27,6 +27,8 @@
 
 #include <deal.II/physics/transformations.h>
 
+#include <memory>
+
 using namespace dealii;
 
 /**
