@@ -92,26 +92,46 @@ Visualization<dim>::print_xyz(
   pcout << "id, type, dp, x, y, z " << std::endl;
   sleep(1);
 
-  // Storing local particles in a map for writing
   std::map<int, Particles::ParticleIterator<dim>> global_particles;
+
+  // Mapping locally owned particle
+  for (auto particle = particle_handler.begin();
+       particle != particle_handler.end();
+       ++particle)
+    {
+      global_particles.insert({particle->get_id(), particle});
+      std::cout << "ID not ghost : " << particle->get_id() << " " << this_mpi_process << std::endl;
+    }
+
+  // Mapping ghost particles particles
+  for (auto particle = particle_handler.begin_ghost();
+       particle != particle_handler.end_ghost();
+       ++particle)
+    {
+      global_particles.insert({particle->get_id(), particle});
+      std::cout << "ID ghost : " << particle->get_id() << " " << this_mpi_process << std::endl;
+    }
+
+  MPI_Barrier(mpi_communicator);
+
+  // Find the processor which have all particles
+  unsigned int processor;
   for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
        ++processor_number)
     {
-      MPI_Barrier(mpi_communicator);
       if (this_mpi_process == processor_number)
         {
-          // Storing local particles in a map for writing
-          for (auto particle = particle_handler.begin();
-               particle != particle_handler.end();
-               ++particle)
+          std::cout << "process : " <<  this_mpi_process << std::endl;
+          std::cout << "glob part size : " << global_particles.size() << " n_glob : " << particle_handler.n_global_particles() << std::endl;
+          if (global_particles.size() == particle_handler.n_global_particles())
             {
-              global_particles.insert({particle->get_id(), particle});
+              processor = this_mpi_process;
+              std::cout << "process : " <<  this_mpi_process << std::endl;
+              std::cout << "glob part size : " << global_particles.size() << "n_glob : " << particle_handler.n_global_particles() << std::endl;
             }
         }
     }
-
-  if (this_mpi_process == n_mpi_processes - 1)
-    {
+      // Printing particle locations sorted by id
       for (auto &iterator : global_particles)
         {
           unsigned int id                  = iterator.first;
@@ -126,7 +146,7 @@ Visualization<dim>::print_xyz(
                     << particle_properties[DEM::PropertiesIndex::dp] << " "
                     << std::setprecision(4) << particle_location << std::endl;
         }
-    }
+
 }
 
 template <int dim>
