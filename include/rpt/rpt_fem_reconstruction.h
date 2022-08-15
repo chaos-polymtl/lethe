@@ -270,9 +270,8 @@ private:
 
   TimerOutput computing_timer;
 
-  // TODO
   /**
-   * @brief
+   * @brief Contains the FEValues objects
    */
   struct AssemblyScratchData
   {
@@ -285,7 +284,7 @@ private:
   };
 
   /**
-   * @brief
+   * @brief Contains elements of the local linear system
    */
   struct AssemblyCopyData
   {
