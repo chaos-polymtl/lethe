@@ -91,6 +91,9 @@ Visualization<dim>::print_xyz(
 
   pcout << "id, type, dp, x, y, z " << std::endl;
   sleep(1);
+
+  // Storing local particles in a map for writing
+  std::map<int, Particles::ParticleIterator<dim>> global_particles;
   for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
        ++processor_number)
     {
@@ -98,29 +101,30 @@ Visualization<dim>::print_xyz(
       if (this_mpi_process == processor_number)
         {
           // Storing local particles in a map for writing
-          std::map<int, Particles::ParticleIterator<dim>> local_particles;
           for (auto particle = particle_handler.begin();
                particle != particle_handler.end();
                ++particle)
             {
-              local_particles.insert({particle->get_id(), particle});
+              global_particles.insert({particle->get_id(), particle});
             }
+        }
+    }
 
-          for (auto &iterator : local_particles)
-            {
-              unsigned int id                  = iterator.first;
-              auto         particle            = iterator.second;
-              auto         particle_properties = particle->get_properties();
-              auto         particle_location   = particle->get_location();
+  if (this_mpi_process == n_mpi_processes - 1)
+    {
+      for (auto &iterator : global_particles)
+        {
+          unsigned int id                  = iterator.first;
+          auto         particle            = iterator.second;
+          auto         particle_properties = particle->get_properties();
+          auto         particle_location   = particle->get_location();
 
-              std::cout << std::fixed << std::setprecision(0) << id << " "
-                        << std::setprecision(0)
-                        << particle_properties[DEM::PropertiesIndex::type]
-                        << " " << std::setprecision(5)
-                        << particle_properties[DEM::PropertiesIndex::dp] << " "
-                        << std::setprecision(4) << particle_location
-                        << std::endl;
-            }
+          std::cout << std::fixed << std::setprecision(0) << id << " "
+                    << std::setprecision(0)
+                    << particle_properties[DEM::PropertiesIndex::type] << " "
+                    << std::setprecision(5)
+                    << particle_properties[DEM::PropertiesIndex::dp] << " "
+                    << std::setprecision(4) << particle_location << std::endl;
         }
     }
 }
