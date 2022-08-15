@@ -49,8 +49,8 @@ class ParticleWallNonLinearForce : public ParticleWallContactForce<dim>
 {
   using FuncPtrType = Tensor<1, 3> (ParticleWallNonLinearForce<dim>::*)(
     const ArrayView<const double> &,
-    const double &,
-    const double &,
+    const double,
+    const double,
     const Tensor<1, 3> &);
   FuncPtrType calculate_rolling_resistance_torque;
 
@@ -131,14 +131,14 @@ public:
     Tensor<1, 3> &                          tangential_torque,
     Tensor<1, 3> &                          rolling_resistance_torque,
     IBParticle<dim> &                       particle,
-    const double &                          wall_youngs_modulus,
-    const double &                          wall_poisson_ratio,
-    const double &                          wall_restitution_coefficient,
-    const double &                          wall_friction_coefficient,
-    const double &                          wall_rolling_friction_coefficient,
+    const double                            wall_youngs_modulus,
+    const double                            wall_poisson_ratio,
+    const double                            wall_restitution_coefficient,
+    const double                            wall_friction_coefficient,
+    const double                            wall_rolling_friction_coefficient,
     const double                            dt,
-    const double &                          mass,
-    const double &                          radius) override;
+    const double                            mass,
+    const double                            radius) override;
 
 private:
   /**
@@ -153,8 +153,8 @@ private:
    */
   inline Tensor<1, 3>
   no_resistance(const ArrayView<const double> & /*particle_properties*/,
-                const double & /*effective_rolling_friction_coefficient*/,
-                const double & /*normal_force_norm*/,
+                const double /*effective_rolling_friction_coefficient*/,
+                const double /*normal_force_norm*/,
                 const Tensor<1, 3> & /*normal_contact_vector*/)
   {
     Tensor<1, 3> rolling_resistance({0, 0, 0});
@@ -173,8 +173,8 @@ private:
    */
   inline Tensor<1, 3>
   constant_resistance(const ArrayView<const double> &particle_properties,
-                      const double &effective_rolling_friction_coefficient,
-                      const double &normal_force_norm,
+                      const double effective_rolling_friction_coefficient,
+                      const double normal_force_norm,
                       const Tensor<1, 3> & /*normal_contact_vector*/)
   {
     // Getting the angular velocity of particle in the vector format
@@ -216,8 +216,8 @@ private:
    */
   inline Tensor<1, 3>
   viscous_resistance(const ArrayView<const double> &particle_properties,
-                     const double &      effective_rolling_friction_coefficient,
-                     const double &      normal_force_norm,
+                     const double        effective_rolling_friction_coefficient,
+                     const double        normal_force_norm,
                      const Tensor<1, 3> &normal_contact_vector)
   {
     // Getting the angular velocity of particle in the vector format

@@ -76,12 +76,12 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
     &                                    boundary_cells_for_floating_walls,
   const Particles::ParticleHandler<dim> &particle_handler,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-  const double &                                    simulation_time,
+  const double                                      simulation_time,
   typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_wall_candidates &pfw_contact_candidates)
+    dim>::particle_floating_wall_candidates &particle_floating_wall_candidates)
 {
-  // Clearing pfw_contact_candidates(output of this function)
-  pfw_contact_candidates.clear();
+  // Clearing particle_floating_wall_candidates(output of this function)
+  particle_floating_wall_candidates.clear();
 
   // Iterating over the boundary_cells_for_floating_walls, which is the output
   // of the find_boundary_cells_for_floating_walls function in
@@ -126,9 +126,10 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
                        particles_in_cell_iterator != particles_in_cell.end();
                        ++particles_in_cell_iterator)
                     {
-                      pfw_contact_candidates[particles_in_cell_iterator
-                                               ->get_id()]
-                        .insert({floating_wall_id, particles_in_cell_iterator});
+                      particle_floating_wall_candidates
+                        [particles_in_cell_iterator->get_id()]
+                          .insert(
+                            {floating_wall_id, particles_in_cell_iterator});
                     }
                 }
             }

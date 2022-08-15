@@ -56,7 +56,7 @@ public:
    */
   GridMotion(
     const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
-    const double &                                      dem_time_step);
+    const double                                        dem_time_step);
 
   /**
    * Calls the desired grid motion.

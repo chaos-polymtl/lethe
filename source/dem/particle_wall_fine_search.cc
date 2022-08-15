@@ -81,11 +81,11 @@ template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
   const typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_wall_candidates &       pfw_contact_candidates,
+    dim>::particle_floating_wall_candidates &particle_floating_wall_candidates,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-  const double &                                    simulation_time,
+  const double                                      simulation_time,
   typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &pfw_pairs_in_contact)
+    dim>::particle_wall_in_contact &particle_floating_wall_pairs_in_contact)
 {
   // Reading floating wall properties
   std::vector<Point<dim>> point_on_wall =
@@ -94,9 +94,9 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
     floating_wall_properties.floating_walls_normal_vectors;
 
   // Iterating over contact candidates from broad search and adding the pairs to
-  // the pfw_pairs_in_contact
+  // the particle_floating_wall_pairs_in_contact
   for (auto const &[particle_id, particle_pair_candidates] :
-       pfw_contact_candidates)
+       particle_floating_wall_candidates)
     {
       if (!particle_pair_candidates.empty())
         {
@@ -177,7 +177,7 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
                   contact_info.tangential_relative_velocity = .0;
 
 
-                  pfw_pairs_in_contact[particle_id].insert(
+                  particle_floating_wall_pairs_in_contact[particle_id].insert(
                     {floating_wall_id, contact_info});
                 }
             }

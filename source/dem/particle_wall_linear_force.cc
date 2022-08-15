@@ -470,14 +470,14 @@ ParticleWallLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   Tensor<1, 3> & /*tangential_torque*/,
   Tensor<1, 3> & /*rolling_resistance_torque*/,
   IBParticle<dim> & /*particle*/,
-  const double & /*wall_youngs_modulus*/,
-  const double & /*wall_poisson_ratio*/,
-  const double & /*wall_restitution_coefficient*/,
-  const double & /*wall_friction_coefficient*/,
-  const double & /*wall_rolling_friction_coefficient*/,
+  const double /*wall_youngs_modulus*/,
+  const double /*wall_poisson_ratio*/,
+  const double /*wall_restitution_coefficient*/,
+  const double /*wall_friction_coefficient*/,
+  const double /*wall_rolling_friction_coefficient*/,
   const double /*dt*/,
-  const double &,
-  const double &)
+  const double,
+  const double)
 {}
 
 template class ParticleWallLinearForce<2>;

@@ -46,9 +46,9 @@ using namespace dealii;
  * information of adjacent local-local particles
  * @param particle_wall_pairs_in_contact Container that contains all the contact
  * information of particle-wall contacts
- * @param pfw_pairs_in_contact Container that contains all the contact
+ * @param particle_floating_wall_pairs_in_contact Container that contains all the contact
  * information of particle-floating wall contacts
- * @param pfm_pairs_in_contact Container that contains all the contact
+ * @param particle_floating_mesh_pairs_in_contact Container that contains all the contact
  * information of particle-floating mesh contacts
  * @param particle_points_in_contact Container that contains all the contact
  * information of particle-point contacts
@@ -70,9 +70,9 @@ locate_local_particles_in_cells(
   typename dem_data_containers::dem_data_structures<
     dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
   typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &pfw_pairs_in_contact,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_mesh_in_contact &pfm_pairs_in_contact,
+    dim>::particle_wall_in_contact &particle_floating_wall_pairs_in_contact,
+  typename dem_data_containers::dem_data_structures<dim>::
+    particle_floating_mesh_in_contact &particle_floating_mesh_pairs_in_contact,
   typename dem_data_containers::dem_data_structures<
     dim>::particle_point_line_contact_info &particle_points_in_contact,
   typename dem_data_containers::dem_data_structures<

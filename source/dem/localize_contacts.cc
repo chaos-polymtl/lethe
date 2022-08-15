@@ -12,7 +12,7 @@ localize_contacts(
   typename dem_data_containers::dem_data_structures<
     dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
   typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &pfw_pairs_in_contact,
+    dim>::particle_wall_in_contact &particle_floating_wall_in_contact,
   typename dem_data_containers::dem_data_structures<
     dim>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
   typename dem_data_containers::dem_data_structures<
@@ -22,7 +22,8 @@ localize_contacts(
   typename dem_data_containers::dem_data_structures<
     dim>::particle_wall_candidates &particle_wall_contact_candidates,
   typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_wall_candidates &pfw_contact_candidates,
+    dim>::particle_floating_wall_candidates
+    &particle_floating_wall_contact_candidates,
   typename dem_data_containers::dem_data_structures<
     dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates)
@@ -152,32 +153,41 @@ localize_contacts(
     }
 
   // Particle-floating wall contacts
-  for (auto pfw_pairs_in_contact_iterator = pfw_pairs_in_contact.begin();
-       pfw_pairs_in_contact_iterator != pfw_pairs_in_contact.end();
-       ++pfw_pairs_in_contact_iterator)
+  for (auto particle_floating_wall_pairs_iterator =
+         particle_floating_wall_in_contact.begin();
+       particle_floating_wall_pairs_iterator !=
+       particle_floating_wall_in_contact.end();
+       ++particle_floating_wall_pairs_iterator)
     {
-      auto particle_id = pfw_pairs_in_contact_iterator->first;
+      auto particle_id = particle_floating_wall_pairs_iterator->first;
 
-      auto pairs_in_contant_content = &pfw_pairs_in_contact_iterator->second;
+      auto pairs_in_contant_content =
+        &particle_floating_wall_pairs_iterator->second;
 
-      for (auto pfw_map_iterator = pairs_in_contant_content->begin();
-           pfw_map_iterator != pairs_in_contant_content->end();)
+      for (auto particle_floating_wall_map_iterator =
+             pairs_in_contant_content->begin();
+           particle_floating_wall_map_iterator !=
+           pairs_in_contant_content->end();)
         {
-          auto floating_wall_id = pfw_map_iterator->first;
-          auto pfw_contact_candidate_element =
-            &pfw_contact_candidates[particle_id];
+          auto floating_wall_id = particle_floating_wall_map_iterator->first;
+          auto particle_floating_wall_contact_candidate_element =
+            &particle_floating_wall_contact_candidates[particle_id];
 
           auto search_iterator =
-            pfw_contact_candidate_element->find(floating_wall_id);
+            particle_floating_wall_contact_candidate_element->find(
+              floating_wall_id);
 
-          if (search_iterator != pfw_contact_candidate_element->end())
+          if (search_iterator !=
+              particle_floating_wall_contact_candidate_element->end())
             {
-              pfw_contact_candidate_element->erase(search_iterator);
-              ++pfw_map_iterator;
+              particle_floating_wall_contact_candidate_element->erase(
+                search_iterator);
+              ++particle_floating_wall_map_iterator;
             }
           else
             {
-              pairs_in_contant_content->erase(pfw_map_iterator++);
+              pairs_in_contant_content->erase(
+                particle_floating_wall_map_iterator++);
             }
         }
     }
@@ -190,37 +200,43 @@ localize_contacts(
       auto &particle_floating_mesh_contact_pair =
         particle_floating_mesh_in_contact[solid_counter];
 
-      for (auto pfm_pairs_in_contact_iterator =
+      for (auto particle_floating_mesh_pairs_in_contact_iterator =
              particle_floating_mesh_contact_pair.begin();
-           pfm_pairs_in_contact_iterator !=
+           particle_floating_mesh_pairs_in_contact_iterator !=
            particle_floating_mesh_contact_pair.end();
-           ++pfm_pairs_in_contact_iterator)
+           ++particle_floating_mesh_pairs_in_contact_iterator)
         {
-          auto triangle = pfm_pairs_in_contact_iterator->first;
+          auto triangle =
+            particle_floating_mesh_pairs_in_contact_iterator->first;
 
           auto pairs_in_contant_content =
-            &pfm_pairs_in_contact_iterator->second;
+            &particle_floating_mesh_pairs_in_contact_iterator->second;
 
-          for (auto pfm_map_iterator = pairs_in_contant_content->begin();
-               pfm_map_iterator != pairs_in_contant_content->end();)
+          for (auto particle_floating_mesh_map_iterator =
+                 pairs_in_contant_content->begin();
+               particle_floating_mesh_map_iterator !=
+               pairs_in_contant_content->end();)
             {
-              auto particle_id = pfm_map_iterator->first;
+              auto particle_id = particle_floating_mesh_map_iterator->first;
 
-              auto pfm_contact_candidate_element =
+              auto particle_floating_mesh_candidate_element =
                 &particle_floating_mesh_contact_candidates[solid_counter]
                                                           [triangle];
 
               auto search_iterator =
-                pfm_contact_candidate_element->find(particle_id);
+                particle_floating_mesh_candidate_element->find(particle_id);
 
-              if (search_iterator != pfm_contact_candidate_element->end())
+              if (search_iterator !=
+                  particle_floating_mesh_candidate_element->end())
                 {
-                  pfm_contact_candidate_element->erase(search_iterator);
-                  ++pfm_map_iterator;
+                  particle_floating_mesh_candidate_element->erase(
+                    search_iterator);
+                  ++particle_floating_mesh_map_iterator;
                 }
               else
                 {
-                  pairs_in_contant_content->erase(pfm_map_iterator++);
+                  pairs_in_contant_content->erase(
+                    particle_floating_mesh_map_iterator++);
                 }
             }
         }
@@ -235,7 +251,7 @@ template void localize_contacts<2>(
   typename dem_data_containers::dem_data_structures<2>::particle_wall_in_contact
     &particle_wall_pairs_in_contact,
   typename dem_data_containers::dem_data_structures<2>::particle_wall_in_contact
-    &pfw_pairs_in_contact,
+    &particle_floating_wall_in_contact,
   typename dem_data_containers::dem_data_structures<
     2>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
   typename dem_data_containers::dem_data_structures<
@@ -245,7 +261,8 @@ template void localize_contacts<2>(
   typename dem_data_containers::dem_data_structures<2>::particle_wall_candidates
     &particle_wall_contact_candidates,
   typename dem_data_containers::dem_data_structures<
-    2>::particle_floating_wall_candidates &pfw_contact_candidates,
+    2>::particle_floating_wall_candidates
+    &particle_floating_wall_contact_candidates,
   typename dem_data_containers::dem_data_structures<
     2>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates);
@@ -258,7 +275,7 @@ template void localize_contacts<3>(
   typename dem_data_containers::dem_data_structures<3>::particle_wall_in_contact
     &particle_wall_pairs_in_contact,
   typename dem_data_containers::dem_data_structures<3>::particle_wall_in_contact
-    &pfw_pairs_in_contact,
+    &particle_floating_wall_in_contact,
   typename dem_data_containers::dem_data_structures<
     3>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
   typename dem_data_containers::dem_data_structures<
@@ -268,7 +285,8 @@ template void localize_contacts<3>(
   typename dem_data_containers::dem_data_structures<3>::particle_wall_candidates
     &particle_wall_contact_candidates,
   typename dem_data_containers::dem_data_structures<
-    3>::particle_floating_wall_candidates &pfw_contact_candidates,
+    3>::particle_floating_wall_candidates
+    &particle_floating_wall_contact_candidates,
   typename dem_data_containers::dem_data_structures<
     3>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates);

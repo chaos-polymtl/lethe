@@ -41,12 +41,12 @@ using namespace std;
  * @param local_adjacent_particles Local-local adjacent particle pairs
  * @param ghost_adjacent_particles Local-ghost adjacent particle pairs
  * @param particle_wall_pairs_in_contact Particle-wall contact pairs
- * @param pfw_pairs_in_contact Particle-floating wall contact pairs
+ * @param particle_floating_wall_in_contact Particle-floating wall contact pairs
  * @param particle_floating_mesh_in_contact Particle-floating mesh contact pairs
  * @param local_contact_pair_candidates Local-local particle-particle contact candidates
  * @param ghost_contact_pair_candidates Local-ghost particle-particle contact candidates
  * @param particle_wall_contact_candidates Particle-wall contact candidates
- * @param pfw_contact_candidates Particle-floating wall contact candidates
+ * @param particle_floating_wall_contact_candidates Particle-floating wall contact candidates
  * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact candidates
  *
  */
@@ -61,7 +61,7 @@ localize_contacts(
   typename dem_data_containers::dem_data_structures<
     dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
   typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &pfw_pairs_in_contact,
+    dim>::particle_wall_in_contact &particle_floating_wall_in_contact,
   typename dem_data_containers::dem_data_structures<
     dim>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
   typename dem_data_containers::dem_data_structures<
@@ -71,7 +71,8 @@ localize_contacts(
   typename dem_data_containers::dem_data_structures<
     dim>::particle_wall_candidates &particle_wall_contact_candidates,
   typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_wall_candidates &pfw_contact_candidates,
+    dim>::particle_floating_wall_candidates
+    &particle_floating_wall_contact_candidates,
   typename dem_data_containers::dem_data_structures<
     dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates);

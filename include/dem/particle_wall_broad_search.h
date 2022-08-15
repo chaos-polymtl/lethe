@@ -92,7 +92,7 @@ public:
    * @param floating_wall_properties Properties of the floating walls specified
    * in the parameter handler file
    * @param simulation_time Simulation time
-   * @param pfw_contact_candidates Output of particle-floating wall broad search
+   * @param particle_floating_wall_candidates Output of particle-floating wall broad search
    * which contains all the particle-floating wall collision candidates
    */
 
@@ -104,9 +104,9 @@ public:
       &                                    boundary_cells_for_floating_walls,
     const Particles::ParticleHandler<dim> &particle_handler,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-    const double &                                    simulation_time,
-    typename dem_data_containers::dem_data_structures<
-      dim>::particle_floating_wall_candidates &pfw_contact_candidates);
+    const double                                      simulation_time,
+    typename dem_data_containers::dem_data_structures<dim>::
+      particle_floating_wall_candidates &particle_floating_wall_candidates);
 
   /**
    * Finds a two-layered unordered map

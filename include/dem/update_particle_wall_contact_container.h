@@ -18,8 +18,6 @@
  */
 #include <core/data_containers.h>
 
-#include <dem/particle_wall_contact_info_struct.h>
-
 using namespace dealii;
 
 #ifndef update_particle_wall_contact_container_h

@@ -11,9 +11,9 @@ void
 ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   const typename dem_data_containers::dem_data_structures<
-    dim>::cells_neighbor_list *cells_local_neighbor_list,
+    dim>::cells_neighbor_list &cells_local_neighbor_list,
   const typename dem_data_containers::dem_data_structures<
-    dim>::cells_neighbor_list *cells_ghost_neighbor_list,
+    dim>::cells_neighbor_list &cells_ghost_neighbor_list,
   typename dem_data_containers::dem_data_structures<
     dim>::particle_particle_candidates &local_contact_pair_candidates,
   typename dem_data_containers::dem_data_structures<
@@ -24,8 +24,8 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   local_contact_pair_candidates.clear();
 
   // Looping over cells_local_neighbor_list
-  for (auto cell_neighbor_list_iterator = cells_local_neighbor_list->begin();
-       cell_neighbor_list_iterator != cells_local_neighbor_list->end();
+  for (auto cell_neighbor_list_iterator = cells_local_neighbor_list.begin();
+       cell_neighbor_list_iterator != cells_local_neighbor_list.end();
        ++cell_neighbor_list_iterator)
     {
       // The main cell
@@ -129,8 +129,8 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   ghost_contact_pair_candidates.clear();
 
   // Looping over cells_ghost_neighbor_list
-  for (auto cell_neighbor_list_iterator = cells_ghost_neighbor_list->begin();
-       cell_neighbor_list_iterator != cells_ghost_neighbor_list->end();
+  for (auto cell_neighbor_list_iterator = cells_ghost_neighbor_list.begin();
+       cell_neighbor_list_iterator != cells_ghost_neighbor_list.end();
        ++cell_neighbor_list_iterator)
     {
       // The main cell

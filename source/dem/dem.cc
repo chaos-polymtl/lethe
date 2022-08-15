@@ -966,8 +966,8 @@ DEMSolver<dim>::solve()
           particle_particle_broad_search_object
             .find_particle_particle_contact_pairs(
               particle_handler,
-              &cells_local_neighbor_list,
-              &cells_ghost_neighbor_list,
+              cells_local_neighbor_list,
+              cells_ghost_neighbor_list,
               local_contact_pair_candidates,
               ghost_contact_pair_candidates);
 

@@ -130,14 +130,14 @@ public:
     Tensor<1, 3> &                          tangential_torque,
     Tensor<1, 3> &                          rolling_resistance_torque,
     IBParticle<dim> &                       particle,
-    const double &                          wall_youngs_modulus,
-    const double &                          wall_poisson_ratio,
-    const double &                          wall_restitution_coefficient,
-    const double &                          wall_friction_coefficient,
-    const double &                          wall_rolling_friction_coefficient,
+    const double                            wall_youngs_modulus,
+    const double                            wall_poisson_ratio,
+    const double                            wall_restitution_coefficient,
+    const double                            wall_friction_coefficient,
+    const double                            wall_rolling_friction_coefficient,
     const double                            dt,
-    const double &                          mass,
-    const double &                          radius) = 0;
+    const double                            mass,
+    const double                            radius) = 0;
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -190,7 +190,7 @@ protected:
     const double                            dt,
     const Tensor<1, 3> &                    cut_cell_translational_velocity,
     const Tensor<1, 3> &                    cut_cell_rotational_velocity,
-    const double &center_of_rotation_particle_distance);
+    const double center_of_rotation_particle_distance);
 
   /**
    * Carries out applying the calculated force and torque on the particle in

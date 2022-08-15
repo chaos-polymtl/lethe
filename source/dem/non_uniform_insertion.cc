@@ -10,7 +10,7 @@ using namespace DEM;
 template <int dim>
 NonUniformInsertion<dim>::NonUniformInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
-  const double &                  maximum_particle_diameter)
+  const double                    maximum_particle_diameter)
   : remained_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
@@ -145,8 +145,8 @@ template <int dim>
 void
 NonUniformInsertion<dim>::create_random_number_container(
   std::vector<double> &random_container,
-  const double &       random_number_range,
-  const int &          random_number_seed)
+  const double         random_number_range,
+  const int            random_number_seed)
 {
   for (unsigned int i = 0; i < this->inserted_this_step; ++i)
     {
@@ -160,9 +160,9 @@ NonUniformInsertion<dim>::create_random_number_container(
 template <>
 void NonUniformInsertion<2>::find_insertion_location_nonuniform(
   Point<2> &                                   insertion_location,
-  const unsigned int &                         id,
-  const double &                               random_number1,
-  const double &                               random_number2,
+  const unsigned int                           id,
+  const double                                 random_number1,
+  const double                                 random_number2,
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   std::vector<int> insertion_index;
@@ -186,9 +186,9 @@ void NonUniformInsertion<2>::find_insertion_location_nonuniform(
 template <>
 void NonUniformInsertion<3>::find_insertion_location_nonuniform(
   Point<3> &                                   insertion_location,
-  const unsigned int &                         id,
-  const double &                               random_number1,
-  const double &                               random_number2,
+  const unsigned int                           id,
+  const double                                 random_number1,
+  const double                                 random_number2,
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   std::vector<int> insertion_index;

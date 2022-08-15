@@ -74,15 +74,15 @@ public:
 
   /**
    * Iterates over the contact candidates from particle-floating wall broad
-   * search (pfw_contact_candidates) to add new contact pairs to the
-   * pfw_pairs_in_contact container
+   * search (particle_floating_wall_candidates) to add new contact pairs to the
+   * particle_floating_wall_pairs_in_contact container
    *
-   * @param pfw_contact_pair_candidates The output of particle-floating wall
+   * @param particle_floating_wall_pair_candidates The output of particle-floating wall
    * broad search which shows contact pair candidates
    * @param floating_wall_properties Properties of floating walls defined in the
    * parameter handler
    * @param simulation_time Simulation time
-   * @param pfw_pairs_in_contact An unordered_map of maps which stores
+   * @param particle_floating_wall_pairs_in_contact An unordered_map of maps which stores
    * all the particle-floating wall pairs which are in contact, and
    * the contact information in a struct. Note that the size of this unordered
    * map is equal to the number of particles
@@ -90,11 +90,12 @@ public:
   void
   particle_floating_wall_fine_search(
     const typename dem_data_containers::dem_data_structures<
-      dim>::particle_floating_wall_candidates &       pfw_contact_candidates,
+      dim>::particle_floating_wall_candidates
+      &particle_floating_wall_contact_candidates,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-    const double &                                    simulation_time,
+    const double                                      simulation_time,
     typename dem_data_containers::dem_data_structures<
-      dim>::particle_wall_in_contact &pfw_pairs_in_contact);
+      dim>::particle_wall_in_contact &particle_floating_wall_in_contact);
 
 
   /**
