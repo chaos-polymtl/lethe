@@ -10,18 +10,19 @@ Here are the default values:
     # FEM reconstruction parameters
     #---------------------------------------------------
     subsection fem reconstruction
-        set mesh type                       = dealii
-        set mesh filename                   = reactor.msh
-        set z subdivisions                  = 2
-        set mesh refinement                 = 2
-        set experimental counts file        = experimental_counts.txt
-        set export positions file           = found_positions.csv
-        set cost function type              = relative
-        set dof handler file                = temp_dof_handler.dof
-        set nodal counts file               = temp_nodal_counts_detector00.counts
-        set search type                     = local
-        set search cell proximity level     = 1
-        set verbose clock                   = false
+        set mesh type                           = dealii
+        set mesh filename                       = reactor.msh
+        set z subdivisions                      = 2
+        set mesh refinement                     = 2
+        set l2 projection before reconstruction = false
+        set experimental counts file            = experimental_counts.txt
+        set export positions file               = found_positions.csv
+        set cost function type                  = relative
+        set dof handler file                    = temp_dof_handler.dof
+        set nodal counts file                   = temp_nodal_counts_detector00.counts
+        set search type                         = local
+        set search cell proximity level         = 1
+        set verbose clock                       = false
 
 For both ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications, we have to define the mesh:
 
@@ -36,6 +37,7 @@ For both ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications
 
 For the ``rpt_fem_reconstruction_3d`` application only, we have to define the following parameters:
 
+- ``l2 projection before reconstruction``: Enable to run the ``rpt_l2_projection_3d`` application before the
 - ``experimental counts file``: Filename of the file containing the experimental photon counts.
     Options: Any ``.txt`` file
 - ``export positions file``: Name of the file in which the calculated positions are exported.

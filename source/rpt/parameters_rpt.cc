@@ -329,6 +329,12 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
                       Patterns::Integer(),
                       "Number of refinements the grid undergoes");
 
+    prm.declare_entry(
+      "l2 projection before reconstruction",
+      "false",
+      Patterns::Bool(),
+      "Run the rpt_l2_projection_3 application before the reconstruction");
+
     prm.declare_entry("experimental counts file",
                       "experimental_counts.txt",
                       Patterns::FileName(),
@@ -400,8 +406,10 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
     else
       mesh_file = mesh_filename;
 
-    z_subdivisions           = prm.get_integer("z subdivisions");
-    mesh_refinement          = prm.get_integer("mesh refinement");
+    z_subdivisions  = prm.get_integer("z subdivisions");
+    mesh_refinement = prm.get_integer("mesh refinement");
+    l2_project_and_reconstruct =
+      prm.get_bool("l2 projection before reconstruction");
     experimental_counts_file = prm.get("experimental counts file");
     export_positions_file    = prm.get("export positions file");
 

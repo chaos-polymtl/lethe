@@ -44,6 +44,8 @@ main(int argc, char *argv[])
       rpt_parameters.parse(prm);
 
       RPTFEMReconstruction<3> rpt_reconstruct(rpt_parameters);
+      if (rpt_parameters.fem_reconstruction_param.l2_project_and_reconstruct)
+        rpt_reconstruct.L2_project();
       rpt_reconstruct.rpt_fem_reconstruct();
     }
   catch (std::exception &exc)
