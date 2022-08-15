@@ -16,6 +16,7 @@
  *
  */
 
+#include <dem/boundary_cells_info_struct.h>
 #include <dem/particle_particle_contact_info_struct.h>
 #include <dem/particle_point_line_contact_info_struct.h>
 #include <dem/particle_wall_contact_info_struct.h>
@@ -178,6 +179,10 @@ namespace dem_data_containers
 
     typedef std::map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
       vector_on_boundary;
+
+    typedef std::map<types::global_cell_index,
+                     periodic_boundaries_cells_info_struct<dim>>
+      periodic_boundaries_cells_info;
   };
 
 } // namespace dem_data_containers
