@@ -26,8 +26,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <iterator>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -237,8 +235,6 @@ RPTFEMReconstruction<dim>::assign_detector_positions()
 
   std::string         header;
   std::vector<double> values;
-  size_t              pos = 0;
-  std::string         coordinate;
 
   // Remove header if the header is present
   std::getline(detector_file, header);
