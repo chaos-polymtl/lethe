@@ -14,4 +14,5 @@ Multiphysics Examples
     dam-break-VOF/dam-break-VOF
     rising-bubble-VOF/rising-bubble-VOF
     melting-cavity/melting-cavity
+    laser-heating/laser-heating
     laser-meltpool/laser-meltpool
