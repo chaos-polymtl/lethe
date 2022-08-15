@@ -67,19 +67,10 @@ public:
 
   void
   particle_wall_fine_search(
-    const std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::boundary_id,
-                         std::tuple<Particles::ParticleIterator<dim>,
-                                    Tensor<1, dim>,
-                                    Point<dim>,
-                                    types::boundary_id,
-                                    types::global_cell_index>>>
-      &particle_wall_contact_pair_candidates,
-    std::unordered_map<
-      types::particle_index,
-      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-      &particle_wall_pairs_in_contact);
+    const typename dem_data_containers::dem_data_structures<
+      dim>::particle_wall_candidates &particle_wall_contact_pair_candidates,
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_wall_in_contact &particle_wall_pairs_in_contact);
 
   /**
    * Iterates over the contact candidates from particle-floating wall broad
@@ -98,16 +89,12 @@ public:
    */
   void
   particle_floating_wall_fine_search(
-    const std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
-      &                                               pfw_contact_candidates,
+    const typename dem_data_containers::dem_data_structures<
+      dim>::particle_floating_wall_candidates &       pfw_contact_candidates,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double &                                    simulation_time,
-    std::unordered_map<
-      types::particle_index,
-      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-      &pfw_pairs_in_contact);
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_wall_in_contact &pfw_pairs_in_contact);
 
 
   /**
@@ -123,18 +110,11 @@ public:
 
   void
   particle_floating_mesh_fine_search(
-    const std::vector<
-      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               std::unordered_map<types::particle_index,
-                                  Particles::ParticleIterator<dim>>,
-               dem_data_containers::cut_cell_comparison<dim>>>
+    const typename dem_data_containers::dem_data_structures<
+      dim>::particle_floating_mesh_candidates
       &particle_floating_mesh_contact_candidates,
-    std::vector<
-      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               std::unordered_map<types::particle_index,
-                                  particle_wall_contact_info_struct<dim>>,
-               dem_data_containers::cut_cell_comparison<dim>>>
-      &particle_floating_mesh_in_contact);
+    typename dem_data_containers::dem_data_structures<dim>::
+      particle_floating_mesh_in_contact &particle_floating_mesh_in_contact);
 };
 
 #endif /* particle_wall_fine_search_h */

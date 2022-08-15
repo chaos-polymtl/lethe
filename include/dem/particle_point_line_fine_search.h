@@ -17,6 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/data_containers.h>
+
 #include <dem/dem_properties.h>
 #include <dem/particle_point_line_contact_info_struct.h>
 
@@ -61,14 +63,12 @@ public:
    * particle-point contact force
    */
 
-  std::unordered_map<types::particle_index,
-                     particle_point_line_contact_info_struct<dim>>
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_point_line_contact_info
   particle_point_fine_search(
-    const std::unordered_map<
-      types::particle_index,
-      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-      &           particle_point_contact_candidates,
-    const double &neighborhood_threshold);
+    const typename dem_data_containers::dem_data_structures<
+      dim>::particle_point_candidates &particle_point_contact_candidates,
+    const double &                     neighborhood_threshold);
 
   /**
    * Iterates over a map of tuples (particle_line_contact_candidates) to see if
@@ -84,14 +84,12 @@ public:
    * particle-line contact force
    */
 
-  std::unordered_map<types::particle_index,
-                     particle_point_line_contact_info_struct<dim>>
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_point_line_contact_info
   particle_line_fine_search(
-    const std::unordered_map<
-      types::particle_index,
-      std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-      &           particle_line_contact_candidates,
-    const double &neighborhood_threshold);
+    const typename dem_data_containers::dem_data_structures<
+      dim>::particle_line_candidates &particle_line_contact_candidates,
+    const double &                    neighborhood_threshold);
 
 private:
   /** This private function is used to find the projection of point_p on

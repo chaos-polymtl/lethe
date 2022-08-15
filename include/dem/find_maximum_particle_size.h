@@ -32,7 +32,9 @@
  *
  * @param lagrangian_physical_properties DEM physical properties declared in the
  * .prm file
- * @param standard_deviation_multiplier Constant standard deviation multiplier. It is defined in the dem constructor and it is equal to 2.5 to cover 99% of the particle size distribution
+ * @param standard_deviation_multiplier Constant standard deviation multiplier.
+ * It is defined in the dem constructor and it is equal to 2.5 to cover 99% of
+ * the particle size distribution
  * @return Maximum particle size
  *
  */

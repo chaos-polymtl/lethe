@@ -18,6 +18,8 @@
 #ifndef lethe_dem_cfd_coupling_h
 #define lethe_dem_cfd_coupling_h
 
+#include <core/data_containers.h>
+
 #include <solvers/navier_stokes_scratch_data.h>
 
 #include <dem/dem.h>
@@ -208,7 +210,6 @@ private:
   void
   post_processing() override;
 
-
   unsigned int              coupling_frequency;
   bool                      contact_detection_step;
   bool                      checkpoint_step;
@@ -223,78 +224,44 @@ private:
   double                    smallest_contact_search_criterion;
   double                    triangulation_cell_diameter;
 
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    cells_local_neighbor_list;
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+  typename dem_data_structures<dim>::cells_neighbor_list
     cells_ghost_neighbor_list;
-  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
-    local_contact_pair_candidates;
-  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_local_neighbor_list;
+  typename dem_data_structures<dim>::particle_particle_candidates
     ghost_contact_pair_candidates;
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
+  typename dem_data_structures<dim>::particle_particle_candidates
+    local_contact_pair_candidates;
+  typename dem_data_structures<dim>::adjacent_particle_pairs
     local_adjacent_particles;
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
+  typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
-  std::unordered_map<
-    types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
-    particle_wall_pairs_in_contact;
-  std::unordered_map<
-    types::particle_index,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
-    pfw_pairs_in_contact;
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<unsigned int,
-                       std::tuple<Particles::ParticleIterator<dim>,
-                                  Tensor<1, dim>,
-                                  Point<dim>,
-                                  unsigned int,
-                                  unsigned int>>>
-    particle_wall_contact_candidates;
-  std::unordered_map<types::particle_index,
-                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-    particle_point_contact_candidates;
-  std::unordered_map<
-    types::particle_index,
-    std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-    particle_line_contact_candidates;
-  std::unordered_map<types::particle_index,
-                     particle_point_line_contact_info_struct<dim>>
-    particle_points_in_contact, particle_lines_in_contact;
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>>
-    pfw_contact_candidates;
-
-  std::vector<
-    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-             std::unordered_map<types::particle_index,
-                                particle_wall_contact_info_struct<dim>>,
-             dem_data_containers::cut_cell_comparison<dim>>>
+  typename dem_data_structures<dim>::particle_wall_candidates
+    particle_wall_candidates;
+  typename dem_data_structures<dim>::particle_wall_in_contact
+    particle_wall_in_contact;
+  typename dem_data_structures<dim>::particle_wall_in_contact
+    particle_floating_wall_in_contact;
+  typename dem_data_structures<dim>::particle_point_candidates
+    particle_point_candidates;
+  typename dem_data_structures<dim>::particle_line_candidates
+    particle_line_candidates;
+  typename dem_data_structures<dim>::particle_point_line_contact_info
+    particle_points_in_contact;
+  typename dem_data_structures<dim>::particle_point_line_contact_info
+    particle_lines_in_contact;
+  typename dem_data_structures<dim>::particle_floating_wall_candidates
+    particle_floating_wall_candidates;
+  typename dem_data_structures<dim>::particle_floating_mesh_candidates
+    particle_floating_mesh_candidates;
+  typename dem_data_structures<dim>::particle_floating_mesh_in_contact
     particle_floating_mesh_in_contact;
-
-  std::vector<std::map<
-    typename Triangulation<dim - 1, dim>::active_cell_iterator,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
-    dem_data_containers::cut_cell_comparison<dim>>>
-    particle_floating_mesh_contact_candidates;
-
-
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
+  typename dem_data_structures<dim>::particle_index_iterator_map
     particle_container;
-
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
+  typename dem_data_structures<dim>::vector_on_boundary
     forces_boundary_information;
-  std::map<unsigned int, std::map<unsigned int, Tensor<1, 3>>>
+  typename dem_data_structures<dim>::vector_on_boundary
     torques_boundary_information;
-
 
   ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
   ParticleParticleFineSearch<dim>   particle_particle_fine_search_object;

@@ -16,20 +16,16 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <core/data_containers.h>
+
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_particle_contact_info_struct.h>
-
-#include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
-
-#include <iostream>
-#include <unordered_map>
-#include <vector>
 
 using namespace dealii;
 
@@ -78,18 +74,14 @@ public:
   void
   find_particle_particle_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const std::vector<
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      *cells_local_neighbor_list,
-    const std::vector<
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      *cells_ghost_neighbor_list,
-    std::unordered_map<types::particle_index,
-                       std::vector<types::particle_index>>
-      &local_contact_pair_candidates,
-    std::unordered_map<types::particle_index,
-                       std::vector<types::particle_index>>
-      &ghost_contact_pair_candidates);
+    const typename dem_data_containers::dem_data_structures<
+      dim>::cells_neighbor_list *cells_local_neighbor_list,
+    const typename dem_data_containers::dem_data_structures<
+      dim>::cells_neighbor_list *cells_ghost_neighbor_list,
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_particle_candidates &local_contact_pair_candidates,
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_particle_candidates &ghost_contact_pair_candidates);
 };
 
 #endif /* particle_particle_broad_search_h */

@@ -110,19 +110,13 @@ template <int dim>
 void
 ParticleParticleHertzMindlinLimitOverlap<dim>::
   calculate_particle_particle_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &local_adjacent_particles,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &                        ghost_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force)
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &local_adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+    const double                     dt,
+    std::vector<Tensor<1, 3>> &      torque,
+    std::vector<Tensor<1, 3>> &      force)
 {
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
@@ -710,19 +704,13 @@ template <int dim>
 void
 ParticleParticleHertzMindlinLimitForce<dim>::
   calculate_particle_particle_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &local_adjacent_particles,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &                        ghost_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force)
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &local_adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+    const double                     dt,
+    std::vector<Tensor<1, 3>> &      torque,
+    std::vector<Tensor<1, 3>> &      force)
 {
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
@@ -1297,19 +1285,13 @@ ParticleParticleHertz<dim>::ParticleParticleHertz(
 template <int dim>
 void
 ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
-    &local_adjacent_particles,
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
-    &                        ghost_adjacent_particles,
-  const double               dt,
-  std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force)
+  typename dem_data_containers::dem_data_structures<
+    dim>::adjacent_particle_pairs &local_adjacent_particles,
+  typename dem_data_containers::dem_data_structures<
+    dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+  const double                     dt,
+  std::vector<Tensor<1, 3>> &      torque,
+  std::vector<Tensor<1, 3>> &      force)
 {
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops

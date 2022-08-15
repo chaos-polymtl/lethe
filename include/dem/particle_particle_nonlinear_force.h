@@ -65,19 +65,13 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &adjacent_particles,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &                        ghost_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+    const double                     dt,
+    std::vector<Tensor<1, 3>> &      torque,
+    std::vector<Tensor<1, 3>> &      force) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -204,19 +198,13 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &adjacent_particles,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &                        ghost_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+    const double                     dt,
+    std::vector<Tensor<1, 3>> &      torque,
+    std::vector<Tensor<1, 3>> &      force) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -344,19 +332,13 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &adjacent_particles,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &                        ghost_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+    const double                     dt,
+    std::vector<Tensor<1, 3>> &      torque,
+    std::vector<Tensor<1, 3>> &      force) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
