@@ -28,6 +28,8 @@
 
 #include <solvers/gls_nitsche_navier_stokes.h>
 
+#include <deal.II/base/multithread_info.h>
+
 #include <deal.II/numerics/fe_field_function.h>
 
 #include <deal.II/particles/data_out.h>
