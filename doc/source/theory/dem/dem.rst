@@ -8,7 +8,7 @@ In this guide, we summarize the theory behind DEM. For further details, we refer
     m_i\frac{d\mathbf{v_i}}{dt} &= \sum_{j\in \mathcal C_i} (\mathbf{F}_{ij}^n + \mathbf{F}_{ij}^t) + m_i\mathbf{g} + \mathbf{F}_i^\text{ext} \\
     I_i\frac{d\mathbf{\omega_i}}{dt} &= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij}^t + \mathbf{M}_{ij}^r) +  \mathbf{M}_i^\text{ext}
 
-Where : 
+Where:
 
 * :math:`m_i` mass of the particule i;
 * :math:`\mathbf{v_i}` velocity of the particule i;
@@ -28,16 +28,16 @@ Where :
 Contact force and torque models
 --------------------------------
 
-The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as followed :
+The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as followed:
 
 .. math::
     \mathbf{F}_{ij}^n &= -(k_n\delta_n)\mathbf{n}_{ij}-(\eta_n\mathbf{v}_{rn}) \\
     \mathbf{F}_{ij}^t &= -(k_t\mathbf{\delta}_t)-(\eta_t\mathbf{v}_{rt})
 
-Where : 
+Where:
 
 * :math:`\delta_n` normal overlap;
-* :math:`\delta_t` tangential overlap;
+* :math:`\mathbf{\delta_t}` tangential overlap vector;
 * :math:`\mathbf{n}_{ij}` contact normal vector;
 * :math:`k_n, k_t` spring constants;
 * :math:`\eta_n, \eta_t` damping model constants;
@@ -52,20 +52,20 @@ Where :
 
     Representation of a typical particle-particle contact. [1]
 
-The contact normal vector :math:`\mathbf{n}_{ij}` is computed as : 
+The contact normal vector :math:`\mathbf{n}_{ij}` is computed as:
 
 .. math::
     \mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}
 
 The normal overlap (:math:`\delta_n`) is the contact distance between the particles i and j. The tangential overlap (:math:`\delta_t`) depends on the contact history and is updated during a contact.
-The normal and tangential overlaps are calculated as follow : 
+The normal and tangential overlaps are calculated as follow:
 
 .. math::
     \delta_n =& \:R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
     \mathbf{\delta}_{ij}^{t,\text{new}} &= \mathbf{\delta}_{ij}^{t,\text{old}}+\mathbf{v}_{rt}dt
 
 
-The relative velocities calculated to allow updating the tangential overlap are then described by :
+The relative velocities calculated to allow updating the tangential overlap are described by:
 
 .. math::
     \mathbf{v}_{rn} &= \left(\mathbf{v}_{ij}.\mathbf{n}_{ij}\right)\mathbf{n}_{ij} \\
@@ -73,7 +73,7 @@ The relative velocities calculated to allow updating the tangential overlap are 
     \mathbf{v}_{ij} &= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij}
 
 
-The linear models used in Lethe-DEM are the following equations :
+The linear models used in Lethe-DEM are the following equations:
 
 .. math::
     k_n &= \frac{16}{15}\sqrt{R_{e}}Y_{e}\left(\frac{15m_{e}V^2}{16\sqrt{R_{e}}Y_{e}}\right)^{0.2} \\
@@ -82,7 +82,7 @@ The linear models used in Lethe-DEM are the following equations :
     \eta_t &= \eta_n
 
 
-Nonlinear viscoelastic models used are :
+Nonlinear viscoelastic models used are:
 
 .. math::
     k_n &= \frac{4}{3}Y_{e}\sqrt{R_{e}\delta_n} \\
@@ -91,7 +91,7 @@ Nonlinear viscoelastic models used are :
     \eta_t &= -2\sqrt{\frac{5}{6}}\beta\sqrt{S_tm_{e}}
 
 
-Where : 
+Where:
 
 * :math:`R_e` effective radius;
 * :math:`Y_e` effective Young's modulus;
@@ -100,7 +100,7 @@ Where :
 * :math:`e` coefficient of restitution;
 * :math:`G_e` effective shear modulus;
 
-The parameters are computed as followed :
+The parameters are computed as followed:
 
 .. math::
     \frac{1}{m_{e}} &= \frac{1}{m_i}+\frac{1}{m_j} \\
@@ -111,32 +111,32 @@ The parameters are computed as followed :
     S_n &= 2Y_{e}\sqrt{R_{e}\delta_n} \\
     S_t &= 8G_{e}\sqrt{R_{e}\delta_n}
 
-Where :
+Where:
 
 * :math:`\nu_i, \nu_j` poisson coefficient of particle i or j;
 
-Rolling friction may be calculated through a constant torque model or a viscous torque model corresponding to those equations :
+Rolling friction may be calculated through a constant torque model or a viscous torque model corresponding to those equations:
 
 .. math::
     \mathbf{M}_{ij}^{r} &= -\mu_{r}R_{e}|\mathbf{F}_{ij}^{n}| \mathbf{\hat{\omega}}_{ij} \\
     \mathbf{M}_{ij}^{r} &= -\mu_{r}R_{e}|\mathbf{F}_{ij}^{n}||\mathbf{V}_{\omega}| \mathbf{\hat{\omega}}_{ij}
 
-Where the parameters are :
+Where the parameters are:
 
 .. math::
     \mathbf{\hat{\omega}}_{ij} &= \frac{\omega_{i} - \omega_{j}}{|\omega_{i} - \omega_{j}|} \\
     \mathbf{V}_{\omega} &= \left( \omega_{i} \times R_{i}\mathbf{n}_{ij}-\omega_{j} \times R_{j}\mathbf{n}_{ji} \right)
 
-Where :
+Where:
 
 * :math:`\mu_{r}` rolling friction coefficient;
 
-Tangential torque is calculated thought :
+Tangential torque is calculated through:
 
 .. math::
     \mathbf{M}_{ij}^{t} = R_{i}\mathbf{n}_{ij} \times \mathbf{F}_{ij}^{c}
 
-Coulomb's criterion is violated when this condition is not respected during a collision :
+Coulomb's criterion is violated when this condition is not respected during a collision:
 
 .. math::
     |\mathbf{F}_{ij}^{t}| \geq \mu |\mathbf{F}_{ij}^{n}|
@@ -145,7 +145,7 @@ Coulomb's criterion is violated when this condition is not respected during a co
 A violation means the collision is having gross sliding and tangential force needs to be limited to the Coulomb limit.
 To do so, the tangential overlap :math:`\mathbf{\delta_t}` is first limited and then the tangential force is recalculated.
 
-The tangential overlap is calculated with the tangential force with no damping force as default nonlinear contact model as follow :
+The tangential overlap is calculated with the tangential force with no damping force as default nonlinear contact model as follow:
 
 .. math::
     \mathbf{\delta_t} &= \frac{\mathbf{\tilde{F}_{ij}}}{-k_{t}} \\
@@ -156,18 +156,18 @@ Regarding the particle-wall contacts, applied models are the same than particle-
 
 Integration methods
 --------------------
-Two types of integration methods are implemented in Lethe-DEM :
+Two types of integration methods are implemented in Lethe-DEM:
 
 * Explicit Euler method;
 * Velocity Verlet method
 
-Explicit Euler method is calculated as :
+Explicit Euler method is calculated as:
 
 .. math::
     \mathbf{v}_{i}^{n+1} &= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}dt \\
     \mathbf{x}_{i}^{n+1} &= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n}dt
 
-And velocity Verlet method is calculated with half-step velocity as :
+And velocity Verlet method is calculated with half-step velocity as:
 
 .. math::
     \mathbf{v}_{i}^{n+\frac{1}{2}} &= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}\frac{dt}{2} \\
