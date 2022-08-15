@@ -1,6 +1,8 @@
 #include <core/ib_particle.h>
 #include <core/shape.h>
 
+#include <cfloat>
+
 
 template <int dim>
 void

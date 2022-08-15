@@ -15,6 +15,8 @@
  */
 #include <core/shape.h>
 
+#include <cfloat>
+
 template <int dim>
 double
 Shape<dim>::displaced_volume(const double /*fluid_density*/)
