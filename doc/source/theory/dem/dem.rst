@@ -73,23 +73,26 @@ The relative velocities calculated to allow updating the tangential overlap are 
     \mathbf{v}_{ij} &= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij}
 
 
-The linear models used in Lethe-DEM are the following equations:
 
-.. math::
-    k_n &= \frac{16}{15}\sqrt{R_{e}}Y_{e}\left(\frac{15m_{e}V^2}{16\sqrt{R_{e}}Y_{e}}\right)^{0.2} \\
-    \eta_n &= \sqrt{\frac{4m_{e}k_n}{1+\left(\frac{\pi}{\ln{e}}\right)^2}} \\
-    k_t &= k_n \\
-    \eta_t &= \eta_n
+.. list-table:: Spring and Damping Models used in Lethe-DEM.
+   :widths: 40 30 30
+   :header-rows: 1
 
-
-Nonlinear viscoelastic models used are:
-
-.. math::
-    k_n &= \frac{4}{3}Y_{e}\sqrt{R_{e}\delta_n} \\
-    \eta_n &= -2\sqrt{\frac{5}{6}}\beta\sqrt{S_nm_{e}} \\
-    k_t &= 8G_{e}\sqrt{R_{e}\delta_n} \\
-    \eta_t &= -2\sqrt{\frac{5}{6}}\beta\sqrt{S_tm_{e}}
-
+   * - Parameters
+     - Linear model definitions
+     - Nonlinear viscoelastic model definitions
+   * - Normal spring constant
+     - :math:`k_n = \frac{16}{15}\sqrt{R_{e}}Y_{e}\left(\frac{15m_{e}V^2}{16\sqrt{R_{e}}Y_{e}}\right)^{0.2}`
+     - :math:`k_n = \frac{4}{3}Y_{e}\sqrt{R_{e}\delta_n}`
+   * - Tangential spring constant
+     - :math:`\eta_n = \sqrt{\frac{4m_{e}k_n}{1+\left(\frac{\pi}{\ln{e}}\right)^2}}`
+     - :math:`\eta_n = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_nm_{e}}`
+   * - Normal damping model constant
+     - :math:`k_t = k_n`
+     - :math:`k_t = 8G_{e}\sqrt{R_{e}\delta_n}`
+   * - Tangential damping model constant
+     - :math:`\eta_t = \eta_n`
+     - :math:`\eta_t = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_tm_{e}}`
 
 Where:
 
