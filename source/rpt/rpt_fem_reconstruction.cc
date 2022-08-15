@@ -240,20 +240,12 @@ RPTFEMReconstruction<dim>::assign_detector_positions()
   size_t              pos = 0;
   std::string         coordinate;
 
-  // remove header if the header is present
+  // Remove header if the header is present
   std::getline(detector_file, header);
   if (!isalpha(header[0]))
     {
-      std::string delimiter = " ";
-      while ((pos = header.find(delimiter)) != std::string::npos)
-        {
-          coordinate = header.substr(0, pos);
-          header.erase(0, pos + delimiter.length());
-          values.push_back(std::stod(coordinate));
-        }
-      values.push_back(std::stod(header));
+      detector_file.seekg(0, std::ios::beg);
     }
-
 
   std::copy(std::istream_iterator<double>(detector_file),
             std::istream_iterator<double>(),
