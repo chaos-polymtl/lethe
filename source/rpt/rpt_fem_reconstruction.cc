@@ -58,6 +58,8 @@ RPTFEMReconstruction<dim>::setup_triangulation()
 {
   TimerOutput::Scope t(computing_timer, "setting_up_grid");
 
+  triangulation.clear();
+
   if (rpt_parameters.fem_reconstruction_param.mesh_type ==
       Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
     {
