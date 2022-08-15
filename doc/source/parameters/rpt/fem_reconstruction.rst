@@ -48,7 +48,7 @@ For the ``rpt_fem_reconstruction_3d`` application only, we have to define the fo
     Options: Any ``.counts`` file
 - ``search type``: Type of search algorithm used to find particle positions. The ``local`` option refers to a search algorithm where the next particle position is searched in a scope around the previously found position's cell. The size of that scope is defined by the ``search cell proximity level`` parameter. And the ``global`` option refers to the algorithm  in which we go through every cell of the grid to find every particle position.
     Options: ``local`` or ``global``
-- ``search cell proximity level``: Level of proximity of the search scope to find the next particle position. A ``search cell proximity level = 1`` includes in the search scope the previously found position's cell and all it's adjacent cells. Specify only if ``local`` was the selected option for the ``search type``.
+- ``search cell proximity level``: Level of proximity of the search scope to find the next particle position. A ``search cell proximity level = 1`` includes in the search scope the previously found position's cell and all its adjacent cells. Specify only if ``local`` was the selected option for the ``search type``.
     Options: Any positive integer
 - ``verbose clock``: Enable to show total wallclock time elapsed since start.
     Options: ``true`` or ``false``
