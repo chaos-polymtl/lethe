@@ -47,7 +47,12 @@ Volume-of-Fluid method for two-phase flows
 
 Discrete Element Method
 =============================
-**Under construction**
+.. toctree::
+    :maxdepth: 3
+    :glob:
+    :titlesonly:
+
+    dem/dem
 
 
 Unresolved CFD-DEM
