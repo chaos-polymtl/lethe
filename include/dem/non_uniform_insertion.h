@@ -52,7 +52,7 @@ public:
    * defined in the parameter handler
    */
   NonUniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
-                           const double &maximum_particle_diameter);
+                           const double maximum_particle_diameter);
 
   /**
    * Carries out the non-uniform insertion of particles.
@@ -81,8 +81,8 @@ private:
    */
   void
   create_random_number_container(std::vector<double> &random_container,
-                                 const double &       random_number_range,
-                                 const int &          random_number_seed);
+                                 const double         random_number_range,
+                                 const int            random_number_seed);
 
   /**
    * Converts id of particles to non-uniform insertion location
@@ -97,9 +97,9 @@ private:
   void
   find_insertion_location_nonuniform(
     Point<dim> &                                 insertion_location,
-    const unsigned int &                         id,
-    const double &                               random_number1,
-    const double &                               random_number2,
+    const unsigned int                           id,
+    const double                                 random_number1,
+    const double                                 random_number2,
     const Parameters::Lagrangian::InsertionInfo &insertion_information);
 
   unsigned int current_inserting_particle_type;

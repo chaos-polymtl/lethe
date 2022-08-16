@@ -10,24 +10,22 @@ template <int dim>
 void
 ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const std::vector<
-    std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    *cells_local_neighbor_list,
-  const std::vector<
-    std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    *cells_ghost_neighbor_list,
-  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
-    &local_contact_pair_candidates,
-  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
-    &ghost_contact_pair_candidates)
+  const typename dem_data_containers::dem_data_structures<
+    dim>::cells_neighbor_list &cells_local_neighbor_list,
+  const typename dem_data_containers::dem_data_structures<
+    dim>::cells_neighbor_list &cells_ghost_neighbor_list,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_particle_candidates &local_contact_pair_candidates,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_particle_candidates &ghost_contact_pair_candidates)
 {
   // First we will handle the local-lcoal candidate pairs
   // Clearing local_contact_pair_candidates
   local_contact_pair_candidates.clear();
 
   // Looping over cells_local_neighbor_list
-  for (auto cell_neighbor_list_iterator = cells_local_neighbor_list->begin();
-       cell_neighbor_list_iterator != cells_local_neighbor_list->end();
+  for (auto cell_neighbor_list_iterator = cells_local_neighbor_list.begin();
+       cell_neighbor_list_iterator != cells_local_neighbor_list.end();
        ++cell_neighbor_list_iterator)
     {
       // The main cell
@@ -131,8 +129,8 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   ghost_contact_pair_candidates.clear();
 
   // Looping over cells_ghost_neighbor_list
-  for (auto cell_neighbor_list_iterator = cells_ghost_neighbor_list->begin();
-       cell_neighbor_list_iterator != cells_ghost_neighbor_list->end();
+  for (auto cell_neighbor_list_iterator = cells_ghost_neighbor_list.begin();
+       cell_neighbor_list_iterator != cells_ghost_neighbor_list.end();
        ++cell_neighbor_list_iterator)
     {
       // The main cell

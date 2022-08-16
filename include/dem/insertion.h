@@ -152,9 +152,9 @@ private:
    */
   void
   particle_size_sampling(std::vector<double> &particle_sizes,
-                         const double &       average,
-                         const double &       standard_deviation,
-                         const double &       particle_number);
+                         const double         average,
+                         const double         standard_deviation,
+                         const double         particle_number);
 
   std::vector<double> particle_sizes;
 };

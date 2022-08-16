@@ -153,7 +153,9 @@ test()
   for (unsigned i = 0; i < MOI.size(); ++i)
     MOI[i] = 1;
 
-  for (double time = 0; time < 0.2; time += dt)
+  double time = 0.0;
+
+  while (time < 0.2)
     {
       auto particle                = particle_handler.begin();
       force[particle->get_id()][0] = 0;
@@ -181,6 +183,8 @@ test()
           deallog << particle->get_location() << std::endl;
         }
       ++step;
+
+      time += dt;
     }
 }
 

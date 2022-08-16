@@ -13,6 +13,7 @@
  *
  * ---------------------------------------------------------------------
  */
+#include <core/data_containers.h>
 
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/dem_solver_parameters.h>
@@ -126,8 +127,8 @@ private:
 
   // Mapping of periodic boundaries information, cell index at outlet is the
   // map key
-  std::map<types::global_cell_index, periodic_boundaries_cells_info_struct<dim>>
-    periodic_boundaries_cells_information;
+  typename dem_data_containers::dem_data_structures<
+    dim>::periodic_boundaries_cells_info periodic_boundaries_cells_information;
 };
 
 #endif /* particle_wall_periodic_displacement_h */

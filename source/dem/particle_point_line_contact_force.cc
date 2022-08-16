@@ -14,9 +14,8 @@ ParticlePointLineForce<dim>::ParticlePointLineForce()
 template <int dim>
 void
 ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
-  const std::unordered_map<types::particle_index,
-                           particle_point_line_contact_info_struct<dim>>
-    *particle_point_pairs_in_contact,
+  const typename dem_data_containers::dem_data_structures<
+    dim>::particle_point_line_contact_info *particle_point_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties
     &                        physical_properties,
   std::vector<Tensor<1, 3>> &force)
@@ -139,9 +138,8 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
 template <int dim>
 void
 ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
-  const std::unordered_map<types::particle_index,
-                           particle_point_line_contact_info_struct<dim>>
-    *particle_line_pairs_in_contact,
+  const typename dem_data_containers::dem_data_structures<
+    dim>::particle_point_line_contact_info *particle_line_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties
     &                        physical_properties,
   std::vector<Tensor<1, 3>> &force)

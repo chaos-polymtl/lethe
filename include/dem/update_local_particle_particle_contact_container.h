@@ -16,9 +16,9 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <dem/particle_particle_contact_info_struct.h>
+#include <core/data_containers.h>
 
-#include <unordered_map>
+#include <dem/particle_particle_contact_info_struct.h>
 
 using namespace dealii;
 
@@ -36,12 +36,9 @@ using namespace dealii;
 template <int dim>
 void
 update_local_particle_particle_contact_container_iterators(
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
-    &local_adjacent_particles,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container);
+  typename dem_data_containers::dem_data_structures<
+    dim>::adjacent_particle_pairs &local_adjacent_particles,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &particle_container);
 
 #endif /* update_local_particle_particle_contact_container_h */

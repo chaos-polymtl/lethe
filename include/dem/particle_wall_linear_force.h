@@ -49,8 +49,8 @@ class ParticleWallLinearForce : public ParticleWallContactForce<dim>
 {
   using FuncPtrType = Tensor<1, 3> (ParticleWallLinearForce<dim>::*)(
     const ArrayView<const double> &,
-    const double &,
-    const double &,
+    const double,
+    const double,
     const Tensor<1, 3> &);
   FuncPtrType calculate_rolling_resistance_torque;
 
@@ -78,13 +78,11 @@ public:
    */
   virtual void
   calculate_particle_wall_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-      &                        particle_wall_pairs_in_contact,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
+    const double                      dt,
+    std::vector<Tensor<1, 3>> &       torque,
+    std::vector<Tensor<1, 3>> &       force) override;
 
   /**
    * Carries out the calculation of particle-floating mesh contact force using
@@ -97,16 +95,13 @@ public:
    * @param force Force acting on particles
    * @param solids Floating solids
    */
-  virtual void calculate_particle_floating_wall_contact_force(
-    std::vector<
-      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               std::unordered_map<types::particle_index,
-                                  particle_wall_contact_info_struct<dim>>,
-               dem_data_containers::cut_cell_comparison<dim>>>
-      &                        particle_floating_mesh_in_contact,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
+  virtual void
+  calculate_particle_floating_wall_contact_force(
+    typename dem_data_containers::dem_data_structures<dim>::
+      particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
+    const double                         dt,
+    std::vector<Tensor<1, 3>> &          torque,
+    std::vector<Tensor<1, 3>> &          force,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
     override;
 
@@ -140,14 +135,14 @@ public:
     Tensor<1, 3> &                          tangential_torque,
     Tensor<1, 3> &                          rolling_resistance_torque,
     IBParticle<dim> &                       particle,
-    const double &                          wall_youngs_modulus,
-    const double &                          wall_poisson_ratio,
-    const double &                          wall_restitution_coefficient,
-    const double &                          wall_friction_coefficient,
-    const double &                          wall_rolling_friction_coefficient,
+    const double                            wall_youngs_modulus,
+    const double                            wall_poisson_ratio,
+    const double                            wall_restitution_coefficient,
+    const double                            wall_friction_coefficient,
+    const double                            wall_rolling_friction_coefficient,
     const double                            dt,
-    const double &                          mass,
-    const double &                          radius) override;
+    const double                            mass,
+    const double                            radius) override;
 
 private:
   /**
@@ -162,8 +157,8 @@ private:
    */
   inline Tensor<1, 3>
   no_resistance(const ArrayView<const double> & /*particle_properties*/,
-                const double & /*effective_rolling_friction_coefficient*/,
-                const double & /*normal_force_norm*/,
+                const double /*effective_rolling_friction_coefficient*/,
+                const double /*normal_force_norm*/,
                 const Tensor<1, 3> & /*normal_contact_vector*/)
   {
     Tensor<1, 3> rolling_resistance({0, 0, 0});
@@ -182,8 +177,8 @@ private:
    */
   inline Tensor<1, 3>
   constant_resistance(const ArrayView<const double> &particle_properties,
-                      const double &effective_rolling_friction_coefficient,
-                      const double &normal_force_norm,
+                      const double effective_rolling_friction_coefficient,
+                      const double normal_force_norm,
                       const Tensor<1, 3> & /*normal_contact_vector*/)
   {
     // Getting the angular velocity of particle in the vector format
@@ -225,8 +220,8 @@ private:
    */
   inline Tensor<1, 3>
   viscous_resistance(const ArrayView<const double> &particle_properties,
-                     const double &      effective_rolling_friction_coefficient,
-                     const double &      normal_force_norm,
+                     const double        effective_rolling_friction_coefficient,
+                     const double        normal_force_norm,
                      const Tensor<1, 3> &normal_contact_vector)
   {
     // Getting the angular velocity of particle in the vector format

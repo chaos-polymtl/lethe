@@ -177,8 +177,8 @@ LagrangianPostProcessing<dim>::write_average_particles_velocity(
   const parallel::distributed::Triangulation<dim> &triangulation,
   PVDHandler &                                     grid_pvdhandler,
   const DEMSolverParameters<dim> &                 dem_parameters,
-  const double &                                   time,
-  const unsigned int &                             step_number,
+  const double                                     time,
+  const unsigned int                               step_number,
   const MPI_Comm &                                 mpi_communicator)
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
@@ -232,8 +232,8 @@ LagrangianPostProcessing<dim>::write_granular_temperature(
   const parallel::distributed::Triangulation<dim> &triangulation,
   PVDHandler &                                     grid_pvdhandler,
   const DEMSolverParameters<dim> &                 dem_parameters,
-  const double &                                   time,
-  const unsigned int &                             step_number,
+  const double                                     time,
+  const unsigned int                               step_number,
   const MPI_Comm &                                 mpi_communicator)
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;

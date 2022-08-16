@@ -64,13 +64,11 @@ public:
    */
   virtual void
   calculate_particle_wall_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-      &                        particle_wall_pairs_in_contact,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) = 0;
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
+    const double                      dt,
+    std::vector<Tensor<1, 3>> &       torque,
+    std::vector<Tensor<1, 3>> &       force) = 0;
 
   /**
    * Carries out the calculation of particle-floating mesh contact force using
@@ -83,16 +81,13 @@ public:
    * @param force Force acting on particles
    * @param solids Floating solids
    */
-  virtual void calculate_particle_floating_wall_contact_force(
-    std::vector<
-      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               std::unordered_map<types::particle_index,
-                                  particle_wall_contact_info_struct<dim>>,
-               dem_data_containers::cut_cell_comparison<dim>>>
-      &                        particle_floating_mesh_in_contact,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
+  virtual void
+  calculate_particle_floating_wall_contact_force(
+    typename dem_data_containers::dem_data_structures<dim>::
+      particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
+    const double                         dt,
+    std::vector<Tensor<1, 3>> &          torque,
+    std::vector<Tensor<1, 3>> &          force,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids) = 0;
 
   std::map<types::boundary_id, Tensor<1, 3>>
@@ -135,14 +130,14 @@ public:
     Tensor<1, 3> &                          tangential_torque,
     Tensor<1, 3> &                          rolling_resistance_torque,
     IBParticle<dim> &                       particle,
-    const double &                          wall_youngs_modulus,
-    const double &                          wall_poisson_ratio,
-    const double &                          wall_restitution_coefficient,
-    const double &                          wall_friction_coefficient,
-    const double &                          wall_rolling_friction_coefficient,
+    const double                            wall_youngs_modulus,
+    const double                            wall_poisson_ratio,
+    const double                            wall_restitution_coefficient,
+    const double                            wall_friction_coefficient,
+    const double                            wall_rolling_friction_coefficient,
     const double                            dt,
-    const double &                          mass,
-    const double &                          radius) = 0;
+    const double                            mass,
+    const double                            radius) = 0;
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -195,7 +190,7 @@ protected:
     const double                            dt,
     const Tensor<1, 3> &                    cut_cell_translational_velocity,
     const Tensor<1, 3> &                    cut_cell_rotational_velocity,
-    const double &center_of_rotation_particle_distance);
+    const double center_of_rotation_particle_distance);
 
   /**
    * Carries out applying the calculated force and torque on the particle in

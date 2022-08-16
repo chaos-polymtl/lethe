@@ -212,7 +212,7 @@ private:
   find_boundary_cells_for_floating_walls(
     const parallel::distributed::Triangulation<dim> & triangulation,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-    const double &                                    maximum_cell_diameter);
+    const double                                      maximum_cell_diameter);
 
   /**
    * Carries out adding new elements with the boundary cells (cells with
