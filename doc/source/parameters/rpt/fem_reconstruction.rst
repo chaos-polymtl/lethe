@@ -38,7 +38,7 @@ For both ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications
 For the ``rpt_fem_reconstruction_3d`` application only, we have to define the following parameters:
 
 - ``l2 projection before reconstruction``: Enable to run the ``rpt_l2_projection_3d`` application before the reconstruction.
-    Options : ``True`` or ``False``
+    Options : ``true`` or ``false``
 - ``experimental counts file``: Filename of the file containing the experimental photon counts.
     Options: Any ``.txt`` file
 - ``export positions file``: Name of the file in which the calculated positions are exported.
