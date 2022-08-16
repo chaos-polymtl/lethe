@@ -95,11 +95,8 @@ Visualization<dim>::print_xyz(
        particle != particle_handler.end();
        ++particle)
     {
-      current_id = particle->get_id();
-      if (current_id > current_id_max)
-        {
-          current_id_max = current_id;
-        }
+      current_id     = particle->get_id();
+      current_id_max = std::max(current_id, current_id_max);
 
       global_particles.insert({current_id, particle});
     }
