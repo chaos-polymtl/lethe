@@ -84,32 +84,32 @@ Visualization<dim>::print_xyz(
   const MPI_Comm &                         mpi_communicator,
   const ConditionalOStream &               pcout)
 {
-  unsigned int n_mpi_processes(
-    Utilities::MPI::n_mpi_processes(mpi_communicator));
-  unsigned int this_mpi_process(
-    Utilities::MPI::this_mpi_process(mpi_communicator));
-
   pcout << "id, type, dp, x, y, z " << std::endl;
   sleep(1);
 
   std::map<int, Particles::ParticleIterator<dim>> global_particles;
+  unsigned int current_id, current_id_max = 0;
 
-  // Get the max particles index
-  unsigned int id_max =
-    Utilities::MPI::max(particle_handler.get_max_local_particle_index(),
-                        mpi_communicator);
-
-  // Mapping of all particles
+  // Mapping of all particles & find the max id on current processor
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
        ++particle)
     {
-      global_particles.insert({particle->get_id(), particle});
+      current_id = particle->get_id();
+      if (current_id > current_id_max)
+        {
+          current_id_max = current_id;
+        }
+
+      global_particles.insert({current_id, particle});
     }
 
-  // Print particle info one by one in order
-  MPI_Barrier(mpi_communicator);
-  for (unsigned int i = 0; i < id_max; i++)
+  // Find global max particle index
+  unsigned int id_max =
+    Utilities::MPI::max(current_id_max, mpi_communicator);
+
+  // Print particle info one by one in ascending order
+  for (unsigned int i = 0; i <= id_max; i++)
     {
       for (auto &iterator : global_particles)
         {
