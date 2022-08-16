@@ -105,8 +105,7 @@ Visualization<dim>::print_xyz(
     }
 
   // Find global max particle index
-  unsigned int id_max =
-    Utilities::MPI::max(current_id_max, mpi_communicator);
+  unsigned int id_max = Utilities::MPI::max(current_id_max, mpi_communicator);
 
   // Print particle info one by one in ascending order
   for (unsigned int i = 0; i <= id_max; i++)
