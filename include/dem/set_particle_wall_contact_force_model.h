@@ -42,6 +42,6 @@ std::shared_ptr<ParticleWallContactForce<dim>>
 set_particle_wall_contact_force_model(
   const DEMSolverParameters<dim> &                 dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const double &                                   triangulation_cell_diameter);
+  const double                                     triangulation_cell_diameter);
 
 #endif /* set_particle_wall_contact_force_model_h */

@@ -114,13 +114,11 @@ ParticleWallLinearForce<dim>::ParticleWallLinearForce(
 template <int dim>
 void
 ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-    &                        particle_wall_pairs_in_contact,
-  const double               dt,
-  std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force)
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
+  const double                      dt,
+  std::vector<Tensor<1, 3>> &       torque,
+  std::vector<Tensor<1, 3>> &       force)
 {
   ParticleWallContactForce<dim>::force_on_walls =
     ParticleWallContactForce<dim>::initialize();
@@ -214,17 +212,13 @@ ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
 
 template <int dim>
 void
-  ParticleWallLinearForce<dim>::calculate_particle_floating_wall_contact_force(
-    std::vector<
-      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               std::unordered_map<types::particle_index,
-                                  particle_wall_contact_info_struct<dim>>,
-               dem_data_containers::cut_cell_comparison<dim>>>
-      &                        particle_floating_mesh_in_contact,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
-    const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
+ParticleWallLinearForce<dim>::calculate_particle_floating_wall_contact_force(
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
+  const double                               dt,
+  std::vector<Tensor<1, 3>> &                torque,
+  std::vector<Tensor<1, 3>> &                force,
+  const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
 {
   std::vector<Particles::ParticleIterator<dim>> particle_locations;
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
@@ -476,14 +470,14 @@ ParticleWallLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   Tensor<1, 3> & /*tangential_torque*/,
   Tensor<1, 3> & /*rolling_resistance_torque*/,
   IBParticle<dim> & /*particle*/,
-  const double & /*wall_youngs_modulus*/,
-  const double & /*wall_poisson_ratio*/,
-  const double & /*wall_restitution_coefficient*/,
-  const double & /*wall_friction_coefficient*/,
-  const double & /*wall_rolling_friction_coefficient*/,
+  const double /*wall_youngs_modulus*/,
+  const double /*wall_poisson_ratio*/,
+  const double /*wall_restitution_coefficient*/,
+  const double /*wall_friction_coefficient*/,
+  const double /*wall_rolling_friction_coefficient*/,
   const double /*dt*/,
-  const double &,
-  const double &)
+  const double,
+  const double)
 {}
 
 template class ParticleWallLinearForce<2>;

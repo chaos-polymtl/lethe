@@ -1,7 +1,5 @@
 #include <dem/find_cell_neighbors.h>
 
-#include <unordered_map>
-
 using namespace dealii;
 
 // The constructor of this class is empty
@@ -15,9 +13,9 @@ template <int dim>
 void
 FindCellNeighbors<dim>::find_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+  typename dem_data_containers::dem_data_structures<dim>::cells_neighbor_list
     &cells_local_neighbor_list,
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+  typename dem_data_containers::dem_data_structures<dim>::cells_neighbor_list
     &cells_ghost_neighbor_list)
 {
   // The output vectors of the function are cells_local_neighbor_list and
@@ -122,10 +120,8 @@ template <int dim>
 void
 FindCellNeighbors<dim>::find_full_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  std::unordered_map<
-    types::global_cell_index,
-    std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    &cells_total_neighbor_list)
+  typename dem_data_containers::dem_data_structures<
+    dim>::cells_total_neighbor_list &cells_total_neighbor_list)
 {
   auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
 

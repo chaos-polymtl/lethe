@@ -41,13 +41,12 @@ using namespace std;
  * @param pcout Printing in parallel
  * @param restart If in restart situation
  * @param triangulation Triangulation
- * @param triangulation_cell_diameter Triangulation cell diameter
  * @param bc_params Boundary conditions parameters for DEM
  */
 template <int dim, int spacedim = dim>
 void
 read_mesh(const Parameters::Mesh &             mesh_params,
-          const bool &                         restart,
+          const bool                           restart,
           const ConditionalOStream &           pcout,
           Triangulation<dim, spacedim> &       triangulation,
           double &                             triangulation_cell_diameter,

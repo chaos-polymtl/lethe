@@ -46,9 +46,9 @@ using namespace dealii;
  * information of adjacent local-local particles
  * @param particle_wall_pairs_in_contact Container that contains all the contact
  * information of particle-wall contacts
- * @param pfw_pairs_in_contact Container that contains all the contact
+ * @param particle_floating_wall_pairs_in_contact Container that contains all the contact
  * information of particle-floating wall contacts
- * @param pfm_pairs_in_contact Container that contains all the contact
+ * @param particle_floating_mesh_pairs_in_contact Container that contains all the contact
  * information of particle-floating mesh contacts
  * @param particle_points_in_contact Container that contains all the contact
  * information of particle-point contacts
@@ -61,37 +61,21 @@ template <int dim>
 void
 locate_local_particles_in_cells(
   const Particles::ParticleHandler<dim> &particle_handler,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container,
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
-    &ghost_adjacent_particles,
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
-    &local_adjacent_particles,
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::particle_index, particle_wall_contact_info_struct<dim>>>
-    &pfw_pairs_in_contact,
-  std::vector<
-    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-             std::unordered_map<types::particle_index,
-                                particle_wall_contact_info_struct<dim>>,
-             dem_data_containers::cut_cell_comparison<dim>>>
-    &pfm_pairs_in_contact,
-  std::unordered_map<types::particle_index,
-                     particle_point_line_contact_info_struct<dim>>
-    &particle_points_in_contact,
-  std::unordered_map<types::particle_index,
-                     particle_point_line_contact_info_struct<dim>>
-    &particle_lines_in_contact);
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &particle_container,
+  typename dem_data_containers::dem_data_structures<
+    dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+  typename dem_data_containers::dem_data_structures<
+    dim>::adjacent_particle_pairs &local_adjacent_particles,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_wall_in_contact &particle_floating_wall_pairs_in_contact,
+  typename dem_data_containers::dem_data_structures<dim>::
+    particle_floating_mesh_in_contact &particle_floating_mesh_pairs_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_point_line_contact_info &particle_points_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_point_line_contact_info &particle_lines_in_contact);
 
 #endif /* locate_local_particles_h */

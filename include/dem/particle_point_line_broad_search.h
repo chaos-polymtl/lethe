@@ -17,13 +17,12 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/data_containers.h>
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
-
-#include <unordered_map>
-#include <vector>
 
 using namespace dealii;
 
@@ -60,8 +59,8 @@ public:
    * (particle located near boundaries with vertices and the vertex location)
    */
 
-  std::unordered_map<types::particle_index,
-                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_point_candidates
   find_particle_point_contact_pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
     const std::unordered_map<
@@ -83,9 +82,8 @@ public:
    * and the locations of beginning and ending vertices of the boundary lines
    */
 
-  std::unordered_map<
-    types::particle_index,
-    std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_line_candidates
   find_particle_line_contact_pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
     const std::unordered_map<

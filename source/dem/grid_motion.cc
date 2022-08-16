@@ -10,7 +10,7 @@ using namespace dealii;
 template <int dim, int spacedim>
 GridMotion<dim, spacedim>::GridMotion(
   const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
-  const double &                                      dem_time_step)
+  const double                                        dem_time_step)
 {
   // Setting grid motion type
   if (grid_motion_parameters.motion_type ==

@@ -365,8 +365,8 @@ test()
       // Calling broad search
       broad_search_object.find_particle_particle_contact_pairs(
         particle_handler,
-        &local_neighbor_list,
-        &ghost_neighbor_list,
+        local_neighbor_list,
+        ghost_neighbor_list,
         local_contact_pair_candidates,
         ghost_contact_pair_candidates);
 

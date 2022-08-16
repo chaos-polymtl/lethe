@@ -93,8 +93,8 @@ public:
     const parallel::distributed::Triangulation<dim> &triangulation,
     PVDHandler &                                     grid_pvdhandler,
     const DEMSolverParameters<dim> &                 dem_parameters,
-    const double &                                   time,
-    const unsigned int &                             step_number,
+    const double                                     time,
+    const unsigned int                               step_number,
     const MPI_Comm &                                 mpi_communicator);
 
   /**
@@ -112,8 +112,8 @@ public:
     const parallel::distributed::Triangulation<dim> &triangulation,
     PVDHandler &                                     grid_pvdhandler,
     const DEMSolverParameters<dim> &                 dem_parameters,
-    const double &                                   time,
-    const unsigned int &                             step_number,
+    const double                                     time,
+    const unsigned int                               step_number,
     const MPI_Comm &                                 mpi_communicator);
 
 

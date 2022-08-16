@@ -7,7 +7,7 @@ template <int dim>
 void
 input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
                            const ConditionalOStream &      pcout,
-                           const double &standard_deviation_multiplier)
+                           const double standard_deviation_multiplier)
 {
   // Getting the input parameters as local variable
   auto   parameters          = dem_parameters;
@@ -101,9 +101,9 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
 template void
 input_parameter_inspection(const DEMSolverParameters<2> &dem_parameters,
                            const ConditionalOStream &    pcout,
-                           const double &standard_deviation_multiplier);
+                           const double standard_deviation_multiplier);
 
 template void
 input_parameter_inspection(const DEMSolverParameters<3> &dem_parameters,
                            const ConditionalOStream &    pcout,
-                           const double &standard_deviation_multiplier);
+                           const double standard_deviation_multiplier);

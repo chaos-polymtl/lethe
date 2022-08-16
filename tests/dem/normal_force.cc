@@ -177,8 +177,9 @@ test()
     dem_parameters);
   VelocityVerletIntegrator<dim> integrator_object;
   double                        distance;
+  double                        time = 0.0;
 
-  for (double time = 0; time < 0.00115; time += dt)
+  while (time < 0.00115)
     {
       auto particle = particle_handler.begin();
       force[0][0]   = 0;
@@ -242,6 +243,8 @@ test()
             << particle_wall_contact_information_iterator->second.normal_overlap
             << " " << step_force << std::endl;
         }
+
+      time += dt;
     }
 }
 

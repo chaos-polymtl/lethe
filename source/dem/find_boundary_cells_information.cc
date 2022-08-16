@@ -652,7 +652,7 @@ void
 BoundaryCellsInformation<dim>::find_boundary_cells_for_floating_walls(
   const parallel::distributed::Triangulation<dim> & triangulation,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-  const double &                                    maximum_cell_diameter)
+  const double                                      maximum_cell_diameter)
 {
   // Reading floating wall properties
   std::vector<Point<dim>> point_on_wall =

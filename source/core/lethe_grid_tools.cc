@@ -11,8 +11,6 @@
 #include <deal.II/grid/manifold_lib.h>
 
 #include <cmath>
-#include <unordered_map>
-
 
 template <int dim>
 void

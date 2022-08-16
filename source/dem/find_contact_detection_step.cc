@@ -5,10 +5,10 @@ using namespace dealii;
 template <int dim>
 bool
 find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
-                            const double &                   dt,
-                            const double &smallest_contact_search_criterion,
-                            MPI_Comm &    mpi_communicator,
-                            bool &        sorting_in_subdomains_step,
+                            const double                     dt,
+                            const double smallest_contact_search_criterion,
+                            MPI_Comm &   mpi_communicator,
+                            bool         sorting_in_subdomains_step,
                             std::vector<double> &displacement)
 {
   if (sorting_in_subdomains_step)
@@ -59,16 +59,16 @@ find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
 
 template bool
   find_contact_detection_step(Particles::ParticleHandler<2> &particle_handler,
-                              const double &                 dt,
-                              const double &smallest_contact_search_criterion,
-                              MPI_Comm &    mpi_communicator,
-                              bool &        sorting_in_subdomains_step,
+                              const double                   dt,
+                              const double smallest_contact_search_criterion,
+                              MPI_Comm &   mpi_communicator,
+                              bool         sorting_in_subdomains_step,
                               std::vector<double> &displacement);
 
 template bool
   find_contact_detection_step(Particles::ParticleHandler<3> &particle_handler,
-                              const double &                 dt,
-                              const double &smallest_contact_search_criterion,
-                              MPI_Comm &    mpi_communicator,
-                              bool &        sorting_in_subdomains_step,
+                              const double                   dt,
+                              const double smallest_contact_search_criterion,
+                              MPI_Comm &   mpi_communicator,
+                              bool         sorting_in_subdomains_step,
                               std::vector<double> &displacement);
