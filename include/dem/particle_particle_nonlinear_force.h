@@ -65,19 +65,13 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &adjacent_particles,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &                        ghost_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+    const double                     dt,
+    std::vector<Tensor<1, 3>> &      torque,
+    std::vector<Tensor<1, 3>> &      force) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -104,7 +98,7 @@ public:
    */
   virtual void
   calculate_IB_particle_particle_contact_force(
-    const double &                              normal_overlap,
+    const double                                normal_overlap,
     particle_particle_contact_info_struct<dim> &contact_info,
     Tensor<1, 3> &                              normal_force,
     Tensor<1, 3> &                              tangential_force,
@@ -116,10 +110,10 @@ public:
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
     const double                                dt,
-    const double &                              particle_one_radius,
-    const double &                              particle_two_radius,
-    const double &                              particle_one_mass,
-    const double &                              particle_two_mass) override;
+    const double                                particle_one_radius,
+    const double                                particle_two_radius,
+    const double                                particle_one_mass,
+    const double                                particle_two_mass) override;
 
 private:
   /**
@@ -142,9 +136,9 @@ private:
   void
   calculate_hertz_mindlin_limit_overlap_contact(
     particle_particle_contact_info_struct<dim> &contact_info,
-    const double &                              normal_relative_velocity_value,
+    const double                                normal_relative_velocity_value,
     const Tensor<1, 3> &                        normal_unit_vector,
-    const double &                              normal_overlap,
+    const double                                normal_overlap,
     const ArrayView<const double> &             particle_one_properties,
     const ArrayView<const double> &             particle_two_propertie,
     Tensor<1, 3> &                              normal_force,
@@ -204,19 +198,13 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &adjacent_particles,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &                        ghost_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+    const double                     dt,
+    std::vector<Tensor<1, 3>> &      torque,
+    std::vector<Tensor<1, 3>> &      force) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -243,7 +231,7 @@ public:
    */
   virtual void
   calculate_IB_particle_particle_contact_force(
-    const double &                              normal_overlap,
+    const double                                normal_overlap,
     particle_particle_contact_info_struct<dim> &contact_info,
     Tensor<1, 3> &                              normal_force,
     Tensor<1, 3> &                              tangential_force,
@@ -255,10 +243,10 @@ public:
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
     const double                                dt,
-    const double &                              particle_one_radius,
-    const double &                              particle_two_radius,
-    const double &                              particle_one_mass,
-    const double &                              particle_two_mass) override;
+    const double                                particle_one_radius,
+    const double                                particle_two_radius,
+    const double                                particle_one_mass,
+    const double                                particle_two_mass) override;
 
 
 private:
@@ -281,9 +269,9 @@ private:
   void
   calculate_hertz_mindlin_limit_force_contact(
     particle_particle_contact_info_struct<dim> &contact_info,
-    const double &                              normal_relative_velocity_value,
+    const double                                normal_relative_velocity_value,
     const Tensor<1, 3> &                        normal_unit_vector,
-    const double &                              normal_overlap,
+    const double                                normal_overlap,
     const ArrayView<const double> &             particle_one_properties,
     const ArrayView<const double> &             particle_two_propertie,
     Tensor<1, 3> &                              normal_force,
@@ -344,19 +332,13 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &adjacent_particles,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &                        ghost_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+    const double                     dt,
+    std::vector<Tensor<1, 3>> &      torque,
+    std::vector<Tensor<1, 3>> &      force) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -383,7 +365,7 @@ public:
    */
   virtual void
   calculate_IB_particle_particle_contact_force(
-    const double &                              normal_overlap,
+    const double                                normal_overlap,
     particle_particle_contact_info_struct<dim> &contact_info,
     Tensor<1, 3> &                              normal_force,
     Tensor<1, 3> &                              tangential_force,
@@ -395,10 +377,10 @@ public:
     const Point<dim> &                          particle_one_location,
     const Point<dim> &                          particle_two_location,
     const double                                dt,
-    const double &                              particle_one_radius,
-    const double &                              particle_two_radius,
-    const double &                              particle_one_mass,
-    const double &                              particle_two_mass) override;
+    const double                                particle_one_radius,
+    const double                                particle_two_radius,
+    const double                                particle_one_mass,
+    const double                                particle_two_mass) override;
 
 
 private:
@@ -421,9 +403,9 @@ private:
   void
   calculate_hertz_contact(
     particle_particle_contact_info_struct<dim> &contact_info,
-    const double &                              normal_relative_velocity_value,
+    const double                                normal_relative_velocity_value,
     const Tensor<1, 3> &                        normal_unit_vector,
-    const double &                              normal_overlap,
+    const double                                normal_overlap,
     const ArrayView<const double> &             particle_one_properties,
     const ArrayView<const double> &             particle_two_propertie,
     Tensor<1, 3> &                              normal_force,

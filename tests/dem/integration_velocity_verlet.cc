@@ -37,7 +37,8 @@
 #include <deal.II/particles/property_pool.h>
 
 // Lethe
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/velocity_verlet_integrator.h>
 
 // Tests (with common definitions)

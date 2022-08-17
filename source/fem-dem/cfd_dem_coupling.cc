@@ -967,8 +967,8 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
     {
       particle_particle_broad_search_object
         .find_particle_particle_contact_pairs(this->particle_handler,
-                                              &cells_local_neighbor_list,
-                                              &cells_ghost_neighbor_list,
+                                              cells_local_neighbor_list,
+                                              cells_ghost_neighbor_list,
                                               local_contact_pair_candidates,
                                               ghost_contact_pair_candidates);
 
@@ -978,22 +978,22 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       localize_contacts<dim>(local_adjacent_particles,
                              ghost_adjacent_particles,
-                             particle_wall_pairs_in_contact,
-                             pfw_pairs_in_contact,
+                             particle_wall_in_contact,
+                             particle_floating_wall_in_contact,
                              particle_floating_mesh_in_contact,
                              local_contact_pair_candidates,
                              ghost_contact_pair_candidates,
-                             particle_wall_contact_candidates,
-                             pfw_contact_candidates,
-                             particle_floating_mesh_contact_candidates);
+                             particle_wall_candidates,
+                             particle_floating_wall_candidates,
+                             particle_floating_mesh_candidates);
 
 
       locate_local_particles_in_cells<dim>(this->particle_handler,
                                            particle_container,
                                            ghost_adjacent_particles,
                                            local_adjacent_particles,
-                                           particle_wall_pairs_in_contact,
-                                           pfw_pairs_in_contact,
+                                           particle_wall_in_contact,
+                                           particle_floating_wall_in_contact,
                                            particle_floating_mesh_in_contact,
                                            particle_points_in_contact,
                                            particle_lines_in_contact);
@@ -1059,7 +1059,7 @@ CFDDEMSolver<dim>::particle_wall_broad_search()
   particle_wall_broad_search_object.find_particle_wall_contact_pairs(
     boundary_cell_object.get_boundary_cells_information(),
     this->particle_handler,
-    particle_wall_contact_candidates);
+    particle_wall_candidates);
 
   // Particle - floating wall contact pairs
   if (dem_parameters.floating_walls.floating_walls_number > 0)
@@ -1070,17 +1070,17 @@ CFDDEMSolver<dim>::particle_wall_broad_search()
           this->particle_handler,
           dem_parameters.floating_walls,
           this->simulation_control->get_current_time(),
-          pfw_contact_candidates);
+          particle_floating_wall_candidates);
     }
 
-  particle_point_contact_candidates =
+  particle_point_candidates =
     particle_point_line_broad_search_object.find_particle_point_contact_pairs(
       this->particle_handler,
       boundary_cell_object.get_boundary_cells_with_points());
 
   if (dim == 3)
     {
-      particle_line_contact_candidates =
+      particle_line_candidates =
         particle_point_line_broad_search_object
           .find_particle_line_contact_pairs(
             this->particle_handler,
@@ -1094,27 +1094,27 @@ CFDDEMSolver<dim>::particle_wall_fine_search()
 {
   // Particle - wall fine search
   particle_wall_fine_search_object.particle_wall_fine_search(
-    particle_wall_contact_candidates, particle_wall_pairs_in_contact);
+    particle_wall_candidates, particle_wall_in_contact);
 
   // Particle - floating wall fine search
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
       particle_wall_fine_search_object.particle_floating_wall_fine_search(
-        pfw_contact_candidates,
+        particle_floating_wall_candidates,
         dem_parameters.floating_walls,
         this->simulation_control->get_current_time(),
-        pfw_pairs_in_contact);
+        particle_floating_wall_in_contact);
     }
 
   particle_points_in_contact =
     particle_point_line_fine_search_object.particle_point_fine_search(
-      particle_point_contact_candidates, neighborhood_threshold_squared);
+      particle_point_candidates, neighborhood_threshold_squared);
 
   if (dim == 3)
     {
       particle_lines_in_contact =
         particle_point_line_fine_search_object.particle_line_fine_search(
-          particle_line_contact_candidates, neighborhood_threshold_squared);
+          particle_line_candidates, neighborhood_threshold_squared);
     }
 }
 
@@ -1124,7 +1124,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-    particle_wall_pairs_in_contact, dem_time_step, torque, force);
+    particle_wall_in_contact, dem_time_step, torque, force);
 
   if (this->cfd_dem_simulation_parameters.dem_parameters.forces_torques
         .calculate_force_torque)
@@ -1140,7 +1140,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-        pfw_pairs_in_contact, dem_time_step, torque, force);
+        particle_floating_wall_in_contact, dem_time_step, torque, force);
     }
 
   particle_point_line_contact_force_object

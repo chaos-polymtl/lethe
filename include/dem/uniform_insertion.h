@@ -17,7 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion.h>
 
@@ -41,7 +42,7 @@ class UniformInsertion : public Insertion<dim>
 {
 public:
   UniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
-                        const double &maximum_particle_diameter);
+                        const double maximum_particle_diameter);
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the

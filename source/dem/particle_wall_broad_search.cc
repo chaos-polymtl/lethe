@@ -13,15 +13,8 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
   const std::map<int, boundary_cells_info_struct<dim>>
     &                                    boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::boundary_id,
-                       std::tuple<Particles::ParticleIterator<dim>,
-                                  Tensor<1, dim>,
-                                  Point<dim>,
-                                  types::boundary_id,
-                                  types::global_cell_index>>>
-    &particle_wall_contact_candidates)
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_wall_candidates &particle_wall_contact_candidates)
 {
   // Clearing particle_wall_contact_candidates (output of this function)
   particle_wall_contact_candidates.clear();
@@ -83,14 +76,12 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
     &                                    boundary_cells_for_floating_walls,
   const Particles::ParticleHandler<dim> &particle_handler,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-  const double &                                    simulation_time,
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
-    &pfw_contact_candidates)
+  const double                                      simulation_time,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_floating_wall_candidates &particle_floating_wall_candidates)
 {
-  // Clearing pfw_contact_candidates(output of this function)
-  pfw_contact_candidates.clear();
+  // Clearing particle_floating_wall_candidates(output of this function)
+  particle_floating_wall_candidates.clear();
 
   // Iterating over the boundary_cells_for_floating_walls, which is the output
   // of the find_boundary_cells_for_floating_walls function in
@@ -135,9 +126,10 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
                        particles_in_cell_iterator != particles_in_cell.end();
                        ++particles_in_cell_iterator)
                     {
-                      pfw_contact_candidates[particles_in_cell_iterator
-                                               ->get_id()]
-                        .insert({floating_wall_id, particles_in_cell_iterator});
+                      particle_floating_wall_candidates
+                        [particles_in_cell_iterator->get_id()]
+                          .insert(
+                            {floating_wall_id, particles_in_cell_iterator});
                     }
                 }
             }
@@ -148,20 +140,14 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
 template <int dim>
 void
 ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
-  const std::vector<std::vector<
-    std::pair<typename Triangulation<dim>::active_cell_iterator,
-              typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
-    &                                    floating_mesh_information,
+  const typename dem_data_containers::dem_data_structures<
+    dim>::floating_mesh_information &    floating_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<std::map<
-    typename Triangulation<dim - 1, dim>::active_cell_iterator,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
-    dem_data_containers::cut_cell_comparison<dim>>>
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
-  std::unordered_map<
-    types::global_cell_index,
-    std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    &cells_total_neighbor_list)
+  typename dem_data_containers::dem_data_structures<
+    dim>::cells_total_neighbor_list &cells_total_neighbor_list)
 {
   // Clear the candidate container
   particle_floating_mesh_contact_candidates.clear();

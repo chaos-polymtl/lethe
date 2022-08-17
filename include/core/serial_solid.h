@@ -25,8 +25,6 @@
 #include <core/solid_objects_parameters.h>
 
 // Dealii Includes
-#include <core/data_containers.h>
-
 #include <deal.II/base/function.h>
 #include <deal.II/base/quadrature_lib.h>
 

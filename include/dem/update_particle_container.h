@@ -16,9 +16,9 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <deal.II/particles/particle_handler.h>
+#include <dem/data_containers.h>
 
-#include <unordered_map>
+#include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
 
@@ -39,8 +39,8 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_container(
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &                                    particle_container,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &  particle_container,
   const Particles::ParticleHandler<dim> *particle_handler);
 
 #endif /* update_particle_container_h */

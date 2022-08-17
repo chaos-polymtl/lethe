@@ -10,7 +10,7 @@ using namespace DEM;
 template <int dim>
 UniformInsertion<dim>::UniformInsertion(
   const DEMSolverParameters<dim> &dem_parameters,
-  const double &                  maximum_particle_diameter)
+  const double                    maximum_particle_diameter)
   : remained_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {

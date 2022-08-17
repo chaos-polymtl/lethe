@@ -14,14 +14,12 @@ ParticlePointLineFineSearch<dim>::ParticlePointLineFineSearch()
 // calculated. The output of this function is used for calculation of the
 // contact force
 template <int dim>
-std::unordered_map<types::particle_index,
-                   particle_point_line_contact_info_struct<dim>>
+typename dem_data_containers::dem_data_structures<
+  dim>::particle_point_line_contact_info
 ParticlePointLineFineSearch<dim>::particle_point_fine_search(
-  const std::unordered_map<
-    types::particle_index,
-    std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-    &           particle_point_contact_candidates,
-  const double &neighborhood_threshold)
+  const typename dem_data_containers::dem_data_structures<
+    dim>::particle_point_candidates &particle_point_contact_candidates,
+  const double                       neighborhood_threshold)
 {
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>
@@ -88,14 +86,12 @@ ParticlePointLineFineSearch<dim>::particle_point_fine_search(
 // calculated. The output of this function is used for calculation of the
 // contact force
 template <int dim>
-std::unordered_map<types::particle_index,
-                   particle_point_line_contact_info_struct<dim>>
+typename dem_data_containers::dem_data_structures<
+  dim>::particle_point_line_contact_info
 ParticlePointLineFineSearch<dim>::particle_line_fine_search(
-  const std::unordered_map<
-    types::particle_index,
-    std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-    &           particle_line_contact_candidates,
-  const double &neighborhood_threshold)
+  const typename dem_data_containers::dem_data_structures<
+    dim>::particle_line_candidates &particle_line_contact_candidates,
+  const double                      neighborhood_threshold)
 {
   std::unordered_map<types::particle_index,
                      particle_point_line_contact_info_struct<dim>>

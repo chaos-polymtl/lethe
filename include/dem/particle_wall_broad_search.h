@@ -17,9 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <core/data_containers.h>
-
 #include <dem/boundary_cells_info_struct.h>
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
@@ -76,15 +75,8 @@ public:
     const std::map<int, boundary_cells_info_struct<dim>>
       &                                    boundary_cells_information,
     const Particles::ParticleHandler<dim> &particle_handler,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::boundary_id,
-                         std::tuple<Particles::ParticleIterator<dim>,
-                                    Tensor<1, dim>,
-                                    Point<dim>,
-                                    types::boundary_id,
-                                    types::global_cell_index>>>
-      &particle_wall_contact_candidates);
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_wall_candidates &particle_wall_contact_candidates);
 
   /**
    * Finds a two-layered unordered map of particle iterators which shows the
@@ -99,7 +91,7 @@ public:
    * @param floating_wall_properties Properties of the floating walls specified
    * in the parameter handler file
    * @param simulation_time Simulation time
-   * @param pfw_contact_candidates Output of particle-floating wall broad search
+   * @param particle_floating_wall_candidates Output of particle-floating wall broad search
    * which contains all the particle-floating wall collision candidates
    */
 
@@ -111,11 +103,9 @@ public:
       &                                    boundary_cells_for_floating_walls,
     const Particles::ParticleHandler<dim> &particle_handler,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-    const double &                                    simulation_time,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
-      &pfw_contact_candidates);
+    const double                                      simulation_time,
+    typename dem_data_containers::dem_data_structures<dim>::
+      particle_floating_wall_candidates &particle_floating_wall_candidates);
 
   /**
    * Finds a two-layered unordered map
@@ -135,21 +125,14 @@ public:
 
   void
   particle_floating_mesh_contact_search(
-    const std::vector<std::vector<
-      std::pair<typename Triangulation<dim>::active_cell_iterator,
-                typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
-      &                                    floating_mesh_information,
+    const typename dem_data_containers::dem_data_structures<
+      dim>::floating_mesh_information &    floating_mesh_information,
     const Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<
-      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               std::unordered_map<types::particle_index,
-                                  Particles::ParticleIterator<dim>>,
-               dem_data_containers::cut_cell_comparison<dim>>>
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_floating_mesh_candidates
       &particle_floating_mesh_contact_candidates,
-    std::unordered_map<
-      types::global_cell_index,
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      &cells_total_neighbor_list);
+    typename dem_data_containers::dem_data_structures<
+      dim>::cells_total_neighbor_list &cells_total_neighbor_list);
 };
 
 #endif /* particle_wall_broad_search_h */

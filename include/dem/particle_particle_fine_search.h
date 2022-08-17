@@ -17,7 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
+#include <dem/data_containers.h>
 #include <dem/particle_particle_contact_info_struct.h>
 
 #include <deal.II/base/tensor.h>
@@ -26,10 +28,6 @@
 #include <deal.II/particles/particle_handler.h>
 
 #include <boost/range/adaptor/map.hpp>
-
-#include <iostream>
-#include <unordered_map>
-#include <vector>
 
 using namespace dealii;
 
@@ -83,25 +81,17 @@ public:
 
   void
   particle_particle_fine_search(
-    const std::unordered_map<types::particle_index,
-                             std::vector<types::particle_index>>
-      &local_contact_pair_candidates,
-    const std::unordered_map<types::particle_index,
-                             std::vector<types::particle_index>>
-      &ghost_contact_pair_candidates,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &local_adjacent_particles,
-    std::unordered_map<
-      types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
-      &ghost_adjacent_particles,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-      &          particle_container,
-    const double neighborhood_threshold);
+    const typename dem_data_containers::dem_data_structures<
+      dim>::particle_particle_candidates &local_contact_pair_candidates,
+    const typename dem_data_containers::dem_data_structures<
+      dim>::particle_particle_candidates &ghost_contact_pair_candidates,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &local_adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_index_iterator_map &particle_container,
+    const double                         neighborhood_threshold);
 };
 
 #endif /* particle_particle_fine_search_h */

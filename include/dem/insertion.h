@@ -17,7 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/base/array_view.h>
@@ -152,9 +153,9 @@ private:
    */
   void
   particle_size_sampling(std::vector<double> &particle_sizes,
-                         const double &       average,
-                         const double &       standard_deviation,
-                         const double &       particle_number);
+                         const double         average,
+                         const double         standard_deviation,
+                         const double         particle_number);
 
   std::vector<double> particle_sizes;
 };

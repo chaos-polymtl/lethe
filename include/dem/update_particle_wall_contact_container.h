@@ -16,11 +16,7 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <core/data_containers.h>
-
-#include <dem/particle_wall_contact_info_struct.h>
-
-#include <unordered_map>
+#include <dem/data_containers.h>
 
 using namespace dealii;
 
@@ -38,31 +34,26 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_wall_contact_container_iterators(
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container);
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &particle_container);
 
 /**
  * Updates the iterators to particles in
- * particle_floating_wall_contact_container
+ * particle floating mesh contact container
  *
- * @param particle_floating_wall_pairs_in_contact Output of particle-floating wall fine search
+ * @param particle_floating_mesh_in_contact Output of particle-floating mesh fine search
  * @param particle_container Output of update_particle_container function
  */
 
 template <int dim>
-void update_particle_floating_wall_contact_container_iterators(
-  std::vector<
-    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-             std::unordered_map<types::particle_index,
-                                particle_wall_contact_info_struct<dim>>,
-             dem_data_containers::cut_cell_comparison<dim>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container);
+void
+update_particle_floating_mesh_contact_container_iterators(
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &particle_container);
 
 
 #endif /* update_particle_wall_contact_container_h */

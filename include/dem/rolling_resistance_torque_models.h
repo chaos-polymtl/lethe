@@ -14,7 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -35,11 +36,11 @@ enum class RollingResistanceTorqueModel
  */
 inline Tensor<1, 3>
 no_rolling_resistance_torque(
-  const double & /*effective_r*/,
+  const double /*effective_r*/,
   const ArrayView<const double> & /*particle_one_properties*/,
   const ArrayView<const double> & /*particle_two_properties*/,
-  const double & /*effective_rolling_friction_coefficient*/,
-  const double & /*normal_force_norm*/,
+  const double /*effective_rolling_friction_coefficient*/,
+  const double /*normal_force_norm*/,
   const Tensor<1, 3> & /*normal_contact_vector*/)
 
 {
@@ -58,11 +59,11 @@ no_rolling_resistance_torque(
 // omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
 inline Tensor<1, 3>
 constant_rolling_resistance_torque(
-  const double &                 effective_r,
+  const double                   effective_r,
   const ArrayView<const double> &particle_one_properties,
   const ArrayView<const double> &particle_two_properties,
-  const double &                 effective_rolling_friction_coefficient,
-  const double &                 normal_force_norm,
+  const double                   effective_rolling_friction_coefficient,
+  const double                   normal_force_norm,
   const Tensor<1, 3> & /*normal_contact_vector*/)
 
 {
@@ -95,11 +96,11 @@ constant_rolling_resistance_torque(
 // V_omega = omega_i × (R_i * n_ij) - omega_j × (R_j * n_ji)
 inline Tensor<1, 3>
 viscous_rolling_resistance_torque(
-  const double &                 effective_r,
+  const double                   effective_r,
   const ArrayView<const double> &particle_one_properties,
   const ArrayView<const double> &particle_two_properties,
-  const double &                 effective_rolling_friction_coefficient,
-  const double &                 normal_force_norm,
+  const double                   effective_rolling_friction_coefficient,
+  const double                   normal_force_norm,
   const Tensor<1, 3> &           normal_contact_vector)
 
 {

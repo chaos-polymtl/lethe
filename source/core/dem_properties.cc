@@ -17,7 +17,7 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020-
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
 
 namespace DEM
 {
