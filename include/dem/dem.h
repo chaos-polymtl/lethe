@@ -14,11 +14,11 @@
  * ---------------------------------------------------------------------
  */
 
-#include <core/data_containers.h>
+#include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
 
-#include <dem/dem_properties.h>
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
@@ -35,7 +35,6 @@
 #include <dem/particle_particle_fine_search.h>
 #include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
-#include <dem/particle_point_line_contact_info_struct.h>
 #include <dem/particle_point_line_fine_search.h>
 #include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_contact_force.h>
@@ -58,6 +57,8 @@
 
 #ifndef Lethe_DEM_h
 #  define Lethe_DEM_h
+
+using namespace dem_data_containers;
 
 /**
  * The DEM class which initializes all the required parameters and iterates over
@@ -277,100 +278,51 @@ private:
   Tensor<1, 3>                         g;
   double                               triangulation_cell_diameter;
 
-  // Simulation control for time stepping and I/Os
-  std::shared_ptr<SimulationControl> simulation_control;
-
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    cells_local_neighbor_list;
-
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+  typename dem_data_structures<dim>::cells_total_neighbor_list
+    total_neighbor_list;
+  typename dem_data_structures<dim>::floating_mesh_information
+    floating_mesh_info;
+  typename dem_data_structures<dim>::cells_neighbor_list
     cells_ghost_neighbor_list;
-
-  std::unordered_map<
-    types::global_cell_index,
-    std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    cells_total_neighbor_list;
-
-  BoundaryCellsInformation<dim> boundary_cell_object;
-
-  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
-    local_contact_pair_candidates;
-  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
-    ghost_contact_pair_candidates;
-
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
-    pfw_contact_candidates;
-
-  std::vector<std::vector<
-    std::pair<typename Triangulation<dim>::active_cell_iterator,
-              typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
-    floating_mesh_information;
-
-  std::vector<
-    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-             std::unordered_map<types::particle_index,
-                                particle_wall_contact_info_struct<dim>>,
-             dem_data_containers::cut_cell_comparison<dim>>>
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_local_neighbor_list;
+  typename dem_data_structures<dim>::particle_floating_mesh_candidates
+    particle_floating_mesh_candidates;
+  typename dem_data_structures<dim>::particle_floating_mesh_in_contact
     particle_floating_mesh_in_contact;
-
-  std::vector<std::map<
-    typename Triangulation<dim - 1, dim>::active_cell_iterator,
-    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>,
-    dem_data_containers::cut_cell_comparison<dim>>>
-    particle_floating_mesh_contact_candidates;
-
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
+  typename dem_data_structures<dim>::particle_floating_wall_candidates
+    particle_floating_wall_candidates;
+  typename dem_data_structures<dim>::particle_wall_in_contact
+    particle_floating_wall_in_contact;
+  typename dem_data_structures<dim>::particle_wall_candidates
+    particle_wall_candidates;
+  typename dem_data_structures<dim>::particle_wall_in_contact
+    particle_wall_in_contact;
+  typename dem_data_structures<dim>::particle_point_candidates
+    particle_point_candidates;
+  typename dem_data_structures<dim>::particle_line_candidates
+    particle_line_candidates;
+  typename dem_data_structures<dim>::particle_point_line_contact_info
+    particle_points_in_contact;
+  typename dem_data_structures<dim>::particle_point_line_contact_info
+    particle_lines_in_contact;
+  typename dem_data_structures<dim>::particle_particle_candidates
+    ghost_contact_pair_candidates;
+  typename dem_data_structures<dim>::particle_particle_candidates
+    local_contact_pair_candidates;
+  typename dem_data_structures<dim>::adjacent_particle_pairs
     local_adjacent_particles;
-
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
+  typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
-
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-    particle_wall_pairs_in_contact;
-
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-    pfw_pairs_in_contact;
-
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::boundary_id,
-                       std::tuple<Particles::ParticleIterator<dim>,
-                                  Tensor<1, dim>,
-                                  Point<dim>,
-                                  types::boundary_id,
-                                  types::global_cell_index>>>
-    particle_wall_contact_candidates;
-
-  std::unordered_map<types::particle_index,
-                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-    particle_point_contact_candidates;
-
-  std::unordered_map<
-    types::particle_index,
-    std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-    particle_line_contact_candidates;
-
-  std::unordered_map<types::particle_index,
-                     particle_point_line_contact_info_struct<dim>>
-    particle_points_in_contact, particle_lines_in_contact;
-
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
+  typename dem_data_structures<dim>::particle_index_iterator_map
     particle_container;
+  typename dem_data_structures<dim>::boundary_points_and_normal_vectors
+    updated_boundary_points_and_normal_vectors;
+  typename dem_data_structures<dim>::vector_on_boundary
+    forces_boundary_information;
+  typename dem_data_structures<dim>::vector_on_boundary
+    torques_boundary_information;
 
-  std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
-                                           updated_boundary_points_and_normal_vectors;
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
@@ -380,6 +332,8 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
+  std::shared_ptr<SimulationControl> simulation_control;
+  BoundaryCellsInformation<dim>      boundary_cell_object;
   std::shared_ptr<GridMotion<dim>>   grid_motion_object;
   ParticleParticleBroadSearch<dim>   particle_particle_broad_search_object;
   ParticleParticleFineSearch<dim>    particle_particle_fine_search_object;
@@ -391,8 +345,6 @@ private:
   std::shared_ptr<Integrator<dim>>   integrator_object;
   std::shared_ptr<Insertion<dim>>    insertion_object;
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
-
-
   std::shared_ptr<ParticleParticleContactForce<dim>>
     particle_particle_contact_force_object;
   std::shared_ptr<ParticleWallContactForce<dim>>
@@ -407,11 +359,6 @@ private:
   std::vector<Tensor<1, 3>> force;
   std::vector<double>       displacement;
   std::vector<double>       MOI;
-
-  std::map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
-    forces_boundary_information;
-  std::map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
-    torques_boundary_information;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

@@ -36,7 +36,8 @@
 #include <deal.II/particles/particle_iterator.h>
 
 // Lethe
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_wall_broad_search.h>

@@ -93,7 +93,7 @@ ParticleWallContactForce<dim>::
     const double                            dt,
     const Tensor<1, 3> &                    cut_cell_translational_velocity,
     const Tensor<1, 3> &                    cut_cell_rotational_velocity,
-    const double &center_of_rotation_particle_distance)
+    const double center_of_rotation_particle_distance)
 {
   const Tensor<1, 3> normal_vector = contact_info.normal_vector;
 

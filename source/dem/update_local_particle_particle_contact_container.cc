@@ -5,13 +5,10 @@ using namespace dealii;
 template <int dim>
 void
 update_local_particle_particle_contact_container_iterators(
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<dim>>>
-    &local_adjacent_particles,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container)
+  typename dem_data_containers::dem_data_structures<
+    dim>::adjacent_particle_pairs &local_adjacent_particles,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &particle_container)
 {
   for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
        adjacent_particles_iterator != local_adjacent_particles.end();
@@ -34,20 +31,14 @@ update_local_particle_particle_contact_container_iterators(
     }
 }
 
-template void update_local_particle_particle_contact_container_iterators(
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<2>>>
+template void update_local_particle_particle_contact_container_iterators<2>(
+  typename dem_data_containers::dem_data_structures<2>::adjacent_particle_pairs
     &local_adjacent_particles,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
-    &particle_container);
+  typename dem_data_containers::dem_data_structures<
+    2>::particle_index_iterator_map &particle_container);
 
-template void update_local_particle_particle_contact_container_iterators(
-  std::unordered_map<
-    types::particle_index,
-    std::unordered_map<types::particle_index,
-                       particle_particle_contact_info_struct<3>>>
+template void update_local_particle_particle_contact_container_iterators<3>(
+  typename dem_data_containers::dem_data_structures<3>::adjacent_particle_pairs
     &local_adjacent_particles,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>
-    &particle_container);
+  typename dem_data_containers::dem_data_structures<
+    3>::particle_index_iterator_map &particle_container);

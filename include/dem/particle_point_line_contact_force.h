@@ -17,7 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_point_line_contact_info_struct.h>
 
@@ -59,9 +61,8 @@ public:
    */
   void
   calculate_particle_point_contact_force(
-    const std::unordered_map<types::particle_index,
-                             particle_point_line_contact_info_struct<dim>>
-      *particle_point_line_pairs_in_contact,
+    const typename dem_data_containers::dem_data_structures<dim>::
+      particle_point_line_contact_info *particle_point_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
       &                        lagrangian_physical_properties,
     std::vector<Tensor<1, 3>> &force);
@@ -78,9 +79,8 @@ public:
    */
   void
   calculate_particle_line_contact_force(
-    const std::unordered_map<types::particle_index,
-                             particle_point_line_contact_info_struct<dim>>
-      *particle_line_pairs_in_contact,
+    const typename dem_data_containers::dem_data_structures<
+      dim>::particle_point_line_contact_info *particle_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
       &                        lagrangian_physical_properties,
     std::vector<Tensor<1, 3>> &force);

@@ -5,12 +5,10 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_wall_contact_container_iterators(
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container)
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &particle_container)
 {
   for (auto particle_wall_pairs_in_contact_iterator =
          particle_wall_pairs_in_contact.begin();
@@ -34,22 +32,19 @@ update_particle_wall_contact_container_iterators(
 }
 
 template <int dim>
-void update_particle_floating_wall_contact_container_iterators(
-  std::vector<
-    std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-             std::unordered_map<types::particle_index,
-                                particle_wall_contact_info_struct<dim>>,
-             dem_data_containers::cut_cell_comparison<dim>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-    &particle_container)
+void
+update_particle_floating_mesh_contact_container_iterators(
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &particle_container)
 {
   for (unsigned int solid_counter = 0;
-       solid_counter < particle_wall_pairs_in_contact.size();
+       solid_counter < particle_floating_mesh_in_contact.size();
        ++solid_counter)
     {
       auto &particle_floating_wall_contact_pair =
-        particle_wall_pairs_in_contact[solid_counter];
+        particle_floating_mesh_in_contact[solid_counter];
       for (auto particle_floating_wall_iterator =
              particle_floating_wall_contact_pair.begin();
            particle_floating_wall_iterator !=
@@ -73,36 +68,26 @@ void update_particle_floating_wall_contact_container_iterators(
     }
 }
 
-template void update_particle_wall_contact_container_iterators(
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::boundary_id, particle_wall_contact_info_struct<2>>>
+template void update_particle_wall_contact_container_iterators<2>(
+  typename dem_data_containers::dem_data_structures<2>::particle_wall_in_contact
     &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
-    &particle_container);
+  typename dem_data_containers::dem_data_structures<
+    2>::particle_index_iterator_map &particle_container);
 
-template void update_particle_wall_contact_container_iterators(
-  std::unordered_map<
-    types::particle_index,
-    std::map<types::boundary_id, particle_wall_contact_info_struct<3>>>
+template void update_particle_wall_contact_container_iterators<3>(
+  typename dem_data_containers::dem_data_structures<3>::particle_wall_in_contact
     &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>
-    &particle_container);
+  typename dem_data_containers::dem_data_structures<
+    3>::particle_index_iterator_map &particle_container);
 
-template void update_particle_floating_wall_contact_container_iterators(
-  std::vector<std::map<typename Triangulation<1, 2>::active_cell_iterator,
-                       std::unordered_map<types::particle_index,
-                                          particle_wall_contact_info_struct<2>>,
-                       dem_data_containers::cut_cell_comparison<2>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
-    &particle_container);
+template void update_particle_floating_mesh_contact_container_iterators<2>(
+  typename dem_data_containers::dem_data_structures<
+    2>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    2>::particle_index_iterator_map &particle_container);
 
-template void update_particle_floating_wall_contact_container_iterators(
-  std::vector<std::map<typename Triangulation<2, 3>::active_cell_iterator,
-                       std::unordered_map<types::particle_index,
-                                          particle_wall_contact_info_struct<3>>,
-                       dem_data_containers::cut_cell_comparison<3>>>
-    &particle_wall_pairs_in_contact,
-  std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>
-    &particle_container);
+template void update_particle_floating_mesh_contact_container_iterators<3>(
+  typename dem_data_containers::dem_data_structures<
+    3>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    3>::particle_index_iterator_map &particle_container);

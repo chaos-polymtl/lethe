@@ -1,8 +1,7 @@
+#include <core/dem_properties.h>
 #include <core/lethe_grid_tools.h>
 #include <core/serial_solid.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
-
-#include <dem/dem_properties.h>
 
 #include <deal.II/fe/fe_q.h>
 
@@ -11,8 +10,6 @@
 #include <deal.II/grid/manifold_lib.h>
 
 #include <cmath>
-#include <unordered_map>
-
 
 template <int dim>
 void

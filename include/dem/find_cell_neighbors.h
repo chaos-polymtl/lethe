@@ -17,14 +17,11 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/data_containers.h>
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/grid/grid_tools.h>
-
-#include <iostream>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 
 
 using namespace dealii;
@@ -67,9 +64,9 @@ public:
   void
   find_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    typename dem_data_containers::dem_data_structures<dim>::cells_neighbor_list
       &cells_local_neighbor_list,
-    std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    typename dem_data_containers::dem_data_structures<dim>::cells_neighbor_list
       &cells_ghost_neighbor_list);
 
   /**
@@ -87,10 +84,8 @@ public:
   void
   find_full_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    std::unordered_map<
-      types::global_cell_index,
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      &cells_total_neighbor_list);
+    typename dem_data_containers::dem_data_structures<
+      dim>::cells_total_neighbor_list &cells_total_neighbor_list);
 };
 
 #endif /* find_cell_neighbors_h */

@@ -36,7 +36,8 @@
 #include <deal.II/particles/particle_iterator.h>
 
 // Lethe
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
@@ -178,8 +179,8 @@ test()
 
   broad_search_object.find_particle_particle_contact_pairs(
     particle_handler,
-    &local_neighbor_list,
-    &local_neighbor_list,
+    local_neighbor_list,
+    local_neighbor_list,
     local_contact_pair_candidates,
     ghost_contact_pair_candidates);
 

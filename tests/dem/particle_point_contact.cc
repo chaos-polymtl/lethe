@@ -37,7 +37,8 @@
 #include <deal.II/particles/particle_iterator.h>
 
 // Lethe
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_point_line_broad_search.h>
@@ -153,7 +154,9 @@ test()
   for (unsigned i = 0; i < MOI.size(); ++i)
     MOI[i] = 1;
 
-  for (double time = 0; time < 0.2; time += dt)
+  double time = 0.0;
+
+  while (time < 0.2)
     {
       auto particle                = particle_handler.begin();
       force[particle->get_id()][0] = 0;
@@ -181,6 +184,8 @@ test()
           deallog << particle->get_location() << std::endl;
         }
       ++step;
+
+      time += dt;
     }
 }
 

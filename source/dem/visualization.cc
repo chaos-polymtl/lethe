@@ -84,34 +84,37 @@ Visualization<dim>::print_xyz(
   const MPI_Comm &                         mpi_communicator,
   const ConditionalOStream &               pcout)
 {
-  unsigned int n_mpi_processes(
-    Utilities::MPI::n_mpi_processes(mpi_communicator));
-  unsigned int this_mpi_process(
-    Utilities::MPI::this_mpi_process(mpi_communicator));
-
   pcout << "id, type, dp, x, y, z " << std::endl;
   sleep(1);
-  for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
-       ++processor_number)
-    {
-      MPI_Barrier(mpi_communicator);
-      if (this_mpi_process == processor_number)
-        {
-          // Storing local particles in a map for writing
-          std::map<int, Particles::ParticleIterator<dim>> local_particles;
-          for (auto particle = particle_handler.begin();
-               particle != particle_handler.end();
-               ++particle)
-            {
-              local_particles.insert({particle->get_id(), particle});
-            }
 
-          for (auto &iterator : local_particles)
+  std::map<int, Particles::ParticleIterator<dim>> global_particles;
+  unsigned int current_id, current_id_max = 0;
+
+  // Mapping of all particles & find the max id on current processor
+  for (auto particle = particle_handler.begin();
+       particle != particle_handler.end();
+       ++particle)
+    {
+      current_id     = particle->get_id();
+      current_id_max = std::max(current_id, current_id_max);
+
+      global_particles.insert({current_id, particle});
+    }
+
+  // Find global max particle index
+  unsigned int id_max = Utilities::MPI::max(current_id_max, mpi_communicator);
+
+  // Print particle info one by one in ascending order
+  for (unsigned int i = 0; i <= id_max; i++)
+    {
+      for (auto &iterator : global_particles)
+        {
+          unsigned int id = iterator.first;
+          if (id == i)
             {
-              unsigned int id                  = iterator.first;
-              auto         particle            = iterator.second;
-              auto         particle_properties = particle->get_properties();
-              auto         particle_location   = particle->get_location();
+              auto particle            = iterator.second;
+              auto particle_properties = particle->get_properties();
+              auto particle_location   = particle->get_location();
 
               std::cout << std::fixed << std::setprecision(0) << id << " "
                         << std::setprecision(0)
@@ -122,6 +125,7 @@ Visualization<dim>::print_xyz(
                         << std::endl;
             }
         }
+      MPI_Barrier(mpi_communicator);
     }
 }
 

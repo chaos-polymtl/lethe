@@ -1,6 +1,6 @@
+#include <core/dem_properties.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/dem_properties.h>
 #include <dem/explicit_euler_integrator.h>
 
 using namespace DEM;
