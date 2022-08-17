@@ -222,8 +222,8 @@ private:
   trajectory();
 
   /**
-   * @brief Saves the built dictionary so it may be used later for the 3D
-   * FEM reconstruction.
+   * @brief Saves the built dictionary so it may be used later for the 3D particle position
+   * reconstruction.
    */
   void
   checkpoint();
