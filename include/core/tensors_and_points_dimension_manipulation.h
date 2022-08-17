@@ -17,7 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_solver_parameters.h>
+#include <deal.II/base/point.h>
+#include <deal.II/base/tensor.h>
 
 using namespace dealii;
 

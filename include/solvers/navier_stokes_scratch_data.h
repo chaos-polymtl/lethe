@@ -15,16 +15,13 @@
  */
 
 #include <core/bdf.h>
+#include <core/dem_properties.h>
 #include <core/density_model.h>
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 #include <core/rheological_model.h>
 
 #include <solvers/physical_properties_manager.h>
-
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
-#include <fem-dem/parameters_cfd_dem.h>
 
 #include <deal.II/base/quadrature.h>
 

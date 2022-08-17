@@ -17,7 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/base/array_view.h>

@@ -1,5 +1,6 @@
+#include "core/dem_properties.h"
+
 #include "dem/dem.h"
-#include "dem/dem_properties.h"
 
 using namespace dealii;
 

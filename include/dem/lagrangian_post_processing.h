@@ -17,9 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 
-#include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
