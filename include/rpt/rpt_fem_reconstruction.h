@@ -57,7 +57,7 @@ public:
    * @brief Constructor for the RPTFEMReconstructon
    *
    * @param RPTparameters All parameters and positions needed for the count
-   * calculation and the reconstruction
+   * calculation and the position reconstruction
    */
   RPTFEMReconstruction(RPTCalculatingParameters &RPTparameters)
     : fe(1)
@@ -68,8 +68,8 @@ public:
   {}
 
   /**
-   * @brief Using the L2 projection, builds a dictionary of particle counts
-   * with respect to a detector for a given reactor.
+   * @brief Using the L2 projection, builds a dictionary of photon counts
+   * recorded by a detector for given positions inside a  reactor.
    */
   void
   L2_project();
@@ -97,8 +97,8 @@ private:
   setup_system();
 
   /**
-   * @brief Assemble matrix and right hand side that form the linear system
-   * that need to be solved for a given detector.
+   * @brief Assemble the matrix and the right hand side that form the linear system
+   * that needs to be solved for a given detector.
    *
    * @param detector_no detector_no defines the detector for which the
    * linear system is being assembled.
@@ -161,7 +161,7 @@ private:
    * @param experimental_count Experimental counts from all detectors for a
    * given particle position
    *
-   * @return Cost; it is calculated with the cost function mentioned in the
+   * @return Cost It is calculated with the cost function mentioned in the
    * parameter file.
    */
   double
@@ -204,7 +204,7 @@ private:
 
   /**
    * @brief Finds the position of the particle by doing a local search around
-   * the previously found position's cell
+   * the previously found position's cell's neighbors 
    *
    * @param experimental_count experimental_count contains the experimental
    * counts of every detector for a given position.
