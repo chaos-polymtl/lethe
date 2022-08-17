@@ -315,7 +315,7 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
                       "Type of mesh used");
 
     prm.declare_entry("mesh filename",
-                      "reactor.msh",
+                      "none",
                       Patterns::FileName(),
                       "Imported mesh filename");
 
@@ -336,12 +336,12 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
       "Run the rpt_l2_projection_3 application before the reconstruction");
 
     prm.declare_entry("experimental counts file",
-                      "experimental_counts.txt",
+                      "none",
                       Patterns::FileName(),
                       "Experimental counts filename");
 
     prm.declare_entry("export positions file",
-                      "found_positions.csv",
+                      "none",
                       Patterns::FileName(),
                       "Exported particle positions filename");
 
@@ -352,13 +352,13 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
       "Type of cost function applied when evaluating the particle's real position");
 
     prm.declare_entry("dof handler file",
-                      "temp_dof_handler.dof",
+                      "none",
                       Patterns::FileName(),
                       "Saved DOF Handler filename");
 
     prm.declare_entry(
       "nodal counts file",
-      "temp_nodal_counts_detector00.counts",
+      "none",
       Patterns::List(Patterns::FileName()),
       "Saved nodal counts of every detector for every cell of the mesh filename");
 
@@ -400,7 +400,7 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
     const std::string mesh_filename = prm.get("mesh filename");
     std::size_t       msh_file      = mesh_filename.find(".msh");
 
-    if (msh_file == std::string::npos)
+    if (msh_file == std::string::npos && mesh_filename != "none")
       throw std::logic_error(
         "Error, the imported mesh must be in a '.msh' file format");
     else

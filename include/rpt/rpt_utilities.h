@@ -141,7 +141,12 @@ assign_detector_positions(Parameters::DetectorParameters &detector_parameters)
   std::ifstream detector_file(detector_parameters.detector_positions_file);
 
   std::string skip;
-  std::getline(detector_file, skip); // Skip header line
+  std::getline(detector_file, skip);
+  // Skip header line if the header is present
+  if (!isalpha(skip[0]))
+    {
+      detector_file.seekg(0, std::ios::beg);
+    }
   std::vector<double> values;
   std::copy(std::istream_iterator<double>(detector_file),
             std::istream_iterator<double>(),
@@ -181,7 +186,12 @@ read_counts(std::string &counts_filename)
   std::ifstream counts_file(counts_filename);
 
   std::string skip;
-  std::getline(counts_file, skip); // Skip header line
+  std::getline(counts_file, skip);
+  // Skip header line if the header is present
+  if (!isalpha(skip[0]))
+    {
+      counts_file.seekg(0, std::ios::beg);
+    }
   std::vector<double> counts;
   std::copy(std::istream_iterator<double>(counts_file),
             std::istream_iterator<double>(),

@@ -45,6 +45,7 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/radioactive_particle.h>
 #include <rpt/rpt_calculating_parameters.h>
+#include <rpt/rpt_utilities.h>
 
 
 using namespace dealii;
@@ -59,11 +60,16 @@ public:
    * @param RPTparameters All parameters and positions needed for the count
    * calculation and the position reconstruction
    */
-  RPTFEMReconstruction(RPTCalculatingParameters &RPTparameters)
+  RPTFEMReconstruction(Parameters::RPTParameters &rpt_parameters,
+                       Parameters::RPTFEMReconstructionParameters
+                         &rpt_fem_reconstruction_parameters,
+                       Parameters::DetectorParameters &rpt_detector_parameters)
     : fe(1)
     , dof_handler(triangulation)
-    , rpt_parameters(RPTparameters)
     , mapping(FE_SimplexP<dim>(1))
+    , parameters(rpt_parameters)
+    , fem_reconstruction_parameters(rpt_fem_reconstruction_parameters)
+    , detector_parameters(rpt_detector_parameters)
     , computing_timer(std::cout, TimerOutput::summary, TimerOutput::wall_times)
   {}
 
@@ -107,13 +113,6 @@ private:
   assemble_system(unsigned detector_no);
 
   /**
-   * @brief Reads file with detector positions, generates Detector objects,
-   * and stores them in a vector.
-   */
-  void
-  assign_detector_positions();
-
-  /**
    * @brief Solve the linear system for a given detector to get the nodal
    * counts.
    *
@@ -137,15 +136,6 @@ private:
    */
   void
   output_raw_results();
-
-  /**
-   * @brief Reads the file with the experimental counts and returns a vector
-   * of vectors containing the counts of all detectors for every particle
-   * position.
-   */
-  void
-  read_experimental_counts(
-    std::vector<std::vector<double>> &all_experimental_counts);
 
   /**
    * @brief Calculates the cost with the selected cost function of the found
@@ -199,8 +189,8 @@ private:
    * particle's position couldn't be found
    */
   bool
-  find_cell(std::vector<double> &experimental_count,
-            const double         tol_reference_location);
+  find_position_global_search(std::vector<double> &experimental_count,
+                              const double         tol_reference_location);
 
   /**
    * @brief Finds the position of the particle by doing a local search around
@@ -219,7 +209,7 @@ private:
    * particle's position couldn't be found
    */
   bool
-  find_in_adjacent_cells(
+  find_position_local_search(
     std::vector<double> &experimental_count,
     const double         tol_reference_location,
     const typename DoFHandler<dim>::active_cell_iterator &cell);
@@ -252,12 +242,15 @@ private:
   void
   export_found_positions();
 
-  Triangulation<dim>       triangulation;
-  FE_SimplexP<dim>         fe;
-  DoFHandler<dim>          dof_handler;
-  RPTCalculatingParameters rpt_parameters;
-  MappingFE<dim>           mapping;
-  unsigned int             n_detector;
+  Triangulation<dim>                         triangulation;
+  FE_SimplexP<dim>                           fe;
+  DoFHandler<dim>                            dof_handler;
+  RPTCalculatingParameters                   rpt_parameters;
+  MappingFE<dim>                             mapping;
+  Parameters::RPTParameters                  parameters;
+  Parameters::RPTFEMReconstructionParameters fem_reconstruction_parameters;
+  Parameters::DetectorParameters             detector_parameters;
+  unsigned int                               n_detector;
 
   AffineConstraints<double>                      constraints;
   SparseMatrix<double>                           system_matrix;

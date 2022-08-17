@@ -272,7 +272,6 @@ Loading dof handler and nodal counts from
 saved files
 -----------------------------------------------
 Finding particle positions
-tol: 0.043125
 -----------------------------------------------
 Exporting particle positions
 0.0887411 0.000701979 0.0141395

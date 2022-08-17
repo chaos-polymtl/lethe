@@ -11,22 +11,22 @@ Here are the default values:
     #---------------------------------------------------
     subsection fem reconstruction
         set mesh type                           = dealii
-        set mesh filename                       = reactor.msh
+        set mesh filename                       = none
         set z subdivisions                      = 2
         set mesh refinement                     = 2
         set l2 projection before reconstruction = false
-        set experimental counts file            = experimental_counts.txt
-        set export positions file               = found_positions.csv
+        set experimental counts file            = none
+        set export positions file               = none
         set cost function type                  = relative
-        set dof handler file                    = temp_dof_handler.dof
-        set nodal counts file                   = temp_nodal_counts_detector00.counts
+        set dof handler file                    = none
+        set nodal counts file                   = none
         set search type                         = local
         set search cell proximity level         = 1
         set verbose clock                       = false
 
 For both ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications, we have to define the mesh:
 
-- ``mesh type``: Type of mesh used.
+- ``mesh type``: Type of mesh used. Choosing the ``dealii`` option will generate a ``subdivided_cylinder`` grid, for that reason the number of subdivision in the z direction must be specified with the ``z subdivisions`` parameter. For the ``gmsh`` option, only meshes for a cylindrical geometry with tetrahedral elements are accepted at the moment.
     Options: ``dealii`` or ``gmsh``
 - ``mesh filename``: Filename of the imported mesh. Specify only if ``gmsh`` was the selected option for the ``mesh type``.
     Options: Any ``.msh`` file

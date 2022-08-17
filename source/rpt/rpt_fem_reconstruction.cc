@@ -60,13 +60,12 @@ RPTFEMReconstruction<dim>::setup_triangulation()
 
   triangulation.clear();
 
-  if (rpt_parameters.fem_reconstruction_param.mesh_type ==
+  if (fem_reconstruction_parameters.mesh_type ==
       Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
     {
       GridIn<dim> grid_in;
       grid_in.attach_triangulation(triangulation);
-      std::ifstream input_file(
-        rpt_parameters.fem_reconstruction_param.mesh_file);
+      std::ifstream input_file(fem_reconstruction_parameters.mesh_file);
       grid_in.read_msh(input_file);
 
       const CylindricalManifold<dim> manifold(2);
@@ -80,11 +79,11 @@ RPTFEMReconstruction<dim>::setup_triangulation()
 
       GridGenerator::subdivided_cylinder(
         temp_triangulation,
-        rpt_parameters.fem_reconstruction_param.z_subdivisions,
-        rpt_parameters.rpt_param.reactor_radius,
-        rpt_parameters.rpt_param.reactor_height * 0.5);
+        fem_reconstruction_parameters.z_subdivisions,
+        parameters.reactor_radius,
+        parameters.reactor_height * 0.5);
       temp_triangulation.refine_global(
-        rpt_parameters.fem_reconstruction_param.mesh_refinement);
+        fem_reconstruction_parameters.mesh_refinement);
 
       // Flatten the triangulation
       GridGenerator::flatten_triangulation(temp_triangulation,
@@ -97,8 +96,7 @@ RPTFEMReconstruction<dim>::setup_triangulation()
       // Grid transformation
       Tensor<1, dim, double> axis({0, 1, 0});
       GridTools::rotate(axis, M_PI_2, triangulation);
-      Tensor<1, dim> shift_vector(
-        {0, 0, rpt_parameters.rpt_param.reactor_height * 0.5});
+      Tensor<1, dim> shift_vector({0, 0, parameters.reactor_height * 0.5});
       GridTools::shift(shift_vector, triangulation);
     }
 }
@@ -132,9 +130,7 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::solve_linear_system(unsigned detector_no)
 {
-  TimerOutput::Scope t(computing_timer,
-                       "solve_linear_system_" +
-                         Utilities::to_string(detector_no, 2));
+  TimerOutput::Scope t(computing_timer, "solve_linear_system");
 
   SolverControl                          solver_control(1000, 1e-12);
   SolverCG<Vector<double>>               solver(solver_control);
@@ -170,10 +166,10 @@ RPTFEMReconstruction<dim>::assemble_local_system(
       Point<dim>         q_point_position = fe_values.quadrature_point(q_index);
       RadioParticle<dim> particle(q_point_position, 0);
 
-      ParticleDetectorInteractions<dim> p_q_interaction(
-        particle, detectors[sd.detector_id], rpt_parameters.rpt_param);
+      ParticleDetectorInteractions<dim> p_d_interaction(
+        particle, detectors[sd.detector_id], parameters);
 
-      double count = p_q_interaction.calculate_count();
+      double count = p_d_interaction.calculate_count();
 
       for (const unsigned int i : fe_values.dof_indices())
         {
@@ -209,9 +205,7 @@ template <int dim>
 void
 RPTFEMReconstruction<dim>::assemble_system(unsigned no_detector)
 {
-  TimerOutput::Scope t(computing_timer,
-                       "assemble_system_" +
-                         Utilities::to_string(no_detector, 2));
+  TimerOutput::Scope t(computing_timer, "assemble_system");
   system_rhs    = 0;
   system_matrix = 0;
 
@@ -222,53 +216,6 @@ RPTFEMReconstruction<dim>::assemble_system(unsigned no_detector)
                   &RPTFEMReconstruction::copy_local_to_global,
                   AssemblyScratchData(fe, no_detector),
                   AssemblyCopyData());
-}
-
-
-template <int dim>
-void
-RPTFEMReconstruction<dim>::assign_detector_positions()
-{
-  TimerOutput::Scope t(computing_timer, "assigning_detector_positions");
-
-  // Read text file with detector positions and store it in vector
-  std::ifstream detector_file(
-    rpt_parameters.detector_param.detector_positions_file);
-
-  std::string         header;
-  std::vector<double> values;
-
-  // Remove header if the header is present
-  std::getline(detector_file, header);
-  if (!isalpha(header[0]))
-    {
-      detector_file.seekg(0, std::ios::beg);
-    }
-
-  std::copy(std::istream_iterator<double>(detector_file),
-            std::istream_iterator<double>(),
-            std::back_inserter(values));
-
-  // Get the number of detector (2 positions for 1 detector, face and middle)
-  int number_of_detector = values.size() / (2 * dim);
-
-  // Extract positions, create point objects and detectors
-  for (int i = 0; i < number_of_detector; i++)
-    {
-      Point<dim> face_point(values[2 * dim * i],
-                            values[2 * dim * i + 1],
-                            values[2 * dim * i + 2]);
-      Point<dim> middle_point(values[2 * dim * i + dim],
-                              values[2 * dim * i + dim + 1],
-                              values[2 * dim * i + dim + 2]);
-
-      Detector<dim> detector(rpt_parameters.detector_param,
-                             i,
-                             face_point,
-                             middle_point);
-
-      detectors.push_back(detector);
-    }
 }
 
 template <int dim>
@@ -322,7 +269,7 @@ RPTFEMReconstruction<dim>::output_raw_results()
   myfile << std::endl;
 
   // Output in file and on terminal
-  if (rpt_parameters.rpt_param.verbosity == Parameters::Verbosity::verbose)
+  if (parameters.verbosity == Parameters::Verbosity::verbose)
     {
       for (auto it = dof_index_and_location.begin();
            it != dof_index_and_location.end();
@@ -369,8 +316,11 @@ RPTFEMReconstruction<dim>::L2_project()
   MultithreadInfo::set_thread_limit(1);
   std::cout << "***********************************************" << std::endl;
   std::cout << "Assigning detector positions" << std::endl;
-  assign_detector_positions();
-
+  {
+    TimerOutput::Scope t(computing_timer, "assigning_detector_positions");
+    detectors = assign_detector_positions<dim>(detector_parameters);
+    //    assign_detector_positions();
+  }
   n_detector = detectors.size();
   std::cout << "Number of detectors identified: " << n_detector << std::endl;
   std::cout << "***********************************************" << std::endl;
@@ -404,7 +354,7 @@ RPTFEMReconstruction<dim>::L2_project()
   std::cout << "***********************************************" << std::endl;
 
   // Disable the output of time clock
-  if (!rpt_parameters.fem_reconstruction_param.verbose_clock_fem_reconstruction)
+  if (!fem_reconstruction_parameters.verbose_clock_fem_reconstruction)
     computing_timer.disable_output();
 }
 
@@ -429,7 +379,7 @@ assemble_matrix_and_rhs(
   if (cost_function_type ==
       Parameters::RPTFEMReconstructionParameters::FEMCostFunction::absolute)
     {
-      // Assembling sys_matrix
+      // Assembling sys_matrix (Jacobian)
       for (unsigned int i = 0; i < dim; ++i)
         {
           for (unsigned int j = 0; j < dim; ++j)
@@ -516,18 +466,26 @@ RPTFEMReconstruction<dim>::calculate_reference_location_error(
   // Check if the location is a valid one
   for (unsigned int i = 0; i < dim; ++i)
     {
+      // e_1 = \xi - 1; e_2 = \eta - 1; e_3 = \zeta - 1;
       if (reference_location[i] > 1)
         err_coordinates[i] = (reference_location[i] - 1);
 
+      // e_1 = - \xi; e_2 = - \eta; e_3 = - \zeta;
       if (reference_location[i] < 0)
-        err_coordinates[i] = (0 - reference_location[i]);
+        err_coordinates[i] = std::abs(reference_location[i]);
     }
 
   // Check the last constraint
   if (last_constraint < 0)
-    err_coordinates[3] = std::abs(last_constraint);
+    {
+      // e_4 = |(1 - \xi - \eta - \zeta)|
+      err_coordinates[3] = std::abs(last_constraint);
+    }
   else if (last_constraint > 1)
-    err_coordinates[3] = 1 - last_constraint;
+    {
+      // e_4 = (1 - \xi - \eta - \zeta) - 1
+      err_coordinates[3] = last_constraint - 1;
+    }
 
   // Calculate the norm of the error coordinate vector
   for (const double &error : err_coordinates)
@@ -550,9 +508,11 @@ RPTFEMReconstruction<dim>::calculate_cost(
   double cost  = 0;
   double count = 0;
 
-  if (rpt_parameters.fem_reconstruction_param.fem_cost_function ==
+  if (fem_reconstruction_parameters.fem_cost_function ==
       Parameters::RPTFEMReconstructionParameters::FEMCostFunction::absolute)
     {
+      // cost = \sum_{d=1}^{n_detector} [C_{0,d} * (1 - \xi - \eta - \zeta) +
+      // C_{1,d} * \xi + C_{2,d} * \eta + C_{3,d} * \zeta - C_{exp,d}]^2
       for (unsigned int d = 0; d < n_detector; ++d)
         {
           count +=
@@ -568,12 +528,15 @@ RPTFEMReconstruction<dim>::calculate_cost(
           count = 0;
         }
     }
-  else if (rpt_parameters.fem_reconstruction_param.fem_cost_function ==
+  else if (fem_reconstruction_parameters.fem_cost_function ==
            Parameters::RPTFEMReconstructionParameters::FEMCostFunction::
              relative)
     {
       std::vector<double> denom(n_detector);
 
+      // cost = \sum_{d=1}^{n_detector} [C_{0,d} * (1 - \xi - \eta - \zeta) +
+      // C_{1,d} * \xi + C_{2,d} * \eta + C_{3,d} * \zeta - C_{exp,d}]^2 / (
+      // C_{exp,d}^2)
       for (unsigned int d = 0; d < n_detector; ++d)
         {
           count +=
@@ -599,8 +562,9 @@ RPTFEMReconstruction<dim>::calculate_cost(
 
 template <int dim>
 bool
-RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
-                                     const double tol_reference_location)
+RPTFEMReconstruction<dim>::find_position_global_search(
+  std::vector<double> &experimental_count,
+  const double         tol_reference_location)
 {
   double                           max_cost_function = DBL_MAX;
   double                           last_constraint_reference_location;
@@ -629,7 +593,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
       reference_location = assemble_matrix_and_rhs<dim>(
         count_from_all_detectors,
         experimental_count,
-        rpt_parameters.fem_reconstruction_param.fem_cost_function);
+        fem_reconstruction_parameters.fem_cost_function);
 
       // 4th constraint on the location of the particle in reference coordinates
       last_constraint_reference_location = 1 - reference_location[0] -
@@ -679,7 +643,7 @@ RPTFEMReconstruction<dim>::find_cell(std::vector<double> &experimental_count,
 
 template <int dim>
 bool
-RPTFEMReconstruction<dim>::find_in_adjacent_cells(
+RPTFEMReconstruction<dim>::find_position_local_search(
   std::vector<double> &                                 experimental_count,
   const double                                          tol_reference_location,
   const typename DoFHandler<dim>::active_cell_iterator &cell)
@@ -713,7 +677,7 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(
     }
 
   // Add adjacent cells according to the level of proximity
-  if (rpt_parameters.fem_reconstruction_param.search_proximity_level > 1)
+  if (fem_reconstruction_parameters.search_proximity_level > 1)
     {
       std::set<typename DoFHandler<dim>::active_cell_iterator>
         previous_adjacent_cells;
@@ -724,7 +688,7 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(
 
       for (unsigned int proximity_level = 2;
            proximity_level <
-           rpt_parameters.fem_reconstruction_param.search_proximity_level + 1;
+           fem_reconstruction_parameters.search_proximity_level + 1;
            ++proximity_level)
         {
           previous_adjacent_cells = all_adjacent_cells;
@@ -768,7 +732,7 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(
       reference_location = assemble_matrix_and_rhs<dim>(
         count_from_all_detectors,
         experimental_count,
-        rpt_parameters.fem_reconstruction_param.fem_cost_function);
+        fem_reconstruction_parameters.fem_cost_function);
 
       // 4th constraint on the location of the particle in reference coordinates
       last_constraint_reference_location = 1 - reference_location[0] -
@@ -822,66 +786,31 @@ RPTFEMReconstruction<dim>::find_in_adjacent_cells(
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::read_experimental_counts(
-  std::vector<std::vector<double>> &all_experimental_counts)
-{
-  TimerOutput::Scope t(computing_timer, "read_experimental_counts");
-
-  std::ifstream in(
-    rpt_parameters.fem_reconstruction_param.experimental_counts_file);
-  double value;
-
-  if (in)
-    {
-      std::string line;
-
-      while (std::getline(in, line))
-        {
-          // Ignore empty lines
-          if (line == "")
-            continue;
-
-          all_experimental_counts.emplace_back(std::vector<double>());
-
-          // Break down the row into column values
-          std::stringstream split(line);
-
-          while (split >> value)
-            all_experimental_counts.back().push_back(value);
-        }
-    }
-}
-
-
-template <int dim>
-void
 RPTFEMReconstruction<dim>::trajectory()
 {
   // Tolerance or the extrapolation limit in the reference space for a found
   // position
   double tol_reference_location = 0.005;
 
-  if (rpt_parameters.fem_reconstruction_param.mesh_type ==
+  if (fem_reconstruction_parameters.mesh_type ==
       Parameters::RPTFEMReconstructionParameters::FEMMeshType::dealii)
     {
       const unsigned int power =
-        pow(2, rpt_parameters.fem_reconstruction_param.mesh_refinement);
+        pow(2, fem_reconstruction_parameters.mesh_refinement);
       const unsigned int n_cell_z =
-        2 * rpt_parameters.fem_reconstruction_param.z_subdivisions * power;
-      tol_reference_location =
-        rpt_parameters.rpt_param.reactor_height / n_cell_z * 1.15;
+        2 * fem_reconstruction_parameters.z_subdivisions * power;
+      tol_reference_location = parameters.reactor_height / n_cell_z * 1.15;
     }
-
-  std::cout << "tol: " << tol_reference_location << std::endl;
 
   // Read and store all experimental counts
   std::vector<std::vector<double>> all_experimental_counts;
-  read_experimental_counts(all_experimental_counts);
+  all_experimental_counts = read_detectors_counts<dim>(
+    fem_reconstruction_parameters.experimental_counts_file, n_detector);
 
   {
     TimerOutput::Scope t(computing_timer, "find_particle_positions");
 
-    if (rpt_parameters.fem_reconstruction_param.search_type ==
+    if (fem_reconstruction_parameters.search_type ==
         Parameters::RPTFEMReconstructionParameters::FEMSearchType::local)
       {
         // It is set to "false" to force the global search on the first search
@@ -893,14 +822,15 @@ RPTFEMReconstruction<dim>::trajectory()
           {
             if (adjacent_cell_search)
               adjacent_cell_search =
-                find_in_adjacent_cells(experimental_counts,
-                                       tol_reference_location,
-                                       previous_position_cell);
+                find_position_local_search(experimental_counts,
+                                           tol_reference_location,
+                                           previous_position_cell);
 
             if (!adjacent_cell_search)
               {
                 adjacent_cell_search =
-                  find_cell(experimental_counts, tol_reference_location);
+                  find_position_global_search(experimental_counts,
+                                              tol_reference_location);
               }
           }
       }
@@ -910,7 +840,8 @@ RPTFEMReconstruction<dim>::trajectory()
         // global search only
         for (std::vector<double> &experimental_counts : all_experimental_counts)
           {
-            find_cell(experimental_counts, tol_reference_location);
+            find_position_global_search(experimental_counts,
+                                        tol_reference_location);
           }
       }
   }
@@ -949,12 +880,12 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
 {
   TimerOutput::Scope t(computing_timer, "load_from_checkpoint");
 
-  n_detector = rpt_parameters.fem_reconstruction_param.nodal_counts_file.size();
+  n_detector = fem_reconstruction_parameters.nodal_counts_file.size();
 
   // Import dof handler
   {
     dof_handler.distribute_dofs(fe);
-    std::ifstream ifs(rpt_parameters.fem_reconstruction_param.dof_handler_file);
+    std::ifstream ifs(fem_reconstruction_parameters.dof_handler_file);
     boost::archive::text_iarchive ia(ifs);
     dof_handler.load(ia, 0);
   }
@@ -966,8 +897,7 @@ RPTFEMReconstruction<dim>::load_from_checkpoint()
 
     for (unsigned int i = 0; i < n_detector; ++i)
       {
-        std::ifstream ifs(
-          rpt_parameters.fem_reconstruction_param.nodal_counts_file[i]);
+        std::ifstream ifs(fem_reconstruction_parameters.nodal_counts_file[i]);
         boost::archive::text_iarchive ia(ifs);
         counts_per_detector.load(ia, 0);
         nodal_counts[i] = counts_per_detector;
@@ -981,8 +911,7 @@ RPTFEMReconstruction<dim>::export_found_positions()
 {
   TimerOutput::Scope t(computing_timer, "export_found_positions");
 
-  std::string filename =
-    rpt_parameters.fem_reconstruction_param.export_positions_file;
+  std::string filename = fem_reconstruction_parameters.export_positions_file;
 
   // Look if extension of the exporting file is specified. If it is not
   // specified, the ".csv" extension is added as a default format.
@@ -997,7 +926,7 @@ RPTFEMReconstruction<dim>::export_found_positions()
   myfile.open(filename);
 
   // Output in file and in terminal
-  if (rpt_parameters.rpt_param.verbosity == Parameters::Verbosity::verbose)
+  if (parameters.verbosity == Parameters::Verbosity::verbose)
     {
       if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
         {
@@ -1073,7 +1002,7 @@ RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
   std::cout << "***********************************************" << std::endl;
 
   // Disable the output of time clock
-  if (!rpt_parameters.fem_reconstruction_param.verbose_clock_fem_reconstruction)
+  if (!fem_reconstruction_parameters.verbose_clock_fem_reconstruction)
     computing_timer.disable_output();
 }
 
