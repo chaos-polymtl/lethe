@@ -4,6 +4,10 @@
 #include <solvers/gls_navier_stokes.h>
 #include <solvers/postprocessing_cfd.h>
 
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_tools.h>
+
+
 template <int dim>
 class ExactInitialSolution : public Function<dim>
 {

@@ -18,10 +18,9 @@
 #ifndef lethe_dem_cfd_coupling_h
 #define lethe_dem_cfd_coupling_h
 
-#include <core/data_containers.h>
-
 #include <solvers/navier_stokes_scratch_data.h>
 
+#include <dem/data_containers.h>
 #include <dem/dem.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>

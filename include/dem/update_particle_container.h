@@ -16,7 +16,7 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <core/data_containers.h>
+#include <dem/data_containers.h>
 
 #include <deal.II/particles/particle_handler.h>
 

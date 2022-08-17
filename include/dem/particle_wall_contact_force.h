@@ -17,10 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 #include <core/auxiliary_math_functions.h>
-#include <core/data_containers.h>
+#include <core/dem_properties.h>
 #include <core/serial_solid.h>
 
-#include <dem/dem_properties.h>
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_info_struct.h>
 

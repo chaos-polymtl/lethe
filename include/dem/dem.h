@@ -14,11 +14,11 @@
  * ---------------------------------------------------------------------
  */
 
-#include <core/data_containers.h>
+#include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
 
-#include <dem/dem_properties.h>
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>

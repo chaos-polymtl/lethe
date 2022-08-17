@@ -11,7 +11,8 @@
 #include <deal.II/particles/particle_iterator.h>
 
 // Lethe
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
