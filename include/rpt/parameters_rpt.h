@@ -157,20 +157,20 @@ namespace Parameters
    */
   struct RPTFEMReconstructionParameters
   {
-    std::string mesh_file; // mesh filename
-    unsigned int
-    z_subdivisions; // number of subdivisions of the initial grid in z direction 
-    unsigned int mesh_refinement;    // number of refinement the grid undergoes
+    std::string  mesh_file;       // mesh filename
+    unsigned int z_subdivisions;  // number of subdivisions of the initial grid
+                                  // in z direction
+    unsigned int mesh_refinement; // number of refinement the grid undergoes
     bool l2_project_and_reconstruct; // run the rpt_l2_projection_3d application
                                      // before reconstruction
-    std::string experimental_counts_file; // file including experimental counts from
-                                          // all detectors
-    std::string export_positions_file;    // file including all found positions
-    std::string dof_handler_file; // file with the saved DOFHandler object
+    std::string experimental_counts_file; // file including experimental counts
+                                          // from all detectors
+    std::string export_positions_file; // file including all found positions
+    std::string dof_handler_file;      // file with the saved DOFHandler object
     std::vector<std::string>
       nodal_counts_file; // vector containing the filenames of the files with
                          // the nodal counts from the built dictionary for each
-                         // detector (1 detector per file)
+                         // detector (1 file per detector)
 
     // type of cost function applied when evaluating the particle's real
     // position

@@ -7,11 +7,11 @@ subsection rpt parameters
     set verbosity                          = quiet
     set monte carlo iteration              = 1000
     set random number seed                 = 0
-    set reactor height				       = 0.15
-    set reactor radius       		       = 0.1
-    set peak-to-total ratio  		       = 0.4
-    set sampling time        		       = 1
-    set gamma-rays emitted        	       = 2
+    set reactor height                     = 0.15
+    set reactor radius                     = 0.1
+    set peak-to-total ratio                = 0.4
+    set sampling time                      = 1
+    set gamma-rays emitted                 = 2
     set attenuation coefficient detector   = 21.477    
 end
 
@@ -31,12 +31,13 @@ end
 # FEM reconstruction parameters
 #---------------------------------------------------
 subsection fem reconstruction
-	set z subdivisions               = 2
-	set mesh refinement              = 2
-	set experimental counts file     = experimental_counts.txt
-	set export positions file		 = found_positions
-	set cost function type 			 = relative
-	set dof handler file             = temp_dof_handler.dof
-	set nodal counts file            = temp_nodal_counts_detector00.counts, temp_nodal_counts_detector01.counts, temp_nodal_counts_detector02.counts, temp_nodal_counts_detector03.counts, temp_nodal_counts_detector04.counts, temp_nodal_counts_detector05.counts
-	set verbose clock 				 = true
+    set mesh type                       = dealii
+    set z subdivisions                  = 2
+    set mesh refinement                 = 2
+    set experimental counts file        = experimental_counts.txt
+    set export positions file           = found_positions
+    set cost function type              = relative
+    set dof handler file                = temp_dof_handler.dof
+    set nodal counts file               = temp_nodal_counts_detector00.counts, temp_nodal_counts_detector01.counts, temp_nodal_counts_detector02.counts, temp_nodal_counts_detector03.counts, temp_nodal_counts_detector04.counts, temp_nodal_counts_detector05.counts
+    set verbose clock                   = true
 end 

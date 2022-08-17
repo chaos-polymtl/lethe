@@ -884,6 +884,7 @@ RPTFEMReconstruction<dim>::trajectory()
     if (rpt_parameters.fem_reconstruction_param.search_type ==
         Parameters::RPTFEMReconstructionParameters::FEMSearchType::local)
       {
+        // It is set to "false" to force the global search on the first search
         bool adjacent_cell_search = false;
 
         // Find the position of the particle with the experimental counts by
