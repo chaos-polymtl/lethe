@@ -151,7 +151,7 @@ private:
    * @param experimental_count Experimental counts from all detectors for a
    * given particle position
    *
-   * @return Cost It is calculated with the cost function mentioned in the
+   * @return cost It is calculated with the cost function mentioned in the
    * parameter file.
    */
   double
@@ -229,7 +229,7 @@ private:
   checkpoint();
 
   /**
-   * @brief Loads the previously built dictionary for the 3D FEM
+   * @brief Loads the previously built dictionary for the 3D particle position
    * reconstruction.
    */
   void
