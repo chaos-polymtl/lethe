@@ -204,7 +204,7 @@ private:
 
   /**
    * @brief Finds the position of the particle by doing a local search around
-   * the previously found position's cell's neighbors 
+   * the previously found position's cell's neighbors
    *
    * @param experimental_count experimental_count contains the experimental
    * counts of every detector for a given position.
