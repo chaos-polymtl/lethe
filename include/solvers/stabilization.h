@@ -33,8 +33,8 @@ using namespace dealii;
  */
 inline double
 calculate_navier_stokes_gls_tau_steady(const double u_mag,
-                                   const double viscosity,
-                                   const double h)
+                                       const double viscosity,
+                                       const double h)
 {
   return 1. / std::sqrt(Utilities::fixed_power<2>(2. * u_mag / h) +
                         9 * Utilities::fixed_power<2>(4 * viscosity / (h * h)));
@@ -55,9 +55,9 @@ calculate_navier_stokes_gls_tau_steady(const double u_mag,
 
 inline double
 calculate_navier_stokes_gls_tau_transient(const double u_mag,
-                                      const double viscosity,
-                                      const double h,
-                                      const double sdt)
+                                          const double viscosity,
+                                          const double h,
+                                          const double sdt)
 {
   return 1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
                         Utilities::fixed_power<2>(2. * u_mag / h) +
