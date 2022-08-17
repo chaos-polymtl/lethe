@@ -15,7 +15,11 @@
  *
  */
 
+#include <deal.II/base/utilities.h>
+
 #include <cmath>
+
+using namespace dealii;
 
 /**
  * @brief Calculate the stabilization parameter for the Navier-Stokes equations in steady-state
@@ -28,16 +32,16 @@
  * @param h Cell size. Should be calculated using the diameter of a sphere of equal volume to that of the cell
  */
 inline double
-calculate_navier_stokes_tau_steady(const double u_mag,
-                                   const double viscosity,
-                                   const double h)
+calculate_navier_stokes_gls_tau_steady(const double u_mag,
+                                       const double viscosity,
+                                       const double h)
 {
-  return 1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                        9 * std::pow(4 * viscosity / (h * h), 2));
+  return 1. / std::sqrt(Utilities::fixed_power<2>(2. * u_mag / h) +
+                        9 * Utilities::fixed_power<2>(4 * viscosity / (h * h)));
 }
 
 /**
- * @brief Calculate the stabilization parameter for the Navier-Stokes equations in steady-state
+ * @brief Calculate the stabilization parameter for the transient Navier-Stokes equations
  * @return Value of the stabilization parameter - tau
  *
  * @param u_mag Magnitude of the velocity
@@ -50,11 +54,12 @@ calculate_navier_stokes_tau_steady(const double u_mag,
  */
 
 inline double
-calculate_navier_stokes_tau_transient(const double u_mag,
-                                      const double viscosity,
-                                      const double h,
-                                      const double sdt)
+calculate_navier_stokes_gls_tau_transient(const double u_mag,
+                                          const double viscosity,
+                                          const double h,
+                                          const double sdt)
 {
-  return 1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                        9 * std::pow(4 * viscosity / (h * h), 2));
+  return 1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
+                        Utilities::fixed_power<2>(2. * u_mag / h) +
+                        9 * Utilities::fixed_power<2>(4 * viscosity / (h * h)));
 }
