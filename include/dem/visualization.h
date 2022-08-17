@@ -61,7 +61,7 @@ public:
    * dimension
    */
   void
-  build_patches(Particles::ParticleHandler<dim>         &particle_handler,
+  build_patches(Particles::ParticleHandler<dim> &        particle_handler,
                 std::vector<std::pair<std::string, int>> properties);
 
   /**
@@ -72,8 +72,8 @@ public:
    */
   void
   print_xyz(dealii::Particles::ParticleHandler<dim> &particle_handler,
-            const MPI_Comm                          &mpi_communicator,
-            const ConditionalOStream                &pcout);
+            const MPI_Comm &                         mpi_communicator,
+            const ConditionalOStream &               pcout);
 
   ~Visualization();
 

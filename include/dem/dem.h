@@ -103,7 +103,7 @@ private:
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
+      &                                                                  cell,
     const typename parallel::distributed::Triangulation<dim>::CellStatus status)
     const;
 
@@ -167,7 +167,7 @@ private:
   void
   update_moment_of_inertia(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double>                     &MOI);
+    std::vector<double> &                    MOI);
 
   /**
    * @brief Carries out the broad contact detection search using the

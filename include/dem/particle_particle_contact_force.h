@@ -71,8 +71,8 @@ public:
     typename dem_data_containers::dem_data_structures<
       dim>::adjacent_particle_pairs &ghost_adjacent_particles,
     const double                     dt,
-    std::vector<Tensor<1, 3>>       &torque,
-    std::vector<Tensor<1, 3>>       &force) = 0;
+    std::vector<Tensor<1, 3>> &      torque,
+    std::vector<Tensor<1, 3>> &      force) = 0;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -101,15 +101,15 @@ public:
   calculate_IB_particle_particle_contact_force(
     const double                                normal_overlap,
     particle_particle_contact_info_struct<dim> &contact_info,
-    Tensor<1, 3>                               &normal_force,
-    Tensor<1, 3>                               &tangential_force,
-    Tensor<1, 3>                               &particle_one_tangential_torque,
-    Tensor<1, 3>                               &particle_two_tangential_torque,
-    Tensor<1, 3>                               &rolling_resistance_torque,
-    IBParticle<dim>                            &particle_one,
-    IBParticle<dim>                            &particle_two,
-    const Point<dim>                           &particle_one_location,
-    const Point<dim>                           &particle_two_location,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque,
+    IBParticle<dim> &                           particle_one,
+    IBParticle<dim> &                           particle_two,
+    const Point<dim> &                          particle_one_location,
+    const Point<dim> &                          particle_two_location,
     const double                                dt,
     const double                                particle_one_radius,
     const double                                particle_two_radius,
@@ -132,12 +132,12 @@ protected:
   void
   update_contact_information(
     particle_particle_contact_info_struct<dim> &adjacent_pair_information,
-    double                                     &normal_relative_velocity_value,
-    Tensor<1, 3>                               &normal_unit_vector,
-    const ArrayView<const double>              &particle_one_properties,
-    const ArrayView<const double>              &particle_two_properties,
-    const Point<3>                             &particle_one_location,
-    const Point<3>                             &particle_two_location,
+    double &                                    normal_relative_velocity_value,
+    Tensor<1, 3> &                              normal_unit_vector,
+    const ArrayView<const double> &             particle_one_properties,
+    const ArrayView<const double> &             particle_two_properties,
+    const Point<3> &                            particle_one_location,
+    const Point<3> &                            particle_two_location,
     const double                                dt);
 
   /**
@@ -161,10 +161,10 @@ protected:
     const Tensor<1, 3> &particle_one_tangential_torque,
     const Tensor<1, 3> &particle_two_tangential_torque,
     const Tensor<1, 3> &rolling_resistance_torque,
-    Tensor<1, 3>       &particle_one_torque,
-    Tensor<1, 3>       &particle_two_torque,
-    Tensor<1, 3>       &particle_one_force,
-    Tensor<1, 3>       &particle_two_force)
+    Tensor<1, 3> &      particle_one_torque,
+    Tensor<1, 3> &      particle_two_torque,
+    Tensor<1, 3> &      particle_one_force,
+    Tensor<1, 3> &      particle_two_force)
   {
     // Calculation of total force
     Tensor<1, 3> total_force = normal_force + tangential_force;
@@ -196,8 +196,8 @@ protected:
     const Tensor<1, 3> &tangential_force,
     const Tensor<1, 3> &particle_one_tangential_torque,
     const Tensor<1, 3> &rolling_resistance_torque,
-    Tensor<1, 3>       &particle_one_torque,
-    Tensor<1, 3>       &particle_one_force)
+    Tensor<1, 3> &      particle_one_torque,
+    Tensor<1, 3> &      particle_one_force)
   {
     // Calculation of total force
     Tensor<1, 3> total_force = normal_force + tangential_force;

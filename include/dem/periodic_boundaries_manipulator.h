@@ -117,7 +117,7 @@ private:
   check_and_move_particles(
     const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
     typename Particles::ParticleHandler<dim>::particle_iterator_range
-              &particles_in_cell,
+      &        particles_in_cell,
     const bool particles_in_outlet_cell);
 
   std::vector<unsigned int> outlet_boundary_ids;

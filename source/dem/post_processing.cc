@@ -8,7 +8,7 @@ namespace DEM
   double
   calculate_total_granular_kinetic_energy(
     const Particles::ParticleHandler<dim> &particle_handler,
-    const MPI_Comm                        &mpi_communicator)
+    const MPI_Comm &                       mpi_communicator)
   {
     double kinetic_energy = 0;
     for (auto &particle : particle_handler)
@@ -35,11 +35,11 @@ namespace DEM
   template double
   calculate_total_granular_kinetic_energy(
     const Particles::ParticleHandler<2, 2> &particle_handler,
-    const MPI_Comm                         &mpi_communicator);
+    const MPI_Comm &                        mpi_communicator);
 
   template double
   calculate_total_granular_kinetic_energy(
     const Particles::ParticleHandler<3, 3> &particle_handler,
-    const MPI_Comm                         &mpi_communicator);
+    const MPI_Comm &                        mpi_communicator);
 
 } // namespace DEM

@@ -154,8 +154,8 @@ protected:
   void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim>                         &scratch_data,
-    StabilizedMethodsTensorCopyData<dim>                 &copy_data);
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -173,8 +173,8 @@ protected:
   void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim>                         &scratch_data,
-    StabilizedMethodsTensorCopyData<dim>                 &copy_data);
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data);
 
   /**
    * @brief sets up the vector of assembler functions

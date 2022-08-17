@@ -64,7 +64,7 @@ public:
     const typename dem_data_containers::dem_data_structures<dim>::
       particle_point_line_contact_info *particle_point_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
-                              &lagrangian_physical_properties,
+      &                        lagrangian_physical_properties,
     std::vector<Tensor<1, 3>> &force);
 
   /**
@@ -82,7 +82,7 @@ public:
     const typename dem_data_containers::dem_data_structures<
       dim>::particle_point_line_contact_info *particle_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
-                              &lagrangian_physical_properties,
+      &                        lagrangian_physical_properties,
     std::vector<Tensor<1, 3>> &force);
 
 private:

@@ -73,7 +73,7 @@ public:
   void
   find_particle_wall_contact_pairs(
     const std::map<int, boundary_cells_info_struct<dim>>
-                                          &boundary_cells_information,
+      &                                    boundary_cells_information,
     const Particles::ParticleHandler<dim> &particle_handler,
     typename dem_data_containers::dem_data_structures<
       dim>::particle_wall_candidates &particle_wall_contact_candidates);
@@ -100,7 +100,7 @@ public:
     const std::unordered_map<
       types::particle_index,
       std::set<typename Triangulation<dim>::active_cell_iterator>>
-                                          &boundary_cells_for_floating_walls,
+      &                                    boundary_cells_for_floating_walls,
     const Particles::ParticleHandler<dim> &particle_handler,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double                                      simulation_time,
@@ -126,7 +126,7 @@ public:
   void
   particle_floating_mesh_contact_search(
     const typename dem_data_containers::dem_data_structures<
-      dim>::floating_mesh_information     &floating_mesh_information,
+      dim>::floating_mesh_information &    floating_mesh_information,
     const Particles::ParticleHandler<dim> &particle_handler,
     typename dem_data_containers::dem_data_structures<
       dim>::particle_floating_mesh_candidates
