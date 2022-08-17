@@ -165,8 +165,8 @@ namespace Parameters
                                      // before reconstruction
     std::string experimental_counts_file; // file including experimental counts
                                           // from all detectors
-    std::string export_positions_file; // file including all found positions
-    std::string dof_handler_file;      // file with the saved DOFHandler object
+    std::string export_positions_file;    // file including all found positions
+    std::string dof_handler_file; // file with the saved DOFHandler object
     std::vector<std::string>
       nodal_counts_file; // vector containing the filenames of the files with
                          // the nodal counts from the built dictionary for each
@@ -181,10 +181,10 @@ namespace Parameters
     };
     FEMCostFunction fem_cost_function;
 
-    // type of mesh that is used to model the vessel's geometry
+    // type of mesh that is used to model the cylindrical vessel's geometry
     enum class FEMMeshType
     {
-      dealii,
+      dealii, // the grid used is a subdivided cylinder
       gmsh
     };
     FEMMeshType mesh_type;
