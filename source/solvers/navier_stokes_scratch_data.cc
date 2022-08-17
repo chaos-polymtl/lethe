@@ -1,11 +1,9 @@
 #include <core/bdf.h>
+#include <core/dem_properties.h>
 #include <core/sdirk.h>
 #include <core/utilities.h>
 
 #include <solvers/navier_stokes_scratch_data.h>
-
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
 
 template <int dim>
 void
@@ -87,8 +85,8 @@ NavierStokesScratchData<dim>::allocate()
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
-                                         const Quadrature<dim> &   quadrature,
-                                         const Mapping<dim> &      mapping)
+                                         const Quadrature<dim>    &quadrature,
+                                         const Mapping<dim>       &mapping)
 {
   gather_vof    = true;
   fe_values_vof = std::make_shared<FEValues<dim>>(
@@ -112,8 +110,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_filtered_phase_fraction_gradient(
   const FiniteElement<dim> &fe_filtered_phase_fraction_gradient,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_filtered_phase_fraction_gradient = true;
   fe_values_filtered_phase_fraction_gradient =
@@ -131,8 +129,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_curvature(
   const FiniteElement<dim> &fe_curvature,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_curvature    = true;
   fe_values_curvature = std::make_shared<FEValues<dim>>(
@@ -147,8 +145,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_void_fraction(
   const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_void_fraction    = true;
   fe_values_void_fraction = std::make_shared<FEValues<dim>>(
@@ -188,8 +186,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_heat_transfer(
   const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_temperature    = true;
   fe_values_temperature = std::make_shared<FEValues<dim>>(
@@ -231,8 +229,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
   switch (properties_manager.get_number_of_fluids())
     {
-      case 1:
-        {
+        case 1: {
           // In this case, only viscosity is the required property
           const auto rheology_model = properties_manager.get_rheology();
           rheology_model->vector_value(fields, viscosity);
@@ -257,8 +254,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
           break;
         }
-      case 2:
-        {
+        case 2: {
           // In this case,  we need both density and viscosity
           const auto density_model_0  = properties_manager.get_density(0);
           const auto rheology_model_0 = properties_manager.get_rheology(0);

@@ -1,6 +1,6 @@
+#include <core/dem_properties.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/dem_properties.h>
 #include <dem/explicit_euler_integrator.h>
 
 using namespace DEM;
@@ -21,11 +21,11 @@ template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
-  const Tensor<1, 3> &             g,
+  const Tensor<1, 3>              &g,
   const double                     dt,
-  std::vector<Tensor<1, 3>> &      torque,
-  std::vector<Tensor<1, 3>> &      force,
-  const std::vector<double> &      MOI)
+  std::vector<Tensor<1, 3>>       &torque,
+  std::vector<Tensor<1, 3>>       &force,
+  const std::vector<double>       &MOI)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();

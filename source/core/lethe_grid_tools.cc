@@ -1,8 +1,7 @@
+#include <core/dem_properties.h>
 #include <core/lethe_grid_tools.h>
 #include <core/serial_solid.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
-
-#include <dem/dem_properties.h>
 
 #include <deal.II/fe/fe_q.h>
 
@@ -47,7 +46,7 @@ template <int dim>
 typename DoFHandler<dim>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_tree(
   const DoFHandler<dim> &dof_handler,
-  const Point<dim> &     point)
+  const Point<dim>      &point)
 {
   // Define temporary variables to store search parameters and intermediate
   // results
@@ -154,16 +153,16 @@ template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
 LetheGridTools::find_boundary_cells_in_sphere(
   const DoFHandler<dim> &dof_handler,
-  const Point<dim> &     center,
+  const Point<dim>      &center,
   const double           radius)
 {
   MappingQ1<dim> mapping;
-  const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
+  const auto    &cell_iterator = dof_handler.cell_iterators_on_level(0);
   unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
 
   std::set<typename DoFHandler<dim>::cell_iterator> boundary_cells_candidates;
   std::set<typename DoFHandler<dim>::cell_iterator>
-                                                    last_boundary_cells_candidates;
+    last_boundary_cells_candidates;
   std::set<typename DoFHandler<dim>::cell_iterator> cells_at_boundary;
   // Loop over the cells on level 0 of the mesh
   for (const auto &cell : cell_iterator)
@@ -243,9 +242,9 @@ LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<dim> &dof_handler,
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
-    &                                                   vertices_cell_map,
+                                                       &vertices_cell_map,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const Point<dim> &                                    point)
+  const Point<dim>                                     &point)
 {
   // Find the cells that share a vertex with the original cell.
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -270,7 +269,7 @@ std::vector<typename DoFHandler<dim>::active_cell_iterator>
 LetheGridTools::find_cells_around_cell(
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
-    &                                                   vertices_cell_map,
+                                                       &vertices_cell_map,
   const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
   // Find all the cells that share a vertex with a reference cell, including the
@@ -295,7 +294,7 @@ LetheGridTools::find_cells_around_cell(
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
 LetheGridTools::find_cells_in_cells(
-  const DoFHandler<dim> &                               dof_handler,
+  const DoFHandler<dim>                                &dof_handler,
   const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
   std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_inside;
@@ -332,7 +331,7 @@ template <int dim>
 bool
 LetheGridTools::cell_pierced_by_edge(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const TriaIterator<CellAccessor<1, dim>> &            cell_edge)
+  const TriaIterator<CellAccessor<1, dim>>             &cell_edge)
 {
   std::vector<Point<dim>> manifold_points(GeometryInfo<1>::vertices_per_cell);
 
@@ -535,8 +534,7 @@ LetheGridTools::project_to_d_linear_object(
         {
           break;
         }
-    }
-  while (true);
+  } while (true);
   Tensor<1, spacedim> normal;
   if (spacedim == 3)
     {
@@ -587,10 +585,10 @@ LetheGridTools::find_cells_around_edge(
   const DoFHandler<dim> &dof_handler,
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
-    &                                                   vertices_cell_map,
+                                                       &vertices_cell_map,
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  Point<dim> &                                          point_1,
-  Point<dim> &                                          point_2)
+  Point<dim>                                           &point_1,
+  Point<dim>                                           &point_2)
 {
   std::set<typename DoFHandler<dim>::active_cell_iterator> cells_pierced_set;
   DoFHandler<1, dim>       local_edge_dof_handler;
@@ -693,7 +691,7 @@ LetheGridTools::find_cells_around_edge(
 template <int dim>
 bool
 LetheGridTools::cell_cut_by_flat(
-  const typename DoFHandler<dim>::active_cell_iterator &         cell,
+  const typename DoFHandler<dim>::active_cell_iterator          &cell,
   const typename DoFHandler<dim - 1, dim>::active_cell_iterator &cell_flat)
 {
   std::vector<Point<dim>> manifold_points(
@@ -816,7 +814,7 @@ LetheGridTools::cell_cut_by_flat(
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
 LetheGridTools::find_cells_around_flat_cell(
-  const DoFHandler<dim> &                                        dof_handler,
+  const DoFHandler<dim>                                         &dof_handler,
   const typename DoFHandler<dim - 1, dim>::active_cell_iterator &cell,
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
@@ -898,7 +896,7 @@ LetheGridTools::find_cells_cut_by_object(
   const DoFHandler<spacedim> &dof_handler,
   std::map<unsigned int,
            std::set<typename DoFHandler<spacedim>::active_cell_iterator>>
-    &                                            vertices_cell_map,
+                                                &vertices_cell_map,
   std::vector<SerialSolid<structdim, spacedim>> &list_of_objects)
 {
   std::map<
@@ -963,11 +961,11 @@ LetheGridTools::find_cells_cut_by_object(
 template typename DoFHandler<3>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_tree(
   const DoFHandler<3> &dof_handler,
-  const Point<3> &     point);
+  const Point<3>      &point);
 template typename DoFHandler<2>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_tree(
   const DoFHandler<2> &dof_handler,
-  const Point<2> &     point);
+  const Point<2>      &point);
 
 template void
 LetheGridTools::vertices_cell_mapping(
@@ -985,61 +983,61 @@ template typename DoFHandler<2>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<2> &dof_handler,
   std::map<unsigned int, std::set<typename DoFHandler<2>::active_cell_iterator>>
-    &                                                 vertices_cell_map,
+                                                     &vertices_cell_map,
   const typename DoFHandler<2>::active_cell_iterator &cell,
-  const Point<2> &                                    point);
+  const Point<2>                                     &point);
 
 template typename DoFHandler<3>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<3> &dof_handler,
   std::map<unsigned int, std::set<typename DoFHandler<3>::active_cell_iterator>>
-    &                                                 vertices_cell_map,
+                                                     &vertices_cell_map,
   const typename DoFHandler<3>::active_cell_iterator &cell,
-  const Point<3> &                                    point);
+  const Point<3>                                     &point);
 
 template typename std::vector<typename DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_cells_around_cell<2>(
   std::map<unsigned int, std::set<typename DoFHandler<2>::active_cell_iterator>>
-    &                                                 vertices_cell_map,
+                                                     &vertices_cell_map,
   const typename DoFHandler<2>::active_cell_iterator &cell);
 
 template typename std::vector<typename DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_cells_around_cell<3>(
   std::map<unsigned int, std::set<typename DoFHandler<3>::active_cell_iterator>>
-    &                                                 vertices_cell_map,
+                                                     &vertices_cell_map,
   const typename DoFHandler<3>::active_cell_iterator &cell);
 
 template std::vector<typename DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_cells_in_cells(
-  const DoFHandler<2> &                               dof_handler,
+  const DoFHandler<2>                                &dof_handler,
   const typename DoFHandler<2>::active_cell_iterator &cell);
 
 template std::vector<typename DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_cells_in_cells(
-  const DoFHandler<3> &                               dof_handler,
+  const DoFHandler<3>                                &dof_handler,
   const typename DoFHandler<3>::active_cell_iterator &cell);
 
 template bool
 LetheGridTools::cell_cut_by_flat<2>(
-  const typename DoFHandler<2>::active_cell_iterator &       cell,
+  const typename DoFHandler<2>::active_cell_iterator        &cell,
   const typename DoFHandler<2 - 1, 2>::active_cell_iterator &cell_flat);
 
 template bool
 LetheGridTools::cell_cut_by_flat<3>(
-  const typename DoFHandler<3>::active_cell_iterator &       cell,
+  const typename DoFHandler<3>::active_cell_iterator        &cell,
   const typename DoFHandler<3 - 1, 3>::active_cell_iterator &cell_flat);
 
 
 template std::vector<typename DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_cells_around_flat_cell(
-  const DoFHandler<2> &                                      dof_handler,
+  const DoFHandler<2>                                       &dof_handler,
   const typename DoFHandler<2 - 1, 2>::active_cell_iterator &cell,
   std::map<unsigned int, std::set<typename DoFHandler<2>::active_cell_iterator>>
     &vertices_cell_map);
 
 template std::vector<typename DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_cells_around_flat_cell(
-  const DoFHandler<3> &                                      dof_handler,
+  const DoFHandler<3>                                       &dof_handler,
   const typename DoFHandler<3 - 1, 3>::active_cell_iterator &cell,
   std::map<unsigned int, std::set<typename DoFHandler<3>::active_cell_iterator>>
     &vertices_cell_map);
@@ -1047,18 +1045,18 @@ LetheGridTools::find_cells_around_flat_cell(
 template std::pair<std::pair<Point<2>, bool>, Tensor<1, 2>>
 LetheGridTools::project_to_d_linear_object<2, 1>(
   const typename DoFHandler<1, 2>::active_cell_iterator &object,
-  const Point<2> &                                       trial_point);
+  const Point<2>                                        &trial_point);
 
 template std::pair<std::pair<Point<3>, bool>, Tensor<1, 3>>
 LetheGridTools::project_to_d_linear_object<3, 2>(
   const typename DoFHandler<2, 3>::active_cell_iterator &object,
-  const Point<3> &                                       trial_point);
+  const Point<3>                                        &trial_point);
 
 
 template bool
 LetheGridTools::cell_pierced_by_edge<3>(
   const typename DoFHandler<3>::active_cell_iterator &cell,
-  const TriaIterator<CellAccessor<1, 3>> &            cell_edge);
+  const TriaIterator<CellAccessor<1, 3>>             &cell_edge);
 
 template bool
 LetheGridTools::cell_pierced_by_edge<3>(
@@ -1068,11 +1066,11 @@ LetheGridTools::cell_pierced_by_edge<3>(
 
 template std::vector<typename DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_boundary_cells_in_sphere(const DoFHandler<2> &dof_handler,
-                                              const Point<2> &     center,
+                                              const Point<2>      &center,
                                               const double         radius);
 template std::vector<typename DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_boundary_cells_in_sphere(const DoFHandler<3> &dof_handler,
-                                              const Point<3> &     center,
+                                              const Point<3>      &center,
                                               const double         radius);
 
 
@@ -1082,7 +1080,7 @@ template std::map<
 LetheGridTools::find_cells_cut_by_object(
   const DoFHandler<3> &dof_handler,
   std::map<unsigned int, std::set<typename DoFHandler<3>::active_cell_iterator>>
-    &                             vertices_cell_map,
+                                 &vertices_cell_map,
   std::vector<SerialSolid<3, 3>> &list_of_objects);
 
 template std::map<
@@ -1091,7 +1089,7 @@ template std::map<
 LetheGridTools::find_cells_cut_by_object(
   const DoFHandler<2> &dof_handler,
   std::map<unsigned int, std::set<typename DoFHandler<2>::active_cell_iterator>>
-    &                             vertices_cell_map,
+                                 &vertices_cell_map,
   std::vector<SerialSolid<2, 2>> &list_of_objects);
 
 template std::map<
@@ -1100,7 +1098,7 @@ template std::map<
 LetheGridTools::find_cells_cut_by_object(
   const DoFHandler<3> &dof_handler,
   std::map<unsigned int, std::set<typename DoFHandler<3>::active_cell_iterator>>
-    &                             vertices_cell_map,
+                                 &vertices_cell_map,
   std::vector<SerialSolid<2, 3>> &list_of_objects);
 
 template std::map<
@@ -1109,16 +1107,16 @@ template std::map<
 LetheGridTools::find_cells_cut_by_object(
   const DoFHandler<2> &dof_handler,
   std::map<unsigned int, std::set<typename DoFHandler<2>::active_cell_iterator>>
-    &                             vertices_cell_map,
+                                 &vertices_cell_map,
   std::vector<SerialSolid<1, 2>> &list_of_objects);
 
 
 template <int dim>
 std::tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
 LetheGridTools::find_particle_triangle_projection(
-  const std::vector<Point<dim>> &                      triangle,
+  const std::vector<Point<dim>>                       &triangle,
   const std::vector<Particles::ParticleIterator<dim>> &particles,
-  const unsigned int &                                 n_particles_in_base_cell)
+  const unsigned int                                  &n_particles_in_base_cell)
 {
   std::vector<bool>         pass_distance_check(n_particles_in_base_cell);
   std::vector<Point<3>>     projection_points(n_particles_in_base_cell);
@@ -1359,12 +1357,12 @@ LetheGridTools::find_particle_triangle_projection(
 template std::
   tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
   LetheGridTools::find_particle_triangle_projection(
-    const std::vector<Point<2>> &                      triangle,
+    const std::vector<Point<2>>                       &triangle,
     const std::vector<Particles::ParticleIterator<2>> &particles,
     const unsigned int &n_particles_in_base_cell);
 template std::
   tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
   LetheGridTools::find_particle_triangle_projection(
-    const std::vector<Point<3>> &                      triangle,
+    const std::vector<Point<3>>                       &triangle,
     const std::vector<Particles::ParticleIterator<3>> &particles,
     const unsigned int &n_particles_in_base_cell);

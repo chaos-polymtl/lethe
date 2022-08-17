@@ -11,7 +11,8 @@
 #include <deal.II/particles/particle_iterator.h>
 
 // Lethe
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
@@ -119,7 +120,7 @@ template <int dim>
 void
 update_local_particle_container(
   std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
-    &                              local_particle_container,
+                                  &local_particle_container,
   Particles::ParticleHandler<dim> *particle_handler)
 {
   for (auto particle_iterator = particle_handler->begin();
@@ -176,8 +177,8 @@ locate_local_particles_in_cells(
 template <int dim>
 void
 reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
-                   std::vector<Tensor<1, 3>> &      torque,
-                   std::vector<Tensor<1, 3>> &      force)
+                   std::vector<Tensor<1, 3>>       &torque,
+                   std::vector<Tensor<1, 3>>       &force)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();

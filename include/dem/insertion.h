@@ -17,7 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/base/array_view.h>
@@ -68,9 +69,9 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    */
   virtual void
-  insert(Particles::ParticleHandler<dim> &                particle_handler,
+  insert(Particles::ParticleHandler<dim>                 &particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
-         const DEMSolverParameters<dim> &                 dem_parameters) = 0;
+         const DEMSolverParameters<dim>                  &dem_parameters) = 0;
 
 protected:
   /**
@@ -84,9 +85,9 @@ protected:
    * @param pcout Printing in parallel
    */
   void
-  print_insertion_info(const unsigned int &      inserted_this_step,
-                       const unsigned int &      remained_particles,
-                       const unsigned int &      particle_type,
+  print_insertion_info(const unsigned int       &inserted_this_step,
+                       const unsigned int       &remained_particles,
+                       const unsigned int       &particle_type,
                        const ConditionalOStream &pcout);
 
   /**
@@ -101,9 +102,9 @@ protected:
    */
   void
   assign_particle_properties(
-    const DEMSolverParameters<dim> &  dem_parameters,
-    const unsigned int &              inserted_this_step_this_proc,
-    const unsigned int &              current_inserting_particle_type,
+    const DEMSolverParameters<dim>   &dem_parameters,
+    const unsigned int               &inserted_this_step_this_proc,
+    const unsigned int               &current_inserting_particle_type,
     std::vector<std::vector<double>> &particle_properties);
 
   /**
@@ -118,7 +119,7 @@ protected:
   void
   calculate_insertion_domain_maximum_particle_number(
     const DEMSolverParameters<dim> &dem_parameters,
-    const ConditionalOStream &      pcout);
+    const ConditionalOStream       &pcout);
 
   // Number of particles that is going to be inserted at each insetion step.This
   // value can change in the last insertion step to reach the desired number of

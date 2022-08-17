@@ -33,6 +33,8 @@
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/solver_cg.h>
@@ -122,7 +124,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
-  auto &                 nonzero_constraints = this->get_nonzero_constraints();
+  auto                  &nonzero_constraints = this->get_nonzero_constraints();
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
@@ -174,6 +176,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    &this->present_solution);
 }
+
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
@@ -597,8 +600,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -780,8 +783,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -978,10 +981,10 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
       const int n_iter_viscosity =
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .n_iter;
-      double viscosity = n_iter_viscosity > 0 ?
-                           this->simulation_parameters.initial_condition->ramp
+      double       viscosity = n_iter_viscosity > 0 ?
+                                 this->simulation_parameters.initial_condition->ramp
                              .ramp_viscosity.viscosity_init :
-                           viscosity_end;
+                                 viscosity_end;
       const double alpha_viscosity =
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .alpha;
@@ -1213,8 +1216,8 @@ GLSNavierStokesSolver<dim>::setup_AMG()
   const unsigned int smoother_overlap =
     this->simulation_parameters.linear_solver.amg_smoother_overlap;
   const bool                                        output_details = false;
-  const char *                                      smoother_type  = "ILU";
-  const char *                                      coarse_type    = "ILU";
+  const char                                       *smoother_type  = "ILU";
+  const char                                       *coarse_type    = "ILU";
   TrilinosWrappers::PreconditionAMG::AdditionalData preconditionerOptions(
     elliptic,
     higher_order_elements,

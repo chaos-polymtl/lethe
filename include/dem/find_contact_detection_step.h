@@ -17,7 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -50,7 +50,7 @@ bool
 find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
                             const double                     dt,
                             const double smallest_contact_search_criterion,
-                            MPI_Comm &   mpi_communicator,
+                            MPI_Comm    &mpi_communicator,
                             bool         sorting_in_subdomains_step,
                             std::vector<double> &displacement);
 

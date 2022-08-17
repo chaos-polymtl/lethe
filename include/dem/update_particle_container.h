@@ -16,7 +16,7 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <core/data_containers.h>
+#include <dem/data_containers.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -40,7 +40,7 @@ template <int dim>
 void
 update_particle_container(
   typename dem_data_containers::dem_data_structures<
-    dim>::particle_index_iterator_map &  particle_container,
+    dim>::particle_index_iterator_map   &particle_container,
   const Particles::ParticleHandler<dim> *particle_handler);
 
 #endif /* update_particle_container_h */

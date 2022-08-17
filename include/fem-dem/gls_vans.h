@@ -20,18 +20,17 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/time_integration_utilities.h"
+#include <core/bdf.h>
+#include <core/dem_properties.h>
 #include <core/grids.h>
+#include <core/manifolds.h>
 #include <core/parameters.h>
+#include <core/time_integration_utilities.h>
 
-#include "solvers/gls_navier_stokes.h"
-#include "solvers/postprocessing_cfd.h"
+#include <solvers/gls_navier_stokes.h>
+#include <solvers/postprocessing_cfd.h>
 
 #include <dem/dem.h>
-#include <dem/dem_properties.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/vans_assemblers.h>
 
@@ -155,8 +154,8 @@ protected:
   void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+    NavierStokesScratchData<dim>                         &scratch_data,
+    StabilizedMethodsTensorCopyData<dim>                 &copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -174,8 +173,8 @@ protected:
   void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+    NavierStokesScratchData<dim>                         &scratch_data,
+    StabilizedMethodsTensorCopyData<dim>                 &copy_data);
 
   /**
    * @brief sets up the vector of assembler functions

@@ -18,10 +18,9 @@
 #ifndef lethe_dem_cfd_coupling_h
 #define lethe_dem_cfd_coupling_h
 
-#include <core/data_containers.h>
-
 #include <solvers/navier_stokes_scratch_data.h>
 
+#include <dem/data_containers.h>
 #include <dem/dem.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>
@@ -78,7 +77,7 @@ public:
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-      &                                                                  cell,
+                                                                        &cell,
     const typename parallel::distributed::Triangulation<dim>::CellStatus status)
     const;
 
@@ -147,7 +146,7 @@ private:
   void
   update_moment_of_inertia(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double> &                    MOI);
+    std::vector<double>                     &MOI);
 
   /**
    * Sets the chosen integration method in the parameter handler file

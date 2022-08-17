@@ -17,7 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/base/data_out_base.h>
@@ -60,7 +61,7 @@ public:
    * dimension
    */
   void
-  build_patches(Particles::ParticleHandler<dim> &        particle_handler,
+  build_patches(Particles::ParticleHandler<dim>         &particle_handler,
                 std::vector<std::pair<std::string, int>> properties);
 
   /**
@@ -71,8 +72,8 @@ public:
    */
   void
   print_xyz(dealii::Particles::ParticleHandler<dim> &particle_handler,
-            const MPI_Comm &                         mpi_communicator,
-            const ConditionalOStream &               pcout);
+            const MPI_Comm                          &mpi_communicator,
+            const ConditionalOStream                &pcout);
 
   ~Visualization();
 

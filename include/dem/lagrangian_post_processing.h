@@ -17,9 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 
-#include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
@@ -62,7 +62,7 @@ public:
   void
   calculate_average_particles_velocity(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const Particles::ParticleHandler<dim> &          particle_handler);
+    const Particles::ParticleHandler<dim>           &particle_handler);
 
   /**
    * Carries out the calculation of the granular temperature in each local cell.
@@ -76,7 +76,7 @@ public:
   void
   calculate_average_granular_temperature(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const Particles::ParticleHandler<dim> &          particle_handler);
+    const Particles::ParticleHandler<dim>           &particle_handler);
 
   /**
    * Carries out writing the particles' average velocity distribution
@@ -91,11 +91,11 @@ public:
   void
   write_average_particles_velocity(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    PVDHandler &                                     grid_pvdhandler,
-    const DEMSolverParameters<dim> &                 dem_parameters,
+    PVDHandler                                      &grid_pvdhandler,
+    const DEMSolverParameters<dim>                  &dem_parameters,
     const double                                     time,
     const unsigned int                               step_number,
-    const MPI_Comm &                                 mpi_communicator);
+    const MPI_Comm                                  &mpi_communicator);
 
   /**
    * Carries out writing the granular temperature distribution
@@ -110,11 +110,11 @@ public:
   void
   write_granular_temperature(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    PVDHandler &                                     grid_pvdhandler,
-    const DEMSolverParameters<dim> &                 dem_parameters,
+    PVDHandler                                      &grid_pvdhandler,
+    const DEMSolverParameters<dim>                  &dem_parameters,
     const double                                     time,
     const unsigned int                               step_number,
-    const MPI_Comm &                                 mpi_communicator);
+    const MPI_Comm                                  &mpi_communicator);
 
 
 
@@ -132,7 +132,7 @@ private:
   Tensor<1, dim>
   calculate_cell_average_particles_velocity(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-      &                                    cell,
+                                          &cell,
     const Particles::ParticleHandler<dim> &particle_handler);
 
   Vector<double> velocity_average_x;

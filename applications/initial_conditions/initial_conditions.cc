@@ -4,6 +4,10 @@
 #include <solvers/gls_navier_stokes.h>
 #include <solvers/postprocessing_cfd.h>
 
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_tools.h>
+
+
 template <int dim>
 class ExactInitialSolution : public Function<dim>
 {
@@ -17,7 +21,7 @@ public:
 template <int dim>
 void
 ExactInitialSolution<dim>::vector_value(const Point<dim> &p,
-                                        Vector<double> &  values) const
+                                        Vector<double>   &values) const
 {
   double x  = p[0];
   double y  = p[1];

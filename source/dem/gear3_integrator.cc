@@ -1,4 +1,5 @@
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/gear3_integrator.h>
 
 using namespace DEM;

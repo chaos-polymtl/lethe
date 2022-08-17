@@ -14,7 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -100,7 +101,7 @@ viscous_rolling_resistance_torque(
   const ArrayView<const double> &particle_two_properties,
   const double                   effective_rolling_friction_coefficient,
   const double                   normal_force_norm,
-  const Tensor<1, 3> &           normal_contact_vector)
+  const Tensor<1, 3>            &normal_contact_vector)
 
 {
   // For calculation of rolling resistance torque, we need to obtain

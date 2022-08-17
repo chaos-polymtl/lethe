@@ -17,7 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
+#include <core/dem_properties.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_force.h>
 #include <dem/particle_wall_contact_info_struct.h>
@@ -57,12 +58,12 @@ class ParticleWallLinearForce : public ParticleWallContactForce<dim>
 public:
   ParticleWallLinearForce<dim>(
     const std::unordered_map<unsigned int, Tensor<1, 3>>
-                                                   boundary_translational_velocity,
+      boundary_translational_velocity,
     const std::unordered_map<unsigned int, double> boundary_rotational_speed,
     const std::unordered_map<unsigned int, Tensor<1, 3>>
                                           boundary_rotational_vector,
     const double                          triangulation_radius,
-    const DEMSolverParameters<dim> &      dem_parameters,
+    const DEMSolverParameters<dim>       &dem_parameters,
     const std::vector<types::boundary_id> boundary_index = {});
 
   /**
@@ -81,8 +82,8 @@ public:
     typename dem_data_containers::dem_data_structures<
       dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
     const double                      dt,
-    std::vector<Tensor<1, 3>> &       torque,
-    std::vector<Tensor<1, 3>> &       force) override;
+    std::vector<Tensor<1, 3>>        &torque,
+    std::vector<Tensor<1, 3>>        &force) override;
 
   /**
    * Carries out the calculation of particle-floating mesh contact force using
@@ -100,8 +101,8 @@ public:
     typename dem_data_containers::dem_data_structures<dim>::
       particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
     const double                         dt,
-    std::vector<Tensor<1, 3>> &          torque,
-    std::vector<Tensor<1, 3>> &          force,
+    std::vector<Tensor<1, 3>>           &torque,
+    std::vector<Tensor<1, 3>>           &force,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
     override;
 
@@ -130,11 +131,11 @@ public:
   virtual void
   calculate_IB_particle_wall_contact_force(
     particle_wall_contact_info_struct<dim> &contact_info,
-    Tensor<1, 3> &                          normal_force,
-    Tensor<1, 3> &                          tangential_force,
-    Tensor<1, 3> &                          tangential_torque,
-    Tensor<1, 3> &                          rolling_resistance_torque,
-    IBParticle<dim> &                       particle,
+    Tensor<1, 3>                           &normal_force,
+    Tensor<1, 3>                           &tangential_force,
+    Tensor<1, 3>                           &tangential_torque,
+    Tensor<1, 3>                           &rolling_resistance_torque,
+    IBParticle<dim>                        &particle,
     const double                            wall_youngs_modulus,
     const double                            wall_poisson_ratio,
     const double                            wall_restitution_coefficient,
@@ -270,7 +271,7 @@ private:
   std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
   calculate_linear_contact_force_and_torque(
     particle_wall_contact_info_struct<dim> &contact_info,
-    const ArrayView<const double> &         particle_properties);
+    const ArrayView<const double>          &particle_properties);
 };
 
 #endif
