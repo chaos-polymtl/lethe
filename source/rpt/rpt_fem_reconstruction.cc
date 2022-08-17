@@ -804,8 +804,11 @@ RPTFEMReconstruction<dim>::trajectory()
 
   // Read and store all experimental counts
   std::vector<std::vector<double>> all_experimental_counts;
-  all_experimental_counts = read_detectors_counts<dim>(
-    fem_reconstruction_parameters.experimental_counts_file, n_detector);
+  {
+    TimerOutput::Scope t(computing_timer, "input_experimental_counts_file");
+    all_experimental_counts = read_detectors_counts<dim>(
+      fem_reconstruction_parameters.experimental_counts_file, n_detector);
+  }
 
   {
     TimerOutput::Scope t(computing_timer, "find_particle_positions");
