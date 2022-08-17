@@ -55,7 +55,7 @@ class RPTFEMReconstruction
 {
 public:
   /**
-   * @brief Constructor for the RPTFEMReconstructon
+   * @brief Constructor for the RPTFEMReconstruction
    *
    * @param RPTparameters All parameters and positions needed for the count
    * calculation and the position reconstruction
