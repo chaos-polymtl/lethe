@@ -66,8 +66,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
-          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
@@ -211,8 +211,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
-          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
 
       // Calculate the strong residual for GLS stabilization
@@ -318,8 +318,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
-          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
@@ -465,8 +465,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
-          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
 
       // Calculate the strong residual for GLS stabilization
@@ -596,8 +596,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
-          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
@@ -776,8 +776,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_tau_steady(u_mag, viscosity, h) :
-          calculate_navier_stokes_tau_transient(u_mag, viscosity, h, sdt);
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity, h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
 
       // Calculate the strong residual for GLS stabilization
