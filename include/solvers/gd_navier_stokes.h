@@ -20,6 +20,8 @@
 #ifndef lethe_gd_navier_stokes_h
 #define lethe_gd_navier_stokes_h
 
+#include <solvers/navier_stokes_base.h>
+
 #include <deal.II/lac/precondition_block.h>
 #include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/solver_cg.h>
@@ -30,8 +32,6 @@
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
-
-#include "navier_stokes_base.h"
 
 
 

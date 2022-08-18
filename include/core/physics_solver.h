@@ -16,14 +16,14 @@
 #ifndef LETHE_PHYSICSSOLVER
 #define LETHE_PHYSICSSOLVER
 
-#include <deal.II/lac/affine_constraints.h>
+#include <core/inexact_newton_non_linear_solver.h>
+#include <core/kinsol_newton_non_linear_solver.h>
+#include <core/multiphysics.h>
+#include <core/newton_non_linear_solver.h>
+#include <core/non_linear_solver.h>
+#include <core/parameters.h>
 
-#include "inexact_newton_non_linear_solver.h"
-#include "kinsol_newton_non_linear_solver.h"
-#include "multiphysics.h"
-#include "newton_non_linear_solver.h"
-#include "non_linear_solver.h"
-#include "parameters.h"
+#include <deal.II/lac/affine_constraints.h>
 
 /**
  * @brief Class that has all the common elements of a physics solver. It creates the nonlinear solver

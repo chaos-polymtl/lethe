@@ -27,8 +27,7 @@
 #include <boost/math/special_functions.hpp>
 #include <boost/range/adaptor/map.hpp>
 
-#include <math.h>
-
+#include <cmath>
 #include <iostream>
 
 using namespace dealii;

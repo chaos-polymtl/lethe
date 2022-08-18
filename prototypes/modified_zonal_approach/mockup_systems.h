@@ -1,7 +1,6 @@
 #include <deal.II/base/point.h>
 
-#include <stdlib.h> /* srand, rand */
-
+#include <cstdlib> /* srand, rand */
 #include <vector>
 
 using namespace dealii;
