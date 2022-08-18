@@ -20,7 +20,7 @@
 #ifndef lethe_pvd_handler_h
 #define lethe_pvd_handler_h
 
-#include "parameters.h"
+#include <core/parameters.h>
 
 using namespace dealii;
 
