@@ -7,10 +7,10 @@ subsection rpt parameters
     set verbosity                          = quiet
     set monte carlo iteration              = 10000
     set random number seed                 = 0
-    set reactor height                     = 0.10
+    set reactor height                     = 0.1
     set reactor radius                     = 0.15
     set peak-to-total ratio                = 0.4
-    set sampling time                      = 1
+    set sampling time                      = 0.01
     set gamma-rays emitted                 = 2
     set attenuation coefficient detector   = 21.477    
 end
