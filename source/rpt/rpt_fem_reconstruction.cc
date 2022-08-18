@@ -1,3 +1,19 @@
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2022 - by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 3.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ */
+
 #include <deal.II/base/multithread_info.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/work_stream.h>
@@ -63,14 +79,38 @@ RPTFEMReconstruction<dim>::setup_triangulation()
   if (fem_reconstruction_parameters.mesh_type ==
       Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
     {
+      // Warn user
+      std::cout << "-----------------------------------------------"
+                << std::endl;
+      std::cout << "At the moment, the application calculates" << std::endl;
+      std::cout << "the gamma-ray attenuation in cylindrical" << std::endl;
+      std::cout << "vessels only. Using another type of geometry" << std::endl;
+      std::cout << "would yield in committing an error when" << std::endl;
+      std::cout << "calculating photon counts. Furthermore, the" << std::endl;
+      std::cout << "axis of symmetry of the cylinder should" << std::endl;
+      std::cout << "be oriented in z-direction." << std::endl;
+      std::cout << "-----------------------------------------------"
+                << std::endl;
+
+      // Import and attach mesh to triangulation
       GridIn<dim> grid_in;
       grid_in.attach_triangulation(triangulation);
       std::ifstream input_file(fem_reconstruction_parameters.mesh_file);
       grid_in.read_msh(input_file);
 
-      const CylindricalManifold<dim> manifold(2);
+      // Attach a cylindrical manifold object to the triangulation
+      const CylindricalManifold<dim> manifold(2); // Cylinder along the z-axis
       triangulation.set_all_manifold_ids(0);
       triangulation.set_manifold(0, manifold);
+
+      // Check if all cells are tetrahedral elements
+      for (const auto &cell : triangulation.active_cell_iterators())
+        {
+          AssertThrow(
+            cell->n_vertices() == 4,
+            ExcMessage(
+              "The imported mesh has to have only tetrahedral elements"));
+        }
     }
   else
     {
