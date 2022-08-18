@@ -1,5 +1,4 @@
-SET(TEST_LIBRARIES lethe)
-SET(TEST_TARGET gls_navier_stokes_3d)
+set(TEST_TARGET gls_navier_stokes_3d)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
@@ -20,6 +19,4 @@ file(COPY poiseuille_restart_files/poiseuille_restart-output.0005.0000.vtu DESTI
 file(COPY poiseuille_restart_files/poiseuille_restart-output.0010.0000.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}")
 file(COPY poiseuille_restart_files/poiseuille_restart-output.0015.0000.vtu DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/poiseuille_restart.${_build_type}")
 
-
-DEAL_II_PICKUP_TESTS()
-
+deal_ii_pickup_tests()

@@ -1,5 +1,4 @@
-SET(TEST_LIBRARIES lethe)
-SET(TEST_TARGET gls_navier_stokes_2d)
+set(TEST_TARGET gls_navier_stokes_2d)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
@@ -20,5 +19,4 @@ file(COPY taylor-green-vortex-restart_gls_bdf1/restart.triangulation DESTINATION
 file(COPY taylor-green-vortex-restart_gls_bdf1/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}")
 file(COPY taylor-green-vortex-restart_gls_bdf1/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${_build_type}")
 
-DEAL_II_PICKUP_TESTS()
-
+deal_ii_pickup_tests()
