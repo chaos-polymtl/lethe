@@ -1,3 +1,3 @@
 ADD_EXECUTABLE(navier_stokes_parameter_template navier_stokes_parameter_template.cc)
 DEAL_II_SETUP_TARGET(navier_stokes_parameter_template)
-TARGET_LINK_LIBRARIES(navier_stokes_parameter_template lethe-core lethe-solvers)
+TARGET_LINK_LIBRARIES(navier_stokes_parameter_template lethe-solvers)
