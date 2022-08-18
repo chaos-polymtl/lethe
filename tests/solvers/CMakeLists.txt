@@ -1,2 +1,2 @@
-SET (TEST_LIBRARIES lethe-core lethe-solvers)
-DEAL_II_PICKUP_TESTS()
+set(TEST_LIBRARIES lethe-core lethe-solvers)
+deal_ii_pickup_tests()

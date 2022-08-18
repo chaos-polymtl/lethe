@@ -1,5 +1,4 @@
-SET(TEST_LIBRARIES lethe)
-SET(TEST_TARGET gls_nitsche_navier_stokes_22)
+set(TEST_TARGET gls_nitsche_navier_stokes_22)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
@@ -19,8 +18,8 @@ file(COPY two-bar-mixer-restart/restart_solid_01.triangulation_fixed.data DESTIN
 file(COPY two-bar-mixer-restart/restart_solid_triangulation_00.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
 file(COPY two-bar-mixer-restart/restart_solid_triangulation_01.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
 
-DEAL_II_PICKUP_TESTS()
+deal_ii_pickup_tests()
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
-       	set_tests_properties(gls_nitsche_navier_stokes_22/noslip_22.debug PROPERTIES TIMEOUT 1200)
-ENDIF()
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set_tests_properties(gls_nitsche_navier_stokes_22/noslip_22.debug PROPERTIES TIMEOUT 1200)
+endif()

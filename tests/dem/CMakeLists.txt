@@ -1,5 +1,2 @@
-SET (TEST_LIBRARIES lethe-core lethe-dem)
-
-DEAL_II_PICKUP_TESTS()
-
-
+set(TEST_LIBRARIES lethe-core lethe-dem)
+deal_ii_pickup_tests()

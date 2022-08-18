@@ -1,5 +1,4 @@
-SET(TEST_LIBRARIES lethe)
-SET(TEST_TARGET cfd_dem_coupling_3d)
+set(TEST_TARGET cfd_dem_coupling_3d)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
@@ -43,12 +42,11 @@ file(COPY liquid_fluidized_bed_files/dem.triangulation.info DESTINATION "${CMAKE
 file(COPY liquid_fluidized_bed_files/dem.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/liquid_fluidized_bed.${_build_type}")
 file(COPY liquid_fluidized_bed_files/dem.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/liquid_fluidized_bed.${_build_type}")
 
-DEAL_II_PICKUP_TESTS()
+deal_ii_pickup_tests()
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
-       	set_tests_properties(cfd_dem_coupling_3d/particle_sedimentation.debug PROPERTIES TIMEOUT 1200)
-       	set_tests_properties(cfd_dem_coupling_3d/restart_particle_sedimentation.debug PROPERTIES TIMEOUT 1200)
-       	set_tests_properties(cfd_dem_coupling_3d/dynamic_contact_search.debug PROPERTIES TIMEOUT 1200)
-       	set_tests_properties(cfd_dem_coupling_3d/liquid_fluidized_bed.debug PROPERTIES TIMEOUT 2400)
-ENDIF()
-
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set_tests_properties(cfd_dem_coupling_3d/particle_sedimentation.debug PROPERTIES TIMEOUT 1200)
+  set_tests_properties(cfd_dem_coupling_3d/restart_particle_sedimentation.debug PROPERTIES TIMEOUT 1200)
+  set_tests_properties(cfd_dem_coupling_3d/dynamic_contact_search.debug PROPERTIES TIMEOUT 1200)
+  set_tests_properties(cfd_dem_coupling_3d/liquid_fluidized_bed.debug PROPERTIES TIMEOUT 2400)
+endif()
