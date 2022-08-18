@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2020 - by the Lethe authors
+ * Copyright (C) 2022 - by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -177,7 +177,7 @@ private:
                                      const double &  last_constraint);
 
   /**
-   * @brief Finds the position of the particle.
+   * @brief Finds and saves the position of the particle in system coordinates.
    *
    * @param experimental_count experimental_count contains the experimental
    * counts of every detector for a given position.
@@ -193,8 +193,9 @@ private:
                               const double         tol_reference_location);
 
   /**
-   * @brief Finds the position of the particle by doing a local search around
-   * the previously found position's cell's neighbors
+   * @brief Finds and saves the position of the particle in system coordinates
+   * by doing a local search around the previously found position's cell's
+   * neighbors
    *
    * @param experimental_count experimental_count contains the experimental
    * counts of every detector for a given position.

@@ -26,7 +26,7 @@ Here are the default values:
 
 For both ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications, we have to define the mesh:
 
-- ``mesh type``: Type of mesh used. Choosing the ``dealii`` option will generate a ``subdivided_cylinder`` grid, for that reason the number of subdivision in the z direction must be specified with the ``z subdivisions`` parameter. For the ``gmsh`` option, only meshes for a cylindrical geometry with tetrahedral elements are accepted at the moment.
+- ``mesh type``: Type of mesh used. Choosing the ``dealii`` option will generate a ``subdivided_cylinder`` grid, for that reason the number of subdivision in the z direction must be specified with the ``z subdivisions`` parameter. For the ``gmsh`` option, only meshes for a cylindrical geometry with tetrahedral elements are accepted at the moment. Furthermore, the z-axis should be the axis of symmetry of the cylinder.
     Options: ``dealii`` or ``gmsh``
 - ``mesh filename``: Filename of the imported mesh. Specify only if ``gmsh`` was the selected option for the ``mesh type``.
     Options: Any ``.msh`` file
