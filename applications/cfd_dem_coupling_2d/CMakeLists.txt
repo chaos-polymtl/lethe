@@ -1,3 +1,3 @@
 ADD_EXECUTABLE(cfd_dem_coupling_2d cfd_dem_coupling_2d.cc)
 DEAL_II_SETUP_TARGET(cfd_dem_coupling_2d)
-TARGET_LINK_LIBRARIES(cfd_dem_coupling_2d lethe-core lethe-solvers lethe-dem lethe-fem-dem)
+TARGET_LINK_LIBRARIES(cfd_dem_coupling_2d lethe-fem-dem)

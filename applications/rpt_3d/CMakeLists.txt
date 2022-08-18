@@ -1,3 +1,3 @@
 ADD_EXECUTABLE(rpt_3d rpt_3d.cc)
 DEAL_II_SETUP_TARGET(rpt_3d)
-TARGET_LINK_LIBRARIES(rpt_3d lethe-core lethe-rpt)
+TARGET_LINK_LIBRARIES(rpt_3d lethe-rpt)
