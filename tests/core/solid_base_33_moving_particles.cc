@@ -29,8 +29,6 @@
 #include <core/solid_base.h>
 #include <core/solid_objects_parameters.h>
 
-#include <solvers/simulation_parameters.h>
-
 // Tests (with common definitions)
 #include <../tests/tests.h>
 
@@ -49,7 +47,6 @@ test()
 {
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
-  SimulationParameters<3> NSparam;
   auto             param = std::make_shared<Parameters::NitscheObject<3>>();
   ParameterHandler prm;
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> fluid_tria =
