@@ -34,7 +34,7 @@ This subsection contains the general information required for the photon count c
 - ``monte carlo iteration``: Defines the number of traced gamma-rays from each particle position to the detector within the defined solid angle
     Options: Any positive integer *(default value: 1)*
 - ``random number seed``: Seed number for the random number generator, using a particular number allows to run the same series of numbers
-    Options: Any positive integer *(default value: time(NULL))*
+    Options: Any positive integer *(default value: std::time(nullptr))*
 - ``reactor height``: Height of the cylindrical reactor vessel [m]
     Options: Any positive float *(default value: 0.1)*
 - ``reactor radius``: Radius of the cylindrical reactor vessel [m]

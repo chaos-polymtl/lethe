@@ -23,9 +23,9 @@
 
 #include <core/solid_base.h>
 
-#include <deal.II/lac/trilinos_vector.h>
+#include <solvers/gls_navier_stokes.h>
 
-#include "gls_navier_stokes.h"
+#include <deal.II/lac/trilinos_vector.h>
 
 using namespace dealii;
 

@@ -37,8 +37,7 @@
 #include <deal.II/particles/particle_iterator.h>
 #include <deal.II/particles/property_pool.h>
 
-#include <math.h>
-
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <random>
