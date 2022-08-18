@@ -17,6 +17,7 @@ Here are the default values:
         set l2 projection before reconstruction = false
         set experimental counts file            = none
         set export positions file               = none
+        set search extrapolation limit          = 0.005
         set cost function type                  = relative
         set dof handler file                    = none
         set nodal counts file                   = none
@@ -49,6 +50,8 @@ For the ``rpt_fem_reconstruction_3d`` application only, we have to define the fo
     Options: Any ``.dof`` file
 - ``nodal counts file``: List of files containing the nodal counts from each detector.
     Options: Any ``.counts`` file
+- ``search extrapolation limit``: Tolerance when extrapolating from a cell in the reference space to find a particle's position. The default value is set to :math:`0.005`. However, for a subdivided cylinder geometry from deal.II, the default tolerance is set to :math:`1.15̀` times the ``cell_height``.
+    Options: Any positive double
 - ``search type``: Type of search algorithm used to find particle positions. The ``local`` option refers to a search algorithm where the next particle position is searched in a scope around the previously found position's cell. The size of that scope is defined by the ``search cell proximity level`` parameter. And the ``global`` option refers to the algorithm  in which we go through every cell of the grid to find every particle position.
     Options: ``local`` or ``global``
 - ``search cell proximity level``: Level of proximity of the search scope to find the next particle position. A ``search cell proximity level = 1`` includes in the search scope the previously found position's cell and all its adjacent cells. Specify only if ``local`` was the selected option for the ``search type``.
