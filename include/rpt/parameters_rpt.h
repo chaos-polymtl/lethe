@@ -171,6 +171,9 @@ namespace Parameters
       nodal_counts_file; // vector containing the filenames of the files with
                          // the nodal counts from the built dictionary for each
                          // detector (1 file per detector)
+    double extrapolation_tolerance; // tolerance when extrapolating from a cell
+                                    // in the reference space to find the
+                                    // particle's position
 
     // type of cost function applied when evaluating the particle's real
     // position

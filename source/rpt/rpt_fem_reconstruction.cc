@@ -830,16 +830,20 @@ RPTFEMReconstruction<dim>::trajectory()
 {
   // Tolerance or the extrapolation limit in the reference space for a found
   // position
-  double tol_reference_location = 0.005;
+  double tol_reference_location =
+    fem_reconstruction_parameters.extrapolation_tolerance;
 
   if (fem_reconstruction_parameters.mesh_type ==
       Parameters::RPTFEMReconstructionParameters::FEMMeshType::dealii)
     {
-      const unsigned int power =
-        pow(2, fem_reconstruction_parameters.mesh_refinement);
-      const unsigned int n_cell_z =
-        2 * fem_reconstruction_parameters.z_subdivisions * power;
-      tol_reference_location = parameters.reactor_height / n_cell_z * 1.15;
+      if (fem_reconstruction_parameters.extrapolation_tolerance == 0.005)
+        {
+          const unsigned int power =
+            pow(2, fem_reconstruction_parameters.mesh_refinement);
+          const unsigned int n_cell_z =
+            2 * fem_reconstruction_parameters.z_subdivisions * power;
+          tol_reference_location = parameters.reactor_height / n_cell_z * 1.15;
+        }
     }
 
   // Read and store all experimental counts

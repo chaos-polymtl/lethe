@@ -335,6 +335,12 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
       Patterns::Bool(),
       "Run the rpt_l2_projection_3 application before the reconstruction");
 
+    prm.declare_entry(
+      "search extrapolation limit",
+      "0.005",
+      Patterns::Double(),
+      "Tolerance when extrapolating from a cell in the reference space to find the particle's position");
+
     prm.declare_entry("experimental counts file",
                       "none",
                       Patterns::FileName(),
@@ -412,6 +418,7 @@ Parameters::RPTFEMReconstructionParameters::parse_parameters(
       prm.get_bool("l2 projection before reconstruction");
     experimental_counts_file = prm.get("experimental counts file");
     export_positions_file    = prm.get("export positions file");
+    extrapolation_tolerance  = prm.get_double("search extrapolation limit");
 
     const std::string fem_cf = prm.get("cost function type");
     if (fem_cf == "absolute")
