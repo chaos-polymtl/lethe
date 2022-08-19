@@ -1,7 +1,7 @@
 #include <rpt/particle_detector_interactions.h>
-#include <stdlib.h>
 
 #include <cmath>
+#include <cstdlib>
 
 template <int dim>
 void

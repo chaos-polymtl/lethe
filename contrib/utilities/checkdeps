@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+# * checkdeps — check for unintended dependencies in Lethe libraries
+#
+# SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# * Synopsis
+#
+# checkdeps
+#
+# * Description
+#
+# The checkdeps utility checks Lethe's core, dem, solvers, fem-dem and
+# rpt libraries for unintended dependencies, including circular
+# dependencies.
+# Run it from the top-level directory of Lethe, and it prints the
+# filename, line number and line of every include directive that refers
+# to a potentially problematic header.
+#
+# The checkdeps utility considers all headers that end in one of the
+# common C++ header extensions .h, .h++, .hh, .hpp, .hxx and .H, and if
+# their prefixes don't match any of a list of known dependencies, they
+# are considered unintended.
+# In particular, standard C++ headers (cmath and others) are not printed
+# because they have no extension, so all C compatibility headers (math.h
+# and others) should be renamed to their standard C++ form.
+# Also, Lethe headers should be included through the angle-bracket form,
+# with a fully qualified path, e.g., as <core/parameters.h> rather than
+# "parameters.h".
+#
+# * Exit status
+#
+# The checkdeps utility exits 0 on success, and 1 if it finds any
+# problematic headers.
+#
+# * Code
+#
+# shellcheck disable=SC1112
+#
+# ** Library dependencies
+#
+# These variables are Awk regular expressions — i.e., with escaped
+# slashes — that match prefixes of the paths of headers included by
+# Lethe's various libraries.
+
+# Remove sys/stat.h when migrating to C++17 filesystem header.
+common_deps='deal[.]II[/]|boost[/]|sys[/]stat[.]h[">]'
+core_deps="$common_deps"
+dem_deps="$common_deps|core[/]"
+solvers_deps="$common_deps|core[/]"
+fem_dem_deps="$common_deps|core[/]|dem[/]|solvers[/]"
+rpt_deps="$common_deps|core[/]"
+# Many false positives; skip for now.
+#all_deps="$common_deps|core[/]|dem[/]|solvers[/]|fem-dem[/]|rpt[/]"
+
+# ** Checking a library
+
+header_exts='[.](h(|\+\+|h|pp|xx)|H)' # Common C++ header extensions
+awk_pre='/^[ \t]*#[ \t]*include[ \t]*["<][^">]*'"$header_exts"'[">]/ && !/["<]('
+# shellcheck disable=SC2016
+awk_post=')/ {printf "%s:%d:%s\n", FILENAME, FNR, $0}'
+
+# Print the headers included by library $1 that are unintended
+# dependencies, i.e., missing from the known dependencies $2.
+# If directories $3 and further are provided, checklib ignores $1 and
+# searches the directories instead.
+#
+# Uses global tmpfile to write intermediate search results to.
+# Sets global badpath to 1 if the find call fails,
+# and global foundep to 1 if it finds unintended dependencies.
+checklib() {
+  local lib="$1"; shift
+  local deps="$1"; shift
+  if test "$#" -le 0; then
+    set -- "source/$lib" "include/$lib"
+    deps="${lib}[/]|$deps"
+  fi
+  find "${@/#-/./-}" \( -name '*.cc' -o -name '*.h' \) -exec \
+    awk "$awk_pre($deps)$awk_post" '{}' + >"$tmpfile" || badpath=1
+  if test -s "$tmpfile"; then
+    foundep=1
+    cat "$tmpfile"
+  fi
+}
+
+# ** Main logic
+
+main() {
+  if test "$#" -gt 0; then
+    printf 'checkdeps: excess arguments: %s\n' "$*" >&2
+    return 1
+  fi
+  tmpfile="$(mktemp)"
+  if test "$?" -ne 0; then
+    printf 'checkdeps: couldn'\''t write to ‘%s’, try adjusting its permissions\n' "${TMPDIR:-/tmp}" >&2
+    return 1
+  fi
+  badpath=0
+  foundep=0
+  checklib core "$core_deps"
+  checklib dem "$dem_deps"
+  checklib solvers "$solvers_deps"
+  checklib fem-dem "$fem_dem_deps"
+  checklib rpt "$rpt_deps"
+  #checklib - "$all_deps" applications prototypes tests
+  rm -f "$tmpfile"
+  if test "$badpath" -ne 0; then
+    printf 'checkdeps: missed some directories, try running from project root\n' >&2
+    return 1
+  fi
+  return "$foundep"
+}
+
+main "$@"
