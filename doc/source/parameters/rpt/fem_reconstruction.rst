@@ -12,7 +12,7 @@ Here are the default values:
     subsection fem reconstruction
         set mesh type                           = dealii
         set mesh filename                       = none
-        set z subdivisions                      = 0
+        set z subdivisions                      = 1
         set mesh refinement                     = 0
         set l2 projection before reconstruction = false
         set experimental counts file            = none

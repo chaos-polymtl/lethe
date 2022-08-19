@@ -320,7 +320,7 @@ Parameters::RPTFEMReconstructionParameters::declare_parameters(
                       "Imported mesh filename");
 
     prm.declare_entry("z subdivisions",
-                      "0",
+                      "1",
                       Patterns::Integer(),
                       "Number of subdivisions of the initial grid in z");
 
