@@ -13,7 +13,6 @@
  *
  * ---------------------------------------------------------------------
  *
- * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
 #include <rpt/rpt_calculating_parameters.h>
