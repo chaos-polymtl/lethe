@@ -343,7 +343,6 @@ RPTFEMReconstruction<dim>::L2_project()
   {
     TimerOutput::Scope t(computing_timer, "assigning_detector_positions");
     detectors = assign_detector_positions<dim>(detector_parameters);
-    //    assign_detector_positions();
   }
   n_detector = detectors.size();
   std::cout << "Number of detectors identified: " << n_detector << std::endl;
