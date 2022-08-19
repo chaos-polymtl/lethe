@@ -21,8 +21,7 @@
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
 
-#include <math.h>
-
+#include <cmath>
 #include <iostream>
 #include <vector>
 

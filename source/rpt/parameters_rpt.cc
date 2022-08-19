@@ -1,6 +1,6 @@
 #include <rpt/parameters_rpt.h>
-#include <time.h>
 
+#include <ctime>
 #include <sstream>
 
 void
@@ -98,7 +98,7 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
       verbosity = Verbosity::quiet;
 
     seed = (prm.get("random number seed") == "auto") ?
-             time(NULL) :
+             std::time(nullptr) :
              prm.get_integer("random number seed");
   }
   prm.leave_subsection();
