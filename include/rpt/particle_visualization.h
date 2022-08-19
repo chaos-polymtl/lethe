@@ -12,10 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Authors: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
-*/
+ */
 
 
 #ifndef LETHE_PARTICLE_VISUALIZATION_H

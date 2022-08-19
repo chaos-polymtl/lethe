@@ -12,11 +12,9 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
- * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2021-
  */
 
-/*
+/**
  *  This file defines parameters needed for the RPT simulation in the Parameters
  * namespace.
  */
