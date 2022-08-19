@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2021 by the Lethe authors
+ * Copyright (C) 2019 - by the Lethe authors
  *
  * This file is part of the Lethe library
  *
