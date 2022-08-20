@@ -219,7 +219,7 @@ RPTL2Projection<dim>::solve_linear_system(unsigned detector_no)
 {
   TimerOutput::Scope t(computing_timer, "solve_linear_system");
 
-  SolverControl   solver_control(solution.size(), 1e-12);
+  SolverControl   solver_control(solution.size(), 1e-8);
   LA::SolverGMRES solver(solver_control);
 
   LA::MPI::PreconditionILU                 preconditioner;

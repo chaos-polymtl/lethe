@@ -284,8 +284,8 @@ private:
    * particle's real position
    * @param reference_location Position of the particle in reference
    * coordinates
-   * @param position_found true' if the particle's position was found and
-   * 'false' if the particle's position couldn't be found
+   * @param position_found Bool,'true' if the particle's position was found,
+   * and 'false' if the particle's position couldn't be found
    * @param real_location Position of the particle in system coordinates
    */
   void
