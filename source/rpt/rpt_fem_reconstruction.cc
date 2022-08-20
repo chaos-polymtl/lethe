@@ -2,6 +2,7 @@
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/work_stream.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_values.h>
@@ -24,6 +25,7 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/rpt_fem_reconstruction.h>
 
+#include <cassert>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -31,26 +33,72 @@
 
 using namespace dealii;
 
-
 template <int dim>
-RPTFEMReconstruction<dim>::AssemblyScratchData::AssemblyScratchData(
-  const FiniteElement<dim> &fe,
-  const unsigned int        no_detector)
-  : fe_values(fe,
-              QGaussSimplex<dim>(fe.degree + 1),
-              update_values | update_quadrature_points | update_JxW_values)
-  , detector_id(no_detector)
-{}
+void
+RPTL2Projection<dim>::setup_triangulation()
+{
+  if (fem_reconstruction_parameters.mesh_type ==
+      Parameters::RPTFEMReconstructionParameters::FEMMeshType::gmsh)
+    {
+      // Warn user
+      pcout << "-----------------------------------------------" << std::endl;
+      pcout << "At the moment, the application calculates" << std::endl;
+      pcout << "the gamma-ray attenuation in cylindrical" << std::endl;
+      pcout << "vessels only. Using another type of geometry" << std::endl;
+      pcout << "would yield in committing an error when" << std::endl;
+      pcout << "calculating photon counts. Furthermore, the" << std::endl;
+      pcout << "axis of symmetry of the cylinder should" << std::endl;
+      pcout << "be oriented in z-direction." << std::endl;
+      pcout << "-----------------------------------------------" << std::endl;
 
-template <int dim>
-RPTFEMReconstruction<dim>::AssemblyScratchData::AssemblyScratchData(
-  const AssemblyScratchData &scratch)
-  : fe_values(scratch.fe_values.get_fe(),
-              scratch.fe_values.get_quadrature(),
-              update_values | update_quadrature_points | update_JxW_values)
-  , detector_id(scratch.detector_id)
-{}
+      // Import and attach mesh to triangulation
+      GridIn<dim> grid_in;
+      grid_in.attach_triangulation(triangulation);
+      std::ifstream input_file(fem_reconstruction_parameters.mesh_file);
+      grid_in.read_msh(input_file);
 
+      // Attach a cylindrical manifold object to the triangulation
+      const CylindricalManifold<dim> manifold(2); // Cylinder along the z-axis
+      triangulation.set_all_manifold_ids(0);
+      triangulation.set_manifold(0, manifold);
+
+      // Check if all cells are tetrahedral elements
+      for (const auto &cell : triangulation.active_cell_iterators())
+        {
+          AssertThrow(
+            cell->n_vertices() == 4,
+            ExcMessage(
+              "The imported mesh has to have only tetrahedral elements"));
+        }
+    }
+  else
+    {
+      Triangulation<dim> temp_triangulation;
+      Triangulation<dim> flat_temp_triangulation;
+
+      GridGenerator::subdivided_cylinder(
+        temp_triangulation,
+        fem_reconstruction_parameters.z_subdivisions,
+        parameters.reactor_radius,
+        parameters.reactor_height * 0.5);
+      temp_triangulation.refine_global(
+        fem_reconstruction_parameters.mesh_refinement);
+
+      // Flatten the triangulation
+      GridGenerator::flatten_triangulation(temp_triangulation,
+                                           flat_temp_triangulation);
+      // Convert to simplex elements
+      GridGenerator::convert_hypercube_to_simplex_mesh(flat_temp_triangulation,
+                                                       triangulation);
+      triangulation.set_all_manifold_ids(0);
+
+      // Grid transformation
+      Tensor<1, dim, double> axis({0, 1, 0});
+      GridTools::rotate(axis, M_PI_2, triangulation);
+      Tensor<1, dim> shift_vector({0, 0, parameters.reactor_height * 0.5});
+      GridTools::shift(shift_vector, triangulation);
+    }
+}
 
 template <int dim>
 void
@@ -127,254 +175,301 @@ RPTFEMReconstruction<dim>::setup_triangulation()
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::setup_system()
+RPTL2Projection<dim>::setup_system()
 {
   TimerOutput::Scope t(computing_timer, "setup_system");
 
+  // Partition triangulation between the processes
+  GridTools::partition_triangulation(
+    Utilities::MPI::n_mpi_processes(mpi_communicator), triangulation);
+
   dof_handler.distribute_dofs(fe);
-
-  system_rhs.reinit(dof_handler.n_dofs());
-  DynamicSparsityPattern dsp(dof_handler.n_dofs());
-  DoFTools::make_sparsity_pattern(dof_handler, dsp);
-  sparsity_pattern.copy_from(dsp);
-  system_matrix.reinit(sparsity_pattern);
-
-  nodal_counts.resize(n_detector);
-  for (auto &nodal_counts_for_one_detector : nodal_counts)
-    {
-      nodal_counts_for_one_detector.reinit(dof_handler.n_dofs());
-    }
+  DoFRenumbering::subdomain_wise(dof_handler);
 
   constraints.clear();
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
   constraints.close();
+
+  DynamicSparsityPattern dsp(dof_handler.n_dofs(), dof_handler.n_dofs());
+  DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints, false);
+
+  const std::vector<IndexSet> locally_owned_dofs_per_proc =
+    DoFTools::locally_owned_dofs_per_subdomain(dof_handler);
+
+  // Get the DoFs owned by each process
+  const IndexSet locally_owned_dofs =
+    locally_owned_dofs_per_proc[Utilities::MPI::this_mpi_process(
+      mpi_communicator)];
+
+  nodal_counts.resize(n_detector);
+  for (Vector<double> &nodal_counts_for_one_detector : nodal_counts)
+    nodal_counts_for_one_detector.reinit(locally_owned_dofs.size());
+
+  system_matrix.reinit(locally_owned_dofs,
+                       locally_owned_dofs,
+                       dsp,
+                       mpi_communicator);
+  solution.reinit(locally_owned_dofs, mpi_communicator);
+  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
 }
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::solve_linear_system(unsigned detector_no)
+RPTL2Projection<dim>::solve_linear_system(unsigned detector_no)
 {
   TimerOutput::Scope t(computing_timer, "solve_linear_system");
 
-  SolverControl                          solver_control(1000, 1e-12);
-  SolverCG<Vector<double>>               solver(solver_control);
-  PreconditionSSOR<SparseMatrix<double>> preconditioner;
-  preconditioner.initialize(system_matrix, 1.2);
-  solver.solve(system_matrix,
-               nodal_counts[detector_no],
-               system_rhs,
-               preconditioner);
-  constraints.distribute(nodal_counts[detector_no]);
-}
+  SolverControl   solver_control(solution.size(), 1e-12);
+  LA::SolverGMRES solver(solver_control);
 
+  LA::MPI::PreconditionILU                 preconditioner;
+  LA::MPI::PreconditionILU::AdditionalData data;
+  preconditioner.initialize(system_matrix, data);
 
-template <int dim>
-void
-RPTFEMReconstruction<dim>::assemble_local_system(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  AssemblyScratchData &                                 sd,
-  AssemblyCopyData &                                    copy_data)
-{
-  unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+  solver.solve(system_matrix, solution, system_rhs, preconditioner);
 
-  copy_data.cell_matrix.reinit(dofs_per_cell, dofs_per_cell);
-  copy_data.cell_rhs.reinit(dofs_per_cell);
+  Vector<double> localized_solution(
+    solution); // constructor Trilinos MPI Vector -> deal.II Vector
 
-  copy_data.local_dof_indices.resize(dofs_per_cell);
-
-  auto &fe_values = sd.fe_values;
-
-  fe_values.reinit(cell);
-  for (const unsigned int q_index : fe_values.quadrature_point_indices())
-    {
-      Point<dim>         q_point_position = fe_values.quadrature_point(q_index);
-      RadioParticle<dim> particle(q_point_position, 0);
-
-      ParticleDetectorInteractions<dim> p_d_interaction(
-        particle, detectors[sd.detector_id], parameters);
-
-      double count = p_d_interaction.calculate_count();
-
-      for (const unsigned int i : fe_values.dof_indices())
-        {
-          for (const unsigned int j : fe_values.dof_indices())
-            {
-              copy_data.cell_matrix(i, j) +=
-                (fe_values.shape_value(i, q_index) * // phi_i(x_q)
-                 fe_values.shape_value(j, q_index) * // phi_j(x_q)
-                 fe_values.JxW(q_index));            // dx
-            }
-          copy_data.cell_rhs(i) +=
-            (count *                             // f(x)
-             fe_values.shape_value(i, q_index) * // phi_i(x_q)
-             fe_values.JxW(q_index));            // dx
-        }
-    }
-  cell->get_dof_indices(copy_data.local_dof_indices);
+  constraints.distribute(localized_solution);
+  nodal_counts[detector_no] = localized_solution;
 }
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::copy_local_to_global(
-  const AssemblyCopyData &copy_data)
-{
-  constraints.distribute_local_to_global(copy_data.cell_matrix,
-                                         copy_data.cell_rhs,
-                                         copy_data.local_dof_indices,
-                                         system_matrix,
-                                         system_rhs);
-}
-
-template <int dim>
-void
-RPTFEMReconstruction<dim>::assemble_system(unsigned no_detector)
+RPTL2Projection<dim>::assemble_system(unsigned no_detector)
 {
   TimerOutput::Scope t(computing_timer, "assemble_system");
+
   system_rhs    = 0;
   system_matrix = 0;
 
-  WorkStream::run(dof_handler.begin_active(),
-                  dof_handler.end(),
-                  *this,
-                  &RPTFEMReconstruction::assemble_local_system,
-                  &RPTFEMReconstruction::copy_local_to_global,
-                  AssemblyScratchData(fe, no_detector),
-                  AssemblyCopyData());
-}
+  const QGaussSimplex<dim> quadrature_formula(fe.degree + 1);
 
-template <int dim>
-void
-RPTFEMReconstruction<dim>::output_results()
-{
-  TimerOutput::Scope t(computing_timer, "output_results_vtu");
+  FEValues<dim> fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_quadrature_points |
+                            update_JxW_values);
 
-  // Export ".vtu" file with the nodal counts
-  DataOut<dim> data_out;
-  data_out.attach_dof_handler(dof_handler);
-  for (unsigned d = 0; d < n_detector; ++d)
-    {
-      data_out.add_data_vector(nodal_counts[d],
-                               "detector_" + Utilities::to_string(d, 2));
-    }
-  data_out.build_patches();
-  std::ofstream output("solution.vtu");
-  data_out.write_vtu(output);
-}
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
 
-template <int dim>
-void
-RPTFEMReconstruction<dim>::output_raw_results()
-{
-  TimerOutput::Scope t(computing_timer, "output_results_raw");
+  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>     cell_rhs(dofs_per_cell);
 
-  std::map<types::global_dof_index, Point<dim>> dof_index_and_location;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      for (unsigned int v = 0; v < cell->n_vertices(); ++v)
+      if (cell->subdomain_id() ==
+          Utilities::MPI::this_mpi_process(mpi_communicator))
         {
-          auto dof_index       = cell->vertex_dof_index(v, 0);
-          auto vertex_location = cell->vertex(v);
-          std::pair<types::global_dof_index, Point<dim>> dof_and_vertex(
-            dof_index, vertex_location);
-          dof_index_and_location.insert(dof_and_vertex);
-        }
-    }
+          cell_matrix = 0;
+          cell_rhs    = 0;
+          fe_values.reinit(cell);
 
-  std::string filename = "raw_counts.dat";
-
-  // Open a file
-  std::ofstream myfile;
-  std::string   sep = " ";
-  myfile.open(filename);
-  myfile << "vertex_positions_x vertex_position_y vertex_position_z ";
-  for (unsigned int i = 0; i < n_detector; ++i)
-    myfile << "detector_" + Utilities::to_string(i, 2) + sep;
-  myfile << std::endl;
-
-  // Output in file and on terminal
-  if (parameters.verbosity == Parameters::Verbosity::verbose)
-    {
-      for (auto it = dof_index_and_location.begin();
-           it != dof_index_and_location.end();
-           ++it)
-        {
-          for (unsigned p = 0; p < dim; ++p)
-            myfile << it->second[p] << sep;
-
-          for (unsigned int d = 0; d < n_detector; ++d)
+          for (const unsigned int q_index :
+               fe_values.quadrature_point_indices())
             {
-              myfile << nodal_counts[d][it->first] << sep;
-              std::cout << nodal_counts[d][it->first] << sep;
-            }
+              Point<dim> q_point_position = fe_values.quadrature_point(q_index);
+              RadioParticle<dim> particle(q_point_position, 0);
 
-          myfile << "\n";
-          std::cout << std::endl;
+              ParticleDetectorInteractions<dim> p_q_interaction(
+                particle, detectors[no_detector], parameters);
+
+              double count = p_q_interaction.calculate_count();
+
+              for (const unsigned int i : fe_values.dof_indices())
+                {
+                  for (const unsigned int j : fe_values.dof_indices())
+                    {
+                      cell_matrix(i, j) +=
+                        (fe_values.shape_value(i, q_index) * // phi_i(x_q)
+                         fe_values.shape_value(j, q_index) * // phi_j(x_q)
+                         fe_values.JxW(q_index));            // dx
+                    }
+                  cell_rhs(i) +=
+                    (count *                             // f(x)
+                     fe_values.shape_value(i, q_index) * // phi_i(x_q)
+                     fe_values.JxW(q_index));            // dx
+                }
+            }
+          cell->get_dof_indices(local_dof_indices);
+          constraints.distribute_local_to_global(cell_matrix,
+                                                 cell_rhs,
+                                                 local_dof_indices,
+                                                 system_matrix,
+                                                 system_rhs);
         }
     }
-  else // Output in file only
-    {
-      for (auto it = dof_index_and_location.begin();
-           it != dof_index_and_location.end();
-           ++it)
-        {
-          for (unsigned p = 0; p < dim; ++p)
-            myfile << it->second[p] << sep;
-
-          for (unsigned int d = 0; d < n_detector; ++d)
-            {
-              myfile << nodal_counts[d][it->first] << sep;
-            }
-
-          myfile << "\n";
-        }
-    }
-  myfile.close();
+  system_matrix.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
 }
-
 
 template <int dim>
 void
-RPTFEMReconstruction<dim>::L2_project()
+RPTL2Projection<dim>::output_results()
 {
-  MultithreadInfo::set_thread_limit(1);
-  std::cout << "***********************************************" << std::endl;
-  std::cout << "Assigning detector positions" << std::endl;
+  TimerOutput::Scope t(computing_timer, "output_results_vtu");
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::ofstream output("solution.vtk");
+
+      DataOut<dim> data_out;
+      data_out.attach_dof_handler(dof_handler);
+
+      for (unsigned d = 0; d < n_detector; ++d)
+        {
+          data_out.add_data_vector(nodal_counts[d],
+                                   "detector_" + Utilities::to_string(d, 2));
+        }
+      data_out.build_patches();
+      data_out.write_vtk(output);
+    }
+}
+
+template <int dim>
+void
+RPTL2Projection<dim>::output_raw_results()
+{
+  TimerOutput::Scope t(computing_timer, "output_results_raw");
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::map<types::global_dof_index, Point<dim>> dof_index_and_location;
+
+      for (const auto &cell : dof_handler.active_cell_iterators())
+        {
+          for (unsigned int v = 0; v < cell->n_vertices(); ++v)
+            {
+              auto dof_index       = cell->vertex_dof_index(v, 0);
+              auto vertex_location = cell->vertex(v);
+              std::pair<types::global_dof_index, Point<dim>> dof_and_vertex(
+                dof_index, vertex_location);
+              dof_index_and_location.insert(dof_and_vertex);
+            }
+        }
+
+
+      std::string filename = "raw_counts.dat";
+
+      // Open a file
+      std::ofstream myfile;
+      std::string   sep = " ";
+      myfile.open(filename);
+      myfile << "vertex_positions_x vertex_position_y vertex_position_z ";
+      for (unsigned int i = 0; i < n_detector; ++i)
+        myfile << "detector_" + Utilities::to_string(i, 2) + sep;
+      myfile << std::endl;
+
+      // Output in file and on terminal
+      if (parameters.verbosity == Parameters::Verbosity::verbose)
+        {
+          for (auto it = dof_index_and_location.begin();
+               it != dof_index_and_location.end();
+               ++it)
+            {
+              for (unsigned p = 0; p < dim; ++p)
+                myfile << it->second[p] << sep;
+
+              for (unsigned int d = 0; d < n_detector; ++d)
+                {
+                  myfile << nodal_counts[d][it->first] << sep;
+                  std::cout << nodal_counts[d][it->first] << sep;
+                }
+
+              myfile << "\n";
+              std::cout << std::endl;
+            }
+        }
+      else // Output in file only
+        {
+          for (auto it = dof_index_and_location.begin();
+               it != dof_index_and_location.end();
+               ++it)
+            {
+              for (unsigned p = 0; p < dim; ++p)
+                myfile << it->second[p] << sep;
+
+              for (unsigned int d = 0; d < n_detector; ++d)
+                {
+                  myfile << nodal_counts[d][it->first] << sep;
+                }
+
+              myfile << "\n";
+            }
+        }
+      myfile.close();
+    }
+}
+
+template <int dim>
+void
+RPTL2Projection<dim>::checkpoint()
+{
+  TimerOutput::Scope t(computing_timer, "checkpoint");
+
+  // Save dof_handler object
+  {
+    std::ofstream                 ofs("temp_dof_handler.dof");
+    boost::archive::text_oarchive oa(ofs);
+    dof_handler.save(oa, 0);
+  }
+
+  // Save nodal_counts_per_detector
+  {
+    for (unsigned int i = 0; i < n_detector; ++i)
+      {
+        std::string                   filename("temp_nodal_counts_detector" +
+                             Utilities::to_string(i, 2) + ".counts");
+        std::ofstream                 ofs(filename);
+        boost::archive::text_oarchive oa(ofs);
+        nodal_counts[i].save(oa, 0);
+      }
+  }
+}
+
+template <int dim>
+void
+RPTL2Projection<dim>::L2_project()
+{
+  pcout << "***********************************************" << std::endl;
+  pcout << "Assigning detector positions" << std::endl;
   {
     TimerOutput::Scope t(computing_timer, "assigning_detector_positions");
     detectors = assign_detector_positions<dim>(detector_parameters);
   }
   n_detector = detectors.size();
-  std::cout << "Number of detectors identified: " << n_detector << std::endl;
-  std::cout << "***********************************************" << std::endl;
-  std::cout << "Setting up the grid" << std::endl;
+  pcout << "Number of detectors identified: " << n_detector << std::endl;
+  pcout << "***********************************************" << std::endl;
+  pcout << "Setting up the grid" << std::endl;
   setup_triangulation();
-  std::cout << "Number of active cells: " << triangulation.n_active_cells()
-            << std::endl;
-  std::cout << "***********************************************" << std::endl;
+  pcout << "Number of active cells: " << triangulation.n_active_cells()
+        << std::endl;
+  pcout << "***********************************************" << std::endl;
 
   setup_system();
 
   for (unsigned d = 0; d < n_detector; ++d)
     {
-      std::cout << "Detector_id: " << Utilities::to_string(d, 2) << std::endl;
-      std::cout << "Assembling system" << std::endl;
+      pcout << "Detector_id: " << Utilities::to_string(d, 2) << std::endl;
+      pcout << "Assembling system" << std::endl;
       assemble_system(d);
-      std::cout << "Solving system" << std::endl;
+      pcout << "Solving system" << std::endl;
       solve_linear_system(d);
-      std::cout << "System solved" << std::endl;
-      std::cout << "-----------------------------------------------"
-                << std::endl;
+      pcout << "System solved" << std::endl;
+      pcout << "-----------------------------------------------" << std::endl;
     }
-  std::cout << "Outputting results" << std::endl;
+  pcout << "Outputting results" << std::endl;
   output_results();
   output_raw_results();
-  std::cout << "-----------------------------------------------" << std::endl;
-  std::cout << "Saving dof handler and nodal counts" << std::endl;
+  pcout << "-----------------------------------------------" << std::endl;
+  pcout << "Saving dof handler and nodal counts" << std::endl;
   checkpoint();
-  std::cout << "***********************************************" << std::endl;
-  std::cout << "Done!" << std::endl;
-  std::cout << "***********************************************" << std::endl;
+  pcout << "***********************************************" << std::endl;
+  pcout << "Done!" << std::endl;
+  pcout << "***********************************************" << std::endl;
 
   // Disable the output of time clock
   if (!fem_reconstruction_parameters.verbose_clock_fem_reconstruction)
@@ -582,17 +677,75 @@ RPTFEMReconstruction<dim>::calculate_cost(
   return cost;
 }
 
+template <int dim>
+void
+RPTFEMReconstruction<dim>::search_position_in_reference_space(
+  std::vector<std::vector<double>> &count_from_all_detectors,
+  std::vector<double> &             experimental_count,
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  const double &                                        tol_reference_location,
+  double &                                              max_cost,
+  Vector<double> &                                      reference_location,
+  bool &                                                position_found,
+  Point<dim> &                                          real_location)
+{
+  double last_constraint_reference_location;
+  double norm_error_coordinates;
+  double calculated_cost;
+
+
+  // Solve linear system to find the location in reference coordinates
+  reference_location = assemble_matrix_and_rhs<dim>(
+    count_from_all_detectors,
+    experimental_count,
+    fem_reconstruction_parameters.fem_cost_function);
+
+  // 4th constraint on the location of the particle in reference coordinates
+  last_constraint_reference_location =
+    1 - reference_location[0] - reference_location[1] - reference_location[2];
+
+  // Evaluate the error of the reference position (Is it outside the
+  // reference tetrahedron ?)
+  norm_error_coordinates =
+    calculate_reference_location_error(reference_location,
+                                       last_constraint_reference_location);
+
+  // Extrapolation limit
+  if (norm_error_coordinates < tol_reference_location)
+    {
+      // Calculate cost with the selected cost function
+      calculated_cost = calculate_cost(cell,
+                                       reference_location,
+                                       last_constraint_reference_location,
+                                       experimental_count);
+      // Check if the new cost is lower than the previously stored
+      // real_location's
+      if (calculated_cost < max_cost)
+        {
+          max_cost               = calculated_cost;
+          position_found         = true;
+          previous_position_cell = cell;
+
+          // Evaluate the real location of the particle
+          for (unsigned int v = 0; v < cell->n_vertices(); ++v)
+            {
+              if (v == 0)
+                real_location = cell->vertex(v);
+              else
+                real_location += reference_location[v - 1] *
+                                 (cell->vertex(v) - cell->vertex(0));
+            }
+        }
+    }
+}
 
 template <int dim>
 bool
 RPTFEMReconstruction<dim>::find_position_global_search(
-  std::vector<double> &experimental_count,
+  std::vector<double> &experimental_counts,
   const double         tol_reference_location)
 {
-  double                           max_cost_function = DBL_MAX;
-  double                           last_constraint_reference_location;
-  double                           norm_error_coordinates;
-  double                           calculated_cost;
+  double                           max_cost       = DBL_MAX;
   bool                             position_found = false;
   Point<dim>                       real_location;
   Vector<double>                   reference_location;
@@ -611,75 +764,33 @@ RPTFEMReconstruction<dim>::find_position_global_search(
               count_from_all_detectors[d][v] = nodal_counts[d][dof_index];
             }
         }
-
-      // Solve linear system to find the location in reference coordinates
-      reference_location = assemble_matrix_and_rhs<dim>(
-        count_from_all_detectors,
-        experimental_count,
-        fem_reconstruction_parameters.fem_cost_function);
-
-      // 4th constraint on the location of the particle in reference coordinates
-      last_constraint_reference_location = 1 - reference_location[0] -
-                                           reference_location[1] -
-                                           reference_location[2];
-
-      // Evaluate the error of the reference position (Is it outside the
-      // reference tetrahedron ?)
-      norm_error_coordinates =
-        calculate_reference_location_error(reference_location,
-                                           last_constraint_reference_location);
-
-      // Extrapolation limit
-      if (norm_error_coordinates < tol_reference_location)
-        {
-          // Calculate cost with the selected cost function
-          calculated_cost = calculate_cost(cell,
-                                           reference_location,
-                                           last_constraint_reference_location,
-                                           experimental_count);
-          // Check if the new cost is lower than the previously stored
-          // real_location's
-          if (calculated_cost < max_cost_function)
-            {
-              max_cost_function      = calculated_cost;
-              position_found         = true;
-              previous_position_cell = cell;
-
-              // Evaluate the real location of the particle
-              for (unsigned int v = 0; v < cell->n_vertices(); ++v)
-                {
-                  if (v == 0)
-                    real_location = cell->vertex(v);
-                  else
-                    real_location += reference_location[v - 1] *
-                                     (cell->vertex(v) - cell->vertex(0));
-                }
-            }
-        }
+      search_position_in_reference_space(count_from_all_detectors,
+                                         experimental_counts,
+                                         cell,
+                                         tol_reference_location,
+                                         max_cost,
+                                         reference_location,
+                                         position_found,
+                                         real_location);
     }
   found_positions.push_back(real_location);
-  if (position_found)
-    return true;
-  else
-    return false;
+  return position_found;
 }
 
 template <int dim>
 bool
 RPTFEMReconstruction<dim>::find_position_local_search(
-  std::vector<double> &                                 experimental_count,
-  const double                                          tol_reference_location,
-  const typename DoFHandler<dim>::active_cell_iterator &cell)
+  std::vector<double> &experimental_counts,
+  const double         tol_reference_location)
 {
-  double                           max_cost_function = DBL_MAX;
-  double                           last_constraint_reference_location;
-  double                           norm_error_coordinates;
-  double                           calculated_cost;
+  double                           max_cost       = DBL_MAX;
   bool                             position_found = false;
   Point<dim>                       real_location;
   Vector<double>                   reference_location;
   std::vector<std::vector<double>> count_from_all_detectors(
     n_detector, std::vector<double>(4));
+  const typename DoFHandler<dim>::active_cell_iterator cell =
+    previous_position_cell;
 
   // Find cells adjacent to the cell were found the previous position
   std::vector<typename DoFHandler<dim>::active_cell_iterator> adjacent_cells;
@@ -751,60 +862,27 @@ RPTFEMReconstruction<dim>::find_position_local_search(
             }
         }
 
-      // Solve linear system to find the location in reference coordinates
-      reference_location = assemble_matrix_and_rhs<dim>(
-        count_from_all_detectors,
-        experimental_count,
-        fem_reconstruction_parameters.fem_cost_function);
-
-      // 4th constraint on the location of the particle in reference coordinates
-      last_constraint_reference_location = 1 - reference_location[0] -
-                                           reference_location[1] -
-                                           reference_location[2];
-
-      // Evaluate the error of the reference position (Is it outside the
-      // reference tetrahedron ?)
-      norm_error_coordinates =
-        calculate_reference_location_error(reference_location,
-                                           last_constraint_reference_location);
-
-      // Extrapolation limit
-      if (norm_error_coordinates < tol_reference_location)
-        {
-          // Calculate cost with the selected cost function
-          calculated_cost = calculate_cost(adjacent_cell,
-                                           reference_location,
-                                           last_constraint_reference_location,
-                                           experimental_count);
-          // Check if the new cost is lower than the previously stored
-          // real_location's
-          if (calculated_cost < max_cost_function)
-            {
-              position_found         = true;
-              max_cost_function      = calculated_cost;
-              previous_position_cell = adjacent_cell;
-
-              // Evaluate the real location of the particle
-              for (unsigned int v = 0; v < adjacent_cell->n_vertices(); ++v)
-                {
-                  if (v == 0)
-                    real_location = adjacent_cell->vertex(v);
-                  else
-                    real_location +=
-                      reference_location[v - 1] *
-                      (adjacent_cell->vertex(v) - adjacent_cell->vertex(0));
-                }
-            }
-        }
+      search_position_in_reference_space(count_from_all_detectors,
+                                         experimental_counts,
+                                         adjacent_cell,
+                                         tol_reference_location,
+                                         max_cost,
+                                         reference_location,
+                                         position_found,
+                                         real_location);
     }
 
   if (position_found)
     {
       found_positions.push_back(real_location);
-      return true;
+      return position_found;
     }
   else
-    return false;
+    {
+      position_found = find_position_global_search(experimental_counts,
+                                                   tol_reference_location);
+      return position_found;
+    }
 }
 
 template <int dim>
@@ -853,15 +931,11 @@ RPTFEMReconstruction<dim>::trajectory()
             if (adjacent_cell_search)
               adjacent_cell_search =
                 find_position_local_search(experimental_counts,
-                                           tol_reference_location,
-                                           previous_position_cell);
-
-            if (!adjacent_cell_search)
-              {
-                adjacent_cell_search =
-                  find_position_global_search(experimental_counts,
-                                              tol_reference_location);
-              }
+                                           tol_reference_location);
+            else
+              adjacent_cell_search =
+                find_position_global_search(experimental_counts,
+                                            tol_reference_location);
           }
       }
     else
@@ -877,31 +951,6 @@ RPTFEMReconstruction<dim>::trajectory()
   }
 }
 
-template <int dim>
-void
-RPTFEMReconstruction<dim>::checkpoint()
-{
-  TimerOutput::Scope t(computing_timer, "checkpoint");
-
-  // Save dof_handler object
-  {
-    std::ofstream                 ofs("temp_dof_handler.dof");
-    boost::archive::text_oarchive oa(ofs);
-    dof_handler.save(oa, 0);
-  }
-
-  // Save nodal_counts_per_detector
-  {
-    for (unsigned int i = 0; i < n_detector; ++i)
-      {
-        std::string                   filename("temp_nodal_counts_detector" +
-                             Utilities::to_string(i, 2) + ".counts");
-        std::ofstream                 ofs(filename);
-        boost::archive::text_oarchive oa(ofs);
-        nodal_counts[i].save(oa, 0);
-      }
-  }
-}
 
 
 template <int dim>
@@ -1036,5 +1085,5 @@ RPTFEMReconstruction<dim>::rpt_fem_reconstruct()
     computing_timer.disable_output();
 }
 
-
+template class RPTL2Projection<3>;
 template class RPTFEMReconstruction<3>;
