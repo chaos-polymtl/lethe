@@ -1,7 +1,4 @@
-# top level CMakeLists.txt
-
-ENABLE_TESTING()
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(solvers)
-ADD_SUBDIRECTORY(dem)
-ADD_SUBDIRECTORY(rpt)
+add_subdirectory(core)
+add_subdirectory(dem)
+add_subdirectory(rpt)
+add_subdirectory(solvers)
