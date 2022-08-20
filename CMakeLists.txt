@@ -1,114 +1,144 @@
-# top level CMakeLists.txt
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
-SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
-
-set(CMAKE_CXX_STANDARD 17)
-add_compile_options(-pedantic)
-add_compile_options(-pedantic-errors)
-add_compile_options(-Wextra)
-add_compile_options(-Wunused-variable)
-add_compile_options(-Wdisabled-optimization)
-add_compile_options(-Wall)
-
-
-# Disabled by default, used to be necessary on the Cedar cluster of Compute Canada
-#add_compile_options(-fext-numeric-literals)
-
-#add_compile_options(-Werror)
-#add_compile_options(-Weffc++)
-
-option(WARNINGERROR "Consider compilation warnings as errors" OFF)
-IF(WARNINGERROR)
-    add_compile_options(-Werror)
-ENDIF()
-
-FIND_PACKAGE(deal.II 9.4.0 QUIET
-  HINTS ${deal.II_DIR} ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
-  )
-IF(NOT ${deal.II_FOUND})
-  MESSAGE(FATAL_ERROR "\n"
-    "*** Could not locate a (sufficiently recent) version of deal.II. ***\n\n"
-    "You may want to either pass a flag -DDEAL_II_DIR=/path/to/deal.II to cmake\n"
-    "or set an environment variable \"DEAL_II_DIR\" that contains this path."
-    )
-ENDIF()
-
-DEAL_II_INITIALIZE_CACHED_VARIABLES()
-
-IF(EXISTS ${CMAKE_SOURCE_DIR}/bundled/CMakeLists.txt)
-  SET(DEAL_II_HAVE_BUNDLED_DIRECTORY TRUE)
-ENDIF()
-
-IF(EXISTS ${CMAKE_SOURCE_DIR}/doc/CMakeLists.txt)
-  SET(DEAL_II_HAVE_DOC_DIRECTORY TRUE)
-ENDIF()
-
-IF(EXISTS ${CMAKE_SOURCE_DIR}/tests/CMakeLists.txt)
-  SET(DEAL_II_HAVE_TESTS_DIRECTORY TRUE)
-ENDIF()
-
-#set(PROTOTYPES "FALSE" CACHE BOOL)
-option(PROTOTYPES "Enable prototype applications" OFF)
-option(MARCH_NATIVE "Enable the -march=native flag" OFF)
-
-
-Project(lethe)
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-ENABLE_TESTING()
-ADD_SUBDIRECTORY(source)
-ADD_SUBDIRECTORY(applications)
-ADD_SUBDIRECTORY(applications_tests)
-ADD_SUBDIRECTORY(tests)
-IF(PROTOTYPES)
-    MESSAGE("Adding prototypes")
-    ADD_SUBDIRECTORY(prototypes)
- ENDIF()
- IF(MARCH_NATIVE)
-    MESSAGE("  Enabling -march=native flag. This may cause some tests to break.")
-    add_compile_options(-march=native)
- ENDIF()
-
-
-set(missing_dealii_features)
-
-foreach(feat
-    DEAL_II_WITH_METIS
-    # MPI is required for p4est and Trilinos, but leave it here as
-    # additional documentation.
-    DEAL_II_WITH_MPI
-    DEAL_II_WITH_P4EST
-    DEAL_II_WITH_TRILINOS)
-  message(STATUS "Checking required ${feat}: " ${${feat}})
-  if(NOT DEFINED ${feat} OR NOT ${${feat}})
-    list(APPEND missing_dealii_features ${feat})
-  endif()
-endforeach()
-
-foreach(feat
-    DEAL_II_WITH_OPENCASCADE
-    DEAL_II_WITH_SUNDIALS)
-  message(STATUS "Checking optional ${feat}: " ${${feat}})
-endforeach()
-
-list(LENGTH missing_dealii_features num_missing_dealii_features)
-if(num_missing_dealii_features GREATER 0)
-  message(FATAL_ERROR
-    "Lethe requires the following features that deal.II was compiled without: "
-    "${missing_dealii_features}")
+cmake_minimum_required(VERSION 3.8...3.21)
+if(CMAKE_VERSION VERSION_LESS 3.12) # To support the version range
+  cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
 
-unset(num_missing_dealii_features)
-unset(missing_dealii_features)
+# TARGET_SUPPORTS_SHARED_LIBS is set by PROJECT, but we have to call
+# FIND_PACKAGE before that, and deal.II's configuration calls
+# ADD_LIBRARY with the SHARED keyword, so setting
+# TARGET_SUPPORTS_SHARED_LIBS beforehand may be necessary in some
+# environments.
+set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 
-find_program(TXR_EXECUTABLE
-  NAMES txr
-  DOC "Path to the TXR executable.")
-if(TXR_EXECUTABLE STREQUAL "TXR_EXECUTABLE-NOTFOUND")
-  message(STATUS "Could not find TXR: omitting target \"update-golden\"")
-else()
-  message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
-  add_custom_target(update-golden
-    COMMAND ${TXR_EXECUTABLE}
-            ${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl
-            ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR})
+# Assume that deal.II_DIR won't be provided on the command line in favor
+# of DEAL_II_DIR and can thus be used to detect whether CMake was
+# already run.
+if(DEFINED deal.II_DIR)
+  set(_had_deal_ii TRUE)
+endif()
+find_package(deal.II 9.4.0 QUIET REQUIRED
+  HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
+deal_ii_initialize_cached_variables()
+
+project(lethe VERSION 0.1 LANGUAGES CXX)
+
+# Check for deal.II features after the PROJECT call — but still as close
+# as possible to the FIND_PACKAGE call — so that the messages appear
+# after the CXX compiler–related messages, which is where FIND_PACKAGE
+# is usually invoked (i.e., after PROJECT).
+if(NOT _had_deal_ii)
+  set(_missing_deal_ii_features)
+  foreach(_feat IN ITEMS
+      DEAL_II_WITH_METIS
+      # MPI is required for p4est and Trilinos, but leave it here as
+      # additional documentation.
+      DEAL_II_WITH_MPI
+      DEAL_II_WITH_P4EST
+      DEAL_II_WITH_TRILINOS)
+    message(STATUS "Checking required ${_feat}: " ${${_feat}})
+    if(NOT DEFINED ${_feat} OR NOT ${${_feat}})
+      list(APPEND _missing_deal_ii_features ${_feat})
+    endif()
+  endforeach()
+
+  foreach(_feat IN ITEMS
+      DEAL_II_WITH_OPENCASCADE
+      DEAL_II_WITH_SUNDIALS)
+    message(STATUS "Checking optional ${_feat}: " ${${_feat}})
+  endforeach()
+
+  list(LENGTH _missing_deal_ii_features _num_missing_deal_ii_features)
+  if(_num_missing_deal_ii_features GREATER 0)
+    message(FATAL_ERROR
+      "Lethe requires the following features that deal.II was compiled without: "
+      "${_missing_deal_ii_features}")
+  endif()
+
+  unset(_num_missing_deal_ii_features)
+  unset(_missing_deal_ii_features)
+endif()
+unset(_had_deal_ii)
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+
+  add_compile_options(
+    -Wall -Wextra -Wpedantic # Actually already in DEAL_II_CXX_FLAGS
+    -Wunused-variable -Wdisabled-optimization)
+
+  if(CMAKE_VERSION VERSION_LESS 3.24)
+    option(CMAKE_COMPILE_WARNING_AS_ERROR "Treat warnings on compile as errors")
+    if(CMAKE_COMPILE_WARNING_AS_ERROR)
+      add_compile_options(-Werror)
+    endif()
+  endif()
+  if(CMAKE_COMPILE_WARNING_AS_ERROR)
+    add_compile_options(-pedantic-errors) # Probably not added by CMake
+  endif()
+
+  # Tests may break when enabled.
+  option(ENABLE_NATIVE_OPTIMIZATION "Enable native optimization (-march=native)")
+  if(ENABLE_NATIVE_OPTIMIZATION)
+    add_compile_options(-march=native)
+  endif()
+
+  option(BUILD_PROTOTYPES "Build the prototype applications")
+  mark_as_advanced(BUILD_PROTOTYPES)
+
+  include(GNUInstallDirs)
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
+    "${CMAKE_INSTALL_FULL_LIBDIR}" _libdir_index)
+  if(_libdir_index LESS 0)
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+  endif()
+
+  option(BUILD_TESTING "Build the tests" ON)
+  if(BUILD_TESTING)
+    enable_testing()
+
+    if(DEFINED TXR_EXECUTABLE)
+      set(_had_txr_executable TRUE)
+    endif()
+    find_program(TXR_EXECUTABLE NAMES txr
+      DOC "Path to the TXR executable.")
+    mark_as_advanced(TXR_EXECUTABLE)
+    # Print the status information only if TXR_EXECUTABLE was neither
+    # provided on the command line nor found in the cache.
+    # Ideally, users would be informed whenever TXR_EXECUTABLE changes
+    # (which is what happens with PERL_EXECUTABLE), but there is no way
+    # to access a variable's cached value if it is also provided on the
+    # command line (except by defining additional variables).
+    if(NOT _had_txr_executable)
+      if(TXR_EXECUTABLE)
+        message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
+      else()
+        message(STATUS "Could not find TXR: omitting target \"update-golden\"")
+      endif()
+    endif()
+    unset(_had_txr_executable)
+  endif()
+endif()
+
+add_subdirectory(source)
+add_subdirectory(applications)
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  if(BUILD_PROTOTYPES)
+    add_subdirectory(prototypes)
+  endif()
+
+  if(BUILD_TESTING)
+    add_subdirectory(tests)
+    add_subdirectory(applications_tests)
+
+    if(TXR_EXECUTABLE)
+      add_custom_target(update-golden
+        COMMAND "${TXR_EXECUTABLE}"
+                "${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl"
+                "${CMAKE_BINARY_DIR}" "${CMAKE_SOURCE_DIR}")
+    endif()
+  endif()
 endif()

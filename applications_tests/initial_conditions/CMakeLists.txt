@@ -1,2 +1,2 @@
-SET(TEST_TARGET initial_conditions)
-DEAL_II_PICKUP_TESTS()
+set(TEST_TARGET initial_conditions)
+deal_ii_pickup_tests()

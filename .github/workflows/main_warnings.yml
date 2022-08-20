@@ -51,5 +51,5 @@ jobs:
         run: |
           mkdir build-warnings
           cd build-warnings
-          cmake ../ -DCMAKE_BUILD_TYPE=Debug -DWARNINGERROR=ON
+          cmake ../ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
           make -j${{ env.COMPILE_JOBS }}
