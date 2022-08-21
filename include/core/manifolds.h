@@ -22,6 +22,8 @@
 
 #include <deal.II/base/parameter_handler.h>
 
+#include <deal.II/distributed/tria_base.h>
+
 #include <deal.II/numerics/data_postprocessor.h>
 
 
