@@ -1,0 +1,3 @@
+add_executable(rpt_l2_projection_3d rpt_l2_projection_3d.cc)
+deal_ii_setup_target(rpt_l2_projection_3d)
+target_link_libraries(rpt_l2_projection_3d lethe-rpt)

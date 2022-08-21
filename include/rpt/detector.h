@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2021 by the Lethe authors
+ * Copyright (C) 2019 - by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2021-
  */
 
 #ifndef lethe_detector_h

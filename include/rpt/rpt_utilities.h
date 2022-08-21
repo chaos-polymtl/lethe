@@ -7,15 +7,12 @@
  * The Lethe library is free software; you can use it, redistribute
  * it, and/or modify it under the terms of the GNU Lesser General
  * Public License as published by the Free Software Foundation; either
- * version 3.1 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  * The full text of the license can be found in the file LICENSE at
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Authors: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
-*/
+ */
 
 
 #ifndef LETHE_RPT_UTILITIES_H
@@ -142,7 +139,12 @@ assign_detector_positions(Parameters::DetectorParameters &detector_parameters)
   std::ifstream detector_file(detector_parameters.detector_positions_file);
 
   std::string skip;
-  std::getline(detector_file, skip); // Skip header line
+  std::getline(detector_file, skip);
+  // Skip header line if the header is present
+  if (!isalpha(skip[0]))
+    {
+      detector_file.seekg(0, std::ios::beg);
+    }
   std::vector<double> values;
   std::copy(std::istream_iterator<double>(detector_file),
             std::istream_iterator<double>(),
@@ -182,7 +184,12 @@ read_counts(std::string &counts_filename)
   std::ifstream counts_file(counts_filename);
 
   std::string skip;
-  std::getline(counts_file, skip); // Skip header line
+  std::getline(counts_file, skip);
+  // Skip header line if the header is present
+  if (!isalpha(skip[0]))
+    {
+      counts_file.seekg(0, std::ios::beg);
+    }
   std::vector<double> counts;
   std::copy(std::istream_iterator<double>(counts_file),
             std::istream_iterator<double>(),

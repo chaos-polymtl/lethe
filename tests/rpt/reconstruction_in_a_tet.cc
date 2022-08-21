@@ -13,55 +13,43 @@
  *
  * ---------------------------------------------------------------------
  *
- * Author: Audrey Collard-Daigneault Polytechnique Montreal, 2021
  */
 
 /**
- * @brief Assure cost functions for RPT give expected outcomes.
+ * @brief Check for a few tetrahedron with detector value what is the
+ * reconstructed position in the reference space
  */
 
 #include <deal.II/base/point.h>
 
 #include <../tests/tests.h>
-#include <rpt/rpt.h>
-#include <rpt/rpt_calculating_parameters.h>
+#include <rpt/parameters_rpt.h>
+#include <rpt/rpt_fem_reconstruction.h>
 
 #include <vector>
+
 
 void
 test()
 {
-  // Calculated and measured counts
-  std::vector<double> calculated_counts(
-    {1, 6, 3, 8, 47, 2, 7, 9, 3, 57, 8, 34, 99, 34, 12});
-  std::vector<double> measured_counts(
-    {2, 7, 2, 7, 44, 1, 9, 7, 2, 55, 9, 33, 88, 32, 8});
+  std::vector<std::vector<double>> vertex_counts;
+  vertex_counts.push_back(std::vector<double>({0, 2, 0, 0}));
+  vertex_counts.push_back(std::vector<double>({0, 0, 3, 0}));
+  vertex_counts.push_back(std::vector<double>({0, 0, 0, 1}));
 
-  // Objects construction
-  RPTCalculatingParameters rpt_parameters;
-  RPT<3>                   RPT(rpt_parameters);
-  double                   cost_function;
 
-  // Calculate the 3 cost functions
-  RPT.rpt_parameters.tuning_param.cost_function_type =
-    Parameters::RPTTuningParameters::CostFunctionType::larachi;
-  cost_function =
-    RPT.calculate_cost_function(calculated_counts, measured_counts);
-  deallog << " Larachi cost function = " << cost_function << std::endl;
+  std::vector<double> measured_count({0.3, 0.3, 0.3});
+  Vector<double>      solution(3);
+  Parameters::RPTFEMReconstructionParameters::FEMCostFunction cost_function =
+    Parameters::RPTFEMReconstructionParameters::FEMCostFunction::absolute;
 
-  RPT.rpt_parameters.tuning_param.cost_function_type =
-    Parameters::RPTTuningParameters::CostFunctionType::l1;
-  cost_function =
-    RPT.calculate_cost_function(calculated_counts, measured_counts);
-  deallog << " L1 cost function = " << cost_function << std::endl;
+  solution =
+    assemble_matrix_and_rhs<3>(vertex_counts, measured_count, cost_function);
 
-  RPT.rpt_parameters.tuning_param.cost_function_type =
-    Parameters::RPTTuningParameters::CostFunctionType::l2;
-  cost_function =
-    RPT.calculate_cost_function(calculated_counts, measured_counts);
-  deallog << " L2 cost function = " << cost_function << std::endl;
+
+  deallog << "The final solution is : " << solution[0] << " " << solution[1]
+          << " " << solution[2] << std::endl;
 }
-
 
 int
 main(int argc, char **argv)
