@@ -18,7 +18,9 @@ foreach(_target IN ITEMS
     initial_conditions
     navier_stokes_parameter_template
     rpt_3d
-    rpt_cell_reconstruction_3d)
+    rpt_cell_reconstruction_3d
+    rpt_fem_reconstruction_3d
+    rpt_l2_projection_3d)
   add_subdirectory(${_target})
   install(TARGETS ${_target})
 endforeach()

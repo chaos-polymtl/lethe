@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2021 by the Lethe authors
+ * Copyright (C) 2019 - by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,12 +12,9 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2021-
  */
 
-/*
+/**
  *  This file defines parameters needed for the RPT simulation in the Parameters
  * namespace.
  */
@@ -145,6 +142,66 @@ namespace Parameters
     std::string known_positions_file;
     bool
       verbose_clock; // Allow to show total wallclock time elapsed since start
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief FEMReconstructionParameters - Defines the parameters for the
+   * rpt_l2_projection_3d and rpt_fem_reconstruction_3d applications
+   */
+  struct RPTFEMReconstructionParameters
+  {
+    std::string  mesh_file;       // mesh filename
+    unsigned int z_subdivisions;  // number of subdivisions of the initial grid
+                                  // in z direction
+    unsigned int mesh_refinement; // number of refinement the grid undergoes
+    bool l2_project_and_reconstruct; // run the rpt_l2_projection_3d application
+                                     // before reconstruction
+    std::string experimental_counts_file; // file including experimental counts
+                                          // from all detectors
+    std::string export_positions_file;    // file including all found positions
+    std::string dof_handler_file; // file with the saved DOFHandler object
+    std::vector<std::string>
+      nodal_counts_file; // vector containing the filenames of the files with
+                         // the nodal counts from the built dictionary for each
+                         // detector (1 file per detector)
+    double extrapolation_tolerance; // tolerance when extrapolating from a cell
+                                    // in the reference space to find the
+                                    // particle's position
+
+    // type of cost function applied when evaluating the particle's real
+    // position
+    enum class FEMCostFunction
+    {
+      absolute,
+      relative
+    };
+    FEMCostFunction fem_cost_function;
+
+    // type of mesh that is used to model the cylindrical vessel's geometry
+    enum class FEMMeshType
+    {
+      dealii, // the grid used is a subdivided cylinder
+      gmsh
+    };
+    FEMMeshType mesh_type;
+
+    // type of searching algorithm
+    enum class FEMSearchType
+    {
+      local,
+      global
+    };
+    FEMSearchType search_type;
+
+    unsigned int
+         search_proximity_level; // level of proximity of the search scope
+    bool verbose_clock_fem_reconstruction; // allow to show total wallclock time
+                                           // elapsed since start
 
     static void
     declare_parameters(ParameterHandler &prm);

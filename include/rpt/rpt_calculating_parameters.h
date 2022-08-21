@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2021 by the Lethe authors
+ * Copyright (C) 2019 - by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2021-
  */
 
 #ifndef lethe_rpt_calculating_parameters_h
@@ -43,10 +40,11 @@ public:
   void
   parse(ParameterHandler &prm);
 
-  Parameters::RPTParameters               rpt_param;
-  Parameters::RPTTuningParameters         tuning_param;
-  Parameters::DetectorParameters          detector_param;
-  Parameters::RPTReconstructionParameters reconstruction_param;
+  Parameters::RPTParameters                  rpt_param;
+  Parameters::RPTTuningParameters            tuning_param;
+  Parameters::DetectorParameters             detector_param;
+  Parameters::RPTReconstructionParameters    reconstruction_param;
+  Parameters::RPTFEMReconstructionParameters fem_reconstruction_param;
 };
 
 

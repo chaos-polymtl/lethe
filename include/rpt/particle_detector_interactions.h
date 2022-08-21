@@ -7,15 +7,12 @@
  * The Lethe library is free software; you can use it, redistribute
  * it, and/or modify it under the terms of the GNU Lesser General
  * Public License as published by the Free Software Foundation; either
- * version 3.1 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  * The full text of the license can be found in the file LICENSE at
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Authors: Audrey Collard-Daigneault, Polytechnique Montreal, 2021-
-*/
+ */
 
 #ifndef lethe_particle_detector_interactions_h
 #define lethe_particle_detector_interactions_h
@@ -66,7 +63,6 @@ public:
     , attenuation_coefficient_reactor(
         detector.get_attenuation_coefficient_reactor())
     , parameters(rpt_parameters)
-
   {}
 
   /**
@@ -183,8 +179,6 @@ private:
   Point<dim> particle_position;
   Point<dim> detector_face_position;
   Point<dim> detector_middle_position;
-
-
 
   double                    detector_radius;
   double                    detector_length;

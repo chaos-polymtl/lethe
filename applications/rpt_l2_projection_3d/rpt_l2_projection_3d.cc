@@ -1,5 +1,5 @@
-#include <rpt/rpt.h>
 #include <rpt/rpt_calculating_parameters.h>
+#include <rpt/rpt_fem_reconstruction.h>
 
 #include <fstream>
 #include <iostream>
@@ -25,8 +25,11 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       rpt_parameters.parse(prm);
 
-      RPT<3> rpt(rpt_parameters);
-      rpt.setup_and_calculate();
+      RPTFEMReconstruction<3> rpt_l2_project(
+        rpt_parameters.rpt_param,
+        rpt_parameters.fem_reconstruction_param,
+        rpt_parameters.detector_param);
+      rpt_l2_project.L2_project();
     }
   catch (std::exception &exc)
     {

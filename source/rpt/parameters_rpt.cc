@@ -26,7 +26,7 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
       "Enable to export counts result in a .csv file <true|false>");
 
     prm.declare_entry("counts file",
-                      "counts",
+                      "counts.csv",
                       Patterns::FileName(),
                       "Exported count's results filename");
 
@@ -117,9 +117,9 @@ Parameters::RPTTuningParameters::declare_parameters(ParameterHandler &prm)
 
     prm.declare_entry("cost function type",
                       "larachi",
-                      Patterns::Selection("larachi|L1|L2"),
+                      Patterns::Selection("larachi|l1|l2"),
                       "Cost function used for the parameter tuning"
-                      "Choices are <larachi|L1|L2>.");
+                      "Choices are <larachi|l1|l2>.");
 
     prm.declare_entry("experimental data file",
                       "none",
@@ -146,7 +146,7 @@ Parameters::RPTTuningParameters::parse_parameters(ParameterHandler &prm)
       cost_function_type = CostFunctionType::l2;
     else
       throw std::logic_error(
-        "Error, invalid cost function type. Choices are larachi, l2 or l1.");
+        "Error, invalid cost function type. Choices are 'larachi', 'l2' or 'l1'.");
 
     experimental_file = prm.get("experimental data file");
   }
@@ -298,6 +298,152 @@ Parameters::RPTReconstructionParameters::parse_parameters(ParameterHandler &prm)
     if (coarse_mesh_level > reactor_refinement)
       throw std::logic_error(
         "Error, the level of the coarse mesh can't be higher that the refinement value (max level).");
+  }
+  prm.leave_subsection();
+}
+
+
+void
+Parameters::RPTFEMReconstructionParameters::declare_parameters(
+  ParameterHandler &prm)
+{
+  prm.enter_subsection("fem reconstruction");
+  {
+    prm.declare_entry("mesh type",
+                      "dealii",
+                      Patterns::Selection("dealii|gmsh"),
+                      "Type of mesh used");
+
+    prm.declare_entry("mesh filename",
+                      "none",
+                      Patterns::FileName(),
+                      "Imported mesh filename");
+
+    prm.declare_entry("z subdivisions",
+                      "1",
+                      Patterns::Integer(),
+                      "Number of subdivisions of the initial grid in z");
+
+    prm.declare_entry("mesh refinement",
+                      "0",
+                      Patterns::Integer(),
+                      "Number of refinements the grid undergoes");
+
+    prm.declare_entry(
+      "l2 projection before reconstruction",
+      "false",
+      Patterns::Bool(),
+      "Run the rpt_l2_projection_3 application before the reconstruction");
+
+    prm.declare_entry(
+      "search extrapolation limit",
+      "0.005",
+      Patterns::Double(),
+      "Tolerance when extrapolating from a cell in the reference space to find the particle's position");
+
+    prm.declare_entry("experimental counts file",
+                      "none",
+                      Patterns::FileName(),
+                      "Experimental counts filename");
+
+    prm.declare_entry("export positions file",
+                      "none",
+                      Patterns::FileName(),
+                      "Exported particle positions filename");
+
+    prm.declare_entry(
+      "cost function type",
+      "relative",
+      Patterns::Selection("absolute|relative"),
+      "Type of cost function applied when evaluating the particle's real position");
+
+    prm.declare_entry("dof handler file",
+                      "none",
+                      Patterns::FileName(),
+                      "Saved DOF Handler filename");
+
+    prm.declare_entry(
+      "nodal counts file",
+      "none",
+      Patterns::List(Patterns::FileName()),
+      "Saved nodal counts of every detector for every cell of the mesh filename");
+
+    prm.declare_entry(
+      "search type",
+      "local",
+      Patterns::Selection("local|global"),
+      "Type of search algorithm used when finding the particle's real position");
+
+    prm.declare_entry(
+      "search cell proximity level",
+      "1",
+      Patterns::Integer(),
+      "Level of proximity of cells considered in the search of a position from the previous position");
+
+    prm.declare_entry("verbose clock",
+                      "false",
+                      Patterns::Bool(),
+                      "Allow to show total wallclock time elapsed since start");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::RPTFEMReconstructionParameters::parse_parameters(
+  ParameterHandler &prm)
+{
+  prm.enter_subsection("fem reconstruction");
+  {
+    const std::string fem_mesh = prm.get("mesh type");
+    if (fem_mesh == "dealii")
+      mesh_type = FEMMeshType::dealii;
+    else if (fem_mesh == "gmsh")
+      mesh_type = FEMMeshType::gmsh;
+    else
+      throw std::logic_error(
+        "Error, invalid mesh type. Choices are 'dealii' or 'gmsh'");
+
+    const std::string mesh_filename = prm.get("mesh filename");
+    std::size_t       msh_file      = mesh_filename.find(".msh");
+
+    if (msh_file == std::string::npos && mesh_filename != "none")
+      throw std::logic_error(
+        "Error, the imported mesh must be in a '.msh' file format");
+    else
+      mesh_file = mesh_filename;
+
+    z_subdivisions  = prm.get_integer("z subdivisions");
+    mesh_refinement = prm.get_integer("mesh refinement");
+    l2_project_and_reconstruct =
+      prm.get_bool("l2 projection before reconstruction");
+    experimental_counts_file = prm.get("experimental counts file");
+    export_positions_file    = prm.get("export positions file");
+    extrapolation_tolerance  = prm.get_double("search extrapolation limit");
+
+    const std::string fem_cf = prm.get("cost function type");
+    if (fem_cf == "absolute")
+      fem_cost_function = FEMCostFunction::absolute;
+    else if (fem_cf == "relative")
+      fem_cost_function = FEMCostFunction::relative;
+    else
+      throw std::logic_error(
+        "Error, invalid cost function type. Choices are 'absolute' or 'relative'");
+
+    dof_handler_file              = prm.get("dof handler file");
+    std::string nodal_counts_list = prm.get("nodal counts file");
+    nodal_counts_file = Utilities::split_string_list(nodal_counts_list);
+
+    const std::string fem_search_type = prm.get("search type");
+    if (fem_search_type == "local")
+      search_type = FEMSearchType::local;
+    else if (fem_search_type == "global")
+      search_type = FEMSearchType::global;
+    else
+      throw std::logic_error(
+        "Error, invalid search type. Choices are 'local' or 'global'");
+
+    search_proximity_level = prm.get_integer("search cell proximity level");
+    verbose_clock_fem_reconstruction = prm.get_bool("verbose clock");
   }
   prm.leave_subsection();
 }

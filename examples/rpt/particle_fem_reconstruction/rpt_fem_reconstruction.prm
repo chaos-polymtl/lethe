@@ -1,0 +1,42 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# RPT Monte Carlo technique
+#---------------------------------------------------
+subsection rpt parameters
+    set verbosity                          = quiet
+    set monte carlo iteration              = 10000
+    set random number seed                 = 0
+    set reactor height                     = 0.1
+    set reactor radius                     = 0.15
+    set peak-to-total ratio                = 0.4
+    set sampling time                      = 0.01
+    set gamma-rays emitted                 = 2
+    set attenuation coefficient detector   = 21.477    
+end
+
+#---------------------------------------------------
+# Detector parameters
+#---------------------------------------------------
+subsection detector parameters
+    set detector positions file          = positions.detector
+    set radius                           = 0.0381 
+    set length                           = 0.0762
+    set dead time                        = 7.6215e-06,1.27187e-05,7.94972e-06,1.0988e-05
+    set activity                         = 6.01924e+06,7.09549e+06,7.24499e+06,7.75147e+06
+    set attenuation coefficient reactor  = 0,0.50377,0,0.95902
+end
+
+#---------------------------------------------------
+# FEM reconstruction parameters
+#---------------------------------------------------
+subsection fem reconstruction
+    set mesh type                       = dealii
+    set z subdivisions                  = 2
+    set mesh refinement                 = 2
+    set experimental counts file        = experimental_counts.txt
+    set export positions file           = found_positions
+    set cost function type              = relative
+    set dof handler file                = temp_dof_handler.dof
+    set nodal counts file               = temp_nodal_counts_detector00.counts, temp_nodal_counts_detector01.counts, temp_nodal_counts_detector02.counts, temp_nodal_counts_detector03.counts
+end 

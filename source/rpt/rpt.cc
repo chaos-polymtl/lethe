@@ -89,24 +89,29 @@ RPT<dim>::export_data()
   // Open a file
   std::ofstream myfile;
   std::string   sep;
-  if (rpt_parameters.rpt_param.export_counts)
+
+  std::string filename = rpt_parameters.rpt_param.export_counts_file;
+
+  // check if an extension is specified in the filename, if not add ".csv"
+  std::size_t csv_file = filename.find(".csv");
+  std::size_t dat_file = filename.find("dat");
+  if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
+    filename += ".csv";
+
+  myfile.open(filename);
+  if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
     {
-      std::string filename = rpt_parameters.rpt_param.export_counts_file;
-      myfile.open(filename);
-      if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
-        {
-          myfile
-            << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
-            << std::endl;
-          sep = " ";
-        }
-      else // .csv is default
-        {
-          myfile
-            << "particle_positions_x,particle_positions_y,particle_positions_z,detector_id,counts"
-            << std::endl;
-          sep = ",";
-        }
+      myfile
+        << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
+        << std::endl;
+      sep = " ";
+    }
+  else // .csv is default
+    {
+      myfile
+        << "particle_positions_x,particle_positions_y,particle_positions_z,detector_id,counts"
+        << std::endl;
+      sep = ",";
     }
 
   for (unsigned int i_particle = 0; i_particle < particle_positions.size();

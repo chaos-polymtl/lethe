@@ -7,6 +7,7 @@ RPTCalculatingParameters::declare(ParameterHandler &prm)
   Parameters::RPTTuningParameters::declare_parameters(prm);
   Parameters::DetectorParameters::declare_parameters(prm);
   Parameters::RPTReconstructionParameters::declare_parameters(prm);
+  Parameters::RPTFEMReconstructionParameters::declare_parameters(prm);
 }
 
 void
@@ -16,4 +17,5 @@ RPTCalculatingParameters::parse(ParameterHandler &prm)
   tuning_param.parse_parameters(prm);
   detector_param.parse_parameters(prm);
   reconstruction_param.parse_parameters(prm);
+  fem_reconstruction_param.parse_parameters(prm);
 }
