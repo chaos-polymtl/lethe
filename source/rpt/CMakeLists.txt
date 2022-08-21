@@ -6,6 +6,7 @@ add_library(lethe-rpt
   rpt.cc
   rpt_calculating_parameters.cc
   rpt_cell_reconstruction.cc
+  rpt_fem_reconstruction.cc
   # Headers
   ../../include/rpt/detector.h
   ../../include/rpt/parameters_rpt.h
@@ -15,6 +16,7 @@ add_library(lethe-rpt
   ../../include/rpt/rpt.h
   ../../include/rpt/rpt_calculating_parameters.h
   ../../include/rpt/rpt_cell_reconstruction.h
+  ../../include/rpt/rpt_fem_reconstruction.h
   ../../include/rpt/rpt_utilities.h)
 
 deal_ii_setup_target(lethe-rpt)
