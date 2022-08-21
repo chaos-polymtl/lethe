@@ -1,10 +1,2 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
-INCLUDE_DIRECTORIES(
-        lethe
-        ${CMAKE_SOURCE_DIR}/include/
-)
-SET(TEST_LIBRARIES lethe-core lethe-rpt)
-
-DEAL_II_PICKUP_TESTS()
-
-
+set(TEST_LIBRARIES lethe-rpt)
+deal_ii_pickup_tests()

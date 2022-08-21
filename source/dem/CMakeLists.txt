@@ -1,29 +1,107 @@
+add_library(lethe-dem
+  # Sources
+  data_containers.cc
+  dem.cc
+  dem_solver_parameters.cc
+  explicit_euler_integrator.cc
+  find_boundary_cells_information.cc
+  find_cell_neighbors.cc
+  find_contact_detection_step.cc
+  find_maximum_particle_size.cc
+  gear3_integrator.cc
+  grid_motion.cc
+  input_parameter_inspection.cc
+  insertion.cc
+  integrator.cc
+  lagrangian_post_processing.cc
+  list_insertion.cc
+  localize_contacts.cc
+  locate_local_particles.cc
+  non_uniform_insertion.cc
+  output_force_torque_calculation.cc
+  particle_particle_broad_search.cc
+  particle_particle_contact_force.cc
+  particle_particle_fine_search.cc
+  particle_particle_linear_force.cc
+  particle_particle_nonlinear_force.cc
+  particle_point_line_broad_search.cc
+  particle_point_line_contact_force.cc
+  particle_point_line_fine_search.cc
+  particle_wall_broad_search.cc
+  particle_wall_contact_force.cc
+  particle_wall_fine_search.cc
+  particle_wall_linear_force.cc
+  particle_wall_nonlinear_force.cc
+  periodic_boundaries_manipulator.cc
+  post_processing.cc
+  print_initial_information.cc
+  read_checkpoint.cc
+  read_mesh.cc
+  set_particle_particle_contact_force_model.cc
+  set_particle_wall_contact_force_model.cc
+  uniform_insertion.cc
+  update_ghost_particle_particle_contact_container.cc
+  update_local_particle_particle_contact_container.cc
+  update_particle_container.cc
+  update_particle_point_line_contact_container.cc
+  update_particle_wall_contact_container.cc
+  velocity_verlet_integrator.cc
+  visualization.cc
+  write_checkpoint.cc
+  # Headers
+  ../../include/dem/boundary_cells_info_struct.h
+  ../../include/dem/data_containers.h
+  ../../include/dem/dem.h
+  ../../include/dem/dem_solver_parameters.h
+  ../../include/dem/explicit_euler_integrator.h
+  ../../include/dem/find_boundary_cells_information.h
+  ../../include/dem/find_cell_neighbors.h
+  ../../include/dem/find_contact_detection_step.h
+  ../../include/dem/find_maximum_particle_size.h
+  ../../include/dem/gear3_integrator.h
+  ../../include/dem/grid_motion.h
+  ../../include/dem/input_parameter_inspection.h
+  ../../include/dem/insertion.h
+  ../../include/dem/integrator.h
+  ../../include/dem/lagrangian_post_processing.h
+  ../../include/dem/list_insertion.h
+  ../../include/dem/localize_contacts.h
+  ../../include/dem/locate_local_particles.h
+  ../../include/dem/non_uniform_insertion.h
+  ../../include/dem/output_force_torque_calculation.h
+  ../../include/dem/particle_particle_broad_search.h
+  ../../include/dem/particle_particle_contact_force.h
+  ../../include/dem/particle_particle_contact_info_struct.h
+  ../../include/dem/particle_particle_fine_search.h
+  ../../include/dem/particle_particle_linear_force.h
+  ../../include/dem/particle_particle_nonlinear_force.h
+  ../../include/dem/particle_point_line_broad_search.h
+  ../../include/dem/particle_point_line_contact_force.h
+  ../../include/dem/particle_point_line_contact_info_struct.h
+  ../../include/dem/particle_point_line_fine_search.h
+  ../../include/dem/particle_wall_broad_search.h
+  ../../include/dem/particle_wall_contact_force.h
+  ../../include/dem/particle_wall_contact_info_struct.h
+  ../../include/dem/particle_wall_fine_search.h
+  ../../include/dem/particle_wall_linear_force.h
+  ../../include/dem/particle_wall_nonlinear_force.h
+  ../../include/dem/periodic_boundaries_manipulator.h
+  ../../include/dem/post_processing.h
+  ../../include/dem/print_initial_information.h
+  ../../include/dem/read_checkpoint.h
+  ../../include/dem/read_mesh.h
+  ../../include/dem/rolling_resistance_torque_models.h
+  ../../include/dem/set_particle_particle_contact_force_model.h
+  ../../include/dem/set_particle_wall_contact_force_model.h
+  ../../include/dem/uniform_insertion.h
+  ../../include/dem/update_ghost_particle_particle_contact_container.h
+  ../../include/dem/update_local_particle_particle_contact_container.h
+  ../../include/dem/update_particle_container.h
+  ../../include/dem/update_particle_point_line_contact_container.h
+  ../../include/dem/update_particle_wall_contact_container.h
+  ../../include/dem/velocity_verlet_integrator.h
+  ../../include/dem/visualization.h
+  ../../include/dem/write_checkpoint.h)
 
-# Set the name of the project and target:
-SET(TARGET "lethe-dem")
-
-# Declare all source files the target consists of. Here, this is only
-# the one step-X.cc file, but as you expand your project you may wish
-# to add other source files as well. If your project becomes much larger,
-# you may want to either replace the following statement by something like
-#    FILE(GLOB_RECURSE TARGET_SRC  "source/*.cc")
-#    FILE(GLOB_RECURSE TARGET_INC  "include/*.h")
-#    SET(TARGET_SRC ${TARGET_SRC}  ${TARGET_INC}) 
-# or switch altogether to the large project CMakeLists.txt file discussed
-# in the "CMake in user projects" page accessible from the "User info"
-# page of the documentation.
-
-FILE(GLOB_RECURSE TARGET_SRC *.cc)
-FILE(GLOB_RECURSE TARGET_INC ${CMAKE_SOURCE_DIR}/include/dem/*.h)
-SET(TARGET_SRC ${TARGET_SRC} ${TARGET_INC})
-
-# Usually, you will not need to modify anything beyond this point...
-
-ADD_LIBRARY(${TARGET}
-  ${TARGET_SRC}
-  )
-
-DEAL_II_SETUP_TARGET(${TARGET})
-TARGET_LINK_LIBRARIES(lethe-dem lethe-core)
-install(TARGETS lethe-dem ARCHIVE DESTINATION lib)
-
+deal_ii_setup_target(lethe-dem)
+target_link_libraries(lethe-dem lethe-core)
