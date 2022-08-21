@@ -25,7 +25,8 @@
 // Deal.II
 #include <deal.II/base/parameter_handler.h>
 
-#include <deal.II/fe/mapping_q.h>
+#include <deal.II/fe/mapping_q1.h>
+#include <deal.II/fe/mapping_q_generic.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>

@@ -21,6 +21,7 @@
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/fe/mapping.h>
+#include <deal.II/fe/mapping_q_generic.h>
 
 #include <deal.II/grid/tria.h>
 
