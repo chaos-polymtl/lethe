@@ -14,7 +14,7 @@ The default values of the VOF parameters are given in the text box below.
 .. code-block:: text
 
 	subsection VOF	
-        set limit force   = false       
+        set limit force   = true       
 
 		set viscous dissipative fluid = fluid 1
 

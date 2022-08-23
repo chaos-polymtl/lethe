@@ -115,7 +115,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
   prm.enter_subsection("VOF");
   {
     prm.declare_entry("limit force",
-                      "false",
+                      "true",
                       Patterns::Bool(),
                       "Enables limit force in VOF solver <true|false>");
 
