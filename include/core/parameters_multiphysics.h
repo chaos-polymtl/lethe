@@ -209,6 +209,7 @@ namespace Parameters
    */
   struct VOF
   {
+    bool                                limit_force;
     Parameters::VOF_MassConservation    conservation;
     Parameters::VOF_InterfaceSharpening sharpening;
     Parameters::VOF_PeelingWetting      peeling_wetting;
