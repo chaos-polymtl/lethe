@@ -739,13 +739,17 @@ public:
 
     // Relative velocity and particle Reynolds
     {
-      unsigned int particle_no = 0;
+      unsigned int particle_no                 = 0;
+      average_fluid_particle_relative_velocity = 0;
+
       for (auto &particle : pic)
         {
           auto particle_properties = particle.get_properties();
           fluid_particle_relative_velocity_at_particle_location[particle_no] =
             fluid_velocity_at_particle_location[particle_no] -
             particle_velocity[particle_no];
+          average_fluid_particle_relative_velocity +=
+            fluid_particle_relative_velocity_at_particle_location[particle_no];
 
           Re_particle[particle_no] =
             1e-3 +
@@ -755,6 +759,11 @@ public:
               particle_properties[DEM::PropertiesIndex::dp] /
               (properties_manager.viscosity_scale + DBL_MIN);
           particle_no++;
+        }
+      if (particle_no > 0)
+        {
+          average_fluid_particle_relative_velocity =
+            average_fluid_particle_relative_velocity / particle_no;
         }
     }
 
@@ -967,6 +976,7 @@ public:
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<Tensor<1, dim>>
                               fluid_particle_relative_velocity_at_particle_location;
+  Tensor<1, dim>              average_fluid_particle_relative_velocity;
   std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
   std::vector<Tensor<1, 1>>   fluid_velocity_curls_at_particle_location_2d;
