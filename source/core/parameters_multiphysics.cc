@@ -114,6 +114,11 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("VOF");
   {
+    prm.declare_entry("limit force",
+                      "false",
+                      Patterns::Bool(),
+                      "Enables limit force in VOF solver <true|false>");
+
     conservation.declare_parameters(prm);
     sharpening.declare_parameters(prm);
     peeling_wetting.declare_parameters(prm);
@@ -133,6 +138,7 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("VOF");
   {
+    limit_force = prm.get_bool("limit force");
     conservation.parse_parameters(prm);
     sharpening.parse_parameters(prm);
     peeling_wetting.parse_parameters(prm);
