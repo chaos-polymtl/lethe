@@ -102,10 +102,12 @@ NavierStokesScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
   phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // Allocate physical properties
-  density_0   = std::vector<double>(n_q_points);
-  density_1   = std::vector<double>(n_q_points);
-  viscosity_0 = std::vector<double>(n_q_points);
-  viscosity_1 = std::vector<double>(n_q_points);
+  density_0           = std::vector<double>(n_q_points);
+  density_1           = std::vector<double>(n_q_points);
+  viscosity_0         = std::vector<double>(n_q_points);
+  viscosity_1         = std::vector<double>(n_q_points);
+  thermal_expansion_0 = std::vector<double>(n_q_points);
+  thermal_expansion_1 = std::vector<double>(n_q_points);
 }
 
 template <int dim>
@@ -271,6 +273,18 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           density_model_1->vector_value(fields, density_1);
           rheology_model_1->vector_value(fields, viscosity_1);
 
+          if (gather_temperature)
+            {
+              const auto thermal_expansion_model_0 =
+                properties_manager.get_thermal_expansion(0);
+              const auto thermal_expansion_model_1 =
+                properties_manager.get_thermal_expansion(1);
+              thermal_expansion_model_0->vector_value(fields,
+                                                      thermal_expansion_0);
+              thermal_expansion_model_1->vector_value(fields,
+                                                      thermal_expansion_1);
+            }
+
           // Blend the physical properties using the VOF field
           for (unsigned int q = 0; q < this->n_q_points; ++q)
             {
@@ -281,8 +295,12 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               viscosity[q] = calculate_point_property(this->phase_values[q],
                                                       this->viscosity_0[q],
                                                       this->viscosity_1[q]);
-            }
 
+              thermal_expansion[q] =
+                calculate_point_property(this->phase_values[q],
+                                         this->thermal_expansion_0[q],
+                                         this->thermal_expansion_1[q]);
+            }
 
 
           for (unsigned p = 0; p < previous_phase_values.size(); ++p)
