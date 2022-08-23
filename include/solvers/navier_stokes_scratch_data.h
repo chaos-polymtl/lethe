@@ -888,6 +888,8 @@ public:
   std::vector<double> density_1;
   std::vector<double> viscosity_0;
   std::vector<double> viscosity_1;
+  std::vector<double> thermal_expansion_0;
+  std::vector<double> thermal_expansion_1;
 
 
   // FEValues for the Navier-Stokes problem
