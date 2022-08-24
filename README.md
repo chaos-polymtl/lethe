@@ -53,6 +53,7 @@ Main developer:
 Contributors (in alphabetical order):
 
 - Antoine Avrit
+- Amishga Alphonius
 - Lucka Barbeau
 - Valérie Bibeau
 - Audrey Collard-Daigneault
@@ -60,6 +61,7 @@ Contributors (in alphabetical order):
 - Toni El Geitani
 - Simon Gauvin
 - Shahab Golshan
+- Marion Hanne
 - Jeanne Joachim
 - Rajeshwari Kamble
 - Martin Kronbichler
@@ -67,6 +69,7 @@ Contributors (in alphabetical order):
 - Ghazaleh Mirakhori
 - Peter Munch
 - Victor Oliveira Ferreira
+- Hélène Papillon-Laroche
 - Paul Patience
 - Catherine Radburn
 - Philippe Rivest
