@@ -31,7 +31,7 @@ Installing deal.II
 ================================
 
 On Niagara, Beluga, Narval, Graham or Cedar
------------------------------------
+----------------------------------------------
 
 All operations can be performed on login nodes.
 
