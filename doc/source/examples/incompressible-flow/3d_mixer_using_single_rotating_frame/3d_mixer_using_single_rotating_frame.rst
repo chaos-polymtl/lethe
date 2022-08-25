@@ -279,7 +279,7 @@ To generate :math:`N_p` vs :math:`Re` curves, we are going to launch simulations
 
 .. seealso::
 
-    If it is your first time running simulations from Lethe on an Alliance cluster, you may want to see our installation guide on how to setup and install all the necessary software and modules: :doc:`../../../installation/compute_canada`.
+    If it is your first time running simulations from Lethe on an Alliance cluster, you may want to see our installation guide on how to setup and install all the necessary software and modules: :doc:`../../../installation/digital_alliance`.
 
 .. _Generating_the_Different_Cases:
 
