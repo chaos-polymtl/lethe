@@ -30,56 +30,19 @@ For the sake of clarity, this is the folder structure considered for the rest of
 Installing deal.II
 ================================
 
-On Niagara, Beluga, Graham or Cedar
------------------------------------
+On Niagara, Beluga, Narval, Graham or Cedar
+----------------------------------------------
 
 All operations can be performed on login nodes.
 
 .. warning::
  If on **Niagara**, this additional module is needed beforehand: ``module load CCEnv``.
 
-For any cluster except Narval (that is: Niagara, Beluga, Graham, Cedar), load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules:
-
-.. code-block:: text
-
- module load nixpkgs/16.09
- module load gcc/7.3.0
- module load openmpi/3.1.2
- module load trilinos/12.12.1
- module load parmetis/4.0.3
- module load p4est/2.0
-
-Then, we can clone and compile ``dealii``. Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the lethe repository. This fork is always tested to make sure it works with lethe. To clone the deal.II fork github repository, execute in ``$HOME/dealii`` directory:
-
-.. code-block:: text
-
- git clone https://github.com/lethe-cfd/dealii.git
-
-We can compile ``dealii`` in the ``$HOME/dealii/build folder``, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est`` :
-
-.. code-block:: text
-
- cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=$EBROOTTRILINOS -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=$EBROOTP4EST -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=$EBROOTPARMETIS -DCMAKE_INSTALL_PREFIX=../inst
-
-and:
-
-.. code-block:: text
-
- make -j8 install
-
-The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 8 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. In addition, the ``nice`` command can be used at the beginning of the call to give a lower priority to this task.
-
-.. note::
- If ``make install`` triggers an error, run the command ``which trilinos``. If it returns ``/usr/bin/which: no trilinos in``, try removing the deal.II build folder, recreating it and explicitly specify libraries' paths on the ``cmake``.
-
-
-On Narval
----------
-
 Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules:
 
 .. code-block:: text
 
+ module load StdEnv/2020
  module load gcc/9.3.0
  module load openmpi/4.0.3
  module load trilinos/13.0.1
@@ -92,11 +55,11 @@ Then, we can clone and compile ``dealii``. Although Lethe always supports the ma
 
  git clone https://github.com/lethe-cfd/dealii.git
 
-We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est`` :
+We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``. We compile ``dealii`` ony in release mode and we do not compile the test in order to increase the speed of the compilation:
 
 .. code-block:: text
 
- cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=$EBROOTTRILINOS -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=$EBROOTP4EST -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=$EBROOTPARMETIS -DCMAKE_INSTALL_PREFIX=../inst -DTrilinos_FIND_COMPONENTS="Pike;PikeImplicit;PikeBlackBox;TrilinosCouplings;Panzer;PanzerMiniEM;PanzerAdaptersSTK;PanzerDiscFE;PanzerDofMgr;PanzerCore;Piro;ROL;Stokhos;Tempus;Rythmos;ShyLU;ShyLU_DD;ShyLU_DDCommon;ShyLU_DDFROSch;ShyLU_DDBDDC;Zoltan2;Zoltan2Sphynx;MueLu;Moertel;NOX;Phalanx;Percept;STK;STKExprEval;STKDoc_tests;STKUnit_tests;STKBalance;STKTools;STKTransfer;STKSearchUtil;STKSearch;STKUnit_test_utils;STKNGP_TEST;STKIO;STKMesh;STKTopology;STKSimd;STKUtil;STKMath;Compadre;Intrepid2;Intrepid;Teko;FEI;Stratimikos;Ifpack2;Anasazi;Komplex;SEACAS;SEACASEx2ex1v2;SEACASTxtexo;SEACASNumbers;SEACASNemspread;SEACASNemslice;SEACASMat2exo;SEACASMapvar-kd;SEACASMapvar;SEACASMapvarlib;SEACASExplore;SEACASGrepos;SEACASGenshell;SEACASGen3D;SEACASGjoin;SEACASFastq;SEACASEx1ex2v2;SEACASExo_format;SEACASExotxt;SEACASExomatlab;SEACASExodiff;SEACASExo2mat;SEACASEpu;SEACASEjoin;SEACASConjoin;SEACASBlot;SEACASAprepro;SEACASAlgebra;SEACASPLT;SEACASSVDI;SEACASSuplibCpp;SEACASSuplibC;SEACASSuplib;SEACASSupes;SEACASAprepro_lib;SEACASChaco;SEACASIoss;SEACASNemesis;SEACASExoIIv2for32;SEACASExodus_for;SEACASExodus;Amesos2;ShyLU_Node;ShyLU_NodeTacho;ShyLU_NodeHTS;Belos;ML;Ifpack;Zoltan2Core;Pamgen;Amesos;Galeri;AztecOO;Pliris;Isorropia;Xpetra;Thyra;ThyraTpetraAdapters;ThyraEpetraExtAdapters;ThyraEpetraAdapters;ThyraCore;Domi;TrilinosSS;Tpetra;TpetraCore;TpetraTSQR;TpetraClassic;EpetraExt;Triutils;Shards;Zoltan;Epetra;MiniTensor;Sacado;RTOp;KokkosKernels;Teuchos;TeuchosKokkosComm;TeuchosKokkosCompat;TeuchosRemainder;TeuchosNumerics;TeuchosComm;TeuchosParameterList;TeuchosParser;TeuchosCore;Kokkos;KokkosAlgorithms;KokkosContainers;KokkosCore;Gtest;TrilinosATDMConfigTests;TrilinosFrameworkTests"
+ cmake ../dealii -DDEAL_II_COMPONENT_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release  -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=$EBROOTTRILINOS -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=$EBROOTP4EST -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=$EBROOTPARMETIS -DCMAKE_INSTALL_PREFIX=../inst -DTrilinos_FIND_COMPONENTS="Pike;PikeImplicit;PikeBlackBox;TrilinosCouplings;Panzer;PanzerMiniEM;PanzerAdaptersSTK;PanzerDiscFE;PanzerDofMgr;PanzerCore;Piro;ROL;Stokhos;Tempus;Rythmos;ShyLU;ShyLU_DD;ShyLU_DDCommon;ShyLU_DDFROSch;ShyLU_DDBDDC;Zoltan2;Zoltan2Sphynx;MueLu;Moertel;NOX;Phalanx;Percept;STK;STKExprEval;STKDoc_tests;STKUnit_tests;STKBalance;STKTools;STKTransfer;STKSearchUtil;STKSearch;STKUnit_test_utils;STKNGP_TEST;STKIO;STKMesh;STKTopology;STKSimd;STKUtil;STKMath;Compadre;Intrepid2;Intrepid;Teko;FEI;Stratimikos;Ifpack2;Anasazi;Komplex;SEACAS;SEACASEx2ex1v2;SEACASTxtexo;SEACASNumbers;SEACASNemspread;SEACASNemslice;SEACASMat2exo;SEACASMapvar-kd;SEACASMapvar;SEACASMapvarlib;SEACASExplore;SEACASGrepos;SEACASGenshell;SEACASGen3D;SEACASGjoin;SEACASFastq;SEACASEx1ex2v2;SEACASExo_format;SEACASExotxt;SEACASExomatlab;SEACASExodiff;SEACASExo2mat;SEACASEpu;SEACASEjoin;SEACASConjoin;SEACASBlot;SEACASAprepro;SEACASAlgebra;SEACASPLT;SEACASSVDI;SEACASSuplibCpp;SEACASSuplibC;SEACASSuplib;SEACASSupes;SEACASAprepro_lib;SEACASChaco;SEACASIoss;SEACASNemesis;SEACASExoIIv2for32;SEACASExodus_for;SEACASExodus;Amesos2;ShyLU_Node;ShyLU_NodeTacho;ShyLU_NodeHTS;Belos;ML;Ifpack;Zoltan2Core;Pamgen;Amesos;Galeri;AztecOO;Pliris;Isorropia;Xpetra;Thyra;ThyraTpetraAdapters;ThyraEpetraExtAdapters;ThyraEpetraAdapters;ThyraCore;Domi;TrilinosSS;Tpetra;TpetraCore;TpetraTSQR;TpetraClassic;EpetraExt;Triutils;Shards;Zoltan;Epetra;MiniTensor;Sacado;RTOp;KokkosKernels;Teuchos;TeuchosKokkosComm;TeuchosKokkosCompat;TeuchosRemainder;TeuchosNumerics;TeuchosComm;TeuchosParameterList;TeuchosParser;TeuchosCore;Kokkos;KokkosAlgorithms;KokkosContainers;KokkosCore;Gtest;TrilinosATDMConfigTests;TrilinosFrameworkTests"
 
 This command is absolutely barbaric, but it is required to prevent the usage of the Zadelus library within Trilinos 13.0.1.
 
@@ -115,7 +78,7 @@ The argument ``-jX`` specifies the number of processors used for the compilation
 Installing Lethe
 ================================
 
-After installing deal.II, compiling Lethe on Beluga, Niagara, Graham or Cedar is relatively straightforward, especially since all of these clusters share a very similar environment. To compile Lethe, the ``Trilinos``, ``Parmetis`` and ``P4est`` modules should be loaded.
+After installing deal.II, compiling Lethe is relatively straightforward, especially since all of these clusters share a very similar environment. To compile Lethe, the ``Trilinos``, ``Parmetis`` and ``P4est`` modules should be loaded.
 
 In the ``$HOME/lethe`` directory, download Lethe:
 
@@ -127,14 +90,14 @@ To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in 
 
 .. code-block:: text
 
- cmake ../lethe  -DDEAL_II_DIR=../../dealii/inst -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst
+ cmake ../lethe  -DDEAL_II_DIR=../../dealii/inst -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst -DBUILD_TESTING=OFF
  make install -j8
 
 
-Installing numdiff if required
-------------------------------
+Installing numdiff to enable tests
+------------------------------------
 
-If numdiff is not installed, you will have an error at the cmake step of Lethe's installation, stating that this module is missing. To install the package manually use the following steps:
+You will need to have numdiff installed to enable the test suite, otherwise you will have an error at the cmake step of Lethe's installation when using ``-DBUILD_TESTING=ON``, stating that this module is missing. To install the package manually use the following steps:
 
 1. Download the `compressed folder <https://mirror.csclub.uwaterloo.ca/nongnu/numdiff/>`_ (ex/ numdiff-5.9.0.tar.gz)
 2. Unzip it
