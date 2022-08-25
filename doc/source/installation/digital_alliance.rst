@@ -55,7 +55,7 @@ Then, we can clone and compile ``dealii``. Although Lethe always supports the ma
 
  git clone https://github.com/lethe-cfd/dealii.git
 
-We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``. We compile ``dealii`` ony in release mode and we do not compile the test in order to increase the speed of the compilation:
+We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the paths to installation folders of ``Trilinos``, ``Parmetis`` and ``P4est``. To increase the speed of this step, we skip ``dealii`` tests and compile in release mode only.
 
 .. code-block:: text
 
