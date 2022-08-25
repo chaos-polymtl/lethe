@@ -41,6 +41,7 @@ All operations can be performed on login nodes.
 Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules:
 
 .. code-block:: text
+
  module load StdEnv/2020
  module load gcc/9.3.0
  module load openmpi/4.0.3
