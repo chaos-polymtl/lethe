@@ -23,7 +23,7 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Condition
 #---------------------------------------------------
 subsection initial conditions
     set type = nodal
@@ -49,7 +49,6 @@ subsection physical properties
     set density 		= 300
     set kinematic viscosity 	= 0.00153
   end
-
 end
 
 #---------------------------------------------------
