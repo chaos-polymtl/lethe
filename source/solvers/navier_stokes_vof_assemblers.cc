@@ -90,19 +90,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      if (vof_parameters.limit_force)
-        {
-          // Determine whether gravity is applied at this quadrature point
-          if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
-            {
-              force = 0;
-            }
-          else if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
-            {
-              force = 0;
-            }
-        }
-
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
@@ -305,20 +292,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
-
-      if (vof_parameters.limit_force)
-        {
-          // Determine whether gravity and continuity condition are applied at
-          // this quadrature point
-          if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
-            {
-              force = 0;
-            }
-          else if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
-            {
-              force = 0;
-            }
-        }
 
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
@@ -798,14 +771,6 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      if (vof_parameters.limit_force)
-        {
-          if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
-            force = 0;
-          if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
-            force = 0;
-        }
-
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
@@ -1050,15 +1015,6 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
-
-      if (vof_parameters.limit_force)
-        {
-          if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
-            force = 0;
-          // Gravity not applied on phase 1
-          if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
-            force = 0;
-        }
 
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
