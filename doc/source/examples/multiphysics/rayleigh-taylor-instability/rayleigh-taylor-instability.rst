@@ -21,7 +21,9 @@ Features
 ------------------------
 Location of the example
 ------------------------
-``examples/multiphysics/rayleigh_taylor_instability/rayleigh_taylor_instability.prm``
+``examples/multiphysics/rayleigh_taylor_instability/rayleigh_taylor_instability_constant_refinement.prm``
+
+``examples/multiphysics/rayleigh_taylor_instability/rayleigh_taylor_instability_adaptive_refinement.prm``
 
 
 -----------------------------
@@ -52,7 +54,7 @@ which result in Reynolds and Atwood numbers equal to
         At = \frac{\rho_r - 1}{\rho_r + 1} = 0.5
 
 
-A perturbed interface defined as :math:`2H + 0.1 \cos{2 \pi x} / H` separates the fluids. At the top and bottom boundaries, no-slip boundary condition is applied, while on the left and right walls, periodic boundary condition is used. The temporal evolution of the interface is compared with the simulations of Garoosi and Hooman [2] at dimensionless times (:math:`t = t \sqrt{\bf{g} / H}`) of 1.5, 2.5, 3.5, 4.0 and 4.5.
+A perturbed interface defined as :math:`2H + 0.1 \cos{2 \pi x} / H` separates the fluids. At the top and bottom boundaries, a no-slip boundary condition is applied, while on the left and right walls, a periodic boundary condition is used. The temporal evolution of the interface is compared with the simulations of Garoosi and Hooman [2] at dimensionless times (:math:`t = t \sqrt{\bf{g} / H}`) of 1.5, 2.5, 3.5, 4.0 and 4.5.
 
 
 --------------
@@ -172,7 +174,34 @@ The ``initial refinement`` of the mesh is equal to 7, but we use a mesh adaptati
     end
 
 
-In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the interface and keep it sharp during the simulation. Note that here we use the ``constant`` method for interface sharpening. We can also use ``adaptative`` type for interface sharpening, but the ``mass conservation`` results show that choosing a ``constant`` method does not affect the mass conservation significantly.
+The boundary conditions applied on the left and right boundaries are ``periodic``, while a ``noslip`` boundary condition is used for the top and bottom walls. In the definition of a ``periodic`` boundary, we need to specify the ``periodic_id`` and the ``periodic_direction`` (in this example, 0 which shows the x direction).
+
+
+.. code-block:: text
+
+    #---------------------------------------------------
+    # Boundary Conditions
+    #---------------------------------------------------
+    subsection boundary conditions
+      set number                  = 4
+        subsection bc 0
+        set id = 0
+            set type              = periodic
+            set periodic_id	      = 1
+            set periodic_direction = 0
+        end
+        subsection bc 1
+        set id = 2
+            set type              = noslip
+        end
+        subsection bc 2
+        set id = 3
+            set type              = noslip
+        end
+    end
+
+
+In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the interface and keep it sharp during the simulation. Note that here we use the ``constant`` and ``adaptive`` methods for interface sharpening. The ``mass conservation`` results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` refinement we use
 
 
 .. code-block:: text
@@ -195,6 +224,35 @@ In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the
         set tolerance           	= 1e-6
         set verbosity           	= quiet
       end
+    end
+
+
+and for the ``adaptive`` refinement
+
+
+.. code-block:: text
+
+    #---------------------------------------------------
+    # VOF
+    #---------------------------------------------------
+    subsection VOF
+      subsection interface sharpening
+        set enable                  = true
+        set threshold               = 0.5
+        set interface sharpness     = 1.5
+        set frequency               = 25
+        set type                    = adaptative
+        set threshold max deviation = 0.2
+        set max iterations          = 50
+     end
+    
+     subsection mass conservation
+        set monitoring          	= true
+        set  monitored fluid     	= fluid 1
+        set tolerance           	= 1e-2
+        set verbosity           	= quiet
+      end
+    
     end
 
 
@@ -235,7 +293,7 @@ In the following figure, we compare the simulation results with that of Garoosi 
     :width: 400
 
 
-The following figure shows the mass of fluid 1 throughout the simulation.
+The following figure shows the mass of fluid 1 throughout the simulation with a constant interface sharpening.
 
 
 .. image:: images/mass_of_fluid1.png

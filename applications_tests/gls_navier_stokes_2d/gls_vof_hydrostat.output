@@ -22,9 +22,9 @@ Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 8.9037
 L2 error velocity : 3.07925e-05
 L2 error phase : 0.0036937
  time  error_velocity error_pressure 
-0.0200 3.071207e-05   0.9287         
-0.0400 3.079621e-05   0.9288         
-0.0600 3.079248e-05   0.9288         
+0.0200 3.071207e-05   0.0682         
+0.0400 3.079621e-05   0.0681         
+0.0600 3.079248e-05   0.0681         
  time  error_phase  
 0.0200 3.693057e-03 
 0.0400 3.693377e-03 
