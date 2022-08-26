@@ -67,7 +67,7 @@ time step of :math:`0.0002` second.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using ``output control = time``, and ``output time = 0.005`` the simulation results are written every 0.005 s.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.9 here). Using ``output control = time``, and ``output time = 0.005`` the simulation results are written every 0.005 s.
 
 
 .. code-block:: text
