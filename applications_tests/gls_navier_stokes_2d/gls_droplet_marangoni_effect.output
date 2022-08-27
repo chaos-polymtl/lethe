@@ -10,29 +10,29 @@ Kinetic energy : 0
 *****************************************************************
 Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0       
 *****************************************************************
-Enstrophy  : 0.543402
-Kinetic energy : 2.06454e-05
+Enstrophy  : 0.435611
+Kinetic energy : 1.60087e-05
 
 *****************************************************************
-Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.00936298
+Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.00809701
 *****************************************************************
-Enstrophy  : 50.4139
-Kinetic energy : 0.000761582
+Enstrophy  : 52.733
+Kinetic energy : 0.000821413
 
 *****************************************************************
-Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.122855
+Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.123127
 *****************************************************************
-Enstrophy  : 189.088
-Kinetic energy : 0.00325828
+Enstrophy  : 195.496
+Kinetic energy : 0.00346916
 
 *****************************************************************
-Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 0.232129
+Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 0.232138
 *****************************************************************
-Enstrophy  : 371.442
-Kinetic energy : 0.0071153
+Enstrophy  : 382.399
+Kinetic energy : 0.00752001
 
 *****************************************************************
-Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 0.317114
+Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 0.31656 
 *****************************************************************
-Enstrophy  : 566.914
-Kinetic energy : 0.0117275
+Enstrophy  : 582.392
+Kinetic energy : 0.0123426

@@ -31,15 +31,15 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
   std::vector<double> &phase_values = scratch_data.phase_values;
 
-  // Limit force application : not applied if cell density is below
-  // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio = 2;
-  double       phase_cutoff  = 0;
-
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
       "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+
+  // Limit force application : not applied if cell density is below
+  // density_ratio of the maximum density (e.g. when one of the fluids is air)
+  const double density_ratio = 2;
+  double       phase_cutoff  = 0;
 
   // Phase cut-off for force (i.e. gravity) application and continuity condition
   if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
@@ -52,7 +52,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
     {
       phase_cutoff = 1 - 1e-6;
     }
-
 
   // Determine whether continuity condition is solved in this cell.
   // Removing the conservation condition on the lowest density fluid
@@ -90,16 +89,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
-
-      // Determine whether gravity is applied at this quadrature point
-      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
-        {
-          force = 0;
-        }
-      else if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
-        {
-          force = 0;
-        }
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
@@ -303,17 +292,6 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
-
-      // Determine whether gravity and continuity condition are applied at this
-      // quadrature point
-      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
-        {
-          force = 0;
-        }
-      else if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
-        {
-          force = 0;
-        }
 
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
@@ -793,11 +771,6 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
-        force = 0;
-      if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
-        force = 0;
-
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
@@ -1042,12 +1015,6 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
-
-      if (phase_cutoff < 0.5 && phase_values[q] < phase_cutoff)
-        force = 0;
-      // Gravity not applied on phase 1
-      if (phase_cutoff > 0.5 && phase_values[q] > phase_cutoff)
-        force = 0;
 
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter

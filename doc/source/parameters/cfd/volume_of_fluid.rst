@@ -14,7 +14,6 @@ The default values of the VOF parameters are given in the text box below.
 .. code-block:: text
 
 	subsection VOF	
-
 		set viscous dissipative fluid = fluid 1
 
 		subsection interface sharpening
@@ -89,7 +88,8 @@ The default values of the VOF parameters are given in the text box below.
 
 	Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, but we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature.
 
-* ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
+
+  * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
   * ``enable``: controls if interface sharpening is enabled.
   * ``frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.

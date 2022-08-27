@@ -72,8 +72,8 @@ subsection analytical solution
   set enable     	= true
   set verbosity 	= verbose
     subsection uvwp
-	set Function constants = rho=2., g=9.81, h=0.4
-        set Function expression =  0 ; 0 ; if (y<h, rho*g*(h-y), 0)
+	set Function constants = rho1=2., g=9.81, h=0.4, rho2=0.5,l=1
+        set Function expression =  0 ; 0 ; if (y<h, rho2*g*(l-h) + rho1*g*(h-y), rho2*g*(l-y))
     end
     subsection phase
 	set Function constants = h=0.4
