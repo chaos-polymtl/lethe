@@ -62,6 +62,13 @@ GDNavierStokesSolver<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
+  // Buoyant force
+  if (this->simulation_parameters.multiphysics.buoyancy_force)
+    {
+      this->assemblers.push_back(
+        std::make_shared<BuoyancyAssembly<dim>>(this->simulation_control));
+    }
+
   if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
@@ -100,13 +107,6 @@ GDNavierStokesSolver<dim>::setup_assemblers()
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesAssemblerSRF<dim>>(
               this->simulation_parameters.velocity_sources));
-        }
-
-      // Buoyant force
-      if (this->simulation_parameters.multiphysics.buoyancy_force)
-        {
-          this->assemblers.push_back(
-            std::make_shared<BuoyancyAssembly<dim>>(this->simulation_control));
         }
 
       if (this->simulation_parameters.physical_properties_manager
