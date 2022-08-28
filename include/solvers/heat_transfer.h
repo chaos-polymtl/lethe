@@ -64,7 +64,7 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , solution_transfer(dof_handler)
+
   {
     if (simulation_parameters.mesh.simplex)
       {
@@ -88,6 +88,12 @@ public:
         face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
         error_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 2);
       }
+
+    // Allocate solution transfer
+    solution_transfer =
+      std::make_shared<parallel::distributed::
+                         SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>(
+        dof_handler);
 
     // Set size of previous solutions using BDF schemes information
     previous_solutions.resize(maximum_number_of_previous_solutions());
@@ -382,7 +388,8 @@ private:
   std::vector<TrilinosWrappers::MPI::Vector> solution_stages;
 
   // Solution transfer classes
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+  std::shared_ptr<
+    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
     solution_transfer;
   std::vector<
     parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
