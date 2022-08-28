@@ -607,7 +607,6 @@ HeatTransfer<dim>::write_checkpoint()
                        SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>(
       dof_handler);
 
-
   sol_set_transfer.push_back(&present_solution);
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {

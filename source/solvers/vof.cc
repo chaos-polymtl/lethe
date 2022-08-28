@@ -1193,7 +1193,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::pre_mesh_adaptation()
 {
-  this->solution_transfer.prepare_for_coarsening_and_refinement(
+  this->solution_transfer->prepare_for_coarsening_and_refinement(
     this->present_solution);
 
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
@@ -1213,7 +1213,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   TrilinosWrappers::MPI::Vector tmp(this->locally_owned_dofs, mpi_communicator);
 
   // Interpolate the solution at time and previous time
-  this->solution_transfer.interpolate(tmp);
+  this->solution_transfer->interpolate(tmp);
 
   // Distribute constraints
   this->nonzero_constraints.distribute(tmp);
@@ -1267,12 +1267,17 @@ VolumeOfFluid<dim>::write_checkpoint()
 {
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
 
+  solution_transfer =
+    std::make_shared<parallel::distributed::
+                       SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>(
+      dof_handler);
+
   sol_set_transfer.push_back(&this->present_solution);
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       sol_set_transfer.push_back(&this->previous_solutions[i]);
     }
-  this->solution_transfer.prepare_for_serialization(sol_set_transfer);
+  this->solution_transfer->prepare_for_serialization(sol_set_transfer);
 }
 
 template <int dim>
@@ -1300,7 +1305,7 @@ VolumeOfFluid<dim>::read_checkpoint()
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
-  this->solution_transfer.deserialize(input_vectors);
+  this->solution_transfer->deserialize(input_vectors);
 
   this->present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions_size; ++i)
