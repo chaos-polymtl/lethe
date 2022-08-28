@@ -471,7 +471,7 @@ template <int dim>
 void
 Tracer<dim>::pre_mesh_adaptation()
 {
-  solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
+  solution_transfer->prepare_for_coarsening_and_refinement(present_solution);
 
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
@@ -490,7 +490,7 @@ Tracer<dim>::post_mesh_adaptation()
   TrilinosWrappers::MPI::Vector tmp(locally_owned_dofs, mpi_communicator);
 
   // Interpolate the solution at time and previous time
-  solution_transfer.interpolate(tmp);
+  solution_transfer->interpolate(tmp);
 
   // Distribute constraints
   nonzero_constraints.distribute(tmp);
@@ -515,12 +515,17 @@ Tracer<dim>::write_checkpoint()
 {
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
 
+  solution_transfer =
+    std::make_shared<parallel::distributed::
+                       SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>(
+      dof_handler);
+
   sol_set_transfer.push_back(&present_solution);
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       sol_set_transfer.push_back(&previous_solutions[i]);
     }
-  solution_transfer.prepare_for_serialization(sol_set_transfer);
+  solution_transfer->prepare_for_serialization(sol_set_transfer);
 }
 
 template <int dim>
@@ -546,7 +551,7 @@ Tracer<dim>::read_checkpoint()
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
-  solution_transfer.deserialize(input_vectors);
+  solution_transfer->deserialize(input_vectors);
 
   present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
