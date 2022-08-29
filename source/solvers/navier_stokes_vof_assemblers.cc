@@ -36,22 +36,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
     RequiresConstantDensity(
       "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
-  // Limit force application : not applied if cell density is below
-  // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio = 2;
-  double       phase_cutoff  = 0;
-
-  // Phase cut-off for force (i.e. gravity) application and continuity condition
-  if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
-      scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
-    {
-      phase_cutoff = 1e-6;
-    }
-  if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
-      scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
-    {
-      phase_cutoff = 1 - 1e-6;
-    }
+  // Phase cutoff to limit continuity application on non-conservative fluid
+  const double phase_cutoff = 1e-6;
 
   // Determine whether continuity condition is solved in this cell.
   // Removing the conservation condition on the lowest density fluid
@@ -64,13 +50,13 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   if (vof_parameters.conservation.conservative_fluid ==
       Parameters::FluidIndicator::fluid0)
     {
-      if (*max_phase_cell < phase_cutoff)
+      if (*max_phase_cell > 1. - phase_cutoff)
         solve_continuity = false;
     }
   else if (vof_parameters.conservation.conservative_fluid ==
            Parameters::FluidIndicator::fluid1)
     {
-      if (*max_phase_cell > phase_cutoff)
+      if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
 
@@ -230,30 +216,10 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
   std::vector<double> &phase_values = scratch_data.phase_values;
 
-  // Limit force application : not applied if cell density is below
-  // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio = 2;
-  double       phase_cutoff  = 0;
+  // Phase cutoff to limit continuity application on non-conservative fluid
+  const double phase_cutoff = 1e-6;
 
-  Assert(
-    scratch_data.properties_manager.density_is_constant(),
-    RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
-
-  // Phase cut-off for force (i.e. gravity) application, also used for
-  // continuity condition
-  if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
-      scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
-    {
-      phase_cutoff = 1e-6;
-    }
-  if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
-      scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
-    {
-      phase_cutoff = 1 - 1e-6;
-    }
-
-  // Determine whether continuity condition is solved in this cell
+  // Determine whether continuity condition is solved in this cell.
   // Removing the conservation condition on the lowest density fluid
   // can improve the wetting mechanism in the framework of incompressible
   // fluids. See documentation for more details.
@@ -264,15 +230,20 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   if (vof_parameters.conservation.conservative_fluid ==
       Parameters::FluidIndicator::fluid0)
     {
-      if (*max_phase_cell < phase_cutoff)
+      if (*max_phase_cell > 1. - phase_cutoff)
         solve_continuity = false;
     }
   else if (vof_parameters.conservation.conservative_fluid ==
            Parameters::FluidIndicator::fluid1)
     {
-      if (*max_phase_cell > phase_cutoff)
+      if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -693,29 +664,10 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
   // std::vector<Tensor<1, dim>> &phase_gradient_values =
   // scratch_data.phase_gradient_values;
 
-  // Limit force application : not applied if cell density is below
-  // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio = 2;
-  double       phase_cutoff  = 0;
+  // Phase cutoff to limit continuity application on non-conservative fluid
+  const double phase_cutoff = 1e-6;
 
-  Assert(
-    scratch_data.properties_manager.density_is_constant(),
-    RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
-
-  // Phase cut-off for force (i.e. gravity) application and continuity condition
-  if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
-      scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
-    {
-      phase_cutoff = 1e-6;
-    }
-  if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
-      scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
-    {
-      phase_cutoff = 1 - 1e-6;
-    }
-
-  // Determine whether continuity condition is solved in this cell
+  // Determine whether continuity condition is solved in this cell.
   // Removing the conservation condition on the lowest density fluid
   // can improve the wetting mechanism in the framework of incompressible
   // fluids. See documentation for more details.
@@ -726,15 +678,20 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
   if (vof_parameters.conservation.conservative_fluid ==
       Parameters::FluidIndicator::fluid0)
     {
-      if (*max_phase_cell < phase_cutoff)
+      if (*max_phase_cell > 1. - phase_cutoff)
         solve_continuity = false;
     }
   else if (vof_parameters.conservation.conservative_fluid ==
            Parameters::FluidIndicator::fluid1)
     {
-      if (*max_phase_cell > phase_cutoff)
+      if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -934,30 +891,10 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
   // std::vector<Tensor<1, dim>> &phase_gradient_values =
   // scratch_data.phase_gradient_values;
 
-  // Limit force application : not applied if cell density is below
-  // density_ratio of the maximum density (e.g. when one of the fluids is air)
-  const double density_ratio = 2;
-  double       phase_cutoff  = 0;
+  // Phase cutoff to limit continuity application on non-conservative fluid
+  const double phase_cutoff = 1e-6;
 
-  Assert(
-    scratch_data.properties_manager.density_is_constant(),
-    RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
-
-  // Phase cut-off for force (i.e. gravity) application, also used for
-  // continuity condition
-  if (scratch_data.density_0[0] < scratch_data.density_1[0] &&
-      scratch_data.density_0[0] * density_ratio < scratch_data.density_1[0])
-    {
-      phase_cutoff = 1e-6;
-    }
-  if (scratch_data.density_1[0] < scratch_data.density_0[0] &&
-      scratch_data.density_1[0] * density_ratio < scratch_data.density_0[0])
-    {
-      phase_cutoff = 1 - 1e-6;
-    }
-
-  // Determine whether continuity condition is solved in this cell
+  // Determine whether continuity condition is solved in this cell.
   // Removing the conservation condition on the lowest density fluid
   // can improve the wetting mechanism in the framework of incompressible
   // fluids. See documentation for more details.
@@ -968,15 +905,20 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
   if (vof_parameters.conservation.conservative_fluid ==
       Parameters::FluidIndicator::fluid0)
     {
-      if (*max_phase_cell < phase_cutoff)
+      if (*max_phase_cell > 1. - phase_cutoff)
         solve_continuity = false;
     }
   else if (vof_parameters.conservation.conservative_fluid ==
            Parameters::FluidIndicator::fluid1)
     {
-      if (*max_phase_cell > phase_cutoff)
+      if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
     }
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
