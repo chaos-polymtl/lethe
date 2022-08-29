@@ -1598,8 +1598,9 @@ GLSNavierStokesSolver<dim>::solve()
 
       if (this->simulation_control->is_at_start())
         {
-          for (unsigned int i = 0; i<this->simulation_parameters.mesh_adaptation
-                                       .initial_refinement> 0;
+          for (unsigned int i = 0;
+               i <
+               this->simulation_parameters.mesh_adaptation.initial_refinement;
                i++)
             NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
               refine_mesh();
