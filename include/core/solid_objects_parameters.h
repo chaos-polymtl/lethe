@@ -227,7 +227,6 @@ namespace Parameters
   Nitsche<dim>::declare_parameters(ParameterHandler &prm)
   {
     nitsche_solids.resize(max_nitsche_solids);
-    number_solids = 0;
 
     prm.enter_subsection("nitsche");
     {

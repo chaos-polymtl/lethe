@@ -542,13 +542,18 @@ public:
 
   /**
    @brief Request the solid objects. Used an auxiliary physics
-    * needs to apply a boundary condition on a solid through Nitsche immersed
-   boundary method.
+    * needs to apply a boundary condition on a solid through
+    * Nitsche immersed boundary method.
     *
+    * NB: this method is called only in
+    * HeatTransfer<dim>::assemble_nitsche_restriction,
+    * which is itself called only if number_solids > 0
     */
   std::vector<std::shared_ptr<SolidBase<dim, dim>>> *
   get_solids()
   {
+    // Called only if number_solids > 0, in the method
+    // HeatTransfer<dim>::assemble_matrix_and_rhs()
     return solids;
   }
 

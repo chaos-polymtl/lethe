@@ -7,7 +7,7 @@ If the problem being simulated has a source, it can be added in this section. Th
 
    subsection source term
 
-     set enable                = true
+     set enable                = false
 
      subsection xyz
        # Default values in 2D
