@@ -926,10 +926,21 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
     }
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
     {
-      this->set_nodal_values();
-      this->finish_time_step_fd();
-    }
+      // *** HERE
+      for (unsigned int i = 0;
+           i <
+           this->simulation_parameters.mesh_adaptation.initial_refinement + 1;
+           i++)
+        {
+          if (i != 0)
+            NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+              refine_mesh();
+          // *** HERE
 
+          this->set_nodal_values();
+          this->finish_time_step_fd();
+        } // THIS LINE SHOULD ALSO BE REMOVED
+    }
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
       this->set_nodal_values();
@@ -1595,16 +1606,8 @@ GLSNavierStokesSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
 
-
       if (this->simulation_control->is_at_start())
         {
-          for (unsigned int i = 0;
-               i <
-               this->simulation_parameters.mesh_adaptation.initial_refinement;
-               i++)
-            NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-              refine_mesh();
-
           this->iterate();
         }
       else
