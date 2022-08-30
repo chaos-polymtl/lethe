@@ -16,6 +16,7 @@
  */
 
 #include <core/shape.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/auto_derivative_function.h>
 #include <deal.II/base/function_signed_distance.h>
@@ -139,7 +140,6 @@ public:
    * @brief
    * Sets up a shape in accordance with the given type and arguments
    *
-   * @param i The particle id
    * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
    * rectangle, death star, cut hollow sphere, or torus
    * @param shape_arguments The dimensions to be used for shape initialization
@@ -147,6 +147,16 @@ public:
   void
   initialize_shape(const std::string         type,
                    const std::vector<double> shape_arguments);
+
+  /**
+   * @brief
+   * Sets up a shape in accordance with the given type and arguments
+   *
+   * @param type The type of shape to be initialized: it should be 'rbf'
+   * @param shape_name The name of the file containing the RBF information
+   */
+  void
+  initialize_rbf_shape(const std::string type, const std::string shape_name);
 
   /**
    * @brief

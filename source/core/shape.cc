@@ -501,15 +501,18 @@ double
 RBFShape<dim>::value(const Point<dim> &evaluation_point,
                      const unsigned int /*component*/) const
 {
-  double value = 0.;
-  double dist, basis;
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+  double       value =0.;
+  double       dist, basis;
+  unsigned int number_of_nodes = weight.size();
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   // TODO How to properly introduce the code/citation
   for (unsigned int i = 0; i < number_of_nodes; ++i)
     {
-      dist  = (evaluation_point - nodes[i]).norm() / support_radius;
-      basis = evaluate_basis_function(dist);
-      value += basis * weights[i];
+      dist  = (centered_point - nodes[i]).norm() / support_radius[i];
+      basis = evaluate_basis_function(basis_function[i], dist);
+      value += basis * weight[i];
     }
   return value;
 }
@@ -521,7 +524,7 @@ RBFShape<dim>::static_copy() const
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<RBFShape<dim>>(support_radius,
                                     basis_function,
-                                    weights,
+                                    weight,
                                     nodes,
                                     this->position,
                                     this->orientation);
@@ -548,7 +551,7 @@ template <int dim>
 double
 RBFShape<dim>::wendlandc2(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -567,7 +570,7 @@ template <int dim>
 double
 RBFShape<dim>::linear(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -629,7 +632,7 @@ template <int dim>
 double
 RBFShape<dim>::c1c0(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -649,7 +652,7 @@ template <int dim>
 double
 RBFShape<dim>::c2c0(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -669,7 +672,7 @@ template <int dim>
 double
 RBFShape<dim>::c0c1(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -689,7 +692,7 @@ template <int dim>
 double
 RBFShape<dim>::c1c1(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -709,7 +712,7 @@ template <int dim>
 double
 RBFShape<dim>::c2c1(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -729,7 +732,7 @@ template <int dim>
 double
 RBFShape<dim>::c0c2(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -749,7 +752,7 @@ template <int dim>
 double
 RBFShape<dim>::c1c2(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -770,7 +773,7 @@ template <int dim>
 double
 RBFShape<dim>::c2c2(double dist) const
 {
-  if (dist > 1)
+  if (dist > 1.)
     {
       return 0.;
     }
@@ -783,10 +786,11 @@ RBFShape<dim>::c2c2(double dist) const
 
 template <int dim>
 double
-RBFShape<dim>::evaluate_basis_function(const double distance) const
+RBFShape<dim>::evaluate_basis_function(const unsigned int basis_function_id,
+                                       const double       distance) const
 {
   double value;
-  switch (basis_function)
+  switch (basis_function_id)
     {
       case 1:
         value = RBFShape<dim>::wendlandc2(distance);

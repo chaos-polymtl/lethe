@@ -543,21 +543,20 @@ public:
   /**
    * @param support_radius the scaling of the extent of the nodes
    * @param basis_function the basis function that was used to parametrize the RBF object
-   * @param weights the weighting associated to each node for the sum operation
+   * @param weight the weighting associated to each node for the sum operation
    * @param nodes the center of each basis function
    */
-  RBFShape<dim>(double                      support_radius,
-                unsigned int                basis_function,
-                std::vector<double>         weights,
+  RBFShape<dim>(std::vector<double>         support_radius,
+                std::vector<unsigned int>   basis_function,
+                std::vector<double>         weight,
                 std::vector<Tensor<1, dim>> nodes,
                 const Point<dim> &          position,
                 const Tensor<1, 3> &        orientation)
-    : Shape<dim>(support_radius, position, orientation)
+    : Shape<dim>(support_radius[0], position, orientation)
     , support_radius(support_radius)
     , basis_function(basis_function)
     , nodes(nodes)
-    , weights(weights)
-    , number_of_nodes(weights.size())
+    , weight(weight)
   {}
 
   double
@@ -572,7 +571,8 @@ public:
 
   double
   // TODO How to properly cite bitpit
-  evaluate_basis_function(const double distance) const;
+  evaluate_basis_function(const unsigned int basis_function_id,
+                          const double distance) const;
 
   double
   wendlandc2(double) const;
@@ -634,11 +634,10 @@ public:
   };
 
 private:
-  std::vector<double>         weights;
+  std::vector<double>         weight;
   std::vector<Tensor<1, dim>> nodes;
-  double                      support_radius;
-  unsigned int                basis_function;
-  unsigned int                number_of_nodes;
+  std::vector<double>         support_radius;
+  std::vector<unsigned int>   basis_function;
 };
 
 #endif // lethe_shape_h

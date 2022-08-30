@@ -1839,9 +1839,9 @@ namespace Parameters
       "type",
       "sphere",
       Patterns::Selection(
-        "sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star"),
+        "sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star|rbf"),
       "The type of shape considered."
-      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star>."
+      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star|rbf>."
       "The parameter for a sphere is: radius. "
       "The parameters for a rectangle are, in order: x half length,"
       "y half length, z half length."
@@ -1854,7 +1854,8 @@ namespace Parameters
       "The parameters for a cut hollow sphere are, in order: sphere radius,"
       "cut thickness, wall thickness. "
       "The parameters for a death star are, in order: sphere radius,"
-      "smaller sphere radius, distance between centers.");
+      "smaller sphere radius, distance between centers."
+      "The parameter for a rbf is the file name.");
     prm.declare_entry("shape arguments",
                       "1",
                       Patterns::Anything(),
@@ -2117,8 +2118,6 @@ namespace Parameters
       lubrication_range_max    = prm.get_double("lubrication range max");
       lubrication_range_min    = prm.get_double("lubrication range min");
 
-
-
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
@@ -2200,9 +2199,17 @@ namespace Parameters
           std::string shape_arguments_str = prm.get("shape arguments");
           std::vector<std::string> shape_arguments_str_list(
             Utilities::split_string_list(shape_arguments_str, ";"));
-          std::vector<double> shape_arguments =
-            Utilities::string_to_double(shape_arguments_str_list);
-          particles[i].initialize_shape(shape_type, shape_arguments);
+          if (shape_type == "rbf")
+            {
+              particles[i].initialize_rbf_shape(shape_type,
+                                                shape_arguments_str_list[0]);
+            }
+          else
+            {
+              std::vector<double> shape_arguments =
+                Utilities::string_to_double(shape_arguments_str_list);
+              particles[i].initialize_shape(shape_type, shape_arguments);
+            }
 
           particles[i].radius = particles[i].shape->effective_radius;
 
