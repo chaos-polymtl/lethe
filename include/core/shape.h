@@ -74,6 +74,7 @@ public:
     cut_hollow_sphere = 5,
     death_star        = 6,
     composite_shape   = 7,
+    rbf_shape         = 8,
   } type;
 
 
@@ -529,6 +530,115 @@ public:
 
 private:
   std::vector<std::shared_ptr<Shape<dim>>> components;
+};
+
+
+// RBF Shapes express the signed distance function as a linear combination of
+// Radial Basis Functions, which have a defined support radius and basis
+// function. A collection of nodes and weights composes the object.
+template <int dim>
+class RBFShape : public Shape<dim>
+{
+public:
+  /**
+   * @param support_radius the scaling of the extent of the nodes
+   * @param basis_function the basis function that was used to parametrize the RBF object
+   * @param weights the weighting associated to each node for the sum operation
+   * @param nodes the center of each basis function
+   */
+  RBFShape<dim>(double                      support_radius,
+                unsigned int                basis_function,
+                std::vector<double>         weights,
+                std::vector<Tensor<1, dim>> nodes,
+                const Point<dim> &          position,
+                const Tensor<1, 3> &        orientation)
+    : Shape<dim>(support_radius, position, orientation)
+    , support_radius(support_radius)
+    , basis_function(basis_function)
+    , nodes(nodes)
+    , weights(weights)
+    , number_of_nodes(weights.size())
+  {}
+
+  double
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
+
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  double
+  displaced_volume(const double fluid_density) override;
+
+  double
+  // TODO How to properly cite bitpit
+  evaluate_basis_function(const double distance) const;
+
+  double
+  wendlandc2(double) const;
+  double
+  linear(double) const;
+  double
+  gauss90(double) const;
+  double
+  gauss95(double) const;
+  double
+  gauss99(double) const;
+  double
+  c1c0(double) const;
+  double
+  c2c0(double) const;
+  double
+  c0c1(double) const;
+  double
+  c1c1(double) const;
+  double
+  c2c1(double) const;
+  double
+  c0c2(double) const;
+  double
+  c1c2(double) const;
+  double
+  c2c2(double) const;
+
+
+  std::pair<std::string, int>
+  get_shape_name() override
+  {
+    return std::make_pair("rbf_shape", Shape<dim>::ShapeType::rbf_shape);
+  }
+
+  /**
+   * Class taken from Optimad Bitpit. https://github.com/optimad/bitpit
+   * // TODO How to properly introduce the code/citation
+   * @enum RBFBasisFunction
+   * @ingroup RBF
+   * @brief Enum class defining types of RBF kernel functions that could be used in bitpit::RBF class
+   */
+  enum class RBFBasisFunction
+  {
+    CUSTOM     = 0,
+    WENDLANDC2 = 1,
+    LINEAR     = 2,
+    GAUSS90    = 3,
+    GAUSS95    = 4,
+    GAUSS99    = 5,
+    C1C0       = 6,
+    C2C0       = 7,
+    C0C1       = 8,
+    C1C1       = 9,
+    C2C1       = 10,
+    C0C2       = 11,
+    C1C2       = 12,
+    C2C2       = 13,
+  };
+
+private:
+  std::vector<double>         weights;
+  std::vector<Tensor<1, dim>> nodes;
+  double                      support_radius;
+  unsigned int                basis_function;
+  unsigned int                number_of_nodes;
 };
 
 #endif // lethe_shape_h

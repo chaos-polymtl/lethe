@@ -495,6 +495,345 @@ CompositeShape<dim>::displaced_volume(const double fluid_density)
   return solid_volume;
 }
 
+
+template <int dim>
+double
+RBFShape<dim>::value(const Point<dim> &evaluation_point,
+                     const unsigned int /*component*/) const
+{
+  double value = 0.;
+  double dist, basis;
+  // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
+  // TODO How to properly introduce the code/citation
+  for (unsigned int i = 0; i < number_of_nodes; ++i)
+    {
+      dist  = (evaluation_point - nodes[i]).norm() / support_radius;
+      basis = evaluate_basis_function(dist);
+      value += basis * weights[i];
+    }
+  return value;
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+RBFShape<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<RBFShape<dim>>(support_radius,
+                                    basis_function,
+                                    weights,
+                                    nodes,
+                                    this->position,
+                                    this->orientation);
+  return copy;
+}
+
+template <int dim>
+double
+RBFShape<dim>::displaced_volume(const double fluid_density)
+{
+  double solid_volume = 0;
+  // TODO
+  // Integration on every cell with the gauss points. Where the distance is
+  // negative, the value to be integrated is 1; 0 otherwise.
+  return solid_volume;
+}
+
+/*!
+ * Wendland C2 function
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::wendlandc2(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return std::pow(1. - dist, 4) * (4. * dist + 1.);
+    }
+}
+
+/*!
+ * Linear function
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::linear(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return (1 - dist);
+    }
+}
+
+/*!
+ * Non compact gaussian function with 0.1 value at dist equal to 1
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::gauss90(double dist) const
+{
+  double eps = std::pow(-1.0 * std::log(0.1), 0.5);
+
+  return std::exp(-1.0 * std::pow(dist * eps, 2));
+}
+
+/*!
+ * Non compact gaussian function with 0.05 value at dist equal to 1
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::gauss95(double dist) const
+{
+  double eps = std::pow(-1.0 * std::log(0.05), 0.5);
+
+  return std::exp(-1.0 * std::pow(dist * eps, 2));
+}
+
+/*!
+ * Non compact gaussian function with 0.01 value at dist equal to 1
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::gauss99(double dist) const
+{
+  double eps = std::pow(-1.0 * std::log(0.01), 0.5);
+
+  return std::exp(-1.0 * std::pow(dist * eps, 2));
+}
+
+/*!
+ * Polynomial function defined between 0,1. Preserve C1 continuity at dist=0, C0
+ * continuity at dist=1. At dist > 1 is 0.
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::c1c0(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return (1.0 - std::pow(dist, 2));
+    }
+}
+
+/*!
+ * Polynomial function defined between 0,1. Preserve C2 continuity at dist=0, C0
+ * continuity at dist=1. At dist > 1 is 0.
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::c2c0(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return (1.0 - std::pow(dist, 3));
+    }
+}
+
+/*!
+ * Polynomial function defined between 0,1. Preserve C0 continuity at dist=0, C1
+ * continuity at dist=1. At dist > 1 is 0.
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::c0c1(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return (1.0 - 2.0 * dist + std::pow(dist, 2));
+    }
+}
+
+/*!
+ * Polynomial function defined between 0,1. Preserve C1 continuity at dist=0, C1
+ * continuity at dist=1. At dist > 1 is 0.
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::c1c1(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return (1.0 - 3.0 * std::pow(dist, 2) + 2.0 * std::pow(dist, 3));
+    }
+}
+
+/*!
+ * Polynomial function defined between 0,1. Preserve C2 continuity at dist=0, C1
+ * continuity at dist=1. At dist > 1 is 0.
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::c2c1(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return (1.0 - 4.0 * std::pow(dist, 3) + 3.0 * std::pow(dist, 4));
+    }
+}
+
+/*!
+ * Polynomial function defined between 0,1. Preserve C0 continuity at dist=0, C2
+ * continuity at dist=1. At dist > 1 is 0.
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::c0c2(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return (1.0 - 3.0 * dist + 3.0 * std::pow(dist, 2) - std::pow(dist, 3));
+    }
+}
+
+/*!
+ * Polynomial function defined between 0,1. Preserve C1 continuity at dist=0, C2
+ * continuity at dist=1. At dist > 1 is 0.
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::c1c2(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return (1.0 - 6.0 * std::pow(dist, 2) + 8.0 * std::pow(dist, 3) -
+              3.0 * std::pow(dist, 4));
+    }
+}
+
+/*!
+ * Polynomial function defined between 0,1. Preserve C2 continuity at dist=0, C2
+ * continuity at dist=1. At dist > 1 is 0.
+ * @param[in] dist distance normalized with respect to support radius
+ * @return rbf value
+ */
+template <int dim>
+double
+RBFShape<dim>::c2c2(double dist) const
+{
+  if (dist > 1)
+    {
+      return 0.;
+    }
+  else
+    {
+      return (1.0 - 10.0 * std::pow(dist, 3) + 15.0 * std::pow(dist, 4) -
+              6.0 * std::pow(dist, 5));
+    }
+}
+
+template <int dim>
+double
+RBFShape<dim>::evaluate_basis_function(const double distance) const
+{
+  double value;
+  switch (basis_function)
+    {
+      case 1:
+        value = RBFShape<dim>::wendlandc2(distance);
+        break;
+      case 2:
+        value = RBFShape<dim>::linear(distance);
+        break;
+      case 3:
+        value = RBFShape<dim>::gauss90(distance);
+        break;
+      case 4:
+        value = RBFShape<dim>::gauss95(distance);
+        break;
+      case 5:
+        value = RBFShape<dim>::gauss99(distance);
+        break;
+      case 6:
+        value = RBFShape<dim>::c1c0(distance);
+        break;
+      case 7:
+        value = RBFShape<dim>::c2c0(distance);
+        break;
+      case 8:
+        value = RBFShape<dim>::c0c1(distance);
+        break;
+      case 9:
+        value = RBFShape<dim>::c1c1(distance);
+        break;
+      case 10:
+        value = RBFShape<dim>::c2c1(distance);
+        break;
+      case 11:
+        value = RBFShape<dim>::c0c2(distance);
+        break;
+      case 12:
+        value = RBFShape<dim>::c1c2(distance);
+        break;
+      case 13:
+        value = RBFShape<dim>::c2c2(distance);
+        break;
+      default:
+        value = RBFShape<dim>::linear(distance);
+        break;
+    }
+  return value;
+}
+
 template class Sphere<2>;
 template class Sphere<3>;
 template class Rectangle<2>;
@@ -507,3 +846,5 @@ template class CutHollowSphere<3>;
 template class DeathStar<3>;
 template class CompositeShape<2>;
 template class CompositeShape<3>;
+template class RBFShape<2>;
+template class RBFShape<3>;

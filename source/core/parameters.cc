@@ -2270,8 +2270,6 @@ namespace Parameters
                                          particles[i].position,
                                          particles[i].orientation);
       }
-
-
     else if (type == "cone")
       {
         if constexpr (dim == 3)
@@ -2281,7 +2279,6 @@ namespace Parameters
                                         particles[i].position,
                                         particles[i].orientation);
       }
-
     else if (type == "cut hollow sphere")
       {
         if constexpr (dim == 3)
@@ -2292,7 +2289,6 @@ namespace Parameters
                                                    particles[i].position,
                                                    particles[i].orientation);
       }
-
     else if (type == "death star")
       {
         if constexpr (dim == 3)
