@@ -215,7 +215,8 @@ protected:
         if (ref_iter > 0)
           this->refine_mesh();
         ref_iter++;
-    } while (
+      }
+    while (
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);
