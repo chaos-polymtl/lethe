@@ -538,11 +538,10 @@ template <int dim>
 double
 RBFShape<dim>::displaced_volume(const double fluid_density)
 {
-  double solid_volume = 0;
-  // TODO
-  // Integration on every cell with the gauss points. Where the distance is
-  // negative, the value to be integrated is 1; 0 otherwise.
-  return solid_volume;
+  std::cout
+    << "Warning: For a RBF shape, the real volume will be lower than output."
+    << std::endl;
+  return bounding_box->displaced_volume(fluid_density);
 }
 
 /*!
