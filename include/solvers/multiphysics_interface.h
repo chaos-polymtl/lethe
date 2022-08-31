@@ -792,25 +792,15 @@ public:
    * NB : only implemented for VOF for now
    */
   virtual void
-  compute_kelly(Parameters::MeshAdaptation::Variable mesh_adaptation_variable,
-                dealii::Vector<float> &              estimated_error_per_cell)
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
   {
-    if (mesh_adaptation_variable ==
-        Parameters::MeshAdaptation::Variable::velocity_temperature)
+    for (auto &iphys : physics)
       {
-        physics[PhysicsID::heat_transfer]->compute_kelly(
-          estimated_error_per_cell);
+        iphys.second->compute_kelly(estimated_error_per_cell);
       }
-    else
+    for (auto &iphys : block_physics)
       {
-        for (auto &iphys : physics)
-          {
-            iphys.second->compute_kelly(estimated_error_per_cell);
-          }
-        for (auto &iphys : block_physics)
-          {
-            iphys.second->compute_kelly(estimated_error_per_cell);
-          }
+        iphys.second->compute_kelly(estimated_error_per_cell);
       }
   };
 

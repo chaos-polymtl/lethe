@@ -722,9 +722,7 @@ HeatTransfer<dim>::compute_kelly(
   dealii::Vector<float> &estimated_error_per_cell)
 {
   if (this->simulation_parameters.mesh_adaptation.variable ==
-        Parameters::MeshAdaptation::Variable::temperature ||
-      this->simulation_parameters.mesh_adaptation.variable ==
-        Parameters::MeshAdaptation::Variable::velocity_temperature)
+      Parameters::MeshAdaptation::Variable::temperature)
     {
       const FEValuesExtractors::Scalar temperature(0);
 
