@@ -6,35 +6,39 @@ This subsection controls the mesh adaptation method, with default values given b
 .. code-block:: text
 
 	subsection mesh adaptation
+	  # Number of initial (pre-solve) refinement steps
+	  set initial refinement steps = 0
+
 	  # Type of mesh adaptation. Choices are  none, uniform or kelly.
-	  set type                 = none
+	  set type                     = none
 
 	  # Variable for kelly estimation. Choices are velocity, pressure, phase or temperature.
-	  set variable             = velocity
+	  set variable                 = velocity
 
 	  # Frequency of the mesh refinement
-	  set frequency            = 1
+	  set frequency                = 1
 
 	  # Minimum refinement level
-	  set min refinement level = 0
+	  set min refinement level     = 0
 
 	  # Maximum refinement level
-	  set max refinement level = 10
+	  set max refinement level     = 10
 
 	  # Fraction of coarsened elements
-	  set fraction coarsening  = 0.05
+	  set fraction coarsening      = 0.05
 
 	  # Fraction of refined elements
-	  set fraction refinement  = 0.1
+	  set fraction refinement      = 0.1
 
 	  # How the fraction of refinement/coarsening are interpreted
 	  # Choices are number or fraction 
-	  set fraction type        = number
+	  set fraction type            = number
 
 	  # Maximum number of elements
-	  set max number elements  = 100000000
+	  set max number elements      = 100000000
 	end
 
+* The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem.
 * Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``kelly`` uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decide which cell are refined, by estimating the error per cell for a given variable. 
 * The variable for kelly estimation should be specified with ``set variable``, and can be:
 	* velocity
