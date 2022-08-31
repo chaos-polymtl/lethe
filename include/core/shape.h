@@ -27,6 +27,7 @@
 
 #include <deal.II/physics/transformations.h>
 
+#include <cfloat>
 #include <memory>
 
 using namespace dealii;
@@ -559,8 +560,11 @@ public:
     , weight(weight)
   {
     unsigned int number_of_nodes = weight.size();
-    high_bounding_point          = Point<dim>();
-    low_bounding_point           = Point<dim>();
+
+    Point<dim>     high_bounding_point = Point<dim>();
+    Point<dim>     low_bounding_point  = Point<dim>();
+    Point<dim>     bounding_box_center = Point<dim>();
+    Tensor<1, dim> half_lengths        = Tensor<1, dim>();
     for (int d = 0; d < dim; d++)
       {
         high_bounding_point[d] = DBL_MIN;
@@ -572,7 +576,15 @@ public:
             if (high_bounding_point[d] < nodes[i][d])
               high_bounding_point[d] = nodes[i][d];
           }
+        bounding_box_center[d] =
+          0.5 *
+          (low_bounding_point[d] + high_bounding_point[d]); // + position[d];
+        half_lengths[d] =
+          0.5 * (high_bounding_point[d] - low_bounding_point[d]);
       }
+    bounding_box = std::make_shared<Rectangle<dim>>(half_lengths,
+                                                    bounding_box_center,
+                                                    orientation);
   }
 
   double
@@ -650,12 +662,11 @@ public:
   };
 
 private:
-  std::vector<double>         weight;
-  std::vector<Tensor<1, dim>> nodes;
-  std::vector<double>         support_radius;
-  std::vector<unsigned int>   basis_function;
-  Point<dim>                  high_bounding_point;
-  Point<dim>                  low_bounding_point;
+  std::vector<double>             weight;
+  std::vector<Tensor<1, dim>>     nodes;
+  std::vector<double>             support_radius;
+  std::vector<unsigned int>       basis_function;
+  std::shared_ptr<Rectangle<dim>> bounding_box;
 };
 
 #endif // lethe_shape_h

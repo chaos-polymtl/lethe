@@ -503,13 +503,14 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  double       value = 0.;
+
+  double bounding_box_distance = bounding_box->value(centered_point);
+  double value = bounding_box_distance > 0. ? bounding_box_distance : 0.;
+
   double       dist, basis;
   unsigned int number_of_nodes = weight.size();
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   // TODO How to properly introduce the code/citation
-
-  // TODO Add the case where the evaluation point is outside the bounding box
   for (unsigned int i = 0; i < number_of_nodes; ++i)
     {
       dist  = (centered_point - nodes[i]).norm() / support_radius[i];
