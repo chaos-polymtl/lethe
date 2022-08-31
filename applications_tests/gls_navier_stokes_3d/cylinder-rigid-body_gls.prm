@@ -10,7 +10,7 @@ subsection simulation control
   set output name             = cylinder
   set output frequency        = 0
   set subdivision             = 0
-  set number mesh adapt       = 1      # If steady, nb mesh adaptation
+  set number mesh adapt       = 0      # If steady, nb mesh adaptation
   set log precision           = 3         # Log precision
 end
 
