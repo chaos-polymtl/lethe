@@ -389,16 +389,13 @@ namespace BoundaryConditions
       this->periodic_direction.resize(this->size);
       this->periodic_id.resize(this->size);
 
-      for (unsigned int n = 0; n < this->max_size; n++)
+      for (unsigned int n = 0; n < this->size; n++)
         {
-          if (this->size >= n + 1)
-            {
-              prm.enter_subsection("bc " + std::to_string(n));
-              {
-                parse_boundary(prm, n);
-              }
-              prm.leave_subsection();
-            }
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            parse_boundary(prm, n);
+          }
+          prm.leave_subsection();
         }
     }
     prm.leave_subsection();
@@ -586,16 +583,13 @@ namespace BoundaryConditions
       this->Tinf.resize(this->size);
       this->emissivity.resize(this->size);
 
-      for (unsigned int n = 0; n < this->max_size; n++)
+      for (unsigned int n = 0; n < this->size; n++)
         {
-          if (this->size >= n + 1)
-            {
-              prm.enter_subsection("bc " + std::to_string(n));
-              {
-                parse_boundary(prm, n);
-              }
-              prm.leave_subsection();
-            }
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            parse_boundary(prm, n);
+          }
+          prm.leave_subsection();
         }
       this->Stefan_Boltzmann_constant =
         prm.get_double("Stefan-Boltzmann constant");
@@ -737,16 +731,13 @@ namespace BoundaryConditions
 
       this->type.resize(this->size);
 
-      for (unsigned int n = 0; n < this->max_size; n++)
+      for (unsigned int n = 0; n < this->size; n++)
         {
-          if (this->size >= n + 1)
-            {
-              prm.enter_subsection("bc " + std::to_string(n));
-              {
-                parse_boundary(prm, n);
-              }
-              prm.leave_subsection();
-            }
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            parse_boundary(prm, n);
+          }
+          prm.leave_subsection();
         }
     }
     prm.leave_subsection();
@@ -878,16 +869,13 @@ namespace BoundaryConditions
       this->type.resize(this->size);
       this->id.resize(this->size);
 
-      for (unsigned int n = 0; n < this->max_size; n++)
+      for (unsigned int n = 0; n < this->size; n++)
         {
-          if (this->size >= n + 1)
-            {
-              prm.enter_subsection("bc " + std::to_string(n));
-              {
-                parse_boundary(prm, n);
-              }
-              prm.leave_subsection();
-            }
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            parse_boundary(prm, n);
+          }
+          prm.leave_subsection();
         }
     }
     prm.leave_subsection();

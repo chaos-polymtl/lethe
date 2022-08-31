@@ -12,45 +12,45 @@ Peeling/wetting correction at step 1
   -number of peeled cells: 0
 
 *****************************************************************
-Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 1.10973 
+Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 1.10334 
 *****************************************************************
-   Number of active cells:       1216
-   Number of degrees of freedom: 4047
+   Number of active cells:       1210
+   Number of degrees of freedom: 4029
    Volume of triangulation:      0.04
-   Number of VOF degrees of freedom: 1349
+   Number of VOF degrees of freedom: 1343
 Peeling/wetting correction at step 2
   -number of wet cells: 28
   -number of peeled cells: 0
 
 *****************************************************************
-Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 1.19854 
+Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 1.19539 
 *****************************************************************
-   Number of active cells:       3058
-   Number of degrees of freedom: 9990
+   Number of active cells:       3040
+   Number of degrees of freedom: 9930
    Volume of triangulation:      0.04
-   Number of VOF degrees of freedom: 3330
+   Number of VOF degrees of freedom: 3310
 Peeling/wetting correction at step 3
   -number of wet cells: 66
   -number of peeled cells: 0
 
 *****************************************************************
-Transient iteration : 4        Time : 0.08     Time step : 0.02     CFL : 2.69391 
+Transient iteration : 4        Time : 0.08     Time step : 0.02     CFL : 2.68869 
 *****************************************************************
-   Number of active cells:       5347
-   Number of degrees of freedom: 16836
+   Number of active cells:       5344
+   Number of degrees of freedom: 16827
    Volume of triangulation:      0.04
-   Number of VOF degrees of freedom: 5612
+   Number of VOF degrees of freedom: 5609
 Peeling/wetting correction at step 4
   -number of wet cells: 69
   -number of peeled cells: 0
 
 *****************************************************************
-Transient iteration : 5        Time : 0.1      Time step : 0.02     CFL : 2.83354 
+Transient iteration : 5        Time : 0.1      Time step : 0.02     CFL : 2.83106 
 *****************************************************************
-   Number of active cells:       5659
-   Number of degrees of freedom: 17709
+   Number of active cells:       5665
+   Number of degrees of freedom: 17727
    Volume of triangulation:      0.04
-   Number of VOF degrees of freedom: 5903
+   Number of VOF degrees of freedom: 5909
 Peeling/wetting correction at step 5
   -number of wet cells: 60
   -number of peeled cells: 0

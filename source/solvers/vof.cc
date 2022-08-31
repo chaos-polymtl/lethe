@@ -2092,7 +2092,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
   Tensor<1, dim>                   normal_vector_fd;
 
   unsigned int boundary_id =
-    this->simulation_parameters.boundary_conditions.id[i_bc];
+    this->simulation_parameters.boundary_conditions_vof.id[i_bc];
 
   // Physical properties
   const auto density_models =
