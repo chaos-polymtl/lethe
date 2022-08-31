@@ -929,7 +929,6 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
       this->set_nodal_values();
       this->finish_time_step_fd();
     }
-
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
       this->set_nodal_values();
@@ -1594,7 +1593,6 @@ GLSNavierStokesSolver<dim>::solve()
 
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
-
 
       if (this->simulation_control->is_at_start())
         {

@@ -201,13 +201,25 @@ protected:
   set_initial_condition(Parameters::InitialConditionType initial_condition_type,
                         bool                             restart = false)
   {
-    set_initial_condition_fd(initial_condition_type, restart);
-    if (!restart)
+    unsigned int ref_iter = 0;
+    do
       {
-        multiphysics->set_initial_conditions();
-        this->postprocess_fd(true);
-        multiphysics->postprocess(true);
+        set_initial_condition_fd(initial_condition_type, restart);
+        if (!restart)
+          {
+            multiphysics->set_initial_conditions();
+            this->postprocess_fd(true);
+            multiphysics->postprocess(true);
+          }
+
+        if (ref_iter > 0)
+          this->refine_mesh();
+        ref_iter++;
       }
+    while (
+      ref_iter <
+        (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
+      restart == false);
   }
 
   /**

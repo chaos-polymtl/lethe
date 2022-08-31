@@ -1531,6 +1531,11 @@ namespace Parameters
   {
     prm.enter_subsection("mesh adaptation");
     {
+      prm.declare_entry("initial refinement steps",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of pre-solve adaptive mesh refinement steps");
+
       prm.declare_entry("type",
                         "none",
                         Patterns::Selection("none|uniform|kelly"),
@@ -1582,6 +1587,8 @@ namespace Parameters
   {
     prm.enter_subsection("mesh adaptation");
     {
+      initial_refinement = prm.get_integer("initial refinement steps");
+
       const std::string op = prm.get("type");
       if (op == "none")
         type = Type::none;
