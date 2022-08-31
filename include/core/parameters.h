@@ -837,6 +837,9 @@ namespace Parameters
    */
   struct MeshAdaptation
   {
+    // Initial adaptive refinement
+    unsigned int initial_refinement;
+
     // Type of mesh adaptation
     enum class Type
     {
