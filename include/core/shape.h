@@ -572,7 +572,7 @@ public:
   double
   // TODO How to properly cite bitpit
   evaluate_basis_function(const unsigned int basis_function_id,
-                          const double distance) const;
+                          const double       distance) const;
 
   double
   wendlandc2(double) const;

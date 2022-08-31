@@ -503,7 +503,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  double       value =0.;
+  double       value = 0.;
   double       dist, basis;
   unsigned int number_of_nodes = weight.size();
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
@@ -557,7 +557,7 @@ RBFShape<dim>::wendlandc2(double dist) const
     }
   else
     {
-      return std::pow(1. - dist, 4) * (4. * dist + 1.);
+      return std::pow(1. - dist, 4.) * (4. * dist + 1.);
     }
 }
 
@@ -576,7 +576,7 @@ RBFShape<dim>::linear(double dist) const
     }
   else
     {
-      return (1 - dist);
+      return (1. - dist);
     }
 }
 
@@ -591,7 +591,7 @@ RBFShape<dim>::gauss90(double dist) const
 {
   double eps = std::pow(-1.0 * std::log(0.1), 0.5);
 
-  return std::exp(-1.0 * std::pow(dist * eps, 2));
+  return std::exp(-1.0 * std::pow(dist * eps, 2.));
 }
 
 /*!
@@ -605,7 +605,7 @@ RBFShape<dim>::gauss95(double dist) const
 {
   double eps = std::pow(-1.0 * std::log(0.05), 0.5);
 
-  return std::exp(-1.0 * std::pow(dist * eps, 2));
+  return std::exp(-1.0 * std::pow(dist * eps, 2.));
 }
 
 /*!
@@ -619,7 +619,7 @@ RBFShape<dim>::gauss99(double dist) const
 {
   double eps = std::pow(-1.0 * std::log(0.01), 0.5);
 
-  return std::exp(-1.0 * std::pow(dist * eps, 2));
+  return std::exp(-1.0 * std::pow(dist * eps, 2.));
 }
 
 /*!
@@ -638,7 +638,7 @@ RBFShape<dim>::c1c0(double dist) const
     }
   else
     {
-      return (1.0 - std::pow(dist, 2));
+      return (1.0 - std::pow(dist, 2.));
     }
 }
 
@@ -658,7 +658,7 @@ RBFShape<dim>::c2c0(double dist) const
     }
   else
     {
-      return (1.0 - std::pow(dist, 3));
+      return (1.0 - std::pow(dist, 3.));
     }
 }
 
@@ -678,7 +678,7 @@ RBFShape<dim>::c0c1(double dist) const
     }
   else
     {
-      return (1.0 - 2.0 * dist + std::pow(dist, 2));
+      return (1.0 - 2.0 * dist + std::pow(dist, 2.));
     }
 }
 
@@ -698,7 +698,7 @@ RBFShape<dim>::c1c1(double dist) const
     }
   else
     {
-      return (1.0 - 3.0 * std::pow(dist, 2) + 2.0 * std::pow(dist, 3));
+      return (1.0 - 3.0 * std::pow(dist, 2.) + 2.0 * std::pow(dist, 3.));
     }
 }
 
@@ -718,7 +718,7 @@ RBFShape<dim>::c2c1(double dist) const
     }
   else
     {
-      return (1.0 - 4.0 * std::pow(dist, 3) + 3.0 * std::pow(dist, 4));
+      return (1.0 - 4.0 * std::pow(dist, 3.) + 3.0 * std::pow(dist, 4.));
     }
 }
 
@@ -738,7 +738,7 @@ RBFShape<dim>::c0c2(double dist) const
     }
   else
     {
-      return (1.0 - 3.0 * dist + 3.0 * std::pow(dist, 2) - std::pow(dist, 3));
+      return (1.0 - 3.0 * dist + 3.0 * std::pow(dist, 2.) - std::pow(dist, 3.));
     }
 }
 
@@ -758,8 +758,8 @@ RBFShape<dim>::c1c2(double dist) const
     }
   else
     {
-      return (1.0 - 6.0 * std::pow(dist, 2) + 8.0 * std::pow(dist, 3) -
-              3.0 * std::pow(dist, 4));
+      return (1.0 - 6.0 * std::pow(dist, 2.) + 8.0 * std::pow(dist, 3.) -
+              3.0 * std::pow(dist, 4.));
     }
 }
 
@@ -779,8 +779,8 @@ RBFShape<dim>::c2c2(double dist) const
     }
   else
     {
-      return (1.0 - 10.0 * std::pow(dist, 3) + 15.0 * std::pow(dist, 4) -
-              6.0 * std::pow(dist, 5));
+      return (1.0 - 10.0 * std::pow(dist, 3.) + 15.0 * std::pow(dist, 4.) -
+              6.0 * std::pow(dist, 5.));
     }
 }
 
