@@ -20,6 +20,22 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
+      if (NSparam.nitsche->number_solids > 0)
+        {
+          std::cerr
+            << "----------------------------------------------------"
+            << std::endl
+            << "Warning: you are using gd_navier_stokes_3d solver, but"
+            << std::endl
+            << "'number of solids' > 0 in 'subsection nitsche' (see documentation)."
+            << std::endl
+            << "To assemble the Nitsche restriction, use a gls_nitsche_navier_stokes solver instead."
+            << std::endl
+            << "----------------------------------------------------"
+            << std::endl
+            << std::endl;
+        }
+
       GDNavierStokesSolver<3> problem_3d(NSparam);
       problem_3d.solve();
     }

@@ -39,6 +39,22 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
+      if (NSparam.nitsche->number_solids == 0)
+        {
+          std::cerr
+            << "----------------------------------------------------"
+            << std::endl
+            << "Warning: you are using gls_nitsche_navier_stokes_22 solver, but"
+            << std::endl
+            << "no solid has been defined to assemble the nitsche restriction:"
+            << std::endl
+            << "check the 'number of solids' parameter (see documentation)."
+            << std::endl
+            << "----------------------------------------------------"
+            << std::endl
+            << std::endl;
+        }
+
       GLSNitscheNavierStokesSolver<2> problem_22(NSparam);
       problem_22.solve();
     }

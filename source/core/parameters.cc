@@ -1601,12 +1601,6 @@ namespace Parameters
       if (vop == "temperature")
         variable = Variable::temperature;
 
-      refine_on_velocity    = prm.get_bool("refine on velocity");
-      refine_on_temperature = prm.get_bool("refine on temperature");
-      refine_on_pressure    = prm.get_bool("refine on pressure");
-      refine_on_phase       = prm.get_bool("refine on phase");
-      refine_on_tracer      = prm.get_bool("refine on tracer");
-
       const std::string fop = prm.get("fraction type");
       if (fop == "number")
         fractionType = FractionType::number;
