@@ -1199,36 +1199,38 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_system_matrix()
 {
-  TimerOutput::Scope t(this->computing_timer, "Assemble_Matrix");
-  this->system_matrix = 0;
+  {
+    TimerOutput::Scope t(this->computing_timer, "Assemble_Matrix");
+    this->system_matrix = 0;
 
-  setup_assemblers();
+    setup_assemblers();
 
-  auto scratch_data = NavierStokesScratchData<dim>(
-    this->simulation_parameters.physical_properties_manager,
-    *this->fe,
-    *this->cell_quadrature,
-    *this->mapping,
-    *this->face_quadrature);
+    auto scratch_data = NavierStokesScratchData<dim>(
+      this->simulation_parameters.physical_properties_manager,
+      *this->fe,
+      *this->cell_quadrature,
+      *this->mapping,
+      *this->face_quadrature);
 
-  scratch_data.enable_void_fraction(fe_void_fraction,
-                                    *this->cell_quadrature,
-                                    *this->mapping);
+    scratch_data.enable_void_fraction(fe_void_fraction,
+                                      *this->cell_quadrature,
+                                      *this->mapping);
 
-  scratch_data.enable_particle_fluid_interactions(
-    particle_handler.n_global_max_particles_per_cell(),
-    this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
+    scratch_data.enable_particle_fluid_interactions(
+      particle_handler.n_global_max_particles_per_cell(),
+      this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
-  WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
-    *this,
-    &GLSVANSSolver::assemble_local_system_matrix,
-    &GLSVANSSolver::copy_local_matrix_to_global_matrix,
-    scratch_data,
-    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-                                         this->cell_quadrature->size()));
-  this->system_matrix.compress(VectorOperation::add);
+    WorkStream::run(
+      this->dof_handler.begin_active(),
+      this->dof_handler.end(),
+      *this,
+      &GLSVANSSolver::assemble_local_system_matrix,
+      &GLSVANSSolver::copy_local_matrix_to_global_matrix,
+      scratch_data,
+      StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                           this->cell_quadrature->size()));
+    this->system_matrix.compress(VectorOperation::add);
+  }
   this->setup_preconditioner();
 }
 
