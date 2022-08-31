@@ -557,7 +557,23 @@ public:
     , basis_function(basis_function)
     , nodes(nodes)
     , weight(weight)
-  {}
+  {
+    unsigned int number_of_nodes = weight.size();
+    high_bounding_point          = Point<dim>();
+    low_bounding_point           = Point<dim>();
+    for (int d = 0; d < dim; d++)
+      {
+        high_bounding_point[d] = DBL_MIN;
+        low_bounding_point[d]  = DBL_MAX;
+        for (int i = 0; i < number_of_nodes; i++)
+          {
+            if (low_bounding_point[d] > nodes[i][d])
+              low_bounding_point[d] = nodes[i][d];
+            if (high_bounding_point[d] < nodes[i][d])
+              high_bounding_point[d] = nodes[i][d];
+          }
+      }
+  }
 
   double
   value(const Point<dim> & evaluation_point,
@@ -638,6 +654,8 @@ private:
   std::vector<Tensor<1, dim>> nodes;
   std::vector<double>         support_radius;
   std::vector<unsigned int>   basis_function;
+  Point<dim>                  high_bounding_point;
+  Point<dim>                  low_bounding_point;
 };
 
 #endif // lethe_shape_h
