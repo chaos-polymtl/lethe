@@ -546,7 +546,7 @@ public:
     * Nitsche immersed boundary method.
     *
     * NB: this method is called only in
-    * HeatTransfer<dim>::assemble_nitsche_restriction,
+    * HeatTransfer<dim>::assemble_nitsche_heat_restriction,
     * which is itself called only if number_solids > 0
     */
   std::vector<std::shared_ptr<SolidBase<dim, dim>>> *

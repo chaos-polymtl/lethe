@@ -34,7 +34,7 @@ HeatTransfer<dim>::assemble_matrix_and_rhs()
   assemble_system_rhs();
 
   if (this->simulation_parameters.nitsche->number_solids > 0)
-    assemble_nitsche_restriction(true);
+    assemble_nitsche_heat_restriction(true);
 }
 
 
@@ -44,16 +44,16 @@ HeatTransfer<dim>::assemble_rhs()
 {
   assemble_system_rhs();
   if (this->simulation_parameters.nitsche->number_solids > 0)
-    assemble_nitsche_restriction(true);
+    assemble_nitsche_heat_restriction(true);
 }
 
 template <int dim>
 void
-HeatTransfer<dim>::assemble_nitsche_restriction(bool assemble_matrix)
+HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
 {
   Assert(
     !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
-    RequiresConstantViscosity("assemble_nitsche_restriction"));
+    RequiresConstantViscosity("assemble_nitsche_heat_restriction"));
 
   // Evaluate fluid properties
   auto density_model =
@@ -268,7 +268,7 @@ HeatTransfer<dim>::assemble_system_matrix()
   system_matrix.compress(VectorOperation::add);
 
   if (this->simulation_parameters.nitsche->number_solids > 0)
-    assemble_nitsche_restriction(true);
+    assemble_nitsche_heat_restriction(true);
 }
 
 template <int dim>
@@ -414,7 +414,7 @@ HeatTransfer<dim>::assemble_system_rhs()
   this->system_rhs.compress(VectorOperation::add);
 
   if (this->simulation_parameters.nitsche->number_solids > 0)
-    assemble_nitsche_restriction(false);
+    assemble_nitsche_heat_restriction(false);
 }
 
 template <int dim>
