@@ -9,7 +9,6 @@ subsection simulation control
   set time step                    = 0.1  # Time step
   set output frequency        	   = 0    # Frequency of simulation output
   set time end                     = 1    # End time of simulation
-
 end
 
 #---------------------------------------------------

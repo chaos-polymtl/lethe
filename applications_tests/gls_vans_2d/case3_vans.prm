@@ -7,7 +7,7 @@ subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
   set output name              = result_
-  set output frequency		= 2
+  set output frequency        = 0
   set startup time scaling         = 0.6
   set time end                     = 1
   set time step                    = 0.1
