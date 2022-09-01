@@ -204,6 +204,9 @@ protected:
     unsigned int ref_iter = 0;
     do
       {
+        if (ref_iter > 0)
+          this->refine_mesh();
+
         set_initial_condition_fd(initial_condition_type, restart);
         if (!restart)
           {
@@ -211,9 +214,6 @@ protected:
             this->postprocess_fd(true);
             multiphysics->postprocess(true);
           }
-
-        if (ref_iter > 0)
-          this->refine_mesh();
         ref_iter++;
       }
     while (
