@@ -22,15 +22,6 @@
 #ifndef lethe_multiphysics_interface_h
 #define lethe_multiphysics_interface_h
 
-#include <core/exceptions.h>
-#include <core/multiphysics.h>
-#include <core/parameters_multiphysics.h>
-#include <core/simulation_control.h>
-#include <core/solid_base.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/simulation_parameters.h>
-
 #include <deal.II/base/exceptions.h>
 
 #include <deal.II/distributed/tria_base.h>
@@ -39,6 +30,13 @@
 
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <core/exceptions.h>
+#include <core/multiphysics.h>
+#include <core/parameters_multiphysics.h>
+#include <core/simulation_control.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/simulation_parameters.h>
 
 #include <map>
 #include <memory>
@@ -794,8 +792,18 @@ public:
    * NB : only implemented for VOF for now
    */
   virtual void
-  compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+  compute_kelly( // Parameters::MeshAdaptation::Variable
+                 // mesh_adaptation_variable,
+    dealii::Vector<float> &estimated_error_per_cell)
   {
+    //    if (mesh_adaptation_variable ==
+    //        Parameters::MeshAdaptation::Variable::velocity_temperature)
+    //      {
+    //        physics[PhysicsID::heat_transfer]->compute_kelly(
+    //          estimated_error_per_cell);
+    //      }
+    //    else
+    //      {
     for (auto &iphys : physics)
       {
         iphys.second->compute_kelly(estimated_error_per_cell);
@@ -804,6 +812,7 @@ public:
       {
         iphys.second->compute_kelly(estimated_error_per_cell);
       }
+    //      }
   };
 
   /**

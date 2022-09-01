@@ -1,6 +1,6 @@
-#include <core/parameters.h>
-
 #include <deal.II/base/exceptions.h>
+
+#include <core/parameters.h>
 
 DeclException2(
   PhaseChangeIntervalError,
@@ -1542,12 +1542,39 @@ namespace Parameters
                         "Type of mesh adaptation"
                         "Choices are <none|uniform|kelly>.");
 
-      prm.declare_entry("variable",
-                        "velocity",
-                        Patterns::Selection(
-                          "velocity|pressure|phase|temperature"),
-                        "Variable for kelly estimation"
-                        "Choices are <velocity|pressure|phase|temperature>.");
+      prm.declare_entry(
+        "variable",
+        "velocity",
+        Patterns::Selection(
+          "velocity|pressure|phase|temperature|velocity and temperature"),
+        "Variable for kelly estimation"
+        "Choices are <velocity|pressure|phase|temperature|velocity and temperature>.");
+
+      prm.declare_entry("refine on velocity",
+                        "true",
+                        Patterns::Bool(),
+                        "Enable refinement on velocity with kelly estimation"
+                        "Choices are <true|false>.");
+      prm.declare_entry("refine on temperature",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable refinement on velocity with kelly estimation"
+                        "Choices are <true|false>.");
+      prm.declare_entry("refine on pressure",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable refinement on velocity with kelly estimation"
+                        "Choices are <true|false>.");
+      prm.declare_entry("refine on phase",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable refinement on velocity with kelly estimation"
+                        "Choices are <true|false>.");
+      prm.declare_entry("refine on tracer",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable refinement on velocity with kelly estimation"
+                        "Choices are <true|false>.");
 
       prm.declare_entry(
         "fraction type",
@@ -1607,6 +1634,14 @@ namespace Parameters
         variable = Variable::phase;
       if (vop == "temperature")
         variable = Variable::temperature;
+      if (vop == "velocity and temperature")
+        variable = Variable::velocity_temperature;
+
+      //      refine_on_velocity    = prm.get_bool("refine on velocity");
+      //      refine_on_temperature = prm.get_bool("refine on temperature");
+      //      refine_on_pressure    = prm.get_bool("refine on pressure");
+      //      refine_on_phase       = prm.get_bool("refine on phase");
+      //      refine_on_tracer      = prm.get_bool("refine on tracer");
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")

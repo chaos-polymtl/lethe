@@ -1,13 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/heat_transfer.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-#include <solvers/postprocessing_cfd.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -25,6 +15,15 @@
 
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/heat_transfer.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/postprocessing_cfd.h>
 
 template <int dim>
 void
@@ -723,7 +722,9 @@ HeatTransfer<dim>::compute_kelly(
   dealii::Vector<float> &estimated_error_per_cell)
 {
   if (this->simulation_parameters.mesh_adaptation.variable ==
-      Parameters::MeshAdaptation::Variable::temperature)
+        Parameters::MeshAdaptation::Variable::temperature ||
+      this->simulation_parameters.mesh_adaptation.variable ==
+        Parameters::MeshAdaptation::Variable::velocity_temperature)
     {
       const FEValuesExtractors::Scalar temperature(0);
 

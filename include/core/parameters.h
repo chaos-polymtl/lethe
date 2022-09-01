@@ -31,11 +31,11 @@
 #ifndef lethe_parameters_h
 #define lethe_parameters_h
 
-#include <core/ib_particle.h>
-
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+
+#include <core/ib_particle.h>
 
 
 using namespace dealii;
@@ -853,7 +853,8 @@ namespace Parameters
       velocity,
       pressure,
       phase,
-      temperature
+      temperature,
+      velocity_temperature,
     } variable;
 
     // Decision factor for Kelly refinement (number or fraction)
