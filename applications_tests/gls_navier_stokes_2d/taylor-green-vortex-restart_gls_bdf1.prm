@@ -9,10 +9,9 @@ subsection simulation control
   set method                  = bdf1
   set time step               = 0.01    # Time step
   set number mesh adapt       = 0       # If steady, nb mesh adaptation
-  set time end                = 1.00      # End time of simulation
-  set output name             = tgv # Prefix for VTU outputs
+  set time end                = 1.00    # End time of simulation
+  set output name             = tgv     # Prefix for VTU outputs
   set output frequency        = 0       # Frequency of simulation output
-  set subdivision             = 1       # Mesh subdivision when outputend
 end
 #---------------------------------------------------
 # FEM
@@ -137,7 +136,7 @@ subsection linear solver
   set max iters                             = 5000
   set relative residual                     = 1e-4
   set minimum residual                      = 1e-9
-  set ilu preconditioner fill               = 1
+  set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-5
   set ilu preconditioner relative tolerance = 1.00
 end

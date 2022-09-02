@@ -6,11 +6,9 @@ subsection simulation control
   set method                  		= bdf1
   set time end                		= 0.05
   set time step               		= 0.01
-  set adapt 		      		= false
   set number mesh adapt       		= 0
   set output name             		= conduction
   set output frequency        		= 0
-  set subdivision             		= 1
 end
 
 #---------------------------------------------------
