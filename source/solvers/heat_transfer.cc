@@ -68,7 +68,8 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
   double rho_cp = density_model->value(field_values) *
                   specific_heat_model->value(field_values);
 
-  auto solids = *this->multiphysics->get_solids();
+  auto solids = *this->multiphysics->get_solids(
+    this->simulation_parameters.nitsche->number_solids);
 
   // Loops over solids
   for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
