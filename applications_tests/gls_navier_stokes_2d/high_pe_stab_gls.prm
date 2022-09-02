@@ -144,7 +144,7 @@ end
 subsection non-linear solver
   set verbosity               = quiet
   set tolerance               = 1e-10
-  set max iterations          = 200
+  set max iterations          = 20
 end
 
 # --------------------------------------------------
@@ -153,7 +153,6 @@ end
 subsection linear solver
   set verbosity               = quiet
   set method                  = gmres
-  set max iters               = 5000
   set relative residual       = 1e-13
   set minimum residual        = 1e-14
   set ilu preconditioner fill = 0

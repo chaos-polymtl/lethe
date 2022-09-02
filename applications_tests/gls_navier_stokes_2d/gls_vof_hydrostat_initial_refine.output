@@ -61,19 +61,19 @@ L2 error velocity : 1.72007e-07
 L2 error phase : 0.00046159
 
 *****************************************************************
-Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 1.114e-05
+Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 1.11401e-05
 *****************************************************************
-   Number of active cells:       2032
-   Number of degrees of freedom: 6948
+   Number of active cells:       1360
+   Number of degrees of freedom: 4923
    Volume of triangulation:      1
-   Number of VOF degrees of freedom: 2316
-L2 error velocity : 1.72004e-07
-L2 error phase : 0.000461589
+   Number of VOF degrees of freedom: 1641
+L2 error velocity : 3.0225e-07
+L2 error phase : 0.000461588
  time  error_velocity error_pressure 
 0.0200 1.720018e-07   0.0028         
 0.0400 1.720071e-07   0.0028         
-0.0600 1.720042e-07   0.0028         
+0.0600 3.022505e-07   0.0028         
  time  error_phase  
 0.0200 4.615910e-04 
 0.0400 4.615899e-04 
-0.0600 4.615888e-04 
+0.0600 4.615877e-04 

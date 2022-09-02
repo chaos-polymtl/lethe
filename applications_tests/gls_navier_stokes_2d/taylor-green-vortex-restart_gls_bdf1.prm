@@ -10,7 +10,6 @@ subsection simulation control
   set time step               = 0.01    # Time step
   set number mesh adapt       = 0       # If steady, nb mesh adaptation
   set time end                = 1.00    # End time of simulation
-  set output name             = tgv     # Prefix for VTU outputs
   set output frequency        = 0       # Frequency of simulation output
 end
 #---------------------------------------------------
@@ -137,6 +136,6 @@ subsection linear solver
   set relative residual                     = 1e-4
   set minimum residual                      = 1e-9
   set ilu preconditioner fill               = 0
-  set ilu preconditioner absolute tolerance = 1e-5
+  set ilu preconditioner absolute tolerance = 1e-10
   set ilu preconditioner relative tolerance = 1.00
 end

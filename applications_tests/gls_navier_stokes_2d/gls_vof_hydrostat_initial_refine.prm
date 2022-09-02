@@ -124,7 +124,7 @@ end
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
-  set initial refinement steps  = 6
+  set initial refinement steps  = 4
   set type                    	= kelly
   set variable                	= phase
   set fraction type           	= fraction
