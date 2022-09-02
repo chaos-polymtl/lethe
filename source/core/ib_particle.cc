@@ -221,8 +221,7 @@ IBParticle<dim>::initialize_shape(const std::string         type,
 
 template <int dim>
 void
-IBParticle<dim>::initialize_rbf_shape(const std::string type,
-                                      const std::string shape_name)
+IBParticle<dim>::initialize_rbf_shape(const std::string shape_name)
 {
   if constexpr (dim == 3)
     {

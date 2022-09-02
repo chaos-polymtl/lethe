@@ -152,11 +152,10 @@ public:
    * @brief
    * Sets up a shape in accordance with the given type and arguments
    *
-   * @param type The type of shape to be initialized: it should be 'rbf'
    * @param shape_name The name of the file containing the RBF information
    */
   void
-  initialize_rbf_shape(const std::string type, const std::string shape_name);
+  initialize_rbf_shape(const std::string shape_name);
 
   /**
    * @brief

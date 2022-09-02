@@ -569,7 +569,7 @@ public:
       {
         high_bounding_point[d] = DBL_MIN;
         low_bounding_point[d]  = DBL_MAX;
-        for (int i = 0; i < number_of_nodes; i++)
+        for (unsigned int i = 0; i < number_of_nodes; i++)
           {
             if (low_bounding_point[d] > nodes[i][d])
               low_bounding_point[d] = nodes[i][d];

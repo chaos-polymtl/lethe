@@ -2201,8 +2201,7 @@ namespace Parameters
             Utilities::split_string_list(shape_arguments_str, ";"));
           if (shape_type == "rbf")
             {
-              particles[i].initialize_rbf_shape(shape_type,
-                                                shape_arguments_str_list[0]);
+              particles[i].initialize_rbf_shape(shape_arguments_str_list[0]);
             }
           else
             {
