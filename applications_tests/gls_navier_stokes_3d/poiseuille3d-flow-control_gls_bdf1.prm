@@ -5,7 +5,6 @@
 #---------------------------------------------------
 subsection simulation control
   set method                       = bdf1
-  set output name                  = poiseuille3d-flow-control_gls_bdf1
   set time step                    = 0.1  # Time step
   set output frequency        	   = 0    # Frequency of simulation output
   set time end                     = 1    # End time of simulation
@@ -103,10 +102,9 @@ end
 #---------------------------------------------------
 subsection linear solver
   set method                                 = gmres
-  set max iters                              = 5000
   set relative residual                      = 1e-4
   set minimum residual                       = 1e-9
-  set ilu preconditioner fill                = 1
+  set ilu preconditioner fill                = 0
   set ilu preconditioner absolute tolerance  = 1e-6
   set ilu preconditioner relative tolerance  = 1.00
   set verbosity               = quiet

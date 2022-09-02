@@ -6,7 +6,6 @@
 subsection simulation control
   set method                  = steady
   set output name              = mms3d_
-  set log precision = 0
   set output frequency        = 0
 end
 
