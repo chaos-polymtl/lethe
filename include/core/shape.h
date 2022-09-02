@@ -554,10 +554,10 @@ public:
                 const Point<dim> &          position,
                 const Tensor<1, 3> &        orientation)
     : Shape<dim>(support_radius[0], position, orientation)
+    , weight(weight)
+    , nodes(nodes)
     , support_radius(support_radius)
     , basis_function(basis_function)
-    , nodes(nodes)
-    , weight(weight)
   {
     unsigned int number_of_nodes = weight.size();
 
