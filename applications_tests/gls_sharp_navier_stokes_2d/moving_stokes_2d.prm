@@ -10,7 +10,6 @@ subsection simulation control
   set time end                = 3 # End time of simulation
   set output name             = out # Prefix for VTU outputs
   set output frequency        = 0       # Frequency of simulation output
-  set subdivision             = 1       # Mesh subdivision when outputend
 end
 
 

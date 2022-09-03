@@ -12,7 +12,6 @@ subsection simulation control
   set time end                = 1.00      # End time of simulation
   set output name             = mms-transient-conduction # Prefix for VTU outputs
   set output frequency        = 0       # Frequency of simulation output
-  set subdivision             = 1       # Mesh subdivision when outputend
 end
 #---------------------------------------------------
 # FEM
@@ -137,7 +136,6 @@ end
 subsection linear solver
   set verbosity               = quiet
   set method                  = gmres
-  set max iters               = 5000
   set relative residual       = 1e-13
   set minimum residual        = 1e-14
   set ilu preconditioner fill = 0

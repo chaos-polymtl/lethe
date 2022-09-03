@@ -11,7 +11,6 @@ subsection simulation control
   set time step               = 0.001
   set time end                = 0.01
   set output frequency        = 0
-  set output name             = mms_conv_22
 end
 #---------------------------------------------------
 # FEM
@@ -36,8 +35,8 @@ subsection initial conditions
     subsection uvwp
             set Function expression = 0; 0; 0
     end
-    subsection temperature
-            set Function expression =0
+    subsection temperature 
+            set Function expression = 0
     end
 end
 #---------------------------------------------------
@@ -100,15 +99,7 @@ subsection boundary conditions heat transfer
         set Tinf	      = 1
     end
 end
-# --------------------------------------------------
-# Source term
-#---------------------------------------------------
-subsection source term
-  set enable                 = false
-    subsection heat transfer
-	    set Function expression =0	
-    end
-end
+
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
@@ -123,7 +114,6 @@ end
 subsection linear solver
   set verbosity               = quiet
   set method                  = gmres
-  set max iters               = 5000
   set relative residual       = 1e-13
   set minimum residual        = 1e-13
   set ilu preconditioner fill = 0

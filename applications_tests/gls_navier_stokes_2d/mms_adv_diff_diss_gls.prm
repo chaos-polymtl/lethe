@@ -8,9 +8,7 @@
 subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
-  set output name             = mms_22
   set output frequency        = 0
-  set subdivision             = 1
 end
 
 #---------------------------------------------------

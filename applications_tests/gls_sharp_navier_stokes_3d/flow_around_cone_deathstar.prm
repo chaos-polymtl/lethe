@@ -8,6 +8,7 @@ subsection simulation control
   set method                  = steady
   set number mesh adapt       = 1
   set output name             = output
+  set output frequency        = 0
 end
 #---------------------------------------------------
 # FEM
