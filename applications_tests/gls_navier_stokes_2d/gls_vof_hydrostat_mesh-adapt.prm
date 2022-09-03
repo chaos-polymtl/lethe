@@ -72,8 +72,8 @@ subsection analytical solution
   set enable     	= true
   set verbosity 	= verbose
     subsection uvwp
-	set Function constants = rho=2., g=9.81, h=0.4
-        set Function expression =  0 ; 0 ; if (y<h, rho*g*(h-y), 0)
+	set Function constants = rho1=2., g=9.81, h=0.4, rho2=0.5,l=1
+        set Function expression =  0 ; 0 ; if (y<h, rho2*g*(l-h) + rho1*g*(h-y), rho2*g*(l-y))
     end
     subsection phase
 	set Function constants = h=0.4
@@ -148,10 +148,9 @@ end
 subsection linear solver
   set verbosity               = quiet
   set method                                 = gmres
-  set max iters                              = 5000
   set relative residual                      = 1e-10
   set minimum residual                       = 1e-10
-  set ilu preconditioner fill                = 1
+  set ilu preconditioner fill                = 0
   set ilu preconditioner absolute tolerance  = 1e-11
   set ilu preconditioner relative tolerance  = 1.00
   set max krylov vectors                     = 200

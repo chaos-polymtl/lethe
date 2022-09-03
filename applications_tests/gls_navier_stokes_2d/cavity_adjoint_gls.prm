@@ -5,12 +5,13 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady_bdf
-  set time step		      = 0.1
+  set time step		            = 0.1
   set adapt                   = true
   set max cfl                 = 1000
-  set stop tolerance	      = 1e-5
+  set stop tolerance	        = 1e-5
   set adaptative time step scaling = 1.2
   set number mesh adapt       = 0
+  set output frequency        = 0
   set output name              = cavity-output
 end
 
@@ -102,9 +103,6 @@ end
 #---------------------------------------------------
 subsection linear solver
   set method                                 = gmres
-  set max iters                              = 5000
-  set max krylov vectors                     = 200
-
   set relative residual                      = 1e-3
   set minimum residual                       = 1e-11
   set ilu preconditioner fill                = 0

@@ -7,6 +7,7 @@ subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
   set output name             = results_couette2d
+  set output frequency         = 0
 end
 
 #---------------------------------------------------
@@ -184,13 +185,5 @@ subsection linear solver
   set ilu preconditioner fill                = 0
   set ilu preconditioner absolute tolerance  = 1e-11
   set ilu preconditioner relative tolerance  = 1
-  set amg aggregation threshold                 = 1e-20
-  set amg n cycles                              = 1
-  set amg preconditioner ilu absolute tolerance = 1e-20
-  set amg preconditioner ilu fill               = 2
-  set amg preconditioner ilu relative tolerance = 1.00
-  set amg smoother overlap                      = 1
-  set amg smoother sweeps                       = 2
-  set amg w cycles                              = false
   set verbosity               = quiet
 end

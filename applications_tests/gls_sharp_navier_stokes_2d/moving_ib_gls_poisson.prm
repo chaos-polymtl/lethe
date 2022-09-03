@@ -10,7 +10,6 @@ subsection simulation control
   set time end                = 0.125     # End time of simulation
   set output name             = test # Prefix for VTU outputs
   set output frequency        = 0       # Frequency of simulation output
-  set subdivision             = 1       # Mesh subdivision when outputend
 end
 #---------------------------------------------------
 # Physical Properties
@@ -196,7 +195,7 @@ end
 # Linear Solver Control
 #---------------------------------------------------
 subsection linear solver
-  set method                                 = direct
+  set method                                 = gmres
   set max krylov vectors                     = 250
   set max iters                              = 1000
   set relative residual                      = 1e-6
@@ -204,13 +203,5 @@ subsection linear solver
   set ilu preconditioner fill                = 1
   set ilu preconditioner absolute tolerance  = 1e-11
   set ilu preconditioner relative tolerance  = 1
-  set amg aggregation threshold                 = 1e-20
-  set amg n cycles                              = 1
-  set amg preconditioner ilu absolute tolerance = 1e-20
-  set amg preconditioner ilu fill               = 3
-  set amg preconditioner ilu relative tolerance = 1.00
-  set amg smoother overlap                      = 10
-  set amg smoother sweeps                       = 2
-  set amg w cycles                              = true
   set verbosity               = quiet
 end

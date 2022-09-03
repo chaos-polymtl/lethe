@@ -6,7 +6,7 @@
 subsection simulation control
   set method                  = steady
   set number mesh adapt       = 1
-  set output name              = mms3d_
+  set output frequency        = 0
 end
 
 #---------------------------------------------------

@@ -9,7 +9,6 @@ subsection simulation control
   set method                  = steady
   set output name             = couette
   set output frequency        = 0
-  set subdivision             = 1
   set number mesh adapt       = 2      # If steady, nb mesh adaptation
 end
 

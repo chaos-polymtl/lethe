@@ -4,9 +4,9 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set method                  = steady
+  set method                   = steady
   set output name              = mms2d_
-  set log precision = 0
+  set output frequency         = 0 
 end
 
 #---------------------------------------------------
@@ -82,11 +82,10 @@ end
 #---------------------------------------------------
 subsection linear solver
   set method                                 = gmres
-  set max iters                              = 5000
   set relative residual                      = 1e-4
   set minimum residual                       = 1e-9
-  set ilu preconditioner fill                = 4
-  set ilu preconditioner absolute tolerance  = 1e-3
+  set ilu preconditioner fill                = 0
+  set ilu preconditioner absolute tolerance  = 1e-10
   set ilu preconditioner relative tolerance  = 1.00
   set verbosity               = quiet
 end

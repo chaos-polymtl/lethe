@@ -7,7 +7,7 @@ subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
   set output name              = result_
-  set output frequency		= 2
+  set output frequency        = 0
   set startup time scaling         = 0.6
   set time end                     = 1
   set time step                    = 0.1
@@ -126,8 +126,8 @@ subsection linear solver
   set max iters                              = 5000
   set relative residual                      = 1e-4
   set minimum residual                       = 1e-9
-  set ilu preconditioner fill                = 4
-  set ilu preconditioner absolute tolerance  = 1e-3
+  set ilu preconditioner fill                = 0
+  set ilu preconditioner absolute tolerance  = 1e-10
   set ilu preconditioner relative tolerance  = 1.00
   set verbosity               = quiet
 end
