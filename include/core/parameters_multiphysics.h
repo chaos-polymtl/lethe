@@ -83,12 +83,6 @@ namespace Parameters
   {
     bool enable;
 
-    // artificial diffusivity (diffusion coefficient) (in L^2/s) added to the
-    // VOF transport equation. This parameter is zero by default, and can be
-    // increased to improve the wetting mechanism. See the documentation for
-    // more details.
-    double diffusivity;
-
     // Type of verbosity for the peeling-wetting mechanism
     Parameters::Verbosity verbosity;
 
@@ -200,6 +194,12 @@ namespace Parameters
     Parameters::VOF_SurfaceTensionForce surface_tension_force;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
+
+    // artificial diffusivity (diffusion coefficient) (in L^2/s) added to the
+    // VOF transport equation. This parameter is zero by default, and can be
+    // increased to improve the wetting mechanism. See the documentation for
+    // more details.
+    double diffusivity;
 
     void
     declare_parameters(ParameterHandler &prm);

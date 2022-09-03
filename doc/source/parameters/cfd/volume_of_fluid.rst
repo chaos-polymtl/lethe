@@ -15,6 +15,7 @@ The default values of the VOF parameters are given in the text box below.
 
 	subsection VOF	
 		set viscous dissipative fluid = fluid 1
+		set diffusivity = 0
 
 		subsection interface sharpening
 			set enable 	= false
@@ -36,7 +37,6 @@ The default values of the VOF parameters are given in the text box below.
 		subsection peeling wetting
 			set enable 	= false
 			set verbosity 	= quiet
-			set diffusivity = 0
 		end
 
 		subsection mass conservation
@@ -83,6 +83,9 @@ The default values of the VOF parameters are given in the text box below.
   .. tip::
 
 	Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, but we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature.
+
+
+* ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. Increase ``diffusivity`` to :ref:`improve wetting`.
 
 
   * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
@@ -164,8 +167,6 @@ The default values of the VOF parameters are given in the text box below.
 
     .. tip::
       Even if ``monitoring`` is not enabled, the ``monitored fluid`` (``fluid 1`` by default) will be considered as the fluid of interest for the average pressure calculation in the peeling/wetting mechanism.
-
-    * ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. Increase ``diffusivity`` to :ref:`improve wetting`.
 
 .. warning::
 

@@ -124,6 +124,13 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
                       Patterns::Selection("fluid 0|fluid 1|both"),
                       "Fluid to which the viscous dissipation is applied "
                       "in the heat equation <fluid 0|fluid 1|both>");
+
+    prm.declare_entry(
+      "diffusivity",
+      "0",
+      Patterns::Double(),
+      "Diffusivity (diffusion coefficient in L^2/s) in the VOF transport equation. "
+      "Default value is 0 to have pure advection.");
   }
   prm.leave_subsection();
 }
@@ -149,6 +156,8 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     else
       throw(std::runtime_error("Invalid viscous dissipative fluid. "
                                "Options are 'fluid 0', 'fluid 1' or 'both'."));
+
+    diffusivity = prm.get_double("diffusivity");
 
     // Error definitions
     if (sharpening.type == Parameters::SharpeningType::adaptative)
@@ -375,15 +384,6 @@ Parameters::VOF_PeelingWetting::declare_parameters(ParameterHandler &prm)
       "Enable peeling/wetting mechanism in free surface simulation <true|false>");
 
     prm.declare_entry(
-      "diffusivity",
-      "0",
-      Patterns::Double(),
-      "Diffusivity (diffusion coefficient in L^2/s) in the VOF transport equation. "
-      "Default value is 0 to have pure advection. "
-      "Increase diffusivity, along with interface sharpening, to improve the wetting mechanism. "
-      "See documentation for more details.");
-
-    prm.declare_entry(
       "verbosity",
       "quiet",
       Patterns::Selection("quiet|verbose"),
@@ -398,8 +398,7 @@ Parameters::VOF_PeelingWetting::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("peeling wetting");
   {
-    enable      = prm.get_bool("enable");
-    diffusivity = prm.get_double("diffusivity");
+    enable = prm.get_bool("enable");
 
     const std::string op = prm.get("verbosity");
     if (op == "verbose")

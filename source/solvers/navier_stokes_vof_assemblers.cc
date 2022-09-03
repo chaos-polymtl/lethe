@@ -31,10 +31,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
   std::vector<double> &phase_values = scratch_data.phase_values;
 
-  Assert(
-    scratch_data.properties_manager.density_is_constant(),
-    RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
   // Phase cutoff to limit continuity application on non-conservative fluid
   const double phase_cutoff = 1e-6;
@@ -240,10 +239,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
         solve_continuity = false;
     }
 
-  Assert(
-    scratch_data.properties_manager.density_is_constant(),
-    RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -500,10 +498,9 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   const double surface_tension_coef = STF_parameters.surface_tension_coef;
 
   // Densities of phases
-  Assert(
-    scratch_data.properties_manager.density_is_constant(),
-    RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
   const double phase_0_density = scratch_data.density_0[0];
   const double phase_1_density = scratch_data.density_1[0];
@@ -569,10 +566,9 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
     STF_properties.surface_tension_gradient;
 
   // Densities of phases
-  Assert(
-    scratch_data.properties_manager.density_is_constant(),
-    RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
   const double phase_0_density = scratch_data.density_0[0];
   const double phase_1_density = scratch_data.density_1[0];
@@ -688,10 +684,9 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
         solve_continuity = false;
     }
 
-  Assert(
-    scratch_data.properties_manager.density_is_constant(),
-    RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -915,10 +910,9 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
         solve_continuity = false;
     }
 
-  Assert(
-    scratch_data.properties_manager.density_is_constant(),
-    RequiresConstantDensity(
-      "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
