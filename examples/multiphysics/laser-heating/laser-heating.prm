@@ -1,0 +1,136 @@
+# Listing of Parameters
+# ---------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  		= bdf2
+  set time end                		= 0.003
+  set time step               		= 0.00005
+  set output name             		= laser-heating
+  set output frequency        		= 1
+  set output path			= ./output/
+  set subdivision             		= 1
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+subsection multiphysics
+	set heat transfer  = true
+end
+
+#---------------------------------------------------
+# Laser
+#---------------------------------------------------
+subsection laser parameters
+	set enable = true
+	set concentration factor = 50
+	set power = 3
+	set absorptivity = 0.6
+	set penetration depth = 0.00005
+	set beam radius = 0.00005
+	set start time = 0
+	set end time = 0.003
+	set beam orientation = z-
+	subsection path
+		set Function expression = if(t<0.001, 0.5 * t, if(t<0.002, 0.0005, if(t<0.003 , 0.0005-0.5 * (t-0.002), -1))); if(t<0.001, 0.00025, if(t < 0.002, 0.00025 - 0.5 * (t-0.001) , if(t < 0.003 , -0.00025, -1))) ; 0.0003
+	end
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+subsection initial conditions
+    set type = nodal
+    subsection uvwp
+        set Function expression = 0; 0; 0; 0
+    end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+  set number of fluids     = 1
+  subsection fluid 0
+    set thermal conductivity = 3
+    set density              = 1000
+    set kinematic viscosity  = 100
+      set specific heat      = 420
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+        set type = dealii
+        set grid type = subdivided_hyper_rectangle
+        set grid arguments = 30, 25, 5 : -0.0002, -0.0005, 0 : 0.001, 0.0005, 0.0002 : false
+        set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+subsection mesh adaptation
+  set type                    = kelly
+  set variable                = temperature
+  set fraction type           = fraction
+  set max refinement level    = 4
+  set min refinement level    = 0
+  set frequency               = 1
+  set fraction refinement     = 0.5
+  set fraction coarsening     = 0.2
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                  = 1
+    subsection bc 0
+        set type              = noslip
+    end
+end
+subsection boundary conditions heat transfer
+  set number                  = 1
+    subsection bc 0
+	set type	      = convection-radiation
+        set h	      	      = 5
+        set Tinf	      = 20
+        set emissivity        = 0.4
+    end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order            = 1
+    set pressure order            = 1
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set tolerance               = 1e-8
+  set max iterations          = 100
+  set verbosity               = quiet
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set verbosity               		     = quiet
+  set method                                 = gmres
+  set max iters                              = 8000
+  set relative residual                      = 1e-3
+  set minimum residual                       = 1e-8
+  set ilu preconditioner fill                = 1
+  set ilu preconditioner absolute tolerance  = 1e-12
+  set ilu preconditioner relative tolerance  = 1.00
+  set max krylov vectors                     = 200
+end
