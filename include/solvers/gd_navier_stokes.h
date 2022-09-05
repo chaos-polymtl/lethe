@@ -33,9 +33,15 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 
-
-
 using namespace dealii;
+
+DeclException3(SolidWarning,
+               unsigned int,
+               std::string,
+               std::string,
+               << "'number of solids = " << arg1 << "' but " << arg2
+               << " solver does not support nitsche restriction. Use " << arg3
+               << " solver instead.");
 
 template <class BSPreconditioner>
 class BlockSchurPreconditioner : public Subscriptor

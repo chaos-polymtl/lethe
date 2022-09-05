@@ -26,9 +26,15 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-
-
 using namespace dealii;
+
+DeclException3(SolidWarning,
+               unsigned int,
+               std::string,
+               std::string,
+               << "'number of solids = " << arg1 << "' but " << arg2
+               << " solver does not support nitsche restriction. Use " << arg3
+               << " solver instead.");
 
 /**
  * @brief A solver class for the Navier-Stokes equation using GLS stabilization

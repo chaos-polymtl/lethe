@@ -29,6 +29,12 @@
 
 using namespace dealii;
 
+DeclException1(
+  NoSolidWarning,
+  std::string,
+  << "No solid defined: impossible to assemble nitsche restriction with "
+  << arg1 << " solver. Change the 'number of solids' parameter.");
+
 /**
  * A solver class for the Navier-Stokes equation using GLS stabilization
  * and Nitsche immersed boundary method
