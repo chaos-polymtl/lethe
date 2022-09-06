@@ -266,11 +266,8 @@ namespace Parameters
       number_solids = prm.get_integer("number of solids");
       nitsche_solids.resize(number_solids);
 
-      if (number_solids > 0)
-        {
-          for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
-            nitsche_solids[i_solid]->parse_parameters(prm, i_solid);
-        }
+      for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
+        nitsche_solids[i_solid]->parse_parameters(prm, i_solid);
     }
     prm.leave_subsection();
   }

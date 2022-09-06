@@ -20,6 +20,8 @@
 #ifndef lethe_gd_navier_stokes_h
 #define lethe_gd_navier_stokes_h
 
+#include <core/exceptions.h>
+
 #include <solvers/navier_stokes_base.h>
 
 #include <deal.II/lac/precondition_block.h>
@@ -34,14 +36,6 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 using namespace dealii;
-
-DeclException3(SolidWarning,
-               unsigned int,
-               std::string,
-               std::string,
-               << "'number of solids = " << arg1 << "' but " << arg2
-               << " solver does not support nitsche restriction. Use " << arg3
-               << " solver instead.");
 
 template <class BSPreconditioner>
 class BlockSchurPreconditioner : public Subscriptor

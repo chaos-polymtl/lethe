@@ -863,13 +863,6 @@ namespace Parameters
       fraction
     } fractionType;
 
-    // Booleans for mesh adaptation
-    bool refine_on_velocity;
-    bool refine_on_temperature;
-    bool refine_on_pressure;
-    bool refine_on_phase;
-    bool refine_on_tracer;
-
     // Maximum number of elements
     unsigned int maximum_number_elements;
 

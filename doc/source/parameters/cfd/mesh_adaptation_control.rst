@@ -45,7 +45,6 @@ This subsection controls the mesh adaptation method, with default values given b
 	* pressure
 	* phase (for multiphase flows)
 	* temperature
-	* velocity and temperature
 * The frequency at which the mesh is refined is controlled with the ``frequency`` parameter. If ``set frequency = 1``, the mesh is refined at every iteration. 
 	* For transient simulation, this means at every time-step. 
 	* For steady-state simulation in which the steady-state problem is solved on successively refined meshes, the user should have ``set frequency = 1``, which is the default value.

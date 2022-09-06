@@ -44,12 +44,6 @@
 
 using namespace dealii;
 
-DeclException1(
-  NumberSolidsError,
-  double,
-  << "Impossible to impose a temperature condition with Nitsche method if 'set number of solids = : "
-  << arg1 << " ' in 'subsection nitsche' (check documentation).");
-
 template <int dim>
 class MultiphysicsInterface
 {
@@ -558,7 +552,7 @@ public:
   std::vector<std::shared_ptr<SolidBase<dim, dim>>> *
   get_solids(const int number_solids)
   {
-    Assert(number_solids > 0, NumberSolidsError(number_solids));
+    Assert(number_solids > 0, NoSolidWarning("the"));
     // to prevent "unused parameter" warning in Release build
     (void)(number_solids);
     return solids;

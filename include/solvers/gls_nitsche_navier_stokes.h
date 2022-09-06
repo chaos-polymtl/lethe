@@ -21,6 +21,7 @@
 #ifndef lethe_gls_nitsche_navier_stokes_h
 #define lethe_gls_nitsche_navier_stokes_h
 
+#include <core/exceptions.h>
 #include <core/solid_base.h>
 
 #include <solvers/gls_navier_stokes.h>
@@ -28,12 +29,6 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 using namespace dealii;
-
-DeclException1(
-  NoSolidWarning,
-  std::string,
-  << "No solid defined: impossible to assemble nitsche restriction with "
-  << arg1 << " solver. Change the 'number of solids' parameter.");
 
 /**
  * A solver class for the Navier-Stokes equation using GLS stabilization
