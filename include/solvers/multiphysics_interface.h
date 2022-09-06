@@ -22,6 +22,7 @@
 #ifndef lethe_multiphysics_interface_h
 #define lethe_multiphysics_interface_h
 
+#include <core/exceptions.h>
 #include <core/multiphysics.h>
 #include <core/parameters_multiphysics.h>
 #include <core/simulation_control.h>
