@@ -12,10 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Author: Carole-Anne Daunais, Valerie Bibeau, Polytechnique Montreal, 2019-
-*/
+ */
 
 #include "solvers/gls_nitsche_navier_stokes.h"
 
@@ -38,6 +35,9 @@ main(int argc, char *argv[])
       // Parsing of the file
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
+
+      AssertThrow(NSparam.nitsche->number_solids > 0,
+                  NoSolidWarning("gls_nitsche_navier_stokes_22"));
 
       GLSNitscheNavierStokesSolver<2> problem_22(NSparam);
       problem_22.solve();

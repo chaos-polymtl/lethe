@@ -39,6 +39,12 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
+      AssertThrow(NSparam.nitsche->number_solids == 0,
+                  SolidWarning(NSparam.nitsche->number_solids,
+                               "gls_navier_stokes_3d",
+                               "gls_nitsche_navier_stokes_23 (2D solid) or "
+                               "gls_nitsche_navier_stokes_33 (3D solid)"));
+
       GLSNavierStokesSolver<3> problem_3d(NSparam);
       problem_3d.solve();
     }

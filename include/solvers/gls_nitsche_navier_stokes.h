@@ -21,6 +21,7 @@
 #ifndef lethe_gls_nitsche_navier_stokes_h
 #define lethe_gls_nitsche_navier_stokes_h
 
+#include <core/exceptions.h>
 #include <core/solid_base.h>
 
 #include <solvers/gls_navier_stokes.h>

@@ -75,8 +75,8 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set verbosity 			= verbose
-
+	set verbosity 		= verbose
+	set number of solids 	= 1
         subsection nitsche solid 0
 	    set beta 	= 10
 	    subsection mesh

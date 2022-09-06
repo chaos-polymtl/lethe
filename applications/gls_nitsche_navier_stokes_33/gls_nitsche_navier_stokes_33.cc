@@ -39,6 +39,9 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
+      Assert(NSparam.nitsche->number_solids > 0,
+             NoSolidWarning("gls_nitsche_navier_stokes_33"));
+
       GLSNitscheNavierStokesSolver<3> problem_33(NSparam);
       problem_33.solve();
     }

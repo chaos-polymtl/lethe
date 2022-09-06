@@ -742,10 +742,16 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
                 const double initial_time =
                   this->simulation_control->get_current_time() - time_step;
 
+                solids[i_solid]->update_temperature_time(time_step);
                 solids[i_solid]->integrate_velocity(time_step, initial_time);
                 solids[i_solid]->move_solid_triangulation(time_step,
                                                           initial_time);
               }
+          }
+        if constexpr (dim == spacedim)
+          {
+            // Parse the nitsche solids to the multiphysics interface
+            this->multiphysics->set_solid(&solids);
           }
       }
       if (this->simulation_control->is_at_start())

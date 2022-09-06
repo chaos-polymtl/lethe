@@ -149,6 +149,9 @@ public:
   Function<spacedim> *
   get_solid_velocity();
 
+  Function<spacedim> *
+  get_solid_temperature();
+
   /**
    * @brief Updates particle positions in solid_particle_handler by integrating velocity using an explicit Runge-Kutta 4 method.
    *
@@ -195,6 +198,12 @@ public:
   rotate_grid(double angle, int axis);
 
   /**
+   * @brief Updates the time in the function used to describe the solid temperature
+   */
+  void
+  update_temperature_time(double time);
+
+  /**
    * @brief read solid base triangulation checkpoint
    */
   void
@@ -237,6 +246,7 @@ private:
   std::shared_ptr<Parameters::NitscheObject<spacedim>> &param;
 
   Function<spacedim> *velocity;
+  Function<spacedim> *temperature;
 
   unsigned int initial_number_of_particles;
 };

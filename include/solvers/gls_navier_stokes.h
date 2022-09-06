@@ -16,6 +16,8 @@
 #ifndef lethe_gls_navier_stokes_h
 #define lethe_gls_navier_stokes_h
 
+#include <core/exceptions.h>
+
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/navier_stokes_scratch_data.h>
@@ -25,8 +27,6 @@
 #include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
-
-
 
 using namespace dealii;
 

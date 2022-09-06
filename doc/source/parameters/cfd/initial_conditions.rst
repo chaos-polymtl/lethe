@@ -19,6 +19,10 @@ It is often necessary to set-up complex initial conditions when simulating trans
      set Function expression = if (x<0.5 & y<1, 1, 0)
    end
 
+   subsection temperature
+     set Function expression = 0
+   end
+
    subsection ramp
     subsection viscosity
       set initial viscosity = 1.0
@@ -44,6 +48,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
 .. note::
    The ``Function expression`` can be used to establish an even more complex free surface initial geometry. For example, one can create a circle of fluid : ``if ( (x^2+y^2)<=(r)^2 ,1,0)``
 
+* The ``subsection temperature`` allows the user to define an initial temperature for the fluid domain (if ``set heat tranfer = true`` in :doc:`multiphysics`).
 
 * The ``subsection ramp`` holds the parameters to operate a ramp on either or both the viscosity and the ``n`` parameter in rheological models (see :doc:`physical_properties` for more information on this parameter). When ramping on the viscosity value, 
 

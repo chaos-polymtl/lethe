@@ -1,5 +1,5 @@
-Nitsche
----------
+Nitsche Immersed Boundary
+--------------------------
 
 These parameters are used for simulations using the Nitsche immersed boundary method. Nitsche immersed boundary method works by forcing the fluid at the location of the Gauss points of the solid triangulation in order to apply the ``noslip`` boundary condition within the solid object.
 
@@ -20,16 +20,14 @@ These parameters are used for simulations using the Nitsche immersed boundary me
     # General parameters
     #---------------------------------------------------
     set verbosity = quiet
-    set number of solids = 1
+    set number of solids = 0
 
     #---------------------------------------------------    
     # Solid parameters
     #---------------------------------------------------
-    subsection nitsche solid 0
-      # Penalization term for Nitsche method
-      set beta = 10
-
-      # Solid mesh
+    subsection nitsche solid 0    
+      # Solid Mesh
+      #=================================================
       subsection mesh
 	set type = dealii
 	set grid type = hyper_ball
@@ -38,12 +36,43 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 	set simplex = false
       end
 
+      # Velocity boundary condition parameters
+      #=================================================
+      # Penalization term for Nitsche method, on the velocity
+      set beta = 10
+
       # Solid velocity
       subsection solid velocity
 	# Default values in 2D
 	set Function expression = 0 ; 0
 	# in 3D: set Function expression = 0 ; 0 ; 0
       end
+      
+      # Condition on the motion of particles
+      set enable particles motion = false
+
+      # Number of sub iterations for the motion of the particles
+      set particles sub iterations = 1
+
+      # Heat boundary condition parameters
+      #=================================================
+      set enable heat boundary condition = false
+
+      # Penalization term for Nitsche method, on the energy equation
+      set beta heat = 10
+
+      # Solid temperature
+      subsection solid temperature
+	set Function expression = 0
+      end
+
+      # Post-processing parameters
+      #=================================================
+      # Force and torque calculation on solid
+      set calculate force on solid = false
+      set solid force name = force_solid
+      set calculate torque on solid = false
+      set solid torque name = torque_solid
 
       # Center of rotation, used for torque calculation
       subsection center of rotation
@@ -52,20 +81,10 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 	# in 3D: set z = 0
       end
 
-      # Condition on the motion of particles
-      set enable particles motion = false
-
-      # Force and torque calculation on solid
-      set calculate force on solid = false
-      set solid force name = force_solid
-      set calculate torque on solid = false
-      set solid torque name = torque_solid
-
+      # Simulation control parameters
+      #=================================================
       # Enable stopping the simulation if Nitsche particles have been lost
       set stop if particles lost = true
-
-      # Number of sub iterations for the motion of the particles
-      set particles sub iterations = 1
 
       # Number of Nitsche (quadrature) points to insert in a 1D cell
       set number of quadrature points = 2
@@ -82,22 +101,15 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 
 	The solid particles enable the Nitsche restriction visualization, while the solid triangulation is used for animation purposes.
 
-* the ``mixer_solid_particles_00.pvd``, corresponding to the discrete particles inserted at the Gauss points of the solid triangulation. 
-
 * ``number of solids``: number of Nitsche solids in the simulation.
 
-.. important::
+.. warning::
+	The number of solids must be specified explicitly. This is often a source of error.
+
+.. note::
 	Each solid will then correspond to a ``subsection nitsche solid``.
 
 * ``subsection nitsche solid 0``: defines a solid object, with index ``0``, on which the Nitsche immersed boundary is applied. Multiple solids can be added in the same fashion (``subsection nitsche solid 1`` etc.).
-* ``beta``: controls the intensity of the Nitsche method application in the fluid region (restriction parameter). Higher values of ``beta`` lead to stiffer problems but prevent the fluid from penetrating the solid.
-
-.. tip::
-	For flows with Reynolds numbers :math:`Re > 1`, we found that setting ``beta = 10`` (default value) leads to satisfactory results. 
-
-	For ``beta = 0``, the solid has no influence on the flow: this value can be used for debugging purposes.
-	
-	In case of a static solid, ``beta`` parameter has to be greatly increased, up to ``100`` or ``1000``, to prevent the fluid moving through the solid. For highly viscous flows, even higher values of ``beta`` could be used to compensate for the larger shear stresses acting on the immersed solid.
 
 * ``subsection mesh``: defines the solid mesh used to apply Nitsche immersed boundary. The syntax is the same as that of the mesh subsection, see :doc:`mesh` for more details.
 
@@ -106,6 +118,15 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 
 .. tip::
 	The solid mesh should have a characteristic size of the same order as the fluid dynamics mesh. Using a finer mesh will not cause any problem, but will increase the computational cost without benefits. 
+
+* ``beta``: penalization term, which controls the intensity of the Nitsche method application on the velocity of the fluid region. Higher values of ``beta`` lead to stiffer problems but prevent the fluid from penetrating the solid.
+
+.. tip::
+	For flows with Reynolds numbers :math:`Re > 1`, we found that setting ``beta = 10`` (default value) leads to satisfactory results. 
+
+	For ``beta = 0``, the solid has no influence on the flow: this value can be used for debugging purposes.
+	
+	In case of a static solid, ``beta`` parameter has to be greatly increased, up to ``100`` or ``1000``, to prevent the fluid moving through the solid. For highly viscous flows, even higher values of ``beta`` could be used to compensate for the larger shear stresses acting on the immersed solid.
 
 * ``subsection solid velocity``: defines the velocity of the solid mesh. This velocity is defined by a ``Function expression`` and can depend on both space and time.
 
@@ -119,9 +140,7 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 
 .. tip::
 	The unit of the solid velocity value depends on the units of the mesh: if the mesh is build with the meter as the base unit, the velocity will be in :math:`m/s`.
-
-* ``subsection center of rotation``: :math:`(x, y)` coordinates of the center of the rotation, used for torque calculation. Default center of rotation is (0, 0). Add ``set z`` for 3D simulations.
-
+	
 * ``enable particles motion``: controls if the immersed boundary moves within the fluid domain.
 
 .. tip ::
@@ -129,14 +148,6 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 
 .. warning ::
 	When the ``solid velocity`` leads to a motion of the solid, use ``enable particles motion = true``.
-
-* ``calculate force on solid``: controls if force calculation on the immersed geometry is enabled. If set to ``true``, forces will written in the output file named ``solid force name``, with the solid index automatically added at the end.
-* ``calculate torque on solid``: controls if torque calculation on the immersed geometry is enabled. If set to ``true``, torques will be written in the file in the output file named ``solid torque name``, with the solid index automatically added at the end. 
-* ``stop if particles lost``: controls if the simulation is stopped when Nitsche particles have been lost. If ``false``, the simulation will continue. 
-
-.. tip ::
-
-	Particle loss can happen when particles move through multiple cells during a time step. This can be caused by a big ``time step`` (see :doc:`simulation_control`), a high fluid ``mesh refinement`` (see :doc:`mesh`), or a high CFL. To prevent particle loss, try increasing the number of ``particles sub iterations``.
 
 * ``particles sub iterations``: number of sub iterations for the motion of the particles. 
 
@@ -147,9 +158,35 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 
 	Generally, it is a good practice to have sufficient ``particles sub iterations`` so as to ensure that particles do not move more than half a cell during a particle sub iteration.
 
+* ``enable heat boundary condition``: controls if a heat boundary condition is imposed on the Nitsche immersed boundary. Use to attribute a given temperature to the Nitsche solid (defined in ``subsection solid temperature``).
+
+* ``beta heat``: penalization term on the heat equation, which controls the intensity of the Nitsche method application on the temperature of the fluid region. Higher values of ``beta`` forces the fluid near the solid to have a temperature matching the one of the solid (defined in ``subsection solid temperature``).
+	
+* ``subsection solid temperature``: defines the temperature of the solid mesh. This temperature is defined by a ``Function expression`` and can depend on both space and time. This parameter is used only if:
+
+  * ``enable heat boundary condition = true``, and
+  * ``heat transfert = true`` in :doc:`multiphysics` subsection.
+
+..  warning ::
+	The heat transfert with nitsche boundary conditions is not compatible with the ``gls_nitsche_navier_stokes_23`` solver for now.
+
+* ``calculate force on solid``: controls if force calculation on the immersed geometry is enabled. If set to ``true``, forces will written in the output file named ``solid force name``, with the solid index automatically added at the end.
+
+* ``calculate torque on solid``: controls if torque calculation on the immersed geometry is enabled. If set to ``true``, torques will be written in the file in the output file named ``solid torque name``, with the solid index automatically added at the end. 
+
+* ``subsection center of rotation``: :math:`(x, y)` coordinates of the center of the rotation, used for torque calculation. Default center of rotation is (0, 0). Add ``set z`` for 3D simulations.
+
+* ``stop if particles lost``: controls if the simulation is stopped when Nitsche particles have been lost. If ``false``, the simulation will continue. 
+
+.. tip ::
+
+	Particle loss can happen when particles move through multiple cells during a time step. This can be caused by a big ``time step`` (see :doc:`simulation_control`), a high fluid ``mesh refinement`` (see :doc:`mesh`), or a high CFL. To prevent particle loss, try increasing the number of ``particles sub iterations``.
+
 * ``number of quadrature points``: number of Nitsche (quadrature) points to insert in a 1D cell. The number of inserted points will be higher for higher dimensions. Increasing this number will lead to a higher points density inside the solid.
 
 .. seealso::
-	The VOF solver is used in the example :doc:`../../examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche`.
+	The Nitsche immersed boundary method is used in the examples:
+	  * :doc:`../../examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche`
+	  * :doc:`../../examples/incompressible-flow/3d_nitsche_mixer_with_pbt_impeller/nitsche_mixer_with_pbt_impeller`
 
 
