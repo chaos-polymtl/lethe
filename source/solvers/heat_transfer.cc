@@ -32,6 +32,9 @@ HeatTransfer<dim>::assemble_matrix_and_rhs()
 {
   assemble_system_matrix();
   assemble_system_rhs();
+
+  if (this->simulation_parameters.nitsche->number_solids > 0)
+    assemble_nitsche_heat_restriction(true);
 }
 
 
@@ -40,6 +43,139 @@ void
 HeatTransfer<dim>::assemble_rhs()
 {
   assemble_system_rhs();
+  if (this->simulation_parameters.nitsche->number_solids > 0)
+    assemble_nitsche_heat_restriction(true);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
+{
+  Assert(
+    !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity("assemble_nitsche_heat_restriction"));
+
+  // Evaluate fluid properties
+  auto density_model =
+    this->simulation_parameters.physical_properties_manager.get_density();
+  auto specific_heat_model =
+    this->simulation_parameters.physical_properties_manager.get_specific_heat();
+  auto conductivity_model =
+    this->simulation_parameters.physical_properties_manager
+      .get_thermal_conductivity();
+  std::map<field, double> field_values;
+
+  double rho_cp = density_model->value(field_values) *
+                  specific_heat_model->value(field_values);
+
+  auto solids = *this->multiphysics->get_solids(
+    this->simulation_parameters.nitsche->number_solids);
+
+  // Loops over solids
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      // Initialize the solid and its particles
+      std::shared_ptr<Particles::ParticleHandler<dim>> &solid_ph =
+        solids[i_solid]->get_solid_particle_handler();
+
+      if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+            ->enable_heat_bc)
+        {
+          const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+
+          std::vector<types::global_dof_index> heat_dof_indices(dofs_per_cell);
+          FullMatrix<double>     local_matrix(dofs_per_cell, dofs_per_cell);
+          dealii::Vector<double> local_rhs(dofs_per_cell);
+
+          Function<dim> *solid_temperature =
+            solids[i_solid]->get_solid_temperature();
+
+          // Penalization terms
+          const double beta =
+            this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+              ->beta_heat;
+
+          // Loop over all local particles
+          auto particle = solid_ph->begin();
+          while (particle != solid_ph->end())
+            {
+              local_matrix = 0;
+              local_rhs    = 0;
+
+              const auto &cell = particle->get_surrounding_cell();
+
+              double h_cell = 0;
+              if (dim == 2)
+                h_cell =
+                  std::sqrt(4. * cell->measure() / M_PI) /
+                  this->simulation_parameters.fem_parameters.velocity_order;
+              else if (dim == 3)
+                h_cell =
+                  pow(6 * cell->measure() / M_PI, 1. / 3.) /
+                  this->simulation_parameters.fem_parameters.velocity_order;
+              const double penalty_parameter =
+                1. / std::pow(h_cell * h_cell, double(dim) / double(dim));
+              const auto &dh_cell =
+                typename DoFHandler<dim>::cell_iterator(*cell,
+                                                        &this->dof_handler);
+              dh_cell->get_dof_indices(heat_dof_indices);
+
+              const auto pic = solid_ph->particles_in_cell(cell);
+              Assert(pic.begin() == particle, ExcInternalError());
+              for (const auto &p : pic)
+                {
+                  double      temperature = 0;
+                  const auto &ref_q       = p.get_reference_location();
+                  const auto &real_q      = p.get_location();
+                  const auto &JxW         = p.get_properties()[0];
+
+                  for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                    {
+                      // Get the temperature at non-quadrature point (particle
+                      // in fluid)
+                      auto &evaluation_point = this->evaluation_point;
+                      temperature += evaluation_point[heat_dof_indices[k]] *
+                                     this->fe->shape_value(k, ref_q);
+                    }
+                  // Assemble the matrix or the rhs
+                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                    {
+                      if (assemble_matrix)
+                        {
+                          for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                            {
+                              local_matrix(i, j) +=
+                                rho_cp * penalty_parameter * beta *
+                                this->fe->shape_value(i, ref_q) *
+                                this->fe->shape_value(j, ref_q) * JxW;
+                            }
+                        }
+                      else
+                        {
+                          // Regular residual
+                          local_rhs(i) +=
+                            -rho_cp * penalty_parameter * beta * temperature *
+                              this->fe->shape_value(i, ref_q) * JxW +
+                            rho_cp * penalty_parameter * beta *
+                              solid_temperature->value(real_q, 0) *
+                              this->fe->shape_value(i, ref_q) * JxW;
+                        }
+                    }
+                }
+              const AffineConstraints<double> &constraints_used =
+                this->zero_constraints;
+              auto &system_rhs = this->system_rhs;
+              constraints_used.distribute_local_to_global(local_matrix,
+                                                          local_rhs,
+                                                          heat_dof_indices,
+                                                          this->system_matrix,
+                                                          system_rhs);
+              particle = pic.end();
+            }
+          this->system_matrix.compress(VectorOperation::add);
+          this->system_rhs.compress(VectorOperation::add);
+        }
+    }
 }
 
 template <int dim>
@@ -131,6 +267,9 @@ HeatTransfer<dim>::assemble_system_matrix()
                                             this->cell_quadrature->size()));
 
   system_matrix.compress(VectorOperation::add);
+
+  if (this->simulation_parameters.nitsche->number_solids > 0)
+    assemble_nitsche_heat_restriction(true);
 }
 
 template <int dim>
@@ -274,6 +413,9 @@ HeatTransfer<dim>::assemble_system_rhs()
                                             this->cell_quadrature->size()));
 
   this->system_rhs.compress(VectorOperation::add);
+
+  if (this->simulation_parameters.nitsche->number_solids > 0)
+    assemble_nitsche_heat_restriction(false);
 }
 
 template <int dim>

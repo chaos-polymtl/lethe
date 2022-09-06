@@ -22,6 +22,11 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
+      AssertThrow(NSparam.nitsche->number_solids == 0,
+                  SolidWarning(NSparam.nitsche->number_solids,
+                               "gd_navier_stokes_2d",
+                               "gls_nitsche_navier_stokes_22"));
+
       GDNavierStokesSolver<2> problem_2d(NSparam);
       problem_2d.solve();
     }

@@ -22,9 +22,11 @@
 #ifndef lethe_multiphysics_interface_h
 #define lethe_multiphysics_interface_h
 
+#include <core/exceptions.h>
 #include <core/multiphysics.h>
 #include <core/parameters_multiphysics.h>
 #include <core/simulation_control.h>
+#include <core/solid_base.h>
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/simulation_parameters.h>
@@ -523,7 +525,6 @@ public:
     return block_physics_time_average_solutions[physics_id];
   }
 
-
   /**
    * @brief Request the reynolds_stress solution of a given physics.
    * WIP for an upcoming PR, not yet implemented in the solver.
@@ -539,6 +540,25 @@ public:
                 ExcInternalError());
     return reynolds_stress_solutions;
   }
+
+  /**
+   @brief Request the solid objects. Used an auxiliary physics
+    * needs to apply a boundary condition on a solid through
+    * Nitsche immersed boundary method.
+    *
+    * NB: this method is called only in
+    * HeatTransfer<dim>::assemble_nitsche_heat_restriction,
+    * which is itself called only if number_solids > 0
+    */
+  std::vector<std::shared_ptr<SolidBase<dim, dim>>> *
+  get_solids(const int number_solids)
+  {
+    Assert(number_solids > 0, NoSolidWarning("the"));
+    // to prevent "unused parameter" warning in Release build
+    (void)(number_solids);
+    return solids;
+  }
+
 
   /**
    * @brief Request the present solution of the filtered phase fraction gradient (PFG)
@@ -629,6 +649,17 @@ public:
   }
 
   /**
+   * @brief Sets the reference to the vector of the SolidBase object. This allows the use of the solid base object in multiple physics at the same time.
+   *
+   * @param solids_input The reference to the vector of solidBase object
+   */
+  void
+  set_solid(std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids_input)
+  {
+    solids = solids_input;
+  }
+
+  /**
    * @brief Sets the reference to the solution of the physics in the multiphysics interface
    *
    * @param physics_id The physics of the DOF handler being requested
@@ -683,7 +714,6 @@ public:
                 ExcInternalError());
     physics_time_average_solutions[physics_id] = solution_vector;
   }
-
 
 
   /**
@@ -809,8 +839,6 @@ public:
       }
   };
 
-
-
 private:
   const Parameters::Multiphysics multiphysics_parameters;
   const Parameters::Verbosity    verbosity;
@@ -818,6 +846,7 @@ private:
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;
+
 
   // Map that states if the physics are solved before the fluid dynamics
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
@@ -839,6 +868,10 @@ private:
 
 
   std::map<PhysicsID, DoFHandler<dim> *> physics_dof_handler;
+
+  std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids;
+
+
 
   // present solution
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions;

@@ -128,6 +128,14 @@ public:
   assemble_rhs();
 
   /**
+   * @brief Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat transfert equation.
+   *
+   * @param assemble_matrix boolean that is true for matrix assembly, and false for rhs assembly
+   */
+  void
+  assemble_nitsche_heat_restriction(bool assemble_matrix);
+
+  /**
    * @brief Attach the solution vector to the DataOut provided. This function
    * enable the auxiliary physics to output their solution via the core solver.
    */

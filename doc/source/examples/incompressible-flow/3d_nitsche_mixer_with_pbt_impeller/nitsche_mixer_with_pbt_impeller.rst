@@ -209,7 +209,7 @@ The :doc:`../../../parameters/cfd/nitsche` subsection is used to insert the imme
 .. code-block:: text
 
 	subsection nitsche
-
+	  set number of solids = 1
 	  subsection nitsche solid 0
 		  subsection mesh
 	      		set type                 = gmsh
