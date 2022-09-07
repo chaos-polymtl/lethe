@@ -536,13 +536,13 @@ private:
 
 // RBF Shapes express the signed distance function as a linear combination of
 // Radial Basis Functions, which have a defined support radius and basis
-// function. A collection of nodes and weights composes the object.
+// function. A collection of nodes and weights compose the object.
 template <int dim>
 class RBFShape : public Shape<dim>
 {
 public:
   /**
-   * @param support_radius the scaling of the extent of the nodes
+   * @param support_radius the scaling of the reach of the nodes
    * @param basis_function the basis function that was used to parametrize the RBF object
    * @param weight the weighting associated to each node for the sum operation
    * @param nodes the center of each basis function
