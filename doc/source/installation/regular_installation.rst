@@ -56,7 +56,7 @@ After installation, add an environment variable to your ``.bashrc`` either manua
 
 .. code-block:: text
 
-   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.bashrc`
+   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.bashrc
 
 Installing deal.II manually (Step #1)
 --------------------------------------
@@ -158,7 +158,7 @@ It is generally recommended to add the variable to your bashrc so it is always l
 
 .. _install-lethe:
 
-Installation of lethe (Step #2)
+Installing lethe (Step #2)
 -------------------------------
 
 Clone lethe from the `Lethe official repository <https://github.com/lethe-cfd/lethe>`_.
@@ -174,7 +174,7 @@ Create a build folder at the same level as the lethe folder
   mkdir build
   cd build
 
-Compile Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
+Build Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
 
 .. code-block:: text
 
