@@ -4,58 +4,35 @@ DEAL::neighbors of cell 62 are:  62 49 51 53 55 56 58 60 57 59 61 63
 DEAL::neighbors of cell 61 are:  61 42 43 46 47 56 57 60 58 59 62 63
 DEAL::neighbors of cell 60 are:  60 35 39 42 46 49 53 56 43 47 57 61 51 55 58 62 59 63
 DEAL::neighbors of cell 59 are:  59 28 29 30 31 56 57 58 60 61 62 63
-DEAL::neighbors of cell 58 are:  58 21 23 28 30 49 51 56 29 31 57 59 53 55 60 62 61 63
-DEAL::neighbors of cell 57 are:  57 14 15 28 29 42 43 56 30 31 58 59 46 47 60 61 62 63
-DEAL::neighbors of cell 56 are:  56 7 14 21 28 35 42 49 15 29 43 57 23 30 51 58 31 59 39 46 53 60 47 61 55 62 63
-DEAL::neighbors of cell 55 are:  55 48 49 50 51 52 53 54 56 58 60 62
-DEAL::neighbors of cell 54 are:  54 48 50 52 49 51 53 55
-DEAL::neighbors of cell 53 are:  53 34 35 38 39 48 49 52 42 46 56 60 50 51 54 55 58 62
-DEAL::neighbors of cell 52 are:  52 34 38 48 35 39 49 53 50 54 51 55
-DEAL::neighbors of cell 51 are:  51 20 21 22 23 48 49 50 28 30 56 58 52 53 54 55 60 62
-DEAL::neighbors of cell 50 are:  50 20 22 48 21 23 49 51 52 54 53 55
-DEAL::neighbors of cell 49 are:  49 6 7 20 21 34 35 48 14 28 42 56 22 23 50 51 30 58 38 39 52 53 46 60 54 55 62
-DEAL::neighbors of cell 48 are:  48 6 20 34 7 21 35 49 22 50 23 51 38 52 39 53 54 55
-DEAL::neighbors of cell 47 are:  47 40 41 42 43 44 45 46 56 57 60 61
-DEAL::neighbors of cell 46 are:  46 33 35 37 39 40 42 44 41 43 45 47 49 53 56 60 57 61
-DEAL::neighbors of cell 45 are:  45 40 41 44 42 43 46 47
-DEAL::neighbors of cell 44 are:  44 33 37 40 41 45 35 39 42 46 43 47
-DEAL::neighbors of cell 43 are:  43 12 13 14 15 40 41 42 28 29 56 57 44 45 46 47 60 61
-DEAL::neighbors of cell 42 are:  42 5 7 12 14 33 35 40 13 15 41 43 21 28 49 56 29 57 37 39 44 46 45 47 53 60 61
-DEAL::neighbors of cell 41 are:  41 12 13 40 14 15 42 43 44 45 46 47
-DEAL::neighbors of cell 40 are:  40 5 12 33 13 41 7 14 35 42 15 43 37 44 45 39 46 47
-DEAL::neighbors of cell 39 are:  39 32 33 34 35 36 37 38 40 42 44 46 48 49 52 53 56 60
-DEAL::neighbors of cell 38 are:  38 32 34 36 33 35 37 39 48 52 49 53
-DEAL::neighbors of cell 37 are:  37 32 33 36 40 44 34 35 38 39 42 46
-DEAL::neighbors of cell 36 are:  36 32 33 37 34 38 35 39
+DEAL::neighbors of cell 28 are:  28 3 7 10 14 17 21 24 11 15 25 29 19 23 26 30 27 31 35 42 49 56 43 57 51 58 59
+DEAL::neighbors of cell 27 are:  27 24 25 26 28 29 30 31
+DEAL::neighbors of cell 26 are:  26 17 19 24 25 27 21 23 28 30 29 31
+DEAL::neighbors of cell 25 are:  25 10 11 24 26 27 14 15 28 29 30 31
+DEAL::neighbors of cell 24 are:  24 3 10 17 11 25 19 26 27 7 14 21 28 15 29 23 30 31
+DEAL::neighbors of cell 23 are:  23 16 17 18 19 20 21 22 24 26 28 30 48 49 50 51 56 58
+DEAL::neighbors of cell 22 are:  22 16 18 20 17 19 21 23 48 50 49 51
+DEAL::neighbors of cell 21 are:  21 2 3 6 7 16 17 20 10 14 24 28 18 19 22 23 26 30 34 35 48 49 42 56 50 51 58
+DEAL::neighbors of cell 20 are:  20 2 6 16 3 7 17 21 18 22 19 23 34 48 35 49 50 51
+DEAL::neighbors of cell 19 are:  19 16 17 18 24 26 20 21 22 23 28 30
+DEAL::neighbors of cell 18 are:  18 16 17 19 20 22 21 23
+DEAL::neighbors of cell 17 are:  17 2 3 16 10 24 18 19 26 6 7 20 21 14 28 22 23 30
+DEAL::neighbors of cell 16 are:  16 2 3 17 18 19 6 20 7 21 22 23
 DEAL::neighbors of cell 15 are:  15 8 9 10 11 12 13 14 24 25 28 29 40 41 42 43 56 57
 DEAL::neighbors of cell 14 are:  14 1 3 5 7 8 10 12 9 11 13 15 17 21 24 28 25 29 33 35 40 42 41 43 49 56 57
 DEAL::neighbors of cell 13 are:  13 8 9 12 10 11 14 15 40 41 42 43
-DEAL::neighbors of cell 12 are:  12 1 5 8 9 13 3 7 10 14 11 15 33 40 41 35 42 43
-DEAL::neighbors of cell 11 are:  11 8 9 10 24 25 12 13 14 15 28 29
-DEAL::neighbors of cell 10 are:  10 1 3 8 9 11 17 24 25 5 7 12 14 13 15 21 28 29
-DEAL::neighbors of cell 9 are:  9 8 10 11 12 13 14 15
-DEAL::neighbors of cell 8 are:  8 1 9 3 10 11 5 12 13 7 14 15
-DEAL::neighbors of cell 7 are:  7 0 1 2 3 4 5 6 8 10 12 14 16 17 20 21 24 28 32 33 34 35 40 42 48 49 56
-DEAL::neighbors of cell 6 are:  6 0 2 4 1 3 5 7 16 20 17 21 32 34 33 35 48 49
-DEAL::neighbors of cell 1 are:  1 0 8 2 3 10 4 5 12 6 7 14
 DEAL::neighbors of cell 0 are:  0 1 2 3 4 5 6 7
+DEAL::neighbors of cell 1 are:  1 0 8 2 3 10 4 5 12 6 7 14
 DEAL::neighbors of cell 2 are:  2 0 1 3 16 17 4 6 5 7 20 21
 DEAL::neighbors of cell 3 are:  3 0 1 2 8 10 16 17 24 4 5 6 7 12 14 20 21 28
 DEAL::neighbors of cell 4 are:  4 0 1 5 2 6 3 7 32 33 34 35
 DEAL::neighbors of cell 5 are:  5 0 1 4 8 12 2 3 6 7 10 14 32 33 40 34 35 42
-DEAL::neighbors of cell 16 are:  16 2 3 17 18 19 6 20 7 21 22 23
-DEAL::neighbors of cell 17 are:  17 2 3 16 10 24 18 19 26 6 7 20 21 14 28 22 23 30
-DEAL::neighbors of cell 18 are:  18 16 17 19 20 22 21 23
-DEAL::neighbors of cell 19 are:  19 16 17 18 24 26 20 21 22 23 28 30
-DEAL::neighbors of cell 20 are:  20 2 6 16 3 7 17 21 18 22 19 23 34 48 35 49 50 51
-DEAL::neighbors of cell 21 are:  21 2 3 6 7 16 17 20 10 14 24 28 18 19 22 23 26 30 34 35 48 49 42 56 50 51 58
-DEAL::neighbors of cell 22 are:  22 16 18 20 17 19 21 23 48 50 49 51
-DEAL::neighbors of cell 23 are:  23 16 17 18 19 20 21 22 24 26 28 30 48 49 50 51 56 58
-DEAL::neighbors of cell 24 are:  24 3 10 17 11 25 19 26 27 7 14 21 28 15 29 23 30 31
-DEAL::neighbors of cell 25 are:  25 10 11 24 26 27 14 15 28 29 30 31
-DEAL::neighbors of cell 26 are:  26 17 19 24 25 27 21 23 28 30 29 31
-DEAL::neighbors of cell 27 are:  27 24 25 26 28 29 30 31
-DEAL::neighbors of cell 28 are:  28 3 7 10 14 17 21 24 11 15 25 29 19 23 26 30 27 31 35 42 49 56 43 57 51 58 59
+DEAL::neighbors of cell 6 are:  6 0 2 4 1 3 5 7 16 20 17 21 32 34 33 35 48 49
+DEAL::neighbors of cell 7 are:  7 0 1 2 3 4 5 6 8 10 12 14 16 17 20 21 24 28 32 33 34 35 40 42 48 49 56
+DEAL::neighbors of cell 8 are:  8 1 9 3 10 11 5 12 13 7 14 15
+DEAL::neighbors of cell 9 are:  9 8 10 11 12 13 14 15
+DEAL::neighbors of cell 10 are:  10 1 3 8 9 11 17 24 25 5 7 12 14 13 15 21 28 29
+DEAL::neighbors of cell 11 are:  11 8 9 10 24 25 12 13 14 15 28 29
+DEAL::neighbors of cell 12 are:  12 1 5 8 9 13 3 7 10 14 11 15 33 40 41 35 42 43
 DEAL::neighbors of cell 29 are:  29 10 11 14 15 24 25 28 26 27 30 31 42 43 56 57 58 59
 DEAL::neighbors of cell 30 are:  30 17 19 21 23 24 26 28 25 27 29 31 49 51 56 58 57 59
 DEAL::neighbors of cell 31 are:  31 24 25 26 27 28 29 30 56 57 58 59
@@ -63,3 +40,26 @@ DEAL::neighbors of cell 32 are:  32 4 5 33 6 34 7 35 36 37 38 39
 DEAL::neighbors of cell 33 are:  33 4 5 32 12 40 6 7 34 35 14 42 36 37 44 38 39 46
 DEAL::neighbors of cell 34 are:  34 4 6 32 5 7 33 35 20 48 21 49 36 38 37 39 52 53
 DEAL::neighbors of cell 35 are:  35 4 5 6 7 32 33 34 12 14 40 42 20 21 48 49 28 56 36 37 38 39 44 46 52 53 60
+DEAL::neighbors of cell 36 are:  36 32 33 37 34 38 35 39
+DEAL::neighbors of cell 37 are:  37 32 33 36 40 44 34 35 38 39 42 46
+DEAL::neighbors of cell 38 are:  38 32 34 36 33 35 37 39 48 52 49 53
+DEAL::neighbors of cell 39 are:  39 32 33 34 35 36 37 38 40 42 44 46 48 49 52 53 56 60
+DEAL::neighbors of cell 40 are:  40 5 12 33 13 41 7 14 35 42 15 43 37 44 45 39 46 47
+DEAL::neighbors of cell 41 are:  41 12 13 40 14 15 42 43 44 45 46 47
+DEAL::neighbors of cell 42 are:  42 5 7 12 14 33 35 40 13 15 41 43 21 28 49 56 29 57 37 39 44 46 45 47 53 60 61
+DEAL::neighbors of cell 43 are:  43 12 13 14 15 40 41 42 28 29 56 57 44 45 46 47 60 61
+DEAL::neighbors of cell 44 are:  44 33 37 40 41 45 35 39 42 46 43 47
+DEAL::neighbors of cell 45 are:  45 40 41 44 42 43 46 47
+DEAL::neighbors of cell 46 are:  46 33 35 37 39 40 42 44 41 43 45 47 49 53 56 60 57 61
+DEAL::neighbors of cell 47 are:  47 40 41 42 43 44 45 46 56 57 60 61
+DEAL::neighbors of cell 48 are:  48 6 20 34 7 21 35 49 22 50 23 51 38 52 39 53 54 55
+DEAL::neighbors of cell 49 are:  49 6 7 20 21 34 35 48 14 28 42 56 22 23 50 51 30 58 38 39 52 53 46 60 54 55 62
+DEAL::neighbors of cell 50 are:  50 20 22 48 21 23 49 51 52 54 53 55
+DEAL::neighbors of cell 51 are:  51 20 21 22 23 48 49 50 28 30 56 58 52 53 54 55 60 62
+DEAL::neighbors of cell 52 are:  52 34 38 48 35 39 49 53 50 54 51 55
+DEAL::neighbors of cell 53 are:  53 34 35 38 39 48 49 52 42 46 56 60 50 51 54 55 58 62
+DEAL::neighbors of cell 54 are:  54 48 50 52 49 51 53 55
+DEAL::neighbors of cell 55 are:  55 48 49 50 51 52 53 54 56 58 60 62
+DEAL::neighbors of cell 56 are:  56 7 14 21 28 35 42 49 15 29 43 57 23 30 51 58 31 59 39 46 53 60 47 61 55 62 63
+DEAL::neighbors of cell 57 are:  57 14 15 28 29 42 43 56 30 31 58 59 46 47 60 61 62 63
+DEAL::neighbors of cell 58 are:  58 21 23 28 30 49 51 56 29 31 57 59 53 55 60 62 61 63
