@@ -83,8 +83,14 @@ Installing deal.II using candi (Step #1)
 
 .. code-block:: text
 
-	sudo apt-get install lsb-release git subversion wget bc libgmp-dev build-essential autoconf automake cmake libtool gfortran libboost-all-dev zlib1g-dev openmpi-bin openmpi-common libopenmpi-dev libblas3 libblas-dev liblapack3 liblapack-dev libsuitesparse-dev
+	sudo apt-get install lsb-release git subversion wget \
+	bc libgmp-dev build-essential autoconf automake cmake \
+	libtool gfortran libboost-all-dev zlib1g-dev openmpi-bin \
+	openmpi-common libopenmpi-dev libblas3 libblas-dev \
+	liblapack3 liblapack-dev libsuitesparse-dev
 
+.. tip::
+	The symbols ``\`` indicate that this a single command written on multiple lines.
 
 2. |linux_shell| Install compilers:
 
@@ -145,18 +151,15 @@ Do not forget the ``.`` at the end of the command, which means "here".
 
 	* save and close 
 
-6. |linux_shell| Still in the candi subfolder, run candi installation:
-	* for a 8Gb RAM computer:
+6. |linux_shell| Still in the candi subfolder, run candi installation script:
 
-	.. code-block:: text
+.. code-block:: text
 
-		./candi.sh -j1
+	./candi.sh -j$numprocs
 
-	* for a 16Gb (and more) RAM computer:
-
-	.. code-block:: text
-
-		./candi.sh -j4
+Where ``$numprocs`` corresponds to the number of processors used for the compilation:
+	* if you have less than 8Gb of RAM, use 1 to 2 procs: ``./candi.sh -j1`` or ``./candi.sh -j2``
+	* if you have 16Gb of RAM and above, ``$numprocs`` can be the number of physical cores minus 1. For instance, for a computer with 6 physical cores: ``./candi.sh -j5``
 
 .. tip::
 
@@ -214,7 +217,9 @@ After installation is complete, the folder structure will be:
 
 	make -j$numprocs
 
-Where ``$numprocs`` corresponds to the number of processors used for the compilation. As a rule of thumb, this can be equal to the number of physical cores on your computer minus 1, so for a 6 physical cores computer, the command is: ``make -j5``
+Where ``$numprocs`` corresponds to the number of processors used for the compilation:
+	* if you have less than 8Gb of RAM, use 1 to 2 procs: ``make -j1`` or ``make -j2``
+	* if you have 16Gb of RAM and above, ``$numprocs`` can be the number of physical cores minus 1. For instance, for a computer with 6 physical cores: ``make -j5``
 
 5. |linux_shell| (optional) Test your installation, still in the build folder:
 
