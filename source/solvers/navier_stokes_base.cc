@@ -17,6 +17,20 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/lethe_grid_tools.h>
+#include <core/sdirk.h>
+#include <core/solutions_output.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+
+#include <solvers/flow_control.h>
+#include <solvers/navier_stokes_base.h>
+#include <solvers/post_processors.h>
+#include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
+
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 
@@ -37,18 +51,6 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
-#include <core/bdf.h>
-#include <core/grids.h>
-#include <core/lethe_grid_tools.h>
-#include <core/sdirk.h>
-#include <core/solutions_output.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-#include <solvers/flow_control.h>
-#include <solvers/navier_stokes_base.h>
-#include <solvers/post_processors.h>
-#include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_velocities.h>
 #include <sys/stat.h>
 
 
@@ -863,91 +865,58 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   const FEValuesExtractors::Scalar pressure(dim);
   auto &                           present_solution = this->present_solution;
 
-  if (this->simulation_parameters.mesh_adaptation.variable ==
-      Parameters::MeshAdaptation::Variable::pressure)
+  for (const std::pair<Parameters::MeshAdaptation::Variable,
+                       Parameters::MultipleAdaptationParameters> &ivar :
+       this->simulation_parameters.mesh_adaptation.variables)
     {
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(pressure));
-    }
-  else if (this->simulation_parameters.mesh_adaptation.variable ==
-           Parameters::MeshAdaptation::Variable::velocity)
-    {
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(velocity));
-    }
-  else if (this->simulation_parameters.mesh_adaptation.variable ==
-           Parameters::MeshAdaptation::Variable::velocity_temperature)
-    {
-      Vector<float> multiphysics_estimated_error_per_cell(
-        tria.n_active_cells());
+      if (ivar.first == Parameters::MeshAdaptation::Variable::pressure)
+        {
+          KellyErrorEstimator<dim>::estimate(
+            *this->mapping,
+            this->dof_handler,
+            *this->face_quadrature,
+            typename std::map<types::boundary_id,
+                              const Function<dim, double> *>(),
+            present_solution,
+            estimated_error_per_cell,
+            this->fe->component_mask(pressure));
+        }
+      else if (ivar.first == Parameters::MeshAdaptation::Variable::velocity)
+        {
+          KellyErrorEstimator<dim>::estimate(
+            *this->mapping,
+            this->dof_handler,
+            *this->face_quadrature,
+            typename std::map<types::boundary_id,
+                              const Function<dim, double> *>(),
+            present_solution,
+            estimated_error_per_cell,
+            this->fe->component_mask(velocity));
+        }
+      else
+        {
+          // refine_mesh on an auxiliary physic parameter
+          multiphysics->compute_kelly(ivar, estimated_error_per_cell);
+        }
 
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(velocity));
-
-      multiphysics->compute_kelly(
-        // this->simulation_parameters.mesh_adaptation.variable,
-        multiphysics_estimated_error_per_cell);
 
       if (this->simulation_parameters.mesh_adaptation.fractionType ==
           Parameters::MeshAdaptation::FractionType::number)
         parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
           tria,
-          multiphysics_estimated_error_per_cell,
-          this->simulation_parameters.mesh_adaptation.refinement_fraction,
-          this->simulation_parameters.mesh_adaptation.coarsening_fraction,
+          estimated_error_per_cell,
+          ivar.second.refinement_fraction,
+          ivar.second.coarsening_fraction,
           this->simulation_parameters.mesh_adaptation.maximum_number_elements);
 
       else if (this->simulation_parameters.mesh_adaptation.fractionType ==
                Parameters::MeshAdaptation::FractionType::fraction)
         parallel::distributed::GridRefinement::
-          refine_and_coarsen_fixed_fraction(
-            tria,
-            multiphysics_estimated_error_per_cell,
-            this->simulation_parameters.mesh_adaptation.refinement_fraction,
-            this->simulation_parameters.mesh_adaptation.coarsening_fraction);
+          refine_and_coarsen_fixed_fraction(tria,
+                                            estimated_error_per_cell,
+                                            ivar.second.refinement_fraction,
+                                            ivar.second.coarsening_fraction);
     }
-  else
-    {
-      // refine_mesh on an auxiliary physic parameter
-      multiphysics->compute_kelly(
-        // this->simulation_parameters.mesh_adaptation.variable,
-        estimated_error_per_cell);
-    }
-
-  if (this->simulation_parameters.mesh_adaptation.fractionType ==
-      Parameters::MeshAdaptation::FractionType::number)
-    parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
-      tria,
-      estimated_error_per_cell,
-      this->simulation_parameters.mesh_adaptation.refinement_fraction,
-      this->simulation_parameters.mesh_adaptation.coarsening_fraction,
-      this->simulation_parameters.mesh_adaptation.maximum_number_elements);
-
-  else if (this->simulation_parameters.mesh_adaptation.fractionType ==
-           Parameters::MeshAdaptation::FractionType::fraction)
-    parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
-      tria,
-      estimated_error_per_cell,
-      this->simulation_parameters.mesh_adaptation.refinement_fraction,
-      this->simulation_parameters.mesh_adaptation.coarsening_fraction);
 
   if (tria.n_levels() >
       this->simulation_parameters.mesh_adaptation.maximum_refinement_level)

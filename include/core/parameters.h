@@ -31,11 +31,12 @@
 #ifndef lethe_parameters_h
 #define lethe_parameters_h
 
+#include <core/ib_particle.h>
+#include <core/multiphysics.h>
+
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
-
-#include <core/ib_particle.h>
 
 
 using namespace dealii;
@@ -831,6 +832,18 @@ namespace Parameters
   };
 
   /**
+   * @brief Mesh Adaptation Parameters that can differ for each refinement variable
+   */
+  struct MultipleAdaptationParameters
+  {
+    // Coarsening fraction
+    double coarsening_fraction;
+
+    // Refinement fraction
+    double refinement_fraction;
+  };
+
+  /**
    * @brief MeshAdaption - Parameters that control dynamic mesh adaptation.
    * Dynamic mesh adaptation in Lethe is very flexible and can be both local
    * and global.
@@ -853,9 +866,14 @@ namespace Parameters
       velocity,
       pressure,
       phase,
-      temperature,
-      velocity_temperature,
+      temperature
     } variable;
+
+    // Map containing the refinement variables
+    std::map<Variable, MultipleAdaptationParameters> variables;
+    // declaration for parsing variables
+    Variable                     vars;
+    MultipleAdaptationParameters var_adaptation_param;
 
     // Decision factor for Kelly refinement (number or fraction)
     enum class FractionType
@@ -875,12 +893,6 @@ namespace Parameters
 
     // Refinement after frequency iter
     unsigned int frequency;
-
-    // Refinement fraction
-    double refinement_fraction;
-
-    // Coarsening fraction
-    double coarsening_fraction;
 
     static void
     declare_parameters(ParameterHandler &prm);

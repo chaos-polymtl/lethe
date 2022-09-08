@@ -164,9 +164,16 @@ public:
   /**
    * @brief Compute the Kelly error estimator for mesh refinement.
    * NB : not implemented for the tracer parameter for now.
+   *
+   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+   *
+   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   void
-  compute_kelly(dealii::Vector<float> & /*estimated_error_per_cell*/)
+  compute_kelly(
+    const std::pair<Parameters::MeshAdaptation::Variable,
+                    Parameters::MultipleAdaptationParameters> & /*ivar*/,
+    dealii::Vector<float> & /*estimated_error_per_cell*/)
   {
     return;
   }

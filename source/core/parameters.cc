@@ -1,6 +1,6 @@
-#include <deal.II/base/exceptions.h>
-
 #include <core/parameters.h>
+
+#include <deal.II/base/exceptions.h>
 
 DeclException2(
   PhaseChangeIntervalError,
@@ -21,6 +21,14 @@ DeclException1(
   unsigned int,
   << "Laser beam orientation in : " << arg1
   << "-dimensional simulations cannot be defined in the z direction");
+
+DeclException3(MultipleAdaptationSizeError,
+               std::string,
+               unsigned int,
+               unsigned int,
+               << "Error in 'mesh adaptation' : number of '" << arg1 << "' ("
+               << arg2 << ") does not correspond to the number of 'variables' ("
+               << arg3 << ")");
 
 namespace Parameters
 {
@@ -1526,6 +1534,7 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
+
   void
   MeshAdaptation::declare_parameters(ParameterHandler &prm)
   {
@@ -1543,38 +1552,30 @@ namespace Parameters
                         "Choices are <none|uniform|kelly>.");
 
       prm.declare_entry(
+        "fraction refinement",
+        "0.1",
+        Patterns::List(Patterns::Double()),
+        "Fraction of refined elements"
+        "For multi-variables refinement, separate the different fractions with a comma "
+        "(ex/ 'set fraction refinement = 0.1,0.1')");
+
+      prm.declare_entry(
+        "fraction coarsening",
+        "0.05",
+        Patterns::List(Patterns::Double()),
+        "Fraction of coarsened elements"
+        "For multi-variables refinement, separate the different fractions with a comma "
+        "(ex/ 'set fraction coarsening = 0.05,0.05')");
+
+      prm.declare_entry(
         "variable",
         "velocity",
-        Patterns::Selection(
-          "velocity|pressure|phase|temperature|velocity and temperature"),
-        "Variable for kelly estimation"
-        "Choices are <velocity|pressure|phase|temperature|velocity and temperature>.");
-
-      prm.declare_entry("refine on velocity",
-                        "true",
-                        Patterns::Bool(),
-                        "Enable refinement on velocity with kelly estimation"
-                        "Choices are <true|false>.");
-      prm.declare_entry("refine on temperature",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable refinement on velocity with kelly estimation"
-                        "Choices are <true|false>.");
-      prm.declare_entry("refine on pressure",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable refinement on velocity with kelly estimation"
-                        "Choices are <true|false>.");
-      prm.declare_entry("refine on phase",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable refinement on velocity with kelly estimation"
-                        "Choices are <true|false>.");
-      prm.declare_entry("refine on tracer",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable refinement on velocity with kelly estimation"
-                        "Choices are <true|false>.");
+        Patterns::List(
+          Patterns::Selection("velocity|pressure|phase|temperature")),
+        "Variables for kelly estimation"
+        "Choices are <velocity|pressure|phase|temperature>."
+        "For multi-variables refinement, separate the different variables with a comma "
+        "(ex/ 'set variables = velocity,temperature')");
 
       prm.declare_entry(
         "fraction type",
@@ -1598,14 +1599,6 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Frequency of the mesh refinement");
-      prm.declare_entry("fraction refinement",
-                        "0.1",
-                        Patterns::Double(),
-                        "Fraction of refined elements");
-      prm.declare_entry("fraction coarsening",
-                        "0.05",
-                        Patterns::Double(),
-                        "Fraction of coarsened elements");
     }
     prm.leave_subsection();
   }
@@ -1625,23 +1618,48 @@ namespace Parameters
       if (op == "kelly")
         type = Type::kelly;
 
-      const std::string vop = prm.get("variable");
-      if (vop == "velocity")
-        variable = Variable::velocity;
-      if (vop == "pressure")
-        variable = Variable::pressure;
-      if (vop == "phase")
-        variable = Variable::phase;
-      if (vop == "temperature")
-        variable = Variable::temperature;
-      if (vop == "velocity and temperature")
-        variable = Variable::velocity_temperature;
+      // Getting multivariables refinement parameters
+      const std::string        var_op   = prm.get("variable");
+      std::vector<std::string> var_vec  = Utilities::split_string_list(var_op);
+      const std::string        coars_op = prm.get("fraction coarsening");
+      std::vector<std::string> coars_vec =
+        Utilities::split_string_list(coars_op);
+      const std::string        refin_op = prm.get("fraction refinement");
+      std::vector<std::string> refin_vec =
+        Utilities::split_string_list(refin_op);
 
-      //      refine_on_velocity    = prm.get_bool("refine on velocity");
-      //      refine_on_temperature = prm.get_bool("refine on temperature");
-      //      refine_on_pressure    = prm.get_bool("refine on pressure");
-      //      refine_on_phase       = prm.get_bool("refine on phase");
-      //      refine_on_tracer      = prm.get_bool("refine on tracer");
+      // Checking that the sizes are coherent
+      Assert(coars_vec.size() == var_vec.size(),
+             MultipleAdaptationSizeError("fraction coarsening",
+                                         coars_vec.size(),
+                                         var_vec.size()));
+      Assert(refin_vec.size() == var_vec.size(),
+             MultipleAdaptationSizeError("fraction refinement",
+                                         refin_vec.size(),
+                                         var_vec.size()));
+
+      // Create map of refinement variables
+      for (std::vector<int>::size_type i = 0; i != var_vec.size(); ++i)
+        {
+          // Parsing variable for this index
+          if (var_vec[i] == "velocity")
+            vars = Variable::velocity;
+          else if (var_vec[i] == "pressure")
+            vars = Variable::pressure;
+          else if (var_vec[i] == "phase")
+            vars = Variable::phase;
+          else if (var_vec[i] == "temperature")
+            vars = Variable::temperature;
+          else
+            throw std::logic_error(
+              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase or temperature");
+
+          var_adaptation_param.coarsening_fraction = std::stod(coars_vec[i]);
+          var_adaptation_param.refinement_fraction = std::stod(refin_vec[i]);
+
+          // defining adaptation map for this variable
+          variables[vars] = var_adaptation_param;
+        }
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")
@@ -1652,8 +1670,6 @@ namespace Parameters
       maximum_refinement_level = prm.get_integer("max refinement level");
       minimum_refinement_level = prm.get_integer("min refinement level");
       frequency                = prm.get_integer("frequency");
-      coarsening_fraction      = prm.get_double("fraction coarsening");
-      refinement_fraction      = prm.get_double("fraction refinement");
     }
     prm.leave_subsection();
   }
