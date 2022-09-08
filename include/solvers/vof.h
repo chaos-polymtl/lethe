@@ -78,7 +78,6 @@ public:
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
-        error_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 2);
       }
     else
       {
@@ -96,9 +95,8 @@ public:
         curvature_mapping = std::make_shared<MappingQ<dim>>(
           fe_curvature->degree,
           simulation_parameters.fem_parameters.qmapping_all);
-        cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
-        face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
-        error_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 2);
+        cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+        face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
 
     // Allocate solution transfer
@@ -181,6 +179,26 @@ public:
   void
   calculate_volume_and_mass(const TrilinosWrappers::MPI::Vector &solution,
                             const Parameters::FluidIndicator monitored_fluid);
+
+  /**
+   * @brief Calculate the average pressure value of the monitored fluid. Used for
+   * the wetting mechanism.
+   *
+   * @tparam VectorType The Vector type used for the solvers
+   *
+   * @param solution VOF solution (phase fraction)
+   *
+   * @param current_solution_fd current solution for the fluid dynamics
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
+   * the phase of interest.
+   */
+  template <typename VectorType>
+  double
+  find_monitored_fluid_avg_pressure(
+    const TrilinosWrappers::MPI::Vector &solution,
+    const VectorType &                   current_solution_fd,
+    const Parameters::FluidIndicator     monitored_fluid);
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -646,7 +664,6 @@ private:
   std::shared_ptr<Mapping<dim>>        curvature_mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
-  std::shared_ptr<Quadrature<dim>>     error_quadrature;
 
   // Solution storage
   IndexSet locally_owned_dofs;

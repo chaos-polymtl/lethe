@@ -15,6 +15,7 @@ The default values of the VOF parameters are given in the text box below.
 
 	subsection VOF	
 		set viscous dissipative fluid = fluid 1
+		set diffusivity = 0
 
 		subsection interface sharpening
 			set enable 	= false
@@ -36,11 +37,6 @@ The default values of the VOF parameters are given in the text box below.
 		subsection peeling wetting
 			set enable 	= false
 			set verbosity 	= quiet
-			set peeling pressure value 	= -0.05
-			set peeling pressure gradient 	= -1e-3
-			set wetting pressure value 	= 0.05
-			set wetting phase distance 	= 0
-			set diffusivity = 0
 		end
 
 		subsection mass conservation
@@ -89,6 +85,9 @@ The default values of the VOF parameters are given in the text box below.
 	Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, but we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature.
 
 
+* ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. Increase ``diffusivity`` to :ref:`improve wetting`.
+
+
   * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
   * ``enable``: controls if interface sharpening is enabled.
@@ -135,6 +134,10 @@ The default values of the VOF parameters are given in the text box below.
 
 * ``subsection peeling wetting``: Peeling and wetting mechanisms are very important to consider when there are solid boundaries in the domain, like a wall. If the fluid is already on the wall and its velocity drives it away from it, the fluid should be able to detach from the wall, meaning to `peel` from it. If the fluid is not already on the wall and its velocity drives it toward it, the fluid should be able to attach to the wall, meaning to `wet` it. This subsection defines the parameters for peeling and wetting mechanisms at the VOF boundaries, as defined in :doc:`boundary_conditions_multiphysics`. 
 
+  .. important::
+    This peeling/wetting mechanism implementation is an heuristic. It has been developed to meet the need of specific projects and gave satisfactory results as is, but it has not been broadly tested nor demonstrated, so its results should be considered with cautions. Do not hesitate to write to the team through the `Lethe github page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
+
+
   * ``enable``: controls if peeling/wetting mechanism is enabled.
   * ``verbosity``: enables the display of the number of peeled and wet cells at each time-step. Choices are: ``quiet`` (default, no output) and ``verbose``.
 
@@ -146,36 +149,28 @@ The default values of the VOF parameters are given in the text box below.
           -number of wet cells: 24
           -number of peeled cells: 1
 
-  * Peeling of the higher density fluid occurs where those conditions are met:
+  * Peeling occurs in a cell where the following conditions are met:
 
     * the cell is in the domain of the higher density fluid,
-    * the cell pressure value is below ``peeling pressure value``, and
-    * more than half of the quadrature points in the cell have a pressure gradient below ``peeling pressure gradient``.
+    * the cell pressure value is below the average pressure of the ``monitored fluid`` (``fluid 1`` by default, see ``subsection mass conservation``), and
+    * the pressure gradient is negative for more than half of the quadrature points.
 
-    The cell is then filled with the lower density fluid by changing its phase value.
+    The cell is then filled with the lower density fluid by changing its phase value progressively.
 
-  * Wetting of the lower density fluid occurs where those conditions are met: 
+  * Wetting occurs in a cell where those conditions are met: 
 
     * the cell is in the domain of the lower density fluid,
-    * the cell pressure value is above ``wetting pressure value``, and
-    * the distance (on the phase value) to the interface is above ``wetting phase distance``.
+    * the cell pressure value is above the average pressure of the ``monitored fluid`` (``fluid 1`` by default, see ``subsection mass conservation``), and
+    * the pressure gradient is positive for more than half of the quadrature points.
 
     The cell is then filled with the higher density fluid by changing its phase value.
 
     .. tip::
-
-      For ``set wetting phase distance = 0``, the wetting can only occur at the interface (considered at ``phase value = 0.5``).
-
-      For ``set wetting phase distance`` :math:`> 0`, the wetting can occur in the area where is larger than the area occupied by the higher density fluid. For example:
-
-      * if the ``fluid 1`` has a higher density than ``fluid 0``, and ``set wetting phase distance = 0.1``, the wetting can occur where the phase value is below :math:`= 0.4`.
-      * if the ``fluid 0`` has a higher density than ``fluid 1``, and ``set wetting phase distance = 0.1``, the wetting can occur where the phase value is above :math:`= 0.6`.
-
-    * ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is 0 to have pure advection. This can be used to :ref:`improve wetting`.
+      Even if ``monitoring`` is not enabled, the ``monitored fluid`` (``fluid 1`` by default) will be considered as the fluid of interest for the average pressure calculation in the peeling/wetting mechanism.
 
 .. warning::
 
-  As peeling/wetting mechanisms result in fluid creation and disparition, is it highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
+  As peeling/wetting mechanisms result in fluid generation and loss, is it highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
 
 * ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``). However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
 
@@ -271,11 +266,10 @@ Improving the Wetting mechanism
 
 In the framework of incompressible fluids, a layer of the lowest density fluid (e.g. air) can form between the highest density fluid (e.g. water) and the boundary, preventing its wetting. Two strategies can be used to improve the wetting mechanism:
 
-1. Add a small ``diffusivity`` to the transport equation (e.g. ``set diffusivity = 1e-3``), so that the higher density fluid spreads to the boundary location. 
-
+1. Increase the ``diffusivity`` to the transport equation (e.g. ``set diffusivity = 1e-2``), so that the higher density fluid spreads even more to the boundary location. 
 
 .. tip::
-  It is strongly advised to sharpen the interface more often (e.g. ``set frequency = 2``) to limit interface blurriness due the added diffusivity. As peeling-wetting is handled after the transport equation is solved, but before interface sharpening, this will not prevent the wetting from occuring.
+  It is strongly advised to sharpen the interface more often (e.g. ``set frequency = 2`` or even ``1``) to limit interface blurriness due the added diffusivity. As peeling-wetting is handled after the transport equation is solved, but before interface sharpening, sharpening will not prevent the wetting from occuring.
 
 2. Remove the conservation condition on the lowest density fluid (e.g. ``set conservative fluid = fluid 1``). The mass conservation equation in the cells of interest is replaced by a zero-pressure condition, to allow the fluid to get out of the domain. 
 
