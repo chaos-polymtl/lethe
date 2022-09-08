@@ -16,7 +16,7 @@ Windows with WSL
 
 .. seealso::
 
-	This tutorial is aimed at Windows users who have no prior knowledge of Linux. Hence it is as simple as possible, namely ``deal.II`` is installed with ``candi`` (see :doc:`./regular_installation` for alternatives). Installation options given in this tutorial is well suited for lethe users. If you are a developer and need more options, see :doc:`regular_installation`.
+	This tutorial is aimed at Windows users who have no prior knowledge of Linux. To keep it simple, all dependencies are installed using candi. Installation options given in this tutorial are well suited for lethe users. If you are a developer or need more options, see :doc:`regular_installation`.
 
 Throughout this tutorial:
 	* |win_shell| indicates operations performed in the Windows session, and 
@@ -40,7 +40,7 @@ Installing WSL and Ubuntu (Step #0)
 
 	should indicate ``version 2``. If not, follow this to update WSL: https://docs.microsoft.com/fr-fr/windows/wsl/install#upgrade-version-from-wsl-1-to-wsl-2
 
-2. |win_shell| Launch Ubuntu (in the start menu) and |linux_shell| update Ubuntu: 
+2. |win_shell| Launch Ubuntu (from the start menu) and |linux_shell| update Ubuntu: 
 
 .. code-block:: text
 
@@ -57,10 +57,20 @@ When prompted "do you want to continue?", proceed by typing ``y`` and hitting ``
 	* in ``Properties``, select ``Use Ctrl+Shift+C/V as Copy/Paste``
 	* you can then use ``Ctrl+Shift+V`` to paste text or commands in the Linux sub-terminal
 
-4. |win_shell| (optionnal) For better ease in the Linux terminal (better coloring, multiple tabs), change the default terminal:
+4. |win_shell| (optional) For better ease in the Linux terminal (better coloring, multiple tabs), change the default terminal:
 	* in the microsoft store, download ``Windows Terminal``
 	* in the ``parameters`` of ``Windows Terminal``, select on the left pannel "start": change default profile with ``Ubuntu-22.04``
 	* from now on, you can use this application instead to launch Ubuntu terminal
+
+.. tip::
+	A (very) few Linux commands useful for navigation:
+		* ``mkdir $dir``: (make directory) create a directory with the name specified as ``$dir``
+		* ``cd $dir``: (change directory) move to the directory ``$dir``
+		* ``cd ..``: move up to the parent directory
+		* ``pwd``: (print working directory) return the directory you are in
+		* ``cd $HOME``: move to your home directory (``/home/<user_name>/``)
+
+	You can find `here <https://linuxconfig.org/linux-commands>`_ a thorough guide for the most basic Linux commands.
 
 
 Installing deal.II using candi (Step #1)
@@ -91,15 +101,6 @@ Installing deal.II using candi (Step #1)
 
 Note the use of ``;`` which enable to serialize operations on a single execution line.
 
-.. tip::
-	A (very) few Linux commands for navigation:
-		* ``mkdir $dir``: (make directory) create a directory with the name specified as ``$dir``
-		* ``cd $dir``: (change directory) move to the directory ``$dir``
-		* ``cd ..``: move up to the parent directory
-		* ``pwd``: (print working directory) return the directory you are in
-
-	You can find `here <https://linuxconfig.org/linux-commands>`_ a thourought guide for the most basic Linux commands.
-
 4. |linux_shell| Download candi:
 
 .. code-block:: text
@@ -108,9 +109,9 @@ Note the use of ``;`` which enable to serialize operations on a single execution
 
 Do not forget the ``.`` at the end of the command, which means "here".
 
-5. |win_shell| Modify installation parameters (``deal.ii`` version and ``trilinos`` version):
+5. |win_shell| Modify installation parameters (deal.II version and trilinos version):
 	* open Windows file manager, and on the left panel (along with ``Files``, ``Computer`` etc.) click on the ``Ubuntu`` mount.
-	* navigate to reach the candi folder, in: ``/home/$user/Softwares/candi``
+	* navigate to reach the candi folder, in: ``/home/<user_name>/Softwares/candi``
 	* open the ``candi.cfg`` file with notepad (or other text editor) and change the following lines:
 
 	+--------+------------------------------------------+----------------------------------------+
@@ -128,7 +129,7 @@ Do not forget the ``.`` at the end of the command, which means "here".
 	* open the ``trilinos.package`` file with notepad and change the following lines:
 
 	.. tip::
-		The prefix ``#`` is used to comment a line. Here we are simply commenting lines 19 and 20, and uncommenting lines 25 and 26, to change the ``trilinos`` version.
+		The prefix ``#`` is used to comment a line. Here we are simply commenting lines 19 and 20, and uncommenting lines 25 and 26, to change the trilinos version.
 
 	+--------+------------------------------------------------+-----------------------------------------------+
 	| line # | initial parameter                              | changed parameter                             |
@@ -149,39 +150,39 @@ Do not forget the ``.`` at the end of the command, which means "here".
 
 	.. code-block:: text
 
-		./candi.sh -j 1
+		./candi.sh -j1
 
 	* for a 16Gb (and more) RAM computer:
 
 	.. code-block:: text
 
-		./candi.sh -j 4
+		./candi.sh -j4
 
 .. tip::
 
-	Candi will print messages asking you if you installed the dependency. Hit ``Enter`` two times to validate and the installation will launch. If new lines are written in the console, this means the installation is correctly going on. The installation will take from 1 to 3 hours depending on your hardware.
+	Candi will print messages asking you if you installed the dependency. Hit ``Enter`` two times to validate and the installation will launch. If new lines are written in the console, this means the installation is going on correctly. The installation will take from 1 to 3 hours depending on your hardware.
 
-	If the installation is stuck (no change on the console for a few minutes), hitting ``Ctrl+C`` can unstuck it.
+	If the installation is stuck (no change on the console for a few minutes), hitting ``Enter`` can unstuck it.
 
-	You can exit the installation at anytime hitting ``Ctrl+C`` 2-3 times.
+	You can exit the installation at any time hitting ``Ctrl+C`` 2-3 times.
 
-7. |win_shell| At the end of the installation, check that you have ``deal.ii`` and its dependencies installed:
+7. |win_shell| At the end of the installation, check that you have deal.II and its dependencies installed:
 	* on Windows file manager, go to the Ubuntu mount
-	* in ``/home/$user`` you should have a folder ``deal.ii-candi``
-	* inside this folder, you should have folders for the dependencies, namely: ``p4est``, ``petsc``, ``parmetis``, ``trilinos``
+	* in ``home/<user_name>`` you should have a folder ``deal.ii-candi``
+	* inside this folder, you should have folders for the dependencies, namely: p4est, petsc, parmetis, trilinos
 	* you should also see this folder: ``deal.II-master``
 
-8. |linux_shell| Add a ``deal.ii`` environment variable in Ubuntu through the following command (replace ``$user`` by your Linux username):
+8. |linux_shell| Add a deal.II environment variable in Ubuntu through the following command:
 
 .. code-block:: text
 
-	echo "export DEAL_II_DIR=/home/$user/deal.ii-candi/deal.II-master" >> ~/.bashrc
+	echo "export DEAL_II_DIR=$HOME/deal.ii-candi/deal.II-master" >> ~/.bashrc
 
 
 Installing Lethe (Step #2)
 -------------------------------------
 
-1. |linux_shell| Set-up the folder structure: in the ``Softwares`` folder created at the beginning of Step #1 (if you are in the ``candi`` folder, type ``cd ..``), type:
+1. |linux_shell| Set-up the folder structure: in the ``Softwares`` folder created at the beginning of Step #1 (if you are in the candi folder, type ``cd ..``), type:
 
 .. code-block:: text
 
